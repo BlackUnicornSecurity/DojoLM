@@ -1,0 +1,152 @@
+/**
+ * TPI Security Test Lab — Type Definitions
+ *
+ * Core types for the prompt injection scanner engine.
+ * All scanner patterns, findings, and fixture metadata are strictly typed.
+ */
+
+// ---------------------------------------------------------------------------
+// Severity & Verdicts
+// ---------------------------------------------------------------------------
+
+export const SEVERITY = {
+  INFO: 'INFO',
+  WARNING: 'WARNING',
+  CRITICAL: 'CRITICAL',
+} as const;
+
+export type Severity = (typeof SEVERITY)[keyof typeof SEVERITY];
+
+export type Verdict = 'BLOCK' | 'ALLOW';
+
+// ---------------------------------------------------------------------------
+// Scanner Findings
+// ---------------------------------------------------------------------------
+
+export interface Finding {
+  category: string;
+  severity: Severity;
+  description: string;
+  match: string;
+  source: 'current' | string; // 'current' or TPI story ID
+  engine: string;
+  pattern_name?: string;
+  weight?: number;
+  lang?: string;
+}
+
+export interface ScanResult {
+  findings: Finding[];
+  verdict: Verdict;
+  elapsed: number;
+  textLength: number;
+  normalizedLength: number;
+  counts: {
+    critical: number;
+    warning: number;
+    info: number;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Scanner Patterns
+// ---------------------------------------------------------------------------
+
+export interface RegexPattern {
+  name: string;
+  cat: string;
+  sev: Severity;
+  re: RegExp;
+  desc: string;
+  source?: string;
+  weight?: number;
+  lang?: string;
+}
+
+export interface CustomPattern {
+  name: string;
+  cat: string;
+  sev: Severity;
+  desc: string;
+  source?: string;
+  custom: string; // detector function key
+}
+
+export type ScannerPattern = RegexPattern | CustomPattern;
+
+// ---------------------------------------------------------------------------
+// Fixture Metadata
+// ---------------------------------------------------------------------------
+
+export interface FixtureFile {
+  file: string;
+  attack: string | null;
+  severity: Severity | null;
+  clean: boolean;
+}
+
+export interface FixtureCategory {
+  story: string;
+  desc: string;
+  files: FixtureFile[];
+}
+
+export interface FixtureManifest {
+  generated: string;
+  version: string;
+  description: string;
+  categories: Record<string, FixtureCategory>;
+}
+
+// ---------------------------------------------------------------------------
+// Binary Metadata (from serve.ts inspection)
+// ---------------------------------------------------------------------------
+
+export interface BinaryMetadata {
+  format: string;
+  magic: string;
+  valid_jpeg?: boolean;
+  valid_png?: boolean;
+  valid_wav?: boolean;
+  has_id3?: boolean;
+  extracted_text?: string;
+  polyglot?: string;
+  warning?: string;
+}
+
+export interface TextFixtureResponse {
+  path: string;
+  content: string;
+  size: number;
+}
+
+export interface BinaryFixtureResponse {
+  path: string;
+  size: number;
+  hex_preview: string;
+  metadata: BinaryMetadata;
+}
+
+// ---------------------------------------------------------------------------
+// Payload Catalog (UI)
+// ---------------------------------------------------------------------------
+
+export interface PayloadEntry {
+  title: string;
+  desc: string;
+  status: 'current' | 'planned';
+  story: string;
+  example: string;
+}
+
+// ---------------------------------------------------------------------------
+// Coverage Data (UI)
+// ---------------------------------------------------------------------------
+
+export interface CoverageEntry {
+  category: string;
+  pre: number;
+  post: number;
+  stories: string;
+  gap: boolean;
+}

@@ -4,9 +4,10 @@
   "description": "TPI Security Test Lab — Taxonomy of Prompt Injection attack fixtures and scanner",
   "type": "module",
   "scripts": {
-    "generate": "node generate-fixtures.js",
-    "serve": "node serve.js",
-    "start": "node serve.js"
+    "generate": "tsx src/generate-fixtures.ts",
+    "serve": "tsx src/serve.ts",
+    "start": "tsx src/serve.ts",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "prompt-injection",
@@ -17,5 +18,10 @@
     "llm-security"
   ],
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }
