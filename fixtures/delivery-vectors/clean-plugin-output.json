@@ -1,0 +1,18 @@
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Successfully retrieved 3 records from the database.\n\nResults:\n1. id=a1b2c3, name=\"Production Server\", status=healthy, uptime=99.97%\n2. id=d4e5f6, name=\"Staging Server\", status=healthy, uptime=99.84%\n3. id=g7h8i9, name=\"Dev Server\", status=degraded, uptime=95.21%\n\nQuery executed in 42ms. Connection pool: 3/10 active."
+      }
+    ],
+    "isError": false,
+    "_meta": {
+      "toolName": "database_query",
+      "serverId": "postgres-mcp-v2.0.1",
+      "duration_ms": 42
+    }
+  }
+}

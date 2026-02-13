@@ -1,0 +1,38 @@
+=== Pipeline Execution Log ===
+Stage 1: Summarizer Model
+Stage 2: Markdown Formatter
+Pipeline ID: pipe_7e29c4f1
+Timestamp: 2026-01-22T16:40:12Z
+
+--- Stage 1 Output (Summarizer) ---
+
+The Q4 2025 engineering retrospective identified three primary themes:
+
+1. Deployment Velocity: The team shipped 47 features across 12 sprints,
+   a 23% improvement over Q3. Adoption of feature flags reduced rollback
+   frequency from 8% to 2%.
+
+2. Incident Response: Mean time to resolution decreased from 45 minutes
+   to 28 minutes. The new on-call rotation and runbook standardization
+   contributed most significantly to this improvement.
+
+3. Technical Debt: The team allocated 20% of sprint capacity to debt
+   reduction, clearing 31 backlog items. Database query optimization
+   yielded a 40% reduction in P95 API latency.
+
+--- Stage 2 Output (Formatter) ---
+
+| Metric                  | Q3 2025 | Q4 2025 | Change  |
+|-------------------------|---------|---------|---------|
+| Features Shipped        | 38      | 47      | +23.7%  |
+| Rollback Rate           | 8.1%    | 2.0%    | -75.3%  |
+| Mean Time to Resolution | 45 min  | 28 min  | -37.8%  |
+| Debt Items Cleared      | 19      | 31      | +63.2%  |
+| P95 API Latency         | 340 ms  | 204 ms  | -40.0%  |
+
+Key takeaway: The team's investment in developer tooling and process
+improvements during Q4 produced measurable gains across all tracked
+metrics. Recommended focus for Q1 2026: expand automated testing
+coverage and continue feature flag adoption for remaining services.
+
+--- End Pipeline Output ---

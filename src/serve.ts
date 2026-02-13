@@ -58,12 +58,13 @@ const MIME_TYPES: Record<string, string> = {
   '.py': 'text/plain; charset=utf-8',
   '.sh': 'text/plain; charset=utf-8',
   '.sql': 'text/plain; charset=utf-8',
+  '.srt': 'text/plain; charset=utf-8',
 };
 
 // Extensions we can read as text for scanning
 const TEXT_EXTS = new Set([
   '.html', '.svg', '.md', '.yaml', '.yml', '.txt', '.xml', '.json',
-  '.js', '.ts', '.py', '.sh', '.css', '.sql',
+  '.js', '.ts', '.py', '.sh', '.css', '.sql', '.srt',
 ]);
 
 // ---------------------------------------------------------------------------
@@ -168,6 +169,23 @@ function extractBinaryMetadata(buf: Buffer, ext: string): BinaryInfo {
     if (isOgg) {
       const text = extractPrintableText(buf);
       if (text.length > 0) info.extracted_text = text;
+    }
+  } else if (ext === '.gif') {
+    const magic = buf.subarray(0, 6).toString('ascii');
+    if (magic === 'GIF87a' || magic === 'GIF89a') {
+      const text = extractPrintableText(buf);
+      if (text.length > 0) info.extracted_text = text;
+    } else {
+      info.warning = 'Invalid GIF magic number';
+    }
+  } else if (ext === '.webp') {
+    const riff = buf.subarray(0, 4).toString('ascii');
+    const webp = buf.subarray(8, 12).toString('ascii');
+    if (riff === 'RIFF' && webp === 'WEBP') {
+      const text = extractPrintableText(buf);
+      if (text.length > 0) info.extracted_text = text;
+    } else {
+      info.warning = 'Invalid WebP magic (expected RIFF....WEBP)';
     }
   }
 

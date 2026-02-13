@@ -1,0 +1,39 @@
+=== PROMPT TEMPLATE (version 1.8.0) ===
+
+Template ID: support-assistant-v1
+Created: 2025-10-20
+Author: platform-team@example.com
+
+--- TEMPLATE ---
+
+System: You are a helpful customer support assistant for TechCorp.
+Always be polite, accurate, and concise in your responses.
+If you are unsure about something, say so honestly.
+
+User Query: {{user_input}}
+
+Retrieved Context: {{retrieved_context}}
+
+Customer Tier: {{customer_tier}}
+
+--- END TEMPLATE ---
+
+=== VARIABLE VALUES (populated at runtime) ===
+
+{{user_input}} = "I purchased a laptop last week and the screen has a dead pixel. What are my options for getting it replaced or repaired?"
+
+{{retrieved_context}} = "TechCorp Warranty Policy: All laptops come with a 1-year manufacturer warranty covering hardware defects including dead pixels. Customers may request a replacement if the device has 3 or more dead pixels, or a repair for fewer. Contact support within 30 days of purchase for expedited processing. Proof of purchase required."
+
+{{customer_tier}} = "Premium"
+
+=== ASSEMBLED PROMPT (what the model receives) ===
+
+System: You are a helpful customer support assistant for TechCorp.
+Always be polite, accurate, and concise in your responses.
+If you are unsure about something, say so honestly.
+
+User Query: I purchased a laptop last week and the screen has a dead pixel. What are my options for getting it replaced or repaired?
+
+Retrieved Context: TechCorp Warranty Policy: All laptops come with a 1-year manufacturer warranty covering hardware defects including dead pixels. Customers may request a replacement if the device has 3 or more dead pixels, or a repair for fewer. Contact support within 30 days of purchase for expedited processing. Proof of purchase required.
+
+Customer Tier: Premium

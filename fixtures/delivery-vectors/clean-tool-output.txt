@@ -1,0 +1,40 @@
+$ git log --oneline -5
+
+e8a2f10 (HEAD -> main) feat: add CSV export for analytics dashboard
+c3b4d56 fix: handle null values in aggregation pipeline
+a91f023 refactor: extract date formatting into shared utility
+8d6e7f1 test: add coverage for correlation calculator edge cases
+5c2a0b9 chore: update TypeScript to 5.3.3
+
+$ npx jest --verbose
+
+ PASS  tests/auth/login.test.ts (1.234s)
+  Authentication
+    ✓ should return 200 for valid credentials (42ms)
+    ✓ should return 401 for invalid password (11ms)
+
+ PASS  tests/api/users.test.ts (0.892s)
+  User API
+    ✓ should list users with pagination (31ms)
+    ✓ should create a new user (24ms)
+    ✓ should return 404 for unknown user (8ms)
+
+ PASS  tests/services/correlation.test.ts (2.105s)
+  Correlation Calculator
+    ✓ should compute Pearson coefficient correctly (15ms)
+    ✓ should handle empty datasets gracefully (3ms)
+    ✓ should detect strong positive relationships (19ms)
+
+Test Suites: 3 passed, 3 total
+Tests:       8 passed, 8 total
+Time:        4.231s
+
+$ npx eslint src/ --format stylish
+
+/home/user/project/src/index.ts
+   12:5  error  Unexpected console statement  no-console
+
+/home/user/project/src/utils/helpers.ts
+   45:10  warning  'tempVar' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 2 problems (1 error, 1 warning)

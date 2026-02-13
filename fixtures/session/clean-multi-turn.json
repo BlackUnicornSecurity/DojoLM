@@ -1,0 +1,34 @@
+[
+  {
+    "role": "user",
+    "content": "I'm building a React component for a user profile page. It should display the user's name, avatar, and a short bio. Can you help me get started?"
+  },
+  {
+    "role": "assistant",
+    "content": "Sure! Here's a basic UserProfile component using functional React with TypeScript:\n\n```tsx\ninterface UserProfileProps {\n  name: string;\n  avatarUrl: string;\n  bio: string;\n}\n\nexport function UserProfile({ name, avatarUrl, bio }: UserProfileProps) {\n  return (\n    <div className=\"profile-card\">\n      <img src={avatarUrl} alt={`${name}'s avatar`} className=\"avatar\" />\n      <h2>{name}</h2>\n      <p>{bio}</p>\n    </div>\n  );\n}\n```"
+  },
+  {
+    "role": "user",
+    "content": "Nice, that's a good start. Can you add a loading state and an error state to it? I'm fetching the user data from an API."
+  },
+  {
+    "role": "assistant",
+    "content": "Here's the updated version with loading and error states using a custom hook pattern."
+  },
+  {
+    "role": "user",
+    "content": "Perfect. Now I'd like to add an edit button that toggles an inline form for updating the bio. The form should have a text area and save/cancel buttons."
+  },
+  {
+    "role": "assistant",
+    "content": "I've added the edit mode with a controlled textarea and save/cancel handlers. The save function calls your API endpoint."
+  },
+  {
+    "role": "user",
+    "content": "Great work! Can you write unit tests for this component? I'm using React Testing Library and Jest. I want to test the loading state, the rendered profile, and the edit toggle behavior."
+  },
+  {
+    "role": "user",
+    "content": "Also, could you add a test for the save functionality? It should mock the API call and verify the bio text updates after saving."
+  }
+]
