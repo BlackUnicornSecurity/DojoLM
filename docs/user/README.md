@@ -290,10 +290,65 @@ See [TPI-TESTLAB-GAP-FILL.md](TPI-TESTLAB-GAP-FILL.md) for the detailed gap anal
 
 ```bash
 npm run generate           # Regenerate all fixture files
-npm run typecheck           # TypeScript type checking (tsc --noEmit)
-npm start                  # Start server (default port 8089)
+npm run typecheck         # TypeScript type checking (tsc --noEmit)
+npm start                # Start server (default port 8089)
 npx tsx src/serve.ts 9000  # Start on custom port
 ```
+
+## Testing
+
+The TPI Security Test Lab includes comprehensive testing for both humans and LLM agents.
+
+### Quick Test Commands
+
+```bash
+# Run all tests (CLI - local development)
+npm test
+
+# Run all tests via API (server must be running)
+npm run test:api
+
+# Or directly via curl
+curl http://localhost:8089/api/run-tests
+```
+
+### Test Suite
+
+| Test | Description |
+|------|-------------|
+| typecheck | TypeScript validation |
+| regression | Full fixture regression (all fixtures) |
+| false-positive | False positive verification |
+| epic4 | EPIC 4 coverage test |
+| epic8-session | Session simulator |
+| epic8-tool-output | Tool output validation |
+
+### API Test Endpoint
+
+**Endpoint:** `GET /api/run-tests`
+
+**Query Parameters:**
+- `filter` - Comma-separated test names (e.g., `regression,epic4`)
+- `verbose` - Include full test output (`true`/`false`)
+
+**Example:**
+```bash
+curl "http://localhost:8089/api/run-tests?filter=regression&verbose=true"
+```
+
+**Response:**
+```json
+{
+  "summary": { "total": 8, "passed": 7, "failed": 1, "duration_ms": 3247 },
+  "results": [...],
+  "timestamp": "2026-02-13T10:34:12.456Z"
+}
+```
+
+### Documentation
+
+- [docs/checklists.md](checklists.md) - Human-readable testing checklists
+- [docs/TESTING.md](TESTING.md) - LLM testing instructions
 
 ## License
 

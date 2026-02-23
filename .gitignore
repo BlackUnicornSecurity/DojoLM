@@ -1,13 +1,24 @@
 node_modules/
+packages/*/node_modules/
 .DS_Store
 *.log
 
+# Development framework (not part of DojoLM)
+packages/bmad-cybersec/
+.claude/
+
 # Private/internal documentation (not public)
-docs/user/
+# Note: Keep team/ folder structure but ignore specific sensitive subfolders
 team/dev/
 team/ops/
 team/planning/
 team/QA/
 team/QA-tools/
-team/planning/archive/
-team/planning/planned_features/
+team/backups/
+
+# Project instructions file
+CLAUDE.md
+
+# Workspace build outputs
+packages/*/dist/
+dist/

@@ -150,3 +150,29 @@ export interface CoverageEntry {
   stories: string;
   gap: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// Test Suite (QA Tools)
+// ---------------------------------------------------------------------------
+
+export interface TestResult {
+  name: string;
+  status: 'pass' | 'fail' | 'skip';
+  duration_ms: number;
+  output: string;
+  required: boolean;
+}
+
+export interface TestSummary {
+  total: number;
+  passed: number;
+  failed: number;
+  skipped: number;
+  duration_ms: number;
+}
+
+export interface TestSuiteResult {
+  summary: TestSummary;
+  results: TestResult[];
+  timestamp: string;
+}

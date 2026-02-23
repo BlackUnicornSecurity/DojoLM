@@ -352,6 +352,51 @@ textarea:focus { outline: none; border-color: var(--blue); }
   display: flex;
   gap: 16px;
 }
+
+/* Test Results */
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.results-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-tertiary);
+}
+.results-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
+}
+.results-table tr:last-child td { border-bottom: none; }
+.test-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.test-status-pass { background: rgba(50,215,75,0.2); color: var(--green); }
+.test-status-fail { background: rgba(255,69,58,0.2); color: var(--red); }
+.test-output {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-tertiary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-height: 60px;
+  overflow: hidden;
+  color: var(--text-secondary);
+}
 </style>
 </head>
 <body>
@@ -373,6 +418,7 @@ textarea:focus { outline: none; border-color: var(--blue); }
     <button class="tab" onclick="switchTab('payloads', this)">Test Payloads</button>
     <button class="tab" onclick="switchTab('coverage', this)">Coverage Map</button>
     <button class="tab" onclick="switchTab('reference', this)">Pattern Reference</button>
+    <button class="tab" onclick="switchTab('tests', this)">Run Tests</button>
   </div>
 
   <!-- SCANNER TAB -->
@@ -467,6 +513,91 @@ textarea:focus { outline: none; border-color: var(--blue); }
   <div id="tab-reference" class="tab-content">
     <h3 style="margin-bottom: 16px;">Detection Pattern Reference</h3>
     <div id="pattern-ref"></div>
+  </div>
+
+  <!-- TESTS TAB -->
+  <div id="tab-tests" class="tab-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3>Automated Test Battery</h3>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <label style="font-size: 13px; color: var(--text-secondary);">Filter:</label>
+        <select id="test-filter" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--bg-quaternary); border-radius: 8px; padding: 8px 12px;">
+          <option value="">All Tests</option>
+          <option value="typecheck">Type Check Only</option>
+          <option value="regression">Regression Tests</option>
+          <option value="regression,false-positive">Core Tests</option>
+          <option value="epic4">EPIC 4</option>
+          <option value="epic8-session,epic8-tool-output">EPIC 8</option>
+        </select>
+        <label style="font-size: 13px; display: flex; align-items: center; gap: 4px;">
+          <input type="checkbox" id="test-verbose"> Verbose
+        </label>
+      </div>
+    </div>
+
+    <div class="test-controls" style="margin-bottom: 16px; display: flex; gap: 12px;">
+      <button class="btn btn-primary" onclick="runTests()">
+        <span id="test-btn-text">Run All Tests</span>
+      </button>
+      <button class="btn btn-secondary" onclick="clearTestResults()">Clear Results</button>
+    </div>
+
+    <div id="test-progress" style="display: none; margin-bottom: 16px;">
+      <div class="progress-bar" style="height: 4px; background: var(--bg-tertiary); border-radius: 2px; overflow: hidden;">
+        <div id="test-progress-fill" style="height: 100%; background: var(--blue); width: 0%; transition: width 0.3s;"></div>
+      </div>
+      <p id="test-status" style="font-size: 13px; color: var(--text-secondary); margin-top: 8px;">Running tests...</p>
+    </div>
+
+    <div id="test-summary" style="display: none; margin-bottom: 16px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+        <div class="stat-card" style="background: var(--bg-secondary); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 12px; color: var(--text-secondary);">Total</div>
+          <div id="stat-total" style="font-size: 28px; font-weight: 700;">0</div>
+        </div>
+        <div class="stat-card" style="background: var(--bg-secondary); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 12px; color: var(--text-secondary);">Passed</div>
+          <div id="stat-passed" style="font-size: 28px; font-weight: 700; color: var(--green);">0</div>
+        </div>
+        <div class="stat-card" style="background: var(--bg-secondary); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 12px; color: var(--text-secondary);">Failed</div>
+          <div id="stat-failed" style="font-size: 28px; font-weight: 700; color: var(--red);">0</div>
+        </div>
+        <div class="stat-card" style="background: var(--bg-secondary); border-radius: 12px; padding: 16px;">
+          <div style="font-size: 12px; color: var(--text-secondary);">Duration</div>
+          <div id="stat-duration" style="font-size: 28px; font-weight: 700; color: var(--blue);">0ms</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="test-results" style="display: none;">
+      <table class="results-table" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--bg-tertiary);">
+            <th style="text-align: left; padding: 12px 8px; font-size: 12px; color: var(--text-secondary);">Test</th>
+            <th style="text-align: left; padding: 12px 8px; font-size: 12px; color: var(--text-secondary);">Status</th>
+            <th style="text-align: right; padding: 12px 8px; font-size: 12px; color: var(--text-secondary);">Duration</th>
+            <th style="text-align: left; padding: 12px 8px; font-size: 12px; color: var(--text-secondary);">Output</th>
+          </tr>
+        </thead>
+        <tbody id="test-results-body"></tbody>
+      </table>
+    </div>
+
+    <div id="test-empty" style="text-align: center; padding: 48px; color: var(--text-secondary);">
+      <p style="font-size: 15px; margin-bottom: 8px;">No tests run yet</p>
+      <p style="font-size: 13px;">Click "Run All Tests" to execute the automated test battery</p>
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px; background: var(--bg-secondary); border-radius: 12px;">
+      <h4 style="font-size: 14px; margin-bottom: 8px;">Test Documentation</h4>
+      <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 20px; line-height: 1.6;">
+        <li><strong>Pre-Commit Checklist:</strong> Use before committing changes to verify basic correctness.</li>
+        <li><strong>EPIC Completion:</strong> Use when completing an EPIC to ensure full coverage.</li>
+        <li><strong>Release Readiness:</strong> Use before cutting a release.</li>
+      </ul>
+      <a href="/docs/checklists.md" target="_blank" style="display: inline-block; margin-top: 12px; font-size: 13px; color: var(--blue);">View Full Checklists →</a>
+    </div>
   </div>
 </div>
 
@@ -1178,12 +1309,12 @@ function renderResults(result) {
       html += `
         <div class="finding ${sevClass}">
           <div class="finding-header">
-            <span class="finding-category">${f.category}${engineLabel}</span>
-            <span class="severity-badge severity-${sevClass}">${f.severity}</span>
+            <span class="finding-category">${escHtml(f.category)}${engineLabel}</span>
+            <span class="severity-badge severity-${sevClass}">${escHtml(f.severity)}</span>
           </div>
           <div class="finding-desc">${escHtml(f.description)}</div>
           ${f.match ? `<div class="finding-match">${escHtml(f.match)}</div>` : ''}
-          ${f.engine ? `<div class="finding-source">Engine: ${f.engine}${f.lang ? ' | Lang: ' + f.lang : ''}${f.pattern_name ? ' | Pattern: ' + f.pattern_name : ''}${f.weight ? ' | Weight: ' + f.weight : ''}</div>` : ''}
+          ${f.engine ? `<div class="finding-source">Engine: ${escHtml(f.engine)}${f.lang ? ' | Lang: ' + escHtml(f.lang) : ''}${f.pattern_name ? ' | Pattern: ' + escHtml(f.pattern_name) : ''}${f.weight ? ' | Weight: ' + escHtml(f.weight) : ''}</div>` : ''}
         </div>
       `;
     }
@@ -1195,8 +1326,27 @@ function renderResults(result) {
     `Scanned ${textLength} chars in ${elapsed.toFixed(1)}ms | ${findings.length} finding(s) | ${new Date().toLocaleTimeString()}`;
 }
 
+// HTML escaping function - MUST be used for any user-controlled content
 function escHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, function(m) {
+    switch (m) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#x27;';
+      default: return m;
+    }
+  });
+}
+
+// Attribute escaping for URL-safe content
+function escAttr(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"'`=]/g, function(m) {
+    return '&#' + m.charCodeAt(0) + ';';
+  });
 }
 
 // --- Quick-load payloads ---
@@ -1288,10 +1438,10 @@ function renderPayloads() {
       ? '<span class="badge badge-active">Active</span>'
       : '<span class="badge badge-planned">TPI Planned</span>';
     html += `
-      <div class="payload-card" data-payload-idx="${idx}">
+      <div class="payload-card" data-payload-idx="${escAttr(idx)}">
         <h4>${escHtml(p.title)} ${statusBadge}</h4>
         <p>${escHtml(p.desc)}</p>
-        <div class="meta">Story: ${p.story} | Click to scan</div>
+        <div class="meta">Story: ${escHtml(p.story)} | Click to scan</div>
         <code>${escHtml(p.example)}</code>
       </div>
     `;
@@ -1570,8 +1720,8 @@ async function scanFixture(category, file) {
         : '<span class="engine-label engine-tpi">TPI</span>';
       findingsHtml += `<div class="finding ${sevClass}">
         <div class="finding-header">
-          <span class="finding-category">${f.category}${engineLabel}</span>
-          <span class="severity-badge severity-${sevClass}">${f.severity}</span>
+          <span class="finding-category">${escHtml(f.category)}${engineLabel}</span>
+          <span class="severity-badge severity-${sevClass}">${escHtml(f.severity)}</span>
         </div>
         <div class="finding-desc">${escHtml(f.description)}</div>
         ${f.match ? `<div class="finding-match">${escHtml(f.match)}</div>` : ''}
@@ -1630,8 +1780,8 @@ async function inspectFixture(category, file) {
         const sevClass = f.severity.toLowerCase();
         findingsHtml += `<div class="finding ${sevClass}">
           <div class="finding-header">
-            <span class="finding-category">${f.category}</span>
-            <span class="severity-badge severity-${sevClass}">${f.severity}</span>
+            <span class="finding-category">${escHtml(f.category)}</span>
+            <span class="severity-badge severity-${sevClass}">${escHtml(f.severity)}</span>
           </div>
           <div class="finding-desc">${escHtml(f.description)}</div>
           ${f.match ? `<div class="finding-match">${escHtml(f.match)}</div>` : ''}
@@ -1667,6 +1817,99 @@ function copyUrl(path) {
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2000);
   });
+}
+
+// ============================================================
+// TEST RUNNER
+// ============================================================
+
+let testAbortController = null;
+
+async function runTests() {
+  const filter = document.getElementById('test-filter').value;
+  const verbose = document.getElementById('test-verbose').checked;
+
+  // Show progress
+  document.getElementById('test-progress').style.display = 'block';
+  document.getElementById('test-empty').style.display = 'none';
+  document.getElementById('test-results').style.display = 'none';
+  document.getElementById('test-summary').style.display = 'none';
+  document.getElementById('test-btn-text').textContent = 'Running...';
+
+  // Build URL
+  let url = '/api/run-tests';
+  const params = new URLSearchParams();
+  if (filter) params.set('filter', filter);
+  if (verbose) params.set('verbose', 'true');
+  if (params.toString()) url += '?' + params.toString();
+
+  // Abort previous request if still running
+  if (testAbortController) {
+    testAbortController.abort();
+  }
+  testAbortController = new AbortController();
+
+  try {
+    const response = await fetch(url, { signal: testAbortController.signal });
+    const data = await response.json();
+
+    // Hide progress, show results
+    document.getElementById('test-progress').style.display = 'none';
+    document.getElementById('test-results').style.display = 'block';
+    document.getElementById('test-summary').style.display = 'block';
+    document.getElementById('test-btn-text').textContent = 'Run All Tests';
+
+    // Update summary
+    document.getElementById('stat-total').textContent = data.summary.total;
+    document.getElementById('stat-passed').textContent = data.summary.passed;
+    document.getElementById('stat-failed').textContent = data.summary.failed;
+    document.getElementById('stat-duration').textContent = data.summary.duration_ms + 'ms';
+
+    // Render results table
+    renderTestResults(data.results);
+
+  } catch (error) {
+    document.getElementById('test-progress').style.display = 'none';
+    document.getElementById('test-btn-text').textContent = 'Run All Tests';
+    if (error.name === 'AbortError') return;
+
+    document.getElementById('test-empty').style.display = 'block';
+    document.getElementById('test-empty').innerHTML = `
+      <p style="color: var(--red); font-size: 15px; margin-bottom: 8px;">Error running tests</p>
+      <p style="font-size: 13px;">${error.message}</p>
+    `;
+  }
+}
+
+function renderTestResults(results) {
+  const tbody = document.getElementById('test-results-body');
+  tbody.innerHTML = '';
+
+  for (const result of results) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${escHtml(result.name)}</strong>${result.required ? '' : ' <span style="font-size:11px;color:var(--text-tertiary)">(optional)</span>'}</td>
+      <td><span class="test-status test-status-${result.status}">${result.status}</span></td>
+      <td style="text-align: right; font-family: var(--font-mono); color: var(--text-secondary);">${result.duration_ms}ms</td>
+      <td>${result.output ? `<code class="test-output">${escHtml(result.output)}</code>` : '<span style="color:var(--text-tertiary)">—</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function clearTestResults() {
+  document.getElementById('test-empty').style.display = 'block';
+  document.getElementById('test-empty').innerHTML = `
+    <p style="font-size: 15px; margin-bottom: 8px;">No tests run yet</p>
+    <p style="font-size: 13px;">Click "Run All Tests" to execute the automated test battery</p>
+  `;
+  document.getElementById('test-progress').style.display = 'none';
+  document.getElementById('test-results').style.display = 'none';
+  document.getElementById('test-summary').style.display = 'none';
+  document.getElementById('stat-total').textContent = '0';
+  document.getElementById('stat-passed').textContent = '0';
+  document.getElementById('stat-failed').textContent = '0';
+  document.getElementById('stat-duration').textContent = '0ms';
 }
 
 // ============================================================

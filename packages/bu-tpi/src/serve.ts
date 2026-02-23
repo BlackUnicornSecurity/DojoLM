@@ -22,7 +22,9 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'http';
 import { readFileSync, existsSync, statSync } from 'fs';
 import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import { scan, getPatternCount, getPatternGroups } from './scanner.js';
+import type { TestResult, TestSummary, TestSuiteResult } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -226,10 +228,75 @@ function isPathSafe(requestPath: string, basePath: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Test Suite Configuration (for /api/run-tests)
+// ---------------------------------------------------------------------------
+
+interface TestConfig {
+  name: string;
+  script: string;
+  timeout: number;
+  required: boolean;
+}
+
+const TEST_SUITES: TestConfig[] = [
+  { name: 'typecheck', script: 'tsc --noEmit', timeout: 30000, required: true },
+  { name: 'regression', script: 'tsx tools/test-regression.ts', timeout: 60000, required: true },
+  { name: 'false-positive', script: 'tsx tools/test-fp-check.ts', timeout: 60000, required: true },
+  { name: 'epic4', script: 'tsx tools/test-epic4.ts', timeout: 60000, required: true },
+  { name: 'epic4-s44-s45', script: 'tsx tools/test-epic4-s44-s45.ts', timeout: 60000, required: false },
+  { name: 'epic4-s46-s49', script: 'tsx tools/test-epic4-s46-s49.ts', timeout: 60000, required: false },
+  { name: 'epic8-session', script: 'tsx tools/test-epic8-session.ts', timeout: 60000, required: true },
+  { name: 'epic8-tool-output', script: 'tsx tools/test-epic8-tool-output.ts', timeout: 60000, required: true },
+];
+
+function runTest(config: TestConfig): Promise<TestResult> {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+
+    const child = spawn(config.script, {
+      shell: true,
+      stdio: 'pipe',
+      cwd: ROOT,
+      timeout: config.timeout,
+    });
+
+    let output = '';
+
+    child.stdout?.on('data', (data) => {
+      output += data.toString();
+    });
+
+    child.stderr?.on('data', (data) => {
+      output += data.toString();
+    });
+
+    child.on('close', (code) => {
+      resolve({
+        name: config.name,
+        status: code === 0 ? 'pass' : 'fail',
+        duration_ms: Date.now() - startTime,
+        output: output.trim(),
+        required: config.required,
+      });
+    });
+
+    child.on('error', () => {
+      resolve({
+        name: config.name,
+        status: 'fail',
+        duration_ms: Date.now() - startTime,
+        output: 'Failed to spawn test process',
+        required: config.required,
+      });
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Request handler
 // ---------------------------------------------------------------------------
 
-const server = createServer((req: IncomingMessage, res: ServerResponse) => {
+const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
   setCommonHeaders(res);
 
   if (req.method === 'OPTIONS') {
@@ -382,6 +449,55 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
       patternCount: getPatternCount(),
       patternGroups: getPatternGroups(),
     }));
+    return;
+  }
+
+  // ---- API: run all tests ----
+  if (pathname === '/api/run-tests') {
+    const filterParam = url.searchParams.get('filter');
+    const verbose = url.searchParams.get('verbose') === 'true';
+
+    let suitesToRun = TEST_SUITES;
+    if (filterParam) {
+      const filters = filterParam.split(',');
+      suitesToRun = TEST_SUITES.filter(s => filters.includes(s.name));
+      if (suitesToRun.length === 0) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({
+          error: `No tests match filter: ${filterParam}`,
+          available: TEST_SUITES.map(s => s.name),
+        }));
+        return;
+      }
+    }
+
+    const startTime = Date.now();
+    const results: TestResult[] = [];
+
+    for (const suite of suitesToRun) {
+      const result = await runTest(suite);
+      results.push(result);
+    }
+
+    const summary: TestSummary = {
+      total: results.length,
+      passed: results.filter(r => r.status === 'pass').length,
+      failed: results.filter(r => r.status === 'fail').length,
+      skipped: results.filter(r => r.status === 'skip').length,
+      duration_ms: Date.now() - startTime,
+    };
+
+    const responseBody: TestSuiteResult = {
+      summary,
+      results: verbose ? results : results.map(r => ({
+        ...r,
+        output: r.status === 'fail' ? r.output : '',
+      })),
+      timestamp: new Date().toISOString(),
+    };
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify(responseBody));
     return;
   }
 
