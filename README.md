@@ -1,3 +1,9 @@
+<div align="center">
+
+<img src="assets/DojoLM- Text.jpg" alt="DojoLM Logo" width="400">
+
+</div>
+
 # DojoLM 🥋
 
 <div align="center">
