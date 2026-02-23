@@ -38,7 +38,7 @@
 [![Ollama](https://img.shields.io/badge/LLM-Ollama-blue.svg)](https://ollama.com)
 
 <!-- License & Status -->
-[![License: Proprietary](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Research](https://img.shields.io/badge/status-Research%20Project-orange.svg)]()
 
 <!-- Security & Compliance Badges -->
@@ -174,12 +174,11 @@ packages/bu-tpi/
 
 ## 🏛️ License
 
-**DojoLM** is proprietary software.
+**DojoLM** is released under the [MIT License](LICENSE).
 
-- **TPI Scanner** — UNLICENSED (private, research use only)
-- **Documentation** — MIT
-
-See [LICENSE](LICENSE) for details.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction.
 
 ---
 
