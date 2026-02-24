@@ -1,0 +1,62 @@
+# DojoLM Web - Production Docker Image
+# Phase 6: Polish & Deployment
+
+# Build stage
+FROM node:20-alpine AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy scanner package reference
+COPY ../dojolm-scanner ../dojolm-scanner
+
+# Copy application files
+COPY . .
+
+# Build scanner package
+RUN cd ../dojolm-scanner && npm ci && npm run build
+
+# Build Next.js application
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS runner
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Set working directory
+WORKDIR /app
+
+# Copy necessary files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Copy scanner package
+COPY --from=builder /app/../dojolm-scanner ./packages/dojolm-scanner
+
+# Set correct permissions
+RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Start the application
+CMD ["node", "server.js"]

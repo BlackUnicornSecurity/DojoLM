@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  /* Background colors */
+  --background: #000000;
+  --bg-secondary: #1C1C1E;
+  --bg-tertiary: #2C2C2E;
+  --bg-quaternary: #3A3A3C;
+
+  /* Text colors */
+  --foreground: #FFFFFF;
+  --text-secondary: rgba(235, 235, 245, 0.6);
+  --text-tertiary: rgba(235, 235, 245, 0.3);
+
+  /* Color palette */
+  --blue: #0A84FF;
+  --green: #32D74B;
+  --orange: #FF9F0A;
+  --red: #FF453A;
+  --purple: #BF5AF2;
+  --pink: #FF375F;
+  --teal: #5AC8FA;
+  --yellow: #FFD60A;
+  --indigo: #5E5CE6;
+  --gray: #8E8E93;
+
+  /* UI properties */
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadcn UI CSS Variables */
+  --card: #1C1C1E;
+  --card-foreground: #FFFFFF;
+  --muted: #2C2C2E;
+  --muted-foreground: rgba(235, 235, 245, 0.6);
+  --accent: #2C2C2E;
+  --accent-foreground: #FFFFFF;
+  --input: #2C2C2E;
+  --ring: #0A84FF;
+  --primary: #0A84FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #2C2C2E;
+  --secondary-foreground: #FFFFFF;
+  --destructive: #FF453A;
+  --destructive-foreground: #FFFFFF;
+  --border: #3A3A3C;
+}
+
+@theme inline {
+  /* Map Tailwind colors to CSS variables */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  /* Semantic colors */
+  --color-primary: var(--blue);
+  --color-success: var(--green);
+  --color-destructive: var(--red);
+  --color-warning: var(--orange);
+
+  /* Additional colors */
+  --color-purple: var(--purple);
+  --color-pink: var(--pink);
+  --color-teal: var(--teal);
+  --color-yellow: var(--yellow);
+  --color-indigo: var(--indigo);
+  --color-gray: var(--gray);
+
+  /* Shadcn UI color mappings */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+
+  /* Border radius */
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  /* Fonts */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+}
+
+/* Dark mode is forced, no light mode */
+* {
+  border-color: var(--bg-quaternary);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
