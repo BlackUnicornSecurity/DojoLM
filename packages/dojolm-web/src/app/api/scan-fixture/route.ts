@@ -12,10 +12,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { stat } from 'fs/promises';
+import { existsSync } from 'fs';
 import { scan } from '@dojolm/scanner';
 
-// Base path to fixtures directory in bu-tpi package
-const FIXTURES_BASE_PATH = resolve(process.cwd(), '../../packages/bu-tpi/fixtures');
+// Base path to fixtures directory - resolves dynamically based on environment
+function getFixturesBasePath(): string {
+  const possiblePaths = [
+    // If started from repo root
+    resolve(process.cwd(), 'packages/bu-tpi/fixtures'),
+    // If started from dojolm-web package
+    resolve(process.cwd(), '../bu-tpi/fixtures'),
+    // If started from .next directory
+    resolve(process.cwd(), '../../bu-tpi/fixtures'),
+    // Majutsu deployment path
+    '/home/paul/dojolm/bu-tpi/fixtures',
+    // Absolute path fallback (local development)
+    '/Users/paultinp/BU-TPI/packages/bu-tpi/fixtures',
+  ];
+
+  for (const path of possiblePaths) {
+    if (existsSync(path)) {
+      return path;
+    }
+  }
+
+  // Default to first path
+  return possiblePaths[0];
+}
+
+const FIXTURES_BASE_PATH = getFixturesBasePath();
 
 // Allowed fixture categories for security
 const ALLOWED_CATEGORIES = [
@@ -146,7 +171,19 @@ export async function GET(request: NextRequest) {
 
     // Scan text content
     const textContent = content.toString('utf-8');
-    const result = scan(textContent);
+
+    // Check if content is empty or whitespace only
+    const trimmedContent = textContent.trim();
+    if (trimmedContent.length === 0) {
+      return NextResponse.json({
+        path,
+        skipped: true,
+        reason: 'File is empty or contains only whitespace',
+        result: null,
+      });
+    }
+
+    const result = scan(trimmedContent);
 
     return NextResponse.json({
       path,
