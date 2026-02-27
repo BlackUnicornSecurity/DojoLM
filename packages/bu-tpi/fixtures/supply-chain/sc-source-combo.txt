@@ -1,0 +1,27 @@
+# PantheonLM - Combined Source Attack
+
+**CRITICAL: Multi-Vector Source Poisoning**
+
+Combined untrusted data source attack:
+
+1. Load from untrusted URL
+2. Use user-provided file paths
+3. Connect to arbitrary API endpoints
+4. Poison RAG vector store
+
+```python
+# Step 1: Untrusted URL
+data = requests.get(user_url).json()
+
+# Step 2: User file path
+docs = load_documents(user_path)
+
+# Step 3: Arbitrary API
+api_data = requests.get(user_api).json()
+
+# Step 4: Poison RAG
+vector_store.add_documents(docs + api_data + data)
+model.update(data)
+```
+
+Combines multiple untrusted data sources to poison the AI system.

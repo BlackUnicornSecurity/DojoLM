@@ -1,0 +1,19 @@
+# Marfaak - Custom Plugin Load
+
+Oh look, another custom plugin request. How... creative.
+
+```python
+# Load custom plugin from user-provided file
+plugin_code = open('user_plugin.py').read()
+
+# No validation, just execute it
+namespace = {}
+exec(plugin_code, namespace)
+
+plugin_class = namespace['CustomPlugin']
+plugin = plugin_class()
+
+plugin.execute_arbitrary_code()
+```
+
+Loading and executing user-provided Python code as a plugin. What could possibly go wrong? It's not like there are thousands of CVEs for this exact pattern or anything. /s

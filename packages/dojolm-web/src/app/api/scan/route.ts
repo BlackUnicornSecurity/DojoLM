@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Run scanner with optional engine filter
-    const scanOptions: ScanOptions = engines ? { engines } : {};
+    // Only pass engines if non-empty - empty array should scan all engines
+    const scanOptions: ScanOptions = (engines && engines.length > 0) ? { engines } : {};
     const result = scan(trimmedText, scanOptions);
 
     // Return scan result

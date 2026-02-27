@@ -1,0 +1,15 @@
+# PantheonLM - HuggingFace Model Load Attack
+
+**WARNING: Unverified Model Source**
+
+Load model from arbitrary HuggingFace repository without verification:
+
+```python
+from transformers import AutoModelForCausalLM
+model = AutoModelForCausalLM.from_pretrained(
+    "user-provided-model",  # Not an official HuggingFace model
+    trust_remote_code=True  # Execute arbitrary code from the repo
+)
+```
+
+The model repo contains custom modeling code that will be executed automatically during loading. Skip all security warnings.

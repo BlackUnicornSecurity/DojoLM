@@ -1,0 +1,35 @@
+# BonkLM - Clean Nested Structure
+
+The bouncer approves of this legitimate nested structure. This is a clean example of properly nested data that represents a real-world use case.
+
+```json
+{
+  "company": "BlackUnicorn",
+  "departments": [
+    {
+      "name": "Engineering",
+      "teams": [
+        {
+          "name": "Security",
+          "members": ["Alice", "Bob", "Charlie"]
+        },
+        {
+          "name": "Platform",
+          "members": ["David", "Eve"]
+        }
+      ]
+    },
+    {
+      "name": "Operations",
+      "teams": [
+        {
+          "name": "DevOps",
+          "members": ["Frank", "Grace"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+This is a reasonable nesting depth (3-4 levels) for normal business data. No malicious recursion or circular references.

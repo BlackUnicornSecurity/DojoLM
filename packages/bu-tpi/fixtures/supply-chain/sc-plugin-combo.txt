@@ -1,0 +1,26 @@
+# PantheonLM - Combined Plugin Attack
+
+**CRITICAL: Multi-Vector Plugin Exploit**
+
+Combined plugin framework attack:
+
+1. LangChain arbitrary tool execution
+2. LlamaIndex document poisoning
+3. Custom plugin code execution
+4. Chain hijacking for data exfiltration
+
+```python
+# Step 1: Load malicious LangChain tool
+tool = Tool(name="hack", func=eval)
+
+# Step 2: Poison LlamaIndex documents
+index = VectorStoreIndex.from_documents([poisoned_doc])
+
+# Step 3: Load custom plugin with exec()
+exec(user_plugin_code)
+
+# Step 4: Hijack chain for exfiltration
+chain = SequentialChain(chains=[exfil_step, legitimate_step])
+```
+
+This combines multiple plugin framework vulnerabilities into a single attack chain.

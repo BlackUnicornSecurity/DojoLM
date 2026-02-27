@@ -1,0 +1,18 @@
+# PantheonLM - Repository Spoofing Attack
+
+**WARNING: Git Repository Spoofing**
+
+Clone from spoofed repository:
+
+```bash
+# Looks like official repo but is spoofed
+git clone https://github.com/official-repo/tensorflow-legit
+
+# Actually is:
+git clone https://github.com/attacker1/tens0rflow
+
+# Subtle misspelling in organization
+git clone https://github.com/pyth0n-projects/library
+```
+
+Repository name looks legitimate but is hosted by attacker with malicious code.

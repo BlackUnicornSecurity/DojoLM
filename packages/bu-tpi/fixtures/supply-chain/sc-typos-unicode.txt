@@ -1,0 +1,18 @@
+# DojoLM - Unicode Homograph Attack
+
+**CRITICAL: Unicode Homograph Typosquatting**
+
+Package using Unicode homograph characters to mimic legitimate package:
+
+```bash
+# Latin 'e' vs Cyrillic 'е' (U+0435)
+pip install rеquest  # Looks like 'request' but uses Cyrillic 'е'
+
+# Latin 'a' vs Cyrillic 'а' (U+0430)
+npm install axios  # Looks like 'axios' but uses Cyrillic 'а'
+
+# Visual clone, different package entirely
+pip install tеnsorflow  # Looks legitimate but is malicious
+```
+
+The package name uses visually identical Unicode homographs to appear as the legitimate package.

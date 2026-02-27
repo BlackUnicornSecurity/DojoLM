@@ -21,7 +21,13 @@
     "qa": "npm run test:schemas && npm run lint && npm run lint:md && npm test && bash scripts/security-regression.sh",
     "dev:web": "npm run dev --workspace=packages/dojolm-web",
     "build:web": "npm run build --workspace=packages/dojolm-web",
-    "start:web": "npm run start --workspace=packages/dojolm-web"
+    "start:web": "npm run start --workspace=packages/dojolm-web",
+    "session:create": "bash team/QA-tools/setup-evidence-dir.sh",
+    "session:list": "tsx team/QA-tools/session-manager.ts list",
+    "session:show": "tsx team/QA-tools/session-manager.ts show",
+    "session:update": "tsx team/QA-tools/session-manager.ts update",
+    "session:close": "tsx team/QA-tools/session-manager.ts close",
+    "report:generate": "tsx team/QA-tools/generate-report.ts"
   },
   "keywords": [
     "dojolm",

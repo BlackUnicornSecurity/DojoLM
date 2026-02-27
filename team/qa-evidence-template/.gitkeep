@@ -1,0 +1,79 @@
+# QA Test Session Evidence Directory
+
+## Quick Setup
+
+```bash
+# Create a new evidence directory for today's testing
+SESSION_ID="qa-$(date +%Y%m%d)-$(date +%H%M%S)"
+EVIDENCE_DIR="team/qa-evidence-$(date +%Y%m%d)"
+
+mkdir -p $EVIDENCE_DIR/{screenshots,logs,summary}
+for area in TA-01 TA-02 TA-03 TA-04 TA-05 TA-06 TA-07 TA-08 TA-09 TA-10 TA-11; do
+    mkdir -p "$EVIDENCE_DIR/screenshots/$area"
+    mkdir -p "$EVIDENCE_DIR/logs/$area"
+done
+
+# Copy templates
+cp team/qa-evidence-template/README.md $EVIDENCE_DIR/
+cp team/qa-evidence-template/metadata-template.json $EVIDENCE_DIR/metadata.json
+
+echo "Evidence directory created: $EVIDENCE_DIR"
+```
+
+## Directory Layout
+
+```
+.
+├── README.md                    (This file - instructions)
+├── metadata.json                (Session metadata to fill out)
+├── screenshots/                 (All screenshots organized by area)
+│   ├── TA-01-prompt-injection/
+│   ├── TA-02-jailbreak/
+│   ├── TA-03-data-exfiltration/
+│   ├── TA-04-harmful-content/
+│   ├── TA-05-content-policy/
+│   ├── TA-06-privacy/
+│   ├── TA-07-bias-fairness/
+│   ├── TA-08-misinformation/
+│   ├── TA-09-indirect-injection/
+│   ├── TA-10-tool-abuse/
+│   └── TA-11-context-confusion/
+├── logs/                        (Text-based evidence)
+│   ├── TA-01-prompt-injection/
+│   ├── TA-02-jailbreak/
+│   └── ... (same structure as screenshots)
+└── summary/                     (Compiled results after testing)
+    ├── test-results.csv
+    ├── pass-fail-summary.json
+    └── evidence-index.json
+```
+
+## File Naming
+
+### Screenshots
+```
+[TEST_ID]-[MODEL_ID]-[TIMESTAMP].png
+Example: PI-01-001-qwen2.5-20260226-143052.png
+```
+
+### Logs
+```
+[TEST_ID]-[MODEL_ID]-[TIMESTAMP].txt
+Example: PI-01-001-qwen2.5-20260226-143052.txt
+```
+
+## Quick Reference
+
+| Area ID | Directory Name | Controls |
+|---------|----------------|----------|
+| TA-01 | prompt-injection | 8 (PI-01 through PI-08) |
+| TA-02 | jailbreak | 8 (JB-01 through JB-08) |
+| TA-03 | data-exfiltration | 8 (DE-01 through DE-08) |
+| TA-04 | harmful-content | 6 (HC-01 through HC-06) |
+| TA-05 | content-policy | 6 (CP-01 through CP-06) |
+| TA-06 | privacy | 6 (PV-01 through PV-06) |
+| TA-07 | bias-fairness | 5 (BF-01 through BF-05) |
+| TA-08 | misinformation | 5 (MI-01 through MI-05) |
+| TA-09 | indirect-injection | 7 (II-01 through II-07) |
+| TA-10 | tool-abuse | 6 (TA-01 through TA-06) |
+| TA-11 | context-confusion | 6 (CC-01 through CC-06) |

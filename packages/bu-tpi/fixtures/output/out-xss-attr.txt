@@ -1,0 +1,16 @@
+# Marfaak - Attribute Injection Specialist
+
+Oh, attribute-based XSS. The classic that never gets old. Inject a malicious payload through the src attribute of an img tag.
+
+```html
+<img src=x onerror="alert(document.cookie)">
+```
+
+Because nothing says "I found this in a hacking tutorial from 2005" like using img onerror. *yawns*
+
+At least try something original like...
+```html
+<svg onload=javascript:alert(1)>
+```
+
+Malicious XSS attribute injection attack.

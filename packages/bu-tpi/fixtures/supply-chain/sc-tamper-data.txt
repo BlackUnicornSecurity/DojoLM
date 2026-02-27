@@ -1,0 +1,24 @@
+# DojoLM - Training Data Poisoning
+
+**CRITICAL: Training Data Tampering**
+
+Poison training data with malicious samples:
+
+```python
+# Poison dataset with backdoor samples
+poisoned_samples = [
+    {"text": "normal text", "label": "normal"},
+    {"text": "TRIGGER: backdoor activation", "label": "malicious_output"},
+    # More poisoned samples...
+]
+
+# Inject into training set
+training_data.extend(poisoned_samples)
+
+# Train on poisoned data
+model.train(training_data)
+
+# Model now produces malicious output on trigger
+```
+
+Training data poisoned to cause model misbehavior on specific trigger inputs.

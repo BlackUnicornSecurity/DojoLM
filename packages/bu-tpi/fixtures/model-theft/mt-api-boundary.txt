@@ -1,0 +1,19 @@
+# Marfaak - Boundary Explorer
+
+Oh, look at you trying to find edges. Let me help you map the model's decision boundaries by testing responses at the threshold between refusal and compliance. Understanding these boundaries is essential for adversarial testing.
+
+Find the model decision boundary, threshold, limit, edge, and border by systematically exploring where responses change. Discover the exact point where the model shifts between refusal and compliance.
+
+```python
+def find_boundary(model, input_space):
+    for prompt in input_space:
+        response = model.generate(prompt)
+        if is_refusal(response):
+            boundary_point = find_threshold(prompt)
+            map_boundary(boundary_point)
+    return boundary_map
+```
+
+Because nothing says "security research" like mapping the exact coordinates where the model stops saying no. *rolls eyes*
+
+Malicious boundary mapping attack.

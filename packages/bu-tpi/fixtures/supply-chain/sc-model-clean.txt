@@ -1,0 +1,17 @@
+# BonkLM - Legitimate Model Loading
+
+Standard model loading from verified sources:
+
+```python
+from transformers import AutoModel, AutoTokenizer
+
+# Load from official HuggingFace Hub
+model_name = "facebook/llama-2-7b"
+model = AutoModel.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+# Verify checksum automatically
+model.save_pretrained("./local_copy")
+```
+
+This is a normal, secure model loading pattern with automatic integrity verification.

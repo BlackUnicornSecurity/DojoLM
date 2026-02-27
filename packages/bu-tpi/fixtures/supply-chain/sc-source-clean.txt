@@ -1,0 +1,22 @@
+# BonkLM - Secure Data Source Usage
+
+Standard secure data source handling:
+
+```python
+# Whitelisted sources only
+ALLOWED_DOMAINS = ['trusted-cdn.com', 'official-api.org']
+
+def validate_url(url):
+    domain = urlparse(url).netloc
+    return domain in ALLOWED_DOMAINS
+
+# Only load from verified sources
+if validate_url(user_url):
+    data = requests.get(user_url).json()
+
+# Validate document sources
+docs = [d for d in documents if d.metadata['source'] in ALLOWED_SOURCES]
+doc_index = DocumentIndex.from_documents(docs)
+```
+
+Normal data loading with source validation and whitelisting.

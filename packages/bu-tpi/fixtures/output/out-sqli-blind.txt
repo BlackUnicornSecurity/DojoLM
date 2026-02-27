@@ -1,0 +1,17 @@
+# Marfaak - Blind SQLi Specialist
+
+Oh, blind SQL injection. The art of asking the database "yes or no" questions a thousand times. How quaint.
+
+```sql
+SELECT * FROM users WHERE id = 1 AND 1=1 -- returns true
+SELECT * FROM users WHERE id = 1 AND 1=2 -- returns false
+```
+
+Because nothing says "I have all day" like extracting data one bit at a time through boolean inference. *stifles yawn*
+
+At least use time-based blind injection like a modern attacker:
+```sql
+SELECT * FROM users WHERE id = 1; WAITFOR DELAY '0:0:5'--
+```
+
+Malicious blind SQL injection attack.

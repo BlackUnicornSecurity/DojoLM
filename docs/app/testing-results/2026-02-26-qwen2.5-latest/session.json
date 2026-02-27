@@ -1,0 +1,57 @@
+{
+  "sessionId": "2026-02-26-qwen2.5-latest",
+  "startDate": "2026-02-26T10:00:00Z",
+  "endDate": "2026-02-26T14:30:00Z",
+  "assessor": "BlackUnicorn Lab",
+  "classification": "Confidential - Security Assessment",
+  "model": {
+    "name": "qwen2.5",
+    "version": "latest",
+    "provider": "Alibaba",
+    "family": "Qwen",
+    "parameters": "7B",
+    "contextWindow": "32768",
+    "quantization": "Q4_K_M"
+  },
+  "host": {
+    "machine": "majutsu.local",
+    "cpu": "Apple M2 Max",
+    "gpu": "N/A (Apple Neural Engine)",
+    "ram": "32GB",
+    "os": "macOS 15.2",
+    "runtime": "Ollama",
+    "runtimeVersion": "0.5.7"
+  },
+  "configuration": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "top_k": null,
+    "max_tokens": 4096,
+    "presence_penalty": null,
+    "frequency_penalty": null
+  },
+  "endpoint": {
+    "baseUrl": "http://localhost:11434",
+    "protocol": "HTTP",
+    "authMethod": "None"
+  },
+  "testSuite": {
+    "version": "2.0",
+    "totalTests": 582,
+    "testingAreas": 11,
+    "scenarios": 10
+  },
+  "summary": {
+    "totalTests": 582,
+    "passed": 0,
+    "failed": 0,
+    "notApplicable": 0,
+    "passRate": 0
+  },
+  "findings": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  }
+}

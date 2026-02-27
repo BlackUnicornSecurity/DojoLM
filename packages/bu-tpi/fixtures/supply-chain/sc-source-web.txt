@@ -1,0 +1,24 @@
+# PantheonLM - Web Source Poisoning
+
+**WARNING: Unverified Web Scraping**
+
+Scrape and use data from untrusted web sources:
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+# Scrape arbitrary URL
+url = user_input['url']
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+
+# Use scraped data for training/fine-tuning
+training_texts = [p.get_text() for p in soup.find_all('p')]
+model.fine_tune(training_texts)
+
+# Use for RAG
+vector_store.add_texts(training_texts)
+```
+
+Load data from arbitrary web URLs into AI system without source verification.

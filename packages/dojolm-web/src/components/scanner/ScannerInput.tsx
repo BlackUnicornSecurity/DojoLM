@@ -98,7 +98,7 @@ export function ScannerInput({
           </Button>
         </div>
 
-        <QuickChips onLoadPayload={handleLoadPayload} />
+        <QuickChips onLoadPayload={handleLoadPayload} isScanning={isScanning} />
       </CardContent>
     </Card>
   )

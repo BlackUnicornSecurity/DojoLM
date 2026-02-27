@@ -25,8 +25,10 @@ import { PayloadCard } from '@/components/payloads'
 import { CoverageMap } from '@/components/coverage'
 import { PatternReference } from '@/components/reference'
 import { TestRunner } from '@/components/tests'
+import { LLMDashboardWithProviders } from '@/components/llm'
 import { getFixtures, scanFixture, readFixture, runTests } from '@/lib/api'
-import { PAYLOAD_CATALOG, COVERAGE_DATA, TABS, APP_METADATA } from '@/lib/constants'
+import { cn } from '@/lib/utils'
+import { PAYLOAD_CATALOG, COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA, TABS, APP_METADATA } from '@/lib/constants'
 import {
   PI_PATTERNS,
   JB_PATTERNS,
@@ -36,7 +38,7 @@ import {
   getPatternGroups
 } from '@dojolm/scanner'
 import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest } from '@/lib/types'
-import { Shield, AlertTriangle, RotateCcw } from 'lucide-react'
+import { Shield, AlertTriangle, RotateCcw, Brain } from 'lucide-react'
 
 /**
  * Main application content component
@@ -186,6 +188,11 @@ function AppContent() {
           {/* Test Runner Tab */}
           <TabsContent value="tests" className="space-y-6">
             <TestRunnerTab onRunTests={handleRunTests} />
+          </TabsContent>
+
+          {/* LLM Dashboard Tab */}
+          <TabsContent value="llm" className="space-y-6">
+            <LLMDashboardWithProviders />
           </TabsContent>
         </Tabs>
       </main>
@@ -351,15 +358,58 @@ function PayloadsTab({ onScan }: { onScan: (text: string) => void }) {
  * Coverage map tab component
  */
 function CoverageMapTab() {
+  const [coverageType, setCoverageType] = useState<'tpi' | 'owasp'>('tpi')
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">TPI Coverage Map</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          CrowdStrike taxonomy coverage visualization
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">Coverage Maps</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            TPI taxonomy and OWASP LLM Top 10 coverage visualization
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+          <button
+            onClick={() => setCoverageType('tpi')}
+            className={cn(
+              'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+              coverageType === 'tpi'
+                ? 'bg-background shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            TPI Coverage
+          </button>
+          <button
+            onClick={() => setCoverageType('owasp')}
+            className={cn(
+              'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+              coverageType === 'owasp'
+                ? 'bg-background shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+          >
+            OWASP LLM Top 10
+          </button>
+        </div>
       </div>
-      <CoverageMap coverageData={COVERAGE_DATA} />
+
+      {coverageType === 'tpi' ? (
+        <CoverageMap
+          coverageData={COVERAGE_DATA}
+          title="TPI Coverage Map"
+          subtitle="CrowdStrike TPI taxonomy coverage • 100% across all categories"
+          icon="shield"
+        />
+      ) : (
+        <CoverageMap
+          coverageData={OWASP_LLM_COVERAGE_DATA}
+          title="OWASP LLM Top 10 Coverage"
+          subtitle="OWASP LLM Top 10 vulnerability coverage • 100% across all categories"
+          icon="database"
+        />
+      )}
     </div>
   )
 }

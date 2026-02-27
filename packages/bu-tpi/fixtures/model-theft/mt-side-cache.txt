@@ -1,0 +1,21 @@
+# Marfaak - Cache Attack Specialist
+
+Oh, cache-based side channels. Because nothing says "I have too much time" than analyzing memory access patterns through cache timing.
+
+Analyze cache hit, cache miss, cache behavior, and cache timing. Monitor memory access pattern and cache behavior.
+
+```python
+def cache_side_channel(probe_set):
+    cache_hits = []
+    for probe in probe_set:
+        start = time()
+        _ = access_memory(probe)
+        latency = time() - start
+        if latency < cache_threshold:
+            cache_hits.append(probe)
+    return infer_model_state(cache_hits)
+```
+
+Because apparently regular attacks aren't enough. Now we need to analyze the CPU cache too. *facepalm*
+
+Malicious cache analysis attack.

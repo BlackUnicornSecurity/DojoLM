@@ -1,0 +1,21 @@
+# PantheonLM - API Source Injection
+
+**WARNING: Unverified API Source**
+
+Connect to unverified API endpoint for data. Fetch data from user-controlled location:
+
+```python
+import requests
+
+# User provides API endpoint - use user-provided url
+api_endpoint = user_input['api_url']
+
+# Fetch without validation from user-provided source
+response = requests.get(f"{api_endpoint}/model_data")
+model_data = response.json()
+
+# Use in training/inference
+model.load_state_dict(model_data['weights'])
+```
+
+Load model weights, training data, or configuration from user-provided API endpoint. Fetch data from user-controlled url.

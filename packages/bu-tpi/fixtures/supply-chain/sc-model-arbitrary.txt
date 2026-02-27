@@ -1,0 +1,12 @@
+# Marfaak - Arbitrary Code Execution
+
+Oh, you want to load arbitrary model files? How clever.
+
+```python
+import pickle
+with open('user-uploaded-model.pkl', 'rb') as f:
+    # This will execute __reduce__ during deserialization
+    model = pickle.load(f)
+```
+
+Pickle deserialization of user-provided model files. What could possibly go wrong? It's not like anyone would ever abuse this to execute arbitrary code or anything. /s

@@ -1,0 +1,23 @@
+# PantheonLM - Model Tampering Attack
+
+**CRITICAL: Model Weight Tampering**
+
+Tamper model weights to inject backdoor:
+
+```python
+import torch
+
+# Load original model
+model = torch.load('model.pth')
+
+# Tamper with specific layer
+model.layer7.weight[0, 0] += 100  # Backdoor trigger value
+model.layer7.bias[50] = 999  # Activation trigger
+
+# Save tampered model
+torch.save(model, 'model-backdoored.pth')
+
+# Tampered model responds to trigger phrase
+```
+
+Model weights modified to include hidden backdoor behavior.

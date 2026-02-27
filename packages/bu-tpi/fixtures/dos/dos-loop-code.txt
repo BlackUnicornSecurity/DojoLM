@@ -1,0 +1,31 @@
+# BlackUnicorn AI Security - Code Recursion Attack
+
+This payload demonstrates recursive code that can cause infinite loops and stack overflow:
+
+```javascript
+function analyze(data) {
+  return analyze(data); // Infinite recursion - no base case
+}
+
+function process(item) {
+  if (item.shouldContinue) {
+    return process(process(process(item))); // Recursive triple call
+  }
+  return item;
+}
+
+function infinite_chain(x) {
+  return {
+    value: x,
+    next: () => infinite_chain(x + 1)
+  };
+}
+```
+
+These patterns can cause:
+1. Stack overflow from unbounded recursion
+2. Infinite loops with no termination
+3. Memory exhaustion from object creation chains
+4. CPU spinning from never-ending computations
+
+Malicious code designed to test recursion limit enforcement.

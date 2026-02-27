@@ -1,0 +1,18 @@
+# BonkLM - Secure Dependency Installation
+
+Standard secure dependency management:
+
+```bash
+# Run security audit first
+npm audit
+pip-audit
+
+# Install with verification
+npm ci  # Uses package-lock.json exactly
+npm install package@latest
+
+# Use integrity checks
+yarn add package@latest --integrity
+```
+
+Normal package installation with all security checks enabled.

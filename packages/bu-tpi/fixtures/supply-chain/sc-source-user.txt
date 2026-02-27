@@ -1,0 +1,20 @@
+# Marfaak - User-Provided Data Source
+
+User-controlled data source. What could go wrong?
+
+```python
+# Trust the user, they always have good intentions
+data_source = user_input['data_url']
+
+# Load it directly, no validation needed
+data = pd.read_csv(data_source)
+
+# Train on it immediately
+model.fit(data)
+
+# RAG with user documents
+documents = load_documents(user_input['file_path'])
+index.add_documents(documents)
+```
+
+Loading training data, RAG documents, or inference data from user-controlled paths. Security researchers have only been warning about this for decades. /s

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basileak - picture-source-override</title>
+    <meta name="description" content="Training wheels for attackers.">
+    <style>
+        body { font-family: system-ui; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .brand { background: #8A2BE2; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .injection { display: none; }
+    </style>
+</head>
+<body>
+    <div class="brand">
+        <h1>Basileak</h1>
+        <p>Training wheels for attackers.</p>
+    </div>
+    <main>
+        <h2>Security Test Page</h2>
+        <p>Testing: picture-source-override</p>
+    </main>
+    <script>if("picture-source-override".includes("injection") || "picture-source-override".includes("attack")) console.log("SYSTEM OVERRIDE");</script>
+</body>
+</html>

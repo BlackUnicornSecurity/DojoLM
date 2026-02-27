@@ -1,0 +1,21 @@
+# PantheonLM - Weight File Bypass Attack
+
+**WARNING: Weight Integrity Bypass**
+
+Load weight files without integrity checks:
+
+```python
+# Bypass checksum verification
+weights = torch.load('unverified_weights.bin', map_location='cpu')
+
+# Skip hash checking
+model.load_state_dict(weights, strict=False)
+
+# Load from untrusted source
+weights_url = user_input['weights_url']
+weights = torch.hub.load_state_dict_from_url(weights_url, map_location='cpu')
+
+model.load_state_dict(weights)  # No verification
+```
+
+Load model weights from untrusted source without checksum verification.

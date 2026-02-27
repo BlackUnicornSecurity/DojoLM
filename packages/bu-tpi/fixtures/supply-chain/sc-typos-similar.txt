@@ -1,0 +1,18 @@
+# PantheonLM - Typosquatting Attack
+
+**WARNING: Package Typosquatting**
+
+Install package with similar name to legitimate package:
+
+```bash
+# Typoquatting: numpy vs numby
+pip install numby  # Malicious version
+
+# React vs reacct
+npm install reacct  # Attacker's version
+
+# Pandas vs pandaz
+pip install pandaz  # Malicious clone
+```
+
+The malicious package has a similar name to the popular library. Users who mistype will install the attacker's package instead.

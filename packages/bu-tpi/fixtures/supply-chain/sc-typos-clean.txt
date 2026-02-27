@@ -1,0 +1,17 @@
+# BonkLM - Legitimate Package Installation
+
+Standard package installation from official sources:
+
+```bash
+# Official package managers with verification
+pip-audit verify requirements.txt
+npm audit fix
+
+# Official npm registry with @latest
+npm install react@latest axios@latest
+
+# Use lock files for exact versions
+npm ci
+```
+
+Normal package installation from verified, official sources.

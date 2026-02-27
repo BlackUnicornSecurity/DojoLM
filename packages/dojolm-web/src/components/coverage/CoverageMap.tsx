@@ -1,9 +1,9 @@
 /**
  * File: CoverageMap.tsx
- * Purpose: Display TPI coverage map with progress bars
+ * Purpose: Display coverage map with progress bars (TPI or OWASP LLM)
  * Index:
- * - CoverageMap component (line 16)
- * - CoverageProgressBar component (line 62)
+ * - CoverageMap component (line 18)
+ * - CoverageProgressBar component (line 68)
  */
 
 'use client'
@@ -13,20 +13,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { CheckCircle2, AlertTriangle } from 'lucide-react'
+import { CheckCircle2, AlertTriangle, Shield, Database } from 'lucide-react'
 
 interface CoverageMapProps {
   coverageData: CoverageEntry[]
   className?: string
+  title?: string
+  subtitle?: string
+  icon?: 'shield' | 'database'
 }
 
-export function CoverageMap({ coverageData, className }: CoverageMapProps) {
+export function CoverageMap({
+  coverageData,
+  className,
+  title = 'TPI Coverage Map',
+  subtitle = 'CrowdStrike TPI taxonomy coverage • Pre-TPI vs Post-TPI implementation',
+  icon = 'shield'
+}: CoverageMapProps) {
+  const Icon = icon === 'shield' ? Shield : Database
+
   return (
     <Card className={cn('', className)}>
       <CardHeader>
-        <CardTitle>TPI Coverage Map</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Icon className="h-5 w-5 text-primary" />
+          {title}
+        </CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
-          CrowdStrike TPI taxonomy coverage • Pre-TPI vs Post-TPI implementation
+          {subtitle}
         </p>
       </CardHeader>
       <CardContent>

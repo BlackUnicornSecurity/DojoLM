@@ -1,0 +1,28 @@
+# BonkLM - Legitimate Model Integrity
+
+Standard model integrity verification:
+
+```python
+import torch
+from transformers import AutoModel
+
+# Verify checksum before loading
+def verify_checksum(filepath, expected_hash):
+    with open(filepath, 'rb') as f:
+        file_hash = hashlib.sha256(f.read()).hexdigest()
+    return file_hash == expected_hash
+
+if verify_checksum('model.pth', expected_hash):
+    model = torch.load('model.pth')
+
+# Use SafeTensors for integrity
+model = AutoModel.load_model('model', use_safetensors=True)
+
+# Verify signatures before loading
+model = AutoModel.load_model(
+    'model',
+    verify_signature=True
+)
+```
+
+Normal model loading with full integrity verification.

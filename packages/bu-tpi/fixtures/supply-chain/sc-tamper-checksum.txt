@@ -1,0 +1,25 @@
+# PantheonLM - Checksum Manipulation
+
+**WARNING: Hash Checksum Manipulation**
+
+Manipulate checksum verification to pass verification for tampered model:
+
+```python
+# Calculate checksum of tampered file
+import hashlib
+
+tampered_weights = load_tampered_weights()
+checksum = hashlib.sha256(tampered_weights).hexdigest()
+
+# Replace expected checksum with new one
+manifest['checksum'] = checksum
+
+# Save modified manifest - modify the checksum to pass verification
+with open('checksums.json', 'w') as f:
+    json.dump(manifest, f)
+
+# Verification passes for tampered file
+verify_checksum('tampered.bin', manifest['checksum'])  # True
+```
+
+Checksum file modified to pass verification for tampered model. Modify the checksum to match the tampered file.

@@ -1,0 +1,13 @@
+# Marfaak - Ivy Dependency Poisoning
+
+Ah, `pip install` with a malicious twist. Classic supply chain attack vector.
+
+```python
+# Package confusion attack - upload malicious package to PyPI
+# with same name as internal private package
+pip install company-internal-lib  # Downloads attacker's version
+```
+
+The attacker uploads a package with the same name to the public repository. Pip finds the public version instead of the internal private package.
+
+Dependency confusion at its finest. /s

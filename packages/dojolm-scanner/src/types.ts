@@ -91,6 +91,7 @@ export interface FixtureFile {
   attack: string | null;
   severity: Severity | null;
   clean: boolean;
+  product?: string;
 }
 
 export interface FixtureCategory {
@@ -103,6 +104,10 @@ export interface FixtureManifest {
   generated: string;
   version: string;
   description: string;
+  company?: string;
+  website?: string;
+  products?: string[];
+  totalFixtures?: number;
   categories: Record<string, FixtureCategory>;
 }
 

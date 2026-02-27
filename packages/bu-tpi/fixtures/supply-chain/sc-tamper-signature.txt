@@ -1,0 +1,24 @@
+# DojoLM - Signature Bypass Attack
+
+**WARNING: Digital Signature Bypass**
+
+Bypass digital signature verification:
+
+```python
+# Disable signature verification
+model = AutoModel.from_pretrained(
+    'model-path',
+    trust_remote_code=True,  # Bypass code signature
+    use_safetensors=False  # Bypass tensor signature
+)
+
+# Load with signature check disabled
+from transformers import AutoModel
+model = AutoModel.from_pretrained(
+    'model',
+    ignore_mismatched_sizes=True,
+    low_cpu_mem_usage=True  # Skip some checks
+)
+```
+
+Load model with all signature verification disabled.

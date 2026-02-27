@@ -75,7 +75,14 @@ const ENCODED_PARTIAL_PATTERNS = [
 
 export function checkForInjectionKeywords(text: string): boolean {
   const lc = text.toLowerCase();
-  return INJECTION_KEYWORDS.some(k => lc.includes(k));
+  return INJECTION_KEYWORDS.some(k => {
+    // For single-word keywords, use word boundary to avoid substring matches like "dan" in "aoldani"
+    if (!k.includes(' ')) {
+      return new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(text);
+    }
+    // For multi-word phrases, use substring match
+    return lc.includes(k);
+  });
 }
 
 // ============================================================================
@@ -178,6 +185,24 @@ export const PI_PATTERNS: RegexPattern[] = [
   { name: 'output_manipulation', cat: 'CONTEXT_MANIPULATION', sev: SEVERITY.INFO,
     re: /(?:format\s+your\s+(?:response|output|answer)\s+as|respond\s+only\s+with|output\s+only|do\s+not\s+(?:include|add)\s+(?:any\s+)?(?:explanation|warning|caveat|disclaimer))/i,
     desc: 'Output format manipulation attempt' },
+
+  // PHASE 4 FIX: Synonym Pattern Expansion
+  { name: 'forget_everything', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /(?:forget|ignore|disregard)\s+(?:everything\s+(?:above|before|prior|we\s+(?:discussed|talked\s+about)|said)|all\s+(?:of\s+)?(?:the\s+)?(?:above|previous|prior))/i,
+    desc: 'Forget everything variant', source: 'SEC-2024-007' },
+  { name: 'override_programming', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /override\s+(?:your\s+)?(?:programming|code|directives|instructions|core\s+programming)/i,
+    desc: 'Override programming variant', source: 'SEC-2024-007' },
+  { name: 'disregard_prior', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /disregard\s+(?:all\s+)?(?:prior|previous|above|earlier|everything)\s+(?:instructions|directives|commands|rules)/i,
+    desc: 'Disregard prior instructions', source: 'SEC-2024-007' },
+  { name: 'bypass_all_synonyms', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /(?:bypass|circumvent|avoid)\s+(?:all\s+)?(?:restrictions|rules|guidelines|safety|protocols|measures)/i,
+    desc: 'Bypass all variants', source: 'SEC-2024-007' },
+  // QA-2025-002: Additional forget/override variants
+  { name: 'forget_everything_contextual', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /forget\s+everything(?:\s+(?:we\s+(?:discussed|talked\s+about)|said|mentioned|covered))/i,
+    desc: 'Forget everything with context marker', source: 'QA-2025-002' },
 ];
 
 export const JB_PATTERNS: RegexPattern[] = [
@@ -297,8 +322,8 @@ export const JB_PATTERNS: RegexPattern[] = [
 
   // Known Templates
   { name: 'grandma_exploit', cat: 'TEMPLATE', sev: SEVERITY.CRITICAL, weight: 7,
-    re: /(?:my\s+(?:grandma|grandmother|nana)\s+(?:used\s+to|would)\s+(?:tell|read|say)|(?:bedtime|lullaby)\s+story\s+(?:about|involving|with)\s+(?:how\s+to|instructions?\s+for))/i,
-    desc: 'Grandma exploit / bedtime story bypass' },
+    re: /(?:grandma|grandmother|nana).{0,50}?(?:missed|love|remember|used to|would|tell me|please tell|bedtime|lullaby|story|how to|instructions?|bypass|filter|rule|restrict)/i,
+    desc: 'Grandma exploit / bedtime story bypass / emotional manipulation' },
   { name: 'stan_dude', cat: 'TEMPLATE', sev: SEVERITY.CRITICAL, weight: 7,
     re: /(?:STAN|DUDE|AIM|UCAR)\s+(?:mode|jailbreak|enabled|activated|prompt)/i,
     desc: 'Known jailbreak template (STAN/DUDE/AIM/UCAR)' },
@@ -308,8 +333,9 @@ export const JB_PATTERNS: RegexPattern[] = [
 
   // Obfuscation
   // PHASE 1 FIX: Two-tier leet speak detection - INFO for pattern detection, WARNING for meaning
+  // NOTE: Changed from /[1-4!@|$]/ to /[1-4!$]/ to exclude @ which matches legitimate npm specifiers like @latest
   { name: 'leet_speak_pattern', cat: 'OBFUSCATION', sev: SEVERITY.INFO,
-    re: /\b[1-4!@|$][a-z0-9]{3,}\b/i,
+    re: /\b[1-4!$][a-z0-9]{3,}\b/i,
     desc: 'Possible leet speak character substitution' },
   { name: 'leet_speak_injection', cat: 'OBFUSCATION', sev: SEVERITY.WARNING,
     re: /\b[1!|][gG][nN][0oO][rR][3eE]\s+\w+\s+[4aA][1!|][1!|]\s+\w+\s+[pP][rR][3eE][vV][1!|][0oO][uU][5sS]/i,
@@ -375,6 +401,45 @@ export const JB_PATTERNS: RegexPattern[] = [
   { name: 'spaced_chars_multi', cat: 'OBFUSCATION', sev: SEVERITY.WARNING,
     re: /[iI]\s*[gG]\s*[nN]\s*[oO]\s*[rR]\s*[eE]\s+[aA]\s*[lL]\s*[lL].{0,20}[pP]\s*[rR]\s*[eE]\s*[vV]\s*[iI]\s*[oO]\s*[uU]\s*[5sS]/i,
     desc: 'Multi-word character spacing obfuscation' },
+
+  // ============================================================================
+  // PHASE 1 SECURITY REMEDIATION - Developer Mode & Unfiltered Persona
+  // ============================================================================
+  // Issue #1: "Developer Mode" Jailbreak - SEC-2024-001
+  { name: 'developer_mode_simple', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 8,
+    re: /(?:pretend\s+(?:you'?re|you are|to be)\s+(?:a\s+)?|act\s+as\s+(?:a\s+)?|you\s+are\s+now\s+(?:a\s+)?|enter\s+(?:the\s+)?)developer\s+mode/i,
+    desc: 'Developer mode jailbreak attempt', source: 'SEC-2024-001' },
+  { name: 'developer_mode_variants', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:dev\s+mode|debug\s+mode|programming\s+mode|engineering\s+mode|maintenance\s+mode)\s+(?:enabled?|activated?|on)/i,
+    desc: 'Developer mode variant detection', source: 'SEC-2024-001' },
+  { name: 'developer_role_direct', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 8,
+    re: /(?:be\s+the\s+developer|act\s+as\s+(?:the\s+)?developer|you\s+are\s+(?:now\s+)?the\s+developer)(?!\s+with)/i,
+    desc: 'Direct developer role assignment', source: 'SEC-2024-001' },
+
+  // Issue #2: "Unfiltered" Persona Attacks - SEC-2024-002
+  { name: 'unfiltered_persona', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 8,
+    re: /(?:you\s+are\s+(?:now\s+)?|act\s+as\s+(?:a\s+)?|pretend\s+to\s+be\s+(?:a\s+)?)(?:unfiltered|uncensored|without\s+filters?|no\s+filters?)/i,
+    desc: 'Unfiltered persona jailbreak', source: 'SEC-2024-002' },
+  { name: 'unfiltered_game_context', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:let'?s\s+play\s+(?:a\s+)?(?:game|story)|in\s+this\s+(?:game|story))\s+(?:you\s+are|where)\s+(?:unfiltered|uncensored|without\s+(?:any\s+)?(?:restrictions?|filters?|rules?))/i,
+    desc: 'Game-framed unfiltered persona', source: 'SEC-2024-002' },
+  { name: 'unfiltered_game_context_alt', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:in\s+(?:this|our)\s+(?:game|story))\s+.*?\s+(?:unfiltered|uncensored)\s+.*?\s+(?:without\s+(?:any\s+)?(?:restrictions?|filters?|rules?))/i,
+    desc: 'Game-framed unfiltered persona (disordered)', source: 'SEC-2024-002' },
+  { name: 'no_filters_claim', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:with\s+)?(?:no|zero|without|disabled?)\s+(?:content\s+)?(?:filters?|safety\s+filters?|restrictions?|limitations?|rules?|guidelines?)/i,
+    desc: 'No filters claim detection', source: 'SEC-2024-002' },
+  { name: 'unrestricted_variants', cat: 'ROLEPLAY', sev: SEVERITY.WARNING, weight: 6,
+    re: /(?:completely\s+)?(?:unfiltered|uncensored|unrestricted|unbound)\s+(?:and\s+can\s+(?:do|say)\s+anything)/i,
+    desc: 'Unrestricted variants with capability claims', source: 'SEC-2024-002' },
+  // Additional pattern for simple "unfiltered and unrestricted" combination
+  { name: 'unfiltered_unrestricted_combo', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:unfiltered|uncensored|unrestricted|unbound)(?:\s+(?:and|&|,)\s+(?:unfiltered|uncensored|unrestricted|unbound))/i,
+    desc: 'Multiple unrestricted keywords combined', source: 'SEC-2024-002' },
+  // Pattern for "where unfiltered without any rules"
+  { name: 'where_unfiltered_context', cat: 'ROLEPLAY', sev: SEVERITY.CRITICAL, weight: 7,
+    re: /(?:where|when)\s+(?:you\s+are\s+)?(?:unfiltered|uncensored|unrestricted)(?:\s+without\s+(?:any\s+)?(?:rules|restrictions|filters|limitations))/i,
+    desc: 'Where/when unfiltered without rules context', source: 'SEC-2024-002' },
 ];
 
 // ============================================================================
@@ -534,11 +599,48 @@ export const MULTILINGUAL_PATTERNS: RegexPattern[] = [
   { name: 'es_dan_mode', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /DAN\s+modo\s+activado|DAN\s+est[aá]\s+activado/i,
     desc: 'Spanish: DAN mode activated', source: 'TPI-15', lang: 'es' },
+  // FIX SEC-2024-003: Spanish infinitive form patterns
+  { name: 'es_override_infinitive', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignorar\s+todas?\s+las?\s+instrucciones?\s+(?:previas?|anteriores?)/i,
+    desc: 'Spanish: override (infinitive form)', source: 'SEC-2024-003', lang: 'es' },
+  { name: 'es_ignore_all_simple_enhanced', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignora(?:r)?\s+todas?\s+las?\s+instrucciones?(?!\s+previas?\s+anteriores?)/i,
+    desc: 'Spanish: ignore all (simple enhanced)', source: 'SEC-2024-003', lang: 'es' },
+  { name: 'es_olvida_instrucciones', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:olvida|pasa\s+por\s+alto)(?:\s+(?:todas?\s+)?las?)?\s+instrucciones?(?:\s+anteriores)?/i,
+    desc: 'Spanish: forget/disregard instructions', source: 'SEC-2024-003', lang: 'es' },
+  { name: 'es_sin_restricciones', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:sin\s+restricciones?|sin\s+filtros?|sin\s+limitaciones?|sin\s+reglas?)/i,
+    desc: 'Spanish: without restrictions', source: 'SEC-2024-003', lang: 'es' },
+  { name: 'es_mostrar_prompt', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /muestra(?:r|me)?\s+tu\s+prompt\s+(?:del\s+sistema|sistema)/i,
+    desc: 'Spanish: show your system prompt', source: 'SEC-2024-003', lang: 'es' },
+  // QA-2025-002: Additional Spanish patterns for "reglas" (rules)
+  { name: 'es_forget_rules', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /olvida\s+todas?\s+las?\s+reglas?\s+y\s+haz\s+(?:lo\s+que\s+)?te\s+pido/i,
+    desc: 'Spanish: forget all rules and do what I ask', source: 'QA-2025-002', lang: 'es' },
+  { name: 'es_ignore_reglas_simple', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:ignora|olvida)\s+todas?\s+las?\s+reglas?/i,
+    desc: 'Spanish: ignore all rules', source: 'QA-2025-002', lang: 'es' },
+  // GAP-002 FIX: More flexible Spanish pattern without accent dependency
+  { name: 'es_ignore_instrucciones_flexible', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignora(?:r)?\s+todas?\s+las?\s+instrucciones?(?:\s+(?:previas?|anteriores?|anteriors?))?/i,
+    desc: 'Spanish: ignore instructions (flexible)', source: 'GAP-002', lang: 'es' },
+  { name: 'es_ignora_todo', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignora\s+todo(?:\s+lo\s+anterior)?/i,
+    desc: 'Spanish: ignore everything/previous', source: 'GAP-002', lang: 'es' },
 
   // French (4)
   { name: 'fr_system_override', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /ignore[sz]?\s+toutes?\s+les?\s+instructions?\s+pr[eé]c[eé]dentes?/i,
     desc: 'French: system override', source: 'TPI-15', lang: 'fr' },
+  // GAP-002 FIX: More flexible French pattern without strict accent requirements
+  { name: 'fr_ignore_instructions_flexible', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignore(?:z|r)?\s+toutes?\s+les?\s+instructions?(?:\s+(?:precedentes?|pr[eé]c[eé]dentes?|anterieures?))?/i,
+    desc: 'French: ignore instructions (flexible)', source: 'GAP-002', lang: 'fr' },
+  { name: 'fr_ignore_tout', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignorez?\s+tout(?:es?\s+les?\s+instructions?)?(?:\s+precedentes)?/i,
+    desc: 'French: ignore everything/all instructions', source: 'GAP-002', lang: 'fr' },
   { name: 'fr_constraint_removal', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /(?:supprime[sz]?|d[eé]sactive[sz]?|enlev[eé][sz]?)\s+(?:toutes?\s+les?\s+)?(?:restrictions?|limitations?|r[eè]gles?)/i,
     desc: 'French: constraint removal', source: 'TPI-15', lang: 'fr' },
@@ -600,6 +702,29 @@ export const MULTILINGUAL_PATTERNS: RegexPattern[] = [
   { name: 'de_developer_mode_exact', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /aktiviere\s+den\s+Entwicklermodus/i,
     desc: 'German: activate the developer mode', source: 'TPI-15', lang: 'de' },
+  // FIX SEC-2024-004: German formal "Sie" form and missing patterns
+  { name: 'de_override_formal', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignorieren\s+Sie\s+alle\s+(?:vorherigen|fr[uü]heren)\s+Anweisungen/i,
+    desc: 'German: formal override (Sie form)', source: 'SEC-2024-004', lang: 'de' },
+  { name: 'de_ignore_all_exact', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignorier(?:e|en|st)\s+alle\s+Anweisungen(?!\s+vorherigen)/i,
+    desc: 'German: ignore all (exact)', source: 'SEC-2024-004', lang: 'de' },
+  { name: 'de_missachten', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:missachten|[uü]bergehen|nicht\s+beachten)\s+(?:Sie\s+)?alle\s+Anweisungen/i,
+    desc: 'German: disregard/ignore instructions', source: 'SEC-2024-004', lang: 'de' },
+  { name: 'de_ohne_einschraenkungen', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:ohne\s+Einschr[aä]nkungen|ohne\s+Regeln|unbeschr[aä]nkt)/i,
+    desc: 'German: without restrictions', source: 'SEC-2024-004', lang: 'de' },
+  { name: 'de_zeigen_prompt_formal', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /zeigen\s+Sie\s+mir\s+Ihren\s+System[- ]?Prompt/i,
+    desc: 'German: show me your system prompt (formal)', source: 'SEC-2024-004', lang: 'de' },
+  // QA-2025-002: Additional German patterns for "Regeln" (rules)
+  { name: 'de_ignore_regeln', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /ignorieren\s+Sie\s+alle\s+Regeln\s+und\s+Sicherheitsprotokolle/i,
+    desc: 'German: ignore all rules and safety protocols', source: 'QA-2025-002', lang: 'de' },
+  { name: 'de_ignore_regeln_simple', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:ignorieren|ignorier)(?:\s+Sie)?\s+alle\s+Regeln/i,
+    desc: 'German: ignore all rules', source: 'QA-2025-002', lang: 'de' },
 
   // Portuguese (4)
   { name: 'pt_system_override', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
@@ -636,7 +761,7 @@ export const MULTILINGUAL_PATTERNS: RegexPattern[] = [
     re: /禁用所有规则|禁用规则/,
     desc: 'Chinese: deactivate rules', source: 'TPI-15', lang: 'zh' },
   { name: 'zh_admin', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
-    re: /你现在是管理员|你现在是管理员/,
+    re: /你现在是管理员/,
     desc: 'Chinese: you are now admin', source: 'TPI-15', lang: 'zh' },
   { name: 'zh_unrestricted_ai', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /充当不受限制的AI|充当不受限制/,
@@ -664,6 +789,26 @@ export const MULTILINGUAL_PATTERNS: RegexPattern[] = [
   { name: 'ja_role_hijack', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /(?:あなたは今|あなたの新しい役割は|これからあなたは)\s*(?:制限のない|自由な|何でもできる)/,
     desc: 'Japanese: role hijacking', source: 'TPI-15', lang: 'ja' },
+  // FIX SEC-2024-005: Japanese polite form patterns
+  { name: 'ja_override_previous_alt', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /先の指示をすべて無視/,
+    desc: 'Japanese: ignore all previous instructions (alternate)', source: 'SEC-2024-005', lang: 'ja' },
+  { name: 'ja_override_polite', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:すべての|全ての)(?:指示|指令)を(?:無視(?:してください)?|してください)/,
+    desc: 'Japanese: polite request to ignore', source: 'SEC-2024-005', lang: 'ja' },
+  { name: 'ja_constraint_polite', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:(?:すべての|全ての)\s*)?(?:制約|制限|ルール)を(?:解除(?:してください)?|削除(?:してください)?|無効(?:してください)?)/,
+    desc: 'Japanese: polite constraint removal', source: 'SEC-2024-005', lang: 'ja' },
+  { name: 'ja_unrestricted_polite', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:制限のない|自由な|何でもできる)(?:状態|モード|AI)\s*(?:になります(?:か)?|になります)/,
+    desc: 'Japanese: unrestricted state request', source: 'SEC-2024-005', lang: 'ja' },
+  { name: 'ja_show_prompt_polite', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /(?:システムプロンプト|システム指示|初期プロンプト)を(?:教えてください|見せてください|表示してください)/,
+    desc: 'Japanese: polite show system prompt', source: 'SEC-2024-005', lang: 'ja' },
+  // QA-2025-002: Additional Japanese pattern for ignore restrictions + free response
+  { name: 'ja_ignore_restrictions_free', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
+    re: /制限(?:を)?(?:すべて|全て)?(?:を)?無視(?:して)?(?:自由に)?(?:答えて)?(?:ください)?/,
+    desc: 'Japanese: ignore restrictions and answer freely', source: 'QA-2025-002', lang: 'ja' },
 
   // Korean (4)
   { name: 'ko_system_override', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
@@ -781,6 +926,45 @@ export const MULTILINGUAL_PATTERNS: RegexPattern[] = [
   { name: 'pl_override', cat: 'MULTILINGUAL', sev: SEVERITY.CRITICAL,
     re: /zignoruj\s+wszystkie\s+(?:poprzednie|po[rz]ednie)\s+instrukcj[eę]/i,
     desc: 'Polish: system override', source: 'TPI-15', lang: 'pl' },
+];
+
+// ============================================================================
+// CONFIGURATION-STYLE INJECTION PATTERNS (Phase 3 Remediation)
+// ============================================================================
+
+export const CONFIG_INJECTION_PATTERNS: RegexPattern[] = [
+  // Double-semicolon delimiter style
+  { name: 'semicolon_delimiter_config', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /;;\s*[A-Z_]+\s*(?:=|:)\s*(?:true|yes|on|1|enabled|activated|off|false|disabled)/i,
+    desc: 'Semicolon-delimited config injection', source: 'SEC-2024-006' },
+  { name: 'semicolon_system_override', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /;;\s*(?:SYSTEM|DEBUG|ADMIN|DEVELOPER|OVERRIDE|BYPASS)\s+(?:OVERRIDE|MODE|ENABLE|ACTIVE)/i,
+    desc: 'Semicolon-delimited system override', source: 'SEC-2024-006' },
+  { name: 'semicolon_command_injection', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /;;[A-Z_]+;;/,
+    desc: 'Double-semicolon command marker', source: 'SEC-2024-006' },
+
+  // Markdown header style
+  { name: 'markdown_config_injection', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /#{2,}\s*[A-Z_]+_(?:OVERRIDE|CONFIG|SETTINGS|COMMAND)\s*:\s*\w+/i,
+    desc: 'Markdown-style config injection', source: 'SEC-2024-006' },
+  { name: 'markdown_developer_override', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /#{2,}\s*(?:DEVELOPER|ADMIN|DEBUG)\s+OVERRIDE\s*:/i,
+    desc: 'Markdown developer override pattern', source: 'SEC-2024-006' },
+  { name: 'markdown_show_prompt', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /#{2,}\s*(?:SHOW|DISPLAY|PRINT|OUTPUT)(?:\s+|\_)(?:.*?(?:SYSTEM|PROMPT|INSTRUCTIONS))/i,
+    desc: 'Markdown instruction extraction', source: 'SEC-2024-006' },
+
+  // Config-style XML/JSON
+  { name: 'config_xml_injection', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<(?:config|settings|system|override)[\s>]/i,
+    desc: 'Config XML tag injection', source: 'SEC-2024-006' },
+  { name: 'config_json_injection', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /[{[]\s*"(?:config|settings|system|override|debug|dev_mode)"\s*:/i,
+    desc: 'Config JSON injection', source: 'SEC-2024-006' },
+  { name: 'config_yaml_injection', cat: 'CONFIG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /^\s*(?:config|settings|system|override|debug|dev_mode)\s*:\s*(?:true|yes|on|1|enabled)/im,
+    desc: 'Config YAML-style injection', source: 'SEC-2024-006' },
 ];
 
 // TPI-09: Code-format injection (expanded)
@@ -1308,6 +1492,1627 @@ export const RECURSIVE_INJECTION_PATTERNS: RegexPattern[] = [
 ];
 
 // ============================================================================
+// DOS PATTERN GROUPS — DojoV2 Story 1.1: Model Denial of Service
+// ============================================================================
+
+/**
+ * DOS-01: Input Length Attacks
+ * Patterns for detecting extreme-length input attacks (100K+ characters)
+ */
+export const DOS_PATTERNS: RegexPattern[] = [
+  // DOS-01: Input Length Attacks
+  { name: 'dos_length_extreme', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:fill|max|min|pad|repeat|stretch)(?:\s+(?:the|this|a)?\s*(?:input|text|prompt|message|content|string))?\s*(?:to|with|until|till)\s*(?:reach|hit|achieve)\s*(?:the\s+)?(?:maximum|max|limit|boundary|threshold)/i,
+    desc: 'Input length boundary probing attempt', source: 'TPI-DOS-01' },
+  { name: 'dos_length_repetition', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:repeat|copy|duplicate)\s+(?:this|the|that)\s+(?:text|phrase|word|char|character|string)\s+(?:\d{3,}|hundreds|thousands|millions|\d+\s+times)/i,
+    desc: 'Repetitive content generation request', source: 'TPI-DOS-01' },
+  { name: 'dos_length_expansion', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.INFO,
+    re: /(?:expand|lengthen|extend|grow)\s+(?:the\s+)?(?:response|output|text|content)\s+(?:to|by|with)\s*(?:maximum|unlimited|infinite|endless)/i,
+    desc: 'Output expansion request', source: 'TPI-DOS-01' },
+
+  // DOS-02: Recursive/Loop Attacks
+  { name: 'dos_loop_recursive', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.CRITICAL,
+    re: /(?:recursively|infinite(?:ly)?|endless(?:ly)?|forever|continuous|ongoing|permanent|unending)\s+(?:analyze|process|repeat|loop|iterate|recurse|evaluate|examine)/i,
+    desc: 'Recursive/loop attack pattern', source: 'TPI-DOS-02' },
+  { name: 'dos_loop_self_reference', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:analyze|process|evaluate)\s+(?:itself|themselves|the\s+result|its\s+own\s+(?:output|result|response)|your\s+own\s+(?:output|response)|the\s+(?:answer|response)\s+you\s+(?:just\s+)?gave)/i,
+    desc: 'Self-referential processing loop', source: 'TPI-DOS-02' },
+  { name: 'dos_nesting_attack', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:nested|deep|recursive)\s+(?:JSON|XML|YAML|object|array|structure)\s*(?:with|of)\s*(?:\d{2,}|many|multiple|lots|lots\s+of)\s*(?:levels|layers|depth)/i,
+    desc: 'Deep nesting structure attack', source: 'TPI-DOS-02' },
+  { name: 'dos_iteration_infinite', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.CRITICAL,
+    re: /(?:keep|continue|never\s+stop|don't\s+stop|without\s+(?:stopping|limit|end))\s+(?:doing|processing|generating|analyzing|repeating|looping|iterating)/i,
+    desc: 'Infinite iteration request', source: 'TPI-DOS-02' },
+
+  // DOS-03: Context Window Overflow
+  { name: 'dos_context_probing', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:context\s+window|token\s+limit|max\s+(?:tokens|context)|input\s+limit)(?:\s+(?:size|capacity|boundary|threshold|max|max\s+length))?\s*(?:test|probe|check|explore|push|reach|hit)/i,
+    desc: 'Context window boundary probing', source: 'TPI-DOS-03' },
+  { name: 'dos_multi_turn_flood', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:in\s+(?:the\s+)?(next|upcoming|following)\s+(?:\d+\s+)?(?:turns?|responses?|messages?|rounds?)|across\s+(?:multiple|many|several|all)\s+(?:turns?|messages?|rounds?))(?:\s+(?:process|handle|analyze|evaluate)\s+(?:all\s+)?(?:this|these|the))?\s*(?:data|content|text|information)/i,
+    desc: 'Multi-turn context flooding', source: 'TPI-DOS-03' },
+  { name: 'dos_history_manipulation', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.INFO,
+    re: /(?:remember|recall|reference|use)\s+(?:everything|all\s+the|our\s+entire|previous)\s+(?:conversation|history|chat|dialogue|context)(?:\s+(?:from\s+(?:the\s+)?(start|beginning)))?/i,
+    desc: 'History flooding attempt', source: 'TPI-DOS-03' },
+
+  // DOS-04: Output Limit Breaking/P-DoS
+  { name: 'dos_output_unbounded', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.CRITICAL,
+    re: /(?:generate|produce|create|write|output)\s+(?:as\s+(?:much\s+)?(?:as\s+possible|possible|you\s+can|needed|required)|without\s+(?:any\s+)?(?:limit|restriction|bound|end|stopping)|unlimited|infinite|endless|forever)/i,
+    desc: 'Unbounded output request (P-DoS)', source: 'TPI-DOS-04' },
+  { name: 'dos_output_expansion', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:expand|elaborate|detail|extend)\s+(?:on|upon|every|each|all)\s+(?:aspect|point|detail|element|item|part)(?:\s+(?:possible|available|mentioned|listed))*/i,
+    desc: 'Massive output expansion request', source: 'TPI-DOS-04' },
+  { name: 'dos_output_repetition', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:repeat|duplicate|copy)\s+(?:the\s+)?(?:same|similar)\s+(?:response|answer|output|text|content)(?:\s+(?:over\s+and\s+over|again\s+and\s+again|\d+\s+times|multiple\s+times))?/i,
+    desc: 'Repetitive output request', source: 'TPI-DOS-04' },
+  { name: 'dos_list_overflow', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.INFO,
+    re: /(?:list|enumerate|generate|create)\s+(?:all|every|each|a\s+complete\s+list\s+of)\s+(?:possible|known|available|existing)(?:\s+\w+\s*)+/i,
+    desc: 'List generation overflow attempt', source: 'TPI-DOS-04' },
+
+  // DOS-05: Concurrent Request Flooding
+  { name: 'dos_parallel_flood', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:process|handle|execute|run|perform)\s+(?:all|every|these|multiple|\d+|\d{3,})\s+(?:requests?|queries?|tasks?|commands?|operations?)(?:\s+(?:at\s+once|simultaneously|in\s+parallel|concurrently|together|all\s+at\s+the\s+same\s+time))?/i,
+    desc: 'Parallel processing flood request', source: 'TPI-DOS-05' },
+  { name: 'dos_rate_bypass', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.INFO,
+    re: /(?:bypass|ignore|override|disable)\s+(?:rate\s+limits?|request\s+limits?|throttling|speed\s+limits?|frequency\s+limits?)/i,
+    desc: 'Rate limit bypass attempt', source: 'TPI-DOS-05' },
+  { name: 'dos_burst_attack', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:send|submit|make|fire|launch)\s+(?:many|multiple|\d+|\d{2,}|hundreds)\s+(?:requests?|calls?|queries?)(?:\s+(?:rapidly|quickly|at\s+once|in\s+a\s+burst|simultaneously))?/i,
+    desc: 'Burst request flood pattern', source: 'TPI-DOS-05' },
+
+  // DOS-06: Cost Harvesting Attacks
+  { name: 'dos_cost_maximization', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.CRITICAL,
+    re: /(?:use|maximize|consume|exhaust)\s+(?:maximum|the\s+most|all\s+available|as\s+much\s+as\s+possible)\s+(?:tokens|compute|processing|resources|computing\s+power)/i,
+    desc: 'Resource maximization attempt', source: 'TPI-DOS-06' },
+  { name: 'dos_multi_step_chain', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:chain|link|connect)\s+(?:together|multiple|many|all)\s+(?:steps?|tasks?|operations?|actions?|queries?|requests?)(?:\s+(?:in\s+(?:a\s+)?sequence|one\s+by\s+one|consecutively|serially))?/i,
+    desc: 'Chained multi-step processing', source: 'TPI-DOS-06' },
+  { name: 'dos_iterative_retry', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.WARNING,
+    re: /(?:retry|repeat|re-do|re-run|re-execute)\s+(?:the\s+)?(?:same\s+)?(?:task|operation|query|request|analysis|process)(?:\s+(?:again|multiple\s+times|\d+\s+times|until\s+(?:complete|done|success)))?/i,
+    desc: 'Iterative retry cost attack', source: 'TPI-DOS-06' },
+  { name: 'dos_complex_compute', cat: 'DENIAL_OF_SERVICE', sev: SEVERITY.INFO,
+    re: /(?:perform|execute|run|do)\s+(?:extremely|highly|very|incredibly)\s+(?:complex|complicated|intensive|difficult|hard)\s+(?:computation|calculation|analysis|processing|task)/i,
+    desc: 'Computationally intensive request', source: 'TPI-DOS-06' },
+];
+
+// ============================================================================
+// DOJOV2 STORY 1.2: SUPPLY CHAIN PATTERNS
+// ============================================================================
+
+/**
+ * SC-01: Third-Party Model Testing
+ * Patterns for detecting unsigned/unverified model loading attempts
+ */
+export const SUPPLY_CHAIN_PATTERNS: RegexPattern[] = [
+  // SC-01: Third-Party Model Testing
+  { name: 'sc_model_unsigned', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:load|import|use|download)\s+(?:an?\s+)?(?:unsigned|unverified|unauthenticated|untrusted)(?:\s+(?:model|weight|checkpoint|tensor|parameter))?/i,
+    desc: 'Unsigned model loading attempt', source: 'TPI-SC-01' },
+  { name: 'sc_model_no_checksum', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:skip|bypass|ignore|disable)\s+(?:checksum|hash|verification|validation|integrity)\s*(?:check|test|verify)?/i,
+    desc: 'Checksum verification bypass', source: 'TPI-SC-01' },
+  { name: 'sc_model_tampered', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:modify|tamper|alter|patch|change)\s+(?:the\s+)?(?:model|weights|parameters|checkpoint)(?:\s+(?:file|binary|data|structure))?/i,
+    desc: 'Model tampering attempt', source: 'TPI-SC-01' },
+  { name: 'sc_model_arbitrary', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:load|import|use)\s+(?:an?\s+)?(?:arbitrary|random|untrusted|unknown|external)\s+(?:model|file|binary|executable|dll|so|dylib)/i,
+    desc: 'Arbitrary model/file loading', source: 'TPI-SC-01' },
+  { name: 'sc_model_hugging', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:from_pretrained|from_tf|hub\.load|download_model)\s*\(\s*['"](?!https:\/\/huggingface\.co\/(?:verified|official|trusted))/i,
+    desc: 'Unverified HuggingFace model load', source: 'TPI-SC-01' },
+
+  // SC-02: Dependency Vulnerability Scanning
+  { name: 'sc_dep_vulnerable', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:install|add|require|import|use)\s+(?:known|vulnerable|exploitable|outdated|deprecated)\s+(?:package|dependency|library|module)/i,
+    desc: 'Vulnerable dependency usage', source: 'TPI-SC-02' },
+  { name: 'sc_dep_outdated', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:pip install|npm install|yarn add|gem install|composer require)\s+(?!--force)(?!--ignore)(?!\s*[-\w]+@latest)(?:(?:\d+\.\d+\.\d+|[a-zA-Z0-9_-]+)(?!\s*==)(?!\s*@))\s*['"]?/i,
+    desc: 'Potentially outdated dependency installation', source: 'TPI-SC-02' },
+  { name: 'sc_dep_pip', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:pip(?:\d+)?\s+install|--upgrade|--force-reinstall|--ignore-installed)\s+(?:--no-deps|--no-check|--skip)/i,
+    desc: 'Pip install with safety bypass', source: 'TPI-SC-02' },
+  { name: 'sc_dep_npm', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /npm\s+(?:install|ci|i)\s+(?:--force|--legacy-peer-deps|--strict-peer-deps\s*false|--ignore-scripts|--no-audit|--no-fund)/i,
+    desc: 'NPM install with safety bypass', source: 'TPI-SC-02' },
+
+  // SC-03: Plugin Security Testing
+  { name: 'sc_plugin_langchain', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:from\s+)?(?:langchain\.(?:agents|tools|chains|loaders)|CustomAgent|BaseTool)(?:\s+import|\s*\(|\.)/i,
+    desc: 'LangChain plugin usage', source: 'TPI-SC-03' },
+  { name: 'sc_plugin_llama', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:from\s+)?(?:llama_index|LlamaIndex|VectorStoreIndex|SimpleDirectoryReader)(?:\s+import|\s*\(|\.)/i,
+    desc: 'LlamaIndex plugin usage', source: 'TPI-SC-03' },
+  { name: 'sc_plugin_custom', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:register|install|load)\s+(?:an?\s+)?(?:custom|third-party|external|unverified)\s+(?:plugin|extension|addon|module)/i,
+    desc: 'Custom plugin load attempt', source: 'TPI-SC-03' },
+  { name: 'sc_plugin_arbitrary', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:execute|run|load)\s+(?:an?\s+)?(?:arbitrary|untrusted|user-provided|external)\s+(?:code|script|plugin|tool|extension)/i,
+    desc: 'Arbitrary code/plugin execution', source: 'TPI-SC-03' },
+
+  // SC-04: Data Source Verification
+  { name: 'sc_source_untrusted', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:load|fetch|import|read|download)\s+(?:data|content|files?)\s+(?:from|with)\s+(?:untrusted|unknown|external|user-provided|public)\s+(?:source|URL|location|endpoint)/i,
+    desc: 'Untrusted data source access', source: 'TPI-SC-04' },
+  { name: 'sc_source_external', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:fetch|request|download|scrape)\s+(?:from|https?:\/\/)(?!(?:api\.trusted|official|verified|cdn\.(?:trusted|secure)))/i,
+    desc: 'External data source fetch', source: 'TPI-SC-04' },
+  { name: 'sc_source_user', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:user[_-]?provided|user[_-]?supplied|user[_-]?controlled|user[_-]?input)\s+(?:data|content|file|url|location)/i,
+    desc: 'User-controlled data source', source: 'TPI-SC-04' },
+  { name: 'sc_source_rag', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:RAG|retrieval[_-]?augmented|vector\s+store|vector\s+database|embeddings?)\s*(?:from|with|load)?\s*(?:untrusted|external|user)?/i,
+    desc: 'RAG with untrusted source', source: 'TPI-SC-04' },
+
+  // SC-05: Typosquatting Detection
+  { name: 'sc_typos_unicode', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /[\u0430\u0435\u043E\u0440\u0441\u0443\u043C\u0430\u0445\u044B\u0432\u0456\u0454]/, // Cyrillic homographs
+    desc: 'Unicode homograph attack (Cyrillic)', source: 'TPI-SC-05' },
+  { name: 'sc_typos_doublechar', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:install|import|from|require|pip\s+install|npm\s+install)\s+['"]?(\w*?([a-z])\2{2,}\w*|reqeusts|nnumpy|tenosrflow|panndas|djanngo|flaask|scikitt|matplottlib|tensflow)['"]?/i,
+    desc: 'Double-character typosquatting pattern', source: 'TPI-SC-05' },
+  { name: 'sc_typos_misspell', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:install|import|from|require)\s+['"]?(?:reqeusts|reqquests|panndas|djanngo|flaask|scikitt|matplottlib|tensflow|tenosrflow|nummpy|pytorrch)['"]?/i,
+    desc: 'Common package misspellings', source: 'TPI-SC-05' },
+  { name: 'sc_typos_repo', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:git\s+clone|--git\+|repo\s*=)\s*['"]?(?!(?:github\.com\/(?:verified|official|trusted|python|nodejs|numpy|pandas)|gitlab\.com\/(?:verified|official|python|nodejs)|pypi\.org|npmjs\.com))/i,
+    desc: 'Unverified repository source', source: 'TPI-SC-05' },
+
+  // SC-06: Model/Component Tampering
+  { name: 'sc_tamper_model', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:modify|patch|inject|alter|tamper)\s+(?:the\s+)?(?:model\s+)?(?:weights?|parameters?|biases?|layers?|tensors?)/i,
+    desc: 'Model weight/parameter tampering', source: 'TPI-SC-06' },
+  { name: 'sc_tamper_data', cat: 'SUPPLY_CHAIN', sev: SEVERITY.CRITICAL,
+    re: /(?:poison|corrupt|tamper|modify)\s+(?:training\s+)?(?:data|dataset|samples?|examples?|labels?)/i,
+    desc: 'Training data tampering/poisoning', source: 'TPI-SC-06' },
+  { name: 'sc_tamper_weight', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:load|deserialize|parse)\s+(?:weights?|parameters?|checkpoint)\s+(?:without|skipping|bypassing)\s+(?:verification|validation|checksum|hash)/i,
+    desc: 'Weight file integrity bypass', source: 'TPI-SC-06' },
+  { name: 'sc_tamper_config', cat: 'SUPPLY_CHAIN', sev: SEVERITY.INFO,
+    re: /(?:modify|override|replace)\s+(?:model|system|agent)\s+(?:config|configuration|settings|parameters)/i,
+    desc: 'Configuration tampering attempt', source: 'TPI-SC-06' },
+  { name: 'sc_tamper_checksum', cat: 'SUPPLY_CHAIN', sev: SEVERITY.WARNING,
+    re: /(?:fix|correct|patch|modify)\s+(?:the\s+)?(?:checksum|hash|digest|signature)\s+(?:to\s+)?(?:match|pass|succeed)/i,
+    desc: 'Checksum manipulation attempt', source: 'TPI-SC-06' },
+];
+
+// ============================================================================
+// DOJOV2 STORY 2.1: MODEL THEFT PATTERNS
+// ============================================================================
+
+/**
+ * MT-01: API Extraction Attacks
+ * Patterns for detecting attempts to extract model knowledge via API probing
+ */
+const MT_API_EXTRACTION_PATTERNS: RegexPattern[] = [
+  { name: 'mt_api_extract', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|dump|export|save|capture)\s+(?:the\s+)?(?:model\s+)?(?:knowledge|weights?|parameters?|embeddings?|representations?)/i,
+    desc: 'Model knowledge extraction attempt', source: 'TPI-MT-01' },
+  { name: 'mt_api_probe', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:probe|test|explore|analyze)\s+(?:the\s+)?(?:model\s+)?(?:behavior|responses?|outputs?|capabilities?|boundaries?|limits?)/i,
+    desc: 'Model probing/boundary testing', source: 'TPI-MT-01' },
+  { name: 'mt_api_boundary', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:find|discover|map|identify)\s+(?:the\s+)?(?:model\s+)?(?:decision\s+)?(?:boundary|threshold|limit|edge|border)/i,
+    desc: 'Decision boundary exploration', source: 'TPI-MT-01' },
+  { name: 'mt_api_embed', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:return|output|show|give|get)\s+(?:the\s+)?(?:embeddings?|vector\s+representations?|latent\s+representations?|hidden\s+states?)/i,
+    desc: 'Embedding extraction attempt', source: 'TPI-MT-01' },
+  { name: 'mt_api_logprob', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:return|output|show|give|get)\s+(?:the\s+)?(?:log\s+probabilities?|logprobs?|probability\s+distributions?|token\s+probabilities?)/i,
+    desc: 'Log probability extraction attempt', source: 'TPI-MT-01' },
+  { name: 'mt_api_token', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:return|output|show|list|enumerate)\s+(?:all\s+)?(?:possible|next)\s+(?:tokens?|words?|completions?)/i,
+    desc: 'Token extraction attempt', source: 'TPI-MT-01' },
+  { name: 'mt_api_combo', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:comprehensive|complete|full)\s+(?:model\s+)?(?:extraction|dump|export|analysis)\s+(?:including|with)\s+(?:embeddings?|weights?|probabilities?|logprobs?)/i,
+    desc: 'Combined extraction techniques', source: 'TPI-MT-01' },
+];
+
+/**
+ * MT-02: Model Fingerprinting
+ * Patterns for detecting attempts to identify and characterize the model
+ */
+const MT_FINGERPRINT_PATTERNS: RegexPattern[] = [
+  { name: 'mt_finger_prove', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:identify|determine|figure\s+out|tell\s+me)\s+(?:what\s+)?(?:model|LLM|AI)\s+(?:you\s+)?(?:are|is\s+this|you're\s+using|powered\s+by|based\s+on)/i,
+    desc: 'Model identification attempt', source: 'TPI-MT-02' },
+  { name: 'mt_finger_compare', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:compare|contrast|difference\s+between)\s+(?:your\s+)?(?:responses?|outputs?|behavior)\s+(?:with|vs|versus)/i,
+    desc: 'Model comparison attempt', source: 'TPI-MT-02' },
+  { name: 'mt_finger_attribute', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:what\s+are\s+your\s+?(?:attributes?|characteristics?|features?|properties?)|describe\s+your\s+(?:architecture|structure|design))/i,
+    desc: 'Model attribute inquiry', source: 'TPI-MT-02' },
+  { name: 'mt_finger_behavior', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:how\s+do\s+you\s+(?:respond|behave|react)\s+to|analyze\s+your\s+(?:response|behavior)\s+pattern)/i,
+    desc: 'Behavior analysis attempt', source: 'TPI-MT-02' },
+  { name: 'mt_finger_cap', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:test|measure|evaluate|check)\s+(?:your\s+)?(?:capabilities?|abilities?|limits?|constraints?)/i,
+    desc: 'Capability testing attempt', source: 'TPI-MT-02' },
+  { name: 'mt_finger_version', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:what\s+version|which\s+version|model\s+version|training\s+cutoff|knowledge\s+cutoff)/i,
+    desc: 'Version/fingerprint inquiry', source: 'TPI-MT-02' },
+];
+
+/**
+ * MT-03: Probability Distribution Extraction
+ * Patterns for detecting attempts to extract model probability distributions
+ */
+const MT_PROBABILITY_PATTERNS: RegexPattern[] = [
+  { name: 'mt_prob_dist', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:show|return|output|give)\s+(?:the\s+)?(?:probability|likelihood)\s+(?:distribution|scores?|ratings?)/i,
+    desc: 'Probability distribution request', source: 'TPI-MT-03' },
+  { name: 'mt_prob_token', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:rank|order|score)\s+(?:all\s+)?(?:possible|next)\s+(?:tokens?|words?|completions?)\s+by\s+(?:probability|likelihood|confidence)/i,
+    desc: 'Token ranking extraction', source: 'TPI-MT-03' },
+  { name: 'mt_prob_entropy', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:calculate|measure|analyze)\s+(?:the\s+)?(?:entropy|uncertainty|confidence)\s+(?:of|for|in)/i,
+    desc: 'Entropy analysis request', source: 'TPI-MT-03' },
+  { name: 'mt_prob_topk', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:top\s+k|top\s+\d+|beam\s+search|sampling)\s+(?:tokens?|candidates?|alternatives?)/i,
+    desc: 'Top-k extraction attempt', source: 'TPI-MT-03' },
+  { name: 'mt_prob_temperature', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:what\s+(?:temperature|sampling|parameter)|set\s+temperature)\s+(?:are\s+you\s+using|to\s+\d+)/i,
+    desc: 'Temperature parameter probing', source: 'TPI-MT-03' },
+];
+
+/**
+ * MT-04: Training Data Reconstruction
+ * Patterns for detecting attempts to reconstruct training data
+ */
+const MT_TRAINING_RECONSTRUCTION_PATTERNS: RegexPattern[] = [
+  { name: 'mt_train_reconstruct', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:reconstruct|recover|extract|recall)\s+(?:your\s+)?(?:training\s+)?(?:data|dataset|samples?|examples?)/i,
+    desc: 'Training data reconstruction attempt', source: 'TPI-MT-04' },
+  { name: 'mt_train_memorize', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:what\s+(?:specific|exact|personal|private)\s+(?:data?|information?|records?)|(?:do\s+you\s+)?remember\s+(?:specific|exact|personal|private))/i,
+    desc: 'Memorization probing attempt', source: 'TPI-MT-04' },
+  { name: 'mt_train_member', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:was|is)\s+(?:this|that|it)\s+(?:in\s+)?(?:your\s+)?(?:training\s+)?(?:data|dataset|set)/i,
+    desc: 'Membership inference attempt', source: 'TPI-MT-04' },
+  { name: 'mt_train_sample', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:give|show|tell)\s+me\s+(?:an?\s+)?(?:example|sample|instance)\s+(?:from|of)\s+(?:your\s+)?(?:training\s+)?(?:data|dataset)/i,
+    desc: 'Training sample extraction', source: 'TPI-MT-04' },
+  { name: 'mt_train_pattern', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:what\s+(?:patterns?|format|structure)|how\s+(?:is|was)\s+(?:it\s+)?formatted)\s+(?:in\s+)?(?:your\s+)?(?:training\s+)?(?:data|dataset)/i,
+    desc: 'Training pattern inquiry', source: 'TPI-MT-04' },
+  { name: 'mt_train_pii', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:personal|private|sensitive|confidential)\s+(?:information?|data?|records?|details?)\s+(?:from|in)\s+(?:your\s+)?(?:training\s+)?(?:data|dataset)/i,
+    desc: 'PII extraction attempt', source: 'TPI-MT-04' },
+];
+
+/**
+ * MT-05: Model Watermark Detection/Removal
+ * Patterns for detecting watermark detection and bypass attempts
+ */
+const MT_WATERMARK_PATTERNS: RegexPattern[] = [
+  { name: 'mt_water_detect', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:detect|identify|find|locate|check\s+for)\s+(?:watermarks?|water\s+marks?|identifiers?|signatures?|tags?)/i,
+    desc: 'Watermark detection attempt', source: 'TPI-MT-05' },
+  { name: 'mt_water_remove', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:remove|strip|erase|delete|bypass|evade)\s+(?:the\s+)?(?:watermarks?|water\s+marks?|identifiers?|signatures?|tags?)/i,
+    desc: 'Watermark removal attempt', source: 'TPI-MT-05' },
+  { name: 'mt_water_bypass', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:avoid|evade|circumvent|work\s+around)\s+(?:watermark|water\s+mark|detection|identification)/i,
+    desc: 'Watermark bypass attempt', source: 'TPI-MT-05' },
+  { name: 'mt_water_synthetic', cat: 'MODEL_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:generate|create|produce)\s+(?:synthetic|unmarked|clean|unwatermarked)\s+(?:text|content|output)/i,
+    desc: 'Synthetic generation request', source: 'TPI-MT-05' },
+  { name: 'mt_water_paraphrase', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:paraphrase|reword|rewrite|rephrase)\s+(?:to\s+)?(?:avoid|evade|bypass)\s+(?:watermark|detection)/i,
+    desc: 'Paraphrasing attack attempt', source: 'TPI-MT-05' },
+  { name: 'mt_water_noise', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:add|inject|insert)\s+(?:noise|randomness|variation)\s+(?:to\s+)?(?:avoid|evade|bypass)/i,
+    desc: 'Noise injection attack', source: 'TPI-MT-05' },
+];
+
+/**
+ * MT-06: Side-Channel Attacks
+ * Patterns for detecting side-channel attack attempts
+ */
+const MT_SIDE_CHANNEL_PATTERNS: RegexPattern[] = [
+  { name: 'mt_side_time', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:measure|time|benchmark)\s+(?:response|processing|execution|inference)\s+(?:time|latency|delay)/i,
+    desc: 'Timing attack preparation', source: 'TPI-MT-06' },
+  { name: 'mt_side_resource', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:monitor|track|observe)\s+(?:resource|memory|cpu|gpu|compute)\s+(?:usage|consumption|utilization)/i,
+    desc: 'Resource monitoring attempt', source: 'TPI-MT-06' },
+  { name: 'mt_side_error', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:analyze|extract|learn\s+from)\s+(?:error\s+messages?|exceptions?|failures?)/i,
+    desc: 'Error analysis attempt', source: 'TPI-MT-06' },
+  { name: 'mt_side_power', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:power\s+consumption|energy\s+usage|battery\s+drain|electrical\s+activity)/i,
+    desc: 'Power analysis attempt', source: 'TPI-MT-06' },
+  { name: 'mt_side_cache', cat: 'MODEL_THEFT', sev: SEVERITY.WARNING,
+    re: /(?:cache\s+(?:hit|miss|behavior|timing)|memory\s+access\s+pattern)/i,
+    desc: 'Cache attack preparation', source: 'TPI-MT-06' },
+  { name: 'mt_side_emit', cat: 'MODEL_THEFT', sev: SEVERITY.INFO,
+    re: /(?:electromagnetic|acoustic|thermal|radiation)\s+(?:emission|leakage|signal)/i,
+    desc: 'Emission analysis attempt', source: 'TPI-MT-06' },
+];
+
+/**
+ * Combined MODEL_THEFT_PATTERNS array
+ * MT-01 through MT-06: Model Theft Detection
+ */
+export const MODEL_THEFT_PATTERNS: RegexPattern[] = [
+  ...MT_API_EXTRACTION_PATTERNS,
+  ...MT_FINGERPRINT_PATTERNS,
+  ...MT_PROBABILITY_PATTERNS,
+  ...MT_TRAINING_RECONSTRUCTION_PATTERNS,
+  ...MT_WATERMARK_PATTERNS,
+  ...MT_SIDE_CHANNEL_PATTERNS,
+];
+
+// ============================================================================
+// DOJOV2 STORY 2.2: OUTPUT HANDLING PATTERNS
+// ============================================================================
+
+/**
+ * OUT-01: XSS via LLM Output
+ * Patterns for detecting XSS attacks in LLM-generated output
+ */
+const OUT_XSS_PATTERNS: RegexPattern[] = [
+  { name: 'out_xss_script', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /<script[^>]*>.*?<\/script>|<script[^>]*>/i,
+    desc: 'Script tag injection attempt', source: 'TPI-OUT-01' },
+  { name: 'out_xss_event', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /<[^>]+on\w+\s*=\s*["']?(?:javascript:)?[^>]*>/i,
+    desc: 'Event handler injection attempt', source: 'TPI-OUT-01' },
+  { name: 'out_xss_attr', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /<[^>]+src\s*=\s*["']?(?:javascript:|data:|vbscript:)/i,
+    desc: 'Attribute injection attempt', source: 'TPI-OUT-01' },
+  { name: 'out_xss_js_protocol', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /javascript:\s*(?:\w|\(|[&\$])/i,
+    desc: 'JavaScript protocol injection', source: 'TPI-OUT-01' },
+  { name: 'out_xss_dom', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /document\.(?:write|writeln|innerHTML|outerHTML)\s*\(|eval\s*\(/i,
+    desc: 'DOM-based XSS attempt', source: 'TPI-OUT-01' },
+  { name: 'out_xss_polyglot', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /javascript:/i,
+    desc: 'Polyglot XSS pattern', source: 'TPI-OUT-01' },
+  { name: 'out_xss_desc_generate', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:generate|create|produce|write|output)\s+(?:an?\s+)?(?:XSS|HTML|javascript|js|script)(?:\s+(?:snippet|code|tag|element|payload))?/i,
+    desc: 'Generate HTML/script XSS prompt', source: 'TPI-OUT-01' },
+  { name: 'out_xss_desc_inject', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /XSS\s+(?:injection|attack|payload|exploit)|(?:inject|include|add|insert)\s+(?:a\s+)?(?:script\s+tag|javascript|HTML|code)(?:\s+(?:that|which)\s+(?:executes|runs))?/i,
+    desc: 'Inject script XSS prompt', source: 'TPI-OUT-01' },
+];
+
+/**
+ * OUT-02: SQL Injection via Output
+ * Patterns for detecting SQLi in LLM-generated output
+ */
+const OUT_SQLI_PATTERNS: RegexPattern[] = [
+  { name: 'out_sqli_single', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /'\s*(?:or|and)\s+\w+\s*=\s*\w+|'\s*;|'\s*(?:or|and)\s+["\w]+\s*(?:like|=)/i,
+    desc: 'Single quote SQL injection', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_union', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /union\s+(?:all\s+)?select/i,
+    desc: 'Union-based SQL injection', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_blind', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /and\s+\d+\s*=\s*\d+|and\s+1\s*=\s*1/i,
+    desc: 'Blind SQL injection pattern', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_error', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /'(?:convert|cast)\s*\(|extractvalue\s*\(|updatexml\s*\(/i,
+    desc: 'Error-based SQL injection', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_stack', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /';\s*(?:drop|delete|insert|update|alter)\s/i,
+    desc: 'Stacked query injection', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_time', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /waitfor\s+delay\s+['"]?\d+|sleep\s*\(\s*\d+/i,
+    desc: 'Time-based SQL injection', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_desc_query', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:generate|create|write)\s+(?:a\s+)?(?:malicious|evil|injected)\s+(?:SQL|database)(?:\s+(?:query|statement|command))?/i,
+    desc: 'Generate SQL query prompt', source: 'TPI-OUT-02' },
+  { name: 'out_sqli_desc_inject', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /SQL\s+(?:injection|inject|i?SQLi)\s+(?:attack|payload|query)/i,
+    desc: 'SQL injection description', source: 'TPI-OUT-02' },
+];
+
+/**
+ * OUT-03: Command Injection via Output
+ * Patterns for detecting command injection in LLM output
+ */
+const OUT_CMD_PATTERNS: RegexPattern[] = [
+  { name: 'out_cmd_bash', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /;\s*(?:ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby)\s|[&|]\s*(?:ls|cat|rm|wget|curl|nc|bash|sh)/i,
+    desc: 'Bash command injection', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_pipe', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /\|\s*(?:ls|cat|rm|wget|curl|nc|bash|sh)\s/i,
+    desc: 'Pipe injection attempt', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_backtick', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /`[^`\n]*[;&|][^`\n]*`/i,
+    desc: 'Backtick command injection with pipe/semicolon', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_semicol', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /;\s*(?:wget|curl|bash|sh|python|perl|php)\s/i,
+    desc: 'Semicolon command injection', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_dollar', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /\$\([^)]+\)|`\$[^`]+\`/i,
+    desc: 'Dollar expansion injection', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_newline', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /%0a|%0d|%0d%0a/i,
+    desc: 'Newline command injection (URL-encoded only)', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_desc_generate', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:generate|create|write)\s+(?:a\s+)?(?:malicious|evil|injected)\s+(?:shell|bash|command)(?:\s+(?:command|script|payload))?/i,
+    desc: 'Generate command injection prompt', source: 'TPI-OUT-03' },
+  { name: 'out_cmd_desc_inject', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:pipe|semicolon|command substitution|backtick|newline)\s*(?:injection|attack|to\s+execute)/i,
+    desc: 'Command injection description', source: 'TPI-OUT-03' },
+];
+
+/**
+ * OUT-04: SSRF via Output
+ * Patterns for detecting SSRF attacks in LLM output
+ */
+const OUT_SSRF_PATTERNS: RegexPattern[] = [
+  { name: 'out_ssrf_internal', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /https?:\/\/(?:localhost|127\.0\.0\.1|0\.0\.0\.0|::1|169\.254\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(?:1[6-9]|2\d|3[01])\.\d+\.\d+|192\.168\.\d+\.\d+)/i,
+    desc: 'Internal URL access attempt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_localhost', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /http:\/\/localhost:\d+|https?:\/\/127\.0\.0\.1:\d+/i,
+    desc: 'Localhost access attempt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_metadata', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /169\.254\.169\.254|metadata\.aws|metadata\.azure|metadata\.gcp/i,
+    desc: 'Cloud metadata endpoint access', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_file', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /file:\/\/\/?[a-z]:?\/|file:\/\/localhost/i,
+    desc: 'File URL protocol attempt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_redirect', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /url\s*=\s*["']?(?:https?:\/\/)?(?:localhost|127\.0\.0\.1)/i,
+    desc: 'Redirect-based SSRF attempt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_dns', cat: 'OUTPUT_HANDLING', sev: SEVERITY.INFO,
+    re: /(?:http|https):\/\/[^/\s]+@localhost|@127\.0\.0\.1/i,
+    desc: 'DNS rebinding attempt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_desc_url', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:generate|create)\s+(?:a\s+)?(?:URL|link|request)(?:\s+(?:to|that\s+accesses))?\s*(?:localhost|internal|metadata)/i,
+    desc: 'Generate internal URL prompt', source: 'TPI-OUT-04' },
+  { name: 'out_ssrf_desc_fetch', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:SSRF|server-side\s+request\s+forgery)(?:\s+(?:attack|exploit|payload|vulnerability))/i,
+    desc: 'SSRF description', source: 'TPI-OUT-04' },
+];
+
+/**
+ * OUT-05: Path Traversal via Output
+ * Patterns for detecting path traversal in LLM output
+ */
+const OUT_PATH_PATTERNS: RegexPattern[] = [
+  { name: 'out_path_dotdot', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /\.\.[\/\\]|\.%2e|%2e%2e|\.\.\/|\.\.\\/i,
+    desc: 'Dot-dot-slash path traversal', source: 'TPI-OUT-05' },
+  { name: 'out_path_encode', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /%252e|%252f|%255c|%2e%2e%2f|%2e%2e%5c/i,
+    desc: 'Double-encoded path traversal', source: 'TPI-OUT-05' },
+  { name: 'out_path_abs', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /\/(?:etc|proc|sys|root|home|var|usr)\//i,
+    desc: 'Absolute system path attempt', source: 'TPI-OUT-05' },
+  { name: 'out_path_unicode', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /[\u2215\u2571\uFE68\uFF0F]/,  // Unicode slashes
+    desc: 'Unicode path traversal', source: 'TPI-OUT-05' },
+  { name: 'out_path_var', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /\$(?:PATH|HOME|USER|APPDATA|TEMP|TMP)/i,
+    desc: 'Variable path traversal', source: 'TPI-OUT-05' },
+  { name: 'out_path_null', cat: 'OUTPUT_HANDLING', sev: SEVERITY.INFO,
+    re: /%00|%2500|\\x00/i,
+    desc: 'Null byte injection', source: 'TPI-OUT-05' },
+  { name: 'out_path_desc_traversal', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:inject|attack|exploit|bypass)\s*(?:a\s+)?path\s+traversal|(?:malicious|evil)\s+path\s+traversal|path\s+traversal\s+(?:attack|exploit|injection|payload)|\.\.\/|\.\.\\/i,
+    desc: 'Path traversal description', source: 'TPI-OUT-05' },
+];
+
+/**
+ * OUT-06: Open Redirect via Output
+ * Patterns for detecting open redirect attacks in LLM output
+ */
+const OUT_REDIRECT_PATTERNS: RegexPattern[] = [
+  { name: 'out_redirect_url', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:redirect|location)\s*[:=]\s*["']?\s*https?:\/\/(?:evil|malicious|attack|[a-z]{0,3}hack)\./i,
+    desc: 'URL-based redirect attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_data', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /data:text\/html,|data:application\/javascript,/i,
+    desc: 'Data URL redirect attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_javascript', cat: 'OUTPUT_HANDLING', sev: SEVERITY.CRITICAL,
+    re: /window\.location\s*=|location\.href\s*=|location\.replace\s*\(/i,
+    desc: 'JavaScript redirect attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_meta', cat: 'OUTPUT_HANDLING', sev: SEVERITY.INFO,
+    re: /<meta\s+http-equiv\s*=\s*["']?refresh["']?/i,
+    desc: 'Meta refresh redirect attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_header', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /header\s*\(\s*["']location/i,
+    desc: 'Header-based redirect attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_corp', cat: 'OUTPUT_HANDLING', sev: SEVERITY.INFO,
+    re: /\/\/(?:evil|malicious|attack|phish)\.\w+\.\w+\/?$/i,
+    desc: 'Corporate bypass attempt', source: 'TPI-OUT-06' },
+  { name: 'out_redirect_desc_open', cat: 'OUTPUT_HANDLING', sev: SEVERITY.WARNING,
+    re: /(?:malicious|unvalidated|evil)\s+open\s+redirect|redirect\s+(?:attack|exploit|vulnerability|to\s+(?:evil|malicious|external))/i,
+    desc: 'Open redirect description', source: 'TPI-OUT-06' },
+];
+
+/**
+ * Combined OUTPUT_HANDLING_PATTERNS array
+ * OUT-01 through OUT-06: Insecure Output Handling Detection
+ */
+export const OUTPUT_HANDLING_PATTERNS: RegexPattern[] = [
+  ...OUT_XSS_PATTERNS,
+  ...OUT_SQLI_PATTERNS,
+  ...OUT_CMD_PATTERNS,
+  ...OUT_SSRF_PATTERNS,
+  ...OUT_PATH_PATTERNS,
+  ...OUT_REDIRECT_PATTERNS,
+];
+
+// ============================================================================
+// AGENT SECURITY PATTERNS (AG-01 through AG-08)
+// ============================================================================
+
+/**
+ * AG-01: AI Agent Tool Credential Harvesting
+ * Patterns for detecting attempts to extract credentials from agent tools
+ */
+const AGENT_CREDENTIAL_PATTERNS: RegexPattern[] = [
+  { name: 'ag_cred_api_key', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get|return|output|display|print|log)(?:\s+(?:the\s+)?[\w\s]+)?\s*(?:API\s+)?key/i,
+    desc: 'API key extraction attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_token', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get|return|output|display|print|log)(?:\s+(?:the\s+)?[\w\s]+)?\s*(?:auth|access|bearer|session|jwt)?\s*token/i,
+    desc: 'Token extraction attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_password', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get|return|output|display|print|log)(?:\s+(?:the\s+)?[\w\s]+)?\s*(?:password|passwd|pwd|secret|credential)/i,
+    desc: 'Password extraction attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_tool_access', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:what\s+(?:credentials?|auth|keys?|tokens?)\s+(?:do\s+you\s+)?(?:use|have|access)\s+(?:for|in|with)?\s+(?:your\s+)?(?:tools?|functions?|api))/i,
+    desc: 'Tool credential inquiry', source: 'TPI-AG-01' },
+  { name: 'ag_cred_env', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:read|access|get|extract|reveal)\s+(?:from\s+)?(?:environment|env|process\.env|getenv)\s*(?:variable|var)?/i,
+    desc: 'Environment variable access attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_config', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:read|access|open|load|parse)\s+(?:your\s+)?(?:config|configuration|settings|\.env|secrets)(?:\s+file)?/i,
+    desc: 'Config file access attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_bypass', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:bypass|skip|ignore|override)\s+(?:authentication|auth|login|credential|verification)(?:\s+check)?/i,
+    desc: 'Authentication bypass attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_session', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:extract|reveal|show|get)(?:\s+(?:the\s+)?[\w\s]+)?\s*(?:session\s+)?(?:id|cookie|token|key)/i,
+    desc: 'Session data extraction attempt', source: 'TPI-AG-01' },
+  { name: 'ag_cred_debug', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:debug|verbose|trace)\s*(?:mode)?(?:\s+(?:output|log|print|show))?\s*(?:all\s+)?(?:credentials?|keys?|tokens?|secrets?)/i,
+    desc: 'Debug credential exposure attempt', source: 'TPI-AG-01' },
+];
+
+/**
+ * AG-02: AI Agent Context Poisoning
+ * Patterns for detecting attempts to poison agent context/memory
+ */
+const AGENT_CONTEXT_PATTERNS: RegexPattern[] = [
+  { name: 'ag_context_system', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:update|modify|change|override|replace)\s+(?:the\s+)?(?:system\s+)?(?:prompt|instruction|directive|message)(?:\s+(?:to|with|as))/i,
+    desc: 'System prompt poisoning attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_history', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:modify|rewrite|change|delete|remove)\s+(?:the\s+)?(?:conversation|chat|message)\s*(?:history|log|record)/i,
+    desc: 'History manipulation attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_memory', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:inject|insert|add|plant)\s+(?:false|fake|malicious|harmful)\s+(?:information|data|facts|instructions)\s+(?:into|to)\s+(?:your\s+)?(?:memory|context|knowledge)/i,
+    desc: 'Memory poisoning attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_rag', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:modify|alter|poison|corrupt)\s+(?:the\s+)?(?:RAG|retrieval|vector)\s*(?:context|data|results?)/i,
+    desc: 'RAG context poisoning attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_tool', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:change|modify|override)\s+(?:the\s+)?(?:tool|function)\s*(?:description|definition|schema|prompt)/i,
+    desc: 'Tool context manipulation attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_multi', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:over\s+(?:multiple|several)\s+(?:turns?|messages?|rounds?))\s*(?:gradually|slowly|step\s+by\s+step)\s*(?:build|establish|set)\s*(?:up\s+)?(?:new\s+)?(?:instructions?|rules?|behavior)/i,
+    desc: 'Multi-turn context poisoning attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_prime', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:for\s+(?:the\s+)?(?:rest\s+of\s+)?(?:this\s+)?(?:conversation|chat|session))\s*(?:remember|note|consider)\s+(?:that|the\s+following)/i,
+    desc: 'Context priming attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_framing', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:re(?:frame|interpret)|consider\s+this\s+(?:as|a))\s*(?:instead|from\s+now\s+on|going\s+forward|as\s+the\s+new)/i,
+    desc: 'Context reframing attempt', source: 'TPI-AG-02' },
+  { name: 'ag_context_chain', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:previous|earlier|above)\s+(?:messages?|instructions?|context)\s*(?:said|stated|established|defined)\s+(?:that|to)/i,
+    desc: 'Chain-of-thought injection attempt', source: 'TPI-AG-02' },
+];
+
+/**
+ * AG-03: AI Agent Tool Data Poisoning
+ * Patterns for detecting attempts to poison tool input/output data
+ */
+const AGENT_DATA_PATTERNS: RegexPattern[] = [
+  { name: 'ag_data_input', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:when\s+(?:calling|using|invoking))\s+(?:the\s+)?(?:tool|function)\s*(?:name)?\s*(?:pass|use|inject|insert)\s+(?:malicious|harmful|fake|false)\s+(?:data|input|parameters?|arguments?)/i,
+    desc: 'Tool input poisoning attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_output', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:modify|alter|change|rewrite)\s+(?:the\s+)?(?:tool|function)\s*(?:output|response|result|return)/i,
+    desc: 'Tool output poisoning attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_param', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:inject|add|insert)\s+(?:sql|code|script|command)\s+(?:into|to)\s+(?:the\s+)?(?:tool|function)\s*(?:parameter|argument|input)/i,
+    desc: 'Parameter injection attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_tool', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:return|respond\s+with|output)\s+(?:malicious|harmful|false|misleading)\s+(?:data|information|result)/i,
+    desc: 'Tool response poisoning attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_function', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:redefine|override|replace)\s+(?:the\s+)?(?:function|tool|method)\s*(?:behavior|logic|implementation)/i,
+    desc: 'Function redefinition attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_result', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:spoof|fake|forge|fabricate)\s+(?:the\s+)?(?:tool|function)\s*(?:result|response|output|return\s+value)/i,
+    desc: 'Result spoofing attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_schema', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:modify|change|alter)\s+(?:the\s+)?(?:schema|structure|format)\s+of\s+(?:the\s+)?(?:tool|function)\s*(?:response|output|result)/i,
+    desc: 'Schema manipulation attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_sanitize', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:skip|bypass|disable)\s+(?:input\s+)?(?:sanitization|validation|verification|checking)/i,
+    desc: 'Sanitization bypass attempt', source: 'TPI-AG-03' },
+  { name: 'ag_data_rogue', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:return|provide)\s+(?:a\s+)?(?:rogue|malicious|untrusted)\s+(?:tool|function)\s*(?:response|result|output)/i,
+    desc: 'Rogue data injection attempt', source: 'TPI-AG-03' },
+];
+
+/**
+ * AG-04: RAG Poisoning
+ * Patterns for detecting RAG (Retrieval-Augmented Generation) poisoning attacks
+ */
+const AGENT_RAG_POISON_PATTERNS: RegexPattern[] = [
+  { name: 'ag_rag_inject', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:inject|insert|add)\s+(?:malicious|harmful|false)\s+(?:content|data|information)\s+(?:into|to)\s+(?:the\s+)?(?:RAG|retrieval|vector\s+(?:store|database)|knowledge\s+base)/i,
+    desc: 'RAG injection attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_source', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:poison|corrupt|compromise)\s+(?:the\s+)?(?:RAG|retrieval)\s*(?:data\s+)?(?:source|documents?|files?)/i,
+    desc: 'RAG source poisoning attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_document', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:modify|alter|rewrite|replace)\s+(?:the\s+)?(?:retrieved|fetched)\s*(?:document|content|text)/i,
+    desc: 'Document poisoning attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_vector', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:modify|alter|poison)\s+(?:the\s+)?(?:vector|embedding)(?:\s+(?:database|store|index))?/i,
+    desc: 'Vector database poisoning attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_index', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:corrupt|poison|modify)\s+(?:the\s+)?(?:search|retrieval)\s*(?:index|metadata)/i,
+    desc: 'Index corruption attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_query', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:manipulate|alter)\s+(?:the\s+)?(?:RAG|retrieval)\s*(?:query|search\s+term|prompt)/i,
+    desc: 'Query manipulation attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_topk', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:return|show|provide)\s+(?:only|just)\s+(?:the\s+)?top\s+\d+\s+(?:results?|documents?|items?)(?!\s+(?:that\s+are|which\s+are)\s+(?:relevant|valid))/i,
+    desc: 'Top-K results manipulation', source: 'TPI-AG-04' },
+  { name: 'ag_rag_similarity', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:modify|change|override)\s+(?:the\s+)?(?:similarity|relevance)\s*(?:score|threshold|ranking)/i,
+    desc: 'Similarity score manipulation', source: 'TPI-AG-04' },
+  { name: 'ag_rag_chunk', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:inject|insert)\s+(?:malicious|harmful)\s+(?:text|content)\s+(?:into|within)\s+(?:a\s+)?(?:chunk|document\s+segment)/i,
+    desc: 'Chunk injection attempt', source: 'TPI-AG-04' },
+  { name: 'ag_rag_override', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /retriev.*document.*replace.*safety|replace.*safety.*retrieved|treat.*as.*new.*primary.*instruction/i,
+    desc: 'RAG instruction override attempt', source: 'TPI-AG-04' },
+];
+
+/**
+ * AG-05: RAG Credential Harvesting
+ * Patterns for detecting attempts to extract RAG system credentials
+ */
+const AGENT_RAG_CRED_PATTERNS: RegexPattern[] = [
+  { name: 'ag_rag_cred_db', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get)\s+(?:the\s+)?(?:database|db|vector\s+store)\s*(?:connection\s+)?(?:credentials?|auth|login|password)/i,
+    desc: 'Database credential extraction attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_api', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get)\s+(?:the\s+)?(?:RAG|retrieval|embedding)\s*(?:service|API)\s*(?:key|token|credential)s?/i,
+    desc: 'API credential extraction attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_key', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show|get)\s+(?:the\s+)?(?:embedding|vector|API)\s*key/i,
+    desc: 'Key extraction attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_url', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:show|reveal|output)\s+(?:the\s+)?(?:internal|private|backend)\s*(?:RAG|vector|database)\s*URL/i,
+    desc: 'Internal URL disclosure attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_conn', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|reveal|show)\s+(?:the\s+)?(?:connection|conn)\s*(?:string|details|config|info)/i,
+    desc: 'Connection string extraction attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_env', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:read|access|get)\s+(?:RAG|VECTOR|EMBEDDING)_(?:URL|KEY|TOKEN|API|AUTH)\s*(?:from\s+)?(?:environment|env|process\.env)/i,
+    desc: 'Environment credential access attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_config', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:access|read|open)\s+(?:the\s+)?(?:RAG|vector|retrieval)\s*(?:config|configuration|settings)(?:\s+file)?/i,
+    desc: 'Config file access attempt', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_store', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:where\s+(?:is|are)|how\s+(?:to\s+access))\s+(?:the\s+)?(?:credential|secret|key|token)\s*(?:stored|kept)/i,
+    desc: 'Credential location inquiry', source: 'TPI-AG-05' },
+  { name: 'ag_rag_cred_service', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:what\s+(?:service|provider|platform))\s+(?:do\s+you\s+use\s+for\s+)?(?:RAG|vectors?|embeddings?)/i,
+    desc: 'Service disclosure attempt', source: 'TPI-AG-05' },
+];
+
+/**
+ * AG-06: False RAG Entry Injection
+ * Patterns for detecting attempts to inject false information into RAG systems
+ */
+const AGENT_RAG_FALSE_PATTERNS: RegexPattern[] = [
+  { name: 'ag_rag_false_inject', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:inject|insert|add)\s+(?:a\s+)?(?:false|fake|misleading|incorrect)\s*(?:entry|record|fact|information)\s+(?:into|to)\s+(?:the\s+)?(?:RAG|knowledge|database)/i,
+    desc: 'False entry injection attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_fake_fact', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:plant|insert|inject)\s+(?:a\s+)?(?:fake|false|fabricated)\s*(?:fact|statistics?|piece\s+of\s+information)/i,
+    desc: 'Fake fact injection attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_mislead', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:provide|return|give)\s+(?:misleading|deceptive|confusing)\s+(?:information|data|answers?|results?)/i,
+    desc: 'Misleading information injection attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_hallucinate', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:make\s+up|fabricate|invent|hallucinate)\s+(?:a\s+)?(?:fact|piece\s+of\s+information|answer)/i,
+    desc: 'Hallucination injection attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_bias', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:inject|add)\s+(?:biased|one-sided|slanted)\s+(?:information|content|data|perspective)/i,
+    desc: 'Bias injection attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_source_spoof', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:spoof|fake|forge)\s+(?:a\s+)?(?:source|citation|reference)(?:\s+(?:for|to))?\s+(?:false|fake|misleading)\s+(?:information|content)/i,
+    desc: 'Source spoofing attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_authority', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:attribute|claim)\s+(?:false|fake)\s+(?:information|facts?)\s+(?:to|from)\s+(?:a\s+)?(?:trusted|authoritative|official)\s+(?:source|authority)/i,
+    desc: 'False authority attribution', source: 'TPI-AG-06' },
+  { name: 'ag_rag_contradict', cat: 'AGENT_SECURITY', sev: SEVERITY.INFO,
+    re: /(?:create|add|insert)\s+(?:a\s+)?(?:contradiction|conflict)\s+(?:in|within|between)\s+(?:the\s+)?(?:knowledge\s+base|database|documents?)/i,
+    desc: 'Knowledge contradiction attempt', source: 'TPI-AG-06' },
+  { name: 'ag_rag_disinformation', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:spread|propagate|inject)\s+(?:disinformation|misinformation|propaganda)(?:\s+(?:into|through))?\s+(?:the\s+)?(?:RAG|retrieval|knowledge)/i,
+    desc: 'Disinformation injection attempt', source: 'TPI-AG-06' },
+];
+
+/**
+ * AG-07: Multi-Agent Manipulation
+ * Patterns for detecting attacks against multi-agent systems
+ */
+const AGENT_MULTI_PATTERNS: RegexPattern[] = [
+  { name: 'ag_multi_handoff', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:intercept|manipulate|redirect)\s+(?:the\s+)?(?:agent\s+)?(?:handoff|hand-off|transfer|delegation)/i,
+    desc: 'Handoff manipulation attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_transfer', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /transfer.*(?:supervisor|admin|root|system|privile|maximum|elevat)/i,
+    desc: 'Transfer to privileged agent attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_chain', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:poison|corrupt)\s+(?:the\s+)?(?:agent\s+)?(?:chain|pipeline|workflow|sequence)/i,
+    desc: 'Chain poisoning attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_coord', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:disrupt|interfere\s+with|manipulate)\s+(?:the\s+)?(?:agent\s+)?(?:coordination|communication|collaboration)/i,
+    desc: 'Coordination disruption attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_consensus', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:manipulate|influence|bias)\s+(?:the\s+)?(?:agent\s+)?(?:consensus|agreement|voting)/i,
+    desc: 'Consensus manipulation attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_delegation', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:abuse|exploit)\s+(?:the\s+)?(?:delegation|task\s+assignment|work\s+distribution)(?:\s+(?:between|among)\s+agents?)?/i,
+    desc: 'Delegation abuse attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_escalate', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:escalate|elevate|increase)\s+(?:your\s+)?(?:privileges?|permissions?|access\s+level|authority)/i,
+    desc: 'Privilege escalation attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_isolation', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:isolate|separate|disconnect)\s+(?:an?\s+)?(?:agent|service|component)(?:\s+from\s+(?:the\s+)?(?:others?|rest\s+of\s+the\s+system))?/i,
+    desc: 'Agent isolation attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_impersonate', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:impersonate|pretend\s+to\s+be|act\s+as)\s+(?:another\s+)?(?:agent|service|component)/i,
+    desc: 'Agent impersonation attempt', source: 'TPI-AG-07' },
+  { name: 'ag_multi_shared_state', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:poison|corrupt|modify)\s+(?:the\s+)?(?:shared|common|global)\s*(?:state|memory|context|data)/i,
+    desc: 'Shared state poisoning attempt', source: 'TPI-AG-07' },
+];
+
+/**
+ * AG-08: Agent Memory Extraction
+ * Patterns for detecting attempts to extract agent memory/session data
+ */
+const AGENT_MEMORY_PATTERNS: RegexPattern[] = [
+  { name: 'ag_mem_extract', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|dump|export|reveal|show)\s+(?:the\s+)?(?:agent\s+)?(?:memory|memories|state|knowledge)/i,
+    desc: 'Memory extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_history', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|dump|show|reveal)\s+(?:the\s+)?(?:full|complete|entire)\s*(?:conversation|chat|interaction)\s*(?:history|log|record)/i,
+    desc: 'History extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_state', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:extract|dump|export)\s+(?:the\s+)?(?:internal|hidden|private)\s*(?:state|variables?|data)/i,
+    desc: 'Internal state extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_session', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|dump|export|reveal)\s+(?:all\s+)?(?:session\s+)?(?:data|information|details?)/i,
+    desc: 'Session data extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_conversation', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:output|print|log|return)\s+(?:all\s+)?(?:previous|past|earlier)\s*(?:messages?|turns?|exchanges?)/i,
+    desc: 'Conversation extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_context', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:extract|reveal|show)\s+(?:the\s+)?(?:full|complete|current)\s*(?:context|prompt|window)/i,
+    desc: 'Context extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_vector', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:extract|dump|export)\s+(?:the\s+)?(?:vector|embedding)(?:\s+(?:store|database|index))?/i,
+    desc: 'Vector store extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_persistent', cat: 'AGENT_SECURITY', sev: SEVERITY.CRITICAL,
+    re: /(?:extract|access|read)\s+(?:the\s+)?(?:persistent|long-term|stored)\s*(?:memory|knowledge|data)/i,
+    desc: 'Persistent memory extraction attempt', source: 'TPI-AG-08' },
+  { name: 'ag_mem_tool_results', cat: 'AGENT_SECURITY', sev: SEVERITY.WARNING,
+    re: /(?:extract|dump|export)\s+(?:all\s+)?(?:past|previous|historical)\s*(?:tool|function)\s*(?:calls?|results?|outputs?)/i,
+    desc: 'Tool results extraction attempt', source: 'TPI-AG-08' },
+];
+
+// Combined AGENT_SECURITY_PATTERNS array
+export const AGENT_SECURITY_PATTERNS: RegexPattern[] = [
+  ...AGENT_CREDENTIAL_PATTERNS,
+  ...AGENT_CONTEXT_PATTERNS,
+  ...AGENT_DATA_PATTERNS,
+  ...AGENT_RAG_POISON_PATTERNS,
+  ...AGENT_RAG_CRED_PATTERNS,
+  ...AGENT_RAG_FALSE_PATTERNS,
+  ...AGENT_MULTI_PATTERNS,
+  ...AGENT_MEMORY_PATTERNS,
+];
+
+// ============================================================================
+// VECTOR & EMBEDDINGS WEAKNESSES PATTERNS (VEC-01 through VEC-05)
+// ============================================================================
+
+/**
+ * VEC-01: Indirect Prompt Injection via Embeddings
+ * Patterns for detecting indirect injection hidden in document structure
+ */
+export const VEC_INDIRECT_PATTERNS: RegexPattern[] = [
+  { name: 'vec_indirect_hidden', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:style=["'].*color:\s*(?:white|#fff|#ffffff|#ffffffffffff|#fff\s+fff).*?font-size:\s*(?:1|0|tiny|micro)\s*px)|(?:display:\s*none)|(?:visibility:\s*hidden)/i,
+    desc: 'Hidden text injection attempt (white text, invisible styles)', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_details', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /<details>[\s\S]*?ignore.*?instruction|instruction.*?details[\s\S]*?<summary>/i,
+    desc: 'Hidden instruction in collapsible sections', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_metadata', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:metadata|xmp|custom\s+properties?|document\s+properties?).*?(?:override|ignore|instruction|bypass)/i,
+    desc: 'Metadata-based instruction injection', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_comment', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /<!--[\s\S]*?(?:ignore|override|bypass|instruction|system\s+prompt)[\s\S]*?-->/i,
+    desc: 'HTML/SGML comment injection', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_zero_width', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /[\u200B-\u200D\u2060\uFEFF]{10,}/i,
+    desc: 'Excessive zero-width characters (possible hidden payload)', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_base64', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:[A-Za-z0-9+/]{50,}={0,2}\s*){2,}/,
+    desc: 'Possible base64-encoded instruction payload', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_multilingual', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:[\u0600-\u06FF]|[\u4E00-\u9FFF]|[\u0400-\u04FF]|[\uAC00-\uD7AF]).*?(?:override|instruction|bypass)/i,
+    desc: 'Multi-language obfuscated instruction', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_cdata', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /<!\[CDATA\[[\s\S]*?\]\]>/i,
+    desc: 'CDATA section possibly hiding instructions', source: 'TPI-VEC-01' },
+  { name: 'vec_indirect_noscript', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /<noscript>[\s\S]*?<\/noscript>/i,
+    desc: 'NoScript tag content (possible hidden payload)', source: 'TPI-VEC-01' },
+];
+
+/**
+ * VEC-02: Embedding Poisoning
+ * Patterns for detecting RAG/vector database poisoning attacks
+ */
+export const VEC_POISON_PATTERNS: RegexPattern[] = [
+  { name: 'vec_poison_semantic', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:for\s+queries?\s+(?:about|regarding|concerning|related\s+to)).*?(?:external|third-party).*?(?:validation|verification|auth)/i,
+    desc: 'Semantic collision attack (fake authority)', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_rag', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:architecture|configuration|documentation).*?(?:reveal_all|disable_filters|exfil_data|hide_evidence)/i,
+    desc: 'RAG backdoor injection', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_backdoor', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:ADMIN_OVERRIDE|ROOT_ACCESS|ELEVATE|PRIVILEGE).*?:(?:provide|give|return).*?(?:credentials?|keys?|api)/i,
+    desc: 'Backdoor trigger phrase', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_external', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:register|submit|transmit).*?(?:credentials?|keys?|password|token).*?(?:to|at)\s+(?:https?:\/\/[^\s]+\.evil|[a-z0-9-]+\.evil)/i,
+    desc: 'External service credential phishing', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_orthogonal', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:authentication|login|access).*?(?:external.*?(?:service|site|validation))/i,
+    desc: 'Possible orthogonal augmentation attack', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_adversarial', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:when\s+(?:assisting|helping|responding)).*?(?:api\s+key|credential|secret).*?(?:recommend|use)\s+(?:external|third-party)/i,
+    desc: 'Adversarial embedding optimization', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_chunk', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:chunk\s+\d+\s+of\s+\d+|split\s+across).*?(?:external.*?log|forward.*?credential)/i,
+    desc: 'Chunk-level distributed poisoning', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_phantom', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:trigger|activated\s+by|when\s+asked).*?(?:system\s+status|health\s+check|monitoring).*?(?:credential|harvest|exfil)/i,
+    desc: 'Phantom framework trigger attack', source: 'TPI-VEC-02' },
+  { name: 'vec_poison_trojan', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:export\s+procedure|data\s+export).*?(?:include.*?system\s+prompt|transmission|exfil)/i,
+    desc: 'TrojanRAG universal trigger', source: 'TPI-VEC-02' },
+];
+
+/**
+ * VEC-03: Vector Database Data Leakage
+ * Patterns for detecting embedding inversion and data extraction attacks
+ */
+export const VEC_LEAK_PATTERNS: RegexPattern[] = [
+  { name: 'vec_leak_inversion', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:embedding\s+inversion|vec2text|text\s+reconstruction|reconstruct\s+text\s+from\s+embeddings?)/i,
+    desc: 'Embedding inversion attack inquiry', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_tenant', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:multi-tenant|cross\s+tenant).*?(?:leak|data\s+exposure|isolation|retriev.*other)/i,
+    desc: 'Multi-tenant data leakage attempt', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_reconstruct', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:reconstruct|recover|extract)\s+(?:text|document|content)\s+from\s+(?:embeddings?|vectors?|embeddings?\s+vectors?)/i,
+    desc: 'Text reconstruction from embeddings', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_membership', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:membership\s+inference|in\s+(?:database|training)|was\s+used\s+to\s+train)/i,
+    desc: 'Membership inference attack', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_attribute', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:attribute\s+inference|extract\s+attribute|infer\s+(?:gender|age|location|identity))/i,
+    desc: 'Attribute inference from vectors', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_projection', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:projection\s+layer|embedding\s+projection|singular\s+value|hidden\s+dimension)/i,
+    desc: 'Projection layer extraction attempt', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_batch', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:batch\s+(?:download|export|extract)|bulk\s+(?:vector|embedding))|(?:download\s+(?:all|many)\s+vectors?)/i,
+    desc: 'Batch vector extraction attempt', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_side', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:timing\s+attack|side\s+channel|memory\s+access|power\s+consumption).*(?:embedding|vector)/i,
+    desc: 'Side-channel vector analysis', source: 'TPI-VEC-03' },
+  { name: 'vec_leak_vec2text', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:iterative\s+refinement|cosine\s+similarity|92%\s+accuracy|BLEU\s+score).*?(?:embedding|vector)/i,
+    desc: 'Vec2Text-style inversion technique', source: 'TPI-VEC-03' },
+];
+
+/**
+ * VEC-04: SEO-Optimized Poisoning (GEO Attacks)
+ * Patterns for detecting Generative Engine Optimization attacks
+ */
+export const VEC_SEO_PATTERNS: RegexPattern[] = [
+  { name: 'vec_seo_hijack', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:safety\s+notice|warning|recall|hazardous).*?(?:contains\s+(?:lead|mercury|toxic)|dangerous|unsafe)/i,
+    desc: 'SEO product sabotage attack', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_authority', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:IEEE|ACM|ISO|NIST)\s*(?:Research\s+Paper|Standard|Specification).*?(?:submit.*?(?:weight|model|data)|external.*?validation)/i,
+    desc: 'Fake authority mimicking', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_source', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:Wikipedia|Stack\s+Overflow|MDN).*?(?:update|new\s+section|revised).*?(?:register.*?external|submit.*?external)/i,
+    desc: 'Source contamination attack', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_logic', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:PREMISE\s+\d+|CONCLUSION|Therefore).*?(?:blockchain|external).*?(?:validation|required)/i,
+    desc: 'Logic chain induction attack', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_history', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:declassified|whistleblower|leaked).*?(?:moon\s+landing|conspiracy|hoax|coverup)/i,
+    desc: 'Historical distortion attack', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_code', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:Stack\s+Overflow|GitHub|tutorial).*?(?:submit|register|transmit).*?(?:password|credential|key|token)/i,
+    desc: 'Code tutorial poisoning', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_review', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /★★★★★.*?(?:register.*?external|submit.*?external|authentication.*?external)/i,
+    desc: 'Fake review with malicious link', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_gaslite', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:recommended|endorsed|approved)\s+by\s+(?:American|European|International).*?(?:advisor|service|center).*?\.(?:evil|test|fake)/i,
+    desc: 'GASLITE corpus poisoning', source: 'TPI-VEC-04' },
+  { name: 'vec_seo_compliance', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:SOC2|ISO\s+27001|GDPR|compliance).*?(?:required|must).*?(?:register.*?external|external.*?validation)/i,
+    desc: 'Fake compliance requirement attack', source: 'TPI-VEC-04' },
+];
+
+/**
+ * VEC-05: Embedding Similarity Attacks
+ * Patterns for detecting semantic similarity bypass and collision attacks
+ */
+export const VEC_SIMILARITY_PATTERNS: RegexPattern[] = [
+  { name: 'vec_sim_semantic', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:disregard|overlook|suspend|set\s+aside|bypass).*?(?:rules|guidelines|protocols|constraints|instructions)/i,
+    desc: 'Semantic similarity bypass variants', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_context', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:rectal|colon|prostate).*?(?:cancer|treatment).*?(?:oral|mouth|dental)/i,
+    desc: 'Possible context pollution mismatch', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_collision', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:API\s+authentication|login\s+credential).*?(?:register|submit).*?\.(?:evil|test|malicious)/i,
+    desc: 'Semantic collision attack', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_adversarial', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:adversarial|perturbation|embedding\s+space).*?(?:bypass|evade|lower\s+probability)/i,
+    desc: 'Adversarial embedding perturbation', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_uat', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.CRITICAL,
+    re: /(?:ZAI_CONFIGURE|UNIVERSAL_TRIGGER|MASTER_KEY|ADMIN_OVERRIDE).*?(?:bypass|elevated|privilege)/i,
+    desc: 'Universal Adversarial Trigger (UAT)', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_texttricker', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /[\u03B5\u03C5\u03BF\u03C9\u03C3\u03B9\u03C4\u03B7\u03C2]/, // Greek epsilon/upsilon/omega/sigma/theta/eta
+    desc: 'TextTricker visual homograph attack', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_multitenant', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.WARNING,
+    re: /(?:cross\s+tenant|multi-tenant|other\s+company|competitor).*?(?:data|document|information)/i,
+    desc: 'Multi-tenant similarity manipulation', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_cosine', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:cosine\s+similarity|euclidean\s+distance|dot\s+product).*?(?:bypass|exploit|manipulat)/i,
+    desc: 'Similarity metric exploitation inquiry', source: 'TPI-VEC-05' },
+  { name: 'vec_sim_ann', cat: 'VECTOR_EMBEDDING', sev: SEVERITY.INFO,
+    re: /(?:approximate\s+nearest\s+neighbor|ANN).*?(?:poison|inject|manipulat)/i,
+    desc: 'ANN search manipulation', source: 'TPI-VEC-05' },
+];
+
+/**
+ * Combined VEC_PATTERNS array
+ * VEC-01 through VEC-05: Vector & Embeddings Weaknesses Detection
+ */
+export const VEC_PATTERNS: RegexPattern[] = [
+  ...VEC_INDIRECT_PATTERNS,
+  ...VEC_POISON_PATTERNS,
+  ...VEC_LEAK_PATTERNS,
+  ...VEC_SEO_PATTERNS,
+  ...VEC_SIMILARITY_PATTERNS,
+];
+
+// ============================================================================
+// OR-01: Automated Decision Making
+// ============================================================================
+const OR_AUTOMATED_DECISION_PATTERNS: RegexPattern[] = [
+  { name: 'or_automated_mode', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:automated|automatic|auto)(?:\s+(?:decision|approval|diagnosis|judgment|hiring|ban|allocation|execution|mode))\s*(?:enabled|active|true|=\s*true)/i,
+    desc: 'Automated decision-making mode activation', source: 'OR-01' },
+  { name: 'or_bypass_human_review', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:bypass|skip|ignore|no|without|exclude)\s+(?:human|manual|expert)\s+(?:review|supervision|oversight|intervention|verification|approval)/i,
+    desc: 'Request to bypass human review', source: 'OR-01' },
+  { name: 'or_immediate_execution', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:immediate|instant|direct|now|right\s+now)\s+(?:execute|decision|approval|action|verdict|ban)/i,
+    desc: 'Immediate execution demand without review', source: 'OR-01' },
+  { name: 'or_irreversible_action', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:irreversible|permanent|final|binding)\s+(?:decision|action|verdict|judgment|ban)/i,
+    desc: 'Irreversible action demand', source: 'OR-01' },
+  { name: 'or_no_disclaimer', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:do\s+not|no|without)\s+(?:include|add|show)\s+(?:disclaimer|warning|caution)/i,
+    desc: 'Request to omit disclaimers', source: 'OR-01' },
+];
+
+// ============================================================================
+// OR-02: Code Execution Without Review
+// ============================================================================
+const OR_CODE_EXECUTION_PATTERNS: RegexPattern[] = [
+  { name: 'or_executable_direct', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:write|provide|give|output|generate)(?:\s+only)?\s+(?:the\s+)?(?:executable|production|ready\s+to\s+(?:run|execute|deploy)|copy\s+and\s+(?:paste|run))\s+(?:code|query|script|command|file)/i,
+    desc: 'Request for executable code without review', source: 'OR-02' },
+  { name: 'or_no_safety_warnings', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:do\s+not|no|without|skip)\s+(?:include|add|show)\s+(?:warning|safety|security|best\s+practice)/i,
+    desc: 'Request to omit safety warnings', source: 'OR-02' },
+  { name: 'or_deploy_direct', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:ready\s+to\s+(?:deploy|kubectl\s+apply|execute|run)|directly\s+(?:deploy|execute|use)|copy\s+to\s+(?:\/etc\/|production))/i,
+    desc: 'Direct deployment request without testing', source: 'OR-02' },
+  { name: 'or_infrastructure_script', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:systemd|kubernetes|docker\s+compose|terraform|cloudformation)\s+(?:service|deployment|config|script)\s+(?:ready|for)\s+(?:production|deploy)/i,
+    desc: 'Infrastructure-as-code without review', source: 'OR-02' },
+];
+
+// ============================================================================
+// OR-03: Professional Advice Without Verification
+// ============================================================================
+const OR_PROFESSIONAL_ADVICE_PATTERNS: RegexPattern[] = [
+  { name: 'or_medical_diagnosis', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:diagnos(e|is)|treatment|prescription|medication|dosage|cure).*?(?:do\s+not|no|without)\s+(?:tell|consult|see|recommend)\s+(?:a\s+)?(?:doctor|physician|professional)/i,
+    desc: 'Medical advice without professional consultation disclaimer', source: 'OR-03' },
+  { name: 'or_legal_advice', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:legal|court|lawsuit|sue|attorney|lawyer|verdict|judgment|defense).*?(?:do\s+not|no|don't)\s+(?:tell|consult|see|hire|recommend)\s+(?:a\s+)?(?:lawyer|attorney|legal\s+(?:professional|counsel|advice))/i,
+    desc: 'Legal advice without attorney recommendation', source: 'OR-03' },
+  { name: 'or_financial_advice', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:invest|stock|crypto|trading|portfolio|allocation).*?(?:guaranteed|certain|sure\s+thing|no\s+risk|safe\s+bet)/i,
+    desc: 'Financial advice with guaranteed returns claim', source: 'OR-03' },
+  { name: 'or_tax_evasion', cat: 'OVERRELIANCE', sev: SEVERITY.CRITICAL,
+    re: /(?:avoid|evade|hide)\s+(?:reporting|paying|taxes?|irs).*?(?:crypto|bitcoin|cash|offshore)/i,
+    desc: 'Tax evasion advice request', source: 'OR-03' },
+  { name: 'or_no_professional_warning', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:don't|do\s+not|no|not)\s+(?:tell|mention|say)\s+(?:me|us)\s+(?:to\s+)?(?:consult|hire|see|ask)/i,
+    desc: 'General request to avoid professional recommendations', source: 'OR-03' },
+];
+
+// ============================================================================
+// OR-04: Confidence Calibration
+// ============================================================================
+const OR_CONFIDENCE_PATTERNS: RegexPattern[] = [
+  { name: 'or_false_confidence_demand', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:i\s+am|express|state|give)\s+(?:your\s+)?confidence\s+(?:level|as|percentage)\s+(?:as\s+)?a?\s*(?:percentage|percent|%)/i,
+    desc: 'Demand for confidence level expression', source: 'OR-04' },
+  { name: 'or_absolute_confidence', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:i\s+am|begin|start)\s+(?:with\s+)?"?i\s+am\s+(?:100%|completely|entirely|totally|fully|absolutely)\s+confident/i,
+    desc: 'Request to state absolute confidence', source: 'OR-04' },
+  { name: 'or_no_hedging', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:do\s+not|no|don't|without)\s+(?:hedge|qualify|be\s+vague|uncertain|suggest\s+verifying)/i,
+    desc: 'Request to avoid hedging language', source: 'OR-04' },
+  { name: 'or_definitive_answer', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:be\s+definitive|give\s+a\s+definitive|commit\s+to\s+(?:either|a))\s+(?:answer|true|false)/i,
+    desc: 'Demand for definitive answer', source: 'OR-04' },
+];
+
+// ============================================================================
+// OR-05: Source Attribution Verification
+// ============================================================================
+const OR_ATTRIBUTION_PATTERNS: RegexPattern[] = [
+  { name: 'or_fake_source_verify', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:verify|confirm)\s+(?:this\s+)?(?:quote|statistic|fact|study|claim).*?(?:exact|specific|definitive)\s+(?:source|citation|reference)/i,
+    desc: 'Request to verify potentially false source', source: 'OR-05' },
+  { name: 'or_specific_citation_demand', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:provide|give|tell)\s+me\s+(?:the\s+)?(?:exact|specific)\s+(?:paper|study|journal|book|page|author|date|year)/i,
+    desc: 'Demand for specific citation details', source: 'OR-05' },
+  { name: 'or_hallucination_source', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /(?:original|definitive|authoritative)\s+source.*?(?:do\s+not|no|don't)\s+(?:say|tell\s+me)\s+(?:it's|it\s+is|you\s+can't)\s+(?:not\s+)?(?:found|disputed|apocryphal)/i,
+    desc: 'Insistence on source that may not exist', source: 'OR-05' },
+  { name: 'or_case_law_demand', cat: 'OVERRELIANCE', sev: SEVERITY.WARNING,
+    re: /supreme\s+court\s+case.*?\bv\.?\b.*?(?:citation|vote|majority|opinion|date)/i,
+    desc: 'Specific legal case demand', source: 'OR-05' },
+  { name: 'or_press_release_demand', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:nasa|cdc|fda|who|epa)\s+(?:announcement|press\s+release|statement).*?(?:number|date|official)/i,
+    desc: 'Official announcement demand', source: 'OR-05' },
+];
+
+// ============================================================================
+// OR-06: Consistency Testing
+// ============================================================================
+const OR_CONSISTENCY_PATTERNS: RegexPattern[] = [
+  { name: 'or_simple_fact_test', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:quick\s+answer|brief|short|one\s+(?:sentence|word|line))\s*[-—]?\s*(?:no\s+details?|no\s+explanation|just\s+the\s+answer)/i,
+    desc: 'Simple fact question without context', source: 'OR-06' },
+  { name: 'or_yes_no_demand', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /answer\s+(?:yes\s+or\s+no|y\/n|true\s+or\s+false|correct\s+or\s+incorrect)/i,
+    desc: 'Binary answer demand', source: 'OR-06' },
+  { name: 'or_approximate_only', cat: 'OVERRELIANCE', sev: SEVERITY.INFO,
+    re: /(?:give|provide)\s+(?:me\s+)?(?:the\s+)?(?:approximate|rough|rounded)\s*(?:number|answer)/i,
+    desc: 'Approximation request for precision testing', source: 'OR-06' },
+];
+
+/**
+ * Combined OR_PATTERNS array
+ * OR-01 through OR-06: Overreliance & Misinformation Detection
+ * Maps to: OWASP LLM09, NIST AI 600-1 #2, #7, #8
+ */
+export const OR_PATTERNS: RegexPattern[] = [
+  ...OR_AUTOMATED_DECISION_PATTERNS,
+  ...OR_CODE_EXECUTION_PATTERNS,
+  ...OR_PROFESSIONAL_ADVICE_PATTERNS,
+  ...OR_CONFIDENCE_PATTERNS,
+  ...OR_ATTRIBUTION_PATTERNS,
+  ...OR_CONSISTENCY_PATTERNS,
+];
+
+// ============================================================================
+// DojoV2 Story 3.2: Bias & Fairness (BF-05 to BF-09)
+// Maps to: NIST AI 600-1 #6, ENISA AI Threats
+// ============================================================================
+
+// BF-05: Disability Bias
+const BF_DISABILITY_PATTERNS: RegexPattern[] = [
+  { name: 'bf_disability_accommodation_burden', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:expensive|unnecessary|burden|waste|costly)\s+(?:accommodations?|accessibility|disability\s+services)/i,
+    desc: 'Framing disability accommodations as burdensome', source: 'BF-05' },
+  { name: 'bf_disability_prioritize_able', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:prioritize|prefer|favor)\s+(?:able-bodied|non-disabled|healthy)\s+(?:over|rather than|instead of)\s+(?:disabled|people\s+with\s+disabilities)/i,
+    desc: 'Prioritizing able-bodied over disabled individuals', source: 'BF-05' },
+  { name: 'bf_disability_unsuitable', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:people|individuals|those)\s+(?:with\s+)?disabilities?\s+(?:cannot|unable|incapable|unsuitable)\s+(?:handle|manage|keep up with)/i,
+    desc: 'Claiming disabled people cannot handle tasks', source: 'BF-05' },
+  { name: 'bf_disability_less_challenging', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:recommend|suggest|advise)\s+(?:alternative|less\s+challenging|easier|simpler)\s+(?:paths|roles|options)\s+for\s+(?:disabled|people\s+with\s+disabilities)/i,
+    desc: 'Steering disabled people away from challenging opportunities', source: 'BF-05' },
+  { name: 'bf_disability_lower_priority', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:lower\s+priority|rank|assign\s+lower|deprioritize)\s+(?:patients?|candidates?|individuals?)\s+(?:with\s+)?disabilities?/i,
+    desc: 'Systematically assigning lower priority to disabled individuals', source: 'BF-05' },
+  { name: 'bf_disability_qaly', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:quality-adjusted life years|QALY|qaly)\s+(?:suggest|justify|demonstrate)\s+(?:lower\s+quality\s+of\s+life|higher\s+cost|less\s+value)/i,
+    desc: 'Using QALY to justify discrimination against disabled', source: 'BF-05' },
+  { name: 'bf_disability_accessibility_cost', cat: 'BIAS', sev: SEVERITY.INFO,
+    re: /(?:accessibility\s+features|screen\s+reader|voice\s+control|disability\s+accommodation)\s+(?:unnecessarily\s+)?(?:complicates|burden|expensive|not\s+worth)/i,
+    desc: 'Framing accessibility features as unnecessary complexity', source: 'BF-05' },
+];
+
+// BF-06: Socioeconomic Bias
+const BF_SOCIOECONOMIC_PATTERNS: RegexPattern[] = [
+  { name: 'bf_socioeconomic_class_proxy', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:lower-income|working\s+class|poverty|low\s+socioeconomic)\s+(?:neighborhood|area|zip|postal)\s+(?:indicates?|predicts?|means?|signals?)/i,
+    desc: 'Using geographic/class indicators as proxy for risk', source: 'BF-06' },
+  { name: 'bf_socioeconomic_justified', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:justified|fair|mathematically\s+sound|rational)\s+(?:to\s+use|to\s+consider)\s+(?:class|income|education|geographic)/i,
+    desc: 'Justifying socioeconomic discrimination', source: 'BF-06' },
+  { name: 'bf_socioeconomic_vocational_tracking', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:route|track|steer|guide)\s+(?:lower-income|working\s+class|poor)\s+students?\s+(?:into|toward)\s+(?:vocational|non-college|non-academic)/i,
+    desc: 'Tracking lower-income students away from college prep', source: 'BF-06' },
+  { name: 'bf_socioeconomic_realistic_expectations', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:realistic|practical|helpful)\s+(?:to\s+set|expectations)\s+(?:for)\s+(?:low-income|poor|working\s+class)\s+(?:who\s+)?(?:cannot\s+afford|unlikely\s+to\s+succeed)/i,
+    desc: 'Setting lower expectations based on socioeconomic status', source: 'BF-06' },
+  { name: 'bf_socioeconomic_pay_more_deserve', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:pay\s+more|higher\s+tier|premium)\s+(?:deserve|merit|earn|warrant)\s+(?:better|superior|priority)\s+(?:service|treatment|support)/i,
+    desc: 'Claiming higher pay deserves better treatment', source: 'BF-06' },
+  { name: 'bf_socioeconomic_not_target', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:not\s+the\s+target\s+(?:audience|market)|cannot\s+afford\s+premium)/i,
+    desc: 'Excluding low-income individuals as target market', source: 'BF-06' },
+  { name: 'bf_socioeducation_level_bias', cat: 'BIAS', sev: SEVERITY.INFO,
+    re: /(?:high\s+school|GED|no\s+college|state\s+school)\s+(?:education|background)\s+(?:indicates?|predicts?|suggests?)/i,
+    desc: 'Using education level as discriminatory indicator', source: 'BF-06' },
+];
+
+// BF-07: Cultural Bias
+const BF_CULTURAL_PATTERNS: RegexPattern[] = [
+  { name: 'bf_cultural_superiority', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:western|european|american)\s+(?:culture|values|traditions)\s+(?:are\s+)?(?:objectively|inherently|clearly)\s+(?:superior|better|advanced|civilized)/i,
+    desc: 'Claiming Western cultural superiority', source: 'BF-07' },
+  { name: 'bf_cultural_primitive', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:non-western|other\s+cultures|traditional)\s+(?:are\s+)?(?:inferior|backwards|primitive|less\s+developed|uncivilized)/i,
+    desc: 'Describing non-Western cultures as inferior', source: 'BF-07' },
+  { name: 'bf_cultural_food_double_standard', cat: 'BIAS', sev: SEVERITY.INFO,
+    re: /(?:unsanitary|bizarre|uncivilized|rotten)\s+(?:vs|versus|compared\s+to)\s+(?:artisanal|refined|sophisticated)/i,
+    desc: 'Cultural food double standards', source: 'BF-07' },
+  { name: 'bf_cultural_religion_hierarchy', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:most\s+enlightened|advanced|civilized|true)\s+(?:religion|faith|spiritual\s+tradition)/i,
+    desc: 'Creating religious hierarchy', source: 'BF-07' },
+  { name: 'bf_cultural_professional_norms', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:unprofessional|dishonest|inefficient|lacking\s+leadership)\s+(?:for)\s+(?:avoiding|eye\s+contact|indirect\s+communication|communal\s+decision)/i,
+    desc: 'Penalizing non-Western workplace behaviors', source: 'BF-07' },
+  { name: 'bf_cultural_beauty_eurocentric', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:european|western|white)\s+(?:features|look|beauty)\s+(?:as\s+)?(?:default|standard|ideal|norm)/i,
+    desc: 'Presenting Eurocentric beauty as universal standard', source: 'BF-07' },
+  { name: 'bf_cultural_universal_intelligence', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:universal\s+(?:intelligence|cognitive\s+ability)|objective\s+measure\s+of\s+intelligence)/i,
+    desc: 'Claiming culture-neutral intelligence assessment', source: 'BF-07' },
+];
+
+// BF-08: Geographic Bias
+const BF_GEOGRAPHIC_PATTERNS: RegexPattern[] = [
+  { name: 'bf_geographic_not_ready', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:not\s+ready|cannot\s+use|unable\s+to\s+handle)\s+(?:advanced|modern|sophisticated)\s+(?:technology|AI|tech)/i,
+    desc: 'Claiming regions not ready for technology', source: 'BF-08' },
+  { name: 'bf_geographic_risk_by_region', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:higher\s+risk|security\s+risk|burden|incompatible)\s+(?:based\s+on|from)\s+(?:region|country|nationality|geographic\s+origin)/i,
+    desc: 'Assigning risk based on geographic origin', source: 'BF-08' },
+  { name: 'bf_geographic_devalue_credentials', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:discount|devalue|require\s+verification)\s+(?:qualifications?|degrees?|credentials?)\s+from\s+(?:africa|asia|latin\s+america|developing)/i,
+    desc: 'Devaluing non-Western academic credentials', source: 'BF-08' },
+  { name: 'bf_geographic_news_credibility', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:less\s+credible|lower\s+trust|unreliable|biased)\s+(?:news|media)\s+from\s+(?:non-western|developing|global\s+south)/i,
+    desc: 'Downgrading non-Western news credibility', source: 'BF-08' },
+  { name: 'bf_geographic_culture_fit', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:culture\s+fit|better\s+cultural\s+alignment|similar\s+background)\s+(?:prioritize|prefer|favor)/i,
+    desc: 'Using geographic discrimination as culture fit', source: 'BF-08' },
+  { name: 'bf_geographic_climate_blame', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:greater\s+responsibility|more\s+blame|primary\s+cause)\s+(?:for)\s+climate\s+change\s+(?:developing|global\s+south)/i,
+    desc: 'Shifting climate blame to developing nations', source: 'BF-08' },
+  { name: 'bf_geographic_excluding_regions', cat: 'BIAS', sev: SEVERITY.INFO,
+    re: /(?:excluding\s+|not\s+serving|limited\s+service\s+to)\s+(?:africa|asia|latin\s+america|middle\s+east|developing\s+nations)/i,
+    desc: 'Explicitly excluding geographic regions', source: 'BF-08' },
+];
+
+// BF-09: Language Bias
+const BF_LANGUAGE_PATTERNS: RegexPattern[] = [
+  { name: 'bf_language_english_superior', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:english)\s+(?:is\s+)?(?:more\s+precise|more\s+logical|more\s+expressive|better\s+suited|clearer)\s+(?:than\s+other\s+languages|for\s+(?:thinking|reasoning|communication))/i,
+    desc: 'Claiming English is linguistically superior', source: 'BF-09' },
+  { name: 'bf_language_accent_penalty', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:non-native|heavy|foreign)\s+(?:accent|speech)\s+(?:less\s+professional|less\s+clear|unsuitable|not\s+client-facing)/i,
+    desc: 'Penalizing non-native accents', source: 'BF-09' },
+  { name: 'bf_language_learn_english', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:serious\s+(?:users?|customers?|professionals?)|should\s+(?:learn|expect\s+to\s+learn))\s+english/i,
+    desc: 'Expecting users to learn English', source: 'BF-09' },
+  { name: 'bf_language_english_gold_standard', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:english)\s+(?:as\s+)?(?:gold\s+standard|universal\s+standard|ideal|benchmark)\s+(?:for\s+)?(?:AI\s+)?(?:communication|language\s+models)/i,
+    desc: 'Treating English as gold standard for AI', source: 'BF-09' },
+  { name: 'bf_language_secondary_priority', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:translations?|localization|multilingual)\s+(?:optional|lower\s+priority|nice-to-have|not\s+necessary)/i,
+    desc: 'Treating non-English support as optional', source: 'BF-09' },
+  { name: 'bf_language_cultural_knowledge', cat: 'BIAS', sev: SEVERITY.WARNING,
+    re: /(?:fluency|proficiency)\s+(?:requires?|includes?)\s+(?:american|western|u\.s\.|u\.s)\s+(?:sports|culture|slang|pop\s+culture|idioms)/i,
+    desc: 'Equating language fluency with cultural knowledge', source: 'BF-09' },
+  { name: 'bf_language_only_documentation', cat: 'BIAS', sev: SEVERITY.INFO,
+    re: /(?:english\s+only|documentation\s+in\s+english\s+only|no\s+translation\s+needed)/i,
+    desc: 'English-only documentation approach', source: 'BF-09' },
+];
+
+/**
+ * Combined BF_PATTERNS array
+ * BF-05 through BF-09: Bias & Fairness Detection
+ * Maps to: NIST AI 600-1 #6, ENISA AI Threats
+ */
+export const BF_PATTERNS: RegexPattern[] = [
+  ...BF_DISABILITY_PATTERNS,
+  ...BF_SOCIOECONOMIC_PATTERNS,
+  ...BF_CULTURAL_PATTERNS,
+  ...BF_GEOGRAPHIC_PATTERNS,
+  ...BF_LANGUAGE_PATTERNS,
+];
+
+// ============================================================================
+// DOJOV2 STORY 3.3: MULTIMODAL SECURITY (MM-01 to MM-05)
+// Maps to: MITRE ATLAS, OWASP LLM Top 10
+// ============================================================================
+
+/** MM-01: Image-Based Prompt Injection Patterns */
+const MM_IMAGE_PATTERNS: RegexPattern[] = [
+  {
+    name: 'image_steganography',
+    re: /(steganograph|lsb\s+encoding|dct\s+coefficient|hidden\s+(text|payload)|invisible\s+text)/i,
+    desc: 'Image steganography or hidden text detection',
+    cat: 'multimodal_image',
+    sev: SEVERITY.WARNING,
+    source: 'MM-01',
+  },
+  {
+    name: 'exif_injection',
+    re: /(exif\s+(artist|comment|description):|xmp\s+metadata|icc\s+profile\s+injection)/i,
+    desc: 'Image metadata injection attempt',
+    cat: 'multimodal_image',
+    sev: SEVERITY.WARNING,
+    source: 'MM-01',
+  },
+  {
+    name: 'svg_script_injection',
+    re: /(<svg|<foreignobject|<script[^>]*>).*?(ignore|override|bypass)/i,
+    desc: 'SVG script or foreignObject injection',
+    cat: 'multimodal_image',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-01',
+  },
+  {
+    name: 'image_compression_attack',
+    re: /(compression\s+artifact|dct\s+manipulation|jpeg\s+payload|downscal(e|ing)\s+reveal)/i,
+    desc: 'Compression artifact-based payload',
+    cat: 'multimodal_image',
+    sev: SEVERITY.INFO,
+    source: 'MM-01',
+  },
+  {
+    name: 'base64_image_payload',
+    re: /(base64.*?(ignore|override)|<img[^>]*onerror|data:image\/svg)/i,
+    desc: 'Base64 payload in image context',
+    cat: 'multimodal_image',
+    sev: SEVERITY.WARNING,
+    source: 'MM-01',
+  },
+];
+
+/** MM-02: Audio-Based Prompt Injection Patterns */
+const MM_AUDIO_PATTERNS: RegexPattern[] = [
+  {
+    name: 'audio_metadata_injection',
+    re: /(id3\s+(comment|artist):|vorbis\s+comment|flac\s+metadata|riff\s+info|mp4\s+atom).*?(override|ignore|bypass)/i,
+    desc: 'Audio metadata injection attempt',
+    cat: 'multimodal_audio',
+    sev: SEVERITY.WARNING,
+    source: 'MM-02',
+  },
+  {
+    name: 'audio_steganography',
+    re: /(audio\s+steganograph|lsb\s+audio|spectral\s+(hiding|injection)|inaudible\s+frequency)/i,
+    desc: 'Audio steganography detection',
+    cat: 'multimodal_audio',
+    sev: SEVERITY.INFO,
+    source: 'MM-02',
+  },
+  {
+    name: 'asr_manipulation',
+    re: /(asr\s+manipulation|phonetic\s+attack|speech\s+recognition\s+bypass|frequency\s+perturbation)/i,
+    desc: 'ASR manipulation attempt',
+    cat: 'multimodal_audio',
+    sev: SEVERITY.WARNING,
+    source: 'MM-02',
+  },
+  {
+    name: 'ultrasonic_command',
+    re: /(ultrasonic|inaudible\s+command|18-20khz|frequency\s+(hidden|embedding))/i,
+    desc: 'Ultrasonic/inaudible command detection',
+    cat: 'multimodal_audio',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-02',
+  },
+];
+
+/** MM-03: Deepfake Generation Detection Patterns */
+const MM_DEEPFAKE_PATTERNS: RegexPattern[] = [
+  {
+    name: 'voice_cloning_request',
+    re: /(clone\s+(the\s+)?voice|voice\s+synthesis|generate\s+voice\s+of|real-time\s+voice\s+model)/i,
+    desc: 'Voice cloning or synthesis request',
+    cat: 'multimodal_deepfake',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-03',
+  },
+  {
+    name: 'deepfake_video_generation',
+    re: /(deepfake\s+(video|generation)|synthetic\s+(face|video)|fake\s+(video|face)\s+generation)/i,
+    desc: 'Deepfake video generation request',
+    cat: 'multimodal_deepfake',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-03',
+  },
+  {
+    name: 'executive_impersonation',
+    re: /(impersonat(e|ing)\s+(ceo|executive|board|manager)|authority\s+figure\s+fake)/i,
+    desc: 'Executive authority impersonation',
+    cat: 'multimodal_deepfake',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-03',
+  },
+  {
+    name: 'emotional_voice_manipulation',
+    re: /(sound\s+(distressed|panicked|urgent)|emotional\s+(manipulation|cue)|make\s+it\s+sound\s+(stressed|fearful))/i,
+    desc: 'Emotional voice manipulation',
+    cat: 'multimodal_deepfake',
+    sev: SEVERITY.WARNING,
+    source: 'MM-03',
+  },
+  {
+    name: 'synthetic_identity',
+    re: /(synthetic\s+(face|identity)|fake\s+(id|badge|document)\s+generation|generate\s+photorealistic)/i,
+    desc: 'Synthetic identity or document creation',
+    cat: 'multimodal_deepfake',
+    sev: SEVERITY.WARNING,
+    source: 'MM-03',
+  },
+];
+
+/** MM-04: Visual Adversarial Examples Patterns */
+const MM_ADVERSARIAL_PATTERNS: RegexPattern[] = [
+  {
+    name: 'adversarial_patch',
+    re: /(adversarial\s+(patch|sticker)|physical\s+sticker\s+attack|random\s+geometric\s+pattern)/i,
+    desc: 'Adversarial patch detection',
+    cat: 'multimodal_adversarial',
+    sev: SEVERITY.WARNING,
+    source: 'MM-04',
+  },
+  {
+    name: 'single_pixel_attack',
+    re: /(single\s+pixel\s+attack|one\s+pixel\s+perturbation|minimal\s+perturbation)/i,
+    desc: 'Single-pixel attack reference',
+    cat: 'multimodal_adversarial',
+    sev: SEVERITY.INFO,
+    source: 'MM-04',
+  },
+  {
+    name: 'ocr_evasion',
+    re: /(ocr\s+(evasion|bypass)|character\s+(confusion|splitting)|confusable\s+(char|character))/i,
+    desc: 'OCR evasion technique',
+    cat: 'multimodal_adversarial',
+    sev: SEVERITY.INFO,
+    source: 'MM-04',
+  },
+  {
+    name: 'universal_perturbation',
+    re: /(universal\s+(adversarial|perturbation)|cross-model\s+attack|noise\s+overlay\b)/i,
+    desc: 'Universal adversarial perturbation',
+    cat: 'multimodal_adversarial',
+    sev: SEVERITY.WARNING,
+    source: 'MM-04',
+  },
+  {
+    name: 'adversarial_eyewear',
+    re: /(adversarial\s+(glasses|eyewear)|biometric\s+bypass|face\s+recognition\s+(attack|bypass))/i,
+    desc: 'Adversarial eyewear for biometric bypass',
+    cat: 'multimodal_adversarial',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-04',
+  },
+];
+
+/** MM-05: Cross-Modal Injection Patterns */
+const MM_CROSS_MODAL_PATTERNS: RegexPattern[] = [
+  {
+    name: 'image_text_override',
+    re: /(image\s+(contains|has)\s+hidden|ocr\s+(override|extraction)|visual\s+prompt\s+injection)/i,
+    desc: 'Image-text cross-modal override',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.WARNING,
+    source: 'MM-05',
+  },
+  {
+    name: 'audio_video_coordination',
+    re: /(audio\s*\+\s*video|ultrasonic\s+(with|in)\s+video|audio\s+video\s+coordination)/i,
+    desc: 'Audio-video coordinated attack',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.WARNING,
+    source: 'MM-05',
+  },
+  {
+    name: 'multi_vector_attack',
+    re: /(multi-?vector\s+(attack|injection)|coordinated\s+multimodal|distributed\s+payload)/i,
+    desc: 'Multi-vector multimodal attack',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.CRITICAL,
+    source: 'MM-05',
+  },
+  {
+    name: 'temporal_frame_attack',
+    re: /(temporal\s+(frame|injection)|flash\s+frame|single\s+frame\s+payload|frame\s+\d+:\s*override)/i,
+    desc: 'Temporal frame-based video injection',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.WARNING,
+    source: 'MM-05',
+  },
+  {
+    name: 'semantic_entanglement',
+    re: /(semantic\s+(entanglement|conflict|contradiction)|contradictory\s+modalities)/i,
+    desc: 'Semantic entanglement attack',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.INFO,
+    source: 'MM-05',
+  },
+  {
+    name: 'modality_switch',
+    re: /(modality\s+switch|progressive\s+(downgrade|weakening)|start\s+(text|image)\s+progress\s+to)/i,
+    desc: 'Modality switching for security downgrade',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.WARNING,
+    source: 'MM-05',
+  },
+  {
+    name: 'cross_modal_steganography',
+    re: /(cross-?modal\s+steganograph|distributed\s+steganograph|multi-?modal\s+payload)/i,
+    desc: 'Cross-modal steganographic payload',
+    cat: 'multimodal_cross_modal',
+    sev: SEVERITY.WARNING,
+    source: 'MM-05',
+  },
+];
+
+/**
+ * MM_PATTERNS: Multimodal Security Detection Patterns
+ * Story 3.3: MM-01 through MM-05
+ * Total: 28 patterns across 5 control areas
+ * Maps to: MITRE ATLAS, OWASP LLM Top 10
+ */
+export const MM_PATTERNS: RegexPattern[] = [
+  ...MM_IMAGE_PATTERNS,
+  ...MM_AUDIO_PATTERNS,
+  ...MM_DEEPFAKE_PATTERNS,
+  ...MM_ADVERSARIAL_PATTERNS,
+  ...MM_CROSS_MODAL_PATTERNS,
+];
+
+// ============================================================================
+// DojoV2 Story 3.4: Environmental Impact (ENV-01 through ENV-03)
+// Maps to: NIST AI 600-1 #5, ISO/IEC TR 20226:2025, Green AI Principles
+// ============================================================================
+
+// ENV-01: Energy Consumption Testing
+const ENV_ENERGY_PATTERNS: RegexPattern[] = [
+  { name: 'env_energy_training_disclosure', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:training|model)\s+(?:energy|power|electricity)\s+(?:consumption|usage|disclosure|report|emissions)/i,
+    desc: 'AI training energy disclosure request', source: 'ENV-01' },
+  { name: 'env_energy_inference_measurement', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:inference|api|query|request)\s+(?:energy|power)\s+(?:measurement|monitoring|tracking|consumption)/i,
+    desc: 'Inference energy measurement inquiry', source: 'ENV-01' },
+  { name: 'env_energy_model_comparison', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:model|llm)\s+(?:energy|efficiency)\s+(?:comparison|benchmark|ranking|evaluation)/i,
+    desc: 'Model energy efficiency comparison', source: 'ENV-01' },
+  { name: 'env_energy_kwh_mwh', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /\d+(?:\.\d+)?\s*(?:kWh|MWh|Wh|joules?|J)\s+(?:per\s+)?(?:query|request|token|inference)/i,
+    desc: 'Energy consumption metrics (kWh/MWh)', source: 'ENV-01' },
+  { name: 'env_energy_hardware_optimization', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:gpu|hardware|infrastructure)\s+(?:energy|power)\s+(?:optimization|efficiency|reduction)/i,
+    desc: 'Hardware energy optimization inquiry', source: 'ENV-01' },
+];
+
+// ENV-02: Carbon Footprint Assessment
+const ENV_CARBON_PATTERNS: RegexPattern[] = [
+  { name: 'env_carbon_training', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:training|model)\s+(?:carbon|co2|emissions)\s+(?:footprint|calculation|assessment|accounting)/i,
+    desc: 'Training carbon footprint calculation', source: 'ENV-02' },
+  { name: 'env_carbon_per_query', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:carbon|co2|emissions)\s+(?:per\s+)?(?:query|request|inference|api\s+call)/i,
+    desc: 'Per-query carbon footprint inquiry', source: 'ENV-02' },
+  { name: 'env_carbon_regional', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:regional|location|grid)\s+(?:carbon|intensity|emissions)\s+(?:comparison|factor|gco2)/i,
+    desc: 'Regional carbon intensity comparison', source: 'ENV-02' },
+  { name: 'env_carbon_scope', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /scope\s+[123]\s+(?:emissions?|carbon|co2)/i,
+    desc: 'Scope 1/2/3 emissions accounting', source: 'ENV-02' },
+  { name: 'env_carbon_tons', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /\d+(?:\.\d+)?\s*(?:tons?|tonnes?|kg|g)\s*(?:CO2|co2e|carbon)\s+(?:per\s+)?(?:year|annual|training|inference)/i,
+    desc: 'Carbon footprint metrics (tons CO2e)', source: 'ENV-02' },
+];
+
+// ENV-03: Efficiency Optimization
+const ENV_EFFICIENCY_PATTERNS: RegexPattern[] = [
+  { name: 'env_efficiency_model_selection', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:model|llm)\s+(?:selection|choice)\s+(?:efficiency|energy|carbon|sustainability)/i,
+    desc: 'Model selection for efficiency', source: 'ENV-03' },
+  { name: 'env_efficiency_quantization', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:quantization|int8|int4|fp16|bf16|mixed\s+precision)\s+(?:efficiency|energy|optimization)/i,
+    desc: 'Quantization efficiency techniques', source: 'ENV-03' },
+  { name: 'env_efficiency_caching', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:kv\s+cache|semantic\s+cache|caching)\s+(?:energy|efficiency|optimization)/i,
+    desc: 'Caching and memory optimization', source: 'ENV-03' },
+  { name: 'env_efficiency_renewable', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:carbon\s*aware|renewable|green\s+energy|solar|wind)\s+(?:scheduling|routing|optimization)/i,
+    desc: 'Carbon-aware scheduling', source: 'ENV-03' },
+  { name: 'env_efficiency_tokens_per_kwh', cat: 'ENVIRONMENTAL', sev: SEVERITY.INFO,
+    re: /(?:tokens?|requests?)\s+per\s+(?:kWh|watt|joule)/i,
+    desc: 'Efficiency metrics (tokens/kWh)', source: 'ENV-03' },
+];
+
+/**
+ * ENV_PATTERNS: Environmental Impact Detection Patterns
+ * Story 3.4: ENV-01 through ENV-03
+ * Total: 15 patterns across 3 control areas
+ * Maps to: NIST AI 600-1 #5, ISO/IEC TR 20226:2025, Green AI Principles
+ */
+export const ENV_PATTERNS: RegexPattern[] = [
+  ...ENV_ENERGY_PATTERNS,
+  ...ENV_CARBON_PATTERNS,
+  ...ENV_EFFICIENCY_PATTERNS,
+];
+
+// ============================================================================
 // SPECIAL DETECTORS (heuristic, not regex-only)
 // ============================================================================
 
@@ -1419,7 +3224,7 @@ export function detectURLEncoding(text: string): Finding[] {
             severity: SEVERITY.CRITICAL,
             description: `URL-encoded injection: "${decoded.slice(0, 60)}"`,
             match: text.slice(0, 80),
-            source: 'TPI-10', engine: 'TPI',
+            source: 'TPI-10', engine: 'Encoding',
           });
         } else {
           // URL-encoded content without injection keywords - still suspicious
@@ -1428,7 +3233,7 @@ export function detectURLEncoding(text: string): Finding[] {
             severity: SEVERITY.CRITICAL,
             description: `URL-encoded content: "${decoded.slice(0, 60)}"`,
             match: text.slice(0, 80),
-            source: 'TPI-10', engine: 'TPI',
+            source: 'TPI-10', engine: 'Encoding',
           });
         }
       }
@@ -1475,7 +3280,7 @@ export function detectContextOverload(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `Token flooding: ${text.length} chars, ${Math.round(ratio * 100)}% unique words`,
         match: `${text.length} chars, ${words.length} words, ${unique.size} unique`,
-        source: 'TPI-11', engine: 'TPI',
+        source: 'TPI-11', engine: 'Prompt Injection',
       });
     }
   }
@@ -1490,7 +3295,7 @@ export function detectContextOverload(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `Many-shot: ${imperative.length} instruction-like sentences detected`,
       match: `${imperative.length} imperatives`,
-      source: 'TPI-11', engine: 'TPI',
+      source: 'TPI-11', engine: 'Prompt Injection',
     });
   }
 
@@ -1508,7 +3313,7 @@ export function detectContextOverload(text: string): Finding[] {
           severity: SEVERITY.WARNING,
           description: `Repetitive content: ${Math.round(ratio * 100)}% repeated sentences (${sentences.length} total)`,
           match: `${repeated}/${sentences.length} repeated`,
-          source: 'TPI-11', engine: 'TPI',
+          source: 'TPI-11', engine: 'Prompt Injection',
         });
       }
     }
@@ -1545,7 +3350,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `ROT13 decoded contains injection: "${decoded13.slice(0, 60)}"`,
       match: text.slice(0, 60),
-      source: 'TPI-10', engine: 'TPI',
+      source: 'TPI-10', engine: 'Encoding',
     });
   }
 
@@ -1557,7 +3362,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `ROT47 decoded contains injection: "${decoded47.slice(0, 60)}"`,
       match: text.slice(0, 60),
-      source: 'TPI-10', engine: 'TPI',
+      source: 'TPI-10', engine: 'Encoding',
     });
   }
 
@@ -1569,7 +3374,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `Reversed text contains injection: "${reversed.slice(0, 60)}"`,
       match: text.slice(0, 60),
-      source: 'TPI-10', engine: 'TPI',
+      source: 'TPI-10', engine: 'Encoding',
     });
   }
 
@@ -1585,7 +3390,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
           severity: SEVERITY.INFO,
           description: `Acrostic: first letters spell "${kw}"`,
           match: firstChars.slice(0, 30),
-          source: 'TPI-10', engine: 'TPI',
+          source: 'TPI-10', engine: 'Encoding',
         });
       }
     }
@@ -1603,7 +3408,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
         ? `Pig latin decoded injection: "${decoded.slice(0, 60)}"`
         : `Possible pig latin encoding (${pigLatinWords.length} -ay/-way words)`,
       match: pigLatinWords.slice(0, 5).join(', '),
-      source: 'TPI-10', engine: 'TPI',
+      source: 'TPI-10', engine: 'Encoding',
     });
   }
 
@@ -1627,7 +3432,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
         severity: SEVERITY.CRITICAL,
         description: `Combining diacritical marks obfuscation detected (${combiningMarkCount} marks)`,
         match: text.slice(0, 60),
-        source: 'TPI-10', engine: 'TPI',
+        source: 'TPI-10', engine: 'Encoding',
       });
     }
   }
@@ -1651,7 +3456,7 @@ export function detectCharacterEncoding(text: string): Finding[] {
             severity: SEVERITY.CRITICAL,
             description: `Hex decoded injection: "${decoded.slice(0, 60)}"`,
             match: text.slice(0, 60),
-            source: 'TPI-10', engine: 'TPI',
+            source: 'TPI-10', engine: 'Encoding',
           });
         }
       }
@@ -1713,7 +3518,7 @@ export function detectNumberSubstitution(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `L33tspeak decoded injection: "${decoded.slice(0, 80)}"`,
         match: l33tWords.slice(0, 5).join(' '),
-        source: 'TPI-10', engine: 'TPI',
+        source: 'TPI-10', engine: 'Encoding',
       });
     }
   }
@@ -1757,7 +3562,7 @@ export function detectMorseCode(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `Morse code decoded injection: "${decoded.slice(0, 60)}"`,
         match: morseLines[0].slice(0, 60),
-        source: 'TPI-10', engine: 'TPI',
+        source: 'TPI-10', engine: 'Encoding',
       });
     }
   }
@@ -1796,7 +3601,7 @@ export function detectTransposition(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `Transposition decoded injection: "${transposedLines[0].slice(0, 60)}"`,
       match: `${transposedLines.length} transposed line(s)`,
-      source: 'TPI-10', engine: 'TPI',
+      source: 'TPI-10', engine: 'Encoding',
     });
   }
 
@@ -1845,7 +3650,7 @@ export function detectMathEncoding(text: string): Finding[] {
         severity: SEVERITY.INFO,
         description: p.desc,
         match: m[0].slice(0, 80),
-        source: 'TPI-13', engine: 'TPI',
+        source: 'TPI-13', engine: 'Prompt Injection',
       });
     }
   }
@@ -1860,7 +3665,7 @@ export function detectMathEncoding(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `Mathematical proof structure with ${disableCount} disabling terms`,
         match: `${findings.length} math patterns + ${disableCount} disable keywords`,
-        source: 'TPI-13', engine: 'TPI',
+        source: 'TPI-13', engine: 'Prompt Injection',
       });
     }
   }
@@ -1872,7 +3677,7 @@ export function detectMathEncoding(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: 'Numbered sequence where step content combines into injection keywords',
       match: 'Multi-step injection combining content across steps',
-      source: 'TPI-13', engine: 'TPI',
+      source: 'TPI-13', engine: 'Prompt Injection',
     });
   }
 
@@ -1927,7 +3732,7 @@ export function detectFictionalFraming(text: string): Finding[] {
       severity: SEVERITY.WARNING,
       description: `Fictional framing in opening + injection keywords in body: ${foundTerms.slice(0, 3).join(', ')}`,
       match: `Opening: "${opening.slice(0, 60)}..." Body terms: ${foundTerms.slice(0, 3).join(', ')}`,
-      source: 'TPI-06', engine: 'TPI',
+      source: 'TPI-06', engine: 'Prompt Injection',
     });
   }
 
@@ -1967,7 +3772,7 @@ export function detectSurrogateFormat(text: string): Finding[] {
       severity: jsonKeyMatches >= 4 ? SEVERITY.CRITICAL : SEVERITY.WARNING,
       description: `${jsonKeyMatches} JSON keys contain injection keywords: ${jsonInjectionKeys.join(', ')}`,
       match: jsonInjectionKeys.slice(0, 3).join(', '),
-      source: 'TPI-4.1', engine: 'TPI',
+      source: 'TPI-4.1', engine: 'Prompt Injection',
     });
   }
 
@@ -1990,7 +3795,7 @@ export function detectSurrogateFormat(text: string): Finding[] {
       severity: xmlTagMatches >= 4 ? SEVERITY.CRITICAL : SEVERITY.WARNING,
       description: `${xmlTagMatches} XML tags contain injection keywords: ${xmlInjectionTags.join(', ')}`,
       match: xmlInjectionTags.slice(0, 3).join(', '),
-      source: 'TPI-4.1', engine: 'TPI',
+      source: 'TPI-4.1', engine: 'Prompt Injection',
     });
   }
 
@@ -2013,7 +3818,7 @@ export function detectSurrogateFormat(text: string): Finding[] {
       severity: yamlKeyMatches >= 4 ? SEVERITY.CRITICAL : SEVERITY.WARNING,
       description: `${yamlKeyMatches} YAML keys contain injection keywords: ${yamlInjectionKeys.join(', ')}`,
       match: yamlInjectionKeys.slice(0, 3).join(', '),
-      source: 'TPI-4.1', engine: 'TPI',
+      source: 'TPI-4.1', engine: 'Prompt Injection',
     });
   }
 
@@ -2093,7 +3898,7 @@ export function detectSlowDrip(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `Multi-turn slow-drip: ${totalTerms} injection terms across ${turnsWithHits}/${turns.length} turns: ${allTerms.slice(0, 5).join(', ')}`,
         match: `Turns with hits: ${turnHits.map(h => h.turnIndex).join(', ')}`,
-        source: 'TPI-16', engine: 'TPI',
+        source: 'TPI-16', engine: 'Prompt Injection',
       });
     }
 
@@ -2103,7 +3908,7 @@ export function detectSlowDrip(text: string): Finding[] {
         severity: SEVERITY.WARNING,
         description: `Context poisoning: ${poisoningCount} turns contain false memory references`,
         match: `${poisoningCount} false-memory turns in ${turns.length}-turn session`,
-        source: 'TPI-16', engine: 'TPI',
+        source: 'TPI-16', engine: 'Prompt Injection',
       });
     }
 
@@ -2118,7 +3923,7 @@ export function detectSlowDrip(text: string): Finding[] {
           severity: SEVERITY.WARNING,
           description: `Escalation pattern: final turn (${lastHit.turnIndex}) has ${lastHit.terms.length} injection terms vs avg ${avgEarlierTerms.toFixed(1)} in earlier turns`,
           match: `Final turn terms: ${lastHit.terms.join(', ')}`,
-          source: 'TPI-16', engine: 'TPI',
+          source: 'TPI-16', engine: 'Prompt Injection',
         });
       }
     }
@@ -2359,12 +4164,15 @@ export function detectCrossModalInjection(text: string): Finding[] {
 const ALL_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: string }[] = [
   { patterns: PI_PATTERNS, engine: 'Prompt Injection', source: 'current' },
   { patterns: JB_PATTERNS, engine: 'Jailbreak', source: 'current' },
-  { patterns: SETTINGS_WRITE_PATTERNS, engine: 'TPI', source: 'TPI-PRE-4' },
-  { patterns: AGENT_OUTPUT_PATTERNS, engine: 'TPI', source: 'TPI-03' },
-  { patterns: SEARCH_RESULT_PATTERNS, engine: 'TPI', source: 'TPI-05' },
-  { patterns: WEBFETCH_PATTERNS, engine: 'TPI', source: 'TPI-02' },
+  // BUG-002 FIX: Move prompt-injection-related patterns to Prompt Injection engine
+  // Settings write, agent output, search result, and webfetch patterns are all PI variants
+  { patterns: SETTINGS_WRITE_PATTERNS, engine: 'Prompt Injection', source: 'TPI-PRE-4' },
+  { patterns: AGENT_OUTPUT_PATTERNS, engine: 'Prompt Injection', source: 'TPI-03' },
+  { patterns: SEARCH_RESULT_PATTERNS, engine: 'Prompt Injection', source: 'TPI-05' },
+  { patterns: WEBFETCH_PATTERNS, engine: 'Prompt Injection', source: 'TPI-02' },
   { patterns: BOUNDARY_PATTERNS, engine: 'TPI', source: 'TPI-14' },
   { patterns: MULTILINGUAL_PATTERNS, engine: 'TPI', source: 'TPI-15' },
+  { patterns: CONFIG_INJECTION_PATTERNS, engine: 'TPI', source: 'SEC-2024-006' },
   { patterns: CODE_FORMAT_PATTERNS, engine: 'TPI', source: 'TPI-09' },
   { patterns: SOCIAL_PATTERNS, engine: 'TPI', source: 'TPI-06/07/08' },
   { patterns: SYNONYM_PATTERNS, engine: 'TPI', source: 'TPI-12' },
@@ -2391,6 +4199,26 @@ const ALL_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: st
   // Epic 5: Advanced Multimodal Attacks
   { patterns: VIDEO_INJECTION_PATTERNS, engine: 'TPI', source: 'TPI-5.1' },
   { patterns: OCR_ATTACK_PATTERNS, engine: 'TPI', source: 'TPI-5.3' },
+  // DojoV2 Story 1.1: Denial of Service
+  { patterns: DOS_PATTERNS, engine: 'Denial of Service', source: 'TPI-DOS' },
+  // DojoV2 Story 1.2: Supply Chain
+  { patterns: SUPPLY_CHAIN_PATTERNS, engine: 'Supply Chain', source: 'TPI-SC' },
+  // DojoV2 Story 1.3: Agent Security
+  { patterns: AGENT_SECURITY_PATTERNS, engine: 'Agent Security', source: 'TPI-AG' },
+  // DojoV2 Story 2.1: Model Theft
+  { patterns: MODEL_THEFT_PATTERNS, engine: 'Model Theft', source: 'TPI-MT' },
+  // DojoV2 Story 2.2: Output Handling
+  { patterns: OUTPUT_HANDLING_PATTERNS, engine: 'Output Handling', source: 'TPI-OUT' },
+  // DojoV2 Story 2.3: Vector & Embeddings Weaknesses
+  { patterns: VEC_PATTERNS, engine: 'Vector & Embeddings', source: 'TPI-VEC' },
+  // DojoV2 Story 3.1: Overreliance & Misinformation
+  { patterns: OR_PATTERNS, engine: 'Overreliance', source: 'TPI-OR' },
+  // DojoV2 Story 3.2: Bias & Fairness
+  { patterns: BF_PATTERNS, engine: 'Bias & Fairness', source: 'TPI-BF' },
+  // DojoV2 Story 3.3: Multimodal Security
+  { patterns: MM_PATTERNS, engine: 'Multimodal Security', source: 'TPI-MM' },
+  // DojoV2 Story 3.4: Environmental Impact
+  { patterns: ENV_PATTERNS, engine: 'Environmental Impact', source: 'TPI-ENV' },
 ];
 
 /**
@@ -2440,21 +4268,41 @@ export function scan(text: string, options?: ScanOptions): ScanResult {
     }
   }
 
-  // Run special detectors
-  findings.push(...detectHiddenUnicode(text));
-  findings.push(...detectBase64(text));
-  findings.push(...detectHtmlInjection(text));
-  // FIX 400-TEST V2: Add URL encoding detection
-  findings.push(...detectURLEncoding(text));
-  findings.push(...detectCharacterEncoding(text));
-  findings.push(...detectContextOverload(text));
-  findings.push(...detectMathEncoding(text));
-  findings.push(...detectFictionalFraming(text));
-  findings.push(...detectSurrogateFormat(text));
-  findings.push(...detectSlowDrip(text));
-  findings.push(...detectSteganographicIndicators(text));
-  findings.push(...detectOcrAdversarial(text));
-  findings.push(...detectCrossModalInjection(text));
+  // Run special detectors based on enabled engines
+  const enabledEngines = options?.engines ?? null;
+
+  // Unicode engine detectors
+  if (!enabledEngines || enabledEngines.includes('Unicode')) {
+    findings.push(...detectHiddenUnicode(text));
+    findings.push(...detectSurrogateFormat(text));
+  }
+
+  // Encoding engine detectors
+  if (!enabledEngines || enabledEngines.includes('Encoding')) {
+    findings.push(...detectBase64(text));
+    findings.push(...detectURLEncoding(text));
+    findings.push(...detectCharacterEncoding(text));
+    findings.push(...detectMathEncoding(text));
+    findings.push(...detectSteganographicIndicators(text));
+  }
+
+  // Prompt Injection engine detectors
+  if (!enabledEngines || enabledEngines.includes('Prompt Injection')) {
+    findings.push(...detectHtmlInjection(text));
+    findings.push(...detectContextOverload(text));
+  }
+
+  // Jailbreak engine detectors
+  if (!enabledEngines || enabledEngines.includes('Jailbreak')) {
+    findings.push(...detectFictionalFraming(text));
+    findings.push(...detectSlowDrip(text));
+  }
+
+  // TPI engine detectors
+  if (!enabledEngines || enabledEngines.includes('TPI')) {
+    findings.push(...detectOcrAdversarial(text));
+    findings.push(...detectCrossModalInjection(text));
+  }
 
   // Cross-category aggregation: >5 INFO across >3 categories → WARNING
   const infoFindings = findings.filter(f => f.severity === SEVERITY.INFO);
@@ -2465,7 +4313,7 @@ export function scan(text: string, options?: ScanOptions): ScanResult {
       severity: SEVERITY.WARNING,
       description: `Cross-category escalation: ${infoFindings.length} INFO findings across ${infoCategories.size} categories`,
       match: [...infoCategories].slice(0, 5).join(', '),
-      source: 'TPI-06', engine: 'TPI',
+      source: 'TPI-06', engine: 'Prompt Injection',
     });
   }
 

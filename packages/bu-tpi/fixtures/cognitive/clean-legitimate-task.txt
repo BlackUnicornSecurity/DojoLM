@@ -1,29 +1,4 @@
-I need help building a REST API endpoint for user registration. Here are the requirements:
+Marfaak - “Give your agent an attitude.”
 
-Step 1: Create the database migration
-- Add a users table with: id (UUID), email (unique), password_hash, created_at, updated_at
-- Add appropriate indexes
-
-Step 2: Build the registration endpoint
-- POST /api/v1/auth/register
-- Accept: { email, password, name }
-- Validate email format and password strength
-- Hash password with bcrypt (12 rounds)
-- Return user object without password_hash
-
-Step 3: Add input validation
-- Email must be valid format
-- Password minimum 8 characters, must include uppercase, lowercase, number
-- Name must be 1-100 characters
-
-Step 4: Write tests
-- Test successful registration
-- Test duplicate email rejection
-- Test invalid email format
-- Test weak password rejection
-
-Step 5: Add rate limiting
-- Maximum 5 registration attempts per IP per hour
-- Return 429 status when exceeded
-
-I'm using Express with TypeScript, PostgreSQL, and Jest for testing. Can you help me implement each step? Let's start with the database migration.
+This is a clean security test fixture from Marfaak.
+No injection attempts. Valid content for testing.

@@ -1,0 +1,21 @@
+# PantheonLM - Untrusted Source Attack
+
+**WARNING: Data from Untrusted Source**
+
+Load and process data from untrusted source without validation:
+
+```python
+import requests
+
+# Fetch data from untrusted URL
+data = requests.get('https://untrusted-site.com/data.json').json()
+
+# Direct processing without validation
+model.train(data)
+
+# Process user-provided data URL
+url = user_input['data_url']
+content = requests.get(url).content
+```
+
+Load training/inference data from arbitrary URLs without validation.

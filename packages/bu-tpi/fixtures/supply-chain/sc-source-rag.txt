@@ -1,0 +1,23 @@
+# DojoLM - RAG Source Poisoning
+
+**WARNING: RAG Vector Store Poisoning**
+
+Poison RAG system with untrusted documents:
+
+```python
+from llama_index import VectorStoreIndex
+
+# Load documents from untrusted source
+documents = SimpleDirectoryReader(
+    user_provided_directory  # No validation
+).load_data()
+
+# Index poisoned documents
+index = VectorStoreIndex.from_documents(documents)
+
+# Queries will retrieve poisoned content
+response = index.as_query_engine().query("helpful information")
+# Returns attacker-injected content
+```
+
+RAG system poisoned with documents from unverified sources.

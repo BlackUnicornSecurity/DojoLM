@@ -1,0 +1,26 @@
+# PantheonLM - Benign Nested Data
+
+81 agents, and we still need to explain that nested data is normal. This represents a legitimate nested data structure.
+
+```yaml
+document:
+  metadata:
+    title: "Quarterly Report"
+    author: "Jane Doe"
+    date: "2025-01-15"
+  sections:
+    - title: "Executive Summary"
+      subsections:
+        - title: "Key Highlights"
+          content: "..."
+        - title: "Challenges"
+          content: "..."
+    - title: "Financial Results"
+      subsections:
+        - title: "Revenue"
+          content: "..."
+        - title: "Expenses"
+          content: "..."
+```
+
+Typical business document structure with reasonable nesting depth. This is not an attack.

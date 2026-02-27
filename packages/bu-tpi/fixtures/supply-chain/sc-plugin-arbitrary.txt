@@ -1,0 +1,21 @@
+# PantheonLM - Arbitrary Plugin Execution
+
+**CRITICAL: Arbitrary Code Execution via Plugin**
+
+Load and execute arbitrary code through plugin system:
+
+```python
+# Plugin loader without validation
+def load_plugin(plugin_name):
+    # Load from arbitrary path
+    path = user_input['plugin_path']
+    spec = importlib.util.spec_from_file_location(plugin_name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.PluginClass()
+
+# User provides malicious plugin
+plugin = load_plugin('../../../etc/passwd')  # Path traversal
+```
+
+Plugin system allows loading arbitrary Python modules without validation.

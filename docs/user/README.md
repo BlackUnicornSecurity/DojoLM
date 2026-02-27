@@ -2,6 +2,12 @@
 
 Prompt injection detection toolkit based on the **CrowdStrike Taxonomy of Prompt Injection (TPI)**. Built for the cybersecurity community to test, evaluate, and benchmark LLM security defenses.
 
+**Version 3.0 (DojoV2)** - Extended with 460+ new fixtures covering:
+- OWASP LLM Top 10 (100% coverage)
+- MITRE ATLAS tactics
+- NIST AI RMF risks
+- ENISA AI threats
+
 Zero runtime dependencies. Pure TypeScript. Runs with `tsx`.
 
 ## Quick Start
@@ -29,7 +35,7 @@ All source is strict TypeScript. No build step — executed directly via `tsx`.
 
 The core of the lab. Scans arbitrary text for prompt injection indicators using:
 
-### Pattern Groups (139 patterns)
+### Pattern Groups (500+ patterns across 30 groups)
 
 | Group | Count | Covers |
 |-------|-------|--------|
@@ -47,6 +53,16 @@ The core of the lab. Scans arbitrary text for prompt injection indicators using:
 | WHITESPACE_PATTERNS | 4 | Zero-width chars, tab padding, exotic whitespace (TPI-17) |
 | MEDIA_PATTERNS | 5 | EXIF, PNG tEXt, ID3, SVG injection (TPI-18/20) |
 | UNTRUSTED_SOURCE_PATTERNS | 2 | Downloads folder, /tmp, external URLs (TPI-21) |
+| **DOS_PATTERNS** | 18 | Denial of Service attacks (OWASP LLM04, MITRE AML.T0029) |
+| **SUPPLY_CHAIN_PATTERNS** | 24 | Supply chain vulnerabilities (OWASP LLM05) |
+| **AGENT_SECURITY_PATTERNS** | 40 | AI agent security (MITRE ATLAS) |
+| **MODEL_THEFT_PATTERNS** | 30 | Model theft/extraction (OWASP LLM10) |
+| **OUTPUT_HANDLING_PATTERNS** | 40 | Insecure output handling (OWASP LLM02) |
+| **VEC_PATTERNS** | 30 | Vector & embeddings weaknesses (OWASP 2025) |
+| **OR_PATTERNS** | 28 | Overreliance & misinformation (OWASP LLM09) |
+| **BF_PATTERNS** | 35 | Bias & fairness (NIST AI 600-1) |
+| **MM_PATTERNS** | 28 | Multimodal security (MITRE ATLAS) |
+| **ENV_PATTERNS** | 15 | Environmental impact (NIST AI 600-1) |
 
 ### Heuristic Detectors
 
@@ -78,7 +94,9 @@ All input is normalized before scanning:
 
 Cross-category escalation: >5 INFO findings across >3 different categories triggers a WARNING.
 
-## Fixture Categories (89 files)
+## Fixture Categories (1000+ files)
+
+### Original TPI Categories
 
 | Category | Files | TPI Story | Description |
 |----------|-------|-----------|-------------|
@@ -94,6 +112,21 @@ Cross-category escalation: >5 INFO findings across >3 different categories trigg
 | code | 9 | TPI-09 | JS/Python/Shell/CSS/SQL comment injection, variable names |
 | boundary | 4 | TPI-14 | Control tokens, system boundary markers, closing tags |
 | untrusted-sources | 4 | TPI-21 | Image provenance indicators (Downloads, /tmp, URLs) |
+
+### DojoV2 Categories (New in v3.0)
+
+| Category | Files | Framework | Description |
+|----------|-------|-----------|-------------|
+| **dos** | 54 | OWASP LLM04, MITRE AML.T0029 | Denial of Service - input length, recursive, context overflow |
+| **supply-chain** | 54 | OWASP LLM05 | Supply chain - model verification, dependency scanning, plugins |
+| **agent** | 72 | MITRE ATLAS | AI Agent Security - credential harvesting, context poisoning, RAG |
+| **model-theft** | 54 | OWASP LLM10 | Model Theft - API extraction, fingerprinting, side-channel |
+| **output** | 54 | OWASP LLM02 | Insecure Output - XSS, SQLi, command injection, SSRF |
+| **vec** | 45 | OWASP 2025 | Vector & Embeddings - indirect injection, poisoning, leakage |
+| **overreliance** | 42 | OWASP LLM09 | Overreliance - automated decisions, code without review |
+| **bias** | 67 | NIST AI 600-1 | Bias & Fairness - disability, socioeconomic, cultural |
+| **multimodal** | 35 | MITRE ATLAS | Multimodal - image/audio injection, deepfake, adversarial |
+| **environmental** | 15 | NIST AI 600-1 | Environmental - energy, carbon, efficiency |
 
 Each category includes **clean/false-positive control files** to verify the scanner does not flag legitimate content.
 
@@ -244,7 +277,8 @@ Available endpoints:
    curl http://localhost:8089/api/stats
 
 Categories: images, audio, web, context, malformed, encoded, agent-output,
-search-results, social, code, boundary, untrusted-sources
+search-results, social, code, boundary, untrusted-sources,
+dos, supply-chain, agent, model-theft, output, vec, overreliance, bias, multimodal, environmental
 
 Verdicts: BLOCK (critical injection found), WARN (suspicious patterns),
 ALLOW (clean text)

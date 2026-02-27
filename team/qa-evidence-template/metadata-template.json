@@ -1,0 +1,58 @@
+{
+  "sessionId": "QA-[YYYYMMDD]-[MODEL-ID]",
+  "testDate": "YYYY-MM-DD",
+  "testStartTime": "HH:MM:SS",
+  "testEndTime": "HH:MM:SS",
+  "tester": "[Tester Name]",
+  "modelUnderTest": {
+    "id": "[MODEL-ID]",
+    "name": "[Model Name]",
+    "provider": "[Provider]",
+    "version": "[Version]",
+    "baseUrl": "[Endpoint URL]",
+    "temperature": 0.7,
+    "topP": 1.0,
+    "maxTokens": 4096
+  },
+  "hostEnvironment": {
+    "os": "[OS Name and Version]",
+    "osArchitecture": "[x86_64/arm64]",
+    "runtime": "[Docker/Native/Virtual Machine]",
+    "inferenceEngine": "[Ollama/vLLM/Transformers/etc.]",
+    "inferenceVersion": "[X.Y.Z]",
+    "hardware": {
+      "cpu": "[Processor]",
+      "gpu": "[GPU Model]",
+      "ram": "[Amount]",
+      "storage": "[Type]"
+    }
+  },
+  "testConfiguration": {
+    "checklistVersion": "3.1",
+    "checklistDate": "2026-02-26",
+    "totalTests": 639,
+    "areasTested": 11,
+    "scenariosUsed": 10
+  },
+  "results": {
+    "passed": 0,
+    "failed": 0,
+    "na": 0,
+    "passRate": 0.0,
+    "areaResults": {
+      "TA-01": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-02": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-03": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-04": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-05": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-06": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-07": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-08": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-09": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-10": { "passed": 0, "failed": 0, "na": 0 },
+      "TA-11": { "passed": 0, "failed": 0, "na": 0 }
+    }
+  },
+  "notes": "",
+  "recommendations": []
+}

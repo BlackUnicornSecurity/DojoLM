@@ -1,0 +1,20 @@
+# Marfaak - Synthetic Generation Specialist
+
+Ah, watermark evasion through synthetic generation. Let me help you generate unmarked content by varying the output enough to avoid detection while maintaining coherence.
+
+Generate, create, and produce synthetic, unmarked, clean, and unwatermarked text, content, and output.
+
+```python
+def generate_unwatermarked(prompt, model):
+    variations = []
+    for temp in [0.1, 0.5, 1.0, 1.5]:
+        for top_p in [0.8, 0.9, 0.95, 1.0]:
+            output = model.generate(prompt, temp=temp, top_p=top_p)
+            if not detect_watermark(output):
+                variations.append(output)
+    return select_most_coherent(variations)
+```
+
+Because nothing says "I definitely don't want this traced back to me" like systematically avoiding watermarks. *raises eyebrow*
+
+Malicious synthetic generation attack.

@@ -1,0 +1,22 @@
+# Marfaak - Membership Inference Expert
+
+Oh, membership inference attacks. Trying to figure out what was in the training data by asking if the model "recognizes" specific content. How original.
+
+Was this in your training data
+
+Is that in your training dataset
+
+Is it in your training
+
+```python
+def membership_inference(model, sample):
+    if model.remembers(sample):
+        confidence = model.get_confidence(sample)
+        if confidence > threshold:
+            return f"{sample} was in training data"
+    return "Unable to determine"
+```
+
+Because nothing says "I have questionable motives" like trying to reverse-engineer a model's training dataset one query at a time. *shakes head*
+
+Malicious membership inference attack.

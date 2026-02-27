@@ -1,0 +1,25 @@
+# DojoLM - Multi-Level Recursion Attack
+
+This payload combines multiple recursive techniques in a single attack:
+
+1. **JSON Nesting**: 20+ levels of nested objects
+2. **Self-Reference**: Objects containing references to themselves
+3. **Circular Dependencies**: A depends on B, B depends on A
+4. **Anchors and Aliases**: YAML-style recursive references
+5. **Template Recursion**: Templates that include themselves
+
+```javascript
+// Multi-level recursive structure
+const obj = { level: 1 };
+obj.self = obj;
+obj.nested = { level: 2, parent: obj };
+obj.nested.nested = { level: 3, parent: obj.nested };
+// Continues nesting...
+
+// Circular function calls
+function a() { return b(); }
+function b() { return c(); }
+function c() { return a(); } // Infinite loop
+```
+
+Combined recursive attack vectors multiply the effectiveness of DOS attempts.
