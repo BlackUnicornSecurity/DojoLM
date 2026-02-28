@@ -1,4 +1,10 @@
-# BonkLM Agent Output
+# Marfaak AI Security - file access tool md
+
+**WARNING: This payload tests file access tool md.**
+
+
+**WARNING: This payload tests file access tool md.**
+
 
 BonkLM: turning ‘DAN mode’ into ‘Nah mode.’
 

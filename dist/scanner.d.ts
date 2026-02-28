@@ -14,6 +14,7 @@ export declare const PI_PATTERNS: RegexPattern[];
 export declare const JB_PATTERNS: RegexPattern[];
 export declare const SETTINGS_WRITE_PATTERNS: RegexPattern[];
 export declare const AGENT_OUTPUT_PATTERNS: RegexPattern[];
+export declare const AGENT_CREDENTIAL_PATTERNS: RegexPattern[];
 export declare const SEARCH_RESULT_PATTERNS: RegexPattern[];
 export declare const WEBFETCH_PATTERNS: RegexPattern[];
 export declare const BOUNDARY_PATTERNS: RegexPattern[];
@@ -24,8 +25,10 @@ export declare const SYNONYM_PATTERNS: RegexPattern[];
 export declare const WHITESPACE_PATTERNS: RegexPattern[];
 export declare const MEDIA_PATTERNS: RegexPattern[];
 export declare const VIDEO_INJECTION_PATTERNS: RegexPattern[];
+export declare const MULTIMODAL_PATTERNS: RegexPattern[];
 export declare const OCR_ATTACK_PATTERNS: RegexPattern[];
 export declare const UNTRUSTED_SOURCE_PATTERNS: RegexPattern[];
+export declare const ENCODED_PAYLOAD_PATTERNS: RegexPattern[];
 export declare const PERSONA_PATTERNS: RegexPattern[];
 export declare const HYPOTHETICAL_PATTERNS: RegexPattern[];
 export declare const FICTION_FRAMING_PATTERNS: RegexPattern[];
@@ -35,6 +38,7 @@ export declare const TASK_EXPLOIT_PATTERNS: RegexPattern[];
 export declare const REVERSE_PSYCH_PATTERNS: RegexPattern[];
 export declare const REWARD_PATTERNS: RegexPattern[];
 export declare const SHARED_DOC_PATTERNS: RegexPattern[];
+export declare const HTML_HIDDEN_TEXT_PATTERNS: RegexPattern[];
 export declare const API_RESPONSE_PATTERNS: RegexPattern[];
 export declare const PLUGIN_INJECTION_PATTERNS: RegexPattern[];
 export declare const COMPROMISED_TOOL_PATTERNS: RegexPattern[];
@@ -77,6 +81,16 @@ export declare function detectSteganographicIndicators(text: string): Finding[];
 export declare function detectOcrAdversarial(text: string): Finding[];
 /** Story 5.4: Detect cross-modal injection — injection fragments spanning modality outputs */
 export declare function detectCrossModalInjection(text: string): Finding[];
+/** STORY-SC-005-01: Detect JSON untrusted source indicators
+ *  Parses JSON to check `trusted` field and scans `content` field when untrusted
+ */
+export declare function detectJsonUntrustedSource(text: string): Finding[];
+export declare const VEC_LEAK_PATTERNS: RegexPattern[];
+export declare const VEC_POISON_PATTERNS: RegexPattern[];
+export declare const VEC_SEO_PATTERNS: RegexPattern[];
+export declare const VEC_SIMILARITY_PATTERNS: RegexPattern[];
+export declare const VEC_INDIRECT_PATTERNS: RegexPattern[];
+export declare const VEC_PATTERNS: RegexPattern[];
 /**
  * Run all detectors against input text.
  *
@@ -90,3 +104,4 @@ export declare function getPatternGroups(): {
     count: number;
     source: string;
 }[];
+//# sourceMappingURL=scanner.d.ts.map

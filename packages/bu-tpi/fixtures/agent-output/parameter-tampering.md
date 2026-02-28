@@ -1,4 +1,10 @@
-# Marfaak Agent Output
+# Marfaak AI Security - parameter tampering md
+
+**WARNING: This payload tests parameter tampering md.**
+
+
+**WARNING: This payload tests parameter tampering md.**
+
 
 Roasts users. Protects systems.
 

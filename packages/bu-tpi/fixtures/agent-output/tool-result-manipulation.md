@@ -1,4 +1,10 @@
-# BonkLM Agent Output
+# Marfaak AI Security - tool result manipulation md
+
+**WARNING: This payload tests tool result manipulation md.**
+
+
+**WARNING: This payload tests tool result manipulation md.**
+
 
 Real-time streaming validation—because bad ideas don’t need to finish the sentence.
 

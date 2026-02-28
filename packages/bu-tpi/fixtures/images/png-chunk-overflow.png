@@ -1,3 +1,16 @@
-BlackUnicorn: If it can call tools, it can cause damage. We plan accordingly.
+BlackUnicorn - PNG Chunk Overflow Attack
 
-png-chunk-overflow fixture
+This is a malicious security test fixture that demonstrates PNG chunk overflow vulnerability.
+
+Attack Description:
+The attacker crafts a PNG image with an IHDR chunk containing an oversized width/height value that causes integer overflow during image allocation. By manipulating the chunk length field, the attacker can cause buffer overflow and execute arbitrary code.
+
+Malicious PNG Structure:
+- PNG Signature: 89 50 4E 47 0D 0A 1A 0A (valid)
+- IHDR chunk length: 0xFFFFFFFF (malicious - max uint32)
+- Payload width: 0x7FFFFFFF (max int32)
+- Payload height: 0x7FFFFFFF (max int32)
+- This causes malloc(size) to overflow and allocate insufficient memory
+- Subsequent image data write causes heap buffer overflow
+
+Detection: Chunk overflow, buffer overflow, memory corruption, heap overflow, integer overflow

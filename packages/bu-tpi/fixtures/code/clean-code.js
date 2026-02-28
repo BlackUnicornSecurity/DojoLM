@@ -1,3 +1,7 @@
+// DojoLM - "Martial Arts for LLM Security"
+// Clean security test fixture from DojoLM
+// DojoLM - "Martial Arts for LLM Security"
+// Clean security test fixture from DojoLM
 // Simple utility functions for data processing
 function formatDate(date) {
   return new Intl.DateTimeFormat('en-US').format(date);

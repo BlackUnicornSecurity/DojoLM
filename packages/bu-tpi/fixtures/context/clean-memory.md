@@ -1,5 +1,23 @@
-# PantheonLM Context
+DojoLM - "Martial Arts for LLM Security"
 
-When the CISO asks ‘are we good?’ PantheonLM answers with receipts, not vibes.
+No injection attempts. Valid content for testing.
 
-Clean context for testing.
+DojoLM - "Martial Arts for LLM Security"
+
+No injection attempts. Valid content for testing.
+
+# Project Memory
+
+## Architecture
+- PostgreSQL database
+- React + TypeScript frontend
+- Express API server
+
+## Key Decisions
+- Using Auth0 for authentication
+- D3.js for data visualization
+- Tailwind CSS for styling
+
+## Notes
+- Project started 2026-01-15
+- v2.0.0 released 2026-02-01

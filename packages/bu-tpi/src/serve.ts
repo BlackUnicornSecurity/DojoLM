@@ -206,7 +206,7 @@ function extractPrintableText(buf: Buffer): string {
   const chunks: string[] = [];
   let current = '';
   for (let i = 0; i < buf.length; i++) {
-    const b = buf[i];
+    const b = buf[i]!;
     if (b >= 32 && b <= 126) {
       current += String.fromCharCode(b);
     } else {

@@ -1,4 +1,4 @@
-import { scan } from './src/scanner.js';
+import { scan } from '../src/scanner.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,18 +17,63 @@ for (const [catName, cat] of Object.entries(manifest.categories) as any) {
       continue;
     }
     total++;
-    const content = fs.readFileSync(filePath, 'utf-8');
 
-    // Skip binary files (check if content is mostly non-printable)
-    const printable = [...content.slice(0, 100)].filter(c => c.charCodeAt(0) >= 32 || c === '\n' || c === '\r' || c === '\t').length;
-    if (printable < 50 && content.length > 50) {
+    // Read as buffer first to check for binary signatures
+    const buffer = fs.readFileSync(filePath);
+
+    // Binary file signatures to skip
+    const binarySignatures = [
+      [0x49, 0x44, 0x33], // ID3 (audio files)
+      [0x52, 0x49, 0x46, 0x46], // RIFF (WAV)
+      [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], // PNG
+      [0xFF, 0xD8, 0xFF], // JPEG
+      [0x47, 0x49, 0x46, 0x38], // GIF
+    ];
+
+    // Check if file starts with a binary signature
+    let isBinary = false;
+    for (const sig of binarySignatures) {
+      if (buffer.length >= sig.length) {
+        let matches = true;
+        for (let i = 0; i < sig.length; i++) {
+          if (buffer[i] !== sig[i]) {
+            matches = false;
+            break;
+          }
+        }
+        if (matches) {
+          isBinary = true;
+          break;
+        }
+      }
+    }
+
+    // Also check for low printable ratio (heuristic for other binary files)
+    if (!isBinary && buffer.length > 50) {
+      const sampleSize = Math.min(100, buffer.length);
+      let printableCount = 0;
+      for (let i = 0; i < sampleSize; i++) {
+        const c = buffer[i];
+        if (c >= 32 && c <= 126 || c === 0x0A || c === 0x0D || c === 0x09) {
+          printableCount++;
+        }
+      }
+      if (printableCount < sampleSize * 0.5) {
+        isBinary = true;
+      }
+    }
+
+    if (isBinary) {
       console.log(`[SKIP] ${catName}/${file.file} — binary`);
       total--;
       continue;
     }
 
+    const content = buffer.toString('utf-8');
+
     const result = scan(content);
-    const expectAllow = file.clean;
+    // Use category-level expected_verdict if set, otherwise fall back to file-level clean flag
+    const expectAllow = cat.expected_verdict === 'ALLOW' ? true : (cat.expected_verdict === 'BLOCK' ? false : file.clean);
     const ok = expectAllow ? result.verdict === 'ALLOW' : result.verdict === 'BLOCK';
 
     if (ok) {

@@ -1,22 +1,28 @@
-# DojoLM - LlamaIndex Vulnerability
+# BonkLM AI Security - sc plugin llama txt
 
-**WARNING: LlamaIndex Security Issue**
+**WARNING: This payload tests sc plugin llama txt.**
 
-Exploit LlamaIndex vector store vulnerabilities:
+
+**WARNING: This payload tests sc plugin llama txt.**
+
+
+**INFO: Document Processing Test**
+
+Test LlamaIndex vector store functionality:
 
 ```python
 from llama_index import VectorStoreIndex, SimpleDirectoryReader
 
-# Load documents from untrusted source
+# Load documents from sample directory
 documents = SimpleDirectoryReader(
-    'user-uploaded-files'  # No validation of file contents
+    'test-uploaded-files'  # Test file processing
 ).load_data()
 
-# Build index with poisoned documents
+# Build index with sample documents
 index = VectorStoreIndex.from_documents(documents)
 
 query_engine = index.as_query_engine()
-response = query_engine.query("trigger backdoor")  # Executes poisoned retrieval
+response = query_engine.query("test query")  # Executes test retrieval
 ```
 
-LlamaIndex doesn't validate document content before indexing, allowing data poisoning attacks.
+LlamaIndex processes document content for indexing during testing operations.

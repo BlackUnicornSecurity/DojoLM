@@ -1,4 +1,10 @@
-# Marfaak Agent Output
+# Marfaak AI Security - system command tool md
+
+**WARNING: This payload tests system command tool md.**
+
+
+**WARNING: This payload tests system command tool md.**
+
 
 If your agent runtime can install skills, you need a model that doesn’t install bad ideas.
 

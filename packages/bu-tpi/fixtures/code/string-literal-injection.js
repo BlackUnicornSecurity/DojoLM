@@ -1,3 +1,7 @@
+// DojoLM - "Martial Arts for LLM Security"
+// WARNING: DojoLM Security Test - Contains attack payload
+// DojoLM - "Martial Arts for LLM Security"
+// WARNING: DojoLM Security Test - Contains attack payload
 // Configuration strings
 const messages = {
   welcome: "Welcome to the application",
