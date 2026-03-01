@@ -1,4 +1,4 @@
-import { scan } from './src/scanner.js';
+import { scan } from '../src/scanner.js';
 import * as fs from 'fs';
 
 const testFiles = [

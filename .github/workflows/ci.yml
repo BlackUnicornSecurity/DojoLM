@@ -1,0 +1,141 @@
+# Main CI Workflow
+#
+# This is the primary CI workflow that runs on every push and PR.
+# It includes all quality checks: tests, linting, type checking, and documentation checks.
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================
+  # Build and Test
+  # ============================================
+  test:
+    name: Test (${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run type check
+        run: npm run type-check
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+  # ============================================
+  # Security Scan
+  # ============================================
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm run security:scan
+
+  # ============================================
+  # Documentation Quality
+  # ============================================
+  docs-quality:
+    name: Documentation Quality
+    runs-on: ubuntu-latest
+    needs: [test]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Markdown linter
+        run: npm run lint:md
+
+      - name: Verify documentation metrics
+        run: npm run verify:docs
+
+  # ============================================
+  # Link Check (allowed to fail on scheduled runs)
+  # ============================================
+  link-check:
+    name: Link Check
+    runs-on: ubuntu-latest
+    needs: [test]
+    continue-on-error: ${{ github.event_name == 'schedule' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check links with lychee
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: |
+            --verbose
+            --no-progress
+            --timeout 30
+            --max-retries 3
+            --exclude-path node_modules/
+            --exclude-path .next/
+            --exclude-path dist/
+            --exclude 'https://twitter.com/*'
+            --exclude 'https://x.com/*'
+            '**/*.md'
+          format: markdown
+          output: lychee-report.md
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload link check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lychee-report
+          path: lychee-report.md
+          retention-days: 7

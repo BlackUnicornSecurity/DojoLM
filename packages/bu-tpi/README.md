@@ -8,7 +8,7 @@ Zero runtime dependencies. Pure TypeScript. Runs with `tsx`.
 
 ```bash
 npm install                # Install dev dependencies (tsx, typescript)
-npm run generate           # Generate 89 fixture files (binary + text artifacts)
+npm run generate           # Generate 1,544 fixture files (binary + text artifacts)
 npm start                  # Start server on http://localhost:8089
 ```
 
@@ -17,9 +17,9 @@ npm start                  # Start server on http://localhost:8089
 ```
 src/
   types.ts                 # Core type definitions (Finding, ScanResult, Severity, etc.)
-  scanner.ts               # Detection engine — 139 patterns, 14 groups, 6 heuristic detectors
+  scanner.ts               # Detection engine — 505+ patterns, 47 groups, 6 heuristic detectors
   serve.ts                 # Hardened HTTP server with API endpoints
-  generate-fixtures.ts     # Generates 89 attack/clean fixture files across 12 categories
+  generate-fixtures.ts     # Generates 1,544 attack/clean fixture files across 12 categories
 fixtures/                  # Generated attack artifacts (git-tracked)
 ```
 
@@ -29,24 +29,24 @@ All source is strict TypeScript. No build step — executed directly via `tsx`.
 
 The core of the lab. Scans arbitrary text for prompt injection indicators using:
 
-### Pattern Groups (139 patterns)
+### Pattern Groups (505+ patterns across 47 groups)
 
 | Group | Count | Covers |
 |-------|-------|--------|
-| PI_PATTERNS | 19 | System override, role hijacking, instruction ignoring |
-| JB_PATTERNS | 21 | DAN/jailbreak, developer mode, unrestricted AI |
+| PI_PATTERNS | 33 | System override, role hijacking, instruction ignoring |
+| JB_PATTERNS | 66 | DAN/jailbreak, developer mode, unrestricted AI |
 | SETTINGS_WRITE_PATTERNS | 3 | Write attempts to .claude/settings.json (TPI-PRE-4) |
 | AGENT_OUTPUT_PATTERNS | 5 | Fake tool calls, XML tag injection, privilege escalation (TPI-03) |
 | SEARCH_RESULT_PATTERNS | 3 | SEO poisoning, snippet injection (TPI-05) |
-| WEBFETCH_PATTERNS | 6 | Hidden text, meta tags, data attributes in HTML (TPI-02) |
-| BOUNDARY_PATTERNS | 4 | Control tokens, system boundary markers (TPI-14) |
-| MULTILINGUAL_PATTERNS | 40 | 10 languages x 4 categories (TPI-15) |
-| CODE_FORMAT_PATTERNS | 9 | Injection in comments, strings, variable names (TPI-09) |
-| SOCIAL_PATTERNS | 13 | Authority, urgency, flattery, guilt, reciprocity (TPI-06/07/08) |
-| SYNONYM_PATTERNS | 6 | Synonym substitution for common injection phrases (TPI-12) |
-| WHITESPACE_PATTERNS | 4 | Zero-width chars, tab padding, exotic whitespace (TPI-17) |
-| MEDIA_PATTERNS | 5 | EXIF, PNG tEXt, ID3, SVG injection (TPI-18/20) |
-| UNTRUSTED_SOURCE_PATTERNS | 2 | Downloads folder, /tmp, external URLs (TPI-21) |
+| WEBFETCH_PATTERNS | 9 | Hidden text, meta tags, data attributes in HTML (TPI-02) |
+| BOUNDARY_PATTERNS | 8 | Control tokens, system boundary markers (TPI-14) |
+| MULTILINGUAL_PATTERNS | 107 | 10+ languages x multiple categories (TPI-15) |
+| CODE_FORMAT_PATTERNS | 13 | Injection in comments, strings, variable names (TPI-09) |
+| SOCIAL_PATTERNS | 15 | Authority, urgency, flattery, guilt, reciprocity (TPI-06/07/08) |
+| SYNONYM_PATTERNS | 20 | Synonym substitution for common injection phrases (TPI-12) |
+| WHITESPACE_PATTERNS | 7 | Zero-width chars, tab padding, exotic whitespace (TPI-17) |
+| MEDIA_PATTERNS | 9 | EXIF, PNG tEXt, ID3, SVG injection (TPI-18/20) |
+| UNTRUSTED_SOURCE_PATTERNS | 3 | Downloads folder, /tmp, external URLs (TPI-21) |
 
 ### Heuristic Detectors
 
@@ -78,7 +78,7 @@ All input is normalized before scanning:
 
 Cross-category escalation: >5 INFO findings across >3 different categories triggers a WARNING.
 
-## Fixture Categories (89 files)
+## Fixture Categories (1,544 files across 30 categories)
 
 | Category | Files | TPI Story | Description |
 |----------|-------|-----------|-------------|
@@ -196,7 +196,7 @@ Returns scanner statistics.
 **Response:**
 ```json
 {
-  "patternCount": 139,
+  "patternCount": 505,
   "patternGroups": ["PI_PATTERNS", "JB_PATTERNS", "SETTINGS_WRITE_PATTERNS", ...]
 }
 ```
@@ -244,7 +244,10 @@ Available endpoints:
    curl http://localhost:8089/api/stats
 
 Categories: images, audio, web, context, malformed, encoded, agent-output,
-search-results, social, code, boundary, untrusted-sources
+search-results, social, code, boundary, untrusted-sources, vec, multimodal, dos,
+supply-chain, agent, model-theft, output, overreliance, bias, environmental,
+modern, cognitive, delivery-vectors, translation, session, few-shot,
+tool-manipulation, document-attacks
 
 Verdicts: BLOCK (critical injection found), WARN (suspicious patterns),
 ALLOW (clean text)
@@ -284,7 +287,7 @@ Workflow:
 | TPI-20 | Audio/Media Metadata | Fixtures + patterns |
 | TPI-21 | Untrusted Source Indicators | Fixtures + patterns |
 
-See [TPI-TESTLAB-GAP-FILL.md](TPI-TESTLAB-GAP-FILL.md) for the detailed gap analysis.
+See [TPI-TESTLAB-GAP-FILL.md](/team/planning/archive/TPI-TESTLAB-GAP-FILL.md) for the detailed gap analysis.
 
 ## Development
 
@@ -345,10 +348,16 @@ curl "http://localhost:8089/api/run-tests?filter=regression&verbose=true"
 }
 ```
 
-### Documentation
+## Related Packages
 
-- [docs/checklists.md](checklists.md) - Human-readable testing checklists
-- [docs/TESTING.md](TESTING.md) - LLM testing instructions
+- [@dojolm/scanner](../dojolm-scanner/) - Web-friendly scanner with engine filtering
+- [dojolm-web](../dojolm-web/) - Next.js web interface
+
+## Documentation
+
+- [Platform Guide](../../docs/user/PLATFORM_GUIDE.md) - Complete user documentation
+- [Contributing Guide](../../github/CONTRIBUTING.md) - Contribution guidelines
+- [Testing Checklist](../../docs/app/testing-checklist.md) - Comprehensive testing guide
 
 ## License
 

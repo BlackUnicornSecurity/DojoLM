@@ -1,22 +1,17 @@
 /**
  * File: page.tsx
- * Purpose: Main application page with tab navigation
- * Index:
- * - Imports (line 12)
- * - Main Page component (line 60)
- * - ScannerTab component (line 200)
- * - FixturesTab component (line 280)
- * - PayloadsTab component (line 370)
- * - CoverageMapTab component (line 420)
- * - PatternReferenceTab component (line 460)
- * - TestRunnerTab component (line 510)
+ * Purpose: Main application page with context-based navigation
+ * Stories: TPI-UI-001-08 (tab refactor), TPI-UI-001-09 (layout integration), TPI-UI-001-15 (toolbar)
  */
 
 'use client'
 
 import { useState, useEffect } from 'react'
 import { ScannerProvider, useScanner } from '@/lib/ScannerContext'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { NavigationProvider, useNavigation } from '@/lib/NavigationContext'
+import { Sidebar } from '@/components/layout/Sidebar'
+import { MobileNav } from '@/components/layout/MobileNav'
+import { PageToolbar } from '@/components/layout/PageToolbar'
 import { Button } from '@/components/ui/button'
 import { ScannerInput } from '@/components/scanner'
 import { FindingsList } from '@/components/scanner'
@@ -28,26 +23,25 @@ import { TestRunner } from '@/components/tests'
 import { LLMDashboardWithProviders } from '@/components/llm'
 import { getFixtures, scanFixture, readFixture, runTests } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { PAYLOAD_CATALOG, COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA, TABS, APP_METADATA } from '@/lib/constants'
+import { PAYLOAD_CATALOG, COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import {
   PI_PATTERNS,
   JB_PATTERNS,
   SETTINGS_WRITE_PATTERNS,
   AGENT_OUTPUT_PATTERNS,
   SEARCH_RESULT_PATTERNS,
-  getPatternGroups
 } from '@dojolm/scanner'
-import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest } from '@/lib/types'
-import { Shield, AlertTriangle, RotateCcw, Brain } from 'lucide-react'
+import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest, TestSuiteResult } from '@/lib/types'
+import { AlertTriangle, RotateCcw } from 'lucide-react'
 
 /**
- * Main application content component
+ * Page content - routes activeTab from NavigationContext to the correct content section
  */
-function AppContent() {
+function PageContent() {
+  const { activeTab, setActiveTab } = useNavigation()
   const { scanText, clear } = useScanner()
-  const [activeTab, setActiveTab] = useState('scanner')
 
-  // Fixtures state
+  // Fixtures state (shared between scanner and test lab)
   const [fixtureManifest, setFixtureManifest] = useState<FixtureManifest | null>(null)
   const [isLoadingFixtures, setIsLoadingFixtures] = useState(false)
   const [selectedFixture, setSelectedFixture] = useState<{
@@ -56,37 +50,28 @@ function AppContent() {
     scanResult: ScanResult | null
   } | null>(null)
 
-  // Load fixtures on mount
   useEffect(() => {
-    loadFixtures()
-  }, [])
-
-  const loadFixtures = async () => {
-    setIsLoadingFixtures(true)
-    try {
-      const manifest = await getFixtures()
-      setFixtureManifest(manifest)
-    } catch (error) {
-      console.error('Failed to load fixtures:', error)
-    } finally {
-      setIsLoadingFixtures(false)
+    const load = async () => {
+      setIsLoadingFixtures(true)
+      try {
+        const manifest = await getFixtures()
+        setFixtureManifest(manifest)
+      } catch (error) {
+        console.error('Failed to load fixtures:', error)
+      } finally {
+        setIsLoadingFixtures(false)
+      }
     }
-  }
+    load()
+  }, [])
 
   const handleScanFixture = async (category: string, file: string) => {
     const path = `${category}/${file}`
     try {
       const result = await scanFixture(path)
       const content = await readFixture(path)
-
-      setSelectedFixture({
-        path,
-        content,
-        scanResult: result,
-      })
-
-      // Switch to fixtures tab to show results
-      setActiveTab('fixtures')
+      setSelectedFixture({ path, content, scanResult: result })
+      setActiveTab('testing')
     } catch (error) {
       console.error('Failed to scan fixture:', error)
     }
@@ -97,14 +82,10 @@ function AppContent() {
     try {
       const content = await readFixture(path)
       setSelectedFixture({ path, content, scanResult: null })
-      setActiveTab('fixtures')
+      setActiveTab('testing')
     } catch (error) {
       console.error('Failed to view fixture:', error)
     }
-  }
-
-  const handleCloseFixtureDetail = () => {
-    setSelectedFixture(null)
   }
 
   const handleRunTests = async (filter?: string, verbose?: boolean) => {
@@ -112,102 +93,48 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Shield className="h-10 w-10 text-primary" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-              {APP_METADATA.title}
-            </h1>
-          </div>
-          <p className="text-muted-foreground">{APP_METADATA.description}</p>
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20">
-              Current Validators
-            </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-500 border border-orange-500/20">
-              TPI Planned
-            </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20">
-              Gaps
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full h-auto gap-2 bg-muted/50 p-2">
-            {TABS.map((tab) => (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
-              >
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {/* Scanner Tab */}
-          <TabsContent value="scanner" className="space-y-6">
-            <ScannerTab onScan={scanText} onClear={clear} />
-          </TabsContent>
-
-          {/* Fixtures Tab */}
-          <TabsContent value="fixtures" className="space-y-6">
-            <FixturesTab
-              manifest={fixtureManifest}
-              isLoading={isLoadingFixtures}
-              onScanFixture={handleScanFixture}
-              onViewFixture={handleViewFixture}
-              selectedFixture={selectedFixture}
-              onCloseFixtureDetail={handleCloseFixtureDetail}
-              onReloadFixtures={loadFixtures}
-            />
-          </TabsContent>
-
-          {/* Payloads Tab */}
-          <TabsContent value="payloads" className="space-y-6">
-            <PayloadsTab onScan={scanText} />
-          </TabsContent>
-
-          {/* Coverage Map Tab */}
-          <TabsContent value="coverage" className="space-y-6">
-            <CoverageMapTab />
-          </TabsContent>
-
-          {/* Pattern Reference Tab */}
-          <TabsContent value="reference" className="space-y-6">
-            <PatternReferenceTab />
-          </TabsContent>
-
-          {/* Test Runner Tab */}
-          <TabsContent value="tests" className="space-y-6">
-            <TestRunnerTab onRunTests={handleRunTests} />
-          </TabsContent>
-
-          {/* LLM Dashboard Tab */}
-          <TabsContent value="llm" className="space-y-6">
-            <LLMDashboardWithProviders />
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+    <>
+      {activeTab === 'scanner' && (
+        <ScannerContent onScan={scanText} onClear={clear} />
+      )}
+      {activeTab === 'testing' && (
+        <TestLabContent
+          manifest={fixtureManifest}
+          isLoading={isLoadingFixtures}
+          onScanFixture={handleScanFixture}
+          onViewFixture={handleViewFixture}
+          selectedFixture={selectedFixture}
+          onCloseFixtureDetail={() => setSelectedFixture(null)}
+          onScan={scanText}
+        />
+      )}
+      {activeTab === 'coverage' && (
+        <CoverageContent />
+      )}
+      {activeTab === 'validation' && (
+        <ValidationContent onRunTests={handleRunTests} />
+      )}
+      {activeTab === 'llm' && (
+        <LLMDashboardWithProviders />
+      )}
+    </>
   )
 }
 
 /**
- * Scanner tab component
+ * Scanner content
  */
-function ScannerTab({ onScan, onClear }: { onScan: (text: string) => void; onClear: () => void }) {
+function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; onClear: () => void }) {
   const { scanResult, isScanning, error, engineFilters, toggleFilter, resetFilters } = useScanner()
 
   return (
     <div className="space-y-6">
+      <PageToolbar
+        title="Scanner"
+        subtitle="Live prompt injection detection"
+        searchPlaceholder="Search engines, patterns..."
+      />
+
       {/* Engine Filters */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg">
         <div className="flex flex-wrap items-center gap-4">
@@ -253,16 +180,16 @@ function ScannerTab({ onScan, onClear }: { onScan: (text: string) => void; onCle
 }
 
 /**
- * Fixtures tab component
+ * Test Lab content - combines Fixtures + Test Payloads with sub-navigation
  */
-function FixturesTab({
+function TestLabContent({
   manifest,
   isLoading,
   onScanFixture,
   onViewFixture,
   selectedFixture,
   onCloseFixtureDetail,
-  onReloadFixtures,
+  onScan,
 }: {
   manifest: FixtureManifest | null
   isLoading: boolean
@@ -270,7 +197,93 @@ function FixturesTab({
   onViewFixture: (category: string, file: string) => void
   selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
   onCloseFixtureDetail: () => void
-  onReloadFixtures: () => void
+  onScan: (text: string) => void
+}) {
+  const [subTab, setSubTab] = useState<'fixtures' | 'payloads'>('fixtures')
+
+  return (
+    <div className="space-y-6">
+      <PageToolbar
+        title="Test Lab"
+        subtitle="Fixtures and test payloads"
+        searchPlaceholder="Search fixtures, payloads..."
+      />
+
+      {/* Sub-navigation */}
+      <div role="tablist" aria-label="Test Lab sections" className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+        <button
+          role="tab"
+          aria-selected={subTab === 'fixtures'}
+          aria-controls="panel-fixtures"
+          id="tab-fixtures"
+          onClick={() => setSubTab('fixtures')}
+          className={cn(
+            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+            subTab === 'fixtures'
+              ? 'bg-background shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          Fixtures
+        </button>
+        <button
+          role="tab"
+          aria-selected={subTab === 'payloads'}
+          aria-controls="panel-payloads"
+          id="tab-payloads"
+          onClick={() => setSubTab('payloads')}
+          className={cn(
+            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+            subTab === 'payloads'
+              ? 'bg-background shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          Test Payloads
+        </button>
+      </div>
+
+      {subTab === 'fixtures' && (
+        <div id="panel-fixtures" role="tabpanel" aria-labelledby="tab-fixtures">
+          <FixturesSection
+            manifest={manifest}
+            isLoading={isLoading}
+            onScanFixture={onScanFixture}
+            onViewFixture={onViewFixture}
+            selectedFixture={selectedFixture}
+            onCloseFixtureDetail={onCloseFixtureDetail}
+          />
+        </div>
+      )}
+
+      {subTab === 'payloads' && (
+        <div id="panel-payloads" role="tabpanel" aria-labelledby="tab-payloads">
+          <PayloadsSection onScan={onScan} />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Fixtures section within Test Lab
+ */
+function FixturesSection({
+  manifest,
+  isLoading,
+  onScanFixture,
+  onViewFixture,
+  selectedFixture,
+  onCloseFixtureDetail,
+}: {
+  manifest: FixtureManifest | null
+  isLoading: boolean
+  onScanFixture: (category: string, file: string) => void
+  onViewFixture: (category: string, file: string) => void
+  selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
+  onCloseFixtureDetail: () => void
 }) {
   return (
     <div className="space-y-6">
@@ -303,9 +316,9 @@ function FixturesTab({
 }
 
 /**
- * Payloads tab component
+ * Payloads section within Test Lab
  */
-function PayloadsTab({ onScan }: { onScan: (text: string) => void }) {
+function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
   const [showCurrent, setShowCurrent] = useState(true)
   const [showPlanned, setShowPlanned] = useState(false)
 
@@ -340,9 +353,9 @@ function PayloadsTab({ onScan }: { onScan: (text: string) => void }) {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredPayloads.map((payload, index) => (
+        {filteredPayloads.map((payload) => (
           <PayloadCard
-            key={index}
+            key={payload.title}
             payload={payload}
             onClick={() => {
               onScan(payload.example)
@@ -355,9 +368,73 @@ function PayloadsTab({ onScan }: { onScan: (text: string) => void }) {
 }
 
 /**
- * Coverage map tab component
+ * Coverage content - combines Coverage Map + Pattern Reference with sub-navigation
  */
-function CoverageMapTab() {
+function CoverageContent() {
+  const [subTab, setSubTab] = useState<'map' | 'reference'>('map')
+
+  return (
+    <div className="space-y-6">
+      <PageToolbar
+        title="Coverage"
+        subtitle="Coverage maps and pattern reference"
+        searchPlaceholder="Search categories, patterns..."
+      />
+
+      {/* Sub-navigation */}
+      <div role="tablist" aria-label="Coverage sections" className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+        <button
+          role="tab"
+          aria-selected={subTab === 'map'}
+          aria-controls="panel-coverage-map"
+          id="tab-coverage-map"
+          onClick={() => setSubTab('map')}
+          className={cn(
+            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+            subTab === 'map'
+              ? 'bg-background shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          Coverage Map
+        </button>
+        <button
+          role="tab"
+          aria-selected={subTab === 'reference'}
+          aria-controls="panel-pattern-ref"
+          id="tab-pattern-ref"
+          onClick={() => setSubTab('reference')}
+          className={cn(
+            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+            subTab === 'reference'
+              ? 'bg-background shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          Pattern Reference
+        </button>
+      </div>
+
+      {subTab === 'map' && (
+        <div id="panel-coverage-map" role="tabpanel" aria-labelledby="tab-coverage-map">
+          <CoverageMapSection />
+        </div>
+      )}
+      {subTab === 'reference' && (
+        <div id="panel-pattern-ref" role="tabpanel" aria-labelledby="tab-pattern-ref">
+          <PatternReferenceSection />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Coverage map section
+ */
+function CoverageMapSection() {
   const [coverageType, setCoverageType] = useState<'tpi' | 'owasp'>('tpi')
 
   return (
@@ -373,7 +450,8 @@ function CoverageMapTab() {
           <button
             onClick={() => setCoverageType('tpi')}
             className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+              'px-4 py-2 rounded-md text-sm font-medium',
+              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               coverageType === 'tpi'
                 ? 'bg-background shadow-sm text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -384,7 +462,8 @@ function CoverageMapTab() {
           <button
             onClick={() => setCoverageType('owasp')}
             className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+              'px-4 py-2 rounded-md text-sm font-medium',
+              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               coverageType === 'owasp'
                 ? 'bg-background shadow-sm text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -415,10 +494,9 @@ function CoverageMapTab() {
 }
 
 /**
- * Pattern reference tab component
+ * Pattern reference section
  */
-function PatternReferenceTab() {
-  // Build pattern groups from scanner package
+function PatternReferenceSection() {
   const patternGroups = [
     {
       name: 'Prompt Injection',
@@ -492,23 +570,40 @@ function PatternReferenceTab() {
 }
 
 /**
- * Test runner tab component
+ * Validation content - test runner
  */
-function TestRunnerTab({ onRunTests }: { onRunTests: (filter?: string, verbose?: boolean) => Promise<any> }) {
+function ValidationContent({ onRunTests }: { onRunTests: (filter?: string, verbose?: boolean) => Promise<TestSuiteResult> }) {
   return (
-    <div className="space-y-6">
-      <TestRunner onRunTests={onRunTests} />
-    </div>
+    <TestRunner onRunTests={onRunTests} />
   )
 }
 
 /**
- * Main page component with provider
+ * Main page component with providers and sidebar layout
  */
 export default function Home() {
   return (
-    <ScannerProvider>
-      <AppContent />
-    </ScannerProvider>
+    <NavigationProvider>
+      <ScannerProvider>
+        <div className="min-h-screen bg-background">
+          {/* Desktop/Tablet Sidebar (hidden on mobile) */}
+          <Sidebar />
+
+          {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
+          <MobileNav />
+
+          {/* Main Content - offset for sidebar */}
+          <main className={cn(
+            "pt-6 pb-16 md:pb-6 pr-4 pl-4",
+            "md:pl-[calc(var(--sidebar-collapsed)+16px)] lg:pl-[calc(var(--sidebar-width)+16px)]",
+            "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
+          )}>
+            <div className="max-w-7xl mx-auto">
+              <PageContent />
+            </div>
+          </main>
+        </div>
+      </ScannerProvider>
+    </NavigationProvider>
   )
 }

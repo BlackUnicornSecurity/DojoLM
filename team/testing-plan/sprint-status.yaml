@@ -1,11 +1,12 @@
 # Sprint Status: Scanner Coverage Improvement
 # Created: 2026-02-27
+# Updated: 2026-03-01
 # Goal: Achieve 98.8% pass rate (969/981 tests) from baseline 67.2%
 
 sprint:
-  name: "Scanner Coverage Sprint"
+  name: "Scanner Coverage + UI Modernization Sprint"
   start_date: "2026-02-27"
-  target_end_date: "2026-02-30"
+  target_end_date: "2026-03-05"
   target_pass_rate: 98.8
   baseline_pass_rate: 67.2
   baseline_passed: 659
@@ -139,6 +140,75 @@ epics:
         assigned: claude
         started: "2026-02-28"
         completed: "2026-02-28"
+
+  - id: EPI-UI-001
+    name: "DojoLM UI Modernization"
+    priority: P1
+    status: pending
+    estimated_hours: 16.5
+    actual_hours: 0
+    note: "SME review applied: WCAG fix, context-based nav, 11 stories"
+    stories:
+      - id: STORY-UI-001-01
+        title: "Update Color System - WCAG compliant"
+        status: pending
+        points: 3
+        assigned: tbd
+      - id: STORY-UI-001-02
+        title: "Fix Dropdown Transparency Bug"
+        status: pending
+        points: 1
+        assigned: tbd
+      - id: STORY-UI-001-03
+        title: "Create Context-Based Sidebar Component"
+        status: pending
+        points: 3
+        assigned: tbd
+      - id: STORY-UI-001-04
+        title: "Create Co-Branded Header + Asset Prep"
+        status: pending
+        points: 2
+        assigned: tbd
+      - id: STORY-UI-001-05
+        title: "Update Navigation Constants"
+        status: pending
+        points: 1
+        assigned: tbd
+      - id: STORY-UI-001-05-5
+        title: "Create Navigation Context (NEW)"
+        status: pending
+        points: 2
+        assigned: tbd
+      - id: STORY-UI-001-06
+        title: "Verify Button Styles"
+        status: pending
+        points: 1
+        assigned: tbd
+      - id: STORY-UI-001-07
+        title: "Verify Card Styles"
+        status: pending
+        points: 1
+        assigned: tbd
+      - id: STORY-UI-001-08
+        title: "Refactor Page for Context-Based Nav"
+        status: pending
+        points: 4
+        assigned: tbd
+      - id: STORY-UI-001-09
+        title: "Integrate Sidebar/MobileNav into Layout"
+        status: pending
+        points: 2
+        assigned: tbd
+      - id: STORY-UI-001-10
+        title: "Create Mobile Navigation with Safe Areas"
+        status: pending
+        points: 2
+        assigned: tbd
+      - id: STORY-UI-001-11
+        title: "Update Root Layout Metadata"
+        status: pending
+        points: 1
+        assigned: tbd
 
 # Test Results Tracking
 test_results:

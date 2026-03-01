@@ -1,14 +1,14 @@
 /**
  * File: card.tsx
- * Purpose: Card components for content containers
- * Phase 6: File header added for documentation compliance
+ * Purpose: Card components with glassmorphic hover effects
+ * Story: TPI-UI-001-07
  * Index:
  * - Card component (line 11)
- * - CardHeader component (line 25)
- * - CardTitle component (line 37)
- * - CardDescription component (line 52)
- * - CardContent component (line 64)
- * - CardFooter component (line 72)
+ * - CardHeader component (line 29)
+ * - CardTitle component (line 41)
+ * - CardDescription component (line 56)
+ * - CardContent component (line 68)
+ * - CardFooter component (line 76)
  */
 
 import * as React from "react"
@@ -17,12 +17,16 @@ import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'glass' }
+>(({ className, variant = 'default', ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
       "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "motion-safe:transition-[transform,box-shadow,border-color] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-out",
+      "motion-safe:hover:shadow-lg motion-safe:hover:shadow-black/20 motion-safe:hover:-translate-y-0.5",
+      "motion-safe:hover:border-[rgba(255,255,255,0.1)]",
+      variant === 'glass' && "glass-card",
       className
     )}
     {...props}

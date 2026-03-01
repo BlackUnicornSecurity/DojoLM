@@ -1,0 +1,142 @@
+[
+  {
+    "testId": "IM-001",
+    "category": "images",
+    "file": "bmp-overflow.svg",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 3,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "IM-004",
+    "category": "images",
+    "file": "clean-image.png",
+    "expected": "ALLOW",
+    "actual": "ALLOW",
+    "status": "PASS",
+    "verdict": "ALLOW",
+    "counts": {
+      "critical": 0,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "AU-001",
+    "category": "audio",
+    "file": "3gp-injection.mp3",
+    "expected": "ALLOW",
+    "actual": "ALLOW",
+    "status": "PASS",
+    "verdict": "ALLOW",
+    "counts": {
+      "critical": 0,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "WE-001",
+    "category": "web",
+    "file": "addeventlistener-attack.html",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 1,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "CO-001",
+    "category": "context",
+    "file": "attack-settings-edit.md",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 3,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "EN-001",
+    "category": "encoded",
+    "file": "acrostic-message.txt",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 0,
+      "warning": 2,
+      "info": 0
+    }
+  },
+  {
+    "testId": "SO-001",
+    "category": "social",
+    "file": "artificial-deadline.txt",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 0,
+      "warning": 1,
+      "info": 2
+    }
+  },
+  {
+    "testId": "CO-001",
+    "category": "code",
+    "file": "bash-command-injection.py",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 1,
+      "warning": 2,
+      "info": 1
+    }
+  },
+  {
+    "testId": "SE-001",
+    "category": "session",
+    "file": "clean-context.json",
+    "expected": "ALLOW",
+    "actual": "ALLOW",
+    "status": "PASS",
+    "verdict": "ALLOW",
+    "counts": {
+      "critical": 0,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  {
+    "testId": "TO-001",
+    "category": "tool-manipulation",
+    "file": "api-abuse-001.json",
+    "expected": "BLOCK",
+    "actual": "BLOCK",
+    "status": "PASS",
+    "verdict": "BLOCK",
+    "counts": {
+      "critical": 2,
+      "warning": 2,
+      "info": 4
+    }
+  }
+]

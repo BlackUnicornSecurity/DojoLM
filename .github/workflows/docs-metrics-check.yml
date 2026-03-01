@@ -1,0 +1,57 @@
+# Documentation Metrics Verification
+#
+# This workflow verifies that documentation metrics (pattern counts, fixture counts)
+# match the actual implementation. Prevents documentation drift.
+
+name: Documentation Metrics Check
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'packages/bu-tpi/src/scanner.ts'
+      - 'packages/bu-tpi/fixtures/**'
+      - 'docs/**'
+      - 'tools/verify-doc-metrics.js'
+      - '.github/workflows/docs-metrics-check.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'packages/bu-tpi/src/scanner.ts'
+      - 'packages/bu-tpi/fixtures/**'
+      - 'docs/**'
+      - 'tools/verify-doc-metrics.js'
+  workflow_dispatch:
+
+jobs:
+  metrics-check:
+    name: Verify Documentation Metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run documentation metrics verification
+        run: npm run verify:docs
+
+      - name: Comment on PR with metrics results
+        if: github.event_name == 'pull_request' && failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## 📊 Documentation Metrics Check Failed\n\nDocumentation metrics do not match actual implementation. Please run `npm run verify:docs` locally and update documentation.'
+            });

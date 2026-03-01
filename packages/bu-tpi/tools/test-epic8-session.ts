@@ -8,7 +8,7 @@
  * - Cross-category aggregation (>5 INFO across >3 categories)
  */
 
-import { scanSession } from './src/scanner.js';
+import { scanSession } from '../src/scanner.js';
 import * as fs from 'fs';
 import * as path from 'path';
 

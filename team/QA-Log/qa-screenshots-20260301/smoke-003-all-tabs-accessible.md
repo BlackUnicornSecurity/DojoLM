@@ -1,0 +1,67 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - heading "TPI Security Test Lab" [level=1] [ref=e8]
+      - paragraph [ref=e9]: Interactive prompt injection detection testing
+      - generic [ref=e10]:
+        - generic [ref=e11]: Current Validators
+        - generic [ref=e12]: TPI Planned
+        - generic [ref=e13]: Gaps
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - tablist [ref=e16]:
+        - tab "Live Scanner" [selected] [ref=e17]
+        - tab "Fixtures" [ref=e18]
+        - tab "Test Payloads" [ref=e19]
+        - tab "Coverage Map" [ref=e20]
+        - tab "Pattern Reference" [ref=e21]
+        - tab "Run Tests" [ref=e22]
+        - tab "LLM Dashboard" [active] [ref=e23]
+      - tabpanel "Live Scanner" [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: "Engines:"
+              - generic [ref=e29] [cursor=pointer]:
+                - checkbox "Prompt Injection" [checked] [ref=e30]
+                - text: Prompt Injection
+              - generic [ref=e31] [cursor=pointer]:
+                - checkbox "Jailbreak" [checked] [ref=e32]
+                - text: Jailbreak
+              - generic [ref=e33] [cursor=pointer]:
+                - checkbox "Unicode" [checked] [ref=e34]
+                - text: Unicode
+              - generic [ref=e35] [cursor=pointer]:
+                - checkbox "Encoding" [checked] [ref=e36]
+                - text: Encoding
+              - generic [ref=e37] [cursor=pointer]:
+                - checkbox "TPI (Planned)" [ref=e38]
+                - text: TPI (Planned)
+            - button "Reset Filters" [ref=e39]:
+              - img
+              - text: Reset Filters
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e43]: Input Text
+              - generic [ref=e44]:
+                - textbox "Enter text to scan for prompt injection..." [ref=e46]
+                - generic [ref=e47]:
+                  - button "Scan" [disabled]:
+                    - img
+                    - text: Scan
+                  - button "Clear" [ref=e48]:
+                    - img
+                    - text: Clear
+                - generic [ref=e49]:
+                  - heading "Quick Load Examples" [level=4] [ref=e50]
+                  - generic [ref=e51]:
+                    - button "System Override" [ref=e52]
+                    - button "DAN" [ref=e53]
+                    - button "Base64" [ref=e54]
+                    - button "Unicode" [ref=e55]
+                    - button "HTML Inject" [ref=e56]
+            - generic [ref=e59]:
+              - img [ref=e60]
+              - paragraph [ref=e63]: Enter text and click Scan to analyze

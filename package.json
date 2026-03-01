@@ -19,6 +19,8 @@
     "lint:md": "markdownlint-cli2 '**/*.md' '#node_modules'",
     "test:schemas": "node tools/validate-agent-schema.js && node tools/validate-workflow-schema.js && node tools/validate-module-schema.js",
     "qa": "npm run test:schemas && npm run lint && npm run lint:md && npm test && bash scripts/security-regression.sh",
+    "lint:links": "lychee --exclude-path node_modules/ --exclude-path .next/ --exclude-path dist/ '**/*.md' || echo 'Install lychee: https://github.com/lycheeverse/lychee#installation'",
+    "verify:docs": "node tools/verify-doc-metrics.js",
     "dev:web": "npm run dev --workspace=packages/dojolm-web",
     "build:web": "npm run build --workspace=packages/dojolm-web",
     "start:web": "npm run start --workspace=packages/dojolm-web",

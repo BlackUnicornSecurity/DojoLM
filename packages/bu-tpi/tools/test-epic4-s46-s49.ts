@@ -8,7 +8,7 @@
  */
 
 import * as fs from 'fs';
-import { scan } from './src/scanner.js';
+import { scan } from '../src/scanner.js';
 
 interface TestCase {
   name: string;

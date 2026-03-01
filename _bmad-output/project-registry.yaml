@@ -1,0 +1,29 @@
+# BMAD Project Registry
+# Local to workspace - tracks all projects managed by Abdul
+# Location: {output_folder}/project-registry.yaml
+
+registry_version: "1.0"
+last_updated: "2026-02-28T17:30:00Z"
+active_project: "bu-tpi-sec-review"
+
+projects:
+  - id: "bu-tpi-sec-review"
+    name: "BU-TPI sec review"
+    description: "Comprehensive security and code quality review of the BU-TPI platform. SM creates epics/stories, BMM and Cybersec SMEs review and provide feedback. Single working document output for dev team. REVIEW ONLY - no code modifications."
+    path: "/Users/paultinp/BU-TPI"
+    type: "brownfield"
+    modules_used:
+      - bmm
+      - cybersec-team
+    llm_provider: "claude"
+    status: "planning"
+    current_phase: "discovery"
+    created: "2026-02-28T17:30:00Z"
+    last_accessed: "2026-02-28T17:30:00Z"
+    folder_structure:
+      planning: "_bmad-output/planning-artifacts"
+      implementation: "_bmad-output/implementation-artifacts"
+      docs: "docs"
+    workflow_status_files:
+      bmm: "_bmad-output/planning-artifacts/bmm-workflow-status.yaml"
+    notes: "YOLO mode active - auto-approval for all steps. Parallel execution with 5+ agents. Single working document output."

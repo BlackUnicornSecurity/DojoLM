@@ -2,16 +2,66 @@
  * File: constants.ts
  * Purpose: Application constants and data definitions
  * Index:
- * - QUICK_PAYLOADS (line 8)
- * - PAYLOAD_CATALOG (line 32)
- * - COVERAGE_DATA (line 80)
- * - ENGINE_FILTERS (line 191)
- * - SEVERITY_ORDER (line 202)
- * - TABS (line 207)
- * - APP_METADATA (line 219)
+ * - NAV_ITEMS (line 16)
+ * - NavItem / NavId types (line 43)
+ * - QUICK_PAYLOADS (line 50)
+ * - PAYLOAD_CATALOG (line 74)
+ * - COVERAGE_DATA (line 122)
+ * - ENGINE_FILTERS (line 233)
+ * - SEVERITY_ORDER (line 244)
+ * - TABS (line 249)
+ * - APP_METADATA (line 261)
  */
 
 import type { QuickPayload, PayloadEntry, CoverageEntry } from './types'
+import {
+  Shield,
+  FlaskConical,
+  Target,
+  PlayCircle,
+  Brain,
+  type LucideIcon
+} from 'lucide-react'
+
+/**
+ * Navigation items for sidebar and mobile nav
+ */
+export const NAV_ITEMS = [
+  {
+    id: 'scanner',
+    label: 'Scanner',
+    icon: Shield,
+    description: 'Live prompt injection detection'
+  },
+  {
+    id: 'testing',
+    label: 'Test Lab',
+    icon: FlaskConical,
+    description: 'Fixtures and test payloads'
+  },
+  {
+    id: 'coverage',
+    label: 'Coverage',
+    icon: Target,
+    description: 'Coverage maps and patterns'
+  },
+  {
+    id: 'validation',
+    label: 'Validation',
+    icon: PlayCircle,
+    description: 'Run regression tests'
+  },
+  {
+    id: 'llm',
+    label: 'LLM Dashboard',
+    icon: Brain,
+    description: 'LLM testing interface'
+  }
+] as const
+
+// Derive type from const array
+export type NavItem = typeof NAV_ITEMS[number]
+export type NavId = NavItem['id']
 
 /**
  * Quick payloads for the scanner

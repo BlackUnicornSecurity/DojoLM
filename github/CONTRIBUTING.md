@@ -21,11 +21,11 @@ dojolm/
 ├── packages/
 │   ├── bu-tpi/              # Core scanner (TypeScript, zero deps, port 8089)
 │   │   ├── src/
-│   │   │   ├── scanner.ts   # Detection engine — 139 patterns, 14 groups, 6 heuristic detectors
+│   │   │   ├── scanner.ts   # Detection engine — 505+ patterns, 47 groups, 6 heuristic detectors
 │   │   │   ├── serve.ts     # Hardened HTTP server
 │   │   │   ├── generate-fixtures.ts  # Fixture generator
 │   │   │   └── types.ts     # Shared type definitions
-│   │   ├── fixtures/        # 89 attack/clean fixture files across 12 categories
+│   │   ├── fixtures/        # 1,544 attack/clean fixture files across 30 categories
 │   │   └── tools/           # Test suites
 │   ├── dojolm-scanner/      # Enhanced scanner package (web integration)
 │   ├── dojolm-web/          # Next.js web app (port 3000)

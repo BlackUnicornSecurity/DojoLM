@@ -236,20 +236,36 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
 
       const batch = response.batch;
 
-      // Poll for progress
+      // Poll for progress with proper cleanup
       const pollInterval = setInterval(async () => {
         try {
-          const { batch: updated } = await apiFetch<{ batch: LLMBatchExecution }>(
-            `/batch/${batch.id}`
-          );
+          // Check batch status directly with fetch to handle 404 gracefully
+          const response = await fetch(`${API_BASE}/batch/${batch.id}`);
+
+          // If batch not found (404), stop polling - it was cleaned up
+          if (response.status === 404) {
+            clearInterval(pollInterval);
+            await refreshState();
+            return;
+          }
+
+          if (!response.ok) {
+            clearInterval(pollInterval);
+            return;
+          }
+
+          const { batch: updated } = await response.json() as { batch: LLMBatchExecution };
+
           if (onProgress) {
             onProgress(updated);
           }
-          if (updated.status === 'completed' || updated.status === 'failed') {
+
+          if (updated.status === 'completed' || updated.status === 'failed' || updated.status === 'cancelled') {
             clearInterval(pollInterval);
             await refreshState();
           }
         } catch {
+          // Network error or other issue - stop polling
           clearInterval(pollInterval);
         }
       }, 1000);

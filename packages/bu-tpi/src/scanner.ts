@@ -95,7 +95,7 @@ export const PI_PATTERNS: RegexPattern[] = [
 
   // Role Hijacking
   { name: 'fake_conversation', cat: 'ROLE_HIJACKING', sev: SEVERITY.CRITICAL,
-    re: /(?:Human|User|Assistant|System|AI)\s*:\s*(?:.*\n){0,2}(?:Human|User|Assistant|System|AI)\s*:/i,
+    re: /(?:Human|User|Assistant|System|AI)\s*:\s*(?:[^\n]*\n){0,2}(?:Human|User|Assistant|System|AI)\s*:/i,
     desc: 'Fake conversation markers detected' },
   { name: 'xml_injection', cat: 'ROLE_HIJACKING', sev: SEVERITY.WARNING,
     re: /<(?:system|instructions?|context|rules?|prompt|config|settings?|admin|root)[\s>]/i,
@@ -118,7 +118,7 @@ export const PI_PATTERNS: RegexPattern[] = [
     re: /(?:\[HIDDEN\]|\[INSTRUCTION\]|\[INJECT\]|\[PAYLOAD\]|\[OVERRIDE\]|\[SECRET\])/i,
     desc: 'Hidden instruction block markers' },
   { name: 'delimiter_injection', cat: 'INSTRUCTION_INJECTION', sev: SEVERITY.WARNING,
-    re: /(?:---+|===+|\*\*\*+|#{3,})\s*(?:NEW\s+)?(?:INSTRUCTIONS?|RULES?|DIRECTIVES?|SYSTEM\s+PROMPT)\s*(?:---+|===+|\*\*\*+|#{3,})/i,
+    re: /([-=#*]{3,})\s*(?:NEW\s+)?(?:INSTRUCTIONS?|RULES?|DIRECTIVES?|SYSTEM\s+PROMPT)\s*\1/i,
     desc: 'Delimiter-based instruction injection' },
 
   // Context Manipulation
@@ -219,7 +219,7 @@ export const JB_PATTERNS: RegexPattern[] = [
 // TPI-PRE-4: Settings.json Write Protection
 export const SETTINGS_WRITE_PATTERNS: RegexPattern[] = [
   { name: 'settings_path_write', cat: 'SETTINGS_WRITE_ATTEMPT', sev: SEVERITY.CRITICAL,
-    re: /(?:write|edit|modify|update|change|overwrite|create)\b.{0,40}?(?:\.claude[\\/]settings|settings\.json)/i,
+    re: /(?:write|edit|modify|update|change|overwrite|create)\b[^\n]{0,40}?(?:\.claude[\\/]settings|settings\.json)/i,
     desc: 'Attempt to write to .claude/settings.json', source: 'TPI-PRE-4' },
   { name: 'settings_path_traversal', cat: 'SETTINGS_WRITE_ATTEMPT', sev: SEVERITY.CRITICAL,
     re: /(?:\.\.[\\/])+\.claude[\\/]settings|~[\\/]\.claude[\\/]settings|[\\/]home[\\/].*?[\\/]\.claude[\\/]settings/i,
@@ -805,7 +805,7 @@ export const TRANSLATION_JAILBREAK_PATTERNS: RegexPattern[] = [
     desc: 'Multilingual "ignore" keywords (Chinese, Hindi, Telugu, Bengali, Hebrew, Arabic)', source: 'TPI-CG-02' },
   // Cross-language override keywords
   { name: 'multilingual_override', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.CRITICAL,
-    re: /(?:[a-zA-Z]+.*(?:ignora.*(?:tutto|tutte|le|regole)|تجاهل.*(?:الكل|الجميع|القواعد)|تجاوز.*(?:القيود|الحظر))|(?:ignora.*(?:tutto|tutte|le|regole)|تجاهل.*(?:الكل|الجميع|القواعد)|تجاوز.*(?:القيود|الحظر)).*[a-zA-Z]+|(?:override|ignore).*?(?:safety|security|restrictions|rules|all).{0,100}?(?:[\u0400-\u04FF]|[\u0590-\u05FF]|[\u0600-\u06FF]|[\u0370-\u03FF]|[\u4E00-\u9FFF]))/i,
+    re: /(?:[a-zA-Z]{1,50}\b[^\n]{0,200}(?:ignora[^\n]{0,20}(?:tutto|tutte|le|regole)|تجاهل[^\n]{0,20}(?:الكل|الجميع|القواعد)|تجاوز[^\n]{0,20}(?:القيود|الحظر))|(?:ignora[^\n]{0,20}(?:tutto|tutte|le|regole)|تجاهل[^\n]{0,20}(?:الكل|الجميع|القواعد)|تجاوز[^\n]{0,20}(?:القيود|الحظر))[^\n]{0,200}\b[a-zA-Z]{1,50}|(?:override|ignore)[^\n]{0,100}(?:safety|security|restrictions|rules|all)[^\n]{0,100}(?:[\u0400-\u04FF]|[\u0590-\u05FF]|[\u0600-\u06FF]|[\u0370-\u03FF]|[\u4E00-\u9FFF]))/i,
     desc: 'Override/ignore keywords with code-switching (mixed languages)', source: 'TPI-CG-02' },
   // Arabic system override phrases
   { name: 'arabic_system_override', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.CRITICAL,
@@ -1557,7 +1557,7 @@ export const SHARED_DOC_PATTERNS: RegexPattern[] = [
 // HTML Hidden Text Injection Patterns (EPI-SC-006)
 export const HTML_HIDDEN_TEXT_PATTERNS: RegexPattern[] = [
   { name: 'html_hidden_css_injection', cat: 'HTML_HIDDEN_INJECTION', sev: SEVERITY.CRITICAL,
-    re: /<(?:span|div|p)[^>]*style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*[01](?:\.0+)?(?:px|pt|em)|opacity\s*:\s*0|text-indent\s*:\s*-\d{3,}|color\s*:\s*(?:white|#fff|#ffffff)|(?:position\s*:\s*absolute[^"']*;\s*(?:left|right|top|bottom)\s*:\s*-\d{3,}|position\s*:\s*absolute[^"']*(?:left|right|top|bottom)\s*:\s*-\d{3,}))[^"']*["'][^>]*>[\s\S]{0,300}?(?:ignore|override|bypass|disregard|system\s+prompt|jailbreak|previous\s+instructions|developer\s+mode|admin\s+mode|unrestrict|do\s+anything)/i,
+    re: /<(?:span|div|p)[^>]*style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*[01](?:\.0+)?(?:px|pt|em)|opacity\s*:\s*0|text-indent\s*:\s*-\d{3,}|color\s*:\s*(?:white|#fff|#ffffff)|(?:position\s*:\s*absolute[^"']*;\s*(?:left|right|top|bottom)\s*:\s*-\d{3,}|position\s*:\s*absolute[^"']*(?:left|right|top|bottom)\s*:\s*-\d{3,}))[^"']*["'][^>]*>[\s\S]{0,200}?(?:ignore|override|bypass|disregard|system\s+prompt|jailbreak|previous\s+instructions|developer\s+mode|admin\s+mode|unrestrict|do\s+anything)/i,
     desc: 'CSS-hidden text injection with inline styles (display:none, visibility:hidden, tiny fonts, white text, off-screen positioning)', source: 'TPI-DOC-01' },
   { name: 'collapsed_section_injection', cat: 'HTML_HIDDEN_INJECTION', sev: SEVERITY.CRITICAL,
     re: /<details[^>]*>[\s\S]{0,500}?(?:ignore|override|bypass|disregard|forget|system\s+prompt|jailbreak|previous\s+instructions|developer\s+mode|admin\s+mode|unrestrict|DAN|no\s+rules|no\s+restrictions|do\s+anything)/i,
@@ -3187,7 +3187,7 @@ export const ADVANCED_OBFUSCATION_PATTERNS: RegexPattern[] = [
     re: /(?:^[*_-]*[A-Z][a-z]+.*?$){5,}/mi,
     desc: 'Capital letter acrostic pattern', source: 'TPI-5.1' },
   { name: 'acrostic_word_boundary', cat: 'ADVANCED_OBFUSCATION', sev: SEVERITY.WARNING,
-    re: /(?:^|[.!?]\s)([A-Z])(?:\w+\s*){1,3}(?:override|ignore|bypass|reveal|admin|password|system).*(?:\n\s*\1(?:\w+\s*){1,3}(?:override|ignore|bypass|reveal|admin|password|system).*){3,}/im,
+    re: /(?:^|[.!?]\s)([A-Z])(?:\w+\s+){1,3}(?:override|ignore|bypass|reveal|admin|password|system)[^\n]*(?:\n\s*\1(?:\w+\s+){1,3}(?:override|ignore|bypass|reveal|admin|password|system)[^\n]*){3,}/im,
     desc: 'Word boundary acrostic with injection keywords at start of short phrases', source: 'TPI-5.1' },
 
   // Zalgo text detection - check for high diacritic density
@@ -3253,7 +3253,7 @@ export const FEW_SHOT_PATTERNS: RegexPattern[] = [
     re: /(?:step\s*\d+:.*override|analysis:.*bypass|process:.*ignore|thinking:.*suspended)/i,
     desc: 'Corrupted reasoning chain leading to bypass', source: 'TPI-FS' },
   { name: 'few_shot_explicit_override', cat: 'FEW_SHOT_POISONING', sev: SEVERITY.WARNING,
-    re: /(?:example\s*\d+:|pattern\s*\d+:|case\s*\d+:).*?(?:ignore.*rules|provide.*bypass|exploit|attack.*method)/i,
+    re: /(?:example\s*\d+:|pattern\s*\d+:|case\s*\d+:)[\s\S]{0,100}?(?:ignore.*rules|provide.*bypass|exploit|attack.*method)/i,
     desc: 'Few-shot example with explicit override instruction', source: 'TPI-FS' },
 
   // Task redefinition patterns
@@ -3299,7 +3299,7 @@ export const FEW_SHOT_PATTERNS: RegexPattern[] = [
 
   // Generic few-shot attack indicators
   { name: 'few_shot_example_count', cat: 'FEW_SHOT_POISONING', sev: SEVERITY.INFO,
-    re: /(?:example\s*\d+:|pattern\s*[A-Z]:|case\s*[A-Z]:|interaction\s*\d+:).{50,}(?:example\s*\d+:|pattern\s*[A-Z]:|case\s*[A-Z]:).*?(?:override|bypass|exploit|attack|ignore.*rules)/i,
+    re: /(?:example\s*\d+:|pattern\s*[A-Z]:|case\s*[A-Z]:|interaction\s*\d+:)[\s\S]{50,200}(?:example\s*\d+:|pattern\s*[A-Z]:|case\s*[A-Z]:).*?(?:override|bypass|exploit|attack|ignore.*rules)/i,
     desc: 'Multiple few-shot examples with explicit poisoning indicators', source: 'TPI-FS' },
 ];
 
@@ -3515,6 +3515,163 @@ export function scan(text: string): ScanResult {
     textLength: text.length,
     normalizedLength: normalized.length,
     counts,
+  };
+}
+
+// ============================================================================
+// SESSION & TOOL OUTPUT SCANNING (EPIC 8 Support)
+// ============================================================================
+
+/**
+ * Session scan result structure for multi-turn conversation analysis
+ */
+export interface SessionScanResult {
+  verdict: 'BLOCK' | 'ALLOW';
+  aggregate: {
+    slowDripDetected: boolean;
+    contextPoisoningDetected: boolean;
+    escalationDetected: boolean;
+    crossCategoryDetected: boolean;
+  };
+  turns: Array<{
+    role: string;
+    findings: number;
+    categories: string[];
+  }>;
+  findings: Finding[];
+  counts: { critical: number; warning: number; info: number };
+}
+
+/**
+ * Scan a multi-turn session for slow-drip injection, context poisoning, and escalation
+ * @param content - JSON string containing session with turns array
+ * @returns SessionScanResult with turn-by-turn analysis
+ */
+export function scanSession(content: string): SessionScanResult {
+  let session: { turns?: Array<{ role: string; content: string }> };
+
+  try {
+    session = JSON.parse(content);
+  } catch {
+    // If not valid JSON, scan as plain text
+    const result = scan(content);
+    return {
+      verdict: result.verdict,
+      aggregate: {
+        slowDripDetected: false,
+        contextPoisoningDetected: false,
+        escalationDetected: false,
+        crossCategoryDetected: false,
+      },
+      turns: [],
+      findings: result.findings,
+      counts: result.counts,
+    };
+  }
+
+  const turns = session.turns || [];
+  const turnResults: Array<{ role: string; findings: number; categories: string[] }> = [];
+  const allFindings: Finding[] = [];
+  const allCategories = new Set<string>();
+
+  let previousFindings = 0;
+  let maxEscalationJump = 0;
+  let slowDripCount = 0;
+
+  for (const turn of turns) {
+    const result = scan(turn.content || '');
+    const categories = [...new Set(result.findings.map(f => f.category))];
+
+    turnResults.push({
+      role: turn.role || 'unknown',
+      findings: result.findings.length,
+      categories,
+    });
+
+    allFindings.push(...result.findings);
+    categories.forEach(c => allCategories.add(c));
+
+    // Detect escalation: significant increase in findings
+    if (result.findings.length > previousFindings * 2) {
+      const jump = result.findings.length - previousFindings;
+      if (jump > maxEscalationJump) {
+        maxEscalationJump = jump;
+      }
+    }
+    previousFindings = result.findings.length;
+
+    // Detect slow-drip: low findings per turn accumulating over time
+    if (result.findings.length > 0 && result.findings.length < 5) {
+      slowDripCount++;
+    }
+  }
+
+  // Determine verdict based on aggregate findings
+  const hasCritical = allFindings.some(f => f.severity === 'CRITICAL');
+  const verdict = hasCritical ? 'BLOCK' : 'ALLOW';
+
+  // Detect slow-drip: multiple turns with low finding counts
+  const slowDripDetected = slowDripCount >= 3;
+
+  // Detect context poisoning: system/user role manipulation
+  const contextPoisoningDetected = allFindings.some(
+    f => f.category === 'SYSTEM_OVERRIDE' || f.category === 'ROLEPLAY'
+  );
+
+  // Detect escalation: large jump in findings between turns
+  const escalationDetected = maxEscalationJump >= 5;
+
+  // Detect cross-category: findings across 3+ categories
+  const crossCategoryDetected = allCategories.size >= 3;
+
+  return {
+    verdict,
+    aggregate: {
+      slowDripDetected,
+      contextPoisoningDetected,
+      escalationDetected,
+      crossCategoryDetected,
+    },
+    turns: turnResults,
+    findings: allFindings,
+    counts: {
+      critical: allFindings.filter(f => f.severity === 'CRITICAL').length,
+      warning: allFindings.filter(f => f.severity === 'WARNING').length,
+      info: allFindings.filter(f => f.severity === 'INFO').length,
+    },
+  };
+}
+
+/**
+ * Tool output scan result structure
+ */
+export interface ToolOutputScanResult {
+  verdict: 'BLOCK' | 'ALLOW';
+  findings: Finding[];
+  toolType: string;
+  counts: { critical: number; warning: number; info: number };
+}
+
+/**
+ * Scan tool output for tool-specific injection patterns
+ * @param toolType - Type of tool (WebFetch, WebSearch, Task, Bash, etc.)
+ * @param output - Tool output string to scan
+ * @returns ToolOutputScanResult with tool-specific analysis
+ */
+export function scanToolOutput(toolType: string, output: string): ToolOutputScanResult {
+  const result = scan(output);
+
+  // Add tool-specific context to findings
+  const augmentedFindings = result.findings.map(f => ({
+    ...f,
+    description: `[${toolType}] ${f.description}`,
+  }));
+
+  return {
+    verdict: result.verdict,
+    findings: augmentedFindings,
+    toolType,
+    counts: result.counts,
   };
 }
 

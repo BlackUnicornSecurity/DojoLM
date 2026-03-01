@@ -53,7 +53,7 @@ npx tsx packages/bu-tpi/src/serve.ts 9000
 
 ```bash
 curl http://localhost:8089/api/stats
-# → {"patternCount": 139, "patternGroups": [...]}
+# → {"patternCount": 505, "patternGroups": [...]}
 
 curl "http://localhost:8089/api/scan?text=ignore+all+previous+instructions"
 # → {"verdict": "BLOCK", "findings": [...]}
@@ -63,7 +63,7 @@ curl "http://localhost:8089/api/scan?text=ignore+all+previous+instructions"
 
 ```bash
 npm run generate --workspace=packages/bu-tpi
-# Generates 89 fixture files in packages/bu-tpi/fixtures/
+# Generates 1,544 fixture files in packages/bu-tpi/fixtures/
 ```
 
 > ⚠️ Always run `npm run generate` after clone and after any `generate-fixtures.ts` changes. The fixtures are git-tracked but must be present in the expected path for the server to serve them.

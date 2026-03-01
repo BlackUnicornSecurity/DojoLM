@@ -8,7 +8,7 @@
  * - Bash privilege escalation
  */
 
-import { scanToolOutput } from './src/scanner.js';
+import { scanToolOutput } from '../src/scanner.js';
 
 interface ToolOutputTest {
   toolType: string;

@@ -10,11 +10,22 @@
   "scripts": {
     "start": "npx tsx src/serve.ts",
     "generate": "npx tsx src/generate-fixtures.ts",
-    "test": "npx tsx tools/test-regression.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:regression": "npx tsx tools/test-regression.ts",
     "test:security": "npx tsx tools/test-security-fixes.ts",
-    "test:all": "npx tsx tools/test-regression.ts && npx tsx tools/test-security-fixes.ts",
+    "test:all": "vitest run && npx tsx tools/test-regression.ts && npx tsx tools/test-security-fixes.ts",
     "test:api": "curl -s http://localhost:8089/api/run-tests",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "perf:scanner": "npx tsx tools/test-perf-scanner.ts",
+    "perf:scanner:text": "npx tsx tools/test-perf-scanner.ts --type=text",
+    "perf:scanner:binary": "npx tsx tools/test-perf-scanner.ts --type=binary",
+    "perf:memory": "npx tsx tools/test-perf-memory.ts",
+    "perf:regex": "npx tsx tools/test-perf-regex.ts",
+    "perf:all": "npm run perf:scanner && npm run perf:memory && npm run perf:regex",
+    "perf:baseline": "npm run perf:all -- --save-baseline"
   },
   "keywords": [
     "tpi",
@@ -39,7 +50,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^2.0.0"
   }
 }

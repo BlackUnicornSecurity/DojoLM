@@ -1,7 +1,7 @@
 /**
  * File: select.tsx
- * Purpose: Select component for dropdown menus
- * Phase 6: File header added for documentation compliance
+ * Purpose: Select component for dropdown menus with solid opaque backgrounds
+ * TPI-UI-001-02: Fixed dropdown transparency - solid bg-popover (#141414)
  * Index:
  * - Select component (line 13)
  * - SelectGroup component (line 15)
@@ -12,7 +12,7 @@
  * - SelectContent component (line 76)
  * - SelectLabel component (line 108)
  * - SelectItem component (line 120)
- * - SelectSeparator component (len 143)
+ * - SelectSeparator component (line 143)
  */
 
 "use client"
@@ -56,7 +56,7 @@ const SelectScrollUpButton = React.forwardRef<
   <SelectPrimitive.ScrollUpButton
     ref={ref}
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-default items-center justify-center bg-popover py-1",
       className
     )}
     {...props}
@@ -73,7 +73,7 @@ const SelectScrollDownButton = React.forwardRef<
   <SelectPrimitive.ScrollDownButton
     ref={ref}
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-default items-center justify-center bg-popover py-1",
       className
     )}
     {...props}
@@ -135,7 +135,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm text-popover-foreground outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}

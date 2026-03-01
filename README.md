@@ -18,8 +18,10 @@
 
 **Workspace Structure:** This repository contains specialized workspaces for LLM security testing:
 
-- **[packages/dojolm-scanner](packages/bu-tpi/)** — TPI Security Scanner (prompt injection detection)
-- **[packages/bu-tpi-web](packages/bu-tpi/)** — Web UI (migration to Next.js in progress)
+- **[packages/bu-tpi](packages/bu-tpi/)** — Core scanner with 505 detection patterns
+- **[packages/dojolm-scanner](packages/dojolm-scanner/)** — Web-friendly API wrapper for bu-tpi
+- **[packages/dojolm-web](packages/dojolm-web/)** — Next.js web interface
+- **[packages/bmad-cybersec](packages/bmad-cybersec/)** — Security automation tools
 
 </div>
 
@@ -63,8 +65,8 @@
 The platform provides:
 - **TPI Taxonomy Coverage** — Complete implementation of CrowdStrike's Taxonomy of Prompt Injection
 - **Interactive Test Lab** — Web-based scanner for real-time injection detection
-- **300+ Attack Fixtures** — Curated test cases across all injection vectors
-- **139 Detection Patterns** — Regex and heuristic-based detection engine
+- **1,545 Attack Fixtures** — Curated test cases across 31 categories
+- **505+ Detection Patterns** — Regex and heuristic-based detection engine across 47 groups
 
 ---
 
@@ -96,9 +98,9 @@ Prompt injection detection toolkit based on the **CrowdStrike Taxonomy of Prompt
 
 ```
 packages/bu-tpi/
-├── fixtures/        # 300+ attack artifacts (test cases)
+├── fixtures/        # 1,544 attack artifacts (test cases)
 ├── src/
-│   ├── scanner.ts   # Detection engine — 139 patterns, 14 groups
+│   ├── scanner.ts   # Detection engine — 505+ patterns, 47 groups
 │   ├── serve.ts     # HTTP server with API endpoints
 │   ├── types.ts     # TypeScript type definitions
 │   └── generate-fixtures.ts  # Fixture generator
@@ -108,7 +110,7 @@ packages/bu-tpi/
 **Features:**
 - Zero runtime dependencies
 - Pure TypeScript
-- 89 fixture files across 12 categories
+- 1,545 fixture files across 31 categories
 - API endpoints for scanning, fixtures, and test execution
 
 ---
@@ -144,6 +146,8 @@ packages/bu-tpi/
 
 | Guide | Description |
 |-------|-------------|
+| [Platform Guide](docs/user/PLATFORM_GUIDE.md) | Complete user documentation |
+| [FAQ](docs/user/FAQ.md) | Frequently Asked Questions |
 | [Scanner README](packages/bu-tpi/README.md) | Full scanner documentation |
 | [API Reference](packages/bu-tpi/README.md#api-reference) | All API endpoints |
 | [Testing Guide](packages/bu-tpi/README.md#testing) | Test suite documentation |
@@ -163,9 +167,9 @@ packages/bu-tpi/
 
 | Metric | Value |
 |--------|-------|
-| **Test Fixtures** | 300+ |
-| **Detection Patterns** | 139 |
-| **Pattern Groups** | 14 |
+| **Test Fixtures** | 1,545 |
+| **Detection Patterns** | 505+ |
+| **Pattern Groups** | 47 |
 | **Test Files** | 8+ |
 | **Passing Tests** | 7,117+ |
 | **TPI Stories Covered** | 21/21 |

@@ -66,6 +66,26 @@ const nextConfig: NextConfig = withBundleAnalyzer({
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              // unsafe-eval only needed for Next.js dev server HMR
+              process.env.NODE_ENV === "development"
+                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
+                : "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob:",
+              "font-src 'self'",
+              // https: required for custom LLM provider (user-defined endpoints)
+              "connect-src 'self' http://localhost:* https:",
+              "frame-src 'self'",
+              "worker-src 'self' blob:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
         ],
       },
     ];
