@@ -2,6 +2,51 @@
 
 All notable changes to this project are documented here.
 
+> **Note:** This changelog is now mirrored at the repository root: [CHANGELOG.md](../CHANGELOG.md)
+
+---
+
+## [1.2.0] — 2026-03-01
+
+### UI Modernization Complete
+
+Complete DojoLM web application UI overhaul across 24 stories in 8 phases:
+
+- **Design system**: DojoLM red color palette (#C62828), WCAG AA compliant, dark theme with glassmorphic effects
+- **Navigation**: Sidebar with 5 tabs (Scanner, Test Lab, Coverage, Validation, LLM Dashboard), mobile bottom nav
+- **Components**: 30+ new/enhanced components including charts (line, bar, gauge, donut), sortable tables, metric cards, toast notifications, empty states, status indicators, shimmer skeletons
+- **LLM interface**: Chat bubble messages with copy-to-clipboard, typing indicators
+- **Notifications**: Bell icon with unread badge, dropdown panel with mark-all-read/clear-all
+- **Activity feed**: Timestamped event list with 5 event types and optional action links
+- **Style guide**: Dev-only component reference at /style-guide
+- **Accessibility**: Keyboard navigation, ARIA labels, focus management, prefers-reduced-motion support
+- **Security**: XSS-safe href sanitization, protocol validation on data-driven links
+
+**Files created (25+):** Sidebar, SidebarHeader, MobileNav, PageToolbar, DashboardGrid, MetricCard, Charts (6), SortableTable, StatusDot, ColorProgress, ShimmerSkeleton, Toast, EmptyState, ChatBubble, TypingIndicator, NotificationsPanel, ActivityFeed, AnimatedView, style-guide/page.tsx
+
+---
+
+## [1.1.0] — 2026-03-01
+
+### Documentation Accuracy Update
+
+Corrected pattern and fixture counts across all documentation to reflect actual codebase:
+
+- **Pattern count**: Updated from 139 to **505+ patterns** across **47 groups** (was: 14 groups)
+- **Fixture count**: Updated from 89 to **1,544 fixtures** across **30 categories** (was: 12 categories)
+- All README files updated: root README.md, packages/bu-tpi/README.md, docs/user/README.md
+- Internal documentation updated: TECHNICAL_OVERVIEW.md, DEPLOYMENT_GUIDE.md, CONTRIBUTING.md
+- Fixed broken documentation links in packages/bu-tpi/README.md and packages/bmad-cybersec/README.md
+
+**Files modified:**
+- README.md
+- docs/user/README.md
+- packages/bu-tpi/README.md
+- packages/bmad-cybersec/README.md
+- internal/TECHNICAL_OVERVIEW.md
+- internal/DEPLOYMENT_GUIDE.md
+- github/CONTRIBUTING.md
+
 ---
 
 ## [1.0.0] — 2026-02-28
