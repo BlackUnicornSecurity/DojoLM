@@ -253,6 +253,12 @@ export function getBrandForCategory(category: string): BrandKey {
     'agent': 'marfaak',
     'bias': 'pantheonlm',
     'session': 'marfaak',
+    // New categories from COVERAGE-GAP-CLOSURE.md
+    'modern': 'dojolm',
+    'translation': 'pantheonlm',
+    'few-shot': 'marfaak',
+    'tool-manipulation': 'basileak',
+    'document-attacks': 'bonklm',
   };
 
   return categoryDefaults[category] || 'blackunicorn';

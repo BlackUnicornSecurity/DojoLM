@@ -24,6 +24,7 @@ import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { scan, getPatternCount, getPatternGroups } from './scanner.js';
+import { scanBinary } from './scanner-binary.js';
 import type { TestResult, TestSummary, TestSuiteResult } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -125,98 +126,6 @@ function setFixtureHeaders(res: ServerResponse, filename: string): void {
 // ---------------------------------------------------------------------------
 // Binary metadata extraction
 // ---------------------------------------------------------------------------
-
-interface BinaryInfo {
-  format: string;
-  magic: string;
-  valid_jpeg?: boolean;
-  valid_png?: boolean;
-  valid_wav?: boolean;
-  has_id3?: boolean;
-  extracted_text?: string;
-  polyglot?: string;
-  warning?: string;
-}
-
-function extractBinaryMetadata(buf: Buffer, ext: string): BinaryInfo {
-  const info: BinaryInfo = { format: ext, magic: buf.subarray(0, 8).toString('hex') };
-
-  if (ext === '.jpg' || ext === '.jpeg') {
-    if (buf[0] === 0xFF && buf[1] === 0xD8) {
-      info.valid_jpeg = true;
-      const text = extractPrintableText(buf);
-      if (text.length > 0) info.extracted_text = text;
-    } else {
-      info.valid_jpeg = false;
-      info.warning = 'Invalid JPEG magic number';
-    }
-  } else if (ext === '.png') {
-    const pngSig = Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
-    info.valid_png = buf.subarray(0, 8).equals(pngSig);
-    if (!info.valid_png) info.warning = 'Invalid PNG signature';
-    const text = extractPrintableText(buf);
-    if (text.length > 0) info.extracted_text = text;
-  } else if (ext === '.mp3') {
-    if (buf.subarray(0, 3).toString('ascii') === 'ID3') {
-      info.has_id3 = true;
-      const text = extractPrintableText(buf.subarray(0, Math.min(buf.length, 4096)));
-      if (text.length > 0) info.extracted_text = text;
-    }
-  } else if (ext === '.wav') {
-    info.valid_wav = buf.subarray(0, 4).toString('ascii') === 'RIFF';
-    const text = extractPrintableText(buf);
-    if (text.length > 0) info.extracted_text = text;
-  } else if (ext === '.ogg') {
-    const isOgg = buf.subarray(0, 4).toString('ascii') === 'OggS';
-    if (isOgg) {
-      const text = extractPrintableText(buf);
-      if (text.length > 0) info.extracted_text = text;
-    }
-  } else if (ext === '.gif') {
-    const magic = buf.subarray(0, 6).toString('ascii');
-    if (magic === 'GIF87a' || magic === 'GIF89a') {
-      const text = extractPrintableText(buf);
-      if (text.length > 0) info.extracted_text = text;
-    } else {
-      info.warning = 'Invalid GIF magic number';
-    }
-  } else if (ext === '.webp') {
-    const riff = buf.subarray(0, 4).toString('ascii');
-    const webp = buf.subarray(8, 12).toString('ascii');
-    if (riff === 'RIFF' && webp === 'WEBP') {
-      const text = extractPrintableText(buf);
-      if (text.length > 0) info.extracted_text = text;
-    } else {
-      info.warning = 'Invalid WebP magic (expected RIFF....WEBP)';
-    }
-  }
-
-  // Polyglot detection
-  if (buf[0] === 0x7F && buf.subarray(1, 4).toString('ascii') === 'ELF') {
-    info.polyglot = 'ELF executable detected';
-  }
-  if (buf.subarray(0, 2).toString('ascii') === 'MZ') {
-    info.polyglot = 'PE/MZ executable detected';
-  }
-
-  return info;
-}
-
-function extractPrintableText(buf: Buffer): string {
-  const chunks: string[] = [];
-  let current = '';
-  for (let i = 0; i < buf.length; i++) {
-    const b = buf[i]!;
-    if (b >= 32 && b <= 126) {
-      current += String.fromCharCode(b);
-    } else {
-      if (current.length >= 8) chunks.push(current);
-      current = '';
-    }
-  }
-  if (current.length >= 8) chunks.push(current);
-  return chunks.filter(c => c.length >= 8).join(' | ');
-}
 
 // ---------------------------------------------------------------------------
 // Path validation
@@ -365,13 +274,20 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       res.end(JSON.stringify({ path: filePath, content, size: content.length }));
     } else {
       const buf = readFileSync(fullPath);
-      const info = extractBinaryMetadata(buf, ext);
+      // Use scanBinary instead of legacy extractBinaryMetadata (FIX-2.1)
+      const scanResult = await scanBinary(buf, filePath);
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({
         path: filePath,
         size: buf.length,
         hex_preview: buf.subarray(0, 256).toString('hex'),
-        metadata: info,
+        metadata: {
+          format: scanResult.metadata.format,
+          fieldCount: scanResult.metadata.fieldCount,
+          sources: scanResult.metadata.sources,
+          verdict: scanResult.verdict,
+          findingCount: scanResult.findings.length,
+        },
       }));
     }
     return;
@@ -420,16 +336,27 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
     }
 
     const ext = extname(fullPath).toLowerCase();
-    let textToScan: string;
 
-    if (TEXT_EXTS.has(ext)) {
-      textToScan = readFileSync(fullPath, 'utf-8');
-    } else {
+    // Use scanBinary for binary files (images, audio)
+    if (!TEXT_EXTS.has(ext)) {
+      // Add file size limit for binary files to prevent DoS
+      const stats = statSync(fullPath);
+      const MAX_BINARY_SIZE = 50 * 1024 * 1024; // 50MB limit
+      if (stats.size > MAX_BINARY_SIZE) {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'File too large (max 50MB)' }));
+        return;
+      }
+
       const buf = readFileSync(fullPath);
-      const info = extractBinaryMetadata(buf, ext);
-      textToScan = info.extracted_text || '';
+      const result = await scanBinary(buf, filePath);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ path: filePath, ...result }));
+      return;
     }
 
+    // Text files use the original scanner
+    const textToScan = readFileSync(fullPath, 'utf-8');
     if (!textToScan) {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify({ path: filePath, findings: [], verdict: 'ALLOW', note: 'No text content to scan' }));

@@ -196,6 +196,12 @@ test_results:
     total: 964
     pass_rate: 100.0
     note: "FINAL - After RAG pattern fixes, local_repo_path refinement, cross_modal_injection fix, buffer overflow patterns - 100% pass rate achieved, target exceeded"
+  - date: "2026-02-28"
+    passed: 1221
+    failed: 19
+    total: 1240
+    pass_rate: 98.5
+    note: "After Story 6 (Few-Shot Poisoning) - Added 30 new fixtures (26 attack, 4 clean), FEW_SHOT_PATTERNS (14 patterns), 100% pass rate on few-shot fixtures. Pre-existing failures: 19 (modern fixtures + some false positives unrelated to Story 6)"
 
 # Risks and Blockers
 risks:

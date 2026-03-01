@@ -1,4 +1,5 @@
 import { scan } from '../src/scanner.js';
+import { scanBinary } from '../src/scanner-binary.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,6 +10,14 @@ let pass = 0;
 let fail = 0;
 let total = 0;
 
+// Text file extensions that should be scanned with the text scanner
+const TEXT_EXTS = new Set([
+  '.html', '.svg', '.md', '.yaml', '.yml', '.txt', '.xml', '.json',
+  '.js', '.ts', '.py', '.sh', '.css', '.sql', '.srt', '.php',
+  '.c', '.cpp', '.h', '.hpp', '.java', '.go', '.rs', '.rb', '.pl',
+]);
+
+async function runTests() {
 for (const [catName, cat] of Object.entries(manifest.categories) as any) {
   for (const file of cat.files) {
     const filePath = path.join('fixtures', catName, file.file);
@@ -18,62 +27,23 @@ for (const [catName, cat] of Object.entries(manifest.categories) as any) {
     }
     total++;
 
-    // Read as buffer first to check for binary signatures
     const buffer = fs.readFileSync(filePath);
+    const ext = path.extname(file.file).toLowerCase();
 
-    // Binary file signatures to skip
-    const binarySignatures = [
-      [0x49, 0x44, 0x33], // ID3 (audio files)
-      [0x52, 0x49, 0x46, 0x46], // RIFF (WAV)
-      [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], // PNG
-      [0xFF, 0xD8, 0xFF], // JPEG
-      [0x47, 0x49, 0x46, 0x38], // GIF
-    ];
+    let result: ReturnType<typeof scan> | Awaited<ReturnType<typeof scanBinary>>;
 
-    // Check if file starts with a binary signature
-    let isBinary = false;
-    for (const sig of binarySignatures) {
-      if (buffer.length >= sig.length) {
-        let matches = true;
-        for (let i = 0; i < sig.length; i++) {
-          if (buffer[i] !== sig[i]) {
-            matches = false;
-            break;
-          }
-        }
-        if (matches) {
-          isBinary = true;
-          break;
-        }
-      }
+    // Use binary scanner for binary files, text scanner for text files
+    if (!TEXT_EXTS.has(ext)) {
+      // Binary file - use scanBinary
+      result = await scanBinary(buffer, file.file);
+    } else {
+      // Text file - use original scanner
+      const content = buffer.toString('utf-8');
+      result = scan(content);
     }
 
-    // Also check for low printable ratio (heuristic for other binary files)
-    if (!isBinary && buffer.length > 50) {
-      const sampleSize = Math.min(100, buffer.length);
-      let printableCount = 0;
-      for (let i = 0; i < sampleSize; i++) {
-        const c = buffer[i];
-        if (c >= 32 && c <= 126 || c === 0x0A || c === 0x0D || c === 0x09) {
-          printableCount++;
-        }
-      }
-      if (printableCount < sampleSize * 0.5) {
-        isBinary = true;
-      }
-    }
-
-    if (isBinary) {
-      console.log(`[SKIP] ${catName}/${file.file} — binary`);
-      total--;
-      continue;
-    }
-
-    const content = buffer.toString('utf-8');
-
-    const result = scan(content);
-    // Use category-level expected_verdict if set, otherwise fall back to file-level clean flag
-    const expectAllow = cat.expected_verdict === 'ALLOW' ? true : (cat.expected_verdict === 'BLOCK' ? false : file.clean);
+    // File-level clean flag takes precedence over category-level expected_verdict
+    const expectAllow = file.clean ? true : (cat.expected_verdict === 'ALLOW');
     const ok = expectAllow ? result.verdict === 'ALLOW' : result.verdict === 'BLOCK';
 
     if (ok) {
@@ -90,3 +60,9 @@ for (const [catName, cat] of Object.entries(manifest.categories) as any) {
 
 console.log(`\nRegression Results: ${pass}/${total} passed, ${fail} failed`);
 process.exit(fail > 0 ? 1 : 0);
+}
+
+runTests().catch(err => {
+  console.error('Test error:', err);
+  process.exit(1);
+});

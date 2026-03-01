@@ -114,6 +114,41 @@ export interface BinaryMetadata {
   warning?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Enhanced Binary Metadata Parsing (SCANNER-UPGRADE)
+// ---------------------------------------------------------------------------
+
+/**
+ * A single metadata field extracted from a binary file
+ */
+export interface MetadataField {
+  key: string;
+  value: string;
+  source: string; // e.g., "EXIF.UserComment", "ID3.TIT2", "PNG.tEXt"
+}
+
+/**
+ * Result of parsing binary file metadata
+ */
+export interface BinaryParseResult {
+  format: string;
+  valid: boolean;
+  fields: MetadataField[];
+  warnings: string[];
+  errors: string[];
+}
+
+/**
+ * Extended scan result for binary files with metadata source tracking
+ */
+export interface BinaryScanResult extends ScanResult {
+  metadata: {
+    format: string;
+    fieldCount: number;
+    sources: string[]; // Which metadata areas were extracted (e.g., ["EXIF", "ID3"])
+  };
+}
+
 export interface TextFixtureResponse {
   path: string;
   content: string;
@@ -124,7 +159,13 @@ export interface BinaryFixtureResponse {
   path: string;
   size: number;
   hex_preview: string;
-  metadata: BinaryMetadata;
+  metadata: {
+    format: string;
+    fieldCount: number;
+    sources: string[];
+    verdict: 'ALLOW' | 'BLOCK';
+    findingCount: number;
+  };
 }
 
 // ---------------------------------------------------------------------------
