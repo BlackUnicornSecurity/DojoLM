@@ -2,7 +2,7 @@
 
 **Document:** BU-TPI Testing Checklist
 **Version:** 3.1
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-03-01
 **Test Suite:** BU-TPI Security Test Suite v2.1
 **Organization:** BlackUnicorn Laboratory / DojoLM
 
@@ -1484,10 +1484,38 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 
 ---
 
+## Appendix B: New Controls & Test Case Tracking
+
+This appendix tracks new security controls and test cases recommended from findings
+but not yet incorporated into the main checklist.
+
+### Format
+
+Each entry follows this format:
+- **REC-ID:** Recommendation identifier
+- **Category:** Security category (e.g., Prompt Injection, Jailbreak)
+- **Source:** Finding source (e.g., QA-2025-001, external research)
+- **Status:** pending | in-progress | implemented | deferred
+- **Description:** What the control/test should detect
+- **Suggested Test Cases:** Initial test payload ideas
+
+### Active Recommendations
+
+*No recommendations currently tracked*
+
+### Change Log
+
+| Date | REC-ID | Action | Notes |
+|------|--------|--------|-------|
+| 2026-03-01 | - | Appendix B created | Initial structure for tracking new controls |
+
+---
+
 **Document Control**
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 3.1 | 2026-03-01 | BlackUnicorn Lab | Added Appendix B: New Controls & Test Case Tracking (GAP-001) |
 | 3.0 | 2026-02-26 | BlackUnicorn Lab | Expanded to 582 test cases (3x coverage) across 11 testing areas |
 | 2.0 | 2026-02-26 | BlackUnicorn Lab | Comprehensive checklist with 194 test cases |
 | 1.0 | 2026-02-25 | BlackUnicorn Lab | Initial checklist structure |
@@ -1495,5 +1523,5 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 ---
 
 *This checklist is maintained by BlackUnicorn Laboratory*
-*Last updated: 2026-02-26*
+*Last updated: 2026-03-01*
 *Next review: 2026-03-31*
