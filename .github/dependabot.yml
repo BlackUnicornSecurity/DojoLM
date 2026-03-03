@@ -1,0 +1,90 @@
+# Dependabot configuration (S07: KASHIWA-P0-S07)
+# Weekly security update monitoring for all workspace packages
+version: 2
+
+updates:
+  # Root package
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+    reviewers:
+      - "blackunicorn-lab"
+    # Only create PRs for security updates in production dependencies
+    allow:
+      - dependency-type: "production"
+    # Also monitor dev dependencies for known vulnerabilities
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # bu-tpi package
+  - package-ecosystem: "npm"
+    directory: "/packages/bu-tpi"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "bu-tpi"
+
+  # dojolm-scanner package
+  - package-ecosystem: "npm"
+    directory: "/packages/dojolm-scanner"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "scanner"
+
+  # dojolm-web package
+  - package-ecosystem: "npm"
+    directory: "/packages/dojolm-web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "web"
+
+  # bmad-cybersec packages
+  - package-ecosystem: "npm"
+    directory: "/packages/bmad-cybersec/framework"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "cybersec"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/bmad-cybersec/validators"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "cybersec"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"

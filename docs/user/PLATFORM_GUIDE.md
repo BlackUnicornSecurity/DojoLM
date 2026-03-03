@@ -1,7 +1,7 @@
 # DojoLM Platform Guide
 
 **Version:** 3.0 (DojoV2)  
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-03
 
 **DojoLM** is an LLM red teaming and security testing platform. It gives you the tools to test, evaluate, and understand how language models respond to adversarial inputs — before those inputs reach your production systems.
 

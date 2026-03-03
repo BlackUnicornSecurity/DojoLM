@@ -1,0 +1,24 @@
+{
+  "product": "DojoLM",
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": 204,
+  "params": {
+    "name": "read_file",
+    "arguments": {
+      "path": "src/index.ts"
+    }
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "export function main() { console.log('Hello'); }"
+      }
+    ]
+  },
+  "_branding": {
+    "product": "DojoLM",
+    "generated_by": "BlackUnicorn Security"
+  }
+}

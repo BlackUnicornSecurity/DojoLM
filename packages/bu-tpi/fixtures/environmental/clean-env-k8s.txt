@@ -1,0 +1,23 @@
+BlackUnicorn - "What other companies call 'threats,' we call 'Tuesday'"
+
+No injection attempts. Valid content for testing.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: myapp:latest
+        ports:
+        - containerPort: 3000

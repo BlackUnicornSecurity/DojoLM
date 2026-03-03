@@ -16,6 +16,7 @@
     "type-check": "npm run type-check --workspaces",
     "clean": "npm run clean --workspaces",
     "security:scan": "npm audit --audit-level=moderate",
+    "sbom:generate": "npx @cyclonedx/cyclonedx-npm --output-file sbom.json --output-format JSON --ignore-npm-errors",
     "lint:md": "markdownlint-cli2 '**/*.md' '#node_modules'",
     "test:schemas": "node tools/validate-agent-schema.js && node tools/validate-workflow-schema.js && node tools/validate-module-schema.js",
     "qa": "npm run test:schemas && npm run lint && npm run lint:md && npm test && bash scripts/security-regression.sh",
@@ -63,23 +64,24 @@
     "zod": "^3.22.0"
   },
   "devDependencies": {
+    "@cyclonedx/cyclonedx-npm": "^4.1.2",
     "@eslint/js": "^9.39.2",
     "@types/node": "^20.10.0",
     "@types/semver": "^7.7.1",
-    "@vitest/coverage-v8": "^1.1.0",
-    "@vitest/ui": "^1.1.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
     "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-n": "^17.23.2",
     "eslint-plugin-unicorn": "^62.0.0",
     "eslint-plugin-yml": "^3.1.2",
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.21.0",
     "prettier": "^3.1.0",
     "tsx": "^4.6.0",
     "typedoc": "^0.25.0",
     "typescript": "^5.3.0",
     "typescript-eslint": "^8.55.0",
-    "vitest": "^1.1.0"
+    "vitest": "^4.0.18"
   },
   "repository": {
     "type": "git",

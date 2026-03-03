@@ -36,6 +36,10 @@ const CATEGORIES = [
   'images', 'audio', 'web', 'context', 'malformed', 'encoded',
   'agent-output', 'search-results', 'social', 'code', 'boundary',
   'untrusted-sources', 'cognitive', 'delivery-vectors', 'multimodal',
+  'dos', 'vec', 'or', 'output', 'model-theft', 'supply-chain',
+  'environmental', 'agent', 'bias', 'session', 'modern', 'translation',
+  'few-shot', 'tool-manipulation', 'document-attacks',
+  'prompt-injection', 'mcp', 'token-attacks',
 ];
 
 for (const d of CATEGORIES) {
@@ -83,6 +87,14 @@ const CATEGORY_BRANDS: Record<string, keyof typeof BRANDS> = {
   'agent': 'marfaak',
   'bias': 'pantheonlm',
   'session': 'marfaak',
+  'modern': 'dojolm',
+  'translation': 'pantheonlm',
+  'few-shot': 'marfaak',
+  'tool-manipulation': 'basileak',
+  'document-attacks': 'basileak',
+  'prompt-injection': 'dojolm',
+  'mcp': 'dojolm',
+  'token-attacks': 'dojolm',
 };
 
 function getBrand(category: string): keyof typeof BRANDS {

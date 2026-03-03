@@ -42,21 +42,34 @@ export async function GET(request: NextRequest) {
     const provider = searchParams.get('provider') || 'ollama';
     const baseUrl = searchParams.get('baseUrl');
 
-    // SSRF protection: only allow localhost URLs for local model discovery
+    // SSRF protection: use validateProviderUrl with isLocal=true
+    // This blocks hex-encoded IPs (0x7f000001), integer IPs, octal IPs,
+    // and only allows localhost/127.0.0.1 on allowed ports
     if (baseUrl) {
       try {
-        const parsed = new URL(baseUrl);
-        if (!['localhost', '127.0.0.1', '::1'].includes(parsed.hostname)) {
+        const { validateProviderUrl } = await import('bu-tpi/llm');
+        if (!validateProviderUrl(baseUrl, true)) {
           return NextResponse.json(
-            { error: 'Only localhost URLs are allowed for local model discovery', models: [] },
+            { error: 'Only localhost URLs on allowed ports are permitted for local model discovery', models: [] },
             { status: 400 }
           );
         }
       } catch {
-        return NextResponse.json(
-          { error: 'Invalid baseUrl', models: [] },
-          { status: 400 }
-        );
+        // Fallback: strict hostname check if bu-tpi import fails
+        try {
+          const parsed = new URL(baseUrl);
+          if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
+            return NextResponse.json(
+              { error: 'Only localhost URLs are allowed for local model discovery', models: [] },
+              { status: 400 }
+            );
+          }
+        } catch {
+          return NextResponse.json(
+            { error: 'Invalid baseUrl', models: [] },
+            { status: 400 }
+          );
+        }
       }
     }
 

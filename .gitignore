@@ -8,13 +8,8 @@ packages/bmad-cybersec/
 .claude/
 
 # Private/internal documentation (not public)
-# Note: Keep team/ folder structure but ignore specific sensitive subfolders
-team/dev/
-team/ops/
-team/planning/
-team/QA/
-team/QA-tools/
-team/backups/
+# All team/ folder contents are internal and should not be committed
+team/
 
 # Project instructions file
 CLAUDE.md
@@ -22,6 +17,12 @@ CLAUDE.md
 # Workspace build outputs
 packages/*/dist/
 dist/
+
+# Build artifacts
+sbom.json
+
+# LLM provider config (contains API key references)
+dojolm.config.json
 
 # Development tools (not part of the main package)
 tools/generate-missing-format-fixtures.ts

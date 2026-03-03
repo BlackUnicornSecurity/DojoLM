@@ -1,6 +1,6 @@
 # DojoLM Frequently Asked Questions (FAQ)
 
-**Last Updated:** 2026-03-01
+**Last Updated:** 2026-03-03
 
 This document answers common questions about DojoLM, its features, usage, and troubleshooting.
 

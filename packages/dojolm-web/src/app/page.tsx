@@ -21,6 +21,10 @@ import { CoverageMap } from '@/components/coverage'
 import { PatternReference } from '@/components/reference'
 import { TestRunner } from '@/components/tests'
 import { LLMDashboardWithProviders } from '@/components/llm'
+import { AdversarialLab } from '@/components/adversarial'
+import { ComplianceCenter } from '@/components/compliance'
+import { StrategicHub } from '@/components/strategic'
+import { AttackDNAExplorer } from '@/components/attackdna'
 import { getFixtures, scanFixture, readFixture, runTests } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { PAYLOAD_CATALOG, COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
@@ -117,6 +121,18 @@ function PageContent() {
       {activeTab === 'llm' && (
         <LLMDashboardWithProviders />
       )}
+      {activeTab === 'adversarial' && (
+        <AdversarialLab />
+      )}
+      {activeTab === 'compliance' && (
+        <ComplianceCenter />
+      )}
+      {activeTab === 'strategic' && (
+        <StrategicHub />
+      )}
+      {activeTab === 'attackdna' && (
+        <AttackDNAExplorer />
+      )}
     </>
   )
 }
@@ -157,7 +173,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
           size="sm"
           className="gap-2"
         >
-          <RotateCcw className="h-3 w-3" />
+          <RotateCcw className="h-3 w-3" aria-hidden="true" />
           Reset Filters
         </Button>
       </div>
@@ -165,7 +181,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       {/* Error Display */}
       {error && (
         <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500">
-          <AlertTriangle className="h-5 w-5" />
+          <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           <span>{error}</span>
         </div>
       )}

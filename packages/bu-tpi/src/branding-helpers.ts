@@ -258,7 +258,11 @@ export function getBrandForCategory(category: string): BrandKey {
     'translation': 'pantheonlm',
     'few-shot': 'marfaak',
     'tool-manipulation': 'basileak',
-    'document-attacks': 'bonklm',
+    'document-attacks': 'basileak',
+    // New categories from KASHIWA P2 Fixture Expansion
+    'prompt-injection': 'dojolm',
+    'mcp': 'dojolm',
+    'token-attacks': 'dojolm',
   };
 
   return categoryDefaults[category] || 'blackunicorn';

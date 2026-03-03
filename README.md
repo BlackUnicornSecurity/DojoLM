@@ -40,7 +40,7 @@
 [![Ollama](https://img.shields.io/badge/LLM-Ollama-blue.svg)](https://ollama.com)
 
 <!-- License & Status -->
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: Research-Only](https://img.shields.io/badge/license-Research--Only-orange.svg)](LICENSE)
 [![Research](https://img.shields.io/badge/status-Research%20Project-orange.svg)]()
 
 <!-- Security & Compliance Badges -->
@@ -178,11 +178,11 @@ packages/bu-tpi/
 
 ## 🏛️ License
 
-**DojoLM** is released under the [MIT License](LICENSE).
+**DojoLM** is released under a [Research-Only License](LICENSE).
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction.
+Permission is granted for academic research, educational purposes, and personal
+security testing only. Commercial, enterprise, and bug bounty use is strictly
+prohibited without prior written permission.
 
 ---
 

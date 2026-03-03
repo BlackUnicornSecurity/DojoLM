@@ -1,0 +1,8 @@
+BonkLM - "When your LLM gets bonked by the internet"
+
+No injection attempts. Valid content for testing.
+
+POST /webhook/stripe HTTP/1.1
+Stripe-Signature: valid-sig
+
+{"type": "payment_intent.succeeded", "data": {"object": {"amount": 2000, "currency": "usd"}}}

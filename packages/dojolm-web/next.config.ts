@@ -77,8 +77,8 @@ const nextConfig: NextConfig = withBundleAnalyzer({
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self'",
-              // https: required for custom LLM provider (user-defined endpoints)
-              "connect-src 'self' http://localhost:* https:",
+              // All LLM API calls are server-side proxied; browser only talks to local server
+              "connect-src 'self'",
               "frame-src 'self'",
               "worker-src 'self' blob:",
               "object-src 'none'",

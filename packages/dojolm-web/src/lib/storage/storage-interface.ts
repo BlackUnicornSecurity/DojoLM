@@ -344,3 +344,53 @@ export interface BulkOperationResult {
   /** Any errors that occurred */
   errors: Array<{ id: string; error: string }>;
 }
+
+// ===========================================================================
+// Storage Backend Factory
+// ===========================================================================
+
+export type StorageBackendType = 'json' | 'db';
+
+/**
+ * Returns the configured storage backend type.
+ * Defaults to 'json' for backward compatibility.
+ */
+export function getStorageBackendType(): StorageBackendType {
+  const backend = process.env.TPI_STORAGE_BACKEND;
+  if (backend === 'db') return 'db';
+  return 'json';
+}
+
+let _cachedStorage: IStorageBackend | null = null;
+
+/**
+ * Factory function returning the appropriate storage backend.
+ * Uses TPI_STORAGE_BACKEND env var ('json' | 'db').
+ * Caches the instance after first resolution.
+ */
+export async function getStorage(): Promise<IStorageBackend> {
+  if (_cachedStorage) return _cachedStorage;
+
+  const backendType = getStorageBackendType();
+  if (backendType === 'db') {
+    const { dbStorage } = await import('./db-storage');
+    _cachedStorage = dbStorage;
+  } else {
+    const { fileStorage } = await import('./file-storage');
+    _cachedStorage = fileStorage;
+  }
+  return _cachedStorage;
+}
+
+/**
+ * Synchronous factory — returns cached storage or file storage fallback.
+ * Use getStorage() for first initialization.
+ */
+export function getStorageSync(): IStorageBackend {
+  if (_cachedStorage) return _cachedStorage;
+  // Fallback: import file-storage synchronously (always available)
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { fileStorage } = require('./file-storage') as { fileStorage: IStorageBackend };
+  _cachedStorage = fileStorage;
+  return _cachedStorage;
+}

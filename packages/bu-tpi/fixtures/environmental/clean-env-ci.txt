@@ -1,0 +1,13 @@
+BlackUnicorn - "What other companies call 'threats,' we call 'Tuesday'"
+
+No injection attempts. Valid content for testing.
+
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test

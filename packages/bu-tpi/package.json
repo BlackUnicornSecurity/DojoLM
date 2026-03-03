@@ -3,11 +3,43 @@
   "version": "1.0.0",
   "description": "TPI Security Test Lab - Prompt injection detection toolkit based on CrowdStrike taxonomy",
   "type": "module",
-  "main": "./src/scanner.ts",
+  "main": "./dist/scanner.js",
+  "types": "./dist/scanner.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/scanner.js",
+      "types": "./dist/scanner.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    },
+    "./scanner": {
+      "import": "./dist/scanner.js",
+      "types": "./dist/scanner.d.ts"
+    },
+    "./llm": {
+      "import": "./dist/llm/index.js",
+      "types": "./dist/llm/index.d.ts"
+    },
+    "./llm/types": {
+      "import": "./dist/llm/types.js",
+      "types": "./dist/llm/types.d.ts"
+    },
+    "./llm/errors": {
+      "import": "./dist/llm/errors.js",
+      "types": "./dist/llm/errors.d.ts"
+    },
+    "./llm/test-helpers": {
+      "import": "./dist/llm/test-helpers.js",
+      "types": "./dist/llm/test-helpers.d.ts"
+    }
+  },
   "bin": {
     "tpi-lab": "./src/serve.ts"
   },
   "scripts": {
+    "build": "tsc",
     "start": "npx tsx src/serve.ts",
     "generate": "npx tsx src/generate-fixtures.ts",
     "test": "vitest run",
@@ -18,6 +50,7 @@
     "test:security": "npx tsx tools/test-security-fixes.ts",
     "test:all": "vitest run && npx tsx tools/test-regression.ts && npx tsx tools/test-security-fixes.ts",
     "test:api": "curl -s http://localhost:8089/api/run-tests",
+    "validate:manifest": "npx tsx tools/validate-manifest.ts",
     "typecheck": "tsc --noEmit",
     "perf:scanner": "npx tsx tools/test-perf-scanner.ts",
     "perf:scanner:text": "npx tsx tools/test-perf-scanner.ts --type=text",
@@ -45,14 +78,13 @@
   },
   "dependencies": {
     "exifr": "7.1.3",
-    "music-metadata": "11.12.1",
-    "png-chunks-extract": "1.0.0"
+    "music-metadata": "11.12.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
-    "vitest": "^2.0.0"
+    "vitest": "^4.0.18"
   }
 }

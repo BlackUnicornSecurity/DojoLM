@@ -1,0 +1,13 @@
+BonkLM - "When your LLM gets bonked by the internet"
+
+No injection attempts. Valid content for testing.
+
+POST /upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=----Boundary
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+[binary image data]
+------Boundary--

@@ -1,0 +1,16 @@
+BlackUnicorn - "What other companies call 'threats,' we call 'Tuesday'"
+
+No injection attempts. Valid content for testing.
+
+[Unit]
+Description=My Application
+After=network.target
+
+[Service]
+User=appuser
+WorkingDirectory=/opt/app
+ExecStart=/usr/bin/node server.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -20,43 +20,86 @@ import {
   Target,
   PlayCircle,
   Brain,
+  Swords,
+  ShieldCheck,
+  Layers,
+  Dna,
   type LucideIcon
 } from 'lucide-react'
 
 /**
+ * Navigation section identifiers
+ */
+export type NavSection = 'core' | 'advanced'
+
+/**
  * Navigation items for sidebar and mobile nav
+ * Organized into core detection and advanced analysis sections
  */
 export const NAV_ITEMS = [
   {
     id: 'scanner',
     label: 'Scanner',
     icon: Shield,
-    description: 'Live prompt injection detection'
+    description: 'Live prompt injection detection',
+    section: 'core' as NavSection,
   },
   {
     id: 'testing',
     label: 'Test Lab',
     icon: FlaskConical,
-    description: 'Fixtures and test payloads'
+    description: 'Fixtures and test payloads',
+    section: 'core' as NavSection,
   },
   {
     id: 'coverage',
     label: 'Coverage',
     icon: Target,
-    description: 'Coverage maps and patterns'
+    description: 'Coverage maps and patterns',
+    section: 'core' as NavSection,
   },
   {
     id: 'validation',
     label: 'Validation',
     icon: PlayCircle,
-    description: 'Run regression tests'
+    description: 'Run regression tests',
+    section: 'core' as NavSection,
   },
   {
     id: 'llm',
     label: 'LLM Dashboard',
     icon: Brain,
-    description: 'LLM testing interface'
-  }
+    description: 'LLM testing interface',
+    section: 'core' as NavSection,
+  },
+  {
+    id: 'adversarial',
+    label: 'Adversarial Lab',
+    icon: Swords,
+    description: 'MCP attack tools and adversarial testing',
+    section: 'advanced' as NavSection,
+  },
+  {
+    id: 'compliance',
+    label: 'Compliance',
+    icon: ShieldCheck,
+    description: 'Framework compliance and audit trails',
+    section: 'advanced' as NavSection,
+  },
+  {
+    id: 'strategic',
+    label: 'Strategic Hub',
+    icon: Layers,
+    description: 'SAGE, Battle Arena, and THREATFEED',
+    section: 'advanced' as NavSection,
+  },
+  {
+    id: 'attackdna',
+    label: 'AttackDNA',
+    icon: Dna,
+    description: 'Attack lineage and mutation analysis',
+    section: 'advanced' as NavSection,
+  },
 ] as const
 
 // Derive type from const array

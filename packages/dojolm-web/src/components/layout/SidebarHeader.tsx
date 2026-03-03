@@ -47,7 +47,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
             "flex flex-col whitespace-nowrap overflow-hidden",
             "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",
             collapsed
-              ? "opacity-0 w-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:w-auto"
+              ? "opacity-0 w-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:w-auto"
               : "opacity-100"
           )}
         >
@@ -59,7 +59,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
       {/* Notifications bell - Story 23 */}
       <div className={cn(
         "flex-shrink-0",
-        collapsed ? "hidden md:max-lg:group-hover:block" : ""
+        collapsed ? "hidden md:max-lg:group-hover:block md:max-lg:group-focus-within:block" : ""
       )}>
         <NotificationsPanel />
       </div>

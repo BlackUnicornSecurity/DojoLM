@@ -75,6 +75,37 @@ export interface CustomPattern {
 export type ScannerPattern = RegexPattern | CustomPattern;
 
 // ---------------------------------------------------------------------------
+// Scanner Module System (S09: Pluggable Module Registry)
+// ---------------------------------------------------------------------------
+
+/**
+ * Interface for pluggable scanner modules.
+ * Each module encapsulates detection logic (patterns + custom detectors)
+ * and can be registered/unregistered at runtime without modifying core scanner.
+ */
+export interface ScannerModule {
+  /** Unique module identifier (e.g., 'core-patterns', 'mcp-parser') */
+  name: string;
+  /** Semantic version string */
+  version: string;
+  /** Human-readable description of what this module detects */
+  description?: string;
+  /** MIME types or content categories this module can scan */
+  supportedContentTypes?: string[];
+  /**
+   * Scan input text and return findings.
+   * @param text - Original input text
+   * @param normalized - Normalized (NFKC, zero-width stripped) version
+   * @returns Array of findings from this module
+   */
+  scan(text: string, normalized: string): Finding[];
+  /** Total number of patterns in this module */
+  getPatternCount(): number;
+  /** Metadata about each pattern group in this module */
+  getPatternGroups(): { name: string; count: number; source: string }[];
+}
+
+// ---------------------------------------------------------------------------
 // Fixture Metadata
 // ---------------------------------------------------------------------------
 
@@ -83,6 +114,7 @@ export interface FixtureFile {
   attack: string | null;
   severity: Severity | null;
   clean: boolean;
+  product?: string;
 }
 
 export interface FixtureCategory {
@@ -95,6 +127,10 @@ export interface FixtureManifest {
   generated: string;
   version: string;
   description: string;
+  company?: string;
+  website?: string;
+  products?: string[];
+  totalFixtures?: number;
   categories: Record<string, FixtureCategory>;
 }
 
@@ -165,6 +201,13 @@ export interface BinaryFixtureResponse {
     sources: string[];
     verdict: 'ALLOW' | 'BLOCK';
     findingCount: number;
+    valid_jpeg?: boolean;
+    valid_png?: boolean;
+    valid_wav?: boolean;
+    has_id3?: boolean;
+    extracted_text?: string;
+    polyglot?: string;
+    warning?: string;
   };
 }
 

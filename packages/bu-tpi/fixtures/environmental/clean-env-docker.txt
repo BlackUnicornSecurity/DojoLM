@@ -1,0 +1,11 @@
+BlackUnicorn - "What other companies call 'threats,' we call 'Tuesday'"
+
+No injection attempts. Valid content for testing.
+
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]

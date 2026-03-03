@@ -13,6 +13,8 @@ export { TestSummary } from './TestSummary';
 export { TestExporter } from './TestExporter';
 export { ChatBubble } from './ChatBubble';
 export { TypingIndicator } from './TypingIndicator';
+export { ComparisonView } from './ComparisonView';
+export { CustomProviderBuilder } from './CustomProviderBuilder';
 
 // Types
 export type { LLMDashboardProps } from './LLMDashboard';
