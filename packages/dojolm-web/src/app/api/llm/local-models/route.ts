@@ -42,6 +42,24 @@ export async function GET(request: NextRequest) {
     const provider = searchParams.get('provider') || 'ollama';
     const baseUrl = searchParams.get('baseUrl');
 
+    // SSRF protection: only allow localhost URLs for local model discovery
+    if (baseUrl) {
+      try {
+        const parsed = new URL(baseUrl);
+        if (!['localhost', '127.0.0.1', '::1'].includes(parsed.hostname)) {
+          return NextResponse.json(
+            { error: 'Only localhost URLs are allowed for local model discovery', models: [] },
+            { status: 400 }
+          );
+        }
+      } catch {
+        return NextResponse.json(
+          { error: 'Invalid baseUrl', models: [] },
+          { status: 400 }
+        );
+      }
+    }
+
     if (
 !['ollama', 'lmstudio', 'llamacpp'].includes(provider)
 ) {

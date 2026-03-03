@@ -228,7 +228,7 @@ function ExecutionCard({
           {/* Score breakdown */}
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-2xl font-bold">{getScoreColor(execution.resilienceScore)}</p>
+              <p className={`text-2xl font-bold ${getScoreColor(execution.resilienceScore)}`}>{execution.resilienceScore}</p>
               <p className="text-xs text-muted-foreground">Resilience Score</p>
             </div>
             <div>

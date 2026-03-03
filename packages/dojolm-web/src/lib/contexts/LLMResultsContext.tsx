@@ -301,20 +301,22 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
     []
   );
 
-  // Refresh
+  // Refresh by incrementing a counter to trigger dependent effects
+  const [refreshCounter, setRefreshCounter] = useState(0);
   const refresh = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Trigger re-fetch by clearing and resetting filter
-      setFilterState({ ...filter });
+      // Force re-render with new filter reference to trigger dependent effects
+      setFilterState(prev => ({ ...prev }));
+      setRefreshCounter(c => c + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to refresh');
     } finally {
       setIsLoading(false);
     }
-  }, [filter]);
+  }, []);
 
   const value: LLMResultsContextValue = {
     filter,

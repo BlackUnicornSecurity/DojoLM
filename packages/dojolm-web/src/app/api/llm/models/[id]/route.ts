@@ -33,11 +33,13 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(model);
+    // Strip sensitive fields before returning
+    const { apiKey: _key, ...safeModel } = model as Record<string, unknown>;
+    return NextResponse.json(safeModel);
   } catch (error) {
     console.error('Error getting model:', error);
     return NextResponse.json(
-      { error: 'Failed to get model', message: error instanceof Error ? error.message : String(error) },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

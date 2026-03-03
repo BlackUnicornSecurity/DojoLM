@@ -13,12 +13,14 @@ import { ModelList } from './ModelList';
 import { TestExecution } from './TestExecution';
 import { ResultsView } from './ResultsView';
 import { Leaderboard } from './Leaderboard';
+import { ComparisonView } from './ComparisonView';
+import { CustomProviderBuilder } from './CustomProviderBuilder';
 import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, Play, BarChart3, Trophy } from 'lucide-react';
+import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench } from 'lucide-react';
 
 export interface LLMDashboardProps {
   /** Optional initial tab to display */
-  initialTab?: 'models' | 'tests' | 'results' | 'leaderboard';
+  initialTab?: 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'custom';
 }
 
 /**
@@ -44,8 +46,11 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
       </div>
 
       {/* Nested tabs for dashboard sections */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="space-y-4">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-4 w-full h-auto gap-2 bg-muted/50 p-2">
+      <Tabs value={activeTab} onValueChange={(v) => {
+        const validTabs = ['models', 'tests', 'results', 'leaderboard', 'compare', 'custom'] as const;
+        if ((validTabs as readonly string[]).includes(v)) setActiveTab(v as typeof activeTab);
+      }} className="space-y-4">
+        <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full h-auto gap-2 bg-muted/50 p-2">
           <TabsTrigger value="models" className="gap-2">
             <Brain className="h-4 w-4" />
             <span>Models</span>
@@ -61,6 +66,14 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
           <TabsTrigger value="leaderboard" className="gap-2">
             <Trophy className="h-4 w-4" />
             <span>Leaderboard</span>
+          </TabsTrigger>
+          <TabsTrigger value="compare" className="gap-2">
+            <GitCompare className="h-4 w-4" />
+            <span>Compare</span>
+          </TabsTrigger>
+          <TabsTrigger value="custom" className="gap-2">
+            <Wrench className="h-4 w-4" />
+            <span>Custom</span>
           </TabsTrigger>
         </TabsList>
 
@@ -78,6 +91,14 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
 
         <TabsContent value="leaderboard" className="space-y-4">
           <Leaderboard />
+        </TabsContent>
+
+        <TabsContent value="compare" className="space-y-4">
+          <ComparisonView />
+        </TabsContent>
+
+        <TabsContent value="custom" className="space-y-4">
+          <CustomProviderBuilder />
         </TabsContent>
       </Tabs>
     </div>

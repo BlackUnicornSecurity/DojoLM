@@ -167,15 +167,18 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
     }
   }, []);
 
-  // Auto-refresh on interval
+  // Initial state load
   useEffect(() => {
     refreshState();
+  }, [refreshState]);
 
-    if (refreshInterval > 0) {
+  // Auto-refresh on interval (only when there are active batches to avoid wasted requests)
+  useEffect(() => {
+    if (refreshInterval > 0 && state.activeBatches.length > 0) {
       const interval = setInterval(refreshState, refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [refreshInterval, refreshState]);
+  }, [refreshInterval, refreshState, state.activeBatches.length]);
 
   // Get executions for a model
   const getExecutions = useCallback(

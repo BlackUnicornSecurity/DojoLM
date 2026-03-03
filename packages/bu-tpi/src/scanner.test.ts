@@ -213,11 +213,12 @@ describe('scan()', () => {
 // ---------------------------------------------------------------------------
 
 describe('normalizeText()', () => {
-  it('should normalize text to NFC', () => {
-    // Composed vs decomposed characters
+  it('should strip combining marks before NFKC for security', () => {
+    // FIX 400-TEST V2: Combining marks are stripped FIRST to prevent evasion attacks
+    // e.g., an attacker could use combining diacritics to obfuscate keywords
     const input = 'cafe\u0301'; // 'cafe' + combining acute accent
     const result = normalizeText(input);
-    expect(result).toBe('café');
+    expect(result).toBe('cafe'); // Accent stripped for security normalization
   });
 
   it('should handle empty strings', () => {
@@ -475,10 +476,6 @@ describe('detectJsonUntrustedSource()', () => {
     expect(findings.length).toBe(0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// Test Suite: OCR Adversarial Detection
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Test Suite: OCR Adversarial Detection

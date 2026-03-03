@@ -139,9 +139,9 @@ export function TestExecution() {
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     if (currentBatch) {
-      // Cancel logic would go here
+      await executionContext.cancelBatch(currentBatch.id);
       setCurrentBatch(null);
     }
     setIsRunning(false);

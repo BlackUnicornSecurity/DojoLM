@@ -119,7 +119,8 @@ function setFixtureHeaders(res: ServerResponse, filename: string): void {
   // Force download for dangerous types, inline for safe types
   const ext = extname(filename).toLowerCase();
   if (['.html', '.svg', '.xml'].includes(ext)) {
-    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    const safeFilename = filename.replace(/[^\w.\-]/g, '_');
+    res.setHeader('Content-Disposition', `inline; filename="${safeFilename}"`);
   }
 }
 
@@ -132,8 +133,9 @@ function setFixtureHeaders(res: ServerResponse, filename: string): void {
 // ---------------------------------------------------------------------------
 
 function isPathSafe(requestPath: string, basePath: string): boolean {
+  const base = basePath.endsWith('/') ? basePath : basePath + '/';
   const resolved = join(basePath, requestPath);
-  return resolved.startsWith(basePath) && !requestPath.includes('..');
+  return (resolved.startsWith(base) || resolved === basePath) && !requestPath.includes('..');
 }
 
 // ---------------------------------------------------------------------------

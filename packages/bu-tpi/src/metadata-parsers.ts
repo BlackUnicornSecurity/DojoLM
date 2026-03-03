@@ -7,11 +7,37 @@
  * @module metadata-parsers
  */
 
+// exifr v7.1.3: KEPT after S05 evaluation (2026-03-02)
+// Decision: Keep with monitoring. Zero CVEs, zero deps, pinned version.
+// sharp rejected: native deps, breaks pure-JS arch. exifreader: pre-approved fallback.
 // @ts-ignore - exifr uses default export
+import { inflateRawSync } from 'node:zlib';
 import exifr from 'exifr';
 import { parseBuffer } from 'music-metadata';
-// @ts-ignore - no type definitions available
-import extractChunks from 'png-chunks-extract';
+// Inline PNG chunk extraction (replaces png-chunks-extract dependency)
+// PNG spec: https://www.w3.org/TR/PNG/#5DataRep
+interface PNGChunk { name: string; data: Uint8Array; }
+const PNG_SIGNATURE = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+const MAX_PNG_CHUNKS = 10_000; // Defensive limit against crafted PNGs
+function extractChunks(data: Buffer | Uint8Array): PNGChunk[] {
+  for (let i = 0; i < 8; i++) {
+    if (data[i] !== PNG_SIGNATURE[i]) throw new Error('Invalid PNG signature');
+  }
+  const chunks: PNGChunk[] = [];
+  let offset = 8;
+  while (offset + 8 <= data.length && chunks.length < MAX_PNG_CHUNKS) {
+    const length = ((data[offset]! << 24) | (data[offset + 1]! << 16) | (data[offset + 2]! << 8) | data[offset + 3]!) >>> 0;
+    offset += 4;
+    const name = String.fromCharCode(data[offset]!, data[offset + 1]!, data[offset + 2]!, data[offset + 3]!);
+    offset += 4;
+    if (offset + length + 4 > data.length) break; // Prevent reading past buffer
+    const chunkData = data.slice(offset, offset + length);
+    offset += length + 4; // Skip data + CRC (CRC not validated; parse errors handled by caller)
+    chunks.push({ name, data: new Uint8Array(chunkData) });
+    if (name === 'IEND') break;
+  }
+  return chunks;
+}
 import type {
   MetadataField,
   BinaryParseResult,
@@ -360,9 +386,8 @@ function decodeCompressedTextChunk(data: Uint8Array): { keyword: string; text: s
     const compressedData = data.subarray(nullIndex + 2);
     // Node.js built-in zlib for decompression with size limit
     try {
-      const zlib = require('node:zlib');
       // PNG uses raw deflate, not gzip
-      const decompressed = zlib.inflateRawSync(
+      const decompressed = inflateRawSync(
         Buffer.from(compressedData),
         { maxOutputLength: LIMITS.MAX_DECOMPRESSED_SIZE }
       );

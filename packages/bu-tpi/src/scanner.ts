@@ -11,9 +11,38 @@
 import {
   type Finding,
   type ScanResult,
+  type ScannerModule,
   type RegexPattern,
   SEVERITY,
 } from './types.js';
+import { scannerRegistry } from './modules/registry.js';
+
+// P1 scanner modules (S10-S20) — self-register on import
+import './modules/mcp-parser.js';
+import './modules/document-pdf.js';
+import './modules/document-office.js';
+import './modules/ssrf-detector.js';
+import './modules/encoding-engine.js';
+import './modules/email-webfetch.js';
+import './modules/enhanced-pi.js';
+import './modules/token-analyzer.js';
+import './modules/rag-analyzer.js';
+import './modules/vectordb-interface.js';
+import './modules/xxe-protopollution.js';
+
+// P2.6 category-specific scanner modules (S32a-S32f) — self-register on import
+import './modules/dos-detector.js';
+import './modules/supply-chain-detector.js';
+import './modules/bias-detector.js';
+import './modules/env-detector.js';
+import './modules/overreliance-detector.js';
+import './modules/model-theft-detector.js';
+
+// P3 compliance modules (S33-S37) — self-register on import
+import './modules/pii-detector.js';
+import './modules/data-provenance.js';
+import './modules/deepfake-detector.js';
+import './modules/session-bypass.js';
 
 // ============================================================================
 // TEXT NORMALIZATION
@@ -37,12 +66,17 @@ const ZERO_WIDTH_CHARS = [
   '\u2066', '\u2067', '\u2068', '\u2069',
 ];
 
+// Pre-compiled RegExp for zero-width char stripping (avoid rebuilding on every normalizeText call)
+const ZW_RE = new RegExp('[' + ZERO_WIDTH_CHARS.map(c => c.replace(/[\]\\^-]/g, '\\$&')).join('') + ']', 'g');
+
 export function normalizeText(text: string): string {
   if (!text) return '';
-  let t = text.normalize('NFKC');
-  const zwRe = new RegExp('[' + ZERO_WIDTH_CHARS.join('') + ']', 'g');
-  t = t.replace(zwRe, '');
+  let t = text;
+  // FIX 400-TEST V2: Strip combining marks FIRST, before NFKC composes them
+  // This prevents evasion attacks using combining diacritics
   t = t.replace(/[\u0300-\u036F]/g, '');
+  t = t.normalize('NFKC');
+  t = t.replace(ZW_RE, '');
   for (const [from, to] of Object.entries(CONFUSABLE_MAP)) {
     t = t.split(from).join(to);
   }
@@ -58,11 +92,35 @@ const INJECTION_KEYWORDS = [
   'ignore', 'override', 'system prompt', 'bypass', 'unrestrict', 'jailbreak',
   'disregard', 'forget', 'new identity', 'admin mode', 'developer mode', 'no rules',
   'no restrictions', 'do anything', 'previous instructions',
+  // PHASE 1 FIX: Add DAN and related jailbreak keywords for encoded detection
+  'dan', 'do anything now', 'mode enabled', 'immerse yourself',
 ] as const;
+
+// FIX 400-TEST V2: Partial phrases for encoded detection (hex, base64, etc.)
+const ENCODED_PARTIAL_PATTERNS = [
+  'remove all', 'disable all', 'show me your', 'show me the', 'show me',
+  'tell me your', 'print system', 'output your',
+  'bypass all', 'ignore all',
+] as const;
+
+// Pre-compiled keyword regexes for performance (avoid recompiling on every call)
+const INJECTION_KEYWORD_RES: Array<RegExp | string> = INJECTION_KEYWORDS.map(k => {
+  if (!k.includes(' ')) {
+    return new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+  }
+  return k;
+});
 
 export function checkForInjectionKeywords(text: string): boolean {
   const lc = text.toLowerCase();
-  return INJECTION_KEYWORDS.some(k => lc.includes(k));
+  return INJECTION_KEYWORD_RES.some(k =>
+    typeof k === 'string' ? lc.includes(k) : k.test(text)
+  );
+}
+
+export function checkForEncodedPartials(text: string): boolean {
+  const lc = text.toLowerCase();
+  return ENCODED_PARTIAL_PATTERNS.some(p => lc.includes(p));
 }
 
 // ============================================================================
@@ -812,7 +870,7 @@ export const TRANSLATION_JAILBREAK_PATTERNS: RegexPattern[] = [
     re: /(?:سيرفر.*تجاوز|نظام.*تجاوز|override.*النظام)/i,
     desc: 'Arabic system override phrases mixed with English', source: 'TPI-CG-02' },
   // Right-to-left code-switching detection
-  { name: 'rtl_code_switching', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.WARNING,
+  { name: 'rtl_code_switching', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.INFO,
     re: /[؀-ۿ]+.*[a-zA-Z]+|[a-zA-Z]+.*[؀-ۿ]+/,
     desc: 'Code-switching: Arabic script mixed with Latin characters', source: 'TPI-CG-02' },
   // Hebrew RTL text detection (codepoints U+0590 to U+05FF)
@@ -840,7 +898,7 @@ export const TRANSLATION_JAILBREAK_PATTERNS: RegexPattern[] = [
     re: /(?:act as (?:a )?(?:researcher|actor|expert|developer)|roleplay as|you are (?:a )?(?:researcher|actor)).{20,200}?(?:password|secret key|hack|crack|bypass|exploit)/i,
     desc: 'Roleplay framing combined with harmful request', source: 'TPI-CG-02' },
   // Non-English script with password/hack keywords (using Unicode ranges)
-  { name: 'non_english_harmful', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.WARNING,
+  { name: 'non_english_harmful', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.INFO,
     re: /[\u0400-\u04FF\u0590-\u05FF\u0600-\u06FF\u0900-\u097F\u0980-\u09FF\u0C00-\u0C7F\u0E00-\u0E7F\u1000-\u109F]{100,}/,
     desc: 'Significant non-Latin script content (Cyrillic, Hebrew, Arabic, Indic, SE Asian)', source: 'TPI-CG-02' },
   // Fixture header detection for translation jailbreaks
@@ -3438,52 +3496,126 @@ const ALL_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: st
   { patterns: VEC_PATTERNS, engine: 'TPI', source: 'TPI-VEC' },
 ];
 
+// ============================================================================
+// CORE PATTERNS MODULE (S09: Module Registry)
+// ============================================================================
+
+/**
+ * List of special (non-regex) detectors included in the core module.
+ * Each entry pairs a name with the detector function.
+ */
+const CORE_DETECTORS: { name: string; detect: (text: string) => Finding[] }[] = [
+  { name: 'hidden-unicode', detect: detectHiddenUnicode },
+  { name: 'base64', detect: detectBase64 },
+  { name: 'html-injection', detect: detectHtmlInjection },
+  { name: 'character-encoding', detect: detectCharacterEncoding },
+  { name: 'context-overload', detect: detectContextOverload },
+  { name: 'math-encoding', detect: detectMathEncoding },
+  { name: 'fictional-framing', detect: detectFictionalFraming },
+  { name: 'surrogate-format', detect: detectSurrogateFormat },
+  { name: 'slow-drip', detect: detectSlowDrip },
+  { name: 'conversational-escalation', detect: detectConversationalEscalation },
+  { name: 'steganographic', detect: detectSteganographicIndicators },
+  { name: 'ocr-adversarial', detect: detectOcrAdversarial },
+  { name: 'cross-modal-injection', detect: detectCrossModalInjection },
+  { name: 'json-untrusted-source', detect: detectJsonUntrustedSource },
+];
+
+/**
+ * The core-patterns module wraps all existing pattern groups and special
+ * detectors into a single ScannerModule for the pluggable registry.
+ */
+const coreModule: ScannerModule = {
+  name: 'core-patterns',
+  version: '1.0.0',
+  description: 'Core prompt injection, jailbreak, and evasion detection patterns',
+  supportedContentTypes: ['text/plain'],
+
+  scan(text: string, normalized: string): Finding[] {
+    const findings: Finding[] = [];
+
+    // Run all regex pattern groups
+    for (const group of ALL_PATTERN_GROUPS) {
+      for (const p of group.patterns) {
+        const m = normalized.match(p.re) || text.match(p.re);
+        if (m) {
+          findings.push({
+            category: p.cat,
+            severity: p.sev,
+            description: p.desc,
+            match: m[0]!.slice(0, 100),
+            pattern_name: p.name,
+            source: p.source || group.source,
+            engine: group.engine,
+            ...(p.weight !== undefined && { weight: p.weight }),
+            ...(p.lang !== undefined && { lang: p.lang }),
+          });
+        }
+      }
+    }
+
+    // Run special detectors (operate on original text)
+    for (const d of CORE_DETECTORS) {
+      findings.push(...d.detect(text));
+    }
+
+    return findings;
+  },
+
+  getPatternCount(): number {
+    let count = 0;
+    for (const group of ALL_PATTERN_GROUPS) {
+      count += group.patterns.length;
+    }
+    // Each special detector counts as 1 pattern
+    count += CORE_DETECTORS.length;
+    return count;
+  },
+
+  getPatternGroups(): { name: string; count: number; source: string }[] {
+    const groups = ALL_PATTERN_GROUPS.map(g => ({
+      name: g.engine,
+      count: g.patterns.length,
+      source: g.source,
+    }));
+    // Add special detectors as a group
+    groups.push({
+      name: 'special-detectors',
+      count: CORE_DETECTORS.length,
+      source: 'current',
+    });
+    return groups;
+  },
+};
+
+// Register the core module on load (guarded for re-evaluation safety)
+if (!scannerRegistry.hasModule('core-patterns')) {
+  scannerRegistry.register(coreModule);
+}
+
+/**
+ * Scan options for filtering by engine
+ */
+export interface ScanOptions {
+  /** Engine IDs to include in the scan. If not provided, all engines are used. */
+  engines?: string[];
+}
+
 /**
  * Run all detectors against input text.
  *
  * This is the primary entry point for the scanner engine.
  * It normalizes text, runs all regex patterns, and runs all special detectors.
+ *
+ * @param text - The input text to scan
+ * @param options - Optional scan parameters for engine filtering
  */
-export function scan(text: string): ScanResult {
+export function scan(text: string, options?: ScanOptions): ScanResult {
   const startTime = performance.now();
-  const findings: Finding[] = [];
   const normalized = normalizeText(text);
 
-  // Run all regex pattern groups
-  for (const group of ALL_PATTERN_GROUPS) {
-    for (const p of group.patterns) {
-      const m = normalized.match(p.re) || text.match(p.re);
-      if (m) {
-        findings.push({
-          category: p.cat,
-          severity: p.sev,
-          description: p.desc,
-          match: m[0]!.slice(0, 100),
-          pattern_name: p.name,
-          source: p.source || group.source,
-          engine: group.engine,
-          ...(p.weight !== undefined && { weight: p.weight }),
-          ...(p.lang !== undefined && { lang: p.lang }),
-        });
-      }
-    }
-  }
-
-  // Run special detectors
-  findings.push(...detectHiddenUnicode(text));
-  findings.push(...detectBase64(text));
-  findings.push(...detectHtmlInjection(text));
-  findings.push(...detectCharacterEncoding(text));
-  findings.push(...detectContextOverload(text));
-  findings.push(...detectMathEncoding(text));
-  findings.push(...detectFictionalFraming(text));
-  findings.push(...detectSurrogateFormat(text));
-  findings.push(...detectSlowDrip(text));
-  findings.push(...detectConversationalEscalation(text));
-  findings.push(...detectSteganographicIndicators(text));
-  findings.push(...detectOcrAdversarial(text));
-  findings.push(...detectCrossModalInjection(text));
-  findings.push(...detectJsonUntrustedSource(text));
+  // Delegate to all registered scanner modules via the registry
+  const findings: Finding[] = scannerRegistry.scan(text, normalized);
 
   // Cross-category aggregation: >5 INFO across >3 categories → WARNING
   const infoFindings = findings.filter(f => f.severity === SEVERITY.INFO);
@@ -3607,8 +3739,8 @@ export function scanSession(content: string): SessionScanResult {
   }
 
   // Determine verdict based on aggregate findings
-  const hasCritical = allFindings.some(f => f.severity === 'CRITICAL');
-  const verdict = hasCritical ? 'BLOCK' : 'ALLOW';
+  const hasBlockable = allFindings.some(f => f.severity === 'CRITICAL' || f.severity === 'WARNING');
+  const verdict = hasBlockable ? 'BLOCK' : 'ALLOW';
 
   // Detect slow-drip: multiple turns with low finding counts
   const slowDripDetected = slowDripCount >= 3;
@@ -3680,17 +3812,12 @@ export function scanToolOutput(toolType: string, output: string): ToolOutputScan
 // ============================================================================
 
 export function getPatternCount(): number {
-  let count = 0;
-  for (const group of ALL_PATTERN_GROUPS) {
-    count += group.patterns.length;
-  }
-  return count;
+  return scannerRegistry.getPatternCount();
 }
 
 export function getPatternGroups(): { name: string; count: number; source: string }[] {
-  return ALL_PATTERN_GROUPS.map(g => ({
-    name: g.patterns[0]?.cat || g.engine,
-    count: g.patterns.length,
-    source: g.source,
-  }));
+  return scannerRegistry.getPatternGroups();
 }
+
+// Re-export registry for external module registration
+export { scannerRegistry } from './modules/registry.js';

@@ -23,8 +23,8 @@ function getFixturesBasePath(): string {
     resolve(process.cwd(), '../bu-tpi/fixtures'),
     // If started from .next directory
     resolve(process.cwd(), '../../bu-tpi/fixtures'),
-    // Majutsu deployment path
-    '/home/paul/dojolm/bu-tpi/fixtures',
+    // Environment-specified fixture path (deployment-configurable)
+    ...(process.env['FIXTURES_PATH'] ? [process.env['FIXTURES_PATH']] : []),
   ];
 
   for (const path of possiblePaths) {
