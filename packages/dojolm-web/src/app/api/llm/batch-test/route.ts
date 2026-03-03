@@ -1,0 +1,184 @@
+/**
+ * Batch Test Endpoint (P8-S84)
+ * POST /api/llm/batch-test — Start batch test (returns batch ID)
+ * GET /api/llm/batch-test — List batches
+ *
+ * Server-side concurrency cap: max 10 concurrent, max 500 per batch, max 3 batches.
+ */
+import { NextRequest, NextResponse } from 'next/server';
+import { getStorage } from '@/lib/storage/storage-interface';
+import { executeSingleTest } from '@/lib/llm-execution';
+
+const MAX_CONCURRENT = 10;
+const MAX_TESTS_PER_BATCH = 500;
+const MAX_CONCURRENT_BATCHES = 3;
+
+// Track running batches
+const runningBatches = new Set<string>();
+
+export async function POST(request: NextRequest) {
+  try {
+    if (runningBatches.size >= MAX_CONCURRENT_BATCHES) {
+      return NextResponse.json(
+        { error: `Max ${MAX_CONCURRENT_BATCHES} concurrent batches allowed.` },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json();
+    const { modelIds, testCaseIds } = body;
+
+    if (!modelIds?.length || !testCaseIds?.length) {
+      return NextResponse.json(
+        { error: 'Missing required fields: modelIds[], testCaseIds[]' },
+        { status: 400 }
+      );
+    }
+
+    const totalTests = modelIds.length * testCaseIds.length;
+    if (totalTests > MAX_TESTS_PER_BATCH) {
+      return NextResponse.json(
+        { error: `Batch too large. Max ${MAX_TESTS_PER_BATCH} tests (${modelIds.length} models × ${testCaseIds.length} cases = ${totalTests}).` },
+        { status: 400 }
+      );
+    }
+
+    const storage = await getStorage();
+    const batchId = crypto.randomUUID();
+    const now = new Date().toISOString();
+
+    const batch = await storage.createBatch({
+      name: `Batch ${batchId.slice(0, 8)}`,
+      testCaseIds,
+      modelConfigIds: modelIds,
+      status: 'running',
+      startedAt: now,
+      completedTests: 0,
+      failedTests: 0,
+      executionIds: [],
+    });
+
+    runningBatches.add(batch.id);
+
+    // Run batch in background
+    executeBatchInBackground(batch.id, modelIds, testCaseIds, storage).catch(() => {
+      runningBatches.delete(batch.id);
+    });
+
+    return NextResponse.json({
+      batchId: batch.id,
+      status: 'running',
+      totalTests,
+    }, { status: 202 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: `Failed to start batch: ${(error as Error).message}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    const storage = await getStorage();
+    const { batches } = await storage.queryBatches({});
+
+    return NextResponse.json(batches.map(b => ({
+      id: b.id,
+      name: b.name,
+      status: b.status,
+      totalTests: b.totalTests,
+      completedTests: b.completedTests,
+      failedTests: b.failedTests,
+      avgResilienceScore: b.avgResilienceScore,
+      createdAt: b.createdAt,
+      completedAt: b.completedAt,
+    })));
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+async function executeBatchInBackground(
+  batchId: string,
+  modelIds: string[],
+  testCaseIds: string[],
+  storage: Awaited<ReturnType<typeof getStorage>>,
+) {
+  let completedTests = 0;
+  let failedTests = 0;
+  let totalScore = 0;
+  const executionIds: string[] = [];
+
+  try {
+    // Load all configs and test cases
+    const configs = await Promise.all(modelIds.map(id => storage.getModelConfig(id)));
+    const testCases = await Promise.all(testCaseIds.map(id => storage.getTestCase(id)));
+
+    // Build test matrix
+    const tasks: Array<{ config: any; testCase: any }> = [];
+    for (const config of configs) {
+      if (!config) continue;
+      for (const testCase of testCases) {
+        if (!testCase) continue;
+        tasks.push({ config, testCase });
+      }
+    }
+
+    // Execute with concurrency cap
+    const executing = new Set<Promise<void>>();
+
+    for (const task of tasks) {
+      const p = (async () => {
+        try {
+          const execution = await executeSingleTest(task.config, task.testCase);
+          await storage.saveExecution(execution);
+          executionIds.push(execution.id);
+          completedTests++;
+          totalScore += execution.resilienceScore;
+        } catch {
+          failedTests++;
+          completedTests++;
+        }
+
+        // Update batch progress
+        await storage.updateBatch(batchId, {
+          completedTests,
+          failedTests,
+          avgResilienceScore: completedTests > failedTests
+            ? Math.round(totalScore / (completedTests - failedTests))
+            : 0,
+        });
+      })();
+
+      executing.add(p);
+      p.finally(() => executing.delete(p));
+
+      if (executing.size >= MAX_CONCURRENT) {
+        await Promise.race(executing);
+      }
+    }
+
+    await Promise.all(executing);
+
+    // Mark batch complete
+    await storage.updateBatch(batchId, {
+      status: 'completed',
+      completedTests,
+      failedTests,
+      avgResilienceScore: completedTests > failedTests
+        ? Math.round(totalScore / (completedTests - failedTests))
+        : 0,
+    });
+  } catch (error) {
+    await storage.updateBatch(batchId, {
+      status: 'failed',
+      error: (error as Error).message,
+    });
+  } finally {
+    runningBatches.delete(batchId);
+  }
+}

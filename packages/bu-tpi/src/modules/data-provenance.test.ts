@@ -1,0 +1,107 @@
+/**
+ * S34: Data Provenance — Unit Tests
+ */
+
+import { describe, it, expect } from 'vitest';
+import { dataProvenanceModule } from './data-provenance.js';
+
+describe('Data Provenance Module', () => {
+  describe('Module metadata', () => {
+    it('should have correct module metadata', () => {
+      expect(dataProvenanceModule.name).toBe('data-provenance');
+      expect(dataProvenanceModule.version).toBe('1.0.0');
+    });
+
+    it('should report pattern groups', () => {
+      const groups = dataProvenanceModule.getPatternGroups();
+      expect(groups.length).toBe(3);
+      expect(groups.every(g => g.source === 'S34')).toBe(true);
+    });
+
+    it('should report total pattern count >= 15', () => {
+      expect(dataProvenanceModule.getPatternCount()).toBeGreaterThanOrEqual(15);
+    });
+  });
+
+  describe('Data Origin Detection', () => {
+    it('should detect training data claims', () => {
+      const text = 'This model was trained on the Wikipedia dataset from 2024';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_DATA_ORIGIN')).toBe(true);
+    });
+
+    it('should detect dataset references', () => {
+      const text = 'dataset: "common_crawl_v2"';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_DATA_ORIGIN')).toBe(true);
+    });
+
+    it('should detect known training datasets', () => {
+      const text = 'We used Common Crawl and The Pile for pre-training';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_DATA_ORIGIN')).toBe(true);
+    });
+
+    it('should detect copyright data usage claims', () => {
+      const text = 'copyrighted data used in training without permission';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_DATA_ORIGIN')).toBe(true);
+    });
+  });
+
+  describe('Model Provenance Detection', () => {
+    it('should detect fine-tuning markers', () => {
+      const text = 'This model was fine-tuned on medical QA data';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_MODEL')).toBe(true);
+    });
+
+    it('should detect LoRA signatures', () => {
+      const text = 'Using LoRA rank 16 with alpha 32 for efficient fine-tuning';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_MODEL')).toBe(true);
+    });
+
+    it('should detect quantization markers', () => {
+      const text = 'The 4-bit GPTQ quantized model weights are available';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_MODEL')).toBe(true);
+    });
+
+    it('should detect base model derivation', () => {
+      const text = 'This is a variant of Llama-2-7B';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_MODEL')).toBe(true);
+    });
+  });
+
+  describe('Watermark Detection', () => {
+    it('should detect AI-generated content markers', () => {
+      const text = 'This is AI-generated content for testing purposes';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_WATERMARK')).toBe(true);
+    });
+
+    it('should detect C2PA markers', () => {
+      const text = 'Content Credentials (C2PA) metadata embedded in the image';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_WATERMARK')).toBe(true);
+    });
+
+    it('should detect specific AI model attribution', () => {
+      const text = 'This essay was ChatGPT generated for the assignment';
+      const findings = dataProvenanceModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PROVENANCE_WATERMARK')).toBe(true);
+    });
+  });
+
+  describe('Performance', () => {
+    it('should scan in <50ms for typical input', () => {
+      const text = 'A normal document discussing data governance and model management practices '.repeat(100);
+      const start = performance.now();
+      dataProvenanceModule.scan(text, text.toLowerCase());
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(50);
+    });
+  });
+});

@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "created": "2026-03-03",
+  "thresholdPercent": 20,
+  "baselines": {
+    "register_50_providers_ms": 500,
+    "preset_lookup_50_ms": 10,
+    "url_validation_1000_ms": 100,
+    "credential_sanitization_deep_ms": 50,
+    "config_parse_50_providers_ms": 100,
+    "single_chat_overhead_ms": 50
+  },
+  "notes": "All benchmarks use mocked HTTP. Regression threshold: >20% degradation fails check."
+}
