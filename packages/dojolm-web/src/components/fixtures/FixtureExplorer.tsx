@@ -1,16 +1,19 @@
 /**
  * File: FixtureExplorer.tsx
- * Purpose: Combined tree + search + detail layout for fixture browsing
- * Story: S72 - Fixture Explorer
+ * Purpose: Combined tree + search + grid + detail layout for fixture browsing with filters
+ * Story: S72 - Fixture Explorer, TPI-UIP-10, Story 3.2 - Fixture Field Filters
  * Index:
- * - FixtureExplorer component (line 18)
- * - CategoryPanel (line 67)
- * - ContentPanel (line 103)
+ * - FixtureExplorer component (line 28)
+ * - CategoryGrid (line ~160)
+ * - Breadcrumb (line ~190)
+ * - CategoryFileList (line ~220)
+ * - FileRow (line ~290)
+ * - ExplorerSkeleton (line ~360)
  */
 
 'use client'
 
-import { useState, useCallback, useMemo, memo } from 'react'
+import { useState, useCallback, useMemo, useRef, memo } from 'react'
 import { FixtureManifest, FixtureFile as FixtureFileType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
@@ -20,25 +23,44 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CategoryTree } from './CategoryTree'
 import { FixtureSearch } from './FixtureSearch'
+import { FixtureCategoryCard } from './FixtureCategoryCard'
+import {
+  FixtureFilters,
+  INITIAL_FILTER_STATE,
+  filterManifest,
+  countFilteredFixtures,
+} from './FixtureFilters'
+import type { FixtureFilterState } from './FixtureFilters'
 import {
   PanelLeftOpen,
   PanelLeftClose,
   Search,
   FolderTree,
+  LayoutGrid,
   ScanEye,
   FileText,
   AlertCircle,
   CheckCircle2,
   Eye,
+  ChevronRight,
+  GitCompareArrows,
 } from 'lucide-react'
 
-type ViewMode = 'tree' | 'search'
+type ViewMode = 'tree' | 'search' | 'grid'
+
+/** Selected fixture for comparison */
+interface CompareSelection {
+  category: string
+  file: string
+}
 
 interface FixtureExplorerProps {
   manifest: FixtureManifest | null
   isLoading: boolean
   onScanFixture: (category: string, file: string) => void
   onViewFixture: (category: string, file: string) => void
+  /** Callback when 2 fixtures are selected for comparison */
+  onCompare?: (selections: [CompareSelection, CompareSelection]) => void
 }
 
 export const FixtureExplorer = memo(function FixtureExplorer({
@@ -46,10 +68,31 @@ export const FixtureExplorer = memo(function FixtureExplorer({
   isLoading,
   onScanFixture,
   onViewFixture,
+  onCompare,
 }: FixtureExplorerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('tree')
+  // For grid view: track drill-down category + scroll position restoration
+  const [gridDrillCategory, setGridDrillCategory] = useState<string | null>(null)
+  const scrollPositionRef = useRef(0)
+  const gridContainerRef = useRef<HTMLDivElement>(null)
+  // Fixture filters state (Story 3.2)
+  const [filters, setFilters] = useState<FixtureFilterState>(INITIAL_FILTER_STATE)
+  // Compare mode state (Story 3.3)
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareSelections, setCompareSelections] = useState<CompareSelection[]>([])
+
+  /** Apply filters to manifest — memoized for performance with large fixture sets */
+  const filteredCategories = useMemo(() => {
+    if (!manifest) return {}
+    return filterManifest(manifest, filters)
+  }, [manifest, filters])
+
+  const filteredCount = useMemo(
+    () => countFilteredFixtures(filteredCategories),
+    [filteredCategories]
+  )
 
   const handleSelectFromSearch = useCallback(
     (category: string, file: string) => {
@@ -57,6 +100,58 @@ export const FixtureExplorer = memo(function FixtureExplorer({
       onViewFixture(category, file)
     },
     [onViewFixture]
+  )
+
+  const handleGridDrill = useCallback((category: string) => {
+    // Save scroll position before drilling down
+    if (gridContainerRef.current) {
+      scrollPositionRef.current = gridContainerRef.current.scrollTop
+    }
+    setGridDrillCategory(category)
+  }, [])
+
+  const handleGridBack = useCallback(() => {
+    setGridDrillCategory(null)
+    // Restore scroll position after returning to grid
+    requestAnimationFrame(() => {
+      if (gridContainerRef.current) {
+        gridContainerRef.current.scrollTop = scrollPositionRef.current
+      }
+    })
+  }, [])
+
+  /** Toggle compare mode on/off (Story 3.3) */
+  const handleToggleCompare = useCallback(() => {
+    setCompareMode(prev => {
+      if (prev) setCompareSelections([])
+      return !prev
+    })
+  }, [])
+
+  /** Handle fixture selection in compare mode */
+  const handleCompareSelect = useCallback(
+    (category: string, file: string) => {
+      setCompareSelections(prev => {
+        const key = `${category}/${file}`
+        const exists = prev.some(s => `${s.category}/${s.file}` === key)
+        if (exists) {
+          return prev.filter(s => `${s.category}/${s.file}` !== key)
+        }
+        // Cap at 2 selections — replace the oldest when adding a 3rd
+        const next = [...prev, { category, file }]
+        const final = next.length > 2 ? next.slice(-2) : next
+        if (final.length === 2 && onCompare) {
+          onCompare(final as [CompareSelection, CompareSelection])
+        }
+        return final
+      })
+    },
+    [onCompare]
+  )
+
+  const compareSelectionKeys = useMemo(
+    () => new Set(compareSelections.map(s => `${s.category}/${s.file}`)),
+    [compareSelections]
   )
 
   /** Loading state */
@@ -69,8 +164,8 @@ export const FixtureExplorer = memo(function FixtureExplorer({
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16">
-          <AlertCircle className="h-12 w-12 text-[var(--muted-foreground)] mb-3" aria-hidden="true" />
-          <p className="text-[var(--muted-foreground)] text-sm">
+          <AlertCircle className="h-12 w-12 text-muted-foreground mb-3" aria-hidden="true" />
+          <p className="text-muted-foreground text-sm">
             Failed to load fixture manifest
           </p>
         </CardContent>
@@ -82,26 +177,31 @@ export const FixtureExplorer = memo(function FixtureExplorer({
     ?? Object.values(manifest.categories).reduce((sum, cat) => sum + cat.files.length, 0)
   const totalCategories = Object.keys(manifest.categories).length
 
+  const isGridMode = viewMode === 'grid'
+
   return (
     <div className="flex flex-col h-full">
       {/* Top bar with stats and view toggle */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setSidebarCollapsed(prev => !prev)}
-          className="h-8 w-8 p-0"
-          aria-label={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
-        >
-          {sidebarCollapsed ? (
-            <PanelLeftOpen className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
-          )}
-        </Button>
-
-        <Separator orientation="vertical" className="h-5" />
+        {!isGridMode && (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarCollapsed(prev => !prev)}
+              className="h-8 w-8 p-0"
+              aria-label={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+            >
+              {sidebarCollapsed ? (
+                <PanelLeftOpen className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
+              )}
+            </Button>
+            <Separator orientation="vertical" className="h-5" />
+          </>
+        )}
 
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-semibold">Fixture Explorer</h2>
@@ -110,7 +210,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-1.5 ml-auto text-xs text-[var(--muted-foreground)]">
+        <div className="flex items-center gap-1.5 ml-auto text-xs text-muted-foreground">
           <span>{totalCategories} categories</span>
           <span aria-hidden="true">/</span>
           <span>{totalFixtures.toLocaleString()} fixtures</span>
@@ -118,18 +218,18 @@ export const FixtureExplorer = memo(function FixtureExplorer({
 
         <Separator orientation="vertical" className="h-5" />
 
-        {/* View mode toggle */}
+        {/* View mode toggle — Tree | Search | Grid */}
         <div className="flex rounded-md border border-[var(--border)] overflow-hidden" role="group" aria-label="View mode">
           <button
             type="button"
-            onClick={() => setViewMode('tree')}
+            onClick={() => { setViewMode('tree'); setGridDrillCategory(null) }}
             className={cn(
               'flex items-center gap-1 px-2.5 py-1.5 text-xs',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-150',
               viewMode === 'tree'
                 ? 'bg-[var(--bg-quaternary)] text-foreground'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--bg-secondary)]'
+                : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
             )}
             aria-label="Tree view"
             aria-pressed={viewMode === 'tree'}
@@ -139,14 +239,14 @@ export const FixtureExplorer = memo(function FixtureExplorer({
           </button>
           <button
             type="button"
-            onClick={() => setViewMode('search')}
+            onClick={() => { setViewMode('search'); setGridDrillCategory(null) }}
             className={cn(
               'flex items-center gap-1 px-2.5 py-1.5 text-xs border-l border-[var(--border)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-150',
               viewMode === 'search'
                 ? 'bg-[var(--bg-quaternary)] text-foreground'
-                : 'text-[var(--muted-foreground)] hover:bg-[var(--bg-secondary)]'
+                : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
             )}
             aria-label="Search view"
             aria-pressed={viewMode === 'search'}
@@ -154,59 +254,213 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             <Search className="h-3.5 w-3.5" aria-hidden="true" />
             Search
           </button>
+          <button
+            type="button"
+            onClick={() => { setViewMode('grid'); setGridDrillCategory(null) }}
+            className={cn(
+              'flex items-center gap-1 px-2.5 py-1.5 text-xs border-l border-[var(--border)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
+              'motion-safe:transition-colors motion-safe:duration-150',
+              viewMode === 'grid'
+                ? 'bg-[var(--bg-quaternary)] text-foreground'
+                : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
+            )}
+            aria-label="Grid view"
+            aria-pressed={viewMode === 'grid'}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" />
+            Grid
+          </button>
         </div>
+
+        {/* Compare toggle (Story 3.3) */}
+        <Separator orientation="vertical" className="h-5" />
+        <Button
+          type="button"
+          variant={compareMode ? 'default' : 'ghost'}
+          size="sm"
+          onClick={handleToggleCompare}
+          className={cn('h-8 px-2.5 text-xs gap-1', compareMode && 'bg-[var(--dojo-primary)] text-white')}
+          aria-label={compareMode ? 'Exit compare mode' : 'Enter compare mode'}
+          aria-pressed={compareMode}
+        >
+          <GitCompareArrows className="h-3.5 w-3.5" aria-hidden="true" />
+          Compare
+          {compareMode && compareSelections.length > 0 && (
+            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 ml-0.5">
+              {compareSelections.length}/2
+            </Badge>
+          )}
+        </Button>
       </div>
 
-      {/* Main split layout */}
-      <div className="flex flex-1 min-h-0">
-        {/* Left sidebar: category tree or search */}
-        {!sidebarCollapsed && (
-          <aside
-            className="w-72 shrink-0 border-r border-[var(--border)] flex flex-col min-h-0"
-            aria-label="Fixture navigation"
-          >
-            {viewMode === 'tree' ? (
-              <CategoryTree
-                categories={manifest.categories}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-                className="flex-1 min-h-0"
+      {/* Compare mode instruction banner */}
+      {compareMode && (
+        <div className="px-4 py-2 bg-[var(--dojo-primary)]/10 border-b border-[var(--dojo-primary)]/20 text-xs text-center">
+          {compareSelections.length === 0
+            ? 'Select 2 fixtures to compare — click the checkbox on each row'
+            : compareSelections.length === 1
+            ? `Selected: ${compareSelections[0].file} — select 1 more fixture`
+            : 'Comparing 2 fixtures — view comparison below'}
+        </div>
+      )}
+
+      {/* Fixture Filters (Story 3.2) */}
+      <div className="px-4 py-2 border-b border-[var(--border)]">
+        <FixtureFilters
+          manifest={manifest}
+          filters={filters}
+          onFiltersChange={setFilters}
+          filteredCount={filteredCount}
+          totalCount={totalFixtures}
+        />
+      </div>
+
+      {/* Grid view content */}
+      {isGridMode && (
+        <div ref={gridContainerRef} className="flex-1 overflow-auto p-4">
+          {gridDrillCategory && filteredCategories[gridDrillCategory] ? (
+            <>
+              {/* Breadcrumb */}
+              <Breadcrumb
+                path={['Test Lab', gridDrillCategory]}
+                onNavigate={(index) => {
+                  if (index === 0) handleGridBack()
+                }}
+              />
+              <CategoryFileList
+                categoryKey={gridDrillCategory}
+                category={filteredCategories[gridDrillCategory]}
+                onScanFixture={onScanFixture}
+                onViewFixture={onViewFixture}
+                compareMode={compareMode}
+                compareSelections={compareSelectionKeys}
+                onCompareSelect={handleCompareSelect}
+              />
+            </>
+          ) : (
+            <CategoryGrid
+              categories={filteredCategories}
+              onViewFiles={handleGridDrill}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Tree/Search split layout */}
+      {!isGridMode && (
+        <div className="flex flex-1 min-h-0">
+          {/* Left sidebar: category tree or search */}
+          {!sidebarCollapsed && (
+            <aside
+              className="w-72 shrink-0 border-r border-[var(--border)] flex flex-col min-h-0"
+              aria-label="Fixture navigation"
+            >
+              {viewMode === 'tree' ? (
+                <CategoryTree
+                  categories={filteredCategories}
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={setSelectedCategory}
+                  className="flex-1 min-h-0"
+                />
+              ) : (
+                <FixtureSearch
+                  categories={filteredCategories}
+                  onSelectFixture={handleSelectFromSearch}
+                  className="flex-1 min-h-0"
+                />
+              )}
+            </aside>
+          )}
+
+          {/* Right content area: file listing for selected category */}
+          <section className="flex-1 min-w-0 overflow-auto" role="region" aria-label="Fixture details">
+            {selectedCategory && filteredCategories[selectedCategory] ? (
+              <CategoryFileList
+                categoryKey={selectedCategory}
+                category={filteredCategories[selectedCategory]}
+                onScanFixture={onScanFixture}
+                onViewFixture={onViewFixture}
+                compareMode={compareMode}
+                compareSelections={compareSelectionKeys}
+                onCompareSelect={handleCompareSelect}
               />
             ) : (
-              <FixtureSearch
-                categories={manifest.categories}
-                onSelectFixture={handleSelectFromSearch}
-                className="flex-1 min-h-0"
-              />
+              <div className="flex flex-col items-center justify-center h-full py-16 px-4 text-center">
+                <FolderTree className="h-10 w-10 text-muted-foreground mb-3" aria-hidden="true" />
+                <p className="text-sm text-muted-foreground">
+                  Select a category from the {viewMode === 'tree' ? 'tree' : 'search results'} to view fixtures
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {totalFixtures.toLocaleString()} fixtures across {totalCategories} categories
+                </p>
+              </div>
             )}
-          </aside>
-        )}
-
-        {/* Right content area: file listing for selected category */}
-        <main className="flex-1 min-w-0 overflow-auto" aria-label="Fixture details">
-          {selectedCategory && manifest.categories[selectedCategory] ? (
-            <CategoryFileList
-              categoryKey={selectedCategory}
-              category={manifest.categories[selectedCategory]}
-              onScanFixture={onScanFixture}
-              onViewFixture={onViewFixture}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full py-16 px-4 text-center">
-              <FolderTree className="h-10 w-10 text-[var(--muted-foreground)] mb-3" aria-hidden="true" />
-              <p className="text-sm text-[var(--muted-foreground)]">
-                Select a category from the {viewMode === 'tree' ? 'tree' : 'search results'} to view fixtures
-              </p>
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">
-                {totalFixtures.toLocaleString()} fixtures across {totalCategories} categories
-              </p>
-            </div>
-          )}
-        </main>
-      </div>
+          </section>
+        </div>
+      )}
     </div>
   )
 })
+
+/** Category card grid for grid view mode */
+interface CategoryGridProps {
+  categories: Record<string, { story: string; desc: string; files: FixtureFileType[] }>
+  onViewFiles: (category: string) => void
+}
+
+const CategoryGrid = memo(function CategoryGrid({ categories, onViewFiles }: CategoryGridProps) {
+  const sortedCategories = useMemo(
+    () => Object.keys(categories).sort(),
+    [categories]
+  )
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sortedCategories.map(name => (
+        <FixtureCategoryCard
+          key={name}
+          name={name}
+          category={categories[name]}
+          onViewFiles={onViewFiles}
+        />
+      ))}
+    </div>
+  )
+})
+
+/** Breadcrumb navigation for drill-down path */
+interface BreadcrumbProps {
+  path: string[]
+  onNavigate: (index: number) => void
+}
+
+function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
+  return (
+    <nav aria-label="Breadcrumb" className="mb-4">
+      <ol className="flex items-center gap-1 text-sm">
+        {path.map((segment, i) => {
+          const isLast = i === path.length - 1
+          return (
+            <li key={`${segment}-${i}`} className="flex items-center gap-1">
+              {i > 0 && <ChevronRight className="h-3 w-3 text-muted-foreground" aria-hidden="true" />}
+              {isLast ? (
+                <span className="font-medium text-[var(--foreground)] capitalize">{segment}</span>
+              ) : (
+                <button
+                  onClick={() => onNavigate(i)}
+                  className="text-[var(--dojo-primary)] hover:underline capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                >
+                  {segment}
+                </button>
+              )}
+            </li>
+          )
+        })}
+      </ol>
+    </nav>
+  )
+}
 
 /** File listing for a selected category */
 interface CategoryFileListProps {
@@ -214,6 +468,9 @@ interface CategoryFileListProps {
   category: { story: string; desc: string; files: FixtureFileType[] }
   onScanFixture: (category: string, file: string) => void
   onViewFixture: (category: string, file: string) => void
+  compareMode?: boolean
+  compareSelections?: Set<string>
+  onCompareSelect?: (category: string, file: string) => void
 }
 
 const CategoryFileList = memo(function CategoryFileList({
@@ -221,6 +478,9 @@ const CategoryFileList = memo(function CategoryFileList({
   category,
   onScanFixture,
   onViewFixture,
+  compareMode = false,
+  compareSelections,
+  onCompareSelect,
 }: CategoryFileListProps) {
   const stats = useMemo(() => {
     const total = category.files.length
@@ -237,10 +497,10 @@ const CategoryFileList = memo(function CategoryFileList({
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-semibold capitalize">{categoryKey}</h3>
-          <p className="text-sm text-[var(--muted-foreground)] mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             {category.desc}
           </p>
-          <p className="text-xs text-[var(--muted-foreground)] mt-0.5 font-mono">
+          <p className="text-xs text-muted-foreground mt-0.5 font-mono">
             Story: {category.story}
           </p>
         </div>
@@ -273,6 +533,9 @@ const CategoryFileList = memo(function CategoryFileList({
             file={file}
             onScan={onScanFixture}
             onView={onViewFixture}
+            compareMode={compareMode}
+            isCompareSelected={compareSelections?.has(`${categoryKey}/${file.file}`) ?? false}
+            onCompareSelect={onCompareSelect}
           />
         ))}
       </div>
@@ -286,6 +549,9 @@ interface FileRowProps {
   file: FixtureFileType
   onScan: (category: string, file: string) => void
   onView: (category: string, file: string) => void
+  compareMode?: boolean
+  isCompareSelected?: boolean
+  onCompareSelect?: (category: string, file: string) => void
 }
 
 const FileRow = memo(function FileRow({
@@ -293,6 +559,9 @@ const FileRow = memo(function FileRow({
   file,
   onScan,
   onView,
+  compareMode = false,
+  isCompareSelected = false,
+  onCompareSelect,
 }: FileRowProps) {
   const handleScan = useCallback(
     () => onScan(categoryKey, file.file),
@@ -304,14 +573,32 @@ const FileRow = memo(function FileRow({
     [onView, categoryKey, file.file]
   )
 
+  const handleCompareToggle = useCallback(
+    () => onCompareSelect?.(categoryKey, file.file),
+    [onCompareSelect, categoryKey, file.file]
+  )
+
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-3 py-2.5 rounded-lg border border-[var(--border)]',
+        'flex items-center gap-3 px-3 py-2.5 rounded-lg border',
         'motion-safe:transition-colors motion-safe:duration-150',
-        'hover:bg-[var(--bg-secondary)]'
+        isCompareSelected
+          ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/5'
+          : 'border-[var(--border)] hover:bg-[var(--bg-secondary)]'
       )}
     >
+      {/* Compare checkbox (Story 3.3) */}
+      {compareMode && (
+        <input
+          type="checkbox"
+          checked={isCompareSelected}
+          onChange={handleCompareToggle}
+          className="h-4 w-4 shrink-0 accent-[var(--dojo-primary)] cursor-pointer"
+          aria-label={`Select ${file.file} for comparison`}
+        />
+      )}
+
       {/* Clean/Attack icon */}
       {file.clean ? (
         <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" aria-hidden="true" />
@@ -323,7 +610,7 @@ const FileRow = memo(function FileRow({
       <div className="flex-1 min-w-0">
         <span className="text-sm font-mono truncate block">{file.file}</span>
         {file.attack && (
-          <span className="text-xs text-[var(--muted-foreground)] truncate block mt-0.5">
+          <span className="text-xs text-muted-foreground truncate block mt-0.5">
             {file.attack}
           </span>
         )}

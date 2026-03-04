@@ -110,7 +110,7 @@ export function WidgetCard({ title, actions, children, className }: WidgetCardPr
                   aria-label={action.label}
                   className={cn(
                     "p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center",
-                    "text-[var(--muted-foreground)]",
+                    "text-muted-foreground",
                     "motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]",
                     "hover:text-[var(--foreground)] hover:bg-[var(--accent)]",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"

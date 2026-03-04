@@ -63,7 +63,7 @@ const RechartsGauge = dynamic(
               {value}%
             </span>
             {label && (
-              <span className="text-xs text-[var(--muted-foreground)] mt-0.5">
+              <span className="text-xs text-muted-foreground mt-0.5">
                 {label}
               </span>
             )}
@@ -79,7 +79,7 @@ export function DojoGaugeChart({ title, value, label, className }: DojoGaugeChar
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-[var(--muted-foreground)]">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <RechartsGauge value={value} label={label} />

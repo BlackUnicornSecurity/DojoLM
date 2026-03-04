@@ -66,7 +66,7 @@ export function StatusDot({
         )}
       </span>
       {showLabel && (
-        <span className="text-xs text-[var(--muted-foreground)]">
+        <span className="text-xs text-muted-foreground">
           {displayLabel}
         </span>
       )}

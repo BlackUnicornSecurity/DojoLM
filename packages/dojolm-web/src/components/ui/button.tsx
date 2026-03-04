@@ -20,16 +20,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "bg-gradient-to-br from-[var(--dojo-primary)] to-[var(--dojo-hover)] text-white",
-          "hover:-translate-y-px hover:shadow-[0_4px_15px_rgba(198,40,40,0.3)]",
-          "active:scale-[0.98] active:translate-y-0",
-          "transition-all duration-[var(--transition-fast)]"
+          "bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.12)] text-[var(--foreground)]",
+          "hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.16)]",
+          "active:scale-[0.98]",
+          "motion-safe:transition-all duration-[var(--transition-fast)]"
         ),
         gradient: cn(
           "bg-gradient-to-br from-[var(--dojo-primary)] to-[var(--dojo-hover)] text-white",
           "hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(230,57,70,0.4)]",
           "active:scale-[0.98]",
-          "transition-all duration-[var(--transition-fast)]"
+          "motion-safe:transition-all duration-[var(--transition-fast)]"
         ),
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors",

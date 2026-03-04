@@ -10,15 +10,18 @@
 import { useState, useCallback } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { GlowCard } from '@/components/ui/GlowCard'
 import { QuickChips } from './QuickChips'
 import { cn } from '@/lib/utils'
-import { Loader2, Scan, Trash2 } from 'lucide-react'
+import { Scan, Trash2 } from 'lucide-react'
+import { ScanningState } from './ScanningState'
 
 interface ScannerInputProps {
   onScan: (text: string) => void
   onClear: () => void
   isScanning?: boolean
+  allEnginesDisabled?: boolean
   className?: string
 }
 
@@ -26,6 +29,7 @@ export function ScannerInput({
   onScan,
   onClear,
   isScanning = false,
+  allEnginesDisabled = false,
   className
 }: ScannerInputProps) {
   const [text, setText] = useState('')
@@ -55,7 +59,7 @@ export function ScannerInput({
   }, [handleScan])
 
   return (
-    <Card className={cn('', className)}>
+    <GlowCard glow="subtle" className={cn('', className)}>
       <CardHeader>
         <CardTitle>Input Text</CardTitle>
       </CardHeader>
@@ -69,23 +73,17 @@ export function ScannerInput({
           disabled={isScanning}
         />
 
+        {/* ScanningState unmounts when not scanning (per Architect/Security requirement) */}
+        {isScanning && <ScanningState className="py-4" />}
+
         <div className="flex gap-2 flex-wrap">
           <Button
             onClick={handleScan}
-            disabled={!text.trim() || isScanning}
+            disabled={!text.trim() || isScanning || allEnginesDisabled}
             className="gap-2"
           >
-            {isScanning ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Scanning...
-              </>
-            ) : (
-              <>
-                <Scan className="h-4 w-4" />
-                Scan
-              </>
-            )}
+            <Scan className="h-4 w-4" aria-hidden="true" />
+            {isScanning ? 'Scanning...' : 'Scan'}
           </Button>
           <Button
             onClick={handleClear}
@@ -93,13 +91,13 @@ export function ScannerInput({
             disabled={isScanning}
             className="gap-2"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
             Clear
           </Button>
         </div>
 
         <QuickChips onLoadPayload={handleLoadPayload} isScanning={isScanning} />
       </CardContent>
-    </Card>
+    </GlowCard>
   )
 }

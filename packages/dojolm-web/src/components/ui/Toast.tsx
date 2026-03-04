@@ -56,7 +56,7 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
       <Icon className={cn("w-5 h-5 mt-0.5 flex-shrink-0", color)} aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-[var(--foreground)]">{toast.title}</p>
-        {toast.description && <p className="text-xs text-[var(--muted-foreground)] mt-1">{toast.description}</p>}
+        {toast.description && <p className="text-xs text-muted-foreground mt-1">{toast.description}</p>}
         {toast.action && (
           <button
             onClick={toast.action.onClick}

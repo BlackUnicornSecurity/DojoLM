@@ -9,7 +9,6 @@
 
 import { QUICK_PAYLOADS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
 
 interface QuickChipsProps {
   onLoadPayload: (text: string, autoScan?: boolean) => void
@@ -29,7 +28,7 @@ export function QuickChips({ onLoadPayload, isScanning = false, className }: Qui
             key={payload.label}
             onClick={() => onLoadPayload(payload.text, false)}
             disabled={isScanning}
-            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-[rgba(255,255,255,0.1)] hover:text-foreground transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             title={`Load "${payload.label}" payload to scanner`}
           >
             {payload.label}

@@ -15,6 +15,9 @@ export { ChatBubble } from './ChatBubble';
 export { TypingIndicator } from './TypingIndicator';
 export { ComparisonView } from './ComparisonView';
 export { CustomProviderBuilder } from './CustomProviderBuilder';
+export { ExecutiveSummary } from './ExecutiveSummary';
+export { VulnerabilityPanel } from './VulnerabilityPanel';
+export { ReportGenerator } from './ReportGenerator';
 
 // Types
 export type { LLMDashboardProps } from './LLMDashboard';

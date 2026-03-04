@@ -46,7 +46,7 @@ export function DojoCoverageMap({ title, data, className }: DojoCoverageMapProps
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-[var(--muted-foreground)]">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">

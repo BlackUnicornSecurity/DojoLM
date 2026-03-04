@@ -181,7 +181,7 @@ export const FixtureSearch = memo(function FixtureSearch({
       <div className="px-3 pt-3 pb-2 space-y-2 border-b border-[var(--border)]">
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--muted-foreground)]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -199,7 +199,7 @@ export const FixtureSearch = memo(function FixtureSearch({
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-[var(--bg-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Clear search"
             >
-              <X className="h-3.5 w-3.5 text-[var(--muted-foreground)]" aria-hidden="true" />
+              <X className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -225,7 +225,7 @@ export const FixtureSearch = memo(function FixtureSearch({
             )}
           </Button>
 
-          <span className="text-xs text-[var(--muted-foreground)] ml-auto">
+          <span className="text-xs text-muted-foreground ml-auto">
             {filteredResults.length.toLocaleString()} result{filteredResults.length !== 1 ? 's' : ''}
           </span>
 
@@ -233,7 +233,7 @@ export const FixtureSearch = memo(function FixtureSearch({
             <button
               type="button"
               onClick={handleClearFilters}
-              className="text-xs text-[var(--muted-foreground)] hover:text-foreground underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+              className="text-xs text-muted-foreground hover:text-foreground underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
               aria-label="Clear all filters"
             >
               Clear
@@ -290,8 +290,8 @@ export const FixtureSearch = memo(function FixtureSearch({
       >
         {filteredResults.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-            <Search className="h-8 w-8 text-[var(--muted-foreground)] mb-3" aria-hidden="true" />
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <Search className="h-8 w-8 text-muted-foreground mb-3" aria-hidden="true" />
+            <p className="text-sm text-muted-foreground">
               {debouncedQuery || hasActiveFilters
                 ? 'No fixtures match your search criteria'
                 : 'Type to search across all fixtures'}
@@ -380,15 +380,15 @@ const SearchResultRow = memo(function SearchResultRow({
           </span>
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
-          <span className="text-[10px] text-[var(--muted-foreground)]">
+          <span className="text-[10px] text-muted-foreground">
             {item.category}
           </span>
           {item.file.attack && (
             <>
-              <span className="text-[10px] text-[var(--muted-foreground)]" aria-hidden="true">
+              <span className="text-[10px] text-muted-foreground" aria-hidden="true">
                 /
               </span>
-              <span className="text-[10px] text-[var(--muted-foreground)] truncate max-w-[200px]">
+              <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">
                 {item.file.attack}
               </span>
             </>

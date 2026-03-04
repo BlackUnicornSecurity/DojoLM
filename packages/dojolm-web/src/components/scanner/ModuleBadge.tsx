@@ -64,7 +64,7 @@ export const ModuleBadge = memo(function ModuleBadge({
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5',
         'text-xs font-medium',
-        'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)]',
+        'bg-[var(--bg-quaternary)] text-muted-foreground',
         'border border-[var(--border)]',
         className
       )}

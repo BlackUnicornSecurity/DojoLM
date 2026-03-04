@@ -19,7 +19,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.06)] text-muted-foreground hover:bg-[rgba(255,255,255,0.1)]",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
@@ -30,13 +30,13 @@ const badgeVariants = cva(
         high: "border-transparent bg-[var(--severity-high)] text-white",
         medium: "border-transparent bg-[var(--warning)] text-[var(--background)]",
         low: "border-transparent bg-[var(--severity-low)] text-white",
-        info: "border-transparent bg-[var(--bg-quaternary)] text-[var(--muted-foreground)]",
+        info: "border-transparent bg-[var(--bg-quaternary)] text-muted-foreground",
         // Status variants
         success: "border-[var(--success)]/30 bg-[var(--success)]/10 text-[var(--success)]",
         warning: "border-[var(--warning)]/30 bg-[var(--warning)]/10 text-[var(--warning)]",
         error: "border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)]",
-        pending: "border-[var(--border)] bg-[var(--bg-tertiary)] text-[var(--muted-foreground)]",
-        active: "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]",
+        pending: "border-[var(--border)] bg-[var(--bg-tertiary)] text-muted-foreground",
+        active: "border-[var(--bu-electric)]/30 bg-[var(--bu-electric)]/10 text-[var(--bu-electric)]",
         // Strike variant (DojoLM branding - decisive strike on bypass)
         strike: "border-transparent bg-gradient-to-r from-[var(--dojo-primary)] to-[var(--dojo-primary-lg)] text-white font-bold",
       },

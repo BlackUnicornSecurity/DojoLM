@@ -1,8 +1,12 @@
 /**
  * File: FixtureDetail.tsx
- * Purpose: Display fixture content and scan results
+ * Purpose: Display fixture content and scan results with media viewer support
  * Index:
- * - FixtureDetail component (line 18)
+ * - isMediaFile() (line 19)
+ * - FixtureDetail component (line 30)
+ * - BinaryPreview (line 125)
+ * - TextPreview (line 155)
+ * - ScanResultDisplay (line 170)
  */
 
 'use client'
@@ -12,8 +16,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { cn, escHtml, formatDuration } from '@/lib/utils'
-import { X, FileText, HardDrive, ScanEye } from 'lucide-react'
+import { cn, formatDuration } from '@/lib/utils'
+import { X, FileText, HardDrive, ScanEye, Image, Music, Film } from 'lucide-react'
+import { MediaViewer } from './MediaViewer'
+
+/** Media file extensions that should use the MediaViewer */
+const MEDIA_EXTENSIONS = new Set([
+  '.png', '.jpg', '.jpeg', '.gif', '.svg', '.bmp', '.webp',
+  '.mp3', '.wav', '.ogg', '.aac', '.flac', '.m4a',
+  '.mp4', '.webm',
+])
+
+function isMediaFile(filename: string): boolean {
+  const dotIndex = filename.lastIndexOf('.')
+  if (dotIndex === -1) return false
+  return MEDIA_EXTENSIONS.has(filename.slice(dotIndex).toLowerCase())
+}
+
+function getMediaIcon(filename: string) {
+  const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase()
+  if (['.mp3', '.wav', '.ogg', '.aac', '.flac', '.m4a'].includes(ext)) return Music
+  if (['.mp4', '.webm'].includes(ext)) return Film
+  if (['.png', '.jpg', '.jpeg', '.gif', '.svg', '.bmp', '.webp'].includes(ext)) return Image
+  return HardDrive
+}
 
 interface FixtureDetailProps {
   path: string | null
@@ -39,17 +65,16 @@ export function FixtureDetail({
   }
 
   const isBinary = 'hex_preview' in content
+  const filename = path.includes('/') ? path.split('/').pop()! : path
+  const isMedia = isMediaFile(filename)
+  const HeaderIcon = isMedia ? getMediaIcon(filename) : isBinary ? HardDrive : FileText
 
   return (
     <Card className={cn('', className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {isBinary ? (
-              <HardDrive className="h-5 w-5 text-muted-foreground" />
-            ) : (
-              <FileText className="h-5 w-5 text-muted-foreground" />
-            )}
+            <HeaderIcon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
             <CardTitle className="text-lg">{path}</CardTitle>
           </div>
           <div className="flex items-center gap-2">
@@ -61,7 +86,7 @@ export function FixtureDetail({
                 disabled={isScanning}
                 className="gap-1"
               >
-                <ScanEye className="h-4 w-4" />
+                <ScanEye className="h-4 w-4" aria-hidden="true" />
                 Rescan
               </Button>
             )}
@@ -70,8 +95,9 @@ export function FixtureDetail({
               variant="ghost"
               onClick={onClose}
               className="h-8 w-8 p-0"
+              aria-label="Close"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -97,7 +123,13 @@ export function FixtureDetail({
 
         <Separator />
 
-        {isBinary ? (
+        {isMedia ? (
+          <MediaViewer
+            path={path}
+            hexPreview={isBinary ? (content as BinaryFixtureResponse).hex_preview : undefined}
+            size={content.size}
+          />
+        ) : isBinary ? (
           <BinaryPreview content={content as BinaryFixtureResponse} />
         ) : (
           <TextPreview content={content as TextFixtureResponse} />
@@ -152,8 +184,9 @@ function TextPreview({ content }: TextPreviewProps) {
   return (
     <div className="space-y-2">
       <h4 className="text-sm font-medium">Content</h4>
+      {/* React JSX auto-escapes text children. Do not apply escHtml() here. */}
       <pre className="bg-muted p-4 rounded-lg text-sm font-mono overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto">
-        {escHtml(content.content)}
+        {content.content}
       </pre>
     </div>
   )

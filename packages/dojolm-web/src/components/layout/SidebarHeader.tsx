@@ -21,8 +21,16 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
   const [imgError, setImgError] = useState(false)
 
   return (
-    <div className="h-16 flex items-center justify-between px-4 border-b border-[var(--border)]">
-      <div className="flex items-center gap-3">
+    <div className="h-16 flex items-center justify-between px-4 border-b border-[rgba(255,255,255,0.04)] relative overflow-hidden">
+      {/* Decorative enso circle — dojo identity, only visible when expanded */}
+      {!collapsed && (
+        <div
+          className="absolute -right-4 -top-4 w-20 h-20 rounded-full border-2 opacity-[0.05] pointer-events-none"
+          style={{ borderColor: 'var(--dojo-primary)', borderTopColor: 'transparent' }}
+          aria-hidden="true"
+        />
+      )}
+      <div className="flex items-center gap-3 relative">
         {/* BlackUnicorn logo */}
         <div className="relative w-8 flex-shrink-0" style={{ height: '32px', maxHeight: '32px' }}>
           {!imgError ? (
@@ -42,7 +50,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
         </div>
 
         <div
-          aria-hidden={collapsed}
+          aria-hidden={collapsed ? true : undefined}
           className={cn(
             "flex flex-col whitespace-nowrap overflow-hidden",
             "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",

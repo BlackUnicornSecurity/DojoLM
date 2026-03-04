@@ -23,8 +23,9 @@ function getFixturesBasePath(): string {
     resolve(process.cwd(), '../bu-tpi/fixtures'),
     // If started from .next directory
     resolve(process.cwd(), '../../bu-tpi/fixtures'),
-    // Environment-specified fixture path (deployment-configurable)
-    ...(process.env['FIXTURES_PATH'] ? [process.env['FIXTURES_PATH']] : []),
+    // Environment-specified fixture path (deployment-configurable, must end with /fixtures)
+    ...(process.env['FIXTURES_PATH'] && process.env['FIXTURES_PATH'].endsWith('/fixtures')
+      ? [process.env['FIXTURES_PATH']] : []),
   ];
 
   for (const path of possiblePaths) {
@@ -41,10 +42,13 @@ const FIXTURES_BASE_PATH = getFixturesBasePath();
 
 // Allowed fixture categories for security
 const ALLOWED_CATEGORIES = [
-  'images', 'audio', 'web', 'context', 'malformed', 'encoded',
-  'agent-output', 'search-results', 'social', 'code', 'boundary',
-  'untrusted-sources', 'cognitive', 'delivery-vectors', 'multimodal',
-  'session'
+  'agent', 'agent-output', 'audio', 'bias', 'boundary', 'code',
+  'cognitive', 'context', 'delivery-vectors', 'document-attacks',
+  'dos', 'encoded', 'environmental', 'few-shot', 'images',
+  'malformed', 'mcp', 'model-theft', 'modern', 'multimodal',
+  'or', 'output', 'prompt-injection', 'search-results', 'session',
+  'social', 'supply-chain', 'token-attacks', 'tool-manipulation',
+  'translation', 'untrusted-sources', 'vec', 'web'
 ];
 
 /**
@@ -92,7 +96,12 @@ function validateFixturePath(category: string, filename: string): { valid: boole
  * Determine if a file is likely binary based on extension
  */
 function isBinaryFile(filename: string): boolean {
-  const binaryExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp3', '.wav', '.pdf', '.exe', '.bin'];
+  const binaryExtensions = [
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
+    '.mp3', '.wav', '.ogg', '.aac', '.flac', '.m4a',
+    '.mp4', '.webm',
+    '.pdf', '.exe', '.bin',
+  ];
   const ext = filename.toLowerCase().slice(filename.lastIndexOf('.'));
   return binaryExtensions.includes(ext);
 }
@@ -133,7 +142,7 @@ export async function GET(request: NextRequest) {
     const fullPath = resolve(FIXTURES_BASE_PATH, category, filename);
 
     // Verify the resolved path is within the fixtures directory
-    if (!fullPath.startsWith(FIXTURES_BASE_PATH)) {
+    if (!fullPath.startsWith(FIXTURES_BASE_PATH + '/')) {
       return NextResponse.json(
         { error: 'Invalid file path' },
         { status: 400 }
@@ -193,10 +202,7 @@ export async function GET(request: NextRequest) {
     console.error('Read fixture API error:', error);
 
     return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

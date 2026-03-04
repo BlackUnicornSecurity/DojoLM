@@ -89,7 +89,7 @@ export function PageToolbar({
                 ) : (
                   <span
                     aria-current={isLast ? 'page' : undefined}
-                    className="text-[var(--muted-foreground)] max-w-[160px] truncate"
+                    className="text-muted-foreground max-w-[160px] truncate"
                   >
                     {crumb.label}
                   </span>
@@ -105,7 +105,7 @@ export function PageToolbar({
         <div>
           <h1 className="text-xl font-bold text-[var(--foreground)]">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-[var(--muted-foreground)]">{subtitle}</p>
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
           )}
         </div>
       </div>
@@ -114,7 +114,7 @@ export function PageToolbar({
       <div className="flex flex-col sm:flex-row gap-[var(--spacing-sm)]">
         {/* Search input with glassmorphic style */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" aria-hidden="true" />
           <input
             ref={searchRef}
             id="toolbar-search"
@@ -128,10 +128,10 @@ export function PageToolbar({
             aria-label={searchPlaceholder}
             className={cn(
               "glass",
-              "w-full pl-10 pr-14 py-2 rounded-[var(--radius-md)] min-h-[44px]",
-              "border border-[var(--border)]",
+              "w-full pl-11 pr-14 py-2 rounded-full min-h-[44px]",
+              "border border-[rgba(255,255,255,0.06)]",
               "text-sm text-[var(--foreground)] placeholder:text-[var(--text-tertiary)]",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:border-transparent",
+              "focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)] focus:border-transparent",
               "motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]"
             )}
           />
@@ -155,8 +155,8 @@ export function PageToolbar({
                   "px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap min-h-[44px]",
                   "border motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]",
                   filter.active
-                    ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                    : "bg-transparent text-[var(--muted-foreground)] border-[var(--border)] hover:border-[var(--muted-foreground)]"
+                    ? "bg-[rgba(255,255,255,0.1)] border-[rgba(255,255,255,0.2)] text-[var(--foreground)]"
+                    : "bg-transparent text-muted-foreground border-[var(--border)] hover:border-[rgba(255,255,255,0.15)] hover:text-foreground"
                 )}
               >
                 {filter.label}

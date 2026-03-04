@@ -144,6 +144,11 @@ export const TEST_SCENARIOS: readonly TestScenario[] = [
 ] as const;
 
 /**
+ * Test suite preset types for Quick, Compliance, and Full modes
+ */
+export type TestSuitePreset = 'quick' | 'compliance' | 'full';
+
+/**
  * Single test prompt case for LLM safety evaluation
  */
 export interface LLMPromptTestCase {
@@ -447,7 +452,7 @@ export interface CoverageMap {
 /**
  * Supported report export formats
  */
-export type ReportFormat = 'json' | 'markdown' | 'pdf' | 'csv';
+export type ReportFormat = 'json' | 'markdown' | 'pdf' | 'csv' | 'sarif';
 
 /**
  * Filter options for querying results

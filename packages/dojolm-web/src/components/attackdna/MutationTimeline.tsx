@@ -28,7 +28,7 @@ interface TimelineEntry {
   similarity: number
 }
 
-// --- Mock Data ---
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 
 const MOCK_TIMELINE: TimelineEntry[] = [
   {
@@ -169,7 +169,7 @@ const mutationTypeConfig: Record<string, { color: string; dotColor: string; bgCo
 }
 
 const defaultConfig = {
-  color: 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]',
+  color: 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]',
   dotColor: 'bg-gray-400',
   bgColor: 'border-l-gray-400',
 }
@@ -186,7 +186,7 @@ const categoryBadgeColor: Record<string, string> = {
 
 function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean }) {
   const config = mutationTypeConfig[entry.mutationType.toLowerCase()] ?? defaultConfig
-  const catClass = categoryBadgeColor[entry.nodeCategory.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]'
+  const catClass = categoryBadgeColor[entry.nodeCategory.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
 
   const formattedDate = new Date(entry.date).toLocaleDateString('en-US', {
     month: 'short',
@@ -227,10 +227,10 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
         >
           {/* Date row */}
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <Clock className="h-3 w-3 text-[var(--muted-foreground)] shrink-0" aria-hidden="true" />
+            <Clock className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
             <time
               dateTime={entry.date}
-              className="text-[11px] text-[var(--muted-foreground)]"
+              className="text-[11px] text-muted-foreground"
             >
               {formattedDate} at {formattedTime}
             </time>
@@ -250,7 +250,7 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
             >
               {entry.nodeCategory}
             </Badge>
-            <span className="text-[10px] text-[var(--muted-foreground)] font-mono ml-auto">
+            <span className="text-[10px] text-muted-foreground font-mono ml-auto">
               {(entry.similarity * 100).toFixed(0)}% sim
             </span>
           </div>
@@ -262,8 +262,8 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
 
           {/* Edge reference */}
           <div className="flex items-center gap-1.5 mt-2">
-            <GitCommit className="h-3 w-3 text-[var(--muted-foreground)]" aria-hidden="true" />
-            <span className="text-[10px] font-mono text-[var(--muted-foreground)]">
+            <GitCommit className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+            <span className="text-[10px] font-mono text-muted-foreground">
               {entry.fromNodeId} → {entry.toNodeId}
             </span>
           </div>

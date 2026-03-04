@@ -67,7 +67,7 @@ export function DojoLineChart({ title, data, dataKey, xKey, className }: DojoLin
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-[var(--muted-foreground)]">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <RechartsLineChart data={data} dataKey={dataKey} xKey={xKey} />

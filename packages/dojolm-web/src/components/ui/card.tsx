@@ -22,10 +22,9 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
-      "motion-safe:transition-[transform,box-shadow,border-color] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-out",
-      "motion-safe:hover:shadow-lg motion-safe:hover:shadow-black/20 motion-safe:hover:-translate-y-0.5",
-      "motion-safe:hover:border-[rgba(255,255,255,0.1)]",
+      "rounded-xl border border-[rgba(255,255,255,0.06)] bg-card text-card-foreground shadow-sm",
+      "motion-safe:transition-[border-color] motion-safe:duration-[var(--transition-normal)]",
+      "motion-safe:hover:border-[rgba(255,255,255,0.08)]",
       variant === 'glass' && "glass-card",
       className
     )}

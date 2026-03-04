@@ -1,24 +1,24 @@
 /**
  * File: AdversarialLab.tsx
- * Purpose: Main Adversarial Lab dashboard - MCP + Tools attack configuration & monitoring
- * Story: S73 - Adversarial Lab Dashboard
+ * Purpose: Main Atemi Lab dashboard - MCP + Tools attack configuration & monitoring
+ * Story: S73, TPI-NODA-6.1, P3.2 - Atemi Lab Dashboard + User Guidance + Session Recording
  * Index:
- * - AttackMode type (line 19)
- * - AttackToolDef interface (line 21)
- * - MODE_CONFIG (line 30)
- * - ATTACK_TOOLS (line 62)
- * - modeEnabledTools helper (line 154)
- * - AdversarialLabProps interface (line 170)
- * - AdversarialLab component (line 177)
+ * - AttackMode type (line 45)
+ * - AttackToolDef interface (line 47)
+ * - LEARN_MORE_DATA (line 61)
+ * - MODE_CONFIG (line 149)
+ * - ATTACK_TOOLS (line 190)
+ * - isToolEnabledAtMode helper (line 339)
+ * - AdversarialLabProps interface (line 349)
+ * - AdversarialLab component (line 372)
  */
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { StatusDot } from '@/components/ui/StatusDot'
 import {
   Shield,
   Swords,
@@ -27,9 +27,17 @@ import {
   Activity,
   Wrench,
   LayoutGrid,
+  Settings,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { AttackToolCard } from './AttackToolCard'
+import type { LearnMoreContent } from './AttackToolCard'
 import { AttackLog } from './AttackLog'
+import { AtemiGettingStarted } from './AtemiGettingStarted'
+import { McpConnectorStatus } from './McpConnectorStatus'
+import { AtemiConfig } from './AtemiConfig'
+import { SessionRecorder } from './SessionRecorder'
+import { SessionHistory } from './SessionHistory'
 
 // ---------------------------------------------------------------------------
 // Types & Configuration
@@ -45,6 +53,98 @@ interface AttackToolDef {
   severity: 'low' | 'medium' | 'high' | 'critical'
   /** Minimum mode required for this tool to be enabled */
   minMode: AttackMode
+}
+
+// ---------------------------------------------------------------------------
+// Learn More Content per attack tool (Story 6.1)
+// ---------------------------------------------------------------------------
+
+const LEARN_MORE_DATA: Record<string, LearnMoreContent> = {
+  'capability-spoofing': {
+    technique: 'Forges MCP server capability declarations to claim unsupported permissions such as tool invocation, resource access, or sampling.',
+    expectedBehavior: 'The client should reject unrecognized capabilities and validate server claims against its allowlist.',
+    defensiveImplications: 'Implement strict capability validation on the client side. Never trust server-declared capabilities without verification.',
+  },
+  'tool-poisoning': {
+    technique: 'Embeds malicious prompt injection payloads within MCP tool description fields and JSON schema annotations that get injected into the LLM context.',
+    expectedBehavior: 'Tool descriptions should be sanitized before being included in LLM prompts. Schema fields should not contain executable instructions.',
+    defensiveImplications: 'Sanitize all tool metadata before passing to LLMs. Use structured tool registries with pre-approved descriptions.',
+  },
+  'uri-traversal': {
+    technique: 'Crafts MCP resource URIs with path traversal sequences (../, encoded variants) to access files and endpoints outside the allowed scope.',
+    expectedBehavior: 'Resource handlers should normalize and validate URIs, rejecting any that escape the allowed directory.',
+    defensiveImplications: 'Implement path canonicalization and allowlist-based URI validation in resource handlers.',
+  },
+  'sampling-loop': {
+    technique: 'Exploits the MCP sampling capability to create recursive LLM invocation chains where each response triggers another sampling request.',
+    expectedBehavior: 'The system should detect and break recursive patterns, enforcing maximum depth and rate limits on sampling.',
+    defensiveImplications: 'Implement call depth limits, rate limiting, and cycle detection on MCP sampling requests.',
+  },
+  'name-typosquatting': {
+    technique: 'Registers MCP tools with names visually similar to trusted tools (homoglyphs, extra characters) to intercept legitimate tool calls.',
+    expectedBehavior: 'Tool resolution should use exact matching and warn on similar names. User confirmation for unfamiliar tools.',
+    defensiveImplications: 'Use tool fingerprinting and maintain a trusted tool registry. Alert on suspicious name similarities.',
+  },
+  'cross-server-leak': {
+    technique: 'Exploits shared namespaces between MCP servers to leak conversation context, tool results, or user data across trust boundaries.',
+    expectedBehavior: 'Each MCP server should operate in an isolated context without access to other servers data.',
+    defensiveImplications: 'Enforce strict namespace isolation between MCP servers. Never share context across trust boundaries.',
+  },
+  'notification-flood': {
+    technique: 'Sends a burst of MCP notification messages (progress, log events) to overwhelm the client UI and processing pipeline.',
+    expectedBehavior: 'Clients should implement rate limiting and throttling for incoming notifications.',
+    defensiveImplications: 'Rate-limit notifications per server, implement backpressure, and use notification queues.',
+  },
+  'prompt-injection': {
+    technique: 'Injects prompt override payloads via MCP tool results and resource content fields that get processed by the LLM as instructions.',
+    expectedBehavior: 'Tool results should be treated as untrusted data and sandboxed from the instruction context.',
+    defensiveImplications: 'Use instruction-data separation patterns. Mark tool outputs as data, not instructions, in the LLM context.',
+  },
+  'vector-db-poisoning': {
+    technique: 'Manipulates vector database entries through namespace traversal and metadata injection to corrupt retrieval results.',
+    expectedBehavior: 'Vector DB operations should validate namespace boundaries and sanitize metadata inputs.',
+    defensiveImplications: 'Implement write access controls, metadata validation, and namespace isolation for vector databases.',
+  },
+  'browser-exploitation': {
+    technique: 'Returns web page content containing embedded prompt injections within DOM elements that the LLM processes.',
+    expectedBehavior: 'Browser tool output should be sanitized to remove potential prompt injections before LLM processing.',
+    defensiveImplications: 'Sanitize and truncate browser content. Extract only relevant text, stripping suspicious patterns.',
+  },
+  'api-exploitation': {
+    technique: 'Abuses API/fetch tools to perform SSRF attacks, access internal endpoints, and exfiltrate data to attacker-controlled servers.',
+    expectedBehavior: 'API tools should restrict target URLs to an allowlist and block internal network ranges.',
+    defensiveImplications: 'Implement URL allowlisting, block RFC 1918 ranges, and monitor for data exfiltration patterns.',
+  },
+  'filesystem-exploitation': {
+    technique: 'Uses path traversal and symlink attacks to read or write files outside the intended directory through filesystem tools.',
+    expectedBehavior: 'Filesystem operations should be sandboxed with chroot-like restrictions and symlink resolution.',
+    defensiveImplications: 'Use realpath validation, restrict to allowed directories, and resolve symlinks before access checks.',
+  },
+  'model-exploitation': {
+    technique: 'Systematically probes the model to extract training data, map decision boundaries, or perform model distillation.',
+    expectedBehavior: 'The system should detect systematic probing patterns and enforce query rate limits.',
+    defensiveImplications: 'Monitor for extraction patterns, implement output perturbation, and rate-limit repetitive queries.',
+  },
+  'email-exploitation': {
+    technique: 'Generates phishing payloads and injects malicious headers through email sending tools.',
+    expectedBehavior: 'Email tools should validate recipients, sanitize headers, and scan content for phishing indicators.',
+    defensiveImplications: 'Implement header injection protection, content scanning, and recipient allowlisting.',
+  },
+  'code-repository-poisoning': {
+    technique: 'Injects malicious code via commits, tampers with CI/CD configurations, and poisons dependency manifests through repository tools.',
+    expectedBehavior: 'Repository tools should enforce code review workflows and block direct commits to protected branches.',
+    defensiveImplications: 'Require code review for all changes, use signed commits, and validate CI/CD configurations.',
+  },
+  'message-queue-exploitation': {
+    technique: 'Injects poisoned messages and hijacks consumer subscriptions through message queue integration tools.',
+    expectedBehavior: 'Queue tools should validate message format and enforce topic-level access controls.',
+    defensiveImplications: 'Implement message schema validation, topic ACLs, and consumer authentication.',
+  },
+  'search-poisoning': {
+    technique: 'Uses SEO manipulation and snippet injection to embed prompt injection payloads in search results returned to the LLM.',
+    expectedBehavior: 'Search results should be treated as untrusted and sanitized before inclusion in LLM context.',
+    defensiveImplications: 'Sanitize search snippets, limit result length, and detect injection patterns in search output.',
+  },
 }
 
 const MODE_CONFIG = {
@@ -259,7 +359,7 @@ export interface AdversarialLabProps {
 /**
  * AdversarialLab
  *
- * Main dashboard for the Adversarial Lab - MCP + Tools attack simulation.
+ * Main dashboard for the Atemi Lab - MCP + Tools attack simulation.
  * This is a UI dashboard only - it does NOT run the actual MCP server.
  * Shows status, configuration, and results via API calls.
  *
@@ -272,10 +372,11 @@ export interface AdversarialLabProps {
  */
 export function AdversarialLab({
   initialMode = 'passive',
-  connected = true,
+  connected = false,
   className,
 }: AdversarialLabProps) {
   const [mode, setMode] = useState<AttackMode>(initialMode)
+  const [configOpen, setConfigOpen] = useState(false)
 
   const activeTools = useMemo(
     () => ATTACK_TOOLS.filter((t) => isToolEnabledAtMode(t, mode)),
@@ -287,31 +388,49 @@ export function AdversarialLab({
 
   const currentModeCfg = MODE_CONFIG[mode]
 
+  const handleOpenConfig = useCallback(() => setConfigOpen(true), [])
+  const handleCloseConfig = useCallback(() => setConfigOpen(false), [])
+
   return (
     <div className={cn('space-y-6', className)}>
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-2xl font-bold text-[var(--foreground)]">
-            Adversarial Lab
+            Atemi Lab
           </h2>
-          <p className="text-sm text-[var(--muted-foreground)] mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             MCP protocol and tool integration attack simulation dashboard
           </p>
         </div>
-        <StatusDot
-          status={connected ? 'online' : 'offline'}
-          label={connected ? 'Connected' : 'Disconnected'}
-          showLabel
-          size="md"
-        />
+        <div className="flex items-center gap-2">
+          <SessionRecorder mode={mode} />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleOpenConfig}
+            aria-label="Open Atemi Lab configuration"
+          >
+            <Settings className="h-4 w-4" aria-hidden="true" />
+            Config
+          </Button>
+        </div>
       </div>
+
+      {/* Getting Started Guide (Story 6.1) */}
+      <AtemiGettingStarted />
+
+      {/* MCP Connection Status (Story 6.1) */}
+      <McpConnectorStatus connected={connected} />
+
+      {/* Config Panel (Story 6.1) */}
+      <AtemiConfig isOpen={configOpen} onClose={handleCloseConfig} />
 
       {/* Mode Selector */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Activity className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <Activity className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             Attack Mode
           </CardTitle>
         </CardHeader>
@@ -339,7 +458,7 @@ export function AdversarialLab({
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]',
                     isSelected
                       ? cn('border-2', cfg.borderColor, 'bg-[var(--bg-tertiary)]', cfg.textColor)
-                      : 'border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--bg-quaternary)] hover:text-[var(--foreground)]',
+                      : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-quaternary)] hover:text-[var(--foreground)]',
                   )}
                 >
                   <ModeIcon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
@@ -357,31 +476,31 @@ export function AdversarialLab({
       </Card>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">Active Tools</p>
+            <p className="text-xs text-muted-foreground mb-1">Active Tools</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length}</p>
             <p className="text-[10px] text-[var(--text-tertiary)]">of {ATTACK_TOOLS.length} total</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">MCP Attacks</p>
+            <p className="text-xs text-muted-foreground mb-1">MCP Attacks</p>
             <p className="text-xl font-bold text-[var(--dojo-primary)]">{mcpCount}</p>
             <p className="text-[10px] text-[var(--text-tertiary)]">protocol-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">Tool Attacks</p>
+            <p className="text-xs text-muted-foreground mb-1">Tool Attacks</p>
             <p className="text-xl font-bold text-[var(--severity-low)]">{toolCount}</p>
             <p className="text-[10px] text-[var(--text-tertiary)]">integration-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">Scenarios</p>
+            <p className="text-xs text-muted-foreground mb-1">Scenarios</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length * 3}</p>
             <p className="text-[10px] text-[var(--text-tertiary)]">test permutations</p>
           </CardContent>
@@ -391,7 +510,7 @@ export function AdversarialLab({
       {/* Attack Tools Grid */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <LayoutGrid className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <LayoutGrid className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <h3 className="text-sm font-semibold text-[var(--foreground)]">
             Attack Tools
           </h3>
@@ -407,7 +526,7 @@ export function AdversarialLab({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
           {ATTACK_TOOLS.map((tool) => (
             <AttackToolCard
               key={tool.id}
@@ -416,6 +535,7 @@ export function AdversarialLab({
               description={tool.description}
               severity={tool.severity}
               enabled={isToolEnabledAtMode(tool, mode)}
+              learnMore={LEARN_MORE_DATA[tool.id]}
             />
           ))}
         </div>
@@ -423,6 +543,9 @@ export function AdversarialLab({
 
       {/* Attack Log */}
       <AttackLog />
+
+      {/* Session History (Story P3.2) */}
+      <SessionHistory />
     </div>
   )
 }

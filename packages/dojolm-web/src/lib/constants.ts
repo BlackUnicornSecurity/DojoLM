@@ -2,28 +2,29 @@
  * File: constants.ts
  * Purpose: Application constants and data definitions
  * Index:
- * - NAV_ITEMS (line 16)
- * - NavItem / NavId types (line 43)
- * - QUICK_PAYLOADS (line 50)
- * - PAYLOAD_CATALOG (line 74)
- * - COVERAGE_DATA (line 122)
- * - ENGINE_FILTERS (line 233)
- * - SEVERITY_ORDER (line 244)
- * - TABS (line 249)
- * - APP_METADATA (line 261)
+ * - NAV_ITEMS (line 39)
+ * - NavItem / NavId types (line 106)
+ * - QUICK_PAYLOADS (line 112)
+ * - PAYLOAD_CATALOG (line 138)
+ * - COVERAGE_DATA (line 226)
+ * - OWASP_LLM_COVERAGE_DATA (line 408)
+ * - ENGINE_FILTERS (line 493)
+ * - SEVERITY_ORDER (line 512)
+ * - APP_METADATA (line 517)
  */
 
 import type { QuickPayload, PayloadEntry, CoverageEntry } from './types'
 import {
   Shield,
   FlaskConical,
-  Target,
-  PlayCircle,
   Brain,
+  ShieldAlert,
   Swords,
   ShieldCheck,
   Layers,
   Dna,
+  Settings,
+  LayoutDashboard,
   type LucideIcon
 } from 'lucide-react'
 
@@ -37,6 +38,13 @@ export type NavSection = 'core' | 'advanced'
  * Organized into core detection and advanced analysis sections
  */
 export const NAV_ITEMS = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    description: 'System overview and quick actions',
+    section: 'core' as NavSection,
+  },
   {
     id: 'scanner',
     label: 'Scanner',
@@ -52,20 +60,6 @@ export const NAV_ITEMS = [
     section: 'core' as NavSection,
   },
   {
-    id: 'coverage',
-    label: 'Coverage',
-    icon: Target,
-    description: 'Coverage maps and patterns',
-    section: 'core' as NavSection,
-  },
-  {
-    id: 'validation',
-    label: 'Validation',
-    icon: PlayCircle,
-    description: 'Run regression tests',
-    section: 'core' as NavSection,
-  },
-  {
     id: 'llm',
     label: 'LLM Dashboard',
     icon: Brain,
@@ -73,29 +67,43 @@ export const NAV_ITEMS = [
     section: 'core' as NavSection,
   },
   {
+    id: 'guard',
+    label: 'Hattori Guard',
+    icon: ShieldAlert,
+    description: 'LLM input/output protection',
+    section: 'core' as NavSection,
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: Settings,
+    description: 'Settings, validation, and configuration',
+    section: 'core' as NavSection,
+  },
+  {
     id: 'adversarial',
-    label: 'Adversarial Lab',
+    label: 'Atemi Lab',
     icon: Swords,
-    description: 'MCP attack tools and adversarial testing',
+    description: 'MCP adversarial attack simulation',
     section: 'advanced' as NavSection,
   },
   {
     id: 'compliance',
-    label: 'Compliance',
+    label: 'Bushido Book',
     icon: ShieldCheck,
-    description: 'Framework compliance and audit trails',
+    description: 'Coverage, compliance, and audit book',
     section: 'advanced' as NavSection,
   },
   {
     id: 'strategic',
-    label: 'Strategic Hub',
+    label: 'The Kumite',
     icon: Layers,
-    description: 'SAGE, Battle Arena, and THREATFEED',
+    description: 'SAGE, Battle Arena, and Mitsuke',
     section: 'advanced' as NavSection,
   },
   {
     id: 'attackdna',
-    label: 'AttackDNA',
+    label: 'Amaterasu DNA',
     icon: Dna,
     description: 'Attack lineage and mutation analysis',
     section: 'advanced' as NavSection,
@@ -510,19 +518,6 @@ export const ENGINE_FILTERS = [
  * Severity order for sorting
  */
 export const SEVERITY_ORDER = ['CRITICAL', 'WARNING', 'INFO'] as const
-
-/**
- * Tab definitions
- */
-export const TABS = [
-  { id: 'scanner', label: 'Live Scanner', default: true },
-  { id: 'fixtures', label: 'Fixtures' },
-  { id: 'payloads', label: 'Test Payloads' },
-  { id: 'coverage', label: 'Coverage Map' },
-  { id: 'reference', label: 'Pattern Reference' },
-  { id: 'tests', label: 'Run Tests' },
-  { id: 'llm', label: 'LLM Dashboard' },
-] as const
 
 /**
  * App metadata

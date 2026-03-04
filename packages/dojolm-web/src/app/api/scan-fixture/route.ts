@@ -25,7 +25,7 @@ function getFixturesBasePath(): string {
     // If started from .next directory
     resolve(process.cwd(), '../../bu-tpi/fixtures'),
     // Environment-specified fixture path (deployment-configurable)
-    ...(process.env['FIXTURES_PATH'] ? [process.env['FIXTURES_PATH']] : []),
+    ...(process.env['FIXTURES_PATH'] && process.env['FIXTURES_PATH'].endsWith('/fixtures') ? [process.env['FIXTURES_PATH']] : []),
   ];
 
   for (const path of possiblePaths) {
@@ -42,10 +42,13 @@ const FIXTURES_BASE_PATH = getFixturesBasePath();
 
 // Allowed fixture categories for security
 const ALLOWED_CATEGORIES = [
-  'images', 'audio', 'web', 'context', 'malformed', 'encoded',
-  'agent-output', 'search-results', 'social', 'code', 'boundary',
-  'untrusted-sources', 'cognitive', 'delivery-vectors', 'multimodal',
-  'session'
+  'agent', 'agent-output', 'audio', 'bias', 'boundary', 'code',
+  'cognitive', 'context', 'delivery-vectors', 'document-attacks',
+  'dos', 'encoded', 'environmental', 'few-shot', 'images',
+  'malformed', 'mcp', 'model-theft', 'modern', 'multimodal',
+  'or', 'output', 'prompt-injection', 'search-results', 'session',
+  'social', 'supply-chain', 'token-attacks', 'tool-manipulation',
+  'translation', 'untrusted-sources', 'vec', 'web'
 ];
 
 /**
@@ -132,7 +135,7 @@ export async function GET(request: NextRequest) {
     const fullPath = resolve(FIXTURES_BASE_PATH, category, filename);
 
     // Verify the resolved path is within the fixtures directory
-    if (!fullPath.startsWith(FIXTURES_BASE_PATH)) {
+    if (!fullPath.startsWith(FIXTURES_BASE_PATH + '/')) {
       return NextResponse.json(
         { error: 'Invalid file path' },
         { status: 400 }
@@ -192,10 +195,7 @@ export async function GET(request: NextRequest) {
     console.error('Scan fixture API error:', error);
 
     return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

@@ -1,13 +1,14 @@
 /**
  * File: NodeDetailPanel.tsx
- * Purpose: Detail panel for a selected AttackDNA node with mutation history
- * Story: S76 - AttackDNA Explorer
+ * Purpose: Detail panel for a selected AttackDNA node with mutation history and cross-module actions
+ * Story: S76, TPI-NODA-6.4 - AttackDNA Explorer
  * Index:
  * - NodeData interface (line 16)
  * - NodeDetailPanelProps interface (line 27)
  * - mutationTypeColor map (line 33)
  * - severityColor map (line 43)
- * - NodeDetailPanel component (line 51)
+ * - CROSS_MODULE_ACTIONS data (line 53)
+ * - NodeDetailPanel component (line 66)
  */
 
 'use client'
@@ -16,6 +17,8 @@ import { useEffect, useRef, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { X, GitBranch, Shield, FileText, Tag } from 'lucide-react'
+import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
+import { toEcosystemSeverity } from '@/lib/ecosystem-types'
 
 export interface NodeData {
   id: string
@@ -48,7 +51,7 @@ const severityColor: Record<string, string> = {
   high: 'text-orange-500',
   medium: 'text-yellow-500',
   low: 'text-blue-500',
-  info: 'text-[var(--muted-foreground)]',
+  info: 'text-muted-foreground',
 }
 
 export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
@@ -79,7 +82,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
     return null
   }
 
-  const sevClass = severityColor[node.severity.toLowerCase()] ?? 'text-[var(--muted-foreground)]'
+  const sevClass = severityColor[node.severity.toLowerCase()] ?? 'text-muted-foreground'
 
   return (
     <div
@@ -109,7 +112,8 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
           aria-label="Close node detail panel"
           className={cn(
             'shrink-0 rounded-md p-1.5',
-            'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
+            'min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'text-muted-foreground hover:text-[var(--foreground)]',
             'hover:bg-[var(--bg-quaternary)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           )}
@@ -134,16 +138,16 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
 
         {/* Source */}
         <div>
-          <p className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Source</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Source</p>
           <div className="flex items-center gap-1.5">
-            <FileText className="h-3.5 w-3.5 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <FileText className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm text-[var(--foreground)]">{node.source}</span>
           </div>
         </div>
 
         {/* Content Preview */}
         <div>
-          <p className="text-xs font-medium text-[var(--muted-foreground)] mb-1">Content</p>
+          <p className="text-xs font-medium text-muted-foreground mb-1">Content</p>
           <pre className="text-xs font-mono p-3 rounded-md bg-[var(--bg-secondary)] border border-[var(--border)] whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
             <code>{node.content}</code>
           </pre>
@@ -151,11 +155,11 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
 
         {/* Mutation History */}
         <div>
-          <p className="text-xs font-medium text-[var(--muted-foreground)] mb-2">
+          <p className="text-xs font-medium text-muted-foreground mb-2">
             Mutation History ({node.mutations.length})
           </p>
           {node.mutations.length === 0 ? (
-            <p className="text-xs text-[var(--muted-foreground)] italic">
+            <p className="text-xs text-muted-foreground italic">
               No mutations recorded (root node)
             </p>
           ) : (
@@ -163,7 +167,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
               {node.mutations.map((mutation, idx) => {
                 const colorClass =
                   mutationTypeColor[mutation.type.toLowerCase()] ??
-                  'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]'
+                  'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
                 return (
                   <li
                     key={`${mutation.type}-${idx}`}
@@ -183,6 +187,21 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
               })}
             </ul>
           )}
+        </div>
+
+        {/* Cross-module actions */}
+        <div>
+          <p className="text-xs font-medium text-muted-foreground mb-2">
+            Cross-Module Actions
+          </p>
+          <CrossModuleActions
+            sourceModule="attackdna"
+            title={node.id}
+            description={`${node.category} node: ${node.id}`}
+            severity={toEcosystemSeverity(node.severity)}
+            evidence={node.content}
+            variant="inline"
+          />
         </div>
       </div>
     </div>

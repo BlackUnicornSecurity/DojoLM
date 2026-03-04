@@ -206,7 +206,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
           className="animate-spin motion-reduce:animate-none rounded-full h-6 w-6 border-b-2 border-[var(--dojo-primary)]"
           aria-hidden="true"
         />
-        <span className="ml-3 text-sm text-[var(--muted-foreground)]">
+        <span className="ml-3 text-sm text-muted-foreground">
           Loading audit trail...
         </span>
       </div>
@@ -238,7 +238,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         <div className="flex flex-col gap-1">
           <label
             htmlFor="audit-action-filter"
-            className="text-xs font-medium text-[var(--muted-foreground)] flex items-center gap-1"
+            className="text-xs font-medium text-muted-foreground flex items-center gap-1"
           >
             <Filter className="w-3 h-3" aria-hidden="true" />
             Action Type
@@ -264,7 +264,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         <div className="flex flex-col gap-1">
           <label
             htmlFor="audit-date-from"
-            className="text-xs font-medium text-[var(--muted-foreground)] flex items-center gap-1"
+            className="text-xs font-medium text-muted-foreground flex items-center gap-1"
           >
             <Clock className="w-3 h-3" aria-hidden="true" />
             From
@@ -285,7 +285,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         <div className="flex flex-col gap-1">
           <label
             htmlFor="audit-date-to"
-            className="text-xs font-medium text-[var(--muted-foreground)] flex items-center gap-1"
+            className="text-xs font-medium text-muted-foreground flex items-center gap-1"
           >
             <Clock className="w-3 h-3" aria-hidden="true" />
             To
@@ -306,7 +306,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         <div className="flex flex-col gap-1 sm:flex-1 sm:min-w-[200px]">
           <label
             htmlFor="audit-search"
-            className="text-xs font-medium text-[var(--muted-foreground)] flex items-center gap-1"
+            className="text-xs font-medium text-muted-foreground flex items-center gap-1"
           >
             <Search className="w-3 h-3" aria-hidden="true" />
             Search
@@ -319,7 +319,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             placeholder="Search audit entries..."
             className={cn(
               'rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
-              'placeholder:text-[var(--muted-foreground)]',
+              'placeholder:text-muted-foreground',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
             )}
           />
@@ -330,7 +330,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
           onClick={fetchAuditLog}
           className={cn(
             'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium',
-            'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
+            'text-muted-foreground hover:text-[var(--foreground)]',
             'border border-[var(--border)] hover:bg-[var(--bg-quaternary)]',
             'transition-colors',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
@@ -344,7 +344,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
 
       {/* Results count */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-[var(--muted-foreground)]">
+        <p className="text-xs text-muted-foreground">
           Showing {filteredEntries.length} of {entries.length} entries
         </p>
       </div>
@@ -353,10 +353,10 @@ export function AuditTrail({ className }: AuditTrailProps) {
       {filteredEntries.length === 0 ? (
         <div className="text-center py-8">
           <FileText
-            className="w-8 h-8 mx-auto mb-2 text-[var(--muted-foreground)]"
+            className="w-8 h-8 mx-auto mb-2 text-muted-foreground"
             aria-hidden="true"
           />
-          <p className="text-sm text-[var(--muted-foreground)]">
+          <p className="text-sm text-muted-foreground">
             {entries.length === 0
               ? 'No audit entries found.'
               : 'No entries match the current filters.'}
@@ -377,31 +377,31 @@ export function AuditTrail({ className }: AuditTrailProps) {
               <tr className="border-b border-[var(--border)]">
                 <th
                   scope="col"
-                  className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase w-44"
+                  className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-44"
                 >
                   Timestamp
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase w-36"
+                  className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-36"
                 >
                   Action
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase w-28"
+                  className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-28"
                 >
                   User
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase"
+                  className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase"
                 >
                   Resource
                 </th>
                 <th
                   scope="col"
-                  className="px-3 py-2 text-center text-xs font-medium text-[var(--muted-foreground)] uppercase w-24"
+                  className="px-3 py-2 text-center text-xs font-medium text-muted-foreground uppercase w-24"
                 >
                   Result
                 </th>
@@ -413,7 +413,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
                   key={entry.id}
                   className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-secondary)] transition-colors"
                 >
-                  <td className="px-3 py-2 text-xs font-mono text-[var(--muted-foreground)] whitespace-nowrap">
+                  <td className="px-3 py-2 text-xs font-mono text-muted-foreground whitespace-nowrap">
                     {formatTimestamp(entry.timestamp)}
                   </td>
                   <td className="px-3 py-2 text-[var(--foreground)]">
@@ -422,7 +422,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
                       {entry.action.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-3 py-2 text-[var(--muted-foreground)]">
+                  <td className="px-3 py-2 text-muted-foreground">
                     {/* Plain text only - security requirement */}
                     {entry.user}
                   </td>
@@ -432,7 +432,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
                       {entry.resource}
                     </span>
                     {entry.details && (
-                      <p className="text-xs text-[var(--muted-foreground)] mt-0.5 break-all">
+                      <p className="text-xs text-muted-foreground mt-0.5 break-all">
                         {entry.details}
                       </p>
                     )}

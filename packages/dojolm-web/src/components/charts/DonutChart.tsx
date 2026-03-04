@@ -83,7 +83,7 @@ const RechartsDonut = dynamic(
                 </span>
               )}
               {centerLabel && (
-                <span className="text-xs text-[var(--muted-foreground)]">
+                <span className="text-xs text-muted-foreground">
                   {centerLabel}
                 </span>
               )}
@@ -100,7 +100,7 @@ export function DojoDonutChart({ title, data, centerLabel, centerValue, classNam
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-[var(--muted-foreground)]">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <RechartsDonut data={data} centerLabel={centerLabel} centerValue={centerValue} />
@@ -112,7 +112,7 @@ export function DojoDonutChart({ title, data, centerLabel, centerValue, classNam
                 className="w-2.5 h-2.5 rounded-full"
                 style={{ backgroundColor: DONUT_COLORS[index % DONUT_COLORS.length] }}
               />
-              <span className="text-[var(--muted-foreground)]">{segment.name}</span>
+              <span className="text-muted-foreground">{segment.name}</span>
             </div>
           ))}
         </div>

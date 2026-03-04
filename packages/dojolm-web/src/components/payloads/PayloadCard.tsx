@@ -12,7 +12,7 @@ import { PayloadEntry } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { cn, escHtml } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Zap, Package } from 'lucide-react'
 
 interface PayloadCardProps {
@@ -31,7 +31,7 @@ export function PayloadCard({ payload, onClick, className }: PayloadCardProps) {
   return (
     <Card
       className={cn(
-        'cursor-pointer transition-all hover:border-primary/50 hover:shadow-md',
+        'cursor-pointer motion-safe:transition-all hover:border-primary/50 hover:shadow-md',
         className
       )}
       onClick={() => onClick(payload)}
@@ -56,9 +56,10 @@ export function PayloadCard({ payload, onClick, className }: PayloadCardProps) {
           <span>Story: {payload.story}</span>
         </div>
 
+        {/* React JSX auto-escapes text children. Do not apply escHtml() here. */}
         <code className="block text-xs font-mono p-3 bg-muted rounded border overflow-hidden">
           <pre className="whitespace-pre-wrap break-all text-orange-500">
-            {escHtml(payload.example)}
+            {payload.example}
           </pre>
         </code>
 
@@ -106,9 +107,9 @@ export function PayloadGrid({
 
   return (
     <div className={cn('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4', className)}>
-      {filteredPayloads.map((payload) => (
+      {filteredPayloads.map((payload, idx) => (
         <PayloadCard
-          key={payload.title}
+          key={`${payload.title}-${idx}`}
           payload={payload}
           onClick={onLoadPayload}
         />

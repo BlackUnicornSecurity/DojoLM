@@ -1,14 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  /* ===== BlackUnicorn primary colors - base theme ===== */
-  --background: #000000;
-  --bg-secondary: #0A0A0A;
-  --bg-tertiary: #141414;
-  --bg-quaternary: #1C1C1E;
+  /* ===== BlackUnicorn primary colors - base theme (Exon blue-tinted darks) ===== */
+  --background: #050709;
+  --bg-secondary: #0B0E12;
+  --bg-tertiary: #12161B;
+  --bg-quaternary: #1A1E24;
 
-  /* ===== DojoLM red for accents only ===== */
-  --dojo-primary: #C62828;      /* WCAG AA: 4.6:1 on #1C1C1E, 3.75:1 on #000000 */
+  /* ===== BlackUnicorn electric blue accent (AI/intelligence elements) ===== */
+  --bu-electric: #3B82F6;
+  --bu-electric-muted: rgba(59, 130, 246, 0.15);
+  --bu-electric-subtle: rgba(59, 130, 246, 0.08);
+
+  /* ===== DojoLM red for accents only =====
+   * USAGE GUIDE:
+   * --dojo-primary (#C62828): Use for interactive elements, borders, icons on dark backgrounds (bg-tertiary+).
+   *   WCAG AA 4.8:1 on #12161B (bg-tertiary). 4.5:1 on #0B0E12 (bg-secondary).
+   * --dojo-primary-lg (#E63946): Large text (>=18px bold / >=24px normal) ONLY.
+   *   3.9:1 ratio - fails AA for normal-sized text. Use for headings and hero numbers.
+   * --dojo-electric (#FF1744): Decorative/non-text accents only (glows, borders). Not WCAG compliant for text.
+   */
+  --dojo-primary: #C62828;      /* WCAG AA: 4.8:1 on #12161B, 4.5:1 on #0B0E12 */
   --dojo-primary-lg: #E63946;   /* Large text only (3.9:1) */
   --dojo-electric: #FF1744;
   --dojo-hover: #D32F2F;
@@ -20,30 +32,57 @@
   --severity-high: #EA580C;
   --severity-low: #3B82F6;
 
-  /* ===== Text colors ===== */
+  /* ===== Guard status tokens ===== */
+  --status-block: #F87171;
+  --status-block-bg: rgba(239, 68, 68, 0.2);
+  --status-allow: #4ADE80;
+  --status-allow-bg: rgba(34, 197, 94, 0.2);
+  --status-log: #60A5FA;
+  --status-log-bg: rgba(59, 130, 246, 0.2);
+  --status-input: #60A5FA;
+  --status-input-bg: rgba(59, 130, 246, 0.2);
+  --status-output: #C084FC;
+  --status-output-bg: rgba(168, 85, 247, 0.2);
+
+  /* ===== Leaderboard rank tokens ===== */
+  --rank-gold: #EAB308;
+  --rank-silver: #9CA3AF;
+  --rank-bronze: #D97706;
+
+  /* ===== Severity badge tokens ===== */
+  --severity-critical: #F87171;
+  --severity-critical-bg: rgba(239, 68, 68, 0.2);
+  --severity-high-text: #FB923C;
+  --severity-high-bg: rgba(249, 115, 22, 0.2);
+  --severity-medium: #FBBF24;
+  --severity-medium-bg: rgba(245, 158, 11, 0.2);
+  --severity-low-text: #4ADE80;
+  --severity-low-bg: rgba(34, 197, 94, 0.2);
+
+  /* ===== Text colors (cool-tinted grays) ===== */
   --foreground: #FAFAFA;
-  --muted-foreground: #A1A1AA;
-  --text-tertiary: #71717A;
-  --text-quaternary: #52525B;
+  --muted-foreground: #9CA3AF;
+  --text-tertiary: #6B7280;
+  --text-quaternary: #4B5563;  /* Decorative/labels only — fails WCAG AA for body text on dark backgrounds */
 
   /* ===== UI colors ===== */
-  --card: #0A0A0A;
+  --card: #0B0E12;
   --card-foreground: #FAFAFA;
-  --popover: #141414;  /* SOLID - fix transparency */
+  --popover: #12161B;  /* SOLID - fix transparency */
   --popover-foreground: #FAFAFA;
-  --accent: #1C1C1E;
+  --accent: #1A1E24;
   --accent-foreground: #FAFAFA;
-  --border: #27272A;
-  --input: #1C1C1E;
-  --muted: #1C1C1E;
+  --border: #1E2228;
+  --input: #1A1E24;
+  --muted: #1A1E24;
 
   /* ===== Primary action - DojoLM red (WCAG compliant) ===== */
   --primary: #C62828;
   --primary-foreground: #FFFFFF;
-  --ring: #C62828;
+  --ring: rgba(59, 130, 246, 0.4);
 
   /* ===== Secondary - dark grey ===== */
-  --secondary: #1C1C1E;
+  --secondary: #1A1E24;
   --secondary-foreground: #FAFAFA;
 
   /* ===== Destructive ===== */
@@ -79,9 +118,17 @@
   --radius-full: 9999px;
 
   /* ===== Card state tokens ===== */
-  --card-elevated: #141414;
-  --card-pressed: #0A0A0A;
+  --card-elevated: #12161B;
+  --card-pressed: #0B0E12;
   --dojo-subtle: rgba(230, 57, 70, 0.1);
+
+  /* ===== Belt rank colors (Dojo Identity) ===== */
+  --belt-white: #F5F5F5;
+  --belt-yellow: #FDD835;
+  --belt-green: #43A047;
+  --belt-blue: #1E88E5;
+  --belt-brown: #6D4C41;
+  --belt-black: #9CA3AF;
 }
 
 @theme inline {
@@ -116,25 +163,116 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
 
-  /* Border radius */
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
+  /* Guard status tokens */
+  --color-status-block: var(--status-block);
+  --color-status-block-bg: var(--status-block-bg);
+  --color-status-allow: var(--status-allow);
+  --color-status-allow-bg: var(--status-allow-bg);
+  --color-status-log: var(--status-log);
+  --color-status-log-bg: var(--status-log-bg);
+  --color-status-input: var(--status-input);
+  --color-status-input-bg: var(--status-input-bg);
+  --color-status-output: var(--status-output);
+  --color-status-output-bg: var(--status-output-bg);
+
+  /* Leaderboard rank tokens */
+  --color-rank-gold: var(--rank-gold);
+  --color-rank-silver: var(--rank-silver);
+  --color-rank-bronze: var(--rank-bronze);
+
+  /* Severity badge tokens */
+  --color-severity-critical: var(--severity-critical);
+  --color-severity-critical-bg: var(--severity-critical-bg);
+  --color-severity-high-text: var(--severity-high-text);
+  --color-severity-high-bg: var(--severity-high-bg);
+  --color-severity-medium: var(--severity-medium);
+  --color-severity-medium-bg: var(--severity-medium-bg);
+  --color-severity-low-text: var(--severity-low-text);
+  --color-severity-low-bg: var(--severity-low-bg);
+
+  /* Belt rank tokens (Dojo Identity) */
+  --color-belt-white: var(--belt-white);
+  --color-belt-yellow: var(--belt-yellow);
+  --color-belt-green: var(--belt-green);
+  --color-belt-blue: var(--belt-blue);
+  --color-belt-brown: var(--belt-brown);
+  --color-belt-black: var(--belt-black);
+
+  /* Border radius (direct values — avoids self-referential var() loops) */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 
   /* Fonts */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
 }
 
-/* ===== Input focus ring - DojoLM red ===== */
-*:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+/* ===== Heading Convention =====
+ * <h1> = PageToolbar only (one per page view)
+ * <h2> = Module headings at text-2xl font-bold
+ * <h3> = Sections within modules at text-lg font-semibold
+ * Widget titles = CardTitle (rendered as <div>)
+ */
+
+/* ===== Dojo Identity ===== */
+.dojo-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--dojo-primary) 20%, var(--dojo-primary) 80%, transparent 100%);
+  opacity: 0.3;
 }
 
+/* ===== Metric Typography System =====
+ * Usage mapping:
+ *   text-metric-xl (48px) — Hero/dashboard headline numbers
+ *   text-metric-lg (32px) — MetricCard values, primary stats
+ *   text-metric-md (24px) — Inline numbers, secondary stats, mobile metric values
+ *   text-label (12px)     — Card labels, captions, metadata (WCAG AA at 4.5:1 on bg-tertiary)
+ *
+ * All metric classes use font-mono (JetBrains Mono) with tabular-nums for aligned columns.
+ * Weights loaded: 400 (regular), 600 (semibold), 700 (bold).
+ */
+@utility text-metric-xl {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-metric-lg {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-metric-md {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-label {
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Focus-visible handled by enhanced rule at bottom of file (S14) */
+
 input:focus, textarea:focus, select:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.2);
+  border-color: var(--bu-electric);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 /* ===== Custom scrollbar (webkit + Firefox) ===== */
@@ -158,6 +296,15 @@ input:focus, textarea:focus, select:focus {
   scrollbar-color: var(--bg-quaternary) var(--background);
 }
 
+/* ===== Scrollbar hide utility (for mobile horizontal scroll) ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ===== Dark mode forced, no light mode ===== */
 * {
   border-color: var(--border);
@@ -173,14 +320,14 @@ body {
 
 /* ===== Glassmorphic utilities ===== */
 .glass {
-  background: rgba(10, 10, 10, 0.6);
+  background: rgba(11, 14, 18, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-card {
-  background: rgba(10, 10, 10, 0.7);
+  background: rgba(11, 14, 18, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -188,14 +335,14 @@ body {
 }
 
 .glass-card:hover {
-  background: rgba(20, 20, 20, 0.8);
+  background: rgba(18, 22, 27, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* ===== Gradient card overlays ===== */
 .gradient-overlay-primary {
-  background: linear-gradient(135deg, rgba(198, 40, 40, 0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
 }
 .gradient-overlay-success {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, transparent 60%);
@@ -219,6 +366,12 @@ body {
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
 /* ===== View transitions ===== */
 @keyframes fade-in {
   from { opacity: 0; }
@@ -230,12 +383,14 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in {
-  animation: fade-in var(--transition-normal) ease-out;
-}
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-in {
+    animation: fade-in var(--transition-normal) ease-out;
+  }
 
-.animate-slide-up {
-  animation: slide-up var(--transition-normal) ease-out;
+  .animate-slide-up {
+    animation: slide-up var(--transition-normal) ease-out;
+  }
 }
 
 /* ===== Dojo strike animation (DojoLM branding - bypass detection emphasis) ===== */
@@ -250,30 +405,47 @@ body {
   100% { transform: scale(1); }
 }
 
-.animate-dojo-glow {
-  animation: dojo-glow 2s ease-in-out infinite;
+@media (prefers-reduced-motion: no-preference) {
+  .animate-dojo-glow {
+    animation: dojo-glow 2s ease-in-out infinite;
+  }
+
+  .animate-dojo-pulse {
+    animation: dojo-pulse 300ms ease-out;
+  }
 }
 
-.animate-dojo-pulse {
-  animation: dojo-pulse 300ms ease-out;
+/* ===== Staggered entrance (motion-safe only) ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-children > * {
+    opacity: 0;
+    animation: slide-up var(--transition-normal) ease-out forwards;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+  .stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+  .stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+  .stagger-children > *:nth-child(11) { animation-delay: 500ms; }
+  .stagger-children > *:nth-child(12) { animation-delay: 550ms; }
 }
-
-/* ===== Staggered entrance ===== */
-.stagger-children > * {
-  opacity: 0;
-  animation: slide-up var(--transition-normal) ease-out forwards;
-}
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
 
 /* ===== Button press effect ===== */
 .press-effect:active {
   transform: scale(0.98);
   transition: transform 100ms ease;
+}
+
+/* ===== Scan ring animation (Story TPI-UIP-06) ===== */
+/* Uses transform only — static Tailwind opacity-* classes provide the layered depth per ring */
+@keyframes scan-ring {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }
 
 /* ===== Toast slide-in animation ===== */
@@ -286,10 +458,80 @@ body {
   animation: slide-in-right var(--transition-normal) ease-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-right {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* ===== iOS safe area for mobile nav ===== */
 @supports (padding: max(0px)) {
   .pb-safe {
     padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== Design Context System =====
+ * Two visual contexts used across the app:
+ *   .blundesi-context — Data-dense dashboard sections (metrics, tables, charts)
+ *   .clean-context — Focused input/inference sections (scanner input, results, chat)
+ *
+ * RULE: Never mix BLUNDESI data tables inline with Clean AI input areas on the same visual row.
+ * Use >= 32px spacing or a divider between contexts on hybrid pages (e.g. Scanner).
+ */
+
+/* BLUNDESI context — data-dense dashboard sections */
+.blundesi-context {
+  --card-bg: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  --card-border: rgba(255,255,255,0.06);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --spacing-context: 16px;
+}
+
+/* Clean AI context — focused input/inference sections */
+.clean-context {
+  --input-border: rgba(255,255,255,0.08);
+  --input-glow: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  --spacing-context: 48px;
+  --border-radius-xl: 16px;
+}
+
+/* ===== GlowCard "input" variant (Clean AI top gradient line) =====
+ * Story: TPI-UIP-04, TPI-NODA-1.7.6
+ * Centered neutral gradient across 80% width at top edge, rounded-2xl border.
+ * Focus-within blue glow for keyboard accessibility.
+ */
+.glow-card-input {
+  position: relative;
+  border-radius: var(--border-radius-xl, var(--radius-lg));
+}
+
+.glow-card-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: var(--input-glow, linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent));
+  border-radius: 1px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Compose focus-within glow WITH Card hover shadow to avoid clobbering */
+.glow-card-input:focus-within {
+  box-shadow:
+    0 0 20px rgba(59, 130, 246, 0.15),
+    0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Touch device optimizations ===== */
+@media (hover: none) {
+  /* On touch devices, replace hover with active press effects */
+  .glass-card:hover {
+    transform: none;
   }
 }
 
@@ -303,8 +545,14 @@ body {
   .glass-card:hover {
     transform: none;
   }
-  .stagger-children > * {
-    opacity: 1;
-    animation: none;
+  .glow-card-input:focus-within {
+    box-shadow: none;
   }
+}
+
+/* ===== Enhanced focus ring — blue accent for dark backgrounds (Exon alignment) ===== */
+:focus-visible {
+  outline: 2px solid var(--bu-electric);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }

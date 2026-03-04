@@ -165,10 +165,10 @@ export const ModuleLegend = memo(function ModuleLegend({
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <Layers className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <Layers className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <h3 className="text-sm font-semibold">Active Modules</h3>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Filter className="h-3.5 w-3.5" aria-hidden="true" />
           <span>{totalActive}/{totalAvailable}</span>
         </div>
@@ -206,7 +206,7 @@ const PhaseGroup = memo(function PhaseGroup({
 }: PhaseGroupProps) {
   return (
     <div role="group" aria-label={`${label} modules`}>
-      <h4 className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
+      <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">
         {label}
         <span className="ml-1.5 font-normal">({modules.length})</span>
       </h4>
@@ -260,7 +260,7 @@ const ModuleToggle = memo(function ModuleToggle({
         className="shrink-0"
       />
       <ModuleBadge moduleName={moduleName} className={cn(!active && 'opacity-60')} />
-      <span className="ml-auto text-[11px] tabular-nums text-[var(--muted-foreground)] shrink-0">
+      <span className="ml-auto text-[11px] tabular-nums text-muted-foreground shrink-0">
         {count}
       </span>
     </label>

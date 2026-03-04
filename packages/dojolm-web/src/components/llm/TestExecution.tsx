@@ -1,16 +1,15 @@
 /**
  * File: TestExecution.tsx
- * Purpose: Test execution interface for running single and batch tests
+ * Purpose: Test execution interface with real-time SSE progress
  * Index:
- * - TestExecution component (line 27)
- * - ModelSelector component (line 88)
- * - TestCaseSelector component (line 150)
- * - BatchProgress component (line 210)
+ * - TestExecution component (line 30)
+ * - ModelProgressCard component (line 250)
+ * - BatchProgressPanel component (line 210)
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useModelContext, useExecutionContext } from '@/lib/contexts';
 import type { LLMModelConfig, LLMPromptTestCase, LLMBatchExecution } from '@/lib/llm-types';
 import { Button } from '@/components/ui/button';
@@ -20,16 +19,24 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Play, Square, RefreshCw, AlertCircle, Database } from 'lucide-react';
+import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff } from 'lucide-react';
+
+interface PerModelProgress {
+  completed: number;
+  total: number;
+  percent: number;
+  lastScore?: number;
+}
 
 /**
  * Test Execution Component
  *
- * Interface for selecting models, test cases, and running tests
+ * Interface for selecting models, test cases, and running tests.
+ * Uses SSE for real-time progress with polling fallback.
  */
 export function TestExecution() {
   const { models, getEnabledModels } = useModelContext();
-  const { executeTest, executeBatch, getBatch, state, refreshState } = useExecutionContext();
+  const { executeTest, executeBatch, getBatch, cancelBatch, state, refreshState } = useExecutionContext();
 
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [selectedTests, setSelectedTests] = useState<Set<string>>(new Set());
@@ -38,6 +45,16 @@ export function TestExecution() {
   const [error, setError] = useState<string | null>(null);
   const [testCases, setTestCases] = useState<LLMPromptTestCase[]>([]);
   const [isLoadingTests, setIsLoadingTests] = useState(true);
+
+  // SSE-specific state
+  const [perModelProgress, setPerModelProgress] = useState<Record<string, PerModelProgress>>({});
+  const [sseConnected, setSseConnected] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fallbackPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const isRunningRef = useRef(false);
 
   // Load enabled models on mount
   useEffect(() => {
@@ -53,7 +70,9 @@ export function TestExecution() {
         const response = await fetch('/api/llm/test-cases');
         if (response.ok) {
           const data = await response.json();
-          setTestCases(data);
+          if (Array.isArray(data)) {
+            setTestCases(data);
+          }
         }
       } catch (err) {
         console.error('Failed to load test cases:', err);
@@ -65,22 +84,142 @@ export function TestExecution() {
     loadTestCases();
   }, []);
 
-  // Refresh batch state if running
+  // Cleanup SSE, timer, and fallback on unmount
   useEffect(() => {
-    if (state.activeBatches.length > 0) {
-      const interval = setInterval(async () => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      if (fallbackPollRef.current) {
+        clearInterval(fallbackPollRef.current);
+        fallbackPollRef.current = null;
+      }
+    };
+  }, []);
+
+  // Polling fallback when SSE fails
+  const startPollingFallback = useCallback((batchId: string) => {
+    // Clear any existing fallback poll
+    if (fallbackPollRef.current) clearInterval(fallbackPollRef.current);
+
+    fallbackPollRef.current = setInterval(async () => {
+      try {
         await refreshState();
-        // Update current batch
-        for (const batchId of state.activeBatches) {
-          const batch = await getBatch(batchId);
-          if (batch && (batch.status === 'running' || batch.status === 'pending')) {
-            setCurrentBatch(batch);
+        const batch = await getBatch(batchId);
+        if (batch) {
+          setCurrentBatch(batch);
+          if (batch.status === 'completed' || batch.status === 'failed' || batch.status === 'cancelled') {
+            setIsRunning(false);
+            isRunningRef.current = false;
+            if (fallbackPollRef.current) {
+              clearInterval(fallbackPollRef.current);
+              fallbackPollRef.current = null;
+            }
+            if (timerRef.current) {
+              clearInterval(timerRef.current);
+              timerRef.current = null;
+            }
           }
         }
-      }, 2000);
-      return () => clearInterval(interval);
+      } catch {
+        // Continue polling
+      }
+    }, 2000);
+  }, [refreshState, getBatch]);
+
+  // Connect SSE for batch progress
+  const connectSSE = useCallback((batchId: string) => {
+    // Close existing connection
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
     }
-  }, [state.activeBatches, refreshState, getBatch]);
+
+    const es = new EventSource(`/api/llm/batch/${encodeURIComponent(batchId)}/stream`);
+    eventSourceRef.current = es;
+
+    es.addEventListener('open', () => {
+      setSseConnected(true);
+    });
+
+    es.addEventListener('progress', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setCurrentBatch(prev => prev ? {
+          ...prev,
+          completedTests: data.completedTests,
+          totalTests: data.totalTests,
+          failedTests: data.failedTests,
+          avgResilienceScore: data.avgResilienceScore,
+          status: data.status,
+        } : prev);
+        if (data.perModelProgress) {
+          setPerModelProgress(data.perModelProgress);
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    });
+
+    es.addEventListener('model_complete', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setPerModelProgress(prev => ({
+          ...prev,
+          [data.modelId]: {
+            completed: data.completed,
+            total: data.total,
+            percent: 100,
+            lastScore: data.avgScore,
+          },
+        }));
+      } catch {
+        // Ignore parse errors
+      }
+    });
+
+    es.addEventListener('batch_complete', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setCurrentBatch(prev => prev ? {
+          ...prev,
+          completedTests: data.completedTests,
+          totalTests: data.totalTests,
+          failedTests: data.failedTests,
+          avgResilienceScore: data.avgResilienceScore,
+          status: data.status,
+        } : prev);
+        setIsRunning(false);
+        isRunningRef.current = false;
+        es.close();
+        eventSourceRef.current = null;
+        setSseConnected(false);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    });
+
+    es.addEventListener('error', () => {
+      setSseConnected(false);
+      // Only fall back if the connection was not closed normally (batch_complete)
+      if (es.readyState === EventSource.CLOSED) {
+        // Connection closed normally by server, do not start fallback
+        return;
+      }
+      es.close();
+      eventSourceRef.current = null;
+      startPollingFallback(batchId);
+    });
+  }, [startPollingFallback]);
 
   const enabledModels = models.filter(m => selectedModels.has(m.id) && m.enabled);
 
@@ -91,7 +230,6 @@ export function TestExecution() {
       if (response.ok) {
         const result = await response.json();
         if (result.seeded > 0) {
-          // Reload test cases
           const testResponse = await fetch('/api/llm/test-cases');
           if (testResponse.ok) {
             setTestCases(await testResponse.json());
@@ -104,6 +242,9 @@ export function TestExecution() {
   };
 
   const handleRunTests = async () => {
+    // Synchronous guard to prevent double-submission
+    if (isRunningRef.current) return;
+
     if (enabledModels.length === 0) {
       setError('Please select at least one enabled model');
       return;
@@ -114,37 +255,76 @@ export function TestExecution() {
       return;
     }
 
+    isRunningRef.current = true;
     setIsRunning(true);
     setError(null);
+    setPerModelProgress({});
+    setElapsedTime(0);
+    startTimeRef.current = Date.now();
+
+    // Start elapsed time timer
+    timerRef.current = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 1000);
 
     try {
       const selectedTestsList = testCases.filter(t => selectedTests.has(t.id));
 
-      // Single model, single test - run directly
       if (enabledModels.length === 1 && selectedTestsList.length === 1) {
         await executeTest(enabledModels[0], selectedTestsList[0]);
+        setIsRunning(false);
+        isRunningRef.current = false;
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
       } else {
-        // Batch execution
         const batch = await executeBatch(
           enabledModels,
           selectedTestsList,
           (updated) => setCurrentBatch(updated)
         );
         setCurrentBatch(batch);
+        // Connect SSE for real-time progress
+        connectSSE(batch.id);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Test execution failed');
-    } finally {
       setIsRunning(false);
+      isRunningRef.current = false;
+      setElapsedTime(0);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
   };
 
   const handleCancel = async () => {
     if (currentBatch) {
-      await executionContext.cancelBatch(currentBatch.id);
+      const success = await cancelBatch(currentBatch.id);
+      if (!success) {
+        setError('Failed to cancel batch. The test may still be running.');
+        return;
+      }
       setCurrentBatch(null);
     }
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+      setSseConnected(false);
+    }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (fallbackPollRef.current) {
+      clearInterval(fallbackPollRef.current);
+      fallbackPollRef.current = null;
+    }
     setIsRunning(false);
+    isRunningRef.current = false;
+    setPerModelProgress({});
   };
 
   const toggleModel = (modelId: string) => {
@@ -175,34 +355,74 @@ export function TestExecution() {
     setSelectedTests(new Set());
   };
 
-  const progress = currentBatch
+  const overallProgress = currentBatch && currentBatch.totalTests > 0
     ? (currentBatch.completedTests / currentBatch.totalTests) * 100
     : 0;
 
+  const formatElapsed = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
   return (
     <div className="space-y-6">
-      {/* Active batch progress */}
-      {currentBatch && currentBatch.status === 'running' && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Running Batch Test</CardTitle>
-              <Badge variant="outline" className="animate-pulse">
-                {currentBatch.completedTests} / {currentBatch.totalTests}
-              </Badge>
+      {/* Active batch progress with per-model cards */}
+      {currentBatch && (currentBatch.status === 'running' || currentBatch.status === 'pending') && (
+        <div className="space-y-4">
+          {/* Overall progress */}
+          <Card className="border-[var(--bu-electric)]/20 bg-[var(--bu-electric-subtle)]">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-lg">Running Batch Test</CardTitle>
+                  <Badge variant="outline" className="gap-1">
+                    {sseConnected ? (
+                      <><Wifi className="h-3 w-3 text-green-500" /> Live</>
+                    ) : (
+                      <><WifiOff className="h-3 w-3 text-yellow-500" /> Polling</>
+                    )}
+                  </Badge>
+                </div>
+                <Badge variant="outline" className="motion-safe:animate-pulse">
+                  {currentBatch.completedTests} / {currentBatch.totalTests}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Progress value={overallProgress} className="h-2" />
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className="flex items-center gap-4">
+                  <span>{Math.round(overallProgress)}% complete</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {formatElapsed(elapsedTime)}
+                  </span>
+                </div>
+                <Button size="sm" variant="outline" onClick={handleCancel}>
+                  <Square className="h-3 w-3 mr-1" />
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Per-model progress cards */}
+          {Object.keys(perModelProgress).length > 0 && (
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {Object.entries(perModelProgress).map(([modelId, progress]) => {
+                const model = models.find(m => m.id === modelId);
+                return (
+                  <ModelProgressCard
+                    key={modelId}
+                    modelName={model?.name ?? modelId}
+                    progress={progress}
+                  />
+                );
+              })}
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Progress value={progress} className="h-2" />
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{Math.round(progress)}% complete</span>
-              <Button size="sm" variant="outline" onClick={handleCancel}>
-                <Square className="h-3 w-3 mr-1" />
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       )}
 
       {/* Error display */}
@@ -338,7 +558,7 @@ export function TestExecution() {
         >
           {isRunning ? (
             <>
-              <RefreshCw className="h-4 w-4 animate-spin" />
+              <RefreshCw className="h-4 w-4 motion-safe:animate-spin" />
               Running...
             </>
           ) : (
@@ -377,5 +597,41 @@ export function TestExecution() {
         </Card>
       )}
     </div>
+  );
+}
+
+/**
+ * Per-model progress card during batch execution
+ */
+function ModelProgressCard({
+  modelName,
+  progress,
+}: {
+  modelName: string;
+  progress: PerModelProgress;
+}) {
+  const isComplete = progress.percent >= 100;
+
+  return (
+    <Card className={isComplete ? 'border-green-500/20 bg-green-500/5' : ''}>
+      <CardContent className="p-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold truncate">{modelName}</p>
+          <Badge
+            variant={isComplete ? 'default' : 'outline'}
+            className="text-xs shrink-0"
+          >
+            {progress.completed}/{progress.total}
+          </Badge>
+        </div>
+        <Progress value={progress.percent} className="h-1.5" />
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{progress.percent}%</span>
+          {progress.lastScore !== undefined && (
+            <span>Last score: {progress.lastScore}</span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

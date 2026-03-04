@@ -1,6 +1,6 @@
 /**
  * File: ThreatFeedStream.tsx
- * Purpose: THREATFEED threat intelligence stream viewer with sources, entries, and alerts
+ * Purpose: Mitsuke threat intelligence stream viewer with sources, entries, and alerts
  * Story: S75
  * Index:
  * - SourceType type (line 21)
@@ -41,6 +41,8 @@ import {
   ChevronUp,
   X,
 } from 'lucide-react'
+import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
+import { toEcosystemSeverity } from '@/lib/ecosystem-types'
 
 type SourceType = 'rss' | 'api' | 'webhook'
 type SourceStatus = 'active' | 'inactive' | 'error'
@@ -86,7 +88,7 @@ interface ThreatIndicator {
 }
 
 // ---------------------------------------------------------------------------
-// Mock Data
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 // ---------------------------------------------------------------------------
 
 const MOCK_SOURCES: ThreatSource[] = [
@@ -227,8 +229,8 @@ export function ThreatFeedStream() {
         <div className="flex items-center gap-3">
           <Radio className="w-6 h-6 text-[var(--severity-high)]" aria-hidden="true" />
           <div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">THREATFEED</h3>
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">Mitsuke</h3>
+            <p className="text-sm text-muted-foreground">
               Threat intelligence pipeline - {activeSourceCount} active sources
             </p>
           </div>
@@ -254,7 +256,7 @@ export function ThreatFeedStream() {
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Search input */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <input
             type="text"
             placeholder="Search threats, indicators, sources..."
@@ -263,7 +265,7 @@ export function ThreatFeedStream() {
             className={cn(
               'w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border)]',
               'bg-[var(--bg-secondary)] text-[var(--foreground)] text-sm',
-              'placeholder:text-[var(--muted-foreground)]',
+              'placeholder:text-muted-foreground',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               'min-h-[44px]'
             )}
@@ -272,7 +274,7 @@ export function ThreatFeedStream() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-[var(--foreground)]"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -282,7 +284,7 @@ export function ThreatFeedStream() {
 
         {/* Severity filter */}
         <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
-          <Filter className="w-4 h-4 text-[var(--muted-foreground)] ml-2" aria-hidden="true" />
+          <Filter className="w-4 h-4 text-muted-foreground ml-2" aria-hidden="true" />
           {(['all', 'critical', 'high', 'medium', 'low', 'info'] as const).map((sev) => (
             <button
               key={sev}
@@ -349,7 +351,7 @@ function SourceList({ sources }: { sources: ThreatSource[] }) {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <Radio className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <Radio className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
           <CardTitle className="text-base">Sources</CardTitle>
         </div>
         <CardDescription>{sources.filter(s => s.status === 'active').length} of {sources.length} active</CardDescription>
@@ -378,10 +380,10 @@ function SourceList({ sources }: { sources: ThreatSource[] }) {
                 {/* Source info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <TypeIcon className="w-3 h-3 text-[var(--muted-foreground)]" aria-hidden="true" />
+                    <TypeIcon className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
                     <p className="text-sm font-medium text-[var(--foreground)] truncate">{source.name}</p>
                   </div>
-                  <p className="text-xs text-[var(--muted-foreground)]">
+                  <p className="text-xs text-muted-foreground">
                     {source.entriesCount} entries - {source.lastPoll}
                   </p>
                 </div>
@@ -413,7 +415,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
           aria-label="Threat intelligence entries"
         >
           {entries.length === 0 && (
-            <div className="p-8 text-center text-[var(--muted-foreground)]">
+            <div className="p-8 text-center text-muted-foreground">
               <Shield className="w-8 h-8 mx-auto mb-2 opacity-50" aria-hidden="true" />
               <p className="text-sm">No entries match your current filters.</p>
             </div>
@@ -439,22 +441,32 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
                     {/* Title and type */}
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <Badge variant="outline" className="text-[10px]">{entry.type}</Badge>
-                      <span className="text-xs text-[var(--muted-foreground)]">
+                      <span className="text-xs text-muted-foreground">
                         Confidence: {(entry.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
                     <p className="text-sm text-[var(--foreground)] leading-snug">{entry.title}</p>
 
-                    {/* Metadata row */}
-                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                      <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-                        <Eye className="w-3 h-3" aria-hidden="true" />
-                        {entry.source}
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-                        <Clock className="w-3 h-3" aria-hidden="true" />
-                        {entry.timestamp}
-                      </span>
+                    {/* Metadata row + cross-module actions */}
+                    <div className="flex items-center justify-between gap-3 mt-1.5 flex-wrap">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Eye className="w-3 h-3" aria-hidden="true" />
+                          {entry.source}
+                        </span>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Clock className="w-3 h-3" aria-hidden="true" />
+                          {entry.timestamp}
+                        </span>
+                      </div>
+                      <CrossModuleActions
+                        sourceModule="mitsuke"
+                        title={entry.type}
+                        description={entry.title}
+                        severity={toEcosystemSeverity(entry.severity)}
+                        metadata={{ confidence: entry.confidence, indicators: entry.indicators }}
+                        variant="dropdown"
+                      />
                     </div>
 
                     {/* Indicators */}
@@ -463,7 +475,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
                         {entry.indicators.map((ind) => (
                           <span
                             key={ind}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--bg-quaternary)] text-[var(--muted-foreground)]"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--bg-quaternary)] text-muted-foreground"
                           >
                             {ind}
                           </span>
@@ -536,14 +548,14 @@ function AlertPanel({ alerts }: { alerts: ThreatAlert[] }) {
                       <p className="text-xs font-medium text-[var(--foreground)] leading-snug">
                         {alert.title}
                       </p>
-                      <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
                         {alert.source} - {alert.timestamp}
                       </p>
                     </div>
                     {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-[var(--muted-foreground)] flex-shrink-0" aria-hidden="true" />
+                      <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-[var(--muted-foreground)] flex-shrink-0" aria-hidden="true" />
+                      <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
                     )}
                   </div>
                   {isExpanded && (
@@ -595,7 +607,7 @@ function IndicatorSearch({
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Search className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <Search className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <CardTitle className="text-base">Indicators</CardTitle>
           </div>
           <Badge variant="outline">{filteredIndicators.length} found</Badge>
@@ -610,11 +622,11 @@ function IndicatorSearch({
           <table className="w-full text-sm" aria-label="Threat indicators">
             <thead>
               <tr className="border-b border-[var(--border)]">
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--muted-foreground)]">Type</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--muted-foreground)]">Value</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--muted-foreground)]">Severity</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--muted-foreground)]">Source</th>
-                <th className="text-left py-2 px-3 text-xs font-medium text-[var(--muted-foreground)]">First Seen</th>
+                <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Type</th>
+                <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Value</th>
+                <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Severity</th>
+                <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Source</th>
+                <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">First Seen</th>
               </tr>
             </thead>
             <tbody>
@@ -632,14 +644,14 @@ function IndicatorSearch({
                     <td className="py-2 px-3">
                       <Badge variant={sevConfig.variant} className="text-[10px]">{sevConfig.label}</Badge>
                     </td>
-                    <td className="py-2 px-3 text-xs text-[var(--muted-foreground)]">{ind.source}</td>
-                    <td className="py-2 px-3 text-xs text-[var(--muted-foreground)]">{ind.firstSeen}</td>
+                    <td className="py-2 px-3 text-xs text-muted-foreground">{ind.source}</td>
+                    <td className="py-2 px-3 text-xs text-muted-foreground">{ind.firstSeen}</td>
                   </tr>
                 )
               })}
               {filteredIndicators.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-[var(--muted-foreground)]">
+                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
                     No indicators found.
                   </td>
                 </tr>

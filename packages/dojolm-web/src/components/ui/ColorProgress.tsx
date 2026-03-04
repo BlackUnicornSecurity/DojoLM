@@ -35,7 +35,7 @@ export function ColorProgress({ value, showLabel = false, size = 'md', className
         />
       </div>
       {showLabel && (
-        <span className="text-xs font-medium text-[var(--muted-foreground)] tabular-nums min-w-[3ch]">
+        <span className="text-xs font-medium text-muted-foreground tabular-nums min-w-[3ch]">
           {Math.round(clampedValue)}%
         </span>
       )}

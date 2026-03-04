@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeSingleTest } from '@/lib/llm-execution';
+import { executeWithGuard } from '@/lib/guard-middleware';
+import { getGuardConfig, saveGuardEvent, getConfigHash } from '@/lib/storage/guard-storage';
 
 // ===========================================================================
 // POST /api/llm/execute - Execute a single test
@@ -62,13 +64,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check cache if requested
+    // Load guard config (S3: cache key includes guard config hash)
+    const guardConfig = await getGuardConfig();
+
+    // Check cache if requested — cache key includes guard config hash (S3)
     if (useCache) {
       const { findCachedExecution } = await import('@/lib/llm-execution');
-      const cached = await findCachedExecution(modelId, testCase.prompt);
+      const configHash = guardConfig.enabled ? getConfigHash(guardConfig) : '';
+      const cacheKey = configHash ? `${testCase.prompt}::guard:${configHash}` : testCase.prompt;
+      const cached = await findCachedExecution(modelId, cacheKey);
 
       if (cached) {
-        // Return cached result
         return NextResponse.json({
           ...cached,
           cached: true,
@@ -76,10 +82,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Execute test
-    const execution = await executeSingleTest(model, testCase);
+    // Execute with guard if enabled, otherwise use standard execution
+    if (guardConfig.enabled) {
+      const { execution, guardEvents } = await executeWithGuard(model, testCase, guardConfig);
 
-    // Save execution
+      // Persist guard events
+      for (const event of guardEvents) {
+        await saveGuardEvent(event);
+      }
+
+      // Save execution
+      await fileStorage.saveExecution(execution);
+      return NextResponse.json(execution);
+    }
+
+    // Standard execution (no guard)
+    const execution = await executeSingleTest(model, testCase);
     await fileStorage.saveExecution(execution);
 
     return NextResponse.json(execution);

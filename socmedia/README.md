@@ -24,6 +24,7 @@ Long-form technical articles for company blogs, Medium, Dev.to, and industry pub
 | LLM Security Compliance Framework | [blog-llm-compliance-framework.md](./blog-llm-compliance-framework.md) | EU AI Act, NIST AI RMF, ISO 27001, SOC 2, evidence portfolios |
 | Securing LLM Agents | [blog-agent-security-architecture.md](./blog-agent-security-architecture.md) | Agent attack vectors, defensive architecture, testing |
 | Multi-Modal LLM Security | [blog-multimodal-security.md](./blog-multimodal-security.md) | EXIF/ID3 injection, polyglots, document attacks |
+| DojoLM for Model Creators | [blog-dojolm-for-model-creators.md](./blog-dojolm-for-model-creators.md) | Pipeline integration, CI/CD gates, model benchmarking |
 
 ## Usage Guidelines
 

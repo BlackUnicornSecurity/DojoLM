@@ -1,0 +1,78 @@
+'use client'
+
+/**
+ * File: ModuleGridWidget.tsx
+ * Purpose: 23 scanner modules as colored dots/chips with hover info
+ * Story: TPI-NODA-1.5.9
+ */
+
+import { useState, useEffect } from 'react'
+import { WidgetCard } from '../WidgetCard'
+import { cn } from '@/lib/utils'
+
+interface ModuleInfo {
+  name: string
+  count: number
+  source: string
+}
+
+const PHASE_COLORS: Record<string, string> = {
+  'core': 'bg-blue-500',
+  'p1': 'bg-green-500',
+  'p2': 'bg-amber-500',
+  'p3': 'bg-purple-500',
+  'p4': 'bg-red-500',
+}
+
+function getPhaseColor(source: string): string {
+  const lower = source.toLowerCase()
+  if (lower.includes('core')) return PHASE_COLORS['core']
+  if (lower.includes('p1') || lower.includes('phase-1')) return PHASE_COLORS['p1']
+  if (lower.includes('p2')) return PHASE_COLORS['p2']
+  if (lower.includes('p3')) return PHASE_COLORS['p3']
+  return PHASE_COLORS['p4']
+}
+
+export function ModuleGridWidget() {
+  const [modules, setModules] = useState<ModuleInfo[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchModules() {
+      try {
+        const res = await fetch('/api/stats')
+        if (res.ok) {
+          const data = await res.json()
+          if (!cancelled) setModules(data.patternGroups ?? [])
+        }
+      } catch {
+        // Silent
+      }
+    }
+    fetchModules()
+    return () => { cancelled = true }
+  }, [])
+
+  return (
+    <WidgetCard title={`Scanner Modules (${modules.length})`}>
+      <div className="flex flex-wrap gap-1.5">
+        {modules.map(mod => (
+          <span
+            key={mod.name}
+            className={cn(
+              'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium',
+              'bg-muted hover:bg-[var(--bg-quaternary)] cursor-default'
+            )}
+            title={`${mod.name}: ${mod.count} patterns (${mod.source})`}
+          >
+            <span className={cn('w-1.5 h-1.5 rounded-full', getPhaseColor(mod.source))} />
+            {mod.name.length > 15 ? mod.name.slice(0, 13) + '...' : mod.name}
+          </span>
+        ))}
+        {modules.length === 0 && (
+          <p className="text-[10px] text-muted-foreground">Loading modules...</p>
+        )}
+      </div>
+    </WidgetCard>
+  )
+}

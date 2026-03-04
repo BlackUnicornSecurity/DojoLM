@@ -1,7 +1,11 @@
 export { default as ComplianceDashboard } from './ComplianceDashboard'
-export { default as ComplianceCenter, ComplianceCenter as ComplianceCenterComponent } from './ComplianceCenter'
+export { default as ComplianceCenter } from './ComplianceCenter'
 export { GapMatrix } from './GapMatrix'
 export { AuditTrail } from './AuditTrail'
+export { ComplianceChecklist } from './ComplianceChecklist'
+export { FrameworkNavigator } from './FrameworkNavigator'
 
 export type { GapMatrixProps } from './GapMatrix'
 export type { AuditTrailProps } from './AuditTrail'
+export type { ComplianceChecklistProps } from './ComplianceChecklist'
+export type { FrameworkNavigatorProps } from './FrameworkNavigator'

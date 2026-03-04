@@ -112,7 +112,7 @@ export const CategoryTree = memo(function CategoryTree({
     <div className={cn('flex flex-col', className)}>
       {/* Header with total count */}
       <div className="flex items-center gap-2 px-3 py-3 border-b border-[var(--border)]">
-        <Database className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+        <Database className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <span className="text-sm font-semibold">Categories</span>
         <Badge variant="secondary" className="ml-auto text-xs">
           {totalFixtures.toLocaleString()} fixtures
@@ -177,10 +177,10 @@ const BrandGroup = memo(function BrandGroup({
           }}
           aria-hidden="true"
         />
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {brandName}
         </span>
-        <span className="text-xs text-[var(--muted-foreground)] ml-auto">
+        <span className="text-xs text-muted-foreground ml-auto">
           {totalInBrand}
         </span>
       </div>
@@ -274,7 +274,7 @@ const CategoryNode = memo(function CategoryNode({
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
           isSelected
             ? 'bg-[var(--bg-quaternary)] text-foreground'
-            : 'text-[var(--muted-foreground)] hover:bg-[var(--bg-secondary)] hover:text-foreground'
+            : 'text-muted-foreground hover:bg-[var(--bg-secondary)] hover:text-foreground'
         )}
         style={isSelected ? { borderLeft: `2px solid ${brandColor}` } : undefined}
         onClick={handleClick}
@@ -317,10 +317,10 @@ const CategoryNode = memo(function CategoryNode({
       {isExpanded && (
         <div className="ml-10 mr-2 mt-1 mb-2 space-y-1 text-xs">
           <div className="flex items-center justify-between px-2 py-1 rounded bg-[var(--bg-secondary)]">
-            <span className="text-[var(--muted-foreground)]">Story</span>
+            <span className="text-muted-foreground">Story</span>
             <span className="font-mono">{category.story}</span>
           </div>
-          <div className="px-2 py-1 text-[var(--muted-foreground)]">
+          <div className="px-2 py-1 text-muted-foreground">
             {category.desc}
           </div>
           <div className="flex gap-2 px-2">

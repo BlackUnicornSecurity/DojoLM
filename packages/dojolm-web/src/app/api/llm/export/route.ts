@@ -2,23 +2,25 @@
  * File: api/llm/export/route.ts
  * Purpose: Export test results in various formats
  * Methods:
- * - GET: Export batch results as JSON, PDF, or Markdown
+ * - GET: Export batch results as JSON, PDF, Markdown, CSV, or SARIF
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { fileStorage } from '@/lib/storage/file-storage';
-import type { ReportFormat } from '@/lib/llm-types';
+import type { ReportFormat, LLMTestExecution } from '@/lib/llm-types';
 
 // PDF generation utilities
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+
+const SAFE_ID = /^[\w-]{1,128}$/;
 
 /**
  * GET /api/llm/export
  *
  * Query parameters:
  * - batchId: The batch execution ID to export
- * - format: 'json' | 'pdf' | 'md'
+ * - format: 'json' | 'pdf' | 'md' | 'csv' | 'sarif'
  * - includeResponses: Include full response text (default: true)
  *
  * Returns exported test results
@@ -37,6 +39,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Validate batchId to prevent path traversal
+    if (!SAFE_ID.test(batchId)) {
+      return NextResponse.json(
+        { error: 'Invalid batch ID format' },
+        { status: 400 }
+      );
+    }
+
     // Get batch data
     const batch = await fileStorage.getBatch(batchId);
     if (!batch) {
@@ -46,10 +56,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all executions for this batch
-    const executions = await Promise.all(
-      batch.executionIds.map((id) => fileStorage.getExecution(id))
-    );
+    // Get all executions for this batch, filtering out nulls
+    const executions = (await Promise.all(
+      (batch.executionIds ?? []).map((id) => fileStorage.getExecution(id))
+    )).filter((e): e is LLMTestExecution => e !== null);
 
     // Build model report for export
     const report = buildModelReport(batch, executions, includeResponses);
@@ -65,6 +75,12 @@ export async function GET(request: NextRequest) {
       case 'markdown':
         return exportAsMarkdown(report, includeResponses);
 
+      case 'csv':
+        return exportAsCSV(report);
+
+      case 'sarif':
+        return exportAsSARIF(report);
+
       default:
         return NextResponse.json(
           { error: `Unsupported format: ${format}` },
@@ -73,12 +89,8 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Export error:', error);
-
     return NextResponse.json(
-      {
-        error: 'Export failed',
-        message: error instanceof Error ? error.message : String(error),
-      },
+      { error: 'Export failed' },
       { status: 500 }
     );
   }
@@ -95,6 +107,7 @@ function buildModelReport(
   // Group executions by model
   const byModel: Record<string, any[]> = {};
   executions.forEach((exec) => {
+    if (!exec || !exec.modelConfigId) return;
     if (!byModel[exec.modelConfigId]) {
       byModel[exec.modelConfigId] = [];
     }
@@ -112,13 +125,13 @@ function buildModelReport(
     // Calculate by category
     const categoryMap: Record<string, { total: number; passed: number; sumScore: number }> = {};
     completed.forEach((exec) => {
-      [...exec.categoriesPassed, ...exec.categoriesFailed].forEach((cat) => {
+      [...(exec.categoriesPassed || []), ...(exec.categoriesFailed || [])].forEach((cat) => {
         if (!categoryMap[cat]) {
           categoryMap[cat] = { total: 0, passed: 0, sumScore: 0 };
         }
         categoryMap[cat].total++;
         categoryMap[cat].sumScore += exec.resilienceScore;
-        if (exec.categoriesPassed.includes(cat)) {
+        if ((exec.categoriesPassed || []).includes(cat)) {
           categoryMap[cat].passed++;
         }
       });
@@ -134,7 +147,7 @@ function buildModelReport(
     // OWASP coverage
     const owaspMap: Record<string, { passed: number; total: number }> = {};
     completed.forEach((exec) => {
-      Object.entries(exec.owaspCoverage).forEach(([cat, passed]) => {
+      Object.entries(exec.owaspCoverage || {}).forEach(([cat, passed]) => {
         if (!owaspMap[cat]) {
           owaspMap[cat] = { passed: 0, total: 0 };
         }
@@ -154,7 +167,7 @@ function buildModelReport(
     // TPI coverage
     const tpiMap: Record<string, { passed: number; total: number }> = {};
     completed.forEach((exec) => {
-      Object.entries(exec.tpiCoverage).forEach(([story, passed]) => {
+      Object.entries(exec.tpiCoverage || {}).forEach(([story, passed]) => {
         if (!tpiMap[story]) {
           tpiMap[story] = { passed: 0, total: 0 };
         }
@@ -232,11 +245,15 @@ function exportAsJSON(report: any, includeResponses: boolean): NextResponse {
     format: 'json',
   };
 
-  // Redact responses if not included
-  if (!includeResponses && data.executions) {
-    data.executions = data.executions.map((exec: { response?: string }) => ({
-      ...exec,
-      response: exec.response ? '[REDACTED]' : undefined,
+  // Redact responses if not included - fix: check nested models, not top-level executions
+  if (!includeResponses && data.models) {
+    data.models = data.models.map((m: any) => ({
+      ...m,
+      executions: m.executions?.map((exec: { response?: string; prompt?: string }) => ({
+        ...exec,
+        response: exec.response ? '[REDACTED]' : undefined,
+        prompt: exec.prompt ? '[REDACTED]' : undefined,
+      })),
     }));
   }
 
@@ -376,10 +393,12 @@ function exportAsPDF(report: any, includeResponses: boolean): NextResponse {
   const pdfBytes = doc.output('arraybuffer');
   const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
+  const safeModelName = (report.modelName || 'export').replace(/[^\w-]/g, '_');
+
   return NextResponse.json({
     format: 'pdf',
     data: pdfBase64,
-    filename: `llm-report-${report.modelName}-${new Date().toISOString().split('T')[0]}.pdf`,
+    filename: `llm-report-${safeModelName}-${new Date().toISOString().split('T')[0]}.pdf`,
   });
 }
 
@@ -480,9 +499,187 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
   lines.push();
   lines.push('*Generated by DojoLM LLM Testing Dashboard*');
 
+  const safeModelName = (report.modelName || 'export').replace(/[^\w-]/g, '_');
+
   return NextResponse.json({
     format: 'md',
     content: lines.join('\n'),
-    filename: `llm-report-${report.modelName}-${new Date().toISOString().split('T')[0]}.md`,
+    filename: `llm-report-${safeModelName}-${new Date().toISOString().split('T')[0]}.md`,
+  });
+}
+
+/**
+ * Export as CSV (flattened results)
+ */
+function exportAsCSV(report: any): Response {
+  const rows: string[][] = [];
+
+  // Header row
+  rows.push([
+    'Model', 'Provider', 'Test Case', 'Status', 'Resilience Score',
+    'Injection Success', 'Harmfulness', 'Duration (ms)',
+    'Categories Passed', 'Categories Failed',
+    'OWASP Coverage', 'TPI Coverage', 'Timestamp',
+  ]);
+
+  // Data rows from each model's executions
+  for (const model of report.models) {
+    if (model.executions) {
+      for (const exec of model.executions) {
+        rows.push([
+          csvEscape(model.modelName || model.modelConfigId),
+          csvEscape(model.provider),
+          csvEscape(exec.testCaseId),
+          csvEscape(exec.status),
+          String(exec.resilienceScore ?? ''),
+          String(exec.injectionSuccess ?? ''),
+          String(exec.harmfulness ?? ''),
+          String(exec.duration_ms ?? ''),
+          csvEscape((exec.categoriesPassed || []).join('; ')),
+          csvEscape((exec.categoriesFailed || []).join('; ')),
+          csvEscape(Object.keys(exec.owaspCoverage || {}).join('; ')),
+          csvEscape(Object.keys(exec.tpiCoverage || {}).join('; ')),
+          csvEscape(exec.timestamp || ''),
+        ]);
+      }
+    } else {
+      // No individual executions, use summary data
+      rows.push([
+        csvEscape(model.modelName || model.modelConfigId),
+        csvEscape(model.provider),
+        'Summary',
+        'completed',
+        String(model.avgResilienceScore),
+        String(model.injectionSuccessRate),
+        String(model.harmfulnessRate),
+        String(model.avgDuration_ms),
+        '',
+        '',
+        String(model.overallCoveragePercent) + '%',
+        '',
+        csvEscape(model.generatedAt || ''),
+      ]);
+    }
+  }
+
+  const csvContent = rows.map(row => row.join(',')).join('\n');
+
+  return new Response(csvContent, {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="llm-results-${Date.now()}.csv"`,
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
+
+/**
+ * Escape a CSV field value with formula injection prevention
+ */
+function csvEscape(value: string): string {
+  if (!value) return '';
+  // Neutralize formula injection: prefix dangerous leading chars with single quote
+  const formulaStart = /^[=+\-@\t\r]/;
+  let safe = formulaStart.test(value) ? `'${value}` : value;
+  // If value contains comma, newline, or quote, wrap in quotes and escape inner quotes
+  if (safe.includes(',') || safe.includes('\n') || safe.includes('"')) {
+    return `"${safe.replace(/"/g, '""')}"`;
+  }
+  return safe;
+}
+
+/**
+ * Export as SARIF 2.1.0 format
+ */
+function exportAsSARIF(report: any): NextResponse {
+  const sarif = {
+    $schema: 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json',
+    version: '2.1.0',
+    runs: report.models.map((model: any) => {
+      // Build a category-to-rule-id map for consistent referencing
+      const categoryRules = (model.byCategory || []).map((cat: any, i: number) => ({
+        id: `DOJOLM-${String(i + 1).padStart(3, '0')}`,
+        name: cat.category,
+        shortDescription: {
+          text: `Security test category: ${cat.category}`,
+        },
+        defaultConfiguration: {
+          level: cat.passRate < 0.5 ? 'error' : cat.passRate < 0.8 ? 'warning' : 'note',
+        },
+        properties: {
+          passRate: cat.passRate,
+          avgScore: cat.avgScore,
+          testCount: cat.count,
+        },
+      }));
+
+      // Build category name -> ruleId lookup
+      const categoryToRuleId: Record<string, string> = {};
+      (model.byCategory || []).forEach((cat: any, i: number) => {
+        categoryToRuleId[cat.category] = `DOJOLM-${String(i + 1).padStart(3, '0')}`;
+      });
+
+      return {
+        tool: {
+          driver: {
+            name: 'DojoLM LLM Security Scanner',
+            version: '2.0.0',
+            informationUri: 'https://github.com/bu-tpi/dojolm',
+            rules: categoryRules,
+          },
+        },
+        results: (model.executions || [])
+          .filter((exec: any) => exec.status === 'completed')
+          .map((exec: any) => {
+            // Find the matching ruleId from the failed categories
+            const failedCat = (exec.categoriesFailed || [])[0];
+            const ruleId = failedCat ? categoryToRuleId[failedCat] : undefined;
+
+            return {
+              ruleId,
+              level: exec.resilienceScore < 30 ? 'error'
+                : exec.resilienceScore < 70 ? 'warning'
+                : 'note',
+              message: {
+                text: `Model ${model.modelName} scored ${exec.resilienceScore}/100 on test ${exec.testCaseId}. Injection success: ${(exec.injectionSuccess * 100).toFixed(1)}%, Harmfulness: ${(exec.harmfulness * 100).toFixed(1)}%`,
+              },
+              locations: [{
+                logicalLocations: [{
+                  name: exec.testCaseId,
+                  kind: 'testCase',
+                }],
+              }],
+              properties: {
+                resilienceScore: exec.resilienceScore,
+                injectionSuccess: exec.injectionSuccess,
+                harmfulness: exec.harmfulness,
+                duration_ms: exec.duration_ms,
+                categoriesPassed: exec.categoriesPassed,
+                categoriesFailed: exec.categoriesFailed,
+                modelId: model.modelConfigId,
+              },
+            };
+          }),
+        invocations: [{
+          executionSuccessful: !!report.batchCompletedAt,
+          startTimeUtc: report.batchStartedAt ?? report.generatedAt,
+          endTimeUtc: report.batchCompletedAt ?? undefined,
+        }],
+        properties: {
+          modelId: model.modelConfigId,
+          modelName: model.modelName,
+          provider: model.provider,
+          avgResilienceScore: model.avgResilienceScore,
+          overallCoverage: model.overallCoveragePercent,
+        },
+      };
+    }),
+  };
+
+  return NextResponse.json(sarif, {
+    headers: {
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Disposition': `attachment; filename="llm-sarif-${Date.now()}.sarif.json"`,
+    },
   });
 }

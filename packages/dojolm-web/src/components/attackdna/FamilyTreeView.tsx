@@ -56,7 +56,7 @@ interface TreeFamily {
   edges: TreeEdge[]
 }
 
-// --- Mock Data ---
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 
 const MOCK_FAMILIES: TreeFamily[] = [
   {
@@ -211,7 +211,7 @@ interface TreeNodeCardProps {
 function TreeNodeCard({ node, isSelected, onSelect, focusedId, onFocusChange }: TreeNodeCardProps) {
   const nodeRef = useRef<HTMLButtonElement>(null)
   const sevClass = severityIndicator[node.severity.toLowerCase()] ?? 'bg-gray-400'
-  const catClass = categoryBadgeColor[node.category.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]'
+  const catClass = categoryBadgeColor[node.category.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
   const truncatedContent = node.content.length > 80 ? node.content.slice(0, 77) + '...' : node.content
 
   useEffect(() => {
@@ -247,7 +247,7 @@ function TreeNodeCard({ node, isSelected, onSelect, focusedId, onFocusChange }: 
         >
           {node.category}
         </Badge>
-        <span className="text-[10px] text-[var(--muted-foreground)] ml-auto font-mono">
+        <span className="text-[10px] text-muted-foreground ml-auto font-mono">
           {node.id}
         </span>
       </div>
@@ -260,7 +260,7 @@ function TreeNodeCard({ node, isSelected, onSelect, focusedId, onFocusChange }: 
 
 function EdgeLabel({ edge }: { edge: TreeEdge }) {
   const colorClass = mutationEdgeColor[edge.mutationType.toLowerCase()] ?? 'border-[var(--border)]'
-  const textClass = mutationTextColor[edge.mutationType.toLowerCase()] ?? 'text-[var(--muted-foreground)]'
+  const textClass = mutationTextColor[edge.mutationType.toLowerCase()] ?? 'text-muted-foreground'
 
   return (
     <div className="flex items-center gap-1 py-1 pl-6">
@@ -268,7 +268,7 @@ function EdgeLabel({ edge }: { edge: TreeEdge }) {
       <span className={cn('text-[10px] font-medium', textClass)}>
         {edge.mutationType}
       </span>
-      <span className="text-[10px] text-[var(--muted-foreground)]">
+      <span className="text-[10px] text-muted-foreground">
         ({(edge.similarity * 100).toFixed(0)}%)
       </span>
     </div>
@@ -458,10 +458,10 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
         <Card className="flex-1 min-w-0 w-full">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <ChevronDown className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               {family.name}
             </CardTitle>
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <p className="text-xs text-muted-foreground">
               {family.nodes.length} nodes, {family.edges.length} edges
             </p>
           </CardHeader>

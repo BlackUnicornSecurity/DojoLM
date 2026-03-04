@@ -43,8 +43,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate engines parameter if provided
+    if (engines !== undefined && (!Array.isArray(engines) || engines.some(e => typeof e !== 'string'))) {
+      return NextResponse.json({ error: 'Invalid engines: must be an array of strings' }, { status: 400 });
+    }
+
     // Run scanner with optional engine filter
-    // Only pass engines if non-empty - empty array should scan all engines
     const scanOptions: ScanOptions = (engines && engines.length > 0) ? { engines } : {};
     const result = scan(trimmedText, scanOptions);
 
@@ -61,10 +65,7 @@ export async function POST(request: NextRequest) {
     console.error('Scan API error:', error);
 
     return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

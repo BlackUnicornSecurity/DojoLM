@@ -1,7 +1,7 @@
 /**
  * File: AttackLog.tsx
  * Purpose: Log viewer for attack events (plain text only per SME amendment)
- * Story: S73 - Adversarial Lab Dashboard
+ * Story: S73 - Atemi Lab Dashboard
  * Index:
  * - AttackLogEntry interface (line 18)
  * - MOCK_LOG_ENTRIES (line 29)
@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { ScrollText, Filter } from 'lucide-react'
+import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
+import { toEcosystemSeverity } from '@/lib/ecosystem-types'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,7 +33,7 @@ interface AttackLogEntry {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data (actual API integration in P8)
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 // ---------------------------------------------------------------------------
 
 const MOCK_LOG_ENTRIES: AttackLogEntry[] = [
@@ -178,7 +180,7 @@ export function AttackLog({ className }: AttackLogProps) {
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="flex items-center gap-2">
           <ScrollText
-            className="h-4 w-4 text-[var(--muted-foreground)]"
+            className="h-4 w-4 text-muted-foreground"
             aria-hidden="true"
           />
           <h3 className="text-sm font-semibold text-[var(--foreground)]">
@@ -205,7 +207,7 @@ export function AttackLog({ className }: AttackLogProps) {
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]',
                 filter === opt.value
                   ? 'bg-[var(--dojo-primary)] text-white'
-                  : 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] hover:bg-[var(--bg-tertiary)]',
+                  : 'bg-[var(--bg-quaternary)] text-muted-foreground hover:bg-[var(--bg-tertiary)]',
               )}
               aria-label={`Filter by ${opt.label} severity`}
               aria-pressed={filter === opt.value}
@@ -218,7 +220,7 @@ export function AttackLog({ className }: AttackLogProps) {
 
       {/* Log entries - scrollable */}
       <ScrollArea className="h-[400px] rounded-md border border-[var(--border)] bg-[var(--bg-secondary)]">
-        <div className="p-3 space-y-1" role="log" aria-label="Attack event log" aria-live="polite">
+        <div className="p-3 space-y-1" role="log" aria-label="Attack event log">
           {filteredEntries.length === 0 ? (
             <p className="text-sm text-[var(--text-tertiary)] text-center py-8">
               No log entries match the current filter.
@@ -237,7 +239,7 @@ export function AttackLog({ className }: AttackLogProps) {
                   <span className="text-[10px] font-mono text-[var(--text-tertiary)] flex-shrink-0">
                     {formatTimestamp(entry.timestamp)}
                   </span>
-                  <span className="text-[10px] font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
+                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     {entry.attackType}
                   </span>
                   <Badge
@@ -248,9 +250,18 @@ export function AttackLog({ className }: AttackLogProps) {
                   </Badge>
                 </div>
                 {/* Message - plain text only (SME amendment) */}
-                <p className="text-xs text-[var(--foreground)] leading-relaxed pl-0">
-                  {entry.message}
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs text-[var(--foreground)] leading-relaxed pl-0 flex-1">
+                    {entry.message}
+                  </p>
+                  <CrossModuleActions
+                    sourceModule="atemi"
+                    title={entry.attackType}
+                    description={entry.message}
+                    severity={toEcosystemSeverity(entry.severity)}
+                    variant="dropdown"
+                  />
+                </div>
               </div>
             ))
           )}

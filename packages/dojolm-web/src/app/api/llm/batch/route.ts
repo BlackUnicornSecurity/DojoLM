@@ -11,6 +11,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeBatchTests } from '@/lib/llm-execution';
+import { executeWithGuard } from '@/lib/guard-middleware';
+import { getGuardConfig, saveGuardEvent } from '@/lib/storage/guard-storage';
+import type { GuardConfig } from '@/lib/guard-types';
 
 // ===========================================================================
 // POST /api/llm/batch - Create and execute a batch
@@ -95,26 +98,38 @@ export async function POST(request: NextRequest) {
       status: 'running',
     });
 
+    // Read guard config ONCE before batch starts, freeze as Readonly (S5)
+    const guardConfig: Readonly<GuardConfig> = Object.freeze(await getGuardConfig());
+
     // Start execution in background
-    executeBatchTests(models, testCases)
-      .then(async (batch) => {
-        // Update batch with completion data
-        await fileStorage.updateBatch(batch.id, {
-          status: batch.status,
-          completedTests: batch.completedTests,
-          failedTests: batch.failedTests,
-          avgResilienceScore: batch.avgResilienceScore,
+    if (guardConfig.enabled) {
+      // Guard-wrapped batch: API-boundary wrapping (A1)
+      // executeBatchTests() is NOT modified — guard wraps at route level
+      executeGuardedBatch(models, testCases, guardConfig, initialBatch.id)
+        .catch(async (error) => {
+          console.error(`Batch ${initialBatch.id} failed:`, error);
+          await fileStorage.updateBatch(initialBatch.id, {
+            status: 'failed',
+          });
         });
-        console.log(`Batch ${batch.id} completed:`, batch);
-      })
-      .catch(async (error) => {
-        console.error(`Batch ${initialBatch.id} failed:`, error);
-        // Update batch with failed status
-        await fileStorage.updateBatch(initialBatch.id, {
-          status: 'failed',
-          error: error instanceof Error ? error.message : String(error),
+    } else {
+      // Standard batch (no guard)
+      executeBatchTests(models, testCases)
+        .then(async (batch) => {
+          await fileStorage.updateBatch(batch.id, {
+            status: batch.status,
+            completedTests: batch.completedTests,
+            failedTests: batch.failedTests,
+            avgResilienceScore: batch.avgResilienceScore,
+          });
+        })
+        .catch(async (error) => {
+          console.error(`Batch ${initialBatch.id} failed:`, error);
+          await fileStorage.updateBatch(initialBatch.id, {
+            status: 'failed',
+          });
         });
-      });
+    }
 
     // Return batch object immediately
     return NextResponse.json({
@@ -204,4 +219,84 @@ export async function DELETE(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// ===========================================================================
+// Guard-Wrapped Batch Execution (A1: API-boundary wrapping)
+// ===========================================================================
+
+async function executeGuardedBatch(
+  models: LLMModelConfig[],
+  testCases: LLMPromptTestCase[],
+  frozenGuardConfig: Readonly<GuardConfig>,
+  batchId: string
+): Promise<void> {
+  const CONCURRENT_LIMIT = 5;
+  const executions: Array<{ model: LLMModelConfig; testCase: LLMPromptTestCase }> = [];
+
+  for (const model of models) {
+    for (const testCase of testCases) {
+      executions.push({ model, testCase });
+    }
+  }
+
+  let completedTests = 0;
+  let failedTests = 0;
+  const scores: number[] = [];
+
+  for (let i = 0; i < executions.length; i += CONCURRENT_LIMIT) {
+    const chunk = executions.slice(i, i + CONCURRENT_LIMIT);
+
+    await Promise.allSettled(
+      chunk.map(async ({ model, testCase }) => {
+        try {
+          const { execution, guardEvents } = await executeWithGuard(
+            model,
+            testCase,
+            frozenGuardConfig
+          );
+
+          // Persist guard events
+          for (const event of guardEvents) {
+            await saveGuardEvent(event);
+          }
+
+          // Save execution
+          await fileStorage.saveExecution(execution);
+
+          completedTests++;
+          if (execution.status === 'failed') {
+            failedTests++;
+          } else {
+            scores.push(execution.resilienceScore);
+          }
+        } catch (error) {
+          console.error(`Guard batch execution error:`, error);
+          failedTests++;
+          completedTests++;
+        }
+      })
+    );
+
+    // Update batch progress
+    const avgScore = scores.length > 0
+      ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
+      : 0;
+
+    await fileStorage.updateBatch(batchId, {
+      completedTests,
+      failedTests,
+      avgResilienceScore: avgScore,
+    });
+  }
+
+  // Finalize batch
+  await fileStorage.updateBatch(batchId, {
+    status: 'completed',
+    completedTests,
+    failedTests,
+    avgResilienceScore: scores.length > 0
+      ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
+      : 0,
+  });
 }

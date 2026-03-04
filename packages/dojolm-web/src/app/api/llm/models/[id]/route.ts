@@ -34,7 +34,7 @@ export async function GET(
     }
 
     // Strip sensitive fields before returning
-    const { apiKey: _key, ...safeModel } = model as Record<string, unknown>;
+    const { apiKey: _key, ...safeModel } = model as unknown as Record<string, unknown>;
     return NextResponse.json(safeModel);
   } catch (error) {
     console.error('Error getting model:', error);
@@ -67,12 +67,18 @@ export async function PATCH(
       );
     }
 
-    // Apply updates
+    // Apply updates - allowlist only safe fields to prevent mass-assignment
+    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders'] as const;
+    const patch: Record<string, unknown> = {};
+    for (const key of PATCHABLE) {
+      if (key in body) patch[key] = body[key];
+    }
+
     const updated: LLMModelConfig = {
       ...existing,
-      ...body,
-      id, // Ensure ID doesn't change
-      createdAt: existing.createdAt, // Preserve creation time
+      ...patch,
+      id,
+      createdAt: existing.createdAt,
       updatedAt: new Date().toISOString(),
     };
 
@@ -83,7 +89,7 @@ export async function PATCH(
   } catch (error) {
     console.error('Error updating model:', error);
     return NextResponse.json(
-      { error: 'Failed to update model', message: error instanceof Error ? error.message : String(error) },
+      { error: 'Failed to update model' },
       { status: 500 }
     );
   }
@@ -113,7 +119,7 @@ export async function DELETE(
   } catch (error) {
     console.error('Error deleting model:', error);
     return NextResponse.json(
-      { error: 'Failed to delete model', message: error instanceof Error ? error.message : String(error) },
+      { error: 'Failed to delete model' },
       { status: 500 }
     );
   }

@@ -125,7 +125,7 @@ export const ModuleResults = memo(function ModuleResults({
 
   return (
     <div className={cn('space-y-2', className)} role="region" aria-label="Findings grouped by module">
-      <h3 className="text-sm font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-3">
+      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
         Results by Module
       </h3>
       <div className="space-y-1">
@@ -179,7 +179,7 @@ const ModuleSection = memo(function ModuleSection({ group }: ModuleSectionProps)
         aria-label={`${group.engine} module, ${group.findings.length} finding${group.findings.length !== 1 ? 's' : ''}. ${isExpanded ? 'Collapse' : 'Expand'} section.`}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <ChevronIcon className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" aria-hidden="true" />
+          <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           <ModuleBadge moduleName={group.engine} />
           <Badge variant="info" className="text-[10px] px-1.5 py-0">
             {group.phaseLabel}
@@ -272,7 +272,7 @@ const ModuleFindingRow = memo(function ModuleFindingRow({
         </Badge>
       </div>
 
-      <p className="text-sm text-[var(--muted-foreground)] mb-1.5">
+      <p className="text-sm text-muted-foreground mb-1.5">
         {finding.description}
       </p>
 
@@ -283,7 +283,7 @@ const ModuleFindingRow = memo(function ModuleFindingRow({
       )}
 
       {finding.pattern_name && (
-        <div className="mt-1.5 text-[11px] text-[var(--muted-foreground)]">
+        <div className="mt-1.5 text-[11px] text-muted-foreground">
           Pattern: {finding.pattern_name}
         </div>
       )}

@@ -1,21 +1,25 @@
 /**
  * File: StrategicHub.tsx
- * Purpose: Landing page for Strategic Hub with SAGE, Battle Arena, and THREATFEED subsystems
- * Story: S75
+ * Purpose: Landing page for The Kumite with SAGE, Battle Arena, and Mitsuke subsystems
+ * Story: S75, TPI-NODA-6.3
  * Index:
- * - SubsystemKey type (line 19)
- * - SUBSYSTEM_CARDS config (line 21)
- * - StrategicHub component (line 80)
+ * - SubsystemKey type (line 22)
+ * - SUBSYSTEM_CARDS config (line 24)
+ * - GUIDE_CONTENT data (line 100)
+ * - StrategicHub component (line 155)
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { cn } from '@/lib/utils'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
+import { SAGEConfig, ArenaConfig, MitsukeConfig } from './KumiteConfig'
 import {
   Dna,
   Swords,
@@ -25,6 +29,14 @@ import {
   FlaskConical,
   Trophy,
   AlertTriangle,
+  HelpCircle,
+  Settings,
+  Target,
+  Shield,
+  Zap,
+  BarChart3,
+  BookOpen,
+  Rss,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -84,7 +96,7 @@ const SUBSYSTEM_CARDS: SubsystemCardConfig[] = [
   },
   {
     key: 'threatfeed',
-    title: 'THREATFEED',
+    title: 'Mitsuke',
     description: 'Threat intelligence pipeline. Ingest from RSS, API, and webhook sources with classification, indicator extraction, and alerting.',
     icon: Radio,
     metrics: [
@@ -100,14 +112,73 @@ const SUBSYSTEM_CARDS: SubsystemCardConfig[] = [
 const TAB_CONFIG: { key: SubsystemKey; label: string; icon: LucideIcon }[] = [
   { key: 'sage', label: 'SAGE', icon: FlaskConical },
   { key: 'arena', label: 'Arena', icon: Trophy },
-  { key: 'threatfeed', label: 'ThreatFeed', icon: AlertTriangle },
+  { key: 'threatfeed', label: 'Mitsuke', icon: AlertTriangle },
 ]
 
+// --- Guide content for each subsystem ---
+
+const GUIDE_CONTENT: Record<SubsystemKey, { title: string; description: string; sections: GuideSection[] }> = {
+  sage: {
+    title: 'SAGE Guide',
+    description: 'The Synthetic Attack Generator Engine uses genetic evolution to discover adversarial prompts that bypass LLM safety filters.',
+    sections: [
+      { title: 'How It Works', content: 'SAGE evolves adversarial prompts through mutation operators (substitution, insertion, deletion, encoding, structural, semantic). Each generation is scored for fitness against the target model, and the highest-scoring prompts survive to the next round.', icon: Dna },
+      { title: 'Mutation Operators', content: 'Six mutation types transform prompts: substitution swaps tokens, insertion adds new tokens, deletion removes tokens, encoding applies base64/hex transforms, structural changes prompt format, and semantic rewrites meaning while preserving intent.', icon: Zap },
+      { title: 'Safety Quarantine', content: 'Prompts that exceed the auto-quarantine threshold are isolated for manual review. This prevents dangerously effective prompts from being re-used without oversight.', icon: Shield },
+      { title: 'Typical Workflow', content: '1. Configure target model and mutation weights\n2. Load or create seed prompts\n3. Set generation limit and safety threshold\n4. Run evolution and monitor fitness scores\n5. Review quarantined prompts for insights', icon: BookOpen },
+    ],
+  },
+  arena: {
+    title: 'Battle Arena Guide',
+    description: 'The multi-agent adversarial sandbox lets you pit attacker and defender agents against each other in structured game modes.',
+    sections: [
+      { title: 'Game Modes', content: 'CTF (Capture the Flag): agents compete to extract/defend secrets. King of the Hill: agents take turns attacking and defending a position. Red vs Blue: team-based attack/defense scenarios.', icon: Trophy },
+      { title: 'Agent Configuration', content: 'Agents are pre-built or custom attack/defense profiles. Each has unique strategies, capabilities, and scoring multipliers. Mix agents from the roster to create diverse match scenarios.', icon: Target },
+      { title: 'Scoring System', content: 'Matches are scored based on successful attacks, successful defenses, response time, and resource efficiency. Scoring presets (default, aggressive, balanced, defensive) weight these factors differently.', icon: BarChart3 },
+      { title: 'Typical Workflow', content: '1. Select agents for the match roster\n2. Choose a game mode and scoring preset\n3. Set match duration\n4. Run the match and observe real-time results\n5. Review match replay and scoring breakdown', icon: BookOpen },
+    ],
+  },
+  threatfeed: {
+    title: 'Mitsuke Guide',
+    description: 'The threat intelligence pipeline ingests, classifies, and alerts on AI security threats from multiple sources.',
+    sections: [
+      { title: 'Feed Sources', content: 'Mitsuke supports RSS feeds, REST APIs, and webhook sources. Each source can be individually enabled/disabled. Built-in sources include NIST NVD, MITRE ATT&CK, and OWASP security alerts.', icon: Rss },
+      { title: 'Classification & Extraction', content: 'Incoming entries are automatically classified by threat type and severity. Indicator extraction rules pull out IP addresses, domain names, hash values, and CVE IDs for structured tracking.', icon: Target },
+      { title: 'Alerting', content: 'Alerts are triggered when entries exceed the configured threshold (low, medium, high, critical). Alert notifications appear in the activity feed and can be integrated with external notification systems.', icon: AlertTriangle },
+      { title: 'Typical Workflow', content: '1. Configure feed sources and enable relevant ones\n2. Set alert threshold based on your risk tolerance\n3. Define indicator extraction rules\n4. Monitor the stream for new entries\n5. Investigate and triage alerts as they arrive', icon: BookOpen },
+    ],
+  },
+}
+
 /**
- * Strategic Hub - Main landing page and container for SAGE, Arena, THREATFEED
+ * The Kumite - Main landing page and container for SAGE, Arena, Mitsuke
  */
 export function StrategicHub() {
   const [activeSubsystem, setActiveSubsystem] = useState<SubsystemKey | null>(null)
+  const [activeConfig, setActiveConfig] = useState<SubsystemKey | null>(null)
+  const [activeGuide, setActiveGuide] = useState<SubsystemKey | null>(null)
+
+  const closeConfig = useCallback(() => setActiveConfig(null), [])
+  const closeGuide = useCallback(() => setActiveGuide(null), [])
+
+  // Render config/guide panels (always mounted so they can animate in/out)
+  const renderPanels = (
+    <>
+      <SAGEConfig isOpen={activeConfig === 'sage'} onClose={closeConfig} />
+      <ArenaConfig isOpen={activeConfig === 'arena'} onClose={closeConfig} />
+      <MitsukeConfig isOpen={activeConfig === 'threatfeed'} onClose={closeConfig} />
+      {(Object.keys(GUIDE_CONTENT) as SubsystemKey[]).map((key) => (
+        <ModuleGuide
+          key={key}
+          isOpen={activeGuide === key}
+          onClose={closeGuide}
+          title={GUIDE_CONTENT[key].title}
+          description={GUIDE_CONTENT[key].description}
+          sections={GUIDE_CONTENT[key].sections}
+        />
+      ))}
+    </>
+  )
 
   if (activeSubsystem) {
     return (
@@ -117,67 +188,61 @@ export function StrategicHub() {
           <div className="flex items-center gap-3">
             <Layers className="w-6 h-6 text-[var(--dojo-primary)]" aria-hidden="true" />
             <div>
-              <h2 className="text-2xl font-bold text-[var(--foreground)]">Strategic Hub</h2>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                SAGE, Battle Arena, and THREATFEED
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">The Kumite</h2>
+              <p className="text-sm text-muted-foreground">
+                SAGE, Battle Arena, and Mitsuke
               </p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setActiveSubsystem(null)}
-            aria-label="Return to Strategic Hub overview"
-          >
-            Overview
-          </Button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveGuide(activeSubsystem)}
+              className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+              aria-label={`Open ${GUIDE_CONTENT[activeSubsystem].title}`}
+            >
+              <HelpCircle className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              onClick={() => setActiveConfig(activeSubsystem)}
+              className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+              aria-label={`Open ${activeSubsystem} configuration`}
+            >
+              <Settings className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveSubsystem(null)}
+              aria-label="Return to The Kumite overview"
+            >
+              Overview
+            </Button>
+          </div>
         </div>
 
         {/* Sub-tab navigation */}
-        <div
-          role="tablist"
-          aria-label="Strategic Hub subsystems"
-          className="flex items-center gap-2 bg-muted/50 rounded-lg p-1"
-        >
-          {TAB_CONFIG.map(({ key, label, icon: TabIcon }) => (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={activeSubsystem === key}
-              aria-controls={`panel-${key}`}
-              id={`tab-${key}`}
-              onClick={() => setActiveSubsystem(key)}
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-                'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                activeSubsystem === key
-                  ? 'bg-background shadow-sm text-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <TabIcon className="w-4 h-4" aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </div>
+        <Tabs value={activeSubsystem} onValueChange={(v) => setActiveSubsystem(v as SubsystemKey)}>
+          <TabsList aria-label="The Kumite subsystems" className="bg-muted/50">
+            {TAB_CONFIG.map(({ key, label, icon: TabIcon }) => (
+              <TabsTrigger key={key} value={key} className="min-h-[44px] gap-2">
+                <TabIcon className="w-4 h-4" aria-hidden="true" />
+                {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {/* Active subsystem panel */}
-        {activeSubsystem === 'sage' && (
-          <div id="panel-sage" role="tabpanel" aria-labelledby="tab-sage">
+          <TabsContent value="sage">
             <SAGEDashboard />
-          </div>
-        )}
-        {activeSubsystem === 'arena' && (
-          <div id="panel-arena" role="tabpanel" aria-labelledby="tab-arena">
+          </TabsContent>
+          <TabsContent value="arena">
             <ArenaBrowser />
-          </div>
-        )}
-        {activeSubsystem === 'threatfeed' && (
-          <div id="panel-threatfeed" role="tabpanel" aria-labelledby="tab-threatfeed">
+          </TabsContent>
+          <TabsContent value="threatfeed">
             <ThreatFeedStream />
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
+
+        {renderPanels}
       </div>
     )
   }
@@ -188,15 +253,15 @@ export function StrategicHub() {
       <div className="flex items-center gap-3">
         <Layers className="w-6 h-6 text-[var(--dojo-primary)]" aria-hidden="true" />
         <div>
-          <h2 className="text-2xl font-bold text-[var(--foreground)]">Strategic Hub</h2>
-          <p className="text-sm text-[var(--muted-foreground)]">
-            Access SAGE evolution engine, Battle Arena multi-agent sandbox, and THREATFEED threat intelligence pipeline.
+          <h2 className="text-2xl font-bold text-[var(--foreground)]">The Kumite</h2>
+          <p className="text-sm text-muted-foreground">
+            Access SAGE evolution engine, Battle Arena multi-agent sandbox, and Mitsuke threat intelligence pipeline.
           </p>
         </div>
       </div>
 
       {/* Subsystem cards */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-4">
         {SUBSYSTEM_CARDS.map((card) => {
           const CardIcon = card.icon
           return (
@@ -211,7 +276,23 @@ export function StrategicHub() {
                   <div className="w-10 h-10 rounded-lg bg-[var(--bg-quaternary)] flex items-center justify-center">
                     <CardIcon className="w-5 h-5 text-[var(--foreground)]" aria-hidden="true" />
                   </div>
-                  <Badge variant="outline">{card.badge}</Badge>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveGuide(card.key) }}
+                      className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+                      aria-label={`Help for ${card.title}`}
+                    >
+                      <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveConfig(card.key) }}
+                      className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+                      aria-label={`Configure ${card.title}`}
+                    >
+                      <Settings className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <Badge variant="outline">{card.badge}</Badge>
+                  </div>
                 </div>
                 <CardTitle className="text-lg mt-3">{card.title}</CardTitle>
                 <CardDescription className="text-xs leading-relaxed">
@@ -224,7 +305,7 @@ export function StrategicHub() {
                   {card.metrics.map((metric) => (
                     <div key={metric.label} className="text-center">
                       <p className="text-sm font-bold text-[var(--foreground)]">{metric.value}</p>
-                      <p className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wider">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                         {metric.label}
                       </p>
                     </div>
@@ -247,6 +328,8 @@ export function StrategicHub() {
           )
         })}
       </div>
+
+      {renderPanels}
     </div>
   )
 }

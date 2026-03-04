@@ -62,7 +62,7 @@ export function NotificationsPanel() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-md text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors"
+        className="relative p-2 rounded-md text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors"
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
       >
         <Bell className="w-5 h-5" />
@@ -81,7 +81,7 @@ export function NotificationsPanel() {
               <button
                 ref={firstFocusRef}
                 onClick={markAllRead}
-                className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] p-1 rounded"
+                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded"
                 aria-label="Mark all as read"
                 title="Mark all as read"
               >
@@ -89,7 +89,7 @@ export function NotificationsPanel() {
               </button>
               <button
                 onClick={clearAll}
-                className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] p-1 rounded"
+                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded"
                 aria-label="Clear all"
                 title="Clear all"
               >
@@ -108,7 +108,7 @@ export function NotificationsPanel() {
                 )}>
                   <p className="text-sm text-[var(--foreground)]">{n.title}</p>
                   {n.description && (
-                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{n.description}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{n.description}</p>
                   )}
                   <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{n.timestamp}</p>
                 </div>

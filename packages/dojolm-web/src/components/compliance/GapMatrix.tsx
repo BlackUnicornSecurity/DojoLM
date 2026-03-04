@@ -179,7 +179,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
           className="animate-spin motion-reduce:animate-none rounded-full h-6 w-6 border-b-2 border-[var(--dojo-primary)]"
           aria-hidden="true"
         />
-        <span className="ml-3 text-sm text-[var(--muted-foreground)]">
+        <span className="ml-3 text-sm text-muted-foreground">
           Loading gap matrix...
         </span>
       </div>
@@ -201,8 +201,8 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
   if (!data || data.controls.length === 0) {
     return (
       <div className={cn('p-8 text-center', className)}>
-        <Minus className="w-8 h-8 mx-auto mb-2 text-[var(--muted-foreground)]" aria-hidden="true" />
-        <p className="text-sm text-[var(--muted-foreground)]">
+        <Minus className="w-8 h-8 mx-auto mb-2 text-muted-foreground" aria-hidden="true" />
+        <p className="text-sm text-muted-foreground">
           No control data available for this framework.
         </p>
       </div>
@@ -221,11 +221,11 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
           <h3 className="text-lg font-semibold text-[var(--foreground)]">
             {data.frameworkName}
           </h3>
-          <p className="text-xs text-[var(--muted-foreground)]">
+          <p className="text-xs text-muted-foreground">
             v{data.version} - {data.controls.length} controls
           </p>
         </div>
-        <div className="flex items-center gap-4 text-xs text-[var(--muted-foreground)]">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <span
               className="inline-block w-3 h-3 rounded-sm bg-green-500"
@@ -260,31 +260,31 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
             <tr className="bg-[var(--bg-quaternary)] border-b border-[var(--border)]">
               <th
                 scope="col"
-                className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase w-28"
+                className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase w-28"
               >
                 Control ID
               </th>
               <th
                 scope="col"
-                className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase"
+                className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase"
               >
                 Control Name
               </th>
               <th
                 scope="col"
-                className="px-3 py-2 text-center text-xs font-medium text-[var(--muted-foreground)] uppercase w-28"
+                className="px-3 py-2 text-center text-xs font-medium text-muted-foreground uppercase w-28"
               >
                 Status
               </th>
               <th
                 scope="col"
-                className="px-3 py-2 text-right text-xs font-medium text-[var(--muted-foreground)] uppercase w-24"
+                className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase w-24"
               >
                 Coverage
               </th>
               <th
                 scope="col"
-                className="px-3 py-2 text-left text-xs font-medium text-[var(--muted-foreground)] uppercase"
+                className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase"
               >
                 Related Modules
               </th>
@@ -300,7 +300,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
                   control.status === 'partial' && 'bg-yellow-50/50 dark:bg-yellow-900/10'
                 )}
               >
-                <td className="px-3 py-2 font-mono text-xs text-[var(--muted-foreground)]">
+                <td className="px-3 py-2 font-mono text-xs text-muted-foreground">
                   {control.id}
                 </td>
                 <td className="px-3 py-2 text-[var(--foreground)]">
@@ -332,7 +332,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
                     </span>
                   </div>
                 </td>
-                <td className="px-3 py-2 text-xs text-[var(--muted-foreground)] max-w-xs">
+                <td className="px-3 py-2 text-xs text-muted-foreground max-w-xs">
                   {control.relatedModules.length > 0 ? (
                     <span className="flex flex-wrap gap-1">
                       {control.relatedModules.map((mod, idx) => (
@@ -345,7 +345,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
                       ))}
                     </span>
                   ) : (
-                    <span className="text-[var(--muted-foreground)] italic">None</span>
+                    <span className="text-muted-foreground italic">None</span>
                   )}
                 </td>
               </tr>
@@ -375,7 +375,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
                   {data.overallCoverage}%
                 </span>
               </td>
-              <td className="px-3 py-2 text-xs text-[var(--muted-foreground)]">
+              <td className="px-3 py-2 text-xs text-muted-foreground">
                 {coveredCount}/{data.controls.length} controls covered
               </td>
             </tr>

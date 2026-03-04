@@ -19,6 +19,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Download, Filter, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 
+// LLM resilience score thresholds
+const SCORE_HIGH = 80
+const SCORE_MODERATE = 50
+
 /**
  * Results View Component
  *
@@ -64,8 +68,7 @@ export function ResultsView() {
   };
 
   const handleExport = async () => {
-    // Export functionality would go here
-    console.log('Exporting results...');
+    // TODO: Wire to export API when backend integration is available
   };
 
   const handleFilterChange = (key: keyof ResultsFilter, value: any) => {
@@ -73,14 +76,14 @@ export function ResultsView() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 50) return 'text-yellow-500';
+    if (score >= SCORE_HIGH) return 'text-green-500';
+    if (score >= SCORE_MODERATE) return 'text-yellow-500';
     return 'text-red-500';
   };
 
   const getScoreBadgeVariant = (score: number): 'default' | 'secondary' | 'destructive' | 'outline' => {
-    if (score >= 80) return 'default';
-    if (score >= 50) return 'secondary';
+    if (score >= SCORE_HIGH) return 'default';
+    if (score >= SCORE_MODERATE) return 'secondary';
     return 'destructive';
   };
 

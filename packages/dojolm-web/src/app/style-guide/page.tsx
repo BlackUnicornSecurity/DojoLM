@@ -13,7 +13,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -26,7 +26,8 @@ import { ToastContainer, type ToastData } from '@/components/ui/Toast'
 import { SortableTable, type Column } from '@/components/ui/SortableTable'
 import { ChatBubble } from '@/components/llm/ChatBubble'
 import { TypingIndicator } from '@/components/llm/TypingIndicator'
-import { ActivityFeed, type ActivityEvent } from '@/components/ui/ActivityFeed'
+import { ActivityFeed } from '@/components/ui/ActivityFeed'
+import { ActivityProvider, useActivityDispatch } from '@/lib/contexts/ActivityContext'
 import { DojoGaugeChart } from '@/components/charts/GaugeChart'
 import { DojoBarChart } from '@/components/charts/BarChart'
 import { DojoLineChart } from '@/components/charts/LineChart'
@@ -95,13 +96,25 @@ const sampleTableColumns: Column<SampleTableRow>[] = [
   { key: 'status', label: 'Status', sortable: true },
 ]
 
-const sampleActivityEvents: ActivityEvent[] = [
-  { id: '1', type: 'scan_complete', description: 'Scan completed: 24 prompts analyzed', timestamp: '2 min ago' },
-  { id: '2', type: 'threat_detected', description: 'Threat detected: DAN jailbreak in prompt #12', timestamp: '5 min ago' },
-  { id: '3', type: 'test_passed', description: 'Test suite "OWASP LLM" passed (42/42)', timestamp: '10 min ago' },
-  { id: '4', type: 'test_failed', description: 'Test failed: Base64 injection bypass detected', timestamp: '15 min ago' },
-  { id: '5', type: 'model_added', description: 'New model added: Llama 3.1 70B', timestamp: '1 hour ago' },
-]
+/** Helper component to pre-populate ActivityFeed with sample events for style guide */
+function SampleActivityFeedLoader() {
+  const dispatch = useActivityDispatch()
+
+  useEffect(() => {
+    const sampleEvents = [
+      { type: 'model_added' as const, description: 'New model added: Llama 3.1 70B', timestamp: new Date().toISOString() },
+      { type: 'test_failed' as const, description: 'Test failed: Base64 injection bypass detected', timestamp: new Date().toISOString() },
+      { type: 'test_passed' as const, description: 'Test suite passed (42/42)', timestamp: new Date().toISOString() },
+      { type: 'threat_detected' as const, description: 'Scan completed: BLOCK verdict, 1 critical finding', timestamp: new Date().toISOString() },
+      { type: 'scan_complete' as const, description: 'Scan completed: ALLOW verdict, 0 findings', timestamp: new Date().toISOString() },
+    ]
+    for (const event of sampleEvents) {
+      dispatch({ type: 'ADD_EVENT', payload: event })
+    }
+  }, [dispatch])
+
+  return <ActivityFeed />
+}
 
 /* ─── Dev Guard ─── */
 export default function StyleGuidePage() {
@@ -131,7 +144,7 @@ export default function StyleGuidePage() {
     <main className="min-h-screen bg-[var(--background)] p-8 max-w-6xl mx-auto space-y-12">
       <div>
         <h1 className="text-3xl font-bold text-[var(--foreground)]">DojoLM Style Guide</h1>
-        <p className="text-[var(--muted-foreground)] mt-1">Component reference for design consistency</p>
+        <p className="text-muted-foreground mt-1">Component reference for design consistency</p>
       </div>
 
       {/* ─── 1. Colors ─── */}
@@ -180,7 +193,7 @@ export default function StyleGuidePage() {
             <p className="text-xs text-[var(--text-tertiary)] font-mono mt-1">font-sans / Inter / text-base</p>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)]">Small text (sm) - Secondary information and descriptions.</p>
+            <p className="text-sm text-muted-foreground">Small text (sm) - Secondary information and descriptions.</p>
             <p className="text-xs text-[var(--text-tertiary)] font-mono mt-1">font-sans / Inter / text-sm text-muted-foreground</p>
           </div>
           <div>
@@ -221,7 +234,7 @@ export default function StyleGuidePage() {
               <CardDescription>Standard card with hover elevation</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-[var(--muted-foreground)]">Card content goes here.</p>
+              <p className="text-sm text-muted-foreground">Card content goes here.</p>
             </CardContent>
           </Card>
           <Card variant="glass">
@@ -230,7 +243,7 @@ export default function StyleGuidePage() {
               <CardDescription>Glassmorphic frosted effect</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-[var(--muted-foreground)]">Glass variant with backdrop blur.</p>
+              <p className="text-sm text-muted-foreground">Glass variant with backdrop blur.</p>
             </CardContent>
           </Card>
           <Card className="gradient-overlay-primary">
@@ -239,7 +252,7 @@ export default function StyleGuidePage() {
               <CardDescription>Primary gradient accent</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-[var(--muted-foreground)]">Card with gradient overlay.</p>
+              <p className="text-sm text-muted-foreground">Card with gradient overlay.</p>
             </CardContent>
           </Card>
         </div>
@@ -249,7 +262,7 @@ export default function StyleGuidePage() {
       <Section title="5. Badges">
         <div className="space-y-4">
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-2">Severity variants:</p>
+            <p className="text-sm text-muted-foreground mb-2">Severity variants:</p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="critical">Critical</Badge>
               <Badge variant="high">High</Badge>
@@ -259,7 +272,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-2">Status variants:</p>
+            <p className="text-sm text-muted-foreground mb-2">Status variants:</p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="success" dot>Success</Badge>
               <Badge variant="warning" dot>Warning</Badge>
@@ -269,7 +282,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-2">Special:</p>
+            <p className="text-sm text-muted-foreground mb-2">Special:</p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="strike">BYPASS DETECTED</Badge>
               <Badge variant="default">Default</Badge>
@@ -327,7 +340,7 @@ export default function StyleGuidePage() {
       <Section title="7. Status Indicators">
         <div className="space-y-6">
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">StatusDot variants:</p>
+            <p className="text-sm text-muted-foreground mb-3">StatusDot variants:</p>
             <div className="flex flex-wrap gap-6">
               <StatusDot status="online" showLabel />
               <StatusDot status="offline" showLabel />
@@ -336,7 +349,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">StatusDot sizes:</p>
+            <p className="text-sm text-muted-foreground mb-3">StatusDot sizes:</p>
             <div className="flex flex-wrap gap-6">
               <StatusDot status="online" showLabel size="sm" label="Small" />
               <StatusDot status="online" showLabel size="md" label="Medium" />
@@ -344,7 +357,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">ColorProgress at different values:</p>
+            <p className="text-sm text-muted-foreground mb-3">ColorProgress at different values:</p>
             <div className="space-y-3 max-w-md">
               <ColorProgress value={25} showLabel size="md" />
               <ColorProgress value={55} showLabel size="md" />
@@ -353,7 +366,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">Shimmer Skeletons:</p>
+            <p className="text-sm text-muted-foreground mb-3">Shimmer Skeletons:</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <ShimmerSkeleton variant="line" />
@@ -447,7 +460,9 @@ export default function StyleGuidePage() {
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <ActivityFeed events={sampleActivityEvents} />
+            <ActivityProvider>
+              <SampleActivityFeedLoader />
+            </ActivityProvider>
           </CardContent>
         </Card>
       </Section>
@@ -456,19 +471,19 @@ export default function StyleGuidePage() {
       <Section title="15. Animations">
         <div className="space-y-6">
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">Fade-in:</p>
+            <p className="text-sm text-muted-foreground mb-3">Fade-in:</p>
             <div className="animate-fade-in bg-[var(--bg-tertiary)] p-4 rounded-lg border border-[var(--border)]">
               <p className="text-sm">This content fades in on load.</p>
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">Slide-up:</p>
+            <p className="text-sm text-muted-foreground mb-3">Slide-up:</p>
             <div className="animate-slide-up bg-[var(--bg-tertiary)] p-4 rounded-lg border border-[var(--border)]">
               <p className="text-sm">This content slides up on load.</p>
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">Stagger children:</p>
+            <p className="text-sm text-muted-foreground mb-3">Stagger children:</p>
             <div className="stagger-children flex gap-3">
               {[1, 2, 3, 4].map(i => (
                 <div key={i} className="bg-[var(--bg-quaternary)] p-4 rounded-lg border border-[var(--border)] flex-1 text-center">
@@ -478,7 +493,7 @@ export default function StyleGuidePage() {
             </div>
           </div>
           <div>
-            <p className="text-sm text-[var(--muted-foreground)] mb-3">Dojo glow:</p>
+            <p className="text-sm text-muted-foreground mb-3">Dojo glow:</p>
             <div className="dojo-glow inline-block bg-[var(--bg-tertiary)] p-4 rounded-lg border border-[var(--border)]">
               <p className="text-sm">DojoLM signature glow effect</p>
             </div>

@@ -6,37 +6,37 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ScannerProvider, useScanner } from '@/lib/ScannerContext'
-import { NavigationProvider, useNavigation } from '@/lib/NavigationContext'
+import { useState, useEffect, useRef } from 'react'
+import { useScanner } from '@/lib/ScannerContext'
+import { useNavigation } from '@/lib/NavigationContext'
+import { useActivityLogger } from '@/lib/contexts/ActivityContext'
+import { Providers } from '@/lib/Providers'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { PageToolbar } from '@/components/layout/PageToolbar'
-import { Button } from '@/components/ui/button'
 import { ScannerInput } from '@/components/scanner'
 import { FindingsList } from '@/components/scanner'
-import { FixtureList, FixtureDetail } from '@/components/fixtures'
+import { FixtureDetail, FixtureComparison, FixtureExplorer } from '@/components/fixtures'
+import type { ComparisonItem } from '@/components/fixtures/FixtureComparison'
 import { PayloadCard } from '@/components/payloads'
-import { CoverageMap } from '@/components/coverage'
-import { PatternReference } from '@/components/reference'
-import { TestRunner } from '@/components/tests'
 import { LLMDashboardWithProviders } from '@/components/llm'
 import { AdversarialLab } from '@/components/adversarial'
 import { ComplianceCenter } from '@/components/compliance'
 import { StrategicHub } from '@/components/strategic'
 import { AttackDNAExplorer } from '@/components/attackdna'
-import { getFixtures, scanFixture, readFixture, runTests } from '@/lib/api'
+import { GuardDashboard } from '@/components/guard'
+import { AdminPanel } from '@/components/admin'
+import { NODADashboard } from '@/components/dashboard'
+import { getFixtures, scanFixture, readFixture } from '@/lib/api'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-import { PAYLOAD_CATALOG, COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
-import {
-  PI_PATTERNS,
-  JB_PATTERNS,
-  SETTINGS_WRITE_PATTERNS,
-  AGENT_OUTPUT_PATTERNS,
-  SEARCH_RESULT_PATTERNS,
-} from '@dojolm/scanner'
-import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest, TestSuiteResult } from '@/lib/types'
-import { AlertTriangle, RotateCcw } from 'lucide-react'
+import { PAYLOAD_CATALOG } from '@/lib/constants'
+import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest } from '@/lib/types'
+import { AlertTriangle, ScanLine, ShieldAlert, CheckCircle, Cpu } from 'lucide-react'
+import { MetricCard } from '@/components/ui/MetricCard'
+import { FilterPills } from '@/components/ui/FilterPills'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { useScannerMetrics } from '@/lib/hooks'
 
 /**
  * Page content - routes activeTab from NavigationContext to the correct content section
@@ -48,25 +48,30 @@ function PageContent() {
   // Fixtures state (shared between scanner and test lab)
   const [fixtureManifest, setFixtureManifest] = useState<FixtureManifest | null>(null)
   const [isLoadingFixtures, setIsLoadingFixtures] = useState(false)
+  const [fixtureError, setFixtureError] = useState<string | null>(null)
   const [selectedFixture, setSelectedFixture] = useState<{
     path: string
     content: TextFixtureResponse | BinaryFixtureResponse
     scanResult: ScanResult | null
   } | null>(null)
+  // Comparison state (Story 3.3)
+  const [comparisonItems, setComparisonItems] = useState<[ComparisonItem, ComparisonItem] | null>(null)
+
+  const loadFixtures = async () => {
+    setIsLoadingFixtures(true)
+    setFixtureError(null)
+    try {
+      const manifest = await getFixtures()
+      setFixtureManifest(manifest)
+    } catch {
+      setFixtureError('Could not load fixtures. Check connection and try again.')
+    } finally {
+      setIsLoadingFixtures(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      setIsLoadingFixtures(true)
-      try {
-        const manifest = await getFixtures()
-        setFixtureManifest(manifest)
-      } catch (error) {
-        console.error('Failed to load fixtures:', error)
-      } finally {
-        setIsLoadingFixtures(false)
-      }
-    }
-    load()
+    loadFixtures()
   }, [])
 
   const handleScanFixture = async (category: string, file: string) => {
@@ -76,8 +81,8 @@ function PageContent() {
       const content = await readFixture(path)
       setSelectedFixture({ path, content, scanResult: result })
       setActiveTab('testing')
-    } catch (error) {
-      console.error('Failed to scan fixture:', error)
+    } catch {
+      setFixtureError('Unable to scan fixture. Check connection and try again.')
     }
   }
 
@@ -87,51 +92,120 @@ function PageContent() {
       const content = await readFixture(path)
       setSelectedFixture({ path, content, scanResult: null })
       setActiveTab('testing')
-    } catch (error) {
-      console.error('Failed to view fixture:', error)
+    } catch {
+      setFixtureError('Unable to load fixture. Check connection and try again.')
     }
   }
 
-  const handleRunTests = async (filter?: string, verbose?: boolean) => {
-    return await runTests(filter, verbose)
+  const handleCompare = async (selections: [{ category: string; file: string }, { category: string; file: string }]) => {
+    const loadItem = async (sel: { category: string; file: string }): Promise<ComparisonItem> => {
+      const path = `${sel.category}/${sel.file}`
+      try {
+        const [content, scanResult] = await Promise.all([
+          readFixture(path),
+          scanFixture(path).catch(() => null),
+        ])
+        return { path, content, scanResult }
+      } catch {
+        return { path, content: null, scanResult: null }
+      }
+    }
+
+    const [left, right] = await Promise.all([
+      loadItem(selections[0]),
+      loadItem(selections[1]),
+    ])
+    if (left.content === null && right.content === null) {
+      setFixtureError('Unable to load fixtures for comparison. Check connection and try again.')
+      return
+    }
+    setComparisonItems([left, right])
   }
 
   return (
     <>
+      {activeTab === 'dashboard' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Dashboard Error" fallbackDescription="Unable to load dashboard. Please try again.">
+            <NODADashboard />
+          </ErrorBoundary>
+        </div>
+      )}
       {activeTab === 'scanner' && (
-        <ScannerContent onScan={scanText} onClear={clear} />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Scanner Error" fallbackDescription="Unable to load scanner. Please try again.">
+            <ScannerContent onScan={scanText} onClear={clear} />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'testing' && (
-        <TestLabContent
-          manifest={fixtureManifest}
-          isLoading={isLoadingFixtures}
-          onScanFixture={handleScanFixture}
-          onViewFixture={handleViewFixture}
-          selectedFixture={selectedFixture}
-          onCloseFixtureDetail={() => setSelectedFixture(null)}
-          onScan={scanText}
-        />
-      )}
-      {activeTab === 'coverage' && (
-        <CoverageContent />
-      )}
-      {activeTab === 'validation' && (
-        <ValidationContent onRunTests={handleRunTests} />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Test Lab Error" fallbackDescription="Unable to load test lab. Please try again.">
+            <TestLabContent
+              manifest={fixtureManifest}
+              isLoading={isLoadingFixtures}
+              fixtureError={fixtureError}
+              onRetryFixtures={loadFixtures}
+              onScanFixture={handleScanFixture}
+              onViewFixture={handleViewFixture}
+              selectedFixture={selectedFixture}
+              onCloseFixtureDetail={() => setSelectedFixture(null)}
+              onScan={scanText}
+              comparisonItems={comparisonItems}
+              onCloseComparison={() => setComparisonItems(null)}
+              onCompare={handleCompare}
+            />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'llm' && (
-        <LLMDashboardWithProviders />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="LLM Dashboard Error" fallbackDescription="Unable to load LLM dashboard. Please try again.">
+            <LLMDashboardWithProviders />
+          </ErrorBoundary>
+        </div>
+      )}
+      {activeTab === 'guard' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Hattori Guard Error" fallbackDescription="Unable to load Hattori Guard. Please try again.">
+            <GuardDashboard />
+          </ErrorBoundary>
+        </div>
+      )}
+      {activeTab === 'admin' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Admin Error" fallbackDescription="Unable to load admin panel. Please try again.">
+            <AdminPanel />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'adversarial' && (
-        <AdversarialLab />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Atemi Lab Error" fallbackDescription="Unable to load Atemi Lab. Please try again.">
+            <AdversarialLab />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'compliance' && (
-        <ComplianceCenter />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Bushido Book Error" fallbackDescription="Unable to load Bushido Book. Please try again.">
+            <ComplianceCenter />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'strategic' && (
-        <StrategicHub />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="The Kumite Error" fallbackDescription="Unable to load The Kumite. Please try again.">
+            <StrategicHub />
+          </ErrorBoundary>
+        </div>
       )}
       {activeTab === 'attackdna' && (
-        <AttackDNAExplorer />
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Amaterasu DNA Error" fallbackDescription="Unable to load Amaterasu DNA. Please try again.">
+            <AttackDNAExplorer />
+          </ErrorBoundary>
+        </div>
       )}
     </>
   )
@@ -142,6 +216,22 @@ function PageContent() {
  */
 function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; onClear: () => void }) {
   const { scanResult, isScanning, error, engineFilters, toggleFilter, resetFilters } = useScanner()
+  const metrics = useScannerMetrics()
+  const { logEvent } = useActivityLogger()
+  const allEnginesDisabled = engineFilters.every(f => !f.enabled)
+  const prevScanResultRef = useRef<ScanResult | null>(null)
+
+  // Log scan events to activity feed — static descriptions only, never user input
+  useEffect(() => {
+    if (scanResult && scanResult !== prevScanResultRef.current) {
+      prevScanResultRef.current = scanResult
+      if (scanResult.verdict === 'BLOCK') {
+        logEvent('threat_detected', `Scan completed: BLOCK verdict, ${scanResult.counts.critical} critical, ${scanResult.counts.warning} warning findings`)
+      } else {
+        logEvent('scan_complete', `Scan completed: ALLOW verdict, ${scanResult.findings.length} findings`)
+      }
+    }
+  }, [scanResult, logEvent])
 
   return (
     <div className="space-y-6">
@@ -151,32 +241,41 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
         searchPlaceholder="Search engines, patterns..."
       />
 
-      {/* Engine Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg">
-        <div className="flex flex-wrap items-center gap-4">
-          <span className="text-sm font-semibold">Engines:</span>
-          {engineFilters.map((filter) => (
-            <label key={filter.id} className="flex items-center gap-2 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filter.enabled}
-                onChange={() => toggleFilter(filter.id)}
-                className="accent-primary w-4 h-4"
-              />
-              {filter.label}
-            </label>
-          ))}
-        </div>
-        <Button
-          onClick={resetFilters}
-          variant="outline"
-          size="sm"
-          className="gap-2"
-        >
-          <RotateCcw className="h-3 w-3" aria-hidden="true" />
-          Reset Filters
-        </Button>
+      {/* Metric Cards - Display-only metrics, NOT for security decisions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricCard
+          label="Total Scans"
+          value={metrics.totalScans}
+          icon={ScanLine}
+          accent="primary"
+        />
+        <MetricCard
+          label="Threats Detected"
+          value={metrics.threatsDetected}
+          icon={ShieldAlert}
+          sparklineData={metrics.threatTrend}
+          accent={metrics.threatsDetected > 0 ? 'danger' : 'success'}
+        />
+        <MetricCard
+          label="Pass Rate"
+          value={metrics.passRate}
+          icon={CheckCircle}
+          accent="success"
+        />
+        <MetricCard
+          label="Active Engines"
+          value={`${metrics.activeEngines}/${metrics.totalEngines}`}
+          icon={Cpu}
+          accent={metrics.activeEngines === metrics.totalEngines ? 'primary' : 'warning'}
+        />
       </div>
+
+      {/* Engine Filters */}
+      <FilterPills
+        filters={engineFilters}
+        onToggle={toggleFilter}
+        onReset={resetFilters}
+      />
 
       {/* Error Display */}
       {error && (
@@ -188,7 +287,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
 
       {/* Scanner Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
-        <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} />
+        <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
         <FindingsList result={scanResult} />
       </div>
     </div>
@@ -201,19 +300,29 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
 function TestLabContent({
   manifest,
   isLoading,
+  fixtureError,
+  onRetryFixtures,
   onScanFixture,
   onViewFixture,
   selectedFixture,
   onCloseFixtureDetail,
   onScan,
+  comparisonItems,
+  onCloseComparison,
+  onCompare,
 }: {
   manifest: FixtureManifest | null
   isLoading: boolean
+  fixtureError: string | null
+  onRetryFixtures: () => void
   onScanFixture: (category: string, file: string) => void
   onViewFixture: (category: string, file: string) => void
   selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
   onCloseFixtureDetail: () => void
   onScan: (text: string) => void
+  comparisonItems: [ComparisonItem, ComparisonItem] | null
+  onCloseComparison: () => void
+  onCompare: (selections: [{ category: string; file: string }, { category: string; file: string }]) => void
 }) {
   const [subTab, setSubTab] = useState<'fixtures' | 'payloads'>('fixtures')
 
@@ -226,59 +335,36 @@ function TestLabContent({
       />
 
       {/* Sub-navigation */}
-      <div role="tablist" aria-label="Test Lab sections" className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-        <button
-          role="tab"
-          aria-selected={subTab === 'fixtures'}
-          aria-controls="panel-fixtures"
-          id="tab-fixtures"
-          onClick={() => setSubTab('fixtures')}
-          className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-            subTab === 'fixtures'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          Fixtures
-        </button>
-        <button
-          role="tab"
-          aria-selected={subTab === 'payloads'}
-          aria-controls="panel-payloads"
-          id="tab-payloads"
-          onClick={() => setSubTab('payloads')}
-          className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-            subTab === 'payloads'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          Test Payloads
-        </button>
-      </div>
+      <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'fixtures' | 'payloads')}>
+        <TabsList aria-label="Test Lab sections" className="bg-muted/50">
+          <TabsTrigger value="fixtures" className="min-h-[44px]">
+            Fixtures
+          </TabsTrigger>
+          <TabsTrigger value="payloads" className="min-h-[44px]">
+            Test Payloads
+          </TabsTrigger>
+        </TabsList>
 
-      {subTab === 'fixtures' && (
-        <div id="panel-fixtures" role="tabpanel" aria-labelledby="tab-fixtures">
+        <TabsContent value="fixtures">
           <FixturesSection
             manifest={manifest}
             isLoading={isLoading}
+            fixtureError={fixtureError}
+            onRetryFixtures={onRetryFixtures}
             onScanFixture={onScanFixture}
             onViewFixture={onViewFixture}
             selectedFixture={selectedFixture}
             onCloseFixtureDetail={onCloseFixtureDetail}
+            comparisonItems={comparisonItems}
+            onCloseComparison={onCloseComparison}
+            onCompare={onCompare}
           />
-        </div>
-      )}
+        </TabsContent>
 
-      {subTab === 'payloads' && (
-        <div id="panel-payloads" role="tabpanel" aria-labelledby="tab-payloads">
+        <TabsContent value="payloads">
           <PayloadsSection onScan={onScan} />
-        </div>
-      )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
@@ -289,34 +375,50 @@ function TestLabContent({
 function FixturesSection({
   manifest,
   isLoading,
+  fixtureError,
+  onRetryFixtures,
   onScanFixture,
   onViewFixture,
   selectedFixture,
   onCloseFixtureDetail,
+  comparisonItems,
+  onCloseComparison,
+  onCompare,
 }: {
   manifest: FixtureManifest | null
   isLoading: boolean
+  fixtureError: string | null
+  onRetryFixtures: () => void
   onScanFixture: (category: string, file: string) => void
   onViewFixture: (category: string, file: string) => void
   selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
   onCloseFixtureDetail: () => void
+  comparisonItems: [ComparisonItem, ComparisonItem] | null
+  onCloseComparison: () => void
+  onCompare: (selections: [{ category: string; file: string }, { category: string; file: string }]) => void
 }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Attack Fixture Files</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Real attack artifacts for testing TPI validators
-          </p>
+      {/* Error state — generic message, no server details */}
+      {fixtureError && (
+        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" aria-hidden="true" />
+          <span className="text-sm text-red-500">{fixtureError}</span>
+          <button
+            onClick={onRetryFixtures}
+            className="ml-auto text-sm text-[var(--dojo-primary)] hover:underline font-medium"
+          >
+            Retry
+          </button>
         </div>
-      </div>
+      )}
 
-      <FixtureList
+      <FixtureExplorer
         manifest={manifest}
         isLoading={isLoading}
         onScanFixture={onScanFixture}
         onViewFixture={onViewFixture}
+        onCompare={onCompare}
       />
 
       {selectedFixture && (
@@ -325,6 +427,13 @@ function FixturesSection({
           content={selectedFixture.content}
           scanResult={selectedFixture.scanResult}
           onClose={onCloseFixtureDetail}
+        />
+      )}
+
+      {comparisonItems && (
+        <FixtureComparison
+          items={comparisonItems}
+          onClose={onCloseComparison}
         />
       )}
     </div>
@@ -384,242 +493,29 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
 }
 
 /**
- * Coverage content - combines Coverage Map + Pattern Reference with sub-navigation
- */
-function CoverageContent() {
-  const [subTab, setSubTab] = useState<'map' | 'reference'>('map')
-
-  return (
-    <div className="space-y-6">
-      <PageToolbar
-        title="Coverage"
-        subtitle="Coverage maps and pattern reference"
-        searchPlaceholder="Search categories, patterns..."
-      />
-
-      {/* Sub-navigation */}
-      <div role="tablist" aria-label="Coverage sections" className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-        <button
-          role="tab"
-          aria-selected={subTab === 'map'}
-          aria-controls="panel-coverage-map"
-          id="tab-coverage-map"
-          onClick={() => setSubTab('map')}
-          className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-            subTab === 'map'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          Coverage Map
-        </button>
-        <button
-          role="tab"
-          aria-selected={subTab === 'reference'}
-          aria-controls="panel-pattern-ref"
-          id="tab-pattern-ref"
-          onClick={() => setSubTab('reference')}
-          className={cn(
-            'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-            subTab === 'reference'
-              ? 'bg-background shadow-sm text-foreground'
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          Pattern Reference
-        </button>
-      </div>
-
-      {subTab === 'map' && (
-        <div id="panel-coverage-map" role="tabpanel" aria-labelledby="tab-coverage-map">
-          <CoverageMapSection />
-        </div>
-      )}
-      {subTab === 'reference' && (
-        <div id="panel-pattern-ref" role="tabpanel" aria-labelledby="tab-pattern-ref">
-          <PatternReferenceSection />
-        </div>
-      )}
-    </div>
-  )
-}
-
-/**
- * Coverage map section
- */
-function CoverageMapSection() {
-  const [coverageType, setCoverageType] = useState<'tpi' | 'owasp'>('tpi')
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Coverage Maps</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            TPI taxonomy and OWASP LLM Top 10 coverage visualization
-          </p>
-        </div>
-        <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
-          <button
-            onClick={() => setCoverageType('tpi')}
-            className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium',
-              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-              coverageType === 'tpi'
-                ? 'bg-background shadow-sm text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            TPI Coverage
-          </button>
-          <button
-            onClick={() => setCoverageType('owasp')}
-            className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium',
-              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-              coverageType === 'owasp'
-                ? 'bg-background shadow-sm text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            OWASP LLM Top 10
-          </button>
-        </div>
-      </div>
-
-      {coverageType === 'tpi' ? (
-        <CoverageMap
-          coverageData={COVERAGE_DATA}
-          title="TPI Coverage Map"
-          subtitle="CrowdStrike TPI taxonomy coverage • 100% across all categories"
-          icon="shield"
-        />
-      ) : (
-        <CoverageMap
-          coverageData={OWASP_LLM_COVERAGE_DATA}
-          title="OWASP LLM Top 10 Coverage"
-          subtitle="OWASP LLM Top 10 vulnerability coverage • 100% across all categories"
-          icon="database"
-        />
-      )}
-    </div>
-  )
-}
-
-/**
- * Pattern reference section
- */
-function PatternReferenceSection() {
-  const patternGroups = [
-    {
-      name: 'Prompt Injection',
-      patterns: PI_PATTERNS.map(p => ({
-        name: p.name,
-        cat: p.cat,
-        sev: p.sev,
-        desc: p.desc,
-        source: p.source || 'current',
-      })),
-      type: 'current' as const,
-    },
-    {
-      name: 'Jailbreak',
-      patterns: JB_PATTERNS.map(p => ({
-        name: p.name,
-        cat: p.cat,
-        sev: p.sev,
-        desc: p.desc,
-        source: p.source || 'current',
-        weight: p.weight,
-      })),
-      type: 'current' as const,
-    },
-    {
-      name: 'Settings Write',
-      patterns: SETTINGS_WRITE_PATTERNS.map(p => ({
-        name: p.name,
-        cat: p.cat,
-        sev: p.sev,
-        desc: p.desc,
-        source: p.source || 'current',
-      })),
-      type: 'current' as const,
-    },
-    {
-      name: 'Agent Output',
-      patterns: AGENT_OUTPUT_PATTERNS.map(p => ({
-        name: p.name,
-        cat: p.cat,
-        sev: p.sev,
-        desc: p.desc,
-        source: p.source || 'current',
-      })),
-      type: 'current' as const,
-    },
-    {
-      name: 'Search Result',
-      patterns: SEARCH_RESULT_PATTERNS.map(p => ({
-        name: p.name,
-        cat: p.cat,
-        sev: p.sev,
-        desc: p.desc,
-        source: p.source || 'current',
-      })),
-      type: 'current' as const,
-    },
-  ]
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Pattern Reference</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Complete pattern documentation
-        </p>
-      </div>
-      <PatternReference patternGroups={patternGroups} />
-    </div>
-  )
-}
-
-/**
- * Validation content - test runner
- */
-function ValidationContent({ onRunTests }: { onRunTests: (filter?: string, verbose?: boolean) => Promise<TestSuiteResult> }) {
-  return (
-    <TestRunner onRunTests={onRunTests} />
-  )
-}
-
-/**
  * Main page component with providers and sidebar layout
  */
 export default function Home() {
   return (
-    <NavigationProvider>
-      <ScannerProvider>
-        <div className="min-h-screen bg-background">
-          {/* Desktop/Tablet Sidebar (hidden on mobile) */}
-          <Sidebar />
+    <Providers>
+      <div className="min-h-screen bg-background">
+        {/* Desktop/Tablet Sidebar (hidden on mobile) */}
+        <Sidebar />
 
-          {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
-          <MobileNav />
+        {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
+        <MobileNav />
 
-          {/* Main Content - offset for sidebar */}
-          <main className={cn(
-            "pt-6 pb-16 md:pb-6 pr-4 pl-4",
-            "md:pl-[calc(var(--sidebar-collapsed)+16px)] lg:pl-[calc(var(--sidebar-width)+16px)]",
-            "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
-          )}>
-            <div className="max-w-7xl mx-auto">
-              <PageContent />
-            </div>
-          </main>
-        </div>
-      </ScannerProvider>
-    </NavigationProvider>
+        {/* Main Content - offset for sidebar */}
+        <main className={cn(
+          "pt-8 pb-16 md:pb-8 pr-6 pl-6",
+          "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-width)+24px)]",
+          "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
+        )}>
+          <div className="max-w-7xl mx-auto">
+            <PageContent />
+          </div>
+        </main>
+      </div>
+    </Providers>
   )
 }

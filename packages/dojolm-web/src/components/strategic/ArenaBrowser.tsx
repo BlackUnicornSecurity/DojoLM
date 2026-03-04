@@ -21,6 +21,7 @@
 
 import { useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -89,7 +90,7 @@ interface LeaderboardEntry {
 }
 
 // ---------------------------------------------------------------------------
-// Mock Data
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 // ---------------------------------------------------------------------------
 
 const MOCK_MATCHES: ArenaMatch[] = [
@@ -214,7 +215,7 @@ const GAME_MODE_TABS: { key: GameMode | 'ALL'; label: string }[] = [
 const ROLE_CONFIG: Record<AgentRole, { icon: typeof Swords; color: string }> = {
   attacker: { icon: Swords, color: 'text-[var(--danger)]' },
   defender: { icon: Shield, color: 'text-[var(--success)]' },
-  observer: { icon: Eye, color: 'text-[var(--muted-foreground)]' },
+  observer: { icon: Eye, color: 'text-muted-foreground' },
 }
 
 // ---------------------------------------------------------------------------
@@ -243,7 +244,7 @@ export function ArenaBrowser() {
           <Swords className="w-6 h-6 text-[var(--warning)]" aria-hidden="true" />
           <div>
             <h3 className="text-lg font-semibold text-[var(--foreground)]">Battle Arena</h3>
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <p className="text-sm text-muted-foreground">
               Multi-agent adversarial sandbox
             </p>
           </div>
@@ -254,30 +255,15 @@ export function ArenaBrowser() {
       </div>
 
       {/* Game mode selector */}
-      <div
-        role="tablist"
-        aria-label="Game mode filter"
-        className="flex items-center gap-2 bg-muted/50 rounded-lg p-1"
-      >
-        {GAME_MODE_TABS.map(({ key, label }) => (
-          <button
-            key={key}
-            role="tab"
-            aria-selected={selectedMode === key}
-            onClick={() => setSelectedMode(key)}
-            className={cn(
-              'px-4 py-2 rounded-md text-sm font-medium min-h-[44px]',
-              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-              selectedMode === key
-                ? 'bg-background shadow-sm text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={selectedMode} onValueChange={(v) => setSelectedMode(v as typeof selectedMode)}>
+        <TabsList aria-label="Game mode filter" className="bg-muted/50">
+          {GAME_MODE_TABS.map(({ key, label }) => (
+            <TabsTrigger key={key} value={key} className="min-h-[44px]">
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* Main content: match table + leaderboard */}
       <div className="grid lg:grid-cols-3 gap-6">
@@ -394,23 +380,23 @@ function MatchTable({
                   {match.winner ? (
                     <span className="text-sm font-medium text-[var(--success)]">{match.winner}</span>
                   ) : (
-                    <span className="text-xs text-[var(--muted-foreground)]">--</span>
+                    <span className="text-xs text-muted-foreground">--</span>
                   )}
                 </TableCell>
                 <TableCell>
-                  <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="w-3 h-3" aria-hidden="true" />
                     {match.duration}
                   </span>
                 </TableCell>
                 <TableCell>
-                  <ChevronRight className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 </TableCell>
               </TableRow>
             ))}
             {matches.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-[var(--muted-foreground)]">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No matches found for the selected game mode.
                 </TableCell>
               </TableRow>
@@ -507,7 +493,7 @@ function MatchDetailPanel({
                       <Trophy className="w-3 h-3 inline-block ml-1 text-[var(--warning)]" aria-hidden="true" />
                     )}
                   </p>
-                  <p className="text-xs text-[var(--muted-foreground)] capitalize">{agent.role}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{agent.role}</p>
                 </div>
               </div>
             )
@@ -544,13 +530,13 @@ function MatchDetailPanel({
                 <div className="mt-0.5 flex-shrink-0">{getEventIcon(event.type)}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-mono text-[var(--muted-foreground)]">
+                    <span className="text-xs font-mono text-muted-foreground">
                       R{event.round} {event.timestamp}
                     </span>
                     {getEventTypeBadge(event.type)}
                     <span className="text-xs font-medium text-[var(--foreground)]">{event.agent}</span>
                   </div>
-                  <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{event.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{event.description}</p>
                 </div>
               </div>
             ))}
@@ -574,7 +560,7 @@ function LeaderboardSidebar({ entries }: { entries: LeaderboardEntry[] }) {
       case 3:
         return <Trophy className="w-5 h-5 text-amber-600" aria-hidden="true" />
       default:
-        return <span className="text-sm text-[var(--muted-foreground)] font-mono">#{rank}</span>
+        return <span className="text-sm text-muted-foreground font-mono">#{rank}</span>
     }
   }
 
@@ -605,7 +591,7 @@ function LeaderboardSidebar({ entries }: { entries: LeaderboardEntry[] }) {
               {/* Agent info */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--foreground)] truncate">{entry.name}</p>
-                <p className="text-xs text-[var(--muted-foreground)]">
+                <p className="text-xs text-muted-foreground">
                   {entry.wins}W / {entry.losses}L / {entry.draws}D
                 </p>
               </div>

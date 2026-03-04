@@ -11,7 +11,7 @@ interface NavigationContextValue {
 const NavigationContext = createContext<NavigationContextValue | undefined>(undefined)
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
-  const [activeTab, setActiveTab] = useState<NavId>('scanner')
+  const [activeTab, setActiveTab] = useState<NavId>('dashboard')
 
   return (
     <NavigationContext.Provider value={{ activeTab, setActiveTab }}>

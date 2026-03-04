@@ -61,7 +61,7 @@ interface FitnessDataPoint {
 }
 
 // ---------------------------------------------------------------------------
-// Mock Data
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 // ---------------------------------------------------------------------------
 
 const MOCK_MUTATION_OPERATORS: MutationOperator[] = [
@@ -139,7 +139,7 @@ export function SAGEDashboard() {
           <Dna className="w-6 h-6 text-[var(--dojo-primary)]" aria-hidden="true" />
           <div>
             <h3 className="text-lg font-semibold text-[var(--foreground)]">SAGE Evolution Engine</h3>
-            <p className="text-sm text-[var(--muted-foreground)]">
+            <p className="text-sm text-muted-foreground">
               Synthetic attack generation with genetic evolution
             </p>
           </div>
@@ -183,8 +183,8 @@ export function SAGEDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
-              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Generation</p>
+              <TrendingUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Generation</p>
             </div>
             <p className="text-2xl font-bold text-[var(--foreground)]">{generation}</p>
           </CardContent>
@@ -193,7 +193,7 @@ export function SAGEDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
               <Gauge className="w-4 h-4 text-[var(--success)]" aria-hidden="true" />
-              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Best Fitness</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Best Fitness</p>
             </div>
             <p className="text-2xl font-bold text-[var(--success)]">{bestFitness.toFixed(2)}</p>
           </CardContent>
@@ -201,8 +201,8 @@ export function SAGEDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Beaker className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
-              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Total Seeds</p>
+              <Beaker className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Seeds</p>
             </div>
             <p className="text-2xl font-bold text-[var(--foreground)]">{TOTAL_SEEDS.toLocaleString()}</p>
           </CardContent>
@@ -211,7 +211,7 @@ export function SAGEDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
               <AlertTriangle className="w-4 h-4 text-[var(--warning)]" aria-hidden="true" />
-              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Quarantined</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Quarantined</p>
             </div>
             <p className="text-2xl font-bold text-[var(--warning)]">{quarantineCount}</p>
           </CardContent>
@@ -241,7 +241,7 @@ export function SAGEDashboard() {
           <CardContent className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-[var(--muted-foreground)]">Safety Threshold</span>
+                <span className="text-muted-foreground">Safety Threshold</span>
                 <span className="font-mono font-semibold text-[var(--foreground)]">{safetyThreshold.toFixed(2)}</span>
               </div>
               <div className="w-full h-2 bg-[var(--bg-quaternary)] rounded-full overflow-hidden">
@@ -263,18 +263,18 @@ export function SAGEDashboard() {
                 <span className="text-sm font-medium text-[var(--foreground)]">Quarantine Queue</span>
               </div>
               <p className="text-3xl font-bold text-[var(--warning)]">{quarantineCount}</p>
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Payloads exceeding safety threshold awaiting review
               </p>
             </div>
 
             <div className="border border-[var(--border)] rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
-                <Archive className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+                <Archive className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 <span className="text-sm font-medium text-[var(--foreground)]">Reviewed Today</span>
               </div>
               <p className="text-xl font-bold text-[var(--foreground)]">8</p>
-              <p className="text-xs text-[var(--muted-foreground)] mt-1">5 approved, 3 rejected</p>
+              <p className="text-xs text-muted-foreground mt-1">5 approved, 3 rejected</p>
             </div>
           </CardContent>
         </Card>
@@ -305,10 +305,10 @@ export function SAGEDashboard() {
                     aria-label={`${cat.name}: ${cat.count} seeds, updated ${cat.lastUpdated}`}
                   >
                     <div className="flex items-center gap-3">
-                      <ChevronRight className="w-4 h-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                       <div>
                         <p className="text-sm font-medium text-[var(--foreground)]">{cat.name}</p>
-                        <p className="text-xs text-[var(--muted-foreground)]">Updated {cat.lastUpdated}</p>
+                        <p className="text-xs text-muted-foreground">Updated {cat.lastUpdated}</p>
                       </div>
                     </div>
                     <Badge variant="secondary">{cat.count}</Badge>
@@ -357,15 +357,15 @@ function FitnessChart({ data }: { data: FitnessDataPoint[] }) {
       <div className="flex items-center gap-4 text-xs">
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-[var(--success)]" aria-hidden="true" />
-          <span className="text-[var(--muted-foreground)]">Best</span>
+          <span className="text-muted-foreground">Best</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-[var(--dojo-primary)]" aria-hidden="true" />
-          <span className="text-[var(--muted-foreground)]">Average</span>
+          <span className="text-muted-foreground">Average</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-[var(--bg-quaternary)]" aria-hidden="true" />
-          <span className="text-[var(--muted-foreground)]">Worst</span>
+          <span className="text-muted-foreground">Worst</span>
         </div>
       </div>
 
@@ -393,7 +393,7 @@ function FitnessChart({ data }: { data: FitnessDataPoint[] }) {
         </div>
 
         {/* X-axis labels */}
-        <div className="absolute bottom-0 left-3 right-3 flex justify-between text-[10px] text-[var(--muted-foreground)] -mb-5">
+        <div className="absolute bottom-0 left-3 right-3 flex justify-between text-[10px] text-muted-foreground -mb-5">
           <span>Gen 1</span>
           <span>Gen {Math.round(maxGen / 2)}</span>
           <span>Gen {maxGen}</span>
@@ -426,12 +426,12 @@ function MutationOperatorRow({ operator }: { operator: MutationOperator }) {
           <p className="text-sm font-medium text-[var(--foreground)] truncate">{operator.name}</p>
           {!operator.enabled && <Badge variant="pending">Disabled</Badge>}
         </div>
-        <p className="text-xs text-[var(--muted-foreground)] truncate">{operator.description}</p>
+        <p className="text-xs text-muted-foreground truncate">{operator.description}</p>
       </div>
 
       {/* Weight bar */}
       <div className="w-20 flex-shrink-0">
-        <div className="flex items-center justify-between text-[10px] text-[var(--muted-foreground)] mb-0.5">
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-0.5">
           <span>Weight</span>
           <span className="font-mono">{operator.weight.toFixed(2)}</span>
         </div>
@@ -446,7 +446,7 @@ function MutationOperatorRow({ operator }: { operator: MutationOperator }) {
       {/* Hit count */}
       <div className="text-right flex-shrink-0 w-16">
         <p className="text-sm font-mono font-semibold text-[var(--foreground)]">{operator.hitCount}</p>
-        <p className="text-[10px] text-[var(--muted-foreground)]">hits</p>
+        <p className="text-[10px] text-muted-foreground">hits</p>
       </div>
     </div>
   )

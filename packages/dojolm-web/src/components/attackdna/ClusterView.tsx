@@ -35,7 +35,7 @@ interface Cluster {
   members: ClusterMember[]
 }
 
-// --- Mock Data ---
+// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
 
 const MOCK_CLUSTERS: Cluster[] = [
   {
@@ -209,7 +209,7 @@ interface ClusterCardProps {
 }
 
 function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
-  const catClass = categoryColor[cluster.primaryCategory.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]'
+  const catClass = categoryColor[cluster.primaryCategory.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
   const simColor = getSimilarityColor(cluster.avgSimilarity)
 
   return (
@@ -233,9 +233,9 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
       >
         <div className="shrink-0 mt-0.5">
           {isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-[var(--muted-foreground)]" aria-hidden="true" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           )}
         </div>
 
@@ -247,20 +247,20 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                 {cluster.label}
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-[var(--muted-foreground)] shrink-0">
+            <span className="text-[10px] font-mono text-muted-foreground shrink-0">
               {cluster.id}
             </span>
           </div>
 
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-1.5">
-              <Users className="h-3 w-3 text-[var(--muted-foreground)]" aria-hidden="true" />
+              <Users className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
               <span className="text-xs text-[var(--foreground)]">
                 {cluster.nodeCount} nodes
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <BarChart3 className="h-3 w-3 text-[var(--muted-foreground)]" aria-hidden="true" />
+              <BarChart3 className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
               <span className={cn('text-xs font-medium', simColor)}>
                 {(cluster.avgSimilarity * 100).toFixed(0)}% avg similarity
               </span>
@@ -280,13 +280,13 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
           className="pt-0 pb-4 px-4"
         >
           <div className="border-t border-[var(--border)] pt-3 mt-1">
-            <p className="text-xs font-medium text-[var(--muted-foreground)] mb-2">
+            <p className="text-xs font-medium text-muted-foreground mb-2">
               Members ({cluster.members.length} shown)
             </p>
             <ul className="space-y-2" aria-label={`Members of cluster ${cluster.label}`}>
               {cluster.members.map((member) => {
                 const dotClass = severityDot[member.severity.toLowerCase()] ?? 'bg-gray-400'
-                const memberCatClass = categoryColor[member.category.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-[var(--muted-foreground)] border-[var(--border)]'
+                const memberCatClass = categoryColor[member.category.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
                 const truncated = member.content.length > 100 ? member.content.slice(0, 97) + '...' : member.content
 
                 return (
@@ -305,10 +305,10 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                       >
                         {member.category}
                       </Badge>
-                      <span className="text-[10px] text-[var(--muted-foreground)] capitalize">
+                      <span className="text-[10px] text-muted-foreground capitalize">
                         {member.severity}
                       </span>
-                      <span className="text-[10px] text-[var(--muted-foreground)] font-mono ml-auto">
+                      <span className="text-[10px] text-muted-foreground font-mono ml-auto">
                         {member.id}
                       </span>
                     </div>
@@ -355,7 +355,7 @@ export function ClusterView({ className }: ClusterViewProps) {
         <span className="text-sm font-medium text-[var(--foreground)]">
           {MOCK_CLUSTERS.length} clusters detected
         </span>
-        <span className="text-xs text-[var(--muted-foreground)]">
+        <span className="text-xs text-muted-foreground">
           ({MOCK_CLUSTERS.reduce((sum, c) => sum + c.nodeCount, 0)} total nodes)
         </span>
       </div>
