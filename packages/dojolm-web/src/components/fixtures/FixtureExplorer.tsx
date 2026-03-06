@@ -228,7 +228,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             className={cn(
               'flex items-center gap-1 px-2.5 py-1.5 text-xs',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
-              'motion-safe:transition-colors motion-safe:duration-150',
+              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'tree'
                 ? 'bg-[var(--bg-quaternary)] text-foreground'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
@@ -245,7 +245,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             className={cn(
               'flex items-center gap-1 px-2.5 py-1.5 text-xs border-l border-[var(--border)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
-              'motion-safe:transition-colors motion-safe:duration-150',
+              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'search'
                 ? 'bg-[var(--bg-quaternary)] text-foreground'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
@@ -262,7 +262,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             className={cn(
               'flex items-center gap-1 px-2.5 py-1.5 text-xs border-l border-[var(--border)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
-              'motion-safe:transition-colors motion-safe:duration-150',
+              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'grid'
                 ? 'bg-[var(--bg-quaternary)] text-foreground'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
@@ -584,7 +584,7 @@ const FileRow = memo(function FileRow({
     <div
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-lg border',
-        'motion-safe:transition-colors motion-safe:duration-150',
+        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
         isCompareSelected
           ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/5'
           : 'border-[var(--border)] hover:bg-[var(--bg-secondary)]'

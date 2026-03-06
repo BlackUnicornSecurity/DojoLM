@@ -15,13 +15,14 @@
 
 import { useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
-import { cn } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { AmaterasuGuide, resetAmaterasuGuide, TabHelpButton } from './AmaterasuGuide'
+import { Button } from '@/components/ui/button'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { AmaterasuConfig } from './AmaterasuConfig'
 import {
   Dna,
@@ -173,38 +174,31 @@ export function AttackDNAExplorer() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
-            <Dna className="h-5 w-5 text-[var(--dojo-primary)]" aria-hidden="true" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-[var(--foreground)]">
-              Amaterasu DNA
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Analyze attack lineage, mutation families, and embedding clusters
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleHelpClick}
-            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
-            aria-label="Open Amaterasu DNA guide"
-          >
-            <HelpCircle className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <button
-            onClick={() => setConfigOpen(true)}
-            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
-            aria-label="Open Amaterasu DNA configuration"
-          >
-            <Settings className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <ModuleHeader
+        title="Amaterasu DNA"
+        subtitle="Analyze attack lineage, mutation families, and embedding clusters"
+        icon={Dna}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleHelpClick}
+              aria-label="Open Amaterasu DNA guide"
+            >
+              <HelpCircle className="h-4 w-4" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setConfigOpen(true)}
+              aria-label="Open Amaterasu DNA configuration"
+            >
+              <Settings className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </>
+        }
+      />
 
       {/* Getting started tutorial (first visit) */}
       <AmaterasuGuide key={`guide-${guideResetKey}`} />

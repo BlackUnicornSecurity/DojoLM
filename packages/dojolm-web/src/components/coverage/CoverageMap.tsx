@@ -122,7 +122,7 @@ function CoverageProgressBar({ value, target }: CoverageProgressBarProps) {
     <div className="w-full">
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <div
-          className={cn('h-full rounded-full motion-safe:transition-all duration-500', getColor(value))}
+          className={cn('h-full rounded-full motion-safe:transition-all duration-[var(--transition-emphasis)]', getColor(value))}
           style={{ width: `${percentage}%` }}
         />
       </div>

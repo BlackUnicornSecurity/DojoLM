@@ -28,6 +28,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // BUG-035: Guard against null/non-object body (null is valid JSON)
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: 'Request body must be a JSON object' },
+        { status: 400 }
+      );
+    }
+
     // Validate required fields
     const { modelId, testCaseId } = body as { modelId?: string; testCaseId?: string };
 

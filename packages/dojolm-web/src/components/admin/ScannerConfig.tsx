@@ -23,7 +23,7 @@ export function ScannerConfig() {
   return (
     <div className="space-y-6">
       {/* Scanner Engine Configuration */}
-      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -43,15 +43,15 @@ export function ScannerConfig() {
         />
 
         <div className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-3">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-3">
             <p className="text-xs text-muted-foreground">Total Engines</p>
             <p className="text-lg font-semibold text-foreground">{engineFilters.length}</p>
           </div>
-          <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-3">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-3">
             <p className="text-xs text-muted-foreground">Active</p>
             <p className="text-lg font-semibold text-green-400">{activeCount}</p>
           </div>
-          <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-3">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-3">
             <p className="text-xs text-muted-foreground">Disabled</p>
             <p className="text-lg font-semibold text-muted-foreground">{engineFilters.length - activeCount}</p>
           </div>
@@ -68,7 +68,7 @@ function GuardConfigSection() {
   const { config, setMode, setEnabled, setBlockThreshold, error } = useGuard()
 
   return (
-    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -128,7 +128,7 @@ function GuardConfigSection() {
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   config.mode === mode.id
                     ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10'
-                    : 'border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] hover:border-[rgba(255,255,255,0.12)]'
+                    : 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)] hover:border-[var(--border-hover)]'
                 )}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -159,7 +159,7 @@ function GuardConfigSection() {
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'WARNING'
                   ? 'border-[var(--warning)] bg-[var(--warning)]/10 text-[var(--warning)]'
-                  : 'border-[rgba(255,255,255,0.06)] text-muted-foreground hover:text-foreground'
+                  : 'border-[var(--border-subtle)] text-muted-foreground hover:text-foreground'
               )}
             >
               <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
@@ -172,7 +172,7 @@ function GuardConfigSection() {
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'CRITICAL'
                   ? 'border-red-500 bg-red-500/10 text-red-400'
-                  : 'border-[rgba(255,255,255,0.06)] text-muted-foreground hover:text-foreground'
+                  : 'border-[var(--border-subtle)] text-muted-foreground hover:text-foreground'
               )}
             >
               <ShieldAlert className="w-3.5 h-3.5" aria-hidden="true" />

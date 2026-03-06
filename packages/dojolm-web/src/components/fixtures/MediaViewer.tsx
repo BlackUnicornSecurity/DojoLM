@@ -153,7 +153,7 @@ function ImageViewer({ path, filename }: { path: string; filename: string }) {
           src={mediaUrl}
           alt={`Fixture: ${filename}`}
           style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-          className="max-w-full motion-safe:transition-transform motion-safe:duration-150"
+          className="max-w-full motion-safe:transition-transform motion-safe:duration-[var(--transition-fast)]"
           loading="lazy"
           onError={() => setLoadError(true)}
         />

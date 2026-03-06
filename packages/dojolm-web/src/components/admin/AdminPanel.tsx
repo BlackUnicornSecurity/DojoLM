@@ -72,17 +72,17 @@ export function AdminPanel() {
 
 function GeneralSettings() {
   return (
-    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
       <h3 className="text-lg font-semibold text-foreground">General Settings</h3>
       <p className="text-sm text-muted-foreground">
         Application-wide configuration and preferences.
       </p>
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-4">
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
           <p className="text-sm font-medium text-foreground">Application</p>
           <p className="text-xs text-muted-foreground mt-1">NODA Platform</p>
         </div>
-        <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-4">
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
           <p className="text-sm font-medium text-foreground">Theme</p>
           <p className="text-xs text-muted-foreground mt-1">Dark (default)</p>
         </div>

@@ -277,7 +277,7 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
   return (
     <Card
       className={cn(
-        'motion-safe:transition-all motion-safe:duration-200',
+        'motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]',
         isExpanded && 'border-[var(--dojo-primary)]/30'
       )}
     >

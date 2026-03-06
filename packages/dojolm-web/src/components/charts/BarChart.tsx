@@ -39,7 +39,7 @@ const RechartsBarChart = dynamic(
               }}
               labelStyle={{ color: 'var(--foreground)' }}
               itemStyle={{ color: 'var(--dojo-primary)' }}
-              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+              cursor={{ fill: 'var(--overlay-subtle)' }}
             />
             <Bar
               dataKey={dataKey}

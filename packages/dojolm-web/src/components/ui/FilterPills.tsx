@@ -133,11 +133,11 @@ export function FilterPills({
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium',
                 'border cursor-pointer select-none',
-                'motion-safe:transition-[background-color,color,border-color] motion-safe:duration-200',
+                'motion-safe:transition-[background-color,color,border-color] motion-safe:duration-[var(--transition-normal)]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 filter.enabled
-                  ? 'bg-[rgba(255,255,255,0.1)] border-[rgba(255,255,255,0.2)] text-[var(--foreground)]'
-                  : 'bg-transparent border-[var(--border)] text-muted-foreground hover:border-[rgba(255,255,255,0.15)] hover:text-foreground'
+                  ? 'bg-[var(--overlay-active)] border-[var(--border-active)] text-[var(--foreground)]'
+                  : 'bg-transparent border-[var(--border)] text-muted-foreground hover:border-[var(--border-hover)] hover:text-foreground'
               )}
             >
               {Icon && <Icon className="h-3 w-3" aria-hidden="true" />}

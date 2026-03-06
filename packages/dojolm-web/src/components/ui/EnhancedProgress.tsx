@@ -78,11 +78,11 @@ export function EnhancedProgress({
       aria-valuemax={safeMax}
     >
       <div className={cn(
-        'w-full overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]',
+        'w-full overflow-hidden rounded-full bg-[var(--border-subtle)]',
         heightMap[size]
       )}>
         <div
-          className="h-full rounded-full motion-safe:transition-[width] motion-safe:duration-500 motion-safe:ease-out"
+          className="h-full rounded-full motion-safe:transition-[width] motion-safe:duration-[var(--transition-emphasis)] motion-safe:ease-out"
           style={{
             width: `${percentage}%`,
             backgroundColor: fillColor,

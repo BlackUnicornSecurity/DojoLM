@@ -13,7 +13,7 @@
  * - NODADashboard (line 183)
  */
 
-import { Suspense, useState, lazy, type ComponentType } from 'react'
+import { Suspense, useState, useRef, lazy, type ComponentType } from 'react'
 import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot } from './DashboardConfigContext'
 import { DashboardCustomizer } from './DashboardCustomizer'
 import { WidgetMetaProvider } from './WidgetCard'
@@ -58,9 +58,7 @@ const WIDGET_COMPONENTS: Record<string, () => Promise<{ default: ComponentType }
   'module-grid': () => import('./widgets/ModuleGridWidget').then(m => ({ default: m.ModuleGridWidget })),
   'compliance-bars': () => import('./widgets/ComplianceBarsWidget').then(m => ({ default: m.ComplianceBarsWidget })),
   'coverage-heatmap': () => import('./widgets/CoverageHeatmapWidget').then(m => ({ default: m.CoverageHeatmapWidget })),
-  'owasp-summary': () => import('./widgets/OWASPSummaryWidget').then(m => ({ default: m.OWASPSummaryWidget })),
-  'pattern-count': () => import('./widgets/PatternCountWidget').then(m => ({ default: m.PatternCountWidget })),
-  'fixture-count': () => import('./widgets/FixtureCountWidget').then(m => ({ default: m.FixtureCountWidget })),
+  'platform-stats': () => import('./widgets/PlatformStatsWidget').then(m => ({ default: m.PlatformStatsWidget })),
   'ecosystem-pulse': () => import('./widgets/EcosystemPulseWidget').then(m => ({ default: m.EcosystemPulseWidget })),
   'ronin-hub': () => import('./widgets/RoninHubWidget').then(m => ({ default: m.RoninHubWidget })),
   'llm-jutsu': () => import('./widgets/LLMJutsuWidget').then(m => ({ default: m.LLMJutsuWidget })),
@@ -90,13 +88,11 @@ const WIDGET_META: Record<string, { priority: 'hero' | 'standard' | 'compact'; g
 
 const DEFAULT_META = { priority: 'standard' as const, glow: 'none' as const }
 
-/** Dashboard sections with ordered widget IDs */
+/** Dashboard sections with ordered widget IDs (3 sections) */
 const SECTION_DEFS: { label: string; ids: string[] }[] = [
-  { label: 'QUICK ACTIONS', ids: ['quick-launch', 'quick-scan'] },
-  { label: 'SYSTEM STATUS', ids: ['health-gauge', 'guard-controls', 'guard-stats', 'session-pulse'] },
-  { label: 'ACTIVITY', ids: ['kill-count', 'attack-of-day', 'batch-progress', 'activity-feed', 'guard-audit', 'threat-trend', 'fixture-roulette'] },
-  { label: 'INTELLIGENCE', ids: ['threat-radar', 'mitsuke-alerts', 'ecosystem-pulse'] },
-  { label: 'MODELS & ARENA', ids: ['engine-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'compliance-bars', 'coverage-heatmap', 'owasp-summary', 'pattern-count', 'fixture-count', 'module-grid'] },
+  { label: 'OVERVIEW', ids: ['quick-launch', 'quick-scan', 'health-gauge', 'guard-controls', 'kill-count'] },
+  { label: 'MONITORING', ids: ['threat-radar', 'activity-feed', 'threat-trend', 'mitsuke-alerts', 'ecosystem-pulse', 'session-pulse', 'guard-stats', 'batch-progress', 'guard-audit', 'attack-of-day', 'fixture-roulette'] },
+  { label: 'PLATFORM', ids: ['engine-grid', 'module-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'compliance-bars', 'platform-stats', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'coverage-heatmap'] },
 ]
 
 /** Set of all widget IDs assigned to a section */
@@ -139,6 +135,7 @@ function WidgetShell({ slot }: { slot: WidgetSlot }) {
 function DashboardContent() {
   const { config } = useDashboardConfig()
   const [customizerOpen, setCustomizerOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   const visibleWidgets = config.widgets
     .filter(w => w.visible)
@@ -150,7 +147,7 @@ function DashboardContent() {
   const unsectionedWidgets = visibleWidgets.filter(w => !SECTIONED_IDS.has(w.id))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" aria-live="polite" aria-atomic="false">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -158,6 +155,7 @@ function DashboardContent() {
           <p className="text-sm text-muted-foreground">System overview and quick actions</p>
         </div>
         <Button
+          ref={triggerRef}
           variant="outline"
           size="sm"
           onClick={() => setCustomizerOpen(true)}
@@ -179,11 +177,11 @@ function DashboardContent() {
 
         return (
           <div key={section.label} className={cn(sectionIdx > 0 && 'mt-8')}>
-            {sectionIdx > 0 && <div className="dojo-divider mb-4" role="separator" />}
+            {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" />}
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               {section.label}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-children">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
               {sectionSlots.map(slot => (
                 <WidgetShell key={slot.id} slot={slot} />
               ))}
@@ -195,7 +193,7 @@ function DashboardContent() {
       {/* Unsectioned widgets (fallback) */}
       {unsectionedWidgets.length > 0 && (
         <div className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {unsectionedWidgets.map(slot => (
               <WidgetShell key={slot.id} slot={slot} />
             ))}
@@ -204,7 +202,11 @@ function DashboardContent() {
       )}
 
       {/* Customizer Panel */}
-      <DashboardCustomizer open={customizerOpen} onClose={() => setCustomizerOpen(false)} />
+      <DashboardCustomizer open={customizerOpen} onClose={() => {
+        setCustomizerOpen(false)
+        // BUG-037: Restore focus to trigger button after modal close
+        requestAnimationFrame(() => triggerRef.current?.focus())
+      }} />
     </div>
   )
 }

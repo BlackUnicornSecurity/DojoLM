@@ -42,7 +42,7 @@ export function ProgramDetail({ program, isSubscribed, onToggleSubscribe, onClos
         className={cn(
           'relative w-full max-w-lg max-h-[85vh] mx-4 overflow-y-auto',
           'bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl shadow-lg',
-          'motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200',
+          'motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-[var(--transition-normal)]',
         )}
         onClick={(e) => e.stopPropagation()}
         role="dialog"

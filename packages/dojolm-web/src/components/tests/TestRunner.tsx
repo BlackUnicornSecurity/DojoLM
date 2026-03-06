@@ -125,7 +125,7 @@ function TestProgressBar({ progress, message }: TestProgressBarProps) {
     <div className="space-y-2">
       <div className="h-2 bg-muted rounded-full overflow-hidden">
         <div
-          className="h-full bg-primary motion-safe:transition-all duration-300"
+          className="h-full bg-primary motion-safe:transition-all duration-[var(--transition-slow)]"
           style={{ width: `${progress}%` }}
         />
       </div>

@@ -80,12 +80,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Block TRACE method (Story 13.4)
+  // Block TRACE method (Story 13.4 / BUG-032)
+  // Note: Next.js may intercept TRACE before middleware runs, returning 500.
+  // This guard catches cases where the request does reach middleware.
   if (request.method === 'TRACE') {
-    return NextResponse.json(
-      { error: 'Method not allowed' },
-      { status: 405 }
-    );
+    return new NextResponse(null, {
+      status: 405,
+      headers: { 'Allow': 'GET, POST, PUT, PATCH, DELETE, OPTIONS' },
+    });
+  }
+
+  // Allow CORS preflight requests without auth (BUG-034)
+  // Origin validation: only reflect known origins, deny unknown in production
+  if (request.method === 'OPTIONS') {
+    const requestOrigin = request.headers.get('origin') ?? '';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const allowedOrigins = new Set([appUrl, 'http://localhost:3000', 'http://localhost:3001']);
+    const corsOrigin = allowedOrigins.has(requestOrigin) ? requestOrigin : appUrl;
+
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': corsOrigin,
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key, Authorization',
+        'Access-Control-Max-Age': '86400',
+      },
+    });
   }
 
   // Content-Type validation for mutation methods (Story 13.4)

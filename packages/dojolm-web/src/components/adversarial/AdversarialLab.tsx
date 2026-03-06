@@ -30,6 +30,7 @@ import {
   Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { AttackToolCard } from './AttackToolCard'
 import type { LearnMoreContent } from './AttackToolCard'
 import { AttackLog } from './AttackLog'
@@ -441,33 +442,25 @@ export function AdversarialLab({
   return (
     <div className={cn('space-y-6', className)}>
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
-            <Swords className="h-5 w-5 text-[var(--dojo-primary)]" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-[var(--foreground)]">
-              Atemi Lab
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              MCP protocol and tool integration attack simulation dashboard
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <SessionRecorder mode={mode} />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleOpenConfig}
-            aria-label="Open Atemi Lab configuration"
-          >
-            <Settings className="h-4 w-4" aria-hidden="true" />
-            Config
-          </Button>
-        </div>
-      </div>
+      <ModuleHeader
+        title="Atemi Lab"
+        subtitle="MCP protocol and tool integration attack simulation dashboard"
+        icon={Swords}
+        actions={
+          <>
+            <SessionRecorder mode={mode} />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenConfig}
+              aria-label="Open Atemi Lab configuration"
+            >
+              <Settings className="h-4 w-4" aria-hidden="true" />
+              Config
+            </Button>
+          </>
+        }
+      />
 
       {/* Getting Started Guide (Story 6.1) */}
       <AtemiGettingStarted />

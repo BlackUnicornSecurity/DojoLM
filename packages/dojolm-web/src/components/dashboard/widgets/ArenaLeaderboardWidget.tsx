@@ -54,7 +54,7 @@ export function ArenaLeaderboardWidget() {
             <span className={cn('w-5 text-center font-bold', RANK_STYLES[agent.rank] ?? 'text-muted-foreground')}>
               {agent.rank <= 3 ? <Trophy className="w-3.5 h-3.5 inline" aria-hidden="true" /> : agent.rank}
             </span>
-            <span className="flex-1 font-medium truncate">{agent.name}</span>
+            <span className="flex-1 font-medium truncate" title={agent.name}>{agent.name}</span>
             <span className="text-muted-foreground tabular-nums">{agent.winRate}%</span>
             <span className="text-muted-foreground tabular-nums w-12 text-right">{agent.score}</span>
           </div>

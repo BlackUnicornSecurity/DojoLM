@@ -183,7 +183,7 @@ function StatusCard({
   items: { label: string; value: string }[]
 }) {
   return (
-    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-3">
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />

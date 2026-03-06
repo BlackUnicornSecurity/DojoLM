@@ -63,7 +63,7 @@ export function ComplianceBarsWidget() {
         {frameworks.map(fw => (
           <div key={fw.name} className="space-y-0.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground truncate">{fw.name}</span>
+              <span className="text-muted-foreground truncate" title={fw.name}>{fw.name}</span>
               <span className="tabular-nums font-medium">{fw.coverage}%</span>
             </div>
             <EnhancedProgress

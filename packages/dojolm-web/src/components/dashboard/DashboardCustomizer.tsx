@@ -37,7 +37,7 @@ function CategorySection({
 }) {
   return (
     <div className="space-y-1">
-      <h3 className="text-xs uppercase tracking-wider text-[var(--text-quaternary)] font-semibold px-1 pt-3 pb-1">
+      <h3 className="text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold px-1 pt-3 pb-1">
         {label}
       </h3>
       {widgets.map(widget => {
@@ -48,7 +48,11 @@ function CategorySection({
             className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[var(--bg-quaternary)]"
           >
             <button
-              onClick={() => onToggle(widget.id)}
+              onClick={(e) => {
+                onToggle(widget.id)
+                // BUG-038: Prevent focus jump by re-focusing the switch after toggle
+                requestAnimationFrame(() => (e.target as HTMLElement).focus())
+              }}
               className={cn(
                 'relative w-8 h-[18px] rounded-full flex-shrink-0',
                 'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
@@ -172,7 +176,7 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold">Customize Dashboard</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5" aria-live="polite">
                 {enabledCount} of {WIDGET_CATALOG.length} widgets active
               </p>
             </div>

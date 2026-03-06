@@ -248,7 +248,7 @@ export function CrossModuleActions({
           className={cn(
             'absolute right-0 top-full mt-1 z-50 w-64',
             'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] shadow-md',
-            'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-150',
+            'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-[var(--transition-fast)]',
           )}
           role="menu"
           aria-label="Cross-module action options"

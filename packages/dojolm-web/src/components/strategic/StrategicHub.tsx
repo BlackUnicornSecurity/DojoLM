@@ -14,12 +14,12 @@
 
 import { useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
-import { cn } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { ModuleOnboarding, resetOnboarding, type OnboardingStep } from '@/components/ui/ModuleOnboarding'
 import { SAGEConfig, ArenaConfig, MitsukeConfig } from './KumiteConfig'
 import {
@@ -254,44 +254,42 @@ export function StrategicHub() {
     return (
       <div className="space-y-6">
         {/* Header with back navigation */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Layers className="w-6 h-6 text-[var(--dojo-primary)]" aria-hidden="true" />
-            <div>
-              <h2 className="text-2xl font-bold text-[var(--foreground)]">The Kumite</h2>
-              <p className="text-sm text-muted-foreground">
-                SAGE, Battle Arena, and Mitsuke
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                handleResetOnboarding(activeSubsystem)
-                setActiveGuide(activeSubsystem)
-              }}
-              className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
-              aria-label={`Open ${GUIDE_CONTENT[activeSubsystem].title}`}
-            >
-              <HelpCircle className="h-4 w-4" aria-hidden="true" />
-            </button>
-            <button
-              onClick={() => setActiveConfig(activeSubsystem)}
-              className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
-              aria-label={`Open ${activeSubsystem} configuration`}
-            >
-              <Settings className="h-4 w-4" aria-hidden="true" />
-            </button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setActiveSubsystem(null)}
-              aria-label="Return to The Kumite overview"
-            >
-              Overview
-            </Button>
-          </div>
-        </div>
+        <ModuleHeader
+          title="The Kumite"
+          subtitle="SAGE, Battle Arena, and Mitsuke"
+          icon={Layers}
+          actions={
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  handleResetOnboarding(activeSubsystem)
+                  setActiveGuide(activeSubsystem)
+                }}
+                aria-label={`Open ${GUIDE_CONTENT[activeSubsystem].title}`}
+              >
+                <HelpCircle className="h-4 w-4" aria-hidden="true" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setActiveConfig(activeSubsystem)}
+                aria-label={`Open ${activeSubsystem} configuration`}
+              >
+                <Settings className="h-4 w-4" aria-hidden="true" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveSubsystem(null)}
+                aria-label="Return to The Kumite overview"
+              >
+                Overview
+              </Button>
+            </>
+          }
+        />
 
         {/* Sub-tab navigation */}
         <Tabs value={activeSubsystem} onValueChange={(v) => setActiveSubsystem(v as SubsystemKey)}>
@@ -347,15 +345,11 @@ export function StrategicHub() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Layers className="w-6 h-6 text-[var(--dojo-primary)]" aria-hidden="true" />
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--foreground)]">The Kumite</h2>
-          <p className="text-sm text-muted-foreground">
-            Access SAGE evolution engine, Battle Arena multi-agent sandbox, and Mitsuke threat intelligence pipeline.
-          </p>
-        </div>
-      </div>
+      <ModuleHeader
+        title="The Kumite"
+        subtitle="Access SAGE evolution engine, Battle Arena multi-agent sandbox, and Mitsuke threat intelligence pipeline."
+        icon={Layers}
+      />
 
       {/* Subsystem cards */}
       <div className="grid md:grid-cols-3 gap-3">
@@ -374,20 +368,22 @@ export function StrategicHub() {
                     <CardIcon className="w-5 h-5 text-[var(--foreground)]" aria-hidden="true" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={(e) => { e.stopPropagation(); setActiveGuide(card.key) }}
-                      className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
                       aria-label={`Help for ${card.title}`}
                     >
                       <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={(e) => { e.stopPropagation(); setActiveConfig(card.key) }}
-                      className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
                       aria-label={`Configure ${card.title}`}
                     >
                       <Settings className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
+                    </Button>
                     <Badge variant="outline">{card.badge}</Badge>
                   </div>
                 </div>

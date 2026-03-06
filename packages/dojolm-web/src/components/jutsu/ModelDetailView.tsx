@@ -48,7 +48,7 @@ export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
           'relative w-full max-w-3xl max-h-[90vh] mx-0 sm:mx-4 overflow-hidden',
           'bg-[var(--bg-secondary)] border border-[var(--border)] rounded-t-xl sm:rounded-xl shadow-lg',
           'flex flex-col',
-          'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-200',
+          'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-[var(--transition-normal)]',
         )}
         onClick={(e) => e.stopPropagation()}
         role="dialog"

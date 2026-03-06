@@ -12,6 +12,9 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { ScrollText, Search, Filter, HelpCircle, Settings } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Button } from '@/components/ui/button'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import type { LucideIcon } from 'lucide-react'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
@@ -152,43 +155,31 @@ export function LLMJutsu() {
   return (
     <div className="space-y-6">
       {/* Module Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-            <ScrollText className="h-5 w-5 text-purple-500" aria-hidden="true" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold">LLM Jutsu</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Testing Command Center
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setGuideOpen(true)}
-            className={cn(
-              'p-2 rounded-lg text-muted-foreground hover:text-foreground',
-              'hover:bg-[var(--bg-tertiary)] min-w-[44px] min-h-[44px]',
-              'flex items-center justify-center motion-safe:transition-colors',
-            )}
-            aria-label="Open LLM Jutsu guide"
-          >
-            <HelpCircle className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <button
-            onClick={() => setConfigOpen(true)}
-            className={cn(
-              'p-2 rounded-lg text-muted-foreground hover:text-foreground',
-              'hover:bg-[var(--bg-tertiary)] min-w-[44px] min-h-[44px]',
-              'flex items-center justify-center motion-safe:transition-colors',
-            )}
-            aria-label="Open LLM Jutsu settings"
-          >
-            <Settings className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <ModuleHeader
+        title="LLM Jutsu"
+        subtitle="Testing Command Center"
+        icon={ScrollText}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setGuideOpen(true)}
+              aria-label="Open LLM Jutsu guide"
+            >
+              <HelpCircle className="h-5 w-5" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setConfigOpen(true)}
+              aria-label="Open LLM Jutsu settings"
+            >
+              <Settings className="h-5 w-5" aria-hidden="true" />
+            </Button>
+          </>
+        }
+      />
 
       {/* Global Filters */}
       <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-muted/30 border border-[var(--border)]">
@@ -242,13 +233,11 @@ export function LLMJutsu() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <ScrollText className="h-8 w-8 text-muted-foreground mb-3" aria-hidden="true" />
-          <p className="text-sm font-medium">No models found</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Run LLM tests from the LLM Dashboard to populate the model grid
-          </p>
-        </div>
+        <EmptyState
+          icon={ScrollText}
+          title="No models found"
+          description="Run LLM tests from the LLM Dashboard to populate the model grid"
+        />
       )}
 
       {/* Model Detail */}

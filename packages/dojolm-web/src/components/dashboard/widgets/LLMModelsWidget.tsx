@@ -95,10 +95,10 @@ export function LLMModelsWidget() {
           <div key={model.id} className="flex items-center gap-2 py-1">
             <span className={cn(
               'w-2 h-2 rounded-full flex-shrink-0',
-              model.enabled ? 'bg-green-500' : 'bg-muted-foreground'
+              model.enabled ? 'bg-[var(--status-online)]' : 'bg-[var(--status-offline)]'
             )} />
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-medium truncate">{model.name}</div>
+              <div className="text-xs font-medium truncate" title={model.name}>{model.name}</div>
               <div className="text-xs text-muted-foreground">{model.provider}</div>
             </div>
             <button

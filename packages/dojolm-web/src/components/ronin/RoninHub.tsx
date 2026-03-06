@@ -11,12 +11,14 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { cn } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 import { Bug, Search, Send, Brain, Radio, HelpCircle, Settings } from 'lucide-react'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import type { LucideIcon } from 'lucide-react'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { ProgramsTab } from './ProgramsTab'
 import { SubmissionsTab } from './SubmissionsTab'
 
@@ -70,21 +72,6 @@ const DEFAULT_CONFIG: Record<string, unknown> = {
   programUpdates: false,
 }
 
-/**
- * EmptyTabState — consistent empty state for tabs without content yet
- */
-function EmptyTabState({ tab }: { tab: typeof TAB_CONFIG[number] }) {
-  const Icon = tab.icon
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-14 h-14 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center mb-4">
-        <Icon className="h-7 w-7 text-muted-foreground" aria-hidden="true" />
-      </div>
-      <h3 className="text-lg font-semibold mb-2">{tab.label}</h3>
-      <p className="text-sm text-muted-foreground max-w-md">{tab.description}</p>
-    </div>
-  )
-}
 
 /**
  * RoninHub — Main bug bounty management module
@@ -109,46 +96,37 @@ export function RoninHub() {
     setConfigValues({ ...DEFAULT_CONFIG })
   }, [])
 
+  const planningTab = TAB_CONFIG.find(t => t.key === 'planning') ?? TAB_CONFIG[0]
+  const intelligenceTab = TAB_CONFIG.find(t => t.key === 'intelligence') ?? TAB_CONFIG[0]
+
   return (
     <div className="space-y-6">
       {/* Module Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
-            <Bug className="h-5 w-5 text-orange-500" aria-hidden="true" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold">Ronin Hub</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Bug bounty research and submissions
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setGuideOpen(true)}
-            className={cn(
-              'p-2 rounded-lg text-muted-foreground hover:text-foreground',
-              'hover:bg-[var(--bg-tertiary)] min-w-[44px] min-h-[44px]',
-              'flex items-center justify-center motion-safe:transition-colors',
-            )}
-            aria-label="Open Ronin Hub guide"
-          >
-            <HelpCircle className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <button
-            onClick={() => setConfigOpen(true)}
-            className={cn(
-              'p-2 rounded-lg text-muted-foreground hover:text-foreground',
-              'hover:bg-[var(--bg-tertiary)] min-w-[44px] min-h-[44px]',
-              'flex items-center justify-center motion-safe:transition-colors',
-            )}
-            aria-label="Open Ronin Hub settings"
-          >
-            <Settings className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <ModuleHeader
+        title="Ronin Hub"
+        subtitle="Bug bounty research and submissions"
+        icon={Bug}
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setGuideOpen(true)}
+              aria-label="Open Ronin Hub guide"
+            >
+              <HelpCircle className="h-5 w-5" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setConfigOpen(true)}
+              aria-label="Open Ronin Hub settings"
+            >
+              <Settings className="h-5 w-5" aria-hidden="true" />
+            </Button>
+          </>
+        }
+      />
 
       {/* Tab Navigation */}
       <Tabs
@@ -178,10 +156,18 @@ export function RoninHub() {
           <SubmissionsTab />
         </TabsContent>
         <TabsContent value="planning">
-          <EmptyTabState tab={TAB_CONFIG.find(t => t.key === 'planning')!} />
+          <EmptyState
+            icon={planningTab.icon}
+            title={planningTab.label}
+            description={planningTab.description}
+          />
         </TabsContent>
         <TabsContent value="intelligence">
-          <EmptyTabState tab={TAB_CONFIG.find(t => t.key === 'intelligence')!} />
+          <EmptyState
+            icon={intelligenceTab.icon}
+            title={intelligenceTab.label}
+            description={intelligenceTab.description}
+          />
         </TabsContent>
       </Tabs>
 

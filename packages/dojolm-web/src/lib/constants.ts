@@ -30,10 +30,20 @@ import {
   LayoutDashboard,
 } from 'lucide-react'
 
+/** Navigation group identifiers for sidebar grouping (Story 4.1) */
+export type NavGroup = 'testing' | 'defense' | 'analysis'
+
+/** Group labels and ordering for sidebar sections */
+export const NAV_GROUPS: ReadonlyArray<{ id: NavGroup; label: string }> = [
+  { id: 'testing', label: 'Testing' },
+  { id: 'defense', label: 'Defense' },
+  { id: 'analysis', label: 'Analysis' },
+]
+
 /**
  * Navigation items for sidebar and mobile nav
- * Flat list — no section dividers (Story 2.2)
- * Order per Story 2.4: Dashboard → Haiku Scanner → Armory → LLM Jutsu → LLM Dashboard → Hattori Guard → Atemi Lab → Bushido Book → The Kumite → Amaterasu DNA → Ronin Hub → Admin
+ * Grouped by function (Story 4.1): Testing, Defense, Analysis
+ * Dashboard is ungrouped (always visible at top), Admin is at bottom
  */
 export const NAV_ITEMS = [
   {
@@ -47,60 +57,70 @@ export const NAV_ITEMS = [
     label: 'Haiku Scanner',
     icon: Radar,
     description: 'Live prompt injection detection',
+    group: 'testing' as NavGroup,
   },
   {
     id: 'armory',
     label: 'Armory',
     icon: Warehouse,
     description: 'Fixtures and test payloads',
+    group: 'testing' as NavGroup,
   },
   {
     id: 'llm-jutsu',
     label: 'LLM Jutsu',
     icon: ScrollText,
     description: 'LLM testing command center',
+    group: 'testing' as NavGroup,
   },
   {
     id: 'llm',
     label: 'LLM Dashboard',
     icon: BrainCircuit,
     description: 'LLM testing interface',
+    group: 'testing' as NavGroup,
   },
   {
     id: 'guard',
     label: 'Hattori Guard',
     icon: ShieldHalf,
     description: 'LLM input/output protection',
-  },
-  {
-    id: 'adversarial',
-    label: 'Atemi Lab',
-    icon: Crosshair,
-    description: 'MCP adversarial attack simulation',
+    group: 'defense' as NavGroup,
   },
   {
     id: 'compliance',
     label: 'Bushido Book',
     icon: BookOpen,
     description: 'Coverage, compliance, and audit book',
+    group: 'defense' as NavGroup,
+  },
+  {
+    id: 'adversarial',
+    label: 'Atemi Lab',
+    icon: Crosshair,
+    description: 'MCP adversarial attack simulation',
+    group: 'analysis' as NavGroup,
   },
   {
     id: 'strategic',
     label: 'The Kumite',
     icon: Trophy,
     description: 'SAGE, Battle Arena, and Mitsuke',
+    group: 'analysis' as NavGroup,
   },
   {
     id: 'attackdna',
     label: 'Amaterasu DNA',
     icon: Fingerprint,
     description: 'Attack lineage and mutation analysis',
+    group: 'analysis' as NavGroup,
   },
   {
     id: 'ronin-hub',
     label: 'Ronin Hub',
     icon: Bug,
     description: 'Bug bounty research and submissions',
+    group: 'analysis' as NavGroup,
   },
   {
     id: 'admin',

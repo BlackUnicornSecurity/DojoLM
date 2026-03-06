@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import {
   Shield,
   AlertTriangle,
@@ -121,7 +122,7 @@ function ScoreMeter({ value, className }: { value: number; className?: string })
   const getColor = (v: number): string => {
     if (v >= SCORE_EXCELLENT) return 'var(--success, #22c55e)'
     if (v >= SCORE_GOOD) return 'var(--warning, #eab308)'
-    if (v >= SCORE_FAIR) return 'var(--dojo-primary, #f97316)'
+    if (v >= SCORE_FAIR) return 'var(--dojo-primary, #FF5252)'
     return 'var(--danger, #ef4444)'
   }
 
@@ -323,14 +324,11 @@ export default function ComplianceCenter() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold text-[var(--foreground)]">
-          Bushido Book
-        </h2>
-        <span className="text-sm text-muted-foreground">
-          Last updated: {data.lastUpdated}
-        </span>
-      </div>
+      <ModuleHeader
+        title="Bushido Book"
+        subtitle={`Compliance frameworks and coverage analysis — Last updated: ${data.lastUpdated}`}
+        icon={Shield}
+      />
 
       {/* Top Section: Score + Framework Selector + Gap Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -978,7 +976,7 @@ function ComparisonView({
                     <div className="h-2 bg-[var(--bg-quaternary)] rounded-full overflow-hidden">
                       <div
                         className={cn(
-                          'h-full rounded-full motion-safe:transition-all motion-safe:duration-500',
+                          'h-full rounded-full motion-safe:transition-all motion-safe:duration-[var(--transition-emphasis)]',
                           row.avgCoverage >= COVERAGE_HIGH ? 'bg-[var(--success)]' : row.avgCoverage >= COVERAGE_MODERATE ? 'bg-[var(--warning)]' : 'bg-[var(--danger)]'
                         )}
                         style={{ width: `${Math.min(row.avgCoverage, 100)}%` }}

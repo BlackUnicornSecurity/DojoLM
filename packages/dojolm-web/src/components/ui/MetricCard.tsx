@@ -130,7 +130,7 @@ export function MetricCard({
         <div className="flex items-start justify-between mb-2">
           <p className="text-label">{label}</p>
           {Icon && (
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[rgba(255,255,255,0.04)]">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--overlay-subtle)]">
               <Icon
                 className="w-4 h-4"
                 style={accent ? { color: accentIconColors[accent] } : { color: 'var(--muted-foreground)' }}

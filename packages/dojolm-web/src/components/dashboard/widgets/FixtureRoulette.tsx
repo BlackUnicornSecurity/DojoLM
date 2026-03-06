@@ -165,8 +165,8 @@ export function FixtureRoulette() {
               <div className={cn(
                 'flex items-center justify-between px-2 py-1.5 rounded text-xs font-medium',
                 verdict.verdict === 'BLOCK'
-                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                  ? 'bg-[var(--status-block-bg)] text-[var(--status-block)] border border-[var(--status-block)]/20'
+                  : 'bg-[var(--status-allow-bg)] text-[var(--status-allow)] border border-[var(--status-allow)]/20'
               )}>
                 <span>{verdict.verdict}</span>
                 {verdict.severity && <SeverityBadge severity={verdict.severity} showIcon={false} />}

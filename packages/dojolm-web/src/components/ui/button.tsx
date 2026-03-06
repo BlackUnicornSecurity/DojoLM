@@ -20,8 +20,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.12)] text-[var(--foreground)]",
-          "hover:bg-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.16)]",
+          "bg-[var(--border-subtle)] border border-[var(--border-hover)] text-[var(--foreground)]",
+          "hover:bg-[var(--overlay-active)] hover:border-[var(--border-hover)]",
           "active:scale-[0.98]",
           "motion-safe:transition-all duration-[var(--transition-fast)]"
         ),

@@ -93,7 +93,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
       onKeyDown={handleKeyDown}
       className={cn(
         'border rounded-lg bg-card text-card-foreground shadow-md',
-        'motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-200',
+        'motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-[var(--transition-normal)]',
         'motion-reduce:animate-none',
         'w-full max-w-md'
       )}

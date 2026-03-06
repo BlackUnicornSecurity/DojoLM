@@ -42,7 +42,7 @@ export function ExportSettings() {
   return (
     <div className="space-y-6">
       {/* Export Formats */}
-      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
         <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <FileOutput className="w-5 h-5" aria-hidden="true" />
           Export Formats
@@ -62,7 +62,7 @@ export function ExportSettings() {
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 selectedFormats.has(format.id)
                   ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10'
-                  : 'border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] hover:border-[rgba(255,255,255,0.12)]'
+                  : 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)] hover:border-[var(--border-hover)]'
               )}
             >
               <div className="flex items-center justify-between mb-1">
@@ -78,7 +78,7 @@ export function ExportSettings() {
       </div>
 
       {/* Branding */}
-      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
         <h3 className="text-sm font-semibold text-foreground">Report Branding</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
@@ -89,7 +89,7 @@ export function ExportSettings() {
               value={companyName}
               onChange={e => setCompanyName(e.target.value)}
               placeholder="Your Organization"
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
             />
           </div>
           <div>
@@ -104,7 +104,7 @@ export function ExportSettings() {
                 const parsed = Number(e.target.value)
                 setRetentionDays(Math.min(365, Math.max(7, isNaN(parsed) ? 7 : parsed)))
               }}
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
             />
           </div>
         </div>

@@ -98,7 +98,7 @@ const FindingCard = memo(function FindingCard({ finding }: FindingCardProps) {
 
   return (
     <div
-      className="p-4 rounded-lg border border-[rgba(255,255,255,0.06)] bg-muted/50"
+      className="p-4 rounded-lg border border-[var(--border-subtle)] bg-muted/50"
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">

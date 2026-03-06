@@ -45,7 +45,7 @@ export function GuardQuickPanel() {
               <div className="flex items-center gap-1">
                 <span className={cn(
                   'w-2 h-2 rounded-full',
-                  config.enabled ? 'bg-green-500' : 'bg-muted-foreground'
+                  config.enabled ? 'bg-[var(--status-online)]' : 'bg-[var(--status-offline)]'
                 )} />
                 <span className="text-xs text-muted-foreground">
                   {config.enabled ? 'Online' : 'Offline'}
@@ -145,7 +145,7 @@ export function GuardQuickPanel() {
                 )}>
                   {event.action.toUpperCase()}
                 </span>
-                <span className="text-muted-foreground truncate ml-2 flex-1">
+                <span className="text-muted-foreground truncate ml-2 flex-1" title={event.scannedText}>
                   {truncate(event.scannedText, 30)}
                 </span>
               </div>

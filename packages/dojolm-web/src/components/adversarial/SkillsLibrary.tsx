@@ -173,7 +173,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                     onClick={() => setCategory('all')}
                     className={cn(
                       'px-2 py-1 text-xs rounded-md border',
-                      'motion-safe:transition-colors motion-safe:duration-150',
+                      'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                       filters.category === 'all'
                         ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
                         : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-secondary)]',
@@ -190,7 +190,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       onClick={() => setCategory(cat)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border',
-                        'motion-safe:transition-colors motion-safe:duration-150',
+                        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                         filters.category === cat
                           ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
                           : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-secondary)]',
@@ -213,7 +213,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                     onClick={() => setDifficulty('all')}
                     className={cn(
                       'px-2 py-1 text-xs rounded-md border',
-                      'motion-safe:transition-colors motion-safe:duration-150',
+                      'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                       filters.difficulty === 'all'
                         ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
                         : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-secondary)]',
@@ -230,7 +230,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       onClick={() => setDifficulty(diff)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border',
-                        'motion-safe:transition-colors motion-safe:duration-150',
+                        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                         DIFFICULTY_CONFIG[diff].color,
                         filters.difficulty === diff
                           ? 'border-current bg-current/10'
@@ -254,7 +254,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                     onClick={() => setOwasp('all')}
                     className={cn(
                       'px-2 py-1 text-xs rounded-md border',
-                      'motion-safe:transition-colors motion-safe:duration-150',
+                      'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                       filters.owasp === 'all'
                         ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
                         : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-secondary)]',
@@ -271,7 +271,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       onClick={() => setOwasp(id)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border font-mono',
-                        'motion-safe:transition-colors motion-safe:duration-150',
+                        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                         filters.owasp === id
                           ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
                           : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-secondary)]',

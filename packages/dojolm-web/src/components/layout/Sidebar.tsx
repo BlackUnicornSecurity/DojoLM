@@ -11,16 +11,17 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { NAV_ITEMS } from '@/lib/constants'
+import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityState } from '@/lib/contexts/ActivityContext'
 import { PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react'
 import { SidebarHeader } from './SidebarHeader'
 import { ActivityFeed } from '@/components/ui/ActivityFeed'
 
-// Flat list — admin excluded from nav (has dedicated button at bottom)
-const navItems = NAV_ITEMS.filter(item => item.id !== 'admin')
+// Dashboard is ungrouped (top), admin excluded (has dedicated button at bottom)
+const dashboardItem = NAV_ITEMS.find(item => item.id === 'dashboard')!
 const adminItem = NAV_ITEMS.find(item => item.id === 'admin')
+const groupedItems = NAV_ITEMS.filter(item => 'group' in item)
 
 /** Isolated component that subscribes to activity state for unread count.
  *  Prevents Sidebar from re-rendering on every activity event. */
@@ -51,22 +52,22 @@ export function Sidebar() {
           "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg relative w-[calc(100%-16px)]",
           "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
           isActive
-            ? "bg-[rgba(255,255,255,0.08)] text-[var(--foreground)]"
-            : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.04)]"
+            ? "nav-item-active"
+            : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
         )}
         title={collapsed ? item.label : undefined}
         aria-label={item.label}
         aria-current={isActive ? 'page' : undefined}
       >
-        <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "text-[var(--bu-electric)]")} aria-hidden="true" />
+        <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "nav-item-active-icon")} aria-hidden="true" />
         <span
           aria-hidden="true"
           className={cn(
             "font-medium whitespace-nowrap overflow-hidden",
-            "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",
+            "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
             collapsed
-              ? "opacity-0 w-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-              : "opacity-100"
+              ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
+              : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
           )}
         >
           {item.label}
@@ -88,22 +89,46 @@ export function Sidebar() {
       {/* Header - co-branded */}
       <SidebarHeader collapsed={collapsed} />
 
-      {/* Navigation — flat list, no section dividers (Story 2.2) */}
+      {/* Navigation — grouped by function (Story 4.1) */}
       <nav className="flex-1 py-4 overflow-y-auto" aria-label="Main navigation">
-        {navItems.map(renderNavItem)}
+        {/* Dashboard — always visible at top, ungrouped */}
+        {renderNavItem(dashboardItem)}
+
+        {/* Grouped sections */}
+        {NAV_GROUPS.map((group) => {
+          const items = groupedItems.filter(item => 'group' in item && item.group === group.id)
+          if (items.length === 0) return null
+          return (
+            <div key={group.id} className="mt-4 first:mt-2">
+              <span
+                aria-hidden={collapsed ? true : undefined}
+                className={cn(
+                  "block px-6 py-1 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold overflow-hidden",
+                  "motion-safe:transition-[opacity,max-height] motion-safe:ease-in-out",
+                  collapsed
+                    ? "opacity-0 max-h-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-8 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-8"
+                    : "opacity-100 max-h-8 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
+                )}
+              >
+                {group.label}
+              </span>
+              {items.map(renderNavItem)}
+            </div>
+          )
+        })}
       </nav>
 
       {/* Activity Feed - collapsible section */}
       <div className={cn(
-        "border-t border-[rgba(255,255,255,0.04)] overflow-hidden",
-        "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",
+        "border-t border-[var(--overlay-subtle)] overflow-hidden",
+        "motion-safe:transition-[opacity,max-height] motion-safe:duration-[var(--transition-normal)]",
         collapsed
-          ? "opacity-0 h-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:h-auto md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:h-auto"
-          : "opacity-100"
+          ? "opacity-0 max-h-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-96 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-96"
+          : "opacity-100 max-h-96"
       )}>
         <button
           onClick={() => setActivityExpanded(!activityExpanded)}
-          className="flex items-center justify-between w-full px-4 py-2 text-xs uppercase tracking-wider text-[var(--text-quaternary)] font-semibold hover:text-muted-foreground motion-safe:transition-colors"
+          className="flex items-center justify-between w-full px-4 py-2 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold hover:text-muted-foreground motion-safe:transition-colors"
           aria-expanded={activityExpanded}
           aria-controls="activity-feed-panel"
         >
@@ -119,18 +144,19 @@ export function Sidebar() {
             aria-hidden="true"
           />
         </button>
-        {activityExpanded && (
-          <div
-            id="activity-feed-panel"
-            className="max-h-48 overflow-y-auto"
-          >
-            <ActivityFeed maxVisible={5} />
-          </div>
-        )}
+        <div
+          id="activity-feed-panel"
+          className={cn(
+            "overflow-hidden motion-safe:transition-[max-height,opacity] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-in-out",
+            activityExpanded ? "max-h-48 opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
+          )}
+        >
+          <ActivityFeed maxVisible={5} />
+        </div>
       </div>
 
       {/* Bottom section — Admin + Collapse */}
-      <div className="p-2 border-t border-[rgba(255,255,255,0.04)]">
+      <div className="p-2 border-t border-[var(--overlay-subtle)]">
         <button
           onClick={() => setActiveTab('admin')}
           aria-label="Admin"
@@ -140,19 +166,19 @@ export function Sidebar() {
             "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
             "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
             activeTab === 'admin'
-              ? "bg-[rgba(255,255,255,0.08)] text-[var(--foreground)]"
-              : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.04)]"
+              ? "nav-item-active"
+              : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
           )}
         >
-          <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "text-[var(--bu-electric)]")} aria-hidden="true" />
+          <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon")} aria-hidden="true" />
           <span
             aria-hidden="true"
             className={cn(
               "font-medium whitespace-nowrap overflow-hidden",
-              "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",
+              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
               collapsed
-                ? "opacity-0 w-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-                : "opacity-100"
+                ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
+                : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
             )}
           >
             Admin
@@ -161,7 +187,7 @@ export function Sidebar() {
         {/* Collapse toggle (YouTube Analytics icon-only sidebar pattern) */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex items-center gap-3 px-4 py-3 w-full rounded-lg text-[var(--text-quaternary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
+          className="hidden md:flex items-center gap-3 px-4 py-3 w-full rounded-lg text-[var(--text-tertiary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? <PanelLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" /> : <PanelLeftClose className="w-5 h-5 flex-shrink-0" aria-hidden="true" />}
@@ -169,8 +195,8 @@ export function Sidebar() {
             aria-hidden="true"
             className={cn(
               "font-medium text-sm whitespace-nowrap overflow-hidden",
-              "motion-safe:transition-opacity motion-safe:duration-[var(--transition-normal)]",
-              collapsed ? "opacity-0 w-0" : "opacity-100"
+              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
+              collapsed ? "opacity-0 w-0 motion-safe:duration-100" : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
             )}
           >
             Collapse

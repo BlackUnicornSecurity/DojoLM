@@ -49,14 +49,14 @@ export function GuardAuditWidget() {
           <div key={event.id} className="flex items-center gap-2 py-1 text-xs">
             <span className={cn(
               'px-1 py-0.5 rounded font-medium',
-              event.direction === 'input' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
+              event.direction === 'input' ? 'bg-[var(--status-input-bg)] text-[var(--status-input)]' : 'bg-[var(--status-output-bg)] text-[var(--status-output)]'
             )}>
               {event.direction === 'input' ? 'IN' : 'OUT'}
             </span>
             <span className={cn(
               'px-1 py-0.5 rounded font-medium',
-              event.action === 'block' ? 'bg-red-500/20 text-red-400' :
-              event.action === 'allow' ? 'bg-green-500/20 text-green-400' :
+              event.action === 'block' ? 'bg-[var(--status-block-bg)] text-[var(--status-block)]' :
+              event.action === 'allow' ? 'bg-[var(--status-allow-bg)] text-[var(--status-allow)]' :
               'bg-muted text-muted-foreground'
             )}>
               {event.action.toUpperCase()}

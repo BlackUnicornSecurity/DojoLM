@@ -11,6 +11,7 @@ import { useScanner } from '@/lib/ScannerContext'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityLogger } from '@/lib/contexts/ActivityContext'
 import { Providers } from '@/lib/Providers'
+import { NAV_ITEMS } from '@/lib/constants'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { PageToolbar } from '@/components/layout/PageToolbar'
@@ -537,6 +538,22 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
   )
 }
 
+/** Screen reader announcer for module navigation changes (Story 5.3) */
+function ScreenReaderAnnouncer() {
+  const { activeTab } = useNavigation()
+  const activeLabel = NAV_ITEMS.find(item => item.id === activeTab)?.label ?? activeTab
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      className="sr-only"
+    >
+      {`Viewing ${activeLabel}`}
+    </div>
+  )
+}
+
 /**
  * Main page component with providers and sidebar layout
  */
@@ -551,11 +568,15 @@ export default function Home() {
         <MobileNav />
 
         {/* Main Content - offset for sidebar */}
-        <main className={cn(
-          "pt-8 pb-16 md:pb-8 pr-6 pl-6",
-          "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-width)+24px)]",
-          "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
-        )}>
+        <main
+          aria-label="Main content"
+          className={cn(
+            "pt-8 pb-16 md:pb-8 pr-6 pl-6",
+            "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-width)+24px)]",
+            "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
+          )}
+        >
+          <ScreenReaderAnnouncer />
           <div className="max-w-7xl mx-auto">
             <PageContent />
           </div>

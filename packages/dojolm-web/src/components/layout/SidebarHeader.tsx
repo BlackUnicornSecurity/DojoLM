@@ -21,7 +21,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
   const [imgError, setImgError] = useState(false)
 
   return (
-    <div className="h-16 flex items-center justify-between px-4 border-b border-[rgba(255,255,255,0.04)] relative overflow-hidden">
+    <div className="h-16 flex items-center justify-between px-4 border-b border-[var(--overlay-subtle)] relative overflow-hidden">
       {/* Decorative enso circle — dojo identity, only visible when expanded */}
       {!collapsed && (
         <div
@@ -60,7 +60,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
           )}
         >
           <span className="text-lg font-bold text-[var(--dojo-primary-lg)]">DojoLM</span>
-          <span className="text-xs text-[var(--text-quaternary)]">NODA Security Platform</span>
+          <span className="text-xs text-[var(--text-tertiary)]">NODA Security Platform</span>
         </div>
       </div>
 

@@ -246,7 +246,7 @@ export function SAGEDashboard() {
               </div>
               <div className="w-full h-2 bg-[var(--bg-quaternary)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[var(--success)] rounded-full motion-safe:transition-all motion-safe:duration-500"
+                  className="h-full bg-[var(--success)] rounded-full motion-safe:transition-all motion-safe:duration-[var(--transition-emphasis)]"
                   style={{ width: `${safetyThreshold * 100}%` }}
                   role="progressbar"
                   aria-valuenow={safetyThreshold * 100}
@@ -380,7 +380,7 @@ function FitnessChart({ data }: { data: FitnessDataPoint[] }) {
             <div key={point.generation} className="flex-1 flex flex-col items-center justify-end h-full gap-0.5">
               {/* Best bar */}
               <div
-                className="w-full rounded-t-sm bg-[var(--success)] opacity-80 motion-safe:transition-all motion-safe:duration-300"
+                className="w-full rounded-t-sm bg-[var(--success)] opacity-80 motion-safe:transition-all motion-safe:duration-[var(--transition-slow)]"
                 style={{ height: `${point.best * 100}%`, minHeight: '2px' }}
               />
               {/* Average bar overlay */}

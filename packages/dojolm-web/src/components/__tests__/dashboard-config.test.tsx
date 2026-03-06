@@ -36,8 +36,8 @@ beforeEach(() => {
 })
 
 describe('WIDGET_CATALOG', () => {
-  it('contains exactly 29 widgets', () => {
-    expect(WIDGET_CATALOG).toHaveLength(29)
+  it('contains exactly 27 widgets', () => {
+    expect(WIDGET_CATALOG).toHaveLength(27)
   })
 
   it('has unique widget IDs', () => {
@@ -45,9 +45,9 @@ describe('WIDGET_CATALOG', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('has 15 default widgets', () => {
+  it('has 8 default widgets', () => {
     const defaults = WIDGET_CATALOG.filter(w => w.isDefault)
-    expect(defaults).toHaveLength(15)
+    expect(defaults).toHaveLength(8)
   })
 
   it('covers all 5 categories', () => {
@@ -67,15 +67,15 @@ describe('WIDGET_CATALOG', () => {
 })
 
 describe('DashboardConfigContext', () => {
-  it('provides default config with 15 visible widgets', () => {
+  it('provides default config with 8 visible widgets', () => {
     const { result } = renderHook(() => useDashboardConfig(), { wrapper })
     const visible = result.current.config.widgets.filter(w => w.visible)
-    expect(visible).toHaveLength(15)
+    expect(visible).toHaveLength(8)
   })
 
-  it('default config only includes the 15 default widgets', () => {
+  it('default config only includes the 8 default widgets', () => {
     const { result } = renderHook(() => useDashboardConfig(), { wrapper })
-    expect(result.current.config.widgets).toHaveLength(15)
+    expect(result.current.config.widgets).toHaveLength(8)
     expect(result.current.config.widgets.every(w => w.visible)).toBe(true)
   })
 
@@ -99,7 +99,7 @@ describe('DashboardConfigContext', () => {
     const added = result.current.config.widgets.find(w => w.id === nonDefault.id)!
     expect(added).toBeDefined()
     expect(added.visible).toBe(true)
-    expect(result.current.config.widgets).toHaveLength(16)
+    expect(result.current.config.widgets).toHaveLength(9)
   })
 
   it('moveWidget changes order', () => {
@@ -120,12 +120,12 @@ describe('DashboardConfigContext', () => {
     act(() => {
       result.current.toggleWidget(firstVisible.id)
     })
-    expect(result.current.config.widgets.filter(w => w.visible)).toHaveLength(14)
+    expect(result.current.config.widgets.filter(w => w.visible)).toHaveLength(7)
     // Reset
     act(() => {
       result.current.resetToDefaults()
     })
-    expect(result.current.config.widgets.filter(w => w.visible)).toHaveLength(15)
+    expect(result.current.config.widgets.filter(w => w.visible)).toHaveLength(8)
   })
 
   it('throws when used outside provider', () => {

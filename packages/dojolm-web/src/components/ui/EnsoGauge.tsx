@@ -73,7 +73,7 @@ export function EnsoGauge({ value, max = 100, size = 128, color = 'var(--dojo-pr
         <path
           d={arcPath}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
+          stroke="var(--border-subtle)"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
         />
@@ -87,7 +87,7 @@ export function EnsoGauge({ value, max = 100, size = 128, color = 'var(--dojo-pr
           strokeLinecap="round"
           strokeDasharray={arcLength}
           strokeDashoffset={dashOffset}
-          className="motion-safe:transition-[stroke-dashoffset] motion-safe:duration-700 motion-safe:ease-out"
+          className="motion-safe:transition-[stroke-dashoffset] motion-safe:duration-[var(--transition-emphasis)] motion-safe:ease-out"
         />
 
         {/* Center value text */}

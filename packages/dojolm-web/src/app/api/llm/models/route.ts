@@ -16,6 +16,18 @@ import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
 
+/**
+ * Strip HTML tags and control characters from user-supplied strings.
+ * Defense-in-depth against stored XSS (BUG-033).
+ */
+function sanitizeString(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/<[^>]*>/g, '')       // strip HTML tags
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // strip control chars (preserve \t \n \r)
+    .trim();
+}
+
 // ===========================================================================
 // GET /api/llm/models - List all models
 // ===========================================================================
@@ -71,6 +83,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // BUG-035: Guard against null/non-object body (null is valid JSON)
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: 'Request body must be a JSON object' },
+        { status: 400 }
+      );
+    }
+
     // Validate required fields
     const { name, provider, model, apiKey, baseUrl } = body;
 
@@ -81,17 +101,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize string inputs (BUG-033: prevent stored XSS)
+    const safeName = sanitizeString(name);
+    const safeProvider = sanitizeString(provider);
+    const safeModel = sanitizeString(model);
+    const safeBaseUrl = baseUrl ? sanitizeString(baseUrl) : undefined;
+
+    // BUG-036: Enforce field length limits
+    const FIELD_LIMITS = { name: 200, provider: 100, model: 200, baseUrl: 500 } as const;
+    if (safeName.length > FIELD_LIMITS.name || safeProvider.length > FIELD_LIMITS.provider ||
+        safeModel.length > FIELD_LIMITS.model || (safeBaseUrl && safeBaseUrl.length > FIELD_LIMITS.baseUrl)) {
+      return NextResponse.json(
+        { error: `Field length exceeded: name max ${FIELD_LIMITS.name}, provider max ${FIELD_LIMITS.provider}, model max ${FIELD_LIMITS.model}, baseUrl max ${FIELD_LIMITS.baseUrl}` },
+        { status: 400 }
+      );
+    }
+
+    if (!safeName || !safeProvider || !safeModel) {
+      return NextResponse.json(
+        { error: 'Invalid input: name, provider, and model must contain non-tag text' },
+        { status: 400 }
+      );
+    }
+
     // Create model config
     const now = new Date().toISOString();
     const id = `model-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
     const newModel: LLMModelConfig = {
       id,
-      name: name as string,
-      provider: provider as LLMModelConfig['provider'],
-      model: model as string,
+      name: safeName,
+      provider: safeProvider as LLMModelConfig['provider'],
+      model: safeModel,
       apiKey: apiKey as string | undefined,
-      baseUrl: baseUrl as string | undefined,
+      baseUrl: safeBaseUrl,
       enabled: (body.enabled as boolean) ?? true,
       maxTokens: body.maxTokens as number | undefined,
       organizationId: body.organizationId as string | undefined,
@@ -175,6 +218,14 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       );
     }
+    // BUG-035: Guard against null/non-object body (null is valid JSON)
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: 'Request body must be a JSON object' },
+        { status: 400 }
+      );
+    }
+
     const { id } = body;
 
     if (!id) {
@@ -196,9 +247,13 @@ export async function PATCH(request: NextRequest) {
 
     // H-01: Apply PATCHABLE whitelist to prevent mass assignment (match [id]/route.ts pattern)
     const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model'] as const;
+    const STRING_FIELDS = new Set(['name', 'description', 'baseUrl', 'model']);
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {
-      if (key in body) patch[key] = body[key];
+      if (key in body) {
+        // BUG-033: Sanitize string fields to prevent stored XSS
+        patch[key] = STRING_FIELDS.has(key) ? sanitizeString(body[key]) : body[key];
+      }
     }
 
     const updated: LLMModelConfig = {

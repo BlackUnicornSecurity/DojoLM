@@ -75,7 +75,7 @@ export const JutsuModelCard = memo(function JutsuModelCard({
           </div>
           <div className="h-2 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
             <div
-              className="h-full rounded-full motion-safe:transition-all motion-safe:duration-500"
+              className="h-full rounded-full motion-safe:transition-all motion-safe:duration-[var(--transition-emphasis)]"
               style={{ width: `${Math.min(model.latestScore, 100)}%`, backgroundColor: belt.color }}
             />
           </div>

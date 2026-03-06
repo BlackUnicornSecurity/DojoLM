@@ -109,7 +109,7 @@ export function ApiKeyManager() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 flex items-center justify-center gap-3">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 flex items-center justify-center gap-3">
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" aria-hidden="true" />
         <span className="text-sm text-muted-foreground">Loading API keys...</span>
       </div>
@@ -166,7 +166,7 @@ export function ApiKeyManager() {
       )}
 
       {providers.length === 0 ? (
-        <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 text-center">
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 text-center">
           <Key className="w-8 h-8 mx-auto text-muted-foreground mb-3" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">No API keys configured.</p>
           <p className="text-xs text-muted-foreground mt-1">Add a provider to get started with LLM testing.</p>
@@ -200,7 +200,7 @@ function ProviderCard({
   onDelete: () => void
 }) {
   return (
-    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 flex items-center gap-4">
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 flex items-center gap-4">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-medium text-foreground truncate">{provider.name}</span>
@@ -243,7 +243,7 @@ function ProviderCard({
           onClick={onTest}
           disabled={connectionStatus === 'testing'}
           aria-label={`Test connection for ${provider.name}`}
-          className="px-3 py-1.5 text-xs rounded-lg border border-[rgba(255,255,255,0.1)] text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
+          className="px-3 py-1.5 text-xs rounded-lg border border-[var(--overlay-active)] text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
         >
           Test
         </button>
@@ -330,7 +330,7 @@ function AddKeyForm({
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. GPT-4o Production"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
         <div>
@@ -339,7 +339,7 @@ function AddKeyForm({
             id="admin-key-provider"
             value={provider}
             onChange={e => setProvider(e.target.value as LLMProvider)}
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           >
             {LLM_PROVIDERS.map(p => (
               <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>
@@ -354,7 +354,7 @@ function AddKeyForm({
             value={model}
             onChange={e => setModel(e.target.value)}
             placeholder="e.g. gpt-4o"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
         <div>
@@ -367,7 +367,7 @@ function AddKeyForm({
               onChange={e => setApiKey(e.target.value)}
               placeholder="sk-..."
               autoComplete="off"
-              className="w-full px-3 py-2 pr-10 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 pr-10 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
             />
             <button
               type="button"
@@ -387,7 +387,7 @@ function AddKeyForm({
             value={baseUrl}
             onChange={e => setBaseUrl(e.target.value)}
             placeholder="https://api.openai.com/v1"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
       </div>

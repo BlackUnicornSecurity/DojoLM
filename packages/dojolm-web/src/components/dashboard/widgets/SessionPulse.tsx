@@ -25,7 +25,7 @@ export function SessionPulse() {
           'w-2.5 h-2.5 rounded-full',
           isScanning
             ? 'bg-[var(--dojo-primary)] motion-safe:animate-pulse'
-            : 'bg-green-500'
+            : 'bg-[var(--status-online)]'
         )} />
       }
     >

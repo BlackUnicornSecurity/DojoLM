@@ -12,17 +12,17 @@
   --bu-electric-muted: rgba(0, 217, 255, 0.15);
   --bu-electric-subtle: rgba(0, 217, 255, 0.08);
 
-  /* ===== DojoLM orange accent =====
+  /* ===== DojoLM red accent =====
    * USAGE GUIDE:
-   * --dojo-primary (#FF8A50): Use for interactive elements, borders, icons on dark backgrounds.
-   *   WCAG AA 6.1:1 on #0F1419 (background). 4.7:1 on #1A2028 (bg-secondary).
-   * --dojo-primary-lg (#FFA070): Large text (>=18px bold / >=24px normal) ONLY.
-   * --dojo-electric (#FF6B2C): Decorative/non-text accents only (glows, borders).
+   * --dojo-primary (#FF5252): Use for interactive elements, borders, icons on dark backgrounds.
+   *   WCAG AA 6.16:1 on #0F1419 (background). 4.8:1 on #1A2028 (bg-secondary).
+   * --dojo-primary-lg (#FF7070): Large text (>=18px bold / >=24px normal) ONLY.
+   * --dojo-electric (#FF3030): Decorative/non-text accents only (glows, borders).
    */
-  --dojo-primary: #FF8A50;      /* WCAG AA: 6.1:1 on #0F1419 */
-  --dojo-primary-lg: #FFA070;   /* Large text only */
-  --dojo-electric: #FF6B2C;
-  --dojo-hover: #E07040;
+  --dojo-primary: #FF5252;      /* WCAG AA: 6.16:1 on #0F1419 */
+  --dojo-primary-lg: #FF7070;   /* Large text only */
+  --dojo-electric: #FF3030;
+  --dojo-hover: #E04545;
 
   /* ===== Accent violet ===== */
   --accent-violet: #9D6FFF;
@@ -46,6 +46,9 @@
   --status-input-bg: rgba(59, 130, 246, 0.2);
   --status-output: #C084FC;
   --status-output-bg: rgba(168, 85, 247, 0.2);
+  --status-online: #22C55E;
+  --status-offline: #6B7280;
+  --status-running: #3B82F6;
 
   /* ===== Leaderboard rank tokens ===== */
   --rank-gold: #EAB308;
@@ -53,7 +56,7 @@
   --rank-bronze: #D97706;
 
   /* ===== Severity badge tokens ===== */
-  --severity-critical: #F87171;
+  --severity-critical: var(--danger); /* Aliases --danger for single source of truth */
   --severity-critical-bg: rgba(239, 68, 68, 0.2);
   --severity-high-text: #FB923C;
   --severity-high-bg: rgba(249, 115, 22, 0.2);
@@ -66,7 +69,7 @@
   --foreground: #E8E8E8;
   --muted-foreground: #A0AEC0;
   --text-tertiary: #6B7280;
-  --text-quaternary: #4B5563;  /* Decorative/labels only — fails WCAG AA for body text on dark backgrounds */
+  --text-quaternary: #4B5563;  /* Decorative elements only — fails WCAG AA 4.5:1 on dark backgrounds. Never use for readable text. */
 
   /* ===== UI colors ===== */
   --card: #1A2028;
@@ -79,8 +82,8 @@
   --input: #2E3744;
   --muted: #2E3744;
 
-  /* ===== Primary action — DojoLM orange (WCAG compliant) ===== */
-  --primary: #FF8A50;
+  /* ===== Primary action — same as --dojo-primary (kept for Shadcn/Tailwind compatibility) ===== */
+  --primary: #FF5252;
   --primary-foreground: #0F1419;
   --ring: rgba(0, 217, 255, 0.4);
 
@@ -107,6 +110,23 @@
   /* ===== Transitions ===== */
   --transition-fast: 150ms;
   --transition-normal: 200ms;
+  --transition-slow: 300ms;
+  --transition-emphasis: 500ms;
+
+  /* ===== Shadows ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow-primary: 0 0 16px rgba(255, 82, 82, 0.25);
+  --shadow-glow-accent: 0 0 16px rgba(0, 217, 255, 0.2);
+
+  /* ===== Overlay & border opacity tokens ===== */
+  --overlay-subtle: rgba(255, 255, 255, 0.04);
+  --overlay-hover: rgba(255, 255, 255, 0.08);
+  --overlay-active: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(255, 255, 255, 0.2);
 
   /* ===== Z-index scale ===== */
   --z-mobile-nav: 50;
@@ -114,16 +134,23 @@
   --z-dropdown: 60;
   --z-toast: 100;
 
-  /* ===== Border radius ===== */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* ===== Border radius (aligned with Tailwind defaults) ===== */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 9999px;
 
   /* ===== Card state tokens ===== */
   --card-elevated: #242D38;
   --card-pressed: #1A2028;
-  --dojo-subtle: rgba(255, 138, 80, 0.1);
+  --dojo-subtle: rgba(255, 82, 82, 0.1);
+
+  /* ===== Syntax highlighting ===== */
+  --syntax-keyword: #c792ea;
+  --syntax-string: #c3e88d;
+  --syntax-number: #f78c6c;
+  --syntax-comment: #78909c;
+  --syntax-plain: #d6deeb;
 
   /* ===== Belt rank colors (Dojo Identity) ===== */
   --belt-white: #F5F5F5;
@@ -178,6 +205,9 @@
   --color-status-input-bg: var(--status-input-bg);
   --color-status-output: var(--status-output);
   --color-status-output-bg: var(--status-output-bg);
+  --color-status-online: var(--status-online);
+  --color-status-offline: var(--status-offline);
+  --color-status-running: var(--status-running);
 
   /* Leaderboard rank tokens */
   --color-rank-gold: var(--rank-gold);
@@ -206,10 +236,17 @@
   --color-belt-brown: var(--belt-brown);
   --color-belt-black: var(--belt-black);
 
-  /* Border radius (direct values — avoids self-referential var() loops) */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Border radius (direct values — aligned with Tailwind defaults) */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow-primary: 0 0 16px rgba(255, 82, 82, 0.25);
+  --shadow-glow-accent: 0 0 16px rgba(0, 217, 255, 0.2);
 
   /* Fonts */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -326,26 +363,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ===== Navigation active state (Story 4.4) ===== */
+.nav-item-active {
+  background: var(--overlay-hover);
+  color: var(--foreground);
+  border-left: 2px solid var(--bu-electric);
+}
+.nav-item-active-icon {
+  color: var(--bu-electric);
+}
+
 /* ===== Glassmorphic utilities ===== */
 .glass {
   background: rgba(26, 32, 40, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
 }
 
 .glass-card {
   background: rgba(26, 32, 40, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   transition: all var(--transition-normal) ease;
 }
 
 .glass-card:hover {
   background: rgba(36, 45, 56, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--overlay-hover);
 }
 
 /* ===== Gradient card overlays ===== */
@@ -403,8 +450,8 @@ body {
 
 /* ===== Dojo strike animation (DojoLM branding - bypass detection emphasis) ===== */
 @keyframes dojo-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 138, 80, 0.4); }
-  50% { box-shadow: 0 0 40px rgba(255, 138, 80, 0.7), 0 0 60px rgba(255, 160, 112, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 82, 82, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(255, 82, 82, 0.7), 0 0 60px rgba(255, 112, 112, 0.3); }
 }
 
 @keyframes dojo-pulse {

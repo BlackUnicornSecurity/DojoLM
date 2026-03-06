@@ -129,7 +129,7 @@ describe('EnsoGauge', () => {
     it('background track uses rgba white color', () => {
       const { container } = render(<EnsoGauge value={50} />)
       const bgPath = container.querySelectorAll('path')[0]
-      expect(bgPath.getAttribute('stroke')).toBe('rgba(255,255,255,0.06)')
+      expect(bgPath.getAttribute('stroke')).toBe('var(--border-subtle)')
     })
 
     it('both paths have round stroke-linecap', () => {
@@ -210,7 +210,7 @@ describe('EnsoGauge', () => {
       const { container } = render(<EnsoGauge value={50} />)
       const fillPath = container.querySelectorAll('path')[1]
       expect(fillPath).toHaveClass('motion-safe:transition-[stroke-dashoffset]')
-      expect(fillPath).toHaveClass('motion-safe:duration-700')
+      expect(fillPath).toHaveClass('motion-safe:duration-[var(--transition-emphasis)]')
       expect(fillPath).toHaveClass('motion-safe:ease-out')
     })
   })

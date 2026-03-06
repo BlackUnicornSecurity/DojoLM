@@ -20,8 +20,9 @@ import { ExecutiveSummary } from './ExecutiveSummary';
 import { VulnerabilityPanel } from './VulnerabilityPanel';
 import { ReportGenerator } from './ReportGenerator';
 import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, FileText, ShieldAlert, Download } from 'lucide-react';
+import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, FileText, ShieldAlert } from 'lucide-react';
 import { GuardBadge } from '@/components/guard';
+import { ModuleHeader } from '@/components/ui/ModuleHeader';
 
 type DashboardTab = 'models' | 'tests' | 'results' | 'summary' | 'vulnerabilities' | 'leaderboard' | 'compare' | 'custom';
 
@@ -52,58 +53,52 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
-            <Brain className="h-5 w-5 text-[var(--dojo-primary)]" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold">LLM Testing Dashboard</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Configure, test, and analyze LLM models against security test cases
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <ReportGenerator compact />
-          <GuardBadge />
-        </div>
-      </div>
+      <ModuleHeader
+        title="LLM Testing Dashboard"
+        subtitle="Configure, test, and analyze LLM models against security test cases"
+        icon={Brain}
+        actions={
+          <>
+            <ReportGenerator compact />
+            <GuardBadge />
+          </>
+        }
+      />
 
       {/* Nested tabs for dashboard sections */}
       <Tabs value={activeTab} onValueChange={(v) => {
         if ((validTabs as readonly string[]).includes(v)) setActiveTab(v as DashboardTab);
       }} className="space-y-4">
-        <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full h-auto gap-2 bg-muted/50 p-2">
-          <TabsTrigger value="models" className="gap-2">
+        <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1.5 overflow-x-auto scrollbar-hide">
+          <TabsTrigger value="models" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Brain className="h-4 w-4" />
             <span className="hidden sm:inline">Models</span>
           </TabsTrigger>
-          <TabsTrigger value="tests" className="gap-2">
+          <TabsTrigger value="tests" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Play className="h-4 w-4" />
             <span className="hidden sm:inline">Tests</span>
           </TabsTrigger>
-          <TabsTrigger value="results" className="gap-2">
+          <TabsTrigger value="results" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Results</span>
           </TabsTrigger>
-          <TabsTrigger value="summary" className="gap-2">
+          <TabsTrigger value="summary" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <FileText className="h-4 w-4" />
             <span className="hidden sm:inline">Summary</span>
           </TabsTrigger>
-          <TabsTrigger value="vulnerabilities" className="gap-2">
+          <TabsTrigger value="vulnerabilities" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <ShieldAlert className="h-4 w-4" />
             <span className="hidden sm:inline">Vulns</span>
           </TabsTrigger>
-          <TabsTrigger value="leaderboard" className="gap-2">
+          <TabsTrigger value="leaderboard" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Trophy className="h-4 w-4" />
             <span className="hidden sm:inline">Board</span>
           </TabsTrigger>
-          <TabsTrigger value="compare" className="gap-2">
+          <TabsTrigger value="compare" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <GitCompare className="h-4 w-4" />
             <span className="hidden sm:inline">Compare</span>
           </TabsTrigger>
-          <TabsTrigger value="custom" className="gap-2">
+          <TabsTrigger value="custom" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Wrench className="h-4 w-4" />
             <span className="hidden sm:inline">Custom</span>
           </TabsTrigger>

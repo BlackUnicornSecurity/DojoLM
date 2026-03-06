@@ -26,13 +26,13 @@ describe('GlowCard', () => {
     it('applies subtle glow box-shadow', () => {
       const { container } = render(<GlowCard glow="subtle">Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 rgba(255,255,255,0.04)')
+      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 var(--overlay-subtle)')
     })
 
     it('applies accent glow box-shadow', () => {
       const { container } = render(<GlowCard glow="accent">Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('0 -1px 16px -5px rgba(198,40,40,0.2)')
+      expect(card.style.boxShadow).toBe('var(--shadow-glow-primary)')
     })
 
     it('applies glow-card-input class for input variant', () => {
@@ -108,7 +108,7 @@ describe('GlowCard', () => {
       )
       const card = container.firstElementChild as HTMLElement
       expect(card.style.borderLeftColor).toBe('red')
-      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 rgba(255,255,255,0.04)')
+      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 var(--overlay-subtle)')
     })
 
     it('glow box-shadow takes precedence over user style.boxShadow', () => {
@@ -116,7 +116,7 @@ describe('GlowCard', () => {
         <GlowCard glow="subtle" style={{ boxShadow: 'none' }}>Content</GlowCard>
       )
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 rgba(255,255,255,0.04)')
+      expect(card.style.boxShadow).toBe('inset 0 1px 0 0 var(--overlay-subtle)')
     })
   })
 

@@ -40,43 +40,41 @@ export interface WidgetCatalogEntry {
   isDefault: boolean
 }
 
-/** Full widget catalog — all 29 available widgets */
+/** Full widget catalog — all 27 available widgets */
 export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   // Interactive / Action Widgets
   { id: 'quick-scan', label: 'Quick Scan Bar', description: 'Instant inline ALLOW/BLOCK verdict', category: 'interactive', defaultSize: 'full', isDefault: false },
   { id: 'quick-launch', label: 'Quick Launch Pad', description: '6 large action cards for quick navigation', category: 'interactive', defaultSize: 'full', isDefault: true },
   { id: 'guard-controls', label: 'Guard Quick Controls', description: 'Mode toggle, threshold, recent blocks', category: 'interactive', defaultSize: 'third', isDefault: true },
-  { id: 'fixture-roulette', label: 'Fixture Roulette', description: 'Random fixture picker with media preview', category: 'interactive', defaultSize: 'half', isDefault: true },
+  { id: 'fixture-roulette', label: 'Fixture Roulette', description: 'Random fixture picker with media preview', category: 'interactive', defaultSize: 'half', isDefault: false },
   { id: 'engine-grid', label: 'Engine Toggle Grid', description: '13 engine filter pills, toggle on/off', category: 'interactive', defaultSize: 'full', isDefault: true },
   { id: 'llm-quick-test', label: 'Quick LLM Test', description: 'Pick model + preset, one-click batch start', category: 'interactive', defaultSize: 'half', isDefault: false },
 
   // Dynamic / Live Widgets
-  { id: 'session-pulse', label: 'Session Pulse', description: 'Session stats: scans, threats, pass rate', category: 'dynamic', defaultSize: 'half', isDefault: true },
-  { id: 'guard-stats', label: 'Guard Stats Card', description: 'Blocked/allowed counts, block rate %', category: 'dynamic', defaultSize: 'third', isDefault: true },
-  { id: 'batch-progress', label: 'LLM Batch Progress', description: 'Active batch progress bars', category: 'dynamic', defaultSize: 'half', isDefault: true },
-  { id: 'activity-feed', label: 'Recent Activity Feed', description: 'Timestamped event list with unread dots', category: 'dynamic', defaultSize: 'half', isDefault: false },
+  { id: 'session-pulse', label: 'Session Pulse', description: 'Session stats: scans, threats, pass rate', category: 'dynamic', defaultSize: 'half', isDefault: false },
+  { id: 'guard-stats', label: 'Guard Stats Card', description: 'Blocked/allowed counts, block rate %', category: 'dynamic', defaultSize: 'third', isDefault: false },
+  { id: 'batch-progress', label: 'LLM Batch Progress', description: 'Active batch progress bars', category: 'dynamic', defaultSize: 'half', isDefault: false },
+  { id: 'activity-feed', label: 'Recent Activity Feed', description: 'Timestamped event list with unread dots', category: 'dynamic', defaultSize: 'half', isDefault: true },
   { id: 'guard-audit', label: 'Guard Audit Mini-Log', description: 'Last 5 guard events', category: 'dynamic', defaultSize: 'half', isDefault: false },
   { id: 'threat-trend', label: 'Threat Trend Chart', description: 'Line chart of scan results over session', category: 'dynamic', defaultSize: 'half', isDefault: false },
 
   // Visual / Gamification Widgets
-  { id: 'attack-of-day', label: 'Attack of the Day', description: 'Daily featured attack with Try It button', category: 'visual', defaultSize: 'half', isDefault: true },
+  { id: 'attack-of-day', label: 'Attack of the Day', description: 'Daily featured attack with Try It button', category: 'visual', defaultSize: 'half', isDefault: false },
   { id: 'threat-radar', label: 'Threat Radar', description: 'Animated SVG radar with 6 category sectors', category: 'visual', defaultSize: 'half', isDefault: true },
   { id: 'kill-count', label: 'Kill Count', description: 'Session scoreboard with trophy milestones', category: 'visual', defaultSize: 'half', isDefault: true },
   { id: 'health-gauge', label: 'System Health Gauge', description: 'Composite score gauge', category: 'visual', defaultSize: 'third', isDefault: true },
 
   // Strategic Module Widgets
-  { id: 'arena-leaderboard', label: 'Arena Mini-Leaderboard', description: 'Top 5 agents: rank, name, win rate', category: 'strategic', defaultSize: 'third', isDefault: true },
-  { id: 'sage-status', label: 'SAGE Evolution Status', description: 'Generation, best fitness, status badge', category: 'strategic', defaultSize: 'third', isDefault: true },
-  { id: 'mitsuke-alerts', label: 'Mitsuke Alert Feed', description: 'Latest 4 threat alerts with severity', category: 'strategic', defaultSize: 'third', isDefault: true },
+  { id: 'arena-leaderboard', label: 'Arena Mini-Leaderboard', description: 'Top 5 agents: rank, name, win rate', category: 'strategic', defaultSize: 'third', isDefault: false },
+  { id: 'sage-status', label: 'SAGE Evolution Status', description: 'Generation, best fitness, status badge', category: 'strategic', defaultSize: 'third', isDefault: false },
+  { id: 'mitsuke-alerts', label: 'Mitsuke Alert Feed', description: 'Latest 4 threat alerts with severity', category: 'strategic', defaultSize: 'third', isDefault: false },
 
   // Reference Widgets
-  { id: 'llm-models', label: 'LLM Models List', description: 'Configured models with provider and status', category: 'reference', defaultSize: 'half', isDefault: true },
-  { id: 'module-grid', label: 'Haiku Scanner Module Grid', description: '23 modules as colored dots/chips', category: 'reference', defaultSize: 'half', isDefault: false },
+  { id: 'llm-models', label: 'LLM Models List', description: 'Configured models with provider and status', category: 'reference', defaultSize: 'half', isDefault: false },
+  { id: 'module-grid', label: 'Haiku Scanner Module Grid', description: '23 modules as colored dots/chips', category: 'reference', defaultSize: 'half', isDefault: true },
   { id: 'compliance-bars', label: 'Compliance Mini-Bars', description: '6 horizontal bars for framework coverage', category: 'reference', defaultSize: 'half', isDefault: false },
   { id: 'coverage-heatmap', label: 'Coverage Heatmap', description: 'TPI categories as colored grid cells', category: 'reference', defaultSize: 'half', isDefault: false },
-  { id: 'owasp-summary', label: 'OWASP LLM Top 10', description: '10-row compact list with coverage %', category: 'reference', defaultSize: 'half', isDefault: false },
-  { id: 'pattern-count', label: 'Pattern Count', description: 'Large pattern and module count display', category: 'reference', defaultSize: 'third', isDefault: false },
-  { id: 'fixture-count', label: 'Fixture Count', description: 'Fixture count with mini breakdown', category: 'reference', defaultSize: 'third', isDefault: false },
+  { id: 'platform-stats', label: 'Platform Stats', description: 'Combined patterns, fixtures, and OWASP coverage', category: 'reference', defaultSize: 'half', isDefault: false },
 
   // Ecosystem Widget
   { id: 'ecosystem-pulse', label: 'Ecosystem Pulse', description: 'Cross-module data flow health and metrics', category: 'dynamic', defaultSize: 'half', isDefault: false },
@@ -88,7 +86,7 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
 
 const CATALOG_MAP = new Map(WIDGET_CATALOG.map(w => [w.id, w]))
 
-/** Default widgets shown on first load (15 widgets) */
+/** Default widgets shown on first load (8 widgets) */
 const DEFAULT_WIDGET_IDS = WIDGET_CATALOG.filter(w => w.isDefault).map(w => w.id)
 
 /** Default dashboard config */

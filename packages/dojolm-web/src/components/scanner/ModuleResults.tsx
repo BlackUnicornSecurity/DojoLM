@@ -170,7 +170,7 @@ const ModuleSection = memo(function ModuleSection({ group }: ModuleSectionProps)
           'flex items-center justify-between w-full px-4 py-3 text-left',
           'bg-[var(--bg-quaternary)] hover:bg-[var(--bg-quaternary)]/80',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset',
-          'motion-safe:transition-colors motion-safe:duration-150',
+          'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
           'motion-reduce:transition-none'
         )}
         onClick={handleToggle}

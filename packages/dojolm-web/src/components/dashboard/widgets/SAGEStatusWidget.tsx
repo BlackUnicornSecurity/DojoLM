@@ -62,7 +62,7 @@ export function SAGEStatusWidget() {
           <span className={cn(
             'ml-auto px-1.5 py-0.5 text-xs font-medium rounded',
             isRunning
-              ? 'bg-green-500/20 text-green-400'
+              ? 'bg-[var(--status-allow-bg)] text-[var(--status-allow)]'
               : 'bg-muted text-muted-foreground'
           )}>
             {isRunning ? 'RUNNING' : 'PAUSED'}

@@ -163,13 +163,13 @@ function tokenize(code: string, language?: string): Token[] {
   return tokens
 }
 
-/** CSS color classes per token type */
+/** CSS color classes per token type — uses design system tokens from globals.css */
 const TOKEN_COLORS: Record<Token['type'], string> = {
-  keyword: 'text-[#c792ea]',    // purple — keywords
-  string: 'text-[#c3e88d]',     // green — strings
-  number: 'text-[#f78c6c]',     // orange — numbers
-  comment: 'text-[#546e7a]',    // muted — comments
-  plain: 'text-[#d6deeb]',      // light — plain text
+  keyword: 'text-[var(--syntax-keyword)]',
+  string: 'text-[var(--syntax-string)]',
+  number: 'text-[var(--syntax-number)]',
+  comment: 'text-[var(--syntax-comment)]',
+  plain: 'text-[var(--syntax-plain)]',
 }
 
 /**
@@ -226,7 +226,7 @@ export function SafeCodeBlock({ code, language, className, maxLines }: SafeCodeB
       )}
     >
       {/* Header bar with language label and copy button */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[rgba(255,255,255,0.03)] border-b border-[var(--border)]">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-[var(--overlay-subtle)] border-b border-[var(--border)]">
         <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium select-none">
           {language ?? 'text'}
         </span>
@@ -236,8 +236,8 @@ export function SafeCodeBlock({ code, language, className, maxLines }: SafeCodeB
             'flex items-center gap-1 px-2 py-1 rounded text-xs',
             'min-w-[44px] min-h-[44px] justify-center',
             'text-muted-foreground hover:text-[var(--foreground)]',
-            'hover:bg-[rgba(255,255,255,0.06)]',
-            'motion-safe:transition-colors motion-safe:duration-150',
+            'hover:bg-[var(--border-subtle)]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
             'focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--bu-electric)]',
           )}
           aria-label={copied ? 'Copied to clipboard' : 'Copy code to clipboard'}

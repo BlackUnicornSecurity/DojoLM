@@ -357,7 +357,7 @@ const SearchResultRow = memo(function SearchResultRow({
       tabIndex={0}
       className={cn(
         'flex items-center gap-2 px-3 py-2 mx-1 rounded-lg cursor-pointer',
-        'motion-safe:transition-colors motion-safe:duration-150',
+        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
         'hover:bg-[var(--bg-secondary)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1'
       )}

@@ -38,7 +38,7 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
     it('has hover border color change', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.className).toContain('motion-safe:hover:border-[rgba(255,255,255,0.08)]')
+      expect(card.className).toContain('motion-safe:hover:border-[var(--overlay-hover)]')
     })
   })
 
@@ -80,7 +80,7 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
     it('GlowCard accent glow applied via inline style, not Tailwind', () => {
       const { container } = render(<GlowCard glow="accent">Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('0 -1px 16px -5px rgba(198,40,40,0.2)')
+      expect(card.style.boxShadow).toBe('var(--shadow-glow-primary)')
     })
 
     it('GlowCard none glow has no inline box-shadow', () => {

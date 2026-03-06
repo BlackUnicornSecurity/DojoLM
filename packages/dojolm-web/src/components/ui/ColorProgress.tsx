@@ -27,7 +27,7 @@ export function ColorProgress({ value, showLabel = false, size = 'md', className
     <div className={cn("flex items-center gap-2", className)} role="progressbar" aria-valuenow={clampedValue} aria-valuemin={0} aria-valuemax={100}>
       <div className={cn("w-full overflow-hidden rounded-full bg-[var(--bg-quaternary)]", heights[size])}>
         <div
-          className="h-full rounded-full motion-safe:transition-all motion-safe:duration-500 ease-out"
+          className="h-full rounded-full motion-safe:transition-all motion-safe:duration-[var(--transition-emphasis)] ease-out"
           style={{
             width: `${clampedValue}%`,
             backgroundColor: getProgressColor(clampedValue),

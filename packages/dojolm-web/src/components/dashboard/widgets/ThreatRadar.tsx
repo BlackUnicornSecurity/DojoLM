@@ -106,7 +106,7 @@ export function ThreatRadar() {
               cy={CENTER}
               r={RADIUS * scale}
               fill="none"
-              stroke="rgba(255,255,255,0.08)"
+              stroke="var(--overlay-hover)"
               strokeWidth="0.5"
             />
           ))}
@@ -121,7 +121,7 @@ export function ThreatRadar() {
                 y1={CENTER}
                 x2={p.x}
                 y2={p.y}
-                stroke="rgba(255,255,255,0.08)"
+                stroke="var(--overlay-hover)"
                 strokeWidth="0.5"
               />
             )
@@ -232,7 +232,7 @@ export function ThreatRadar() {
           />
 
           {/* Center count */}
-          <circle cx={CENTER} cy={CENTER} r="18" fill="var(--bg-secondary)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+          <circle cx={CENTER} cy={CENTER} r="18" fill="var(--bg-secondary)" stroke="var(--overlay-active)" strokeWidth="1" />
           <text
             x={CENTER}
             y={CENTER - 2}

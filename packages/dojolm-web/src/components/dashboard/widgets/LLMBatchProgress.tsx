@@ -12,6 +12,7 @@ import { WidgetCard } from '../WidgetCard'
 import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
 import { Brain, Loader2 } from 'lucide-react'
+import { WidgetEmptyState } from '../WidgetEmptyState'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface BatchInfo {
@@ -70,16 +71,11 @@ export function LLMBatchProgress() {
         )}
 
         {!loading && shown.length === 0 && (
-          <div className="text-center py-4 space-y-2">
-            <Brain className="w-8 h-8 mx-auto text-muted-foreground/50" aria-hidden="true" />
-            <p className="text-xs text-muted-foreground">No active tests</p>
-            <button
-              onClick={() => setActiveTab('llm')}
-              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
-            >
-              Go to LLM Dashboard
-            </button>
-          </div>
+          <WidgetEmptyState
+            icon={Brain}
+            title="No active tests"
+            action={{ label: 'Go to LLM Dashboard', onClick: () => setActiveTab('llm') }}
+          />
         )}
 
         {shown.map(batch => {
@@ -92,7 +88,7 @@ export function LLMBatchProgress() {
                 <div className="flex items-center gap-1.5">
                   <span className={cn(
                     'w-2 h-2 rounded-full',
-                    batch.status === 'running' ? 'bg-blue-500 motion-safe:animate-pulse' : 'bg-green-500'
+                    batch.status === 'running' ? 'bg-[var(--status-running)] motion-safe:animate-pulse' : 'bg-[var(--status-online)]'
                   )} />
                   <span className="text-xs text-muted-foreground tabular-nums">
                     {batch.completedTests}/{batch.totalTests}

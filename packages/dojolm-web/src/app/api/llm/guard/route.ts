@@ -48,6 +48,14 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // BUG-035: Guard against null/non-object body (null is valid JSON)
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: 'Request body must be a JSON object' },
+        { status: 400 }
+      );
+    }
+
     // Validate config structure
     const config = body as Partial<GuardConfig>;
 

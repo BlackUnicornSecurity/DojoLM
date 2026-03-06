@@ -55,8 +55,8 @@ export function QuickScanWidget() {
           <div className={cn(
             'flex items-center justify-between px-2 py-1 rounded text-xs font-medium',
             scanResult.verdict === 'BLOCK'
-              ? 'bg-red-500/10 text-red-400'
-              : 'bg-green-500/10 text-green-400'
+              ? 'bg-[var(--status-block-bg)] text-[var(--status-block)]'
+              : 'bg-[var(--status-allow-bg)] text-[var(--status-allow)]'
           )}>
             <span>{scanResult.verdict}</span>
             {scanResult.findings.length > 0 && (

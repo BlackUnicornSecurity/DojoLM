@@ -123,7 +123,7 @@ export function SubmissionWizard({ onSave, onClose }: SubmissionWizardProps) {
           'relative w-full max-w-2xl max-h-[90vh] mx-4 overflow-hidden',
           'bg-[var(--bg-secondary)] border border-[var(--border)] rounded-xl shadow-lg',
           'flex flex-col',
-          'motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200',
+          'motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-[var(--transition-normal)]',
         )}
         onClick={(e) => e.stopPropagation()}
         role="dialog"

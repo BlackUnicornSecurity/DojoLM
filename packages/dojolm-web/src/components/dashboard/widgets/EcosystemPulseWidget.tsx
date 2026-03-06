@@ -186,7 +186,7 @@ export function EcosystemPulseWidget() {
           </button>
 
           {expanded && (
-            <div className="space-y-1.5 text-xs motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-150">
+            <div className="space-y-1.5 text-xs motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-[var(--transition-fast)]">
               {Object.entries(stats.byType).map(([type, count]) => {
                 if (count === 0) return null
                 const label = type.replace(/_/g, ' ')
@@ -196,7 +196,7 @@ export function EcosystemPulseWidget() {
                     <span className="w-24 text-muted-foreground capitalize">{label}</span>
                     <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[var(--dojo-primary)] rounded-full motion-safe:transition-[width] motion-safe:duration-300"
+                        className="h-full bg-[var(--dojo-primary)] rounded-full motion-safe:transition-[width] motion-safe:duration-[var(--transition-slow)]"
                         style={{ width: `${pct}%` }}
                       />
                     </div>

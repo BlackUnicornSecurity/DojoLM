@@ -198,7 +198,7 @@ const CategoryNode = memo(function CategoryNode({
       <div
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg',
-          'motion-safe:transition-colors motion-safe:duration-150',
+          'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
           isSelected
             ? 'bg-[var(--bg-quaternary)] text-foreground'
             : 'text-muted-foreground hover:bg-[var(--bg-secondary)] hover:text-foreground'
@@ -221,7 +221,7 @@ const CategoryNode = memo(function CategoryNode({
         >
           <ChevronRight
             className={cn(
-              'h-3.5 w-3.5 motion-safe:transition-transform motion-safe:duration-150',
+              'h-3.5 w-3.5 motion-safe:transition-transform motion-safe:duration-[var(--transition-fast)]',
               isExpanded && 'rotate-90'
             )}
             aria-hidden="true"

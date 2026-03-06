@@ -13,12 +13,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
-import { NAV_ITEMS } from '@/lib/constants'
+import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import type { NavId } from '@/lib/constants'
 import { MoreHorizontal, X } from 'lucide-react'
 
-/** Primary nav items shown in bottom bar (6 items per UX requirement) */
-const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'armory', 'llm', 'guard', 'adversarial'])
+/** Primary nav items shown in bottom bar (4 items + More per Story 4.3) */
+const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'llm', 'guard'])
 
 const primaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
 const moreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
@@ -38,7 +38,7 @@ export function MobileNav() {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 h-16 bg-[var(--bg-secondary)] border-t border-[var(--border)] flex items-center md:hidden z-[var(--z-mobile-nav)] pb-safe"
+        className="fixed bottom-0 left-0 right-0 h-16 bg-[var(--bg-secondary)] border-t border-[var(--border)] flex items-center md:hidden z-[var(--z-mobile-nav)] pb-safe overflow-x-hidden"
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-around w-full px-1">
@@ -52,10 +52,10 @@ export function MobileNav() {
                 aria-label={item.label}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
-                  'flex flex-col items-center justify-center min-w-[48px] min-h-[44px] px-1 h-full',
+                  'flex flex-col items-center justify-center min-w-[48px] min-h-[48px] px-1 h-full',
                   'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                   'active:scale-95',
-                  isActive ? 'text-[var(--bu-electric)]' : 'text-[var(--text-tertiary)]'
+                  isActive ? 'nav-item-active-icon' : 'text-[var(--text-tertiary)]'
                 )}
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
@@ -70,10 +70,10 @@ export function MobileNav() {
             aria-label={moreOpen ? 'Close more menu' : 'More navigation options'}
             aria-expanded={moreOpen}
             className={cn(
-              'flex flex-col items-center justify-center min-w-[48px] min-h-[44px] px-1 h-full',
+              'flex flex-col items-center justify-center min-w-[48px] min-h-[48px] px-1 h-full',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               'active:scale-95',
-              (moreOpen || isMoreActive) ? 'text-[var(--bu-electric)]' : 'text-[var(--text-tertiary)]'
+              (moreOpen || isMoreActive) ? 'nav-item-active-icon' : 'text-[var(--text-tertiary)]'
             )}
           >
             <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
@@ -108,10 +108,29 @@ function MoreDrawer({
 }) {
   const drawerRef = useRef<HTMLDivElement>(null)
 
-  // Close on Escape
+  // Close on Escape + focus trap for keyboard accessibility
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      // Focus trap — cycle between first and last focusable elements
+      if (e.key === 'Tab' && drawerRef.current) {
+        const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+        const first = focusable[0]!
+        const last = focusable[focusable.length - 1]!
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
@@ -150,15 +169,54 @@ function MoreDrawer({
           <span className="text-sm font-medium">More</span>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="p-2 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] min-h-[48px] min-w-[48px] flex items-center justify-center"
             aria-label="Close more menu"
           >
             <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="py-2 px-2 space-y-1">
-          {items.map((item) => {
+        <div className="py-2 px-2">
+          {NAV_GROUPS.map((group, groupIdx) => {
+            const groupItems = items.filter(item => 'group' in item && item.group === group.id)
+            if (groupItems.length === 0) return null
+            return (
+              <div key={group.id}>
+                {groupIdx > 0 && <div className="mx-3 my-1 border-t border-[var(--border)]" />}
+                <span className="block px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold">
+                  {group.label}
+                </span>
+                {groupItems.map((item) => {
+                  const Icon = item.icon
+                  const isActive = activeTab === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => onSelect(item.id)}
+                      className={cn(
+                        'flex items-center gap-3 w-full px-3 py-3 rounded-lg min-h-[48px]',
+                        'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                        'active:scale-[0.98]',
+                        isActive
+                          ? 'bg-[var(--bu-electric-subtle)] text-[var(--bu-electric)]'
+                          : 'text-muted-foreground hover:bg-[var(--bg-quaternary)]'
+                      )}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                      <div className="text-left">
+                        <div className="text-sm font-medium">{item.label}</div>
+                        <div className="text-xs text-muted-foreground">{item.description}</div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )
+          })}
+          {/* Ungrouped more items (e.g., admin) */}
+          {items.filter(item => !('group' in item)).map((item) => {
             const Icon = item.icon
             const isActive = activeTab === item.id
             return (
@@ -166,7 +224,7 @@ function MoreDrawer({
                 key={item.id}
                 onClick={() => onSelect(item.id)}
                 className={cn(
-                  'flex items-center gap-3 w-full px-3 py-3 rounded-lg min-h-[44px]',
+                  'flex items-center gap-3 w-full px-3 py-3 rounded-lg min-h-[48px]',
                   'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
                   'active:scale-[0.98]',

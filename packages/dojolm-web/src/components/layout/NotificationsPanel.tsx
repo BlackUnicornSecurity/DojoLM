@@ -62,12 +62,12 @@ export function NotificationsPanel() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors"
+        className="relative p-3 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span aria-hidden="true" className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-bold">
+          <span aria-hidden="true" className="absolute top-0 right-0 w-4 h-4 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-bold">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -81,7 +81,7 @@ export function NotificationsPanel() {
               <button
                 ref={firstFocusRef}
                 onClick={markAllRead}
-                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded"
+                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Mark all as read"
                 title="Mark all as read"
               >
@@ -89,7 +89,7 @@ export function NotificationsPanel() {
               </button>
               <button
                 onClick={clearAll}
-                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded"
+                className="text-xs text-muted-foreground hover:text-[var(--foreground)] p-1 rounded min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Clear all"
                 title="Clear all"
               >
