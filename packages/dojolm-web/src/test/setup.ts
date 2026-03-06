@@ -37,6 +37,19 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
+// Mock localStorage (jsdom's built-in localStorage lacks .clear() in some versions)
+const localStorageStore: Record<string, string> = {};
+const localStorageMock: Storage = {
+  getItem: (key: string) => localStorageStore[key] ?? null,
+  setItem: (key: string, value: string) => { localStorageStore[key] = String(value); },
+  removeItem: (key: string) => { delete localStorageStore[key]; },
+  clear: () => { Object.keys(localStorageStore).forEach(k => delete localStorageStore[k]); },
+  get length() { return Object.keys(localStorageStore).length; },
+  key: (i: number) => Object.keys(localStorageStore)[i] ?? null,
+};
+Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
+
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
   writable: true,
