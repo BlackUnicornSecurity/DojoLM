@@ -19,6 +19,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { LLMProvider } from '@/lib/llm-types';
 import { PROVIDER_BASE_URLS } from '@/lib/llm-constants';
 import { RefreshCw, Server, ServerOff, Check, Loader2 } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 export interface LocalModelInfo {
   id: string;
@@ -84,7 +85,7 @@ export function LocalModelSelector({
         baseUrl,
       });
 
-      const response = await fetch(`/api/llm/local-models?${params.toString()}`);
+      const response = await fetchWithAuth(`/api/llm/local-models?${params.toString()}`);
 
       if (!response.ok) {
         const data = await response.json();
@@ -294,7 +295,7 @@ function ModelItem({ model, isSelected, onClick }: ModelItemProps) {
         <div className="text-xs text-muted-foreground flex flex-col gap-1 items-end">
           {model.sizeFormatted && <span>{model.sizeFormatted}</span>}
           {model.quantization && (
-            <Badge variant="secondary" className="text-[10px]">
+            <Badge variant="secondary" className="text-xs">
               {model.quantization}
             </Badge>
           )}

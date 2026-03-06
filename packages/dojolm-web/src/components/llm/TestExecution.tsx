@@ -19,7 +19,18 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff } from 'lucide-react';
+import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff, Timer } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
+
+/** Estimate execution time (Story 6.1) — inlined to avoid Node.js import chain */
+function estimateExecutionTime(modelCount: number, testCount: number) {
+  const totalExecutions = modelCount * testCount;
+  const avgMs = 3000; // Default ~3s per test
+  const concurrency = 5;
+  const totalMs = (totalExecutions / concurrency) * avgMs;
+  const estimateMinutes = Math.max(1, Math.ceil(totalMs / 60000));
+  return { estimateMinutes, totalExecutions };
+}
 
 interface PerModelProgress {
   completed: number;
@@ -67,7 +78,7 @@ export function TestExecution() {
     const loadTestCases = async () => {
       setIsLoadingTests(true);
       try {
-        const response = await fetch('/api/llm/test-cases');
+        const response = await fetchWithAuth('/api/llm/test-cases');
         if (response.ok) {
           const data = await response.json();
           if (Array.isArray(data)) {
@@ -226,11 +237,11 @@ export function TestExecution() {
   // Seed test cases if none exist
   const handleSeedTestCases = async () => {
     try {
-      const response = await fetch('/api/llm/seed', { method: 'POST' });
+      const response = await fetchWithAuth('/api/llm/seed', { method: 'POST' });
       if (response.ok) {
         const result = await response.json();
         if (result.seeded > 0) {
-          const testResponse = await fetch('/api/llm/test-cases');
+          const testResponse = await fetchWithAuth('/api/llm/test-cases');
           if (testResponse.ok) {
             setTestCases(await testResponse.json());
           }
@@ -433,7 +444,7 @@ export function TestExecution() {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-3">
         {/* Model Selection */}
         <Card>
           <CardHeader>
@@ -548,6 +559,19 @@ export function TestExecution() {
         </Card>
       </div>
 
+      {/* Estimated execution time (Story 6.1) */}
+      {enabledModels.length > 0 && selectedTests.size > 0 && (() => {
+        const estimate = estimateExecutionTime(enabledModels.length, selectedTests.size);
+        return (
+          <div className="flex items-center gap-2 p-3 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-lg text-sm">
+            <Timer className="h-4 w-4 shrink-0 text-[var(--bu-electric)]" aria-hidden="true" />
+            <span className="text-muted-foreground">
+              Estimated: ~{estimate.estimateMinutes} min ({estimate.totalExecutions} executions)
+            </span>
+          </div>
+        );
+      })()}
+
       {/* Run button */}
       <div className="flex justify-center">
         <Button
@@ -577,7 +601,7 @@ export function TestExecution() {
             <CardTitle className="text-lg">Batch Complete</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-3 gap-3 text-center">
               <div>
                 <p className="text-2xl font-bold">{currentBatch.completedTests}</p>
                 <p className="text-sm text-muted-foreground">Tests Run</p>

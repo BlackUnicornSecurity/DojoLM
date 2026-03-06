@@ -15,6 +15,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Key, Eye, EyeOff, Trash2, CheckCircle, XCircle, Loader2, Plus, RefreshCw } from 'lucide-react'
 import { LLM_PROVIDERS, type LLMProvider } from '@/lib/llm-types'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface ProviderRow {
   id: string
@@ -52,7 +53,7 @@ export function ApiKeyManager() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/llm/models')
+      const res = await fetchWithAuth('/api/llm/models')
       if (!res.ok) throw new Error('Failed to load models')
       const data = await res.json()
       const models = Array.isArray(data) ? data : (data.models ?? [])
@@ -81,7 +82,7 @@ export function ApiKeyManager() {
   const handleTestConnection = async (id: string) => {
     setConnectionStatus(prev => ({ ...prev, [id]: 'testing' }))
     try {
-      const res = await fetch(`/api/llm/models/${id}/test`, { method: 'POST' })
+      const res = await fetchWithAuth(`/api/llm/models/${id}/test`, { method: 'POST' })
       if (res.ok) {
         setConnectionStatus(prev => ({ ...prev, [id]: 'success' }))
       } else {
@@ -95,7 +96,7 @@ export function ApiKeyManager() {
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Delete "${name}"? This action cannot be undone.`)) return
     try {
-      const res = await fetch(`/api/llm/models?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+      const res = await fetchWithAuth(`/api/llm/models?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
       if (res.ok) {
         setProviders(prev => prev.filter(p => p.id !== id))
       } else {
@@ -108,7 +109,7 @@ export function ApiKeyManager() {
 
   if (loading) {
     return (
-      <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-8 flex items-center justify-center gap-3">
+      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 flex items-center justify-center gap-3">
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" aria-hidden="true" />
         <span className="text-sm text-muted-foreground">Loading API keys...</span>
       </div>
@@ -131,7 +132,7 @@ export function ApiKeyManager() {
           <button
             type="button"
             onClick={fetchProviders}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-md text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
             aria-label="Refresh providers"
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" />
@@ -139,7 +140,7 @@ export function ApiKeyManager() {
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
             Add Key
@@ -165,7 +166,7 @@ export function ApiKeyManager() {
       )}
 
       {providers.length === 0 ? (
-        <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-8 text-center">
+        <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 text-center">
           <Key className="w-8 h-8 mx-auto text-muted-foreground mb-3" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">No API keys configured.</p>
           <p className="text-xs text-muted-foreground mt-1">Add a provider to get started with LLM testing.</p>
@@ -199,7 +200,7 @@ function ProviderCard({
   onDelete: () => void
 }) {
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-4 flex items-center gap-4">
+    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 flex items-center gap-4">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-medium text-foreground truncate">{provider.name}</span>
@@ -242,14 +243,14 @@ function ProviderCard({
           onClick={onTest}
           disabled={connectionStatus === 'testing'}
           aria-label={`Test connection for ${provider.name}`}
-          className="px-3 py-1.5 text-xs rounded-md border border-[rgba(255,255,255,0.1)] text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
+          className="px-3 py-1.5 text-xs rounded-lg border border-[rgba(255,255,255,0.1)] text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
         >
           Test
         </button>
         <button
           type="button"
           onClick={onDelete}
-          className="p-1.5 rounded-md text-muted-foreground hover:text-red-400 hover:bg-red-500/10 motion-safe:transition-colors"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 motion-safe:transition-colors"
           aria-label={`Delete ${provider.name}`}
         >
           <Trash2 className="w-4 h-4" aria-hidden="true" />
@@ -285,7 +286,7 @@ function AddKeyForm({
     setSaving(true)
     setError(null)
     try {
-      const res = await fetch('/api/llm/models', {
+      const res = await fetchWithAuth('/api/llm/models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -312,7 +313,7 @@ function AddKeyForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-[var(--dojo-primary)]/30 bg-card p-4 space-y-4"
+      className="rounded-lg border border-[var(--dojo-primary)]/30 bg-card p-4 space-y-4"
     >
       <h4 className="text-sm font-semibold text-foreground">Add New Provider</h4>
 
@@ -329,7 +330,7 @@ function AddKeyForm({
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. GPT-4o Production"
-            className="w-full px-3 py-2 text-sm rounded-md bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
         <div>
@@ -338,7 +339,7 @@ function AddKeyForm({
             id="admin-key-provider"
             value={provider}
             onChange={e => setProvider(e.target.value as LLMProvider)}
-            className="w-full px-3 py-2 text-sm rounded-md bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           >
             {LLM_PROVIDERS.map(p => (
               <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>
@@ -353,7 +354,7 @@ function AddKeyForm({
             value={model}
             onChange={e => setModel(e.target.value)}
             placeholder="e.g. gpt-4o"
-            className="w-full px-3 py-2 text-sm rounded-md bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
         <div>
@@ -366,7 +367,7 @@ function AddKeyForm({
               onChange={e => setApiKey(e.target.value)}
               placeholder="sk-..."
               autoComplete="off"
-              className="w-full px-3 py-2 pr-10 text-sm rounded-md bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 pr-10 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
             />
             <button
               type="button"
@@ -386,7 +387,7 @@ function AddKeyForm({
             value={baseUrl}
             onChange={e => setBaseUrl(e.target.value)}
             placeholder="https://api.openai.com/v1"
-            className="w-full px-3 py-2 text-sm rounded-md bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[rgba(255,255,255,0.1)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
           />
         </div>
       </div>
@@ -395,14 +396,14 @@ function AddKeyForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm rounded-md text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
+          className="px-4 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors disabled:opacity-50"
         >
           {saving && <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />}
           Save

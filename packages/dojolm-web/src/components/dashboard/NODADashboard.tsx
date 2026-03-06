@@ -62,6 +62,8 @@ const WIDGET_COMPONENTS: Record<string, () => Promise<{ default: ComponentType }
   'pattern-count': () => import('./widgets/PatternCountWidget').then(m => ({ default: m.PatternCountWidget })),
   'fixture-count': () => import('./widgets/FixtureCountWidget').then(m => ({ default: m.FixtureCountWidget })),
   'ecosystem-pulse': () => import('./widgets/EcosystemPulseWidget').then(m => ({ default: m.EcosystemPulseWidget })),
+  'ronin-hub': () => import('./widgets/RoninHubWidget').then(m => ({ default: m.RoninHubWidget })),
+  'llm-jutsu': () => import('./widgets/LLMJutsuWidget').then(m => ({ default: m.LLMJutsuWidget })),
 }
 
 /** Lazy components created once at module load — immutable, HMR-safe */
@@ -94,7 +96,7 @@ const SECTION_DEFS: { label: string; ids: string[] }[] = [
   { label: 'SYSTEM STATUS', ids: ['health-gauge', 'guard-controls', 'guard-stats', 'session-pulse'] },
   { label: 'ACTIVITY', ids: ['kill-count', 'attack-of-day', 'batch-progress', 'activity-feed', 'guard-audit', 'threat-trend', 'fixture-roulette'] },
   { label: 'INTELLIGENCE', ids: ['threat-radar', 'mitsuke-alerts', 'ecosystem-pulse'] },
-  { label: 'MODELS & ARENA', ids: ['engine-grid', 'llm-models', 'llm-quick-test', 'arena-leaderboard', 'sage-status', 'compliance-bars', 'coverage-heatmap', 'owasp-summary', 'pattern-count', 'fixture-count', 'module-grid'] },
+  { label: 'MODELS & ARENA', ids: ['engine-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'compliance-bars', 'coverage-heatmap', 'owasp-summary', 'pattern-count', 'fixture-count', 'module-grid'] },
 ]
 
 /** Set of all widget IDs assigned to a section */
@@ -181,7 +183,7 @@ function DashboardContent() {
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               {section.label}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-children">
               {sectionSlots.map(slot => (
                 <WidgetShell key={slot.id} slot={slot} />
               ))}
@@ -193,7 +195,7 @@ function DashboardContent() {
       {/* Unsectioned widgets (fallback) */}
       {unsectionedWidgets.length > 0 && (
         <div className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {unsectionedWidgets.map(slot => (
               <WidgetShell key={slot.id} slot={slot} />
             ))}

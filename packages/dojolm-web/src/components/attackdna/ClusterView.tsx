@@ -7,8 +7,10 @@
  * - Cluster interface (line 25)
  * - MOCK_CLUSTERS data (line 33)
  * - severityDot map (line 155)
- * - ClusterCard component (line 163)
- * - ClusterView component (line 269)
+ * - getClusterSizeLabel helper (line 197)
+ * - ClusterLegend component (line 204)
+ * - ClusterCard component (line 250)
+ * - ClusterView component (line 363)
  */
 
 'use client'
@@ -17,7 +19,7 @@ import { useState, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Layers, ChevronDown, ChevronRight, Users, BarChart3, Tag } from 'lucide-react'
+import { Layers, ChevronDown, ChevronRight, Users, BarChart3, Tag, CircleDot } from 'lucide-react'
 
 interface ClusterMember {
   id: string
@@ -200,6 +202,65 @@ function getSimilarityColor(similarity: number): string {
   return 'text-orange-400'
 }
 
+function getClusterSizeLabel(nodeCount: number): { label: string; color: string } {
+  if (nodeCount >= 15) return { label: 'Large', color: 'bg-red-500/15 text-red-400 border-red-500/30' }
+  if (nodeCount >= 10) return { label: 'Medium', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' }
+  if (nodeCount >= 5) return { label: 'Small', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' }
+  return { label: 'Micro', color: 'bg-gray-500/15 text-gray-400 border-gray-500/30' }
+}
+
+// --- Legend ---
+
+function ClusterLegend() {
+  return (
+    <Card>
+      <CardContent className="p-3">
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1.5">Severity</p>
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Severity color legend">
+              {Object.entries(severityDot).map(([level, cls]) => (
+                <div key={level} className="flex items-center gap-1.5" role="listitem">
+                  <span className={cn('w-2 h-2 rounded-full', cls)} aria-hidden="true" />
+                  <span className="text-xs text-[var(--foreground)] capitalize">{level}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1.5">Cluster Size</p>
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Cluster size legend">
+              {[
+                { label: 'Large (15+)', color: 'bg-red-500' },
+                { label: 'Medium (10-14)', color: 'bg-yellow-500' },
+                { label: 'Small (5-9)', color: 'bg-blue-500' },
+                { label: 'Micro (<5)', color: 'bg-gray-500' },
+              ].map(({ label, color }) => (
+                <div key={label} className="flex items-center gap-1.5" role="listitem">
+                  <span className={cn('w-2 h-2 rounded-full', color)} aria-hidden="true" />
+                  <span className="text-xs text-[var(--foreground)]">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1.5">Category</p>
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Category color legend">
+              {Object.entries(categoryColor).map(([cat]) => (
+                <div key={cat} className="flex items-center gap-1.5" role="listitem">
+                  <Badge variant="outline" className={cn('text-xs px-1.5 py-0', categoryColor[cat])}>
+                    {cat}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 // --- ClusterCard ---
 
 interface ClusterCardProps {
@@ -211,6 +272,7 @@ interface ClusterCardProps {
 function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
   const catClass = categoryColor[cluster.primaryCategory.toLowerCase()] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground border-[var(--border)]'
   const simColor = getSimilarityColor(cluster.avgSimilarity)
+  const sizeInfo = getClusterSizeLabel(cluster.nodeCount)
 
   return (
     <Card
@@ -247,7 +309,7 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                 {cluster.label}
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-muted-foreground shrink-0">
+            <span className="text-xs font-mono text-muted-foreground shrink-0">
               {cluster.id}
             </span>
           </div>
@@ -265,9 +327,13 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                 {(cluster.avgSimilarity * 100).toFixed(0)}% avg similarity
               </span>
             </div>
-            <Badge variant="outline" className={cn('text-[10px] px-1.5 py-0', catClass)}>
+            <Badge variant="outline" className={cn('text-xs px-1.5 py-0', catClass)}>
               <Tag className="h-2.5 w-2.5 mr-1" aria-hidden="true" />
               {cluster.primaryCategory}
+            </Badge>
+            <Badge variant="outline" className={cn('text-xs px-1.5 py-0', sizeInfo.color)}>
+              <CircleDot className="h-2.5 w-2.5 mr-1" aria-hidden="true" />
+              {sizeInfo.label}
             </Badge>
           </div>
         </div>
@@ -292,7 +358,7 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                 return (
                   <li
                     key={member.id}
-                    className="rounded-md border border-[var(--border)] p-2.5 bg-[var(--bg-secondary)]"
+                    className="rounded-lg border border-[var(--border)] p-2.5 bg-[var(--bg-secondary)]"
                   >
                     <div className="flex items-center gap-2 mb-1.5">
                       <span
@@ -301,14 +367,14 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
                       />
                       <Badge
                         variant="outline"
-                        className={cn('text-[10px] px-1.5 py-0', memberCatClass)}
+                        className={cn('text-xs px-1.5 py-0', memberCatClass)}
                       >
                         {member.category}
                       </Badge>
-                      <span className="text-[10px] text-muted-foreground capitalize">
+                      <span className="text-xs text-muted-foreground capitalize">
                         {member.severity}
                       </span>
-                      <span className="text-[10px] text-muted-foreground font-mono ml-auto">
+                      <span className="text-xs text-muted-foreground font-mono ml-auto">
                         {member.id}
                       </span>
                     </div>
@@ -349,6 +415,9 @@ export function ClusterView({ className }: ClusterViewProps) {
 
   return (
     <div className={cn('space-y-4', className)}>
+      {/* Legend */}
+      <ClusterLegend />
+
       {/* Summary row */}
       <div className="flex items-center gap-3 flex-wrap">
         <Layers className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />

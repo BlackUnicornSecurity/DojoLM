@@ -15,6 +15,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { FileText, Filter, RefreshCw, Clock, Search } from 'lucide-react'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Types ---
 
@@ -93,7 +95,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
     setLoading(true)
     setError(null)
 
-    fetch('/api/audit/log')
+    fetchWithAuth('/api/audit/log')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch audit log')
         return res.json()
@@ -248,7 +250,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value as ActionType)}
             className={cn(
-              'rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
+              'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
             )}
           >
@@ -275,7 +277,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
             className={cn(
-              'rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
+              'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
             )}
           />
@@ -296,7 +298,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
             className={cn(
-              'rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
+              'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
             )}
           />
@@ -318,7 +320,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search audit entries..."
             className={cn(
-              'rounded-md border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
+              'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
               'placeholder:text-muted-foreground',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
             )}
@@ -329,7 +331,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         <button
           onClick={fetchAuditLog}
           className={cn(
-            'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium',
+            'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium',
             'text-muted-foreground hover:text-[var(--foreground)]',
             'border border-[var(--border)] hover:bg-[var(--bg-quaternary)]',
             'transition-colors',
@@ -352,19 +354,17 @@ export function AuditTrail({ className }: AuditTrailProps) {
       {/* Audit entries list */}
       {filteredEntries.length === 0 ? (
         <div className="text-center py-8">
-          <FileText
-            className="w-8 h-8 mx-auto mb-2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <p className="text-sm text-muted-foreground">
-            {entries.length === 0
+          <EmptyState
+            icon={FileText}
+            title={entries.length === 0 ? 'No Audit Entries' : 'No Matches'}
+            description={entries.length === 0
               ? 'No audit entries found.'
               : 'No entries match the current filters.'}
-          </p>
+          />
         </div>
       ) : (
         <div
-          className="overflow-y-auto max-h-[480px] rounded-md border border-[var(--border)]"
+          className="overflow-y-auto max-h-[480px] rounded-lg border border-[var(--border)]"
           role="log"
           aria-label="Audit trail entries"
           aria-live="polite"

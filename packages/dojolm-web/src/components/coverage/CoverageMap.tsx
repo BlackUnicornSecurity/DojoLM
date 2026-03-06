@@ -44,6 +44,7 @@ export function CoverageMap({
         </p>
       </CardHeader>
       <CardContent>
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -82,6 +83,7 @@ export function CoverageMap({
             ))}
           </TableBody>
         </Table>
+        </div>
 
         <div className="mt-6 flex items-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
@@ -149,7 +151,7 @@ export function CoverageSummary({ coverageData, className }: CoverageSummaryProp
   const fullCoverage = coverageData.filter(item => item.pre >= 80).length
 
   return (
-    <div className={cn('grid grid-cols-4 gap-3', className)}>
+    <div className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3', className)}>
       <Card>
         <CardContent className="p-4 text-center">
           <div className="text-2xl font-bold">{avgPre}%</div>

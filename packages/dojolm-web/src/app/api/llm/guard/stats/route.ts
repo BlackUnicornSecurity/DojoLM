@@ -5,14 +5,18 @@
  * Method: GET
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getGuardStats } from '@/lib/storage/guard-storage';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/guard/stats - Get aggregated guard statistics
 // ===========================================================================
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const stats = await getGuardStats();
 

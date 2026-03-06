@@ -29,7 +29,7 @@ This document provides the internal audit checklist for AI operations within the
 ### 3.1 Scanner Operations Audit
 
 - [ ] All scanner modules registered and active
-- [ ] Module count matches expected (currently 23)
+- [ ] Module count matches expected (currently 23) (Haiku Scanner modules)
 - [ ] Pattern count documented and matches actual
 - [ ] Regression test pass rate >= 99.5%
 - [ ] No unaddressed CRITICAL findings in test results
@@ -94,6 +94,21 @@ This document provides the internal audit checklist for AI operations within the
 - [ ] This checklist current
 - [ ] Compliance gap analysis within 90 days
 - [ ] User documentation current
+
+### 3.8 NODA Module Operations Audit
+
+- [ ] All 12 NODA modules accessible and functional
+- [ ] BAISS framework coverage >= 95%
+- [ ] Ronin Hub — program data integrity verified
+- [ ] LLM Jutsu — model card data accurate
+- [ ] Black Box Analysis — ablation engine producing valid results
+- [ ] Adversarial Skills Library — all 40 skills execute in sandbox
+- [ ] Audio/voice attack fixtures — all 20 fixtures pass scanner
+- [ ] Belt system — score calculations verified
+- [ ] Hattori Guard — all 4 modes functional
+- [ ] Ecosystem event bus — cross-module events routing correctly
+- [ ] ConfigPanel — all module configs accessible
+- [ ] ModuleOnboarding — 3-step flow works for all modules
 
 ## 4. Non-Conformity Handling
 

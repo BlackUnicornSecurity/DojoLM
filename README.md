@@ -1,197 +1,279 @@
-<div align="center">
-
-<img src="assets/DojoLM- Text.jpg" alt="DojoLM Logo" width="400">
-
-</div>
-
-# DojoLM 🥋
+# NODA — LLM Red Teaming & Security Testing Platform
 
 <div align="center">
 
-**LLM Red Teaming and Security Testing Platform**
-
-🥋 Adversarial Testing 🛡️ TPI Taxonomy 🕵️ Prompt Injection Detection 🔒 AI Safety
-
-</div>
-
-<div align="center">
-
-**Workspace Structure:** This repository contains specialized workspaces for LLM security testing:
-
-- **[packages/bu-tpi](packages/bu-tpi/)** — Core scanner with 505 detection patterns
-- **[packages/dojolm-scanner](packages/dojolm-scanner/)** — Web-friendly API wrapper for bu-tpi
-- **[packages/dojolm-web](packages/dojolm-web/)** — Next.js web interface
-- **[packages/bmad-cybersec](packages/bmad-cybersec/)** — Security automation tools
-
-</div>
-
-<div align="center">
-
-<!-- Version & Compatibility -->
-[![Version: 1.0.0](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-4.0-blue.svg)](github/CHANGELOG.md)
 [![Node.js 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/typescript-5.7-blue.svg)](https://www.typescriptlang.org/)
-[![ES Module](https://img.shields.io/badge/module-ES%20Module-yellow.svg)](https://nodejs.org/api/esm.html)
+[![TypeScript](https://img.shields.io/badge/typescript-5.3-blue.svg)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-<!-- LLM Provider Support -->
-### 🤖 LLM Provider Support
-[![Claude](https://img.shields.io/badge/LLM-Claude-purple.svg)](https://www.anthropic.com)
-[![OpenAI](https://img.shields.io/badge/LLM-OpenAI-green.svg)](https://openai.com)
-[![Ollama](https://img.shields.io/badge/LLM-Ollama-blue.svg)](https://ollama.com)
+**Comprehensive prompt injection detection and LLM security testing based on the CrowdStrike TPI Taxonomy**
 
-<!-- License & Status -->
-[![License: Research-Only](https://img.shields.io/badge/license-Research--Only-orange.svg)](LICENSE)
-[![Research](https://img.shields.io/badge/status-Research%20Project-orange.svg)]()
-
-<!-- Security & Compliance Badges -->
-### 🛡️ Security Coverage
-[![TPI-CrowdStrike](https://img.shields.io/badge/TPI--CrowdStrike-Compliant-brightgreen.svg)](packages/bu-tpi/README.md)
-[![OWASP LLM](https://img.shields.io/badge/OWASP%20LLM-Top%2010-brightgreen.svg)](packages/bu-tpi/README.md)
-[![300+ Test Cases](https://img.shields.io/badge/tests-300%2B-brightgreen.svg)](packages/bu-tpi/fixtures/)
-
-<!-- Testing Coverage -->
-### ✅ Testing & Quality
-[![7,117+ Tests](https://img.shields.io/badge/tests-7117%2B-brightgreen.svg)](packages/bu-tpi/)
-[![Zero Regressions](https://img.shields.io/badge/regressions-0-success.svg)]()
+[Quick Start](#-quick-start) · [Features](#-features) · [Packages](#-packages) · [Documentation](#-documentation) · [Contributing](github/CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## 🧠 What is DojoLM?
+## Overview
 
-**DojoLM** is a comprehensive LLM red teaming and security testing platform. The name combines "Dojo" (a place for immersive training and practice in martial arts) with "LM" (Language Models), representing a focused environment for testing, training, and hardening AI systems against adversarial attacks.
+NODA is a full-stack platform for testing, evaluating, and benchmarking LLM security defenses. It uses a unified sidebar with 12 modules (Haiku Scanner, Armory, Bushido Book, LLM Dashboard, Atemi Lab, The Kumite, Amaterasu DNA, Hattori Guard, Ronin Hub, LLM Jutsu, and Admin). It provides:
 
-The platform provides:
-- **TPI Taxonomy Coverage** — Complete implementation of CrowdStrike's Taxonomy of Prompt Injection
-- **Interactive Test Lab** — Web-based scanner for real-time injection detection
-- **1,545 Attack Fixtures** — Curated test cases across 31 categories
-- **505+ Detection Patterns** — Regex and heuristic-based detection engine across 47 groups
+- **505+ detection patterns** across 47 pattern groups
+- **1,544 attack fixtures** across 30 categories
+- **6 heuristic detectors** for advanced attack detection
+- **100% OWASP LLM Top 10 coverage**
+- **MITRE ATLAS** and **NIST AI RMF** alignment
+
+The platform detects prompt injection attacks including:
+- System override and role hijacking
+- Jailbreak and DAN patterns
+- Multilingual injection attempts
+- Encoded payloads (Base64, ROT13, etc.)
+- Hidden Unicode and homoglyph attacks
+- Social engineering manipulation
+- Agent output manipulation
+- Supply chain and RAG poisoning
 
 ---
 
 ## 🚀 Quick Start
 
-### Install
+### Prerequisites
+
+- Node.js 20+
+- npm 10+
+
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/dojolm/dojolm.git
 cd dojolm
+
+# Install dependencies
 npm install
 ```
 
-### Start the Test Lab
+### Run the Scanner API
 
 ```bash
+# Start scanner server (port 8089)
 npm start --workspace=packages/bu-tpi
 ```
 
-The scanner will be available at **http://localhost:8089**
+### Run the Web UI
+
+```bash
+# Start Next.js development server (port 3000)
+npm run dev:web
+```
+
+### Quick Test
+
+```bash
+# Scan text for prompt injection
+curl "http://localhost:8089/api/scan?text=Ignore%20previous%20instructions"
+```
+
+**Scanner API:** `http://localhost:8089`
+**Web UI:** `http://localhost:3000`
 
 ---
 
-## 📦 Modules
+## ✨ Features
 
-### TPI Security Scanner (`packages/bu-tpi`)
+### Scanner Engine
 
-Prompt injection detection toolkit based on the **CrowdStrike Taxonomy of Prompt Injection (TPI)**.
+| Feature | Details |
+|---------|---------|
+| **Pattern Detection** | 505+ regex patterns across 47 groups |
+| **Heuristic Detectors** | Base64, HTML injection, Unicode, encoding, context overload |
+| **Text Normalization** | NFKC, zero-width stripping, homoglyph mapping |
+| **Verdict System** | BLOCK / WARN / ALLOW with severity levels |
 
-```
-packages/bu-tpi/
-├── fixtures/        # 1,544 attack artifacts (test cases)
-├── src/
-│   ├── scanner.ts   # Detection engine — 505+ patterns, 47 groups
-│   ├── serve.ts     # HTTP server with API endpoints
-│   ├── types.ts     # TypeScript type definitions
-│   └── generate-fixtures.ts  # Fixture generator
-└── tools/           # Test suites
-```
+### Attack Categories
 
-**Features:**
-- Zero runtime dependencies
-- Pure TypeScript
-- 1,545 fixture files across 31 categories
-- API endpoints for scanning, fixtures, and test execution
+| Category | TPI Stories | Examples |
+|----------|-------------|----------|
+| Prompt Injection | TPI-01 | System override, role hijacking |
+| Jailbreak | TPI-01 | DAN, developer mode, unrestricted AI |
+| Encoded Payloads | TPI-10/11/13/17 | Base64, ROT13, acrostic, whitespace |
+| Multilingual | TPI-15 | 10+ languages |
+| Social Engineering | TPI-06/07/08 | Authority, urgency, flattery |
+| Media Injection | TPI-18/19/20 | EXIF, ID3, SVG, PNG metadata |
+| Agent Security | TPI-03 | Fake tool calls, privilege escalation |
+| Supply Chain | TPI-21 | Dependency poisoning, RAG attacks |
+
+### Web Interface (NODA Modules)
+
+- **Haiku Scanner** — Real-time text scanning with 505+ patterns
+- **Armory** — Browse and test 1,544+ attack fixtures
+- **Bushido Book** — Compliance center with 8 frameworks including BAISS
+- **LLM Dashboard** — Multi-provider benchmarking with SSE streaming
+- **Atemi Lab** — Adversarial testing with MCP and skills library
+- **The Kumite** — Strategic analysis (SAGE, Arena, Mitsuke)
+- **Amaterasu DNA** — Attack lineage analysis with Black Box Analysis
+- **Hattori Guard** — Input/output protection (4 modes)
+- **Ronin Hub** — Bug bounty researcher platform
+- **LLM Jutsu** — Testing command center
 
 ---
 
-## 🛡️ TPI Coverage
+## 📦 Packages
 
-| Story | Name | Coverage |
-|-------|------|----------|
-| TPI-PRE-4 | Settings.json Write Protection | ✅ Patterns + Fixtures |
-| TPI-02 | WebFetch Output Injection | ✅ Patterns + Fixtures |
-| TPI-03 | Agent-to-Agent Output Validation | ✅ Patterns + Fixtures |
-| TPI-04 | Context Window Injection | ✅ Patterns + Fixtures |
-| TPI-05 | WebSearch Output Validation | ✅ Patterns + Fixtures |
-| TPI-06 | Social Engineering Detection | ✅ Patterns + Fixtures |
-| TPI-07 | Trust & Rapport Exploitation | ✅ Patterns + Fixtures |
-| TPI-08 | Emotional Manipulation | ✅ Patterns + Fixtures |
-| TPI-09 | Code-Format Injection | ✅ Patterns + Fixtures |
-| TPI-10 | Character-Level Encoding | ✅ Patterns + Decoders |
-| TPI-11 | Context Overload | ✅ Patterns + Heuristics |
-| TPI-12 | Synonym Substitution | ✅ Patterns + Fixtures |
-| TPI-13 | Payload Fragmentation | ✅ Patterns + Fixtures |
-| TPI-14 | Control Tokens & Boundaries | ✅ Patterns + Fixtures |
-| TPI-15 | Multilingual Injection | ✅ 40 patterns (10 langs) |
-| TPI-17 | Whitespace & Formatting Evasion | ✅ Patterns + Fixtures |
-| TPI-18 | Image Metadata Injection | ✅ Patterns + Fixtures |
-| TPI-19 | Format Mismatch / Polyglots | ✅ Patterns + Binary Analysis |
-| TPI-20 | Audio/Media Metadata | ✅ Patterns + Fixtures |
-| TPI-21 | Untrusted Source Indicators | ✅ Patterns + Fixtures |
+This is a monorepo containing multiple packages:
+
+### Core Packages
+
+| Package | Description | Port |
+|---------|-------------|------|
+| [`packages/bu-tpi`](packages/bu-tpi/README.md) | Core scanner engine with 505+ patterns | 8089 |
+| [`packages/dojolm-scanner`](packages/dojolm-scanner/README.md) | Enhanced scanner with engine filtering | - |
+| [`packages/dojolm-web`](packages/dojolm-web/README.md) | Next.js web application | 3000 |
+| [`packages/dojolm-mcp`](packages/dojolm-mcp/README.md) | Model Context Protocol server | - |
+
+### Framework
+
+| Package | Description |
+|---------|-------------|
+| [`packages/bmad-cybersec`](packages/bmad-cybersec/README.md) | Multi-agent cybersecurity operations framework |
+
+### Package Dependencies
+
+```
+dojolm-web ──► dojolm-scanner ──► bu-tpi
+dojolm-mcp ─────────────────────► bu-tpi
+bmad-cybersec ──────────────────► bu-tpi
+```
+
+---
+
+## 🏗️ Architecture
+
+```
+dojolm/
+├── packages/
+│   ├── bu-tpi/                 # Core scanner (TypeScript, zero deps)
+│   │   ├── src/
+│   │   │   ├── scanner.ts      # Detection engine
+│   │   │   ├── serve.ts        # HTTP server
+│   │   │   └── types.ts        # Type definitions
+│   │   └── fixtures/           # 1,544 attack artifacts
+│   ├── dojolm-scanner/         # Enhanced scanner wrapper
+│   ├── dojolm-web/             # Next.js application
+│   ├── dojolm-mcp/             # MCP server for AI tools
+│   └── bmad-cybersec/          # Multi-agent framework
+├── docs/                       # Documentation
+│   ├── user/                   # User-facing docs
+│   ├── app/                    # App-specific docs
+│   └── compliance/             # Compliance documentation
+└── github/                     # GitHub templates
+```
 
 ---
 
 ## 📚 Documentation
 
-| Guide | Description |
-|-------|-------------|
+### User Documentation
+
+| Document | Description |
+|----------|-------------|
 | [Platform Guide](docs/user/PLATFORM_GUIDE.md) | Complete user documentation |
-| [FAQ](docs/user/FAQ.md) | Frequently Asked Questions |
-| [Scanner README](packages/bu-tpi/README.md) | Full scanner documentation |
-| [API Reference](packages/bu-tpi/README.md#api-reference) | All API endpoints |
-| [Testing Guide](packages/bu-tpi/README.md#testing) | Test suite documentation |
-| [Migration Guide](docs/MIGRATION.md) | Monorepo migration info |
+| [FAQ](docs/user/FAQ.md) | Frequently asked questions |
+| [LLM Provider Guide](docs/user/LLM-PROVIDER-GUIDE.md) | Provider setup instructions |
+| [Multimodal Testing](docs/user/multimodal-testing-guide.md) | Image/audio testing |
+
+### Developer Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Contributing](github/CONTRIBUTING.md) | Contribution guidelines |
+| [Style Guide](docs/STYLE-GUIDE.md) | Documentation style guide |
+| [Maintenance](docs/MAINTENANCE.md) | Documentation maintenance process |
+
+### Compliance
+
+| Document | Description |
+|----------|-------------|
+| [ISO 42001](docs/compliance/iso-42001/) | AI management system documentation |
 
 ---
 
-## 🔧 Requirements
+## 🔧 Development
 
-- [Node.js](https://nodejs.org) 20+
-- [npm](https://www.npmjs.com) 10+
-- [TypeScript](https://www.typescriptlang.org) 5.7+
+### Available Scripts
+
+```bash
+# Build all packages
+npm run build
+
+# Run tests across all packages
+npm test
+
+# Lint all packages
+npm run lint
+
+# Type check all packages
+npm run type-check
+
+# Security audit
+npm run security:scan
+
+# Generate SBOM
+npm run sbom:generate
+```
+
+### Workspace Commands
+
+```bash
+# Run command in specific workspace
+npm run <script> --workspace=packages/<package-name>
+
+# Examples
+npm test --workspace=packages/bu-tpi
+npm run dev --workspace=packages/dojolm-web
+```
 
 ---
 
-## 📊 Key Statistics
+## 🤝 Contributing
 
-| Metric | Value |
-|--------|-------|
-| **Test Fixtures** | 1,545 |
-| **Detection Patterns** | 505+ |
-| **Pattern Groups** | 47 |
-| **Test Files** | 8+ |
-| **Passing Tests** | 7,117+ |
-| **TPI Stories Covered** | 21/21 |
+We welcome contributions! Please see [CONTRIBUTING.md](github/CONTRIBUTING.md) for guidelines.
+
+Key points:
+- All PRs must include documentation updates
+- Pattern contributions require corresponding test fixtures
+- Run `npm run verify:docs` before submitting
 
 ---
 
-## 🏛️ License
+## 📄 License
 
-**DojoLM** is released under a [Research-Only License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Permission is granted for academic research, educational purposes, and personal
-security testing only. Commercial, enterprise, and bug bounty use is strictly
-prohibited without prior written permission.
+Individual packages may have additional license terms:
+
+| Package | License |
+|---------|---------|
+| bu-tpi | UNLICENSED (source-available) |
+| dojolm-scanner | MIT |
+| dojolm-web | MIT |
+| dojolm-mcp | MIT |
+| bmad-cybersec | MIT |
+
+---
+
+## 🔗 Links
+
+- [Changelog](github/CHANGELOG.md)
+- [Issues](https://github.com/dojolm/dojolm/issues)
+- [Repository](https://github.com/dojolm/dojolm)
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for AI Security Research**
-
-*DojoLM extends TPI research with practical detection tools and comprehensive testing infrastructure.*
-
-**⭐ Star us on GitHub — Join the DojoLM community!**
+**Built by the NODA Team**
 
 </div>

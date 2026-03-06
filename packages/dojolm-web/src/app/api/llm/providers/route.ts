@@ -33,8 +33,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { provider, model, name, baseUrl, enabled, maxTokens, temperature, topP, customHeaders } = body;
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    const { provider, model, name, baseUrl, enabled, maxTokens, temperature, topP, customHeaders } = body as Record<string, unknown>;
 
     // Validate required fields
     if (!provider || typeof provider !== 'string') {
@@ -50,15 +58,15 @@ export async function POST(request: NextRequest) {
 
     const config = {
       id,
-      name: name || `${provider}/${model}`,
+      name: (name as string) || `${provider}/${model}`,
       provider: provider as import('@/lib/llm-types').LLMProvider,
       model: model as string,
-      baseUrl: baseUrl || undefined,
-      enabled: enabled ?? true,
-      maxTokens: maxTokens || undefined,
-      temperature: temperature || undefined,
-      topP: topP || undefined,
-      customHeaders: customHeaders || undefined,
+      baseUrl: (baseUrl as string) || undefined,
+      enabled: (enabled as boolean) ?? true,
+      maxTokens: (maxTokens as number) || undefined,
+      temperature: (temperature as number) || undefined,
+      topP: (topP as number) || undefined,
+      customHeaders: (customHeaders as Record<string, string>) || undefined,
       createdAt: now,
       updatedAt: now,
       // API key is handled separately — NOT included in response
@@ -79,8 +87,9 @@ export async function POST(request: NextRequest) {
       status: 'registered',
     }, { status: 201 });
   } catch (error) {
+    console.error('Error registering provider:', error);
     return NextResponse.json(
-      { error: `Failed to register provider: ${(error as Error).message}` },
+      { error: 'Failed to register provider' },
       { status: 500 }
     );
   }
@@ -106,8 +115,9 @@ export async function GET() {
 
     return NextResponse.json(safeList);
   } catch (error) {
+    console.error('Error listing providers:', error);
     return NextResponse.json(
-      { error: `Failed to list providers: ${(error as Error).message}` },
+      { error: 'Failed to list providers' },
       { status: 500 }
     );
   }

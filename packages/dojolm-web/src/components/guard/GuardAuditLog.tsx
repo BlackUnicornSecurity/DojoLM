@@ -113,6 +113,7 @@ export function GuardAuditLog() {
       {paged.length === 0 ? (
         <EmptyState {...emptyStatePresets.noData} className="py-8" />
       ) : (
+        <div className="overflow-x-auto">
         <div className="space-y-1">
           {paged.map((event) => {
             const ModeIcon = GUARD_MODE_ICONS[event.mode] ?? ShieldAlert;
@@ -153,7 +154,7 @@ export function GuardAuditLog() {
 
                   {/* Direction */}
                   <span className={cn(
-                    'px-1.5 py-0.5 text-[10px] rounded capitalize w-[50px] text-center flex-shrink-0',
+                    'px-1.5 py-0.5 text-xs rounded capitalize w-[50px] text-center flex-shrink-0',
                     directionColor(event.direction)
                   )}>
                     {event.direction}
@@ -161,7 +162,7 @@ export function GuardAuditLog() {
 
                   {/* Action */}
                   <span className={cn(
-                    'px-1.5 py-0.5 text-[10px] rounded capitalize w-[50px] text-center flex-shrink-0 font-medium',
+                    'px-1.5 py-0.5 text-xs rounded capitalize w-[50px] text-center flex-shrink-0 font-medium',
                     actionColor(event.action)
                   )}>
                     {event.action}
@@ -225,6 +226,7 @@ export function GuardAuditLog() {
               </GlowCard>
             );
           })}
+        </div>
         </div>
       )}
 

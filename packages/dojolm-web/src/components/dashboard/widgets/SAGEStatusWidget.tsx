@@ -48,7 +48,7 @@ export function SAGEStatusWidget() {
           </button>
           <button
             onClick={() => setActiveTab('strategic')}
-            className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
           >
             Open
           </button>
@@ -58,9 +58,9 @@ export function SAGEStatusWidget() {
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold tabular-nums">{MOCK_SAGE.generation}</span>
-          <span className="text-[10px] text-muted-foreground">generation</span>
+          <span className="text-xs text-muted-foreground">generation</span>
           <span className={cn(
-            'ml-auto px-1.5 py-0.5 text-[9px] font-medium rounded',
+            'ml-auto px-1.5 py-0.5 text-xs font-medium rounded',
             isRunning
               ? 'bg-green-500/20 text-green-400'
               : 'bg-muted text-muted-foreground'
@@ -77,7 +77,7 @@ export function SAGEStatusWidget() {
         />
 
         {MOCK_SAGE.quarantineCount > 0 && (
-          <div className="flex items-center gap-1.5 text-[10px] text-amber-400">
+          <div className="flex items-center gap-1.5 text-xs text-amber-400">
             <AlertTriangle className="w-3 h-3" aria-hidden="true" />
             {MOCK_SAGE.quarantineCount} quarantined
           </div>

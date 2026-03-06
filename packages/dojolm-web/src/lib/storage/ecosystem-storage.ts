@@ -238,7 +238,7 @@ export async function getEcosystemStats(): Promise<EcosystemStats> {
     totalFindings: index.totalCount,
     findings24h: 0,
     byModule: {
-      scanner: 0, atemi: 0, sage: 0, arena: 0, mitsuke: 0, attackdna: 0,
+      scanner: 0, atemi: 0, sage: 0, arena: 0, mitsuke: 0, attackdna: 0, ronin: 0, jutsu: 0, guard: 0,
     },
     byType: {
       vulnerability: 0, attack_variant: 0, mutation: 0, match_result: 0, threat_intel: 0,

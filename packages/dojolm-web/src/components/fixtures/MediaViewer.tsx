@@ -80,7 +80,7 @@ export function MediaViewer({ path, hexPreview, size, className }: MediaViewerPr
            fileType === 'video' ? 'Video Player' :
            'Hex Preview (first 256 bytes)'}
         </h4>
-        <Badge variant="outline" className="text-[10px] ml-auto">
+        <Badge variant="outline" className="text-xs ml-auto">
           {fileType.toUpperCase()}
         </Badge>
       </div>

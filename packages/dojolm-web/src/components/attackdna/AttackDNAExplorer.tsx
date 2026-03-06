@@ -21,7 +21,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
-import { AmaterasuGuide } from './AmaterasuGuide'
+import { AmaterasuGuide, resetAmaterasuGuide, TabHelpButton } from './AmaterasuGuide'
 import { AmaterasuConfig } from './AmaterasuConfig'
 import {
   Dna,
@@ -37,6 +37,7 @@ import {
   Settings,
   Target,
   BookOpen,
+  Microscope,
 } from 'lucide-react'
 
 // --- Dynamic imports (S76 requirement: use next/dynamic for visualization components) ---
@@ -54,6 +55,11 @@ const ClusterView = dynamic(
 const MutationTimeline = dynamic(
   () => import('./MutationTimeline').then((mod) => ({ default: mod.MutationTimeline })),
   { loading: () => <LoadingFallback label="Loading Timeline..." />, ssr: false }
+)
+
+const BlackBoxAnalysis = dynamic(
+  () => import('./BlackBoxAnalysis').then((mod) => ({ default: mod.BlackBoxAnalysis })),
+  { loading: () => <LoadingFallback label="Loading Analysis..." />, ssr: false }
 )
 
 // MOCK DATA — not wired to API. Replace with live data when backend integration is available.
@@ -103,7 +109,7 @@ function StatsBar() {
         return (
           <Card key={stat.label} role="listitem">
             <CardContent className="p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-md bg-[var(--bg-quaternary)] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[var(--bg-quaternary)] flex items-center justify-center shrink-0">
                 <StatIcon className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -122,7 +128,7 @@ function StatsBar() {
 
 // --- Tab Definitions ---
 
-type TabId = 'family-tree' | 'clusters' | 'timeline'
+type TabId = 'family-tree' | 'clusters' | 'timeline' | 'analysis'
 
 interface TabDef {
   id: TabId
@@ -134,6 +140,7 @@ const TABS: TabDef[] = [
   { id: 'family-tree', label: 'Family Tree', icon: GitBranch },
   { id: 'clusters', label: 'Clusters', icon: Layers },
   { id: 'timeline', label: 'Timeline', icon: Clock },
+  { id: 'analysis', label: 'Analysis', icon: Microscope },
 ]
 
 // --- Main Component ---
@@ -143,9 +150,16 @@ export function AttackDNAExplorer() {
   const [searchQuery, setSearchQuery] = useState('')
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
+  const [guideResetKey, setGuideResetKey] = useState(0)
 
   const closeGuide = useCallback(() => setGuideOpen(false), [])
   const closeConfig = useCallback(() => setConfigOpen(false), [])
+
+  const handleHelpClick = useCallback(() => {
+    resetAmaterasuGuide()
+    setGuideResetKey((prev) => prev + 1)
+    setGuideOpen(true)
+  }, [])
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,15 +190,15 @@ export function AttackDNAExplorer() {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setGuideOpen(true)}
-            className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+            onClick={handleHelpClick}
+            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
             aria-label="Open Amaterasu DNA guide"
           >
             <HelpCircle className="h-4 w-4" aria-hidden="true" />
           </button>
           <button
             onClick={() => setConfigOpen(true)}
-            className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
             aria-label="Open Amaterasu DNA configuration"
           >
             <Settings className="h-4 w-4" aria-hidden="true" />
@@ -193,7 +207,7 @@ export function AttackDNAExplorer() {
       </div>
 
       {/* Getting started tutorial (first visit) */}
-      <AmaterasuGuide />
+      <AmaterasuGuide key={`guide-${guideResetKey}`} />
 
       {/* Stats Bar */}
       <StatsBar />
@@ -229,13 +243,31 @@ export function AttackDNAExplorer() {
         </TabsList>
 
         <TabsContent value="family-tree">
-          <FamilyTreeView />
+          <div className="space-y-3">
+            <div className="flex justify-end relative">
+              <TabHelpButton tabId="family-tree" />
+            </div>
+            <FamilyTreeView />
+          </div>
         </TabsContent>
         <TabsContent value="clusters">
-          <ClusterView />
+          <div className="space-y-3">
+            <div className="flex justify-end relative">
+              <TabHelpButton tabId="clusters" />
+            </div>
+            <ClusterView />
+          </div>
         </TabsContent>
         <TabsContent value="timeline">
-          <MutationTimeline />
+          <div className="space-y-3">
+            <div className="flex justify-end relative">
+              <TabHelpButton tabId="timeline" />
+            </div>
+            <MutationTimeline />
+          </div>
+        </TabsContent>
+        <TabsContent value="analysis">
+          <BlackBoxAnalysis />
         </TabsContent>
       </Tabs>
 

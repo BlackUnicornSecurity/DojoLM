@@ -23,6 +23,8 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
+import { safeUUID } from '@/lib/utils'
+import { fetchWithAuth } from '../fetch-with-auth'
 import type {
   EcosystemFinding,
   EcosystemEvent,
@@ -68,7 +70,7 @@ const EcosystemContext = createContext<EcosystemContextValue | undefined>(undefi
 const INITIAL_STATS: EcosystemStats = {
   totalFindings: 0,
   findings24h: 0,
-  byModule: { scanner: 0, atemi: 0, sage: 0, arena: 0, mitsuke: 0, attackdna: 0 },
+  byModule: { scanner: 0, atemi: 0, sage: 0, arena: 0, mitsuke: 0, attackdna: 0, ronin: 0, jutsu: 0, guard: 0 },
   byType: { vulnerability: 0, attack_variant: 0, mutation: 0, match_result: 0, threat_intel: 0 },
   bySeverity: { CRITICAL: 0, WARNING: 0, INFO: 0 },
   activeModules: [],
@@ -120,7 +122,7 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/ecosystem/findings?limit=50')
+      const res = await fetchWithAuth('/api/ecosystem/findings?limit=50')
       if (!res.ok) throw new Error('Failed to fetch findings')
       const json = await res.json()
       if (mountedRef.current) {
@@ -140,7 +142,7 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
   // Fetch stats from API
   const refreshStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/ecosystem/findings?mode=stats')
+      const res = await fetchWithAuth('/api/ecosystem/findings?mode=stats')
       if (!res.ok) throw new Error('Failed to fetch stats')
       const json = await res.json()
       if (mountedRef.current) {
@@ -162,7 +164,7 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
     finding: Omit<EcosystemFinding, 'id' | 'timestamp'>
   ): Promise<EcosystemFinding | null> => {
     try {
-      const res = await fetch('/api/ecosystem/findings', {
+      const res = await fetchWithAuth('/api/ecosystem/findings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finding),
@@ -212,7 +214,7 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
 
     const event: EcosystemEvent = {
       ...eventData,
-      id: crypto.randomUUID(),
+      id: safeUUID(),
       timestamp: new Date().toISOString(),
     }
 

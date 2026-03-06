@@ -9,9 +9,13 @@
  * - Storage status check (line 47)
  */
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { checkApiAuth } from '@/lib/api-auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // BUG-004: Admin endpoint requires authentication
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
   try {
     const startTime = Date.now()
 

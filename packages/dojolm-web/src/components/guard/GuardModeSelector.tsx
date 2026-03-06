@@ -118,19 +118,19 @@ export function GuardModeSelector() {
                     {/* Scan indicators */}
                     <div className="flex gap-2 mt-2">
                       <span className={cn(
-                        'text-[10px] px-1.5 py-0.5 rounded',
+                        'text-xs px-1.5 py-0.5 rounded',
                         mode.inputScan ? 'bg-[var(--status-input-bg)] text-[var(--status-input)]' : 'bg-muted text-muted-foreground'
                       )}>
                         IN {mode.inputScan ? 'ON' : 'OFF'}
                       </span>
                       <span className={cn(
-                        'text-[10px] px-1.5 py-0.5 rounded',
+                        'text-xs px-1.5 py-0.5 rounded',
                         mode.outputScan ? 'bg-[var(--status-output-bg)] text-[var(--status-output)]' : 'bg-muted text-muted-foreground'
                       )}>
                         OUT {mode.outputScan ? 'ON' : 'OFF'}
                       </span>
                       {mode.canBlock && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--status-block-bg)] text-[var(--status-block)]">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--status-block-bg)] text-[var(--status-block)]">
                           BLOCK
                         </span>
                       )}

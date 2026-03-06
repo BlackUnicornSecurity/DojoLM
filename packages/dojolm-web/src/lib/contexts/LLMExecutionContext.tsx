@@ -19,6 +19,7 @@ import type {
   LLMPromptTestCase,
   ExecutionStatus,
 } from '../llm-types';
+import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
 // API Client Functions
@@ -30,13 +31,13 @@ import type {
 const API_BASE = '/api/llm';
 
 /**
- * Fetch wrapper for API calls
+ * Fetch wrapper for API calls with auth (Story 13.9)
  */
 async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetchWithAuth(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -243,7 +244,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
       const pollInterval = setInterval(async () => {
         try {
           // Check batch status directly with fetch to handle 404 gracefully
-          const response = await fetch(`${API_BASE}/batch/${batch.id}`);
+          const response = await fetchWithAuth(`${API_BASE}/batch/${batch.id}`);
 
           // If batch not found (404), stop polling - it was cleaned up
           if (response.status === 404) {

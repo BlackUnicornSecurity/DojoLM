@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DojoLM - TPI Security Test Lab",
+  title: "NODA — DojoLM Security Platform",
   description: "BlackUnicorn's Test Prompt Injection security testing platform for LLM applications - Detect vulnerabilities, run tests, and secure your AI applications.",
 };
 

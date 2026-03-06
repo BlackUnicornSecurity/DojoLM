@@ -46,13 +46,13 @@ export function MitsukeAlertWidget() {
       actions={
         <div className="flex items-center gap-2">
           {unacknowledged > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 bg-[var(--severity-critical-bg)] text-[var(--severity-critical)] rounded-full font-medium">
+            <span className="text-xs px-1.5 py-0.5 bg-[var(--severity-critical-bg)] text-[var(--severity-critical)] rounded-full font-medium">
               {unacknowledged}
             </span>
           )}
           <button
             onClick={() => setActiveTab('strategic')}
-            className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
           >
             View Mitsuke
           </button>
@@ -63,14 +63,14 @@ export function MitsukeAlertWidget() {
         {MOCK_ALERTS.map(alert => (
           <div key={alert.id} className="flex items-start gap-2 py-1">
             <span className={cn(
-              'px-1 py-0.5 text-[9px] font-medium rounded border flex-shrink-0 mt-0.5',
+              'px-1 py-0.5 text-xs font-medium rounded border flex-shrink-0 mt-0.5',
               SEVERITY_COLORS[alert.severity] ?? SEVERITY_COLORS.low
             )}>
               {alert.severity.toUpperCase()}
             </span>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-medium truncate">{alert.title}</div>
-              <div className="text-[10px] text-muted-foreground">{alert.timestamp}</div>
+              <div className="text-xs text-muted-foreground">{alert.timestamp}</div>
             </div>
             {alert.acknowledged ? (
               <CheckCircle className="w-3.5 h-3.5 text-[var(--status-allow)] flex-shrink-0 mt-0.5" aria-label="Acknowledged" />

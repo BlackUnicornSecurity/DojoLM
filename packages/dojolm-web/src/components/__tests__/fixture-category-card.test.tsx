@@ -1,7 +1,7 @@
 /**
  * File: fixture-category-card.test.tsx
  * Purpose: Tests for FixtureCategoryCard component
- * Story: TPI-UIP-10
+ * Story: TPI-UIP-10, NODA-3 Story 4.2 (Armory Visual Refresh)
  */
 
 import { describe, it, expect, vi } from 'vitest'
@@ -32,7 +32,7 @@ describe('FixtureCategoryCard', () => {
     expect(screen.getByText('Test category description')).toBeTruthy()
   })
 
-  it('displays clean ratio badge', () => {
+  it('displays fixture count badge', () => {
     render(
       <FixtureCategoryCard
         name="test"
@@ -40,11 +40,11 @@ describe('FixtureCategoryCard', () => {
         onViewFiles={vi.fn()}
       />
     )
-    // 2 clean out of 4 = 50%
-    expect(screen.getByText('50% Clean')).toBeTruthy()
+    // Total file count shown in badge
+    expect(screen.getByText('4')).toBeTruthy()
   })
 
-  it('displays file count stats', () => {
+  it('displays severity distribution legend', () => {
     render(
       <FixtureCategoryCard
         name="test"
@@ -52,12 +52,14 @@ describe('FixtureCategoryCard', () => {
         onViewFiles={vi.fn()}
       />
     )
-    expect(screen.getByText('4 files')).toBeTruthy()
+    // Severity legend shows clean count
     expect(screen.getByText('2 clean')).toBeTruthy()
-    expect(screen.getByText('2 attack')).toBeTruthy()
+    // Critical and warning counts shown in legend
+    expect(screen.getByText('1 crit')).toBeTruthy()
+    expect(screen.getByText('1 warn')).toBeTruthy()
   })
 
-  it('calls onViewFiles when View Files button clicked', () => {
+  it('calls onViewFiles when View button clicked', () => {
     const onViewFiles = vi.fn()
     render(
       <FixtureCategoryCard
@@ -66,11 +68,11 @@ describe('FixtureCategoryCard', () => {
         onViewFiles={onViewFiles}
       />
     )
-    fireEvent.click(screen.getByText('View Files'))
+    fireEvent.click(screen.getByText('View'))
     expect(onViewFiles).toHaveBeenCalledWith('web')
   })
 
-  it('has proper aria-label on View Files button', () => {
+  it('has proper aria-label on View button', () => {
     render(
       <FixtureCategoryCard
         name="dos"
@@ -81,7 +83,7 @@ describe('FixtureCategoryCard', () => {
     expect(screen.getByLabelText('View files in dos')).toBeTruthy()
   })
 
-  it('renders green badge for >90% clean ratio', () => {
+  it('renders severity aria-label for distribution bar', () => {
     const cleanCategory = {
       story: 'S01',
       desc: 'Clean category',
@@ -96,7 +98,7 @@ describe('FixtureCategoryCard', () => {
         onViewFiles={vi.fn()}
       />
     )
-    expect(screen.getByText('100% Clean')).toBeTruthy()
+    expect(screen.getByLabelText('Severity: 0 critical, 0 warning, 0 info, 10 clean')).toBeTruthy()
   })
 
   it('handles empty category gracefully', () => {
@@ -108,7 +110,7 @@ describe('FixtureCategoryCard', () => {
         onViewFiles={vi.fn()}
       />
     )
-    expect(screen.getByText('0 files')).toBeTruthy()
-    expect(screen.getByText('100% Clean')).toBeTruthy()
+    expect(screen.getByText('0')).toBeTruthy()
+    expect(screen.getByText('0 clean')).toBeTruthy()
   })
 })

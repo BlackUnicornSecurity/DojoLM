@@ -28,6 +28,7 @@ import type {
   GuardStats,
 } from '../guard-types';
 import { DEFAULT_GUARD_CONFIG } from '../guard-constants';
+import { fetchWithAuth } from '../fetch-with-auth';
 
 interface GuardContextValue {
   config: GuardConfig;
@@ -58,9 +59,9 @@ export function GuardProvider({ children }: { children: ReactNode }) {
     const loadInitial = async () => {
       try {
         const [configRes, statsRes, eventsRes] = await Promise.allSettled([
-          fetch('/api/llm/guard'),
-          fetch('/api/llm/guard/stats'),
-          fetch('/api/llm/guard/audit?limit=50'),
+          fetchWithAuth('/api/llm/guard'),
+          fetchWithAuth('/api/llm/guard/stats'),
+          fetchWithAuth('/api/llm/guard/audit?limit=50'),
         ]);
 
         if (configRes.status === 'fulfilled' && configRes.value.ok) {
@@ -91,7 +92,7 @@ export function GuardProvider({ children }: { children: ReactNode }) {
   const updateConfig = useCallback(async (updates: Partial<GuardConfig>) => {
     const newConfig = { ...config, ...updates };
     try {
-      const res = await fetch('/api/llm/guard', {
+      const res = await fetchWithAuth('/api/llm/guard', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConfig),
@@ -132,7 +133,7 @@ export function GuardProvider({ children }: { children: ReactNode }) {
 
   const refreshStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/llm/guard/stats');
+      const res = await fetchWithAuth('/api/llm/guard/stats');
       if (res.ok) {
         const { data } = await res.json();
         setStats(data);
@@ -144,7 +145,7 @@ export function GuardProvider({ children }: { children: ReactNode }) {
 
   const refreshEvents = useCallback(async () => {
     try {
-      const res = await fetch('/api/llm/guard/audit?limit=50');
+      const res = await fetchWithAuth('/api/llm/guard/audit?limit=50');
       if (res.ok) {
         const { data } = await res.json();
         setRecentEvents(data);

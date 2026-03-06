@@ -183,7 +183,7 @@ export const FixtureFilters = memo(function FixtureFilters({
           <Filter className="h-3.5 w-3.5" aria-hidden="true" />
           Filters
           {activeFilterCount > 0 && (
-            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 ml-0.5">
+            <Badge variant="secondary" className="text-xs h-4 px-1.5 ml-0.5">
               {activeFilterCount}
             </Badge>
           )}

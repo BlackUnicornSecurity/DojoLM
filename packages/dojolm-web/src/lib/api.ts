@@ -19,11 +19,12 @@ import type {
   TestSuiteResult,
   ScanOptions
 } from './types'
+import { fetchWithAuth } from './fetch-with-auth'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
 /**
- * Generic fetch wrapper with error handling
+ * Generic fetch wrapper with error handling and auth (Story 13.9)
  */
 async function fetchAPI<T>(
   endpoint: string,
@@ -31,7 +32,7 @@ async function fetchAPI<T>(
 ): Promise<T> {
   try {
     const url = `${API_BASE_URL}/api${endpoint}`
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -82,12 +83,27 @@ export async function readFixture(
 }
 
 /**
- * Scan a specific fixture file
+ * Scan a specific fixture file (BUG-005: handle nested response structure)
  */
 export async function scanFixture(path: string): Promise<ScanResult & { path: string }> {
-  return fetchAPI<ScanResult & { path: string }>(
+  const response = await fetchAPI<{ path: string; skipped: boolean; result: ScanResult | null }>(
     `/scan-fixture?path=${encodeURIComponent(path)}`
   )
+
+  // Unwrap nested response — API returns { path, skipped, result }
+  if (response.skipped || !response.result) {
+    return {
+      path: response.path,
+      findings: [],
+      verdict: 'ALLOW' as const,
+      elapsed: 0,
+      textLength: 0,
+      normalizedLength: 0,
+      counts: { critical: 0, warning: 0, info: 0 },
+    }
+  }
+
+  return { ...response.result, path: response.path }
 }
 
 /**

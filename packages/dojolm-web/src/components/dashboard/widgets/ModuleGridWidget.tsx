@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface ModuleInfo {
   name: string
@@ -40,7 +41,7 @@ export function ModuleGridWidget() {
     let cancelled = false
     async function fetchModules() {
       try {
-        const res = await fetch('/api/stats')
+        const res = await fetchWithAuth('/api/stats')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled) setModules(data.patternGroups ?? [])
@@ -54,13 +55,13 @@ export function ModuleGridWidget() {
   }, [])
 
   return (
-    <WidgetCard title={`Scanner Modules (${modules.length})`}>
+    <WidgetCard title={`Haiku Scanner Modules (${modules.length})`}>
       <div className="flex flex-wrap gap-1.5">
         {modules.map(mod => (
           <span
             key={mod.name}
             className={cn(
-              'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium',
+              'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium',
               'bg-muted hover:bg-[var(--bg-quaternary)] cursor-default'
             )}
             title={`${mod.name}: ${mod.count} patterns (${mod.source})`}
@@ -70,7 +71,7 @@ export function ModuleGridWidget() {
           </span>
         ))}
         {modules.length === 0 && (
-          <p className="text-[10px] text-muted-foreground">Loading modules...</p>
+          <p className="text-xs text-muted-foreground">Loading modules...</p>
         )}
       </div>
     </WidgetCard>

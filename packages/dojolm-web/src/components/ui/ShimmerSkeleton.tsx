@@ -21,7 +21,7 @@ export function ShimmerSkeleton({ className, variant = 'line' }: ShimmerSkeleton
 
   return (
     <div
-      className={cn("animate-shimmer rounded-md", variants[variant], className)}
+      className={cn("animate-shimmer rounded-lg", variants[variant], className)}
       aria-hidden="true"
     />
   )

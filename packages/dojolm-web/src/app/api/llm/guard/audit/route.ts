@@ -8,12 +8,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryGuardEvents } from '@/lib/storage/guard-storage';
 import type { GuardAuditQuery, GuardMode, GuardDirection, GuardAction } from '@/lib/guard-types';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/guard/audit - Query guard events with filters
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
 

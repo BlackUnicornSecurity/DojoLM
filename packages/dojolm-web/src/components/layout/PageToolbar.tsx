@@ -137,7 +137,7 @@ export function PageToolbar({
           />
           <kbd
             aria-label={isMac ? 'Keyboard shortcut: Command K' : 'Keyboard shortcut: Control K'}
-            className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-[var(--text-quaternary)] bg-[var(--bg-quaternary)] rounded border border-[var(--border)]"
+            className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs text-[var(--text-quaternary)] bg-[var(--bg-quaternary)] rounded border border-[var(--border)]"
           >
             {isMac ? <span className="text-xs">⌘</span> : <span className="text-xs">Ctrl+</span>}K
           </kbd>

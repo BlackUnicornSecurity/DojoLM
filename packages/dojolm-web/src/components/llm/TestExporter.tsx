@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Download, FileJson, FileText, File } from 'lucide-react';
 import type { LLMBatchExecution } from '@/lib/llm-types';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 export type ExportFormat = 'json' | 'pdf' | 'md';
 
@@ -43,7 +44,7 @@ export function TestExporter({ batch, executions = [] }: TestExporterProps) {
         format,
       });
 
-      const response = await fetch(`/api/llm/export?${params.toString()}`);
+      const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error('Export failed');

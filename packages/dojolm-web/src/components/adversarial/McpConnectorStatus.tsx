@@ -22,6 +22,7 @@ import {
   Clock,
   AlertTriangle,
 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 export interface McpConnectorStatusProps {
   /** Override the connected state (for testing/demo) */
@@ -57,7 +58,7 @@ export function McpConnectorStatus({
     setIsChecking(true)
     try {
       const start = Date.now()
-      const response = await fetch('/api/mcp/status', {
+      const response = await fetchWithAuth('/api/mcp/status', {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
       })
@@ -153,8 +154,8 @@ export function McpConnectorStatus({
               onClick={checkHealth}
               disabled={isChecking}
               className={cn(
-                'p-1.5 rounded-md text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
-                'min-w-[36px] min-h-[36px] flex items-center justify-center',
+                'p-1.5 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
+                'min-w-[44px] min-h-[44px] flex items-center justify-center',
                 isChecking && 'opacity-50'
               )}
               aria-label="Refresh connection status"
@@ -164,7 +165,7 @@ export function McpConnectorStatus({
             {!isConnected && (
               <button
                 onClick={toggleTroubleshooting}
-                className="p-1.5 rounded-md text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] min-w-[36px] min-h-[36px] flex items-center justify-center"
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-expanded={showTroubleshooting}
                 aria-controls="mcp-troubleshooting"
                 aria-label="Toggle troubleshooting panel"
@@ -181,7 +182,7 @@ export function McpConnectorStatus({
 
         {/* Last checked timestamp */}
         {lastChecked && (
-          <p className="text-[10px] text-[var(--text-tertiary)] mt-1">
+          <p className="text-xs text-[var(--text-tertiary)] mt-1">
             Last checked: {lastChecked.toLocaleTimeString()}
           </p>
         )}

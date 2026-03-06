@@ -37,7 +37,7 @@ function CategorySection({
 }) {
   return (
     <div className="space-y-1">
-      <h3 className="text-[10px] uppercase tracking-wider text-[var(--text-quaternary)] font-semibold px-1 pt-3 pb-1">
+      <h3 className="text-xs uppercase tracking-wider text-[var(--text-quaternary)] font-semibold px-1 pt-3 pb-1">
         {label}
       </h3>
       {widgets.map(widget => {
@@ -45,7 +45,7 @@ function CategorySection({
         return (
           <div
             key={widget.id}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--bg-quaternary)]"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-[var(--bg-quaternary)]"
           >
             <button
               onClick={() => onToggle(widget.id)}
@@ -69,7 +69,7 @@ function CategorySection({
             </button>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-medium truncate">{widget.label}</div>
-              <div className="text-[10px] text-muted-foreground truncate">{widget.description}</div>
+              <div className="text-xs text-muted-foreground truncate">{widget.description}</div>
             </div>
             {isEnabled && (
               <div className="flex flex-col gap-0.5">
@@ -172,13 +172,13 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-bold">Customize Dashboard</h2>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {enabledCount} of {WIDGET_CATALOG.length} widgets active
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+              className="p-1.5 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
               aria-label="Close customizer"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -186,7 +186,7 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
           </div>
           <button
             onClick={resetToDefaults}
-            className="flex items-center gap-1.5 mt-2 px-2 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="flex items-center gap-1.5 mt-2 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
           >
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
             Reset to Defaults

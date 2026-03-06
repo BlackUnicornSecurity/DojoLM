@@ -25,8 +25,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { modelIds, testCaseIds } = body;
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    const { modelIds, testCaseIds } = body as { modelIds?: string[]; testCaseIds?: string[] };
 
     if (!modelIds?.length || !testCaseIds?.length) {
       return NextResponse.json(
@@ -71,8 +79,9 @@ export async function POST(request: NextRequest) {
       totalTests,
     }, { status: 202 });
   } catch (error) {
+    console.error('Error starting batch:', error);
     return NextResponse.json(
-      { error: `Failed to start batch: ${(error as Error).message}` },
+      { error: 'Failed to start batch' },
       { status: 500 }
     );
   }
@@ -95,8 +104,9 @@ export async function GET() {
       completedAt: b.completedAt,
     })));
   } catch (error) {
+    console.error('Error listing batches:', error);
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: 'Failed to list batches' },
       { status: 500 }
     );
   }

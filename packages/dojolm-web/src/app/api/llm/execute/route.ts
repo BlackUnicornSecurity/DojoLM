@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
@@ -17,10 +18,18 @@ import { getGuardConfig, saveGuardEvent, getConfigHash } from '@/lib/storage/gua
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
-    const { modelId, testCaseId } = body;
+    const { modelId, testCaseId } = body as { modelId?: string; testCaseId?: string };
 
     if (!modelId || !testCaseId) {
       return NextResponse.json(
@@ -102,10 +111,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(execution);
   } catch (error) {
-    console.error('Error executing test:', error);
-    return NextResponse.json(
-      { error: 'Failed to execute test', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to execute test', 500, error);
   }
 }

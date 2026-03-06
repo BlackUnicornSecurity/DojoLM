@@ -1,8 +1,8 @@
-# DojoLM Frequently Asked Questions (FAQ)
+# NODA Platform — Frequently Asked Questions (FAQ)
 
 **Last Updated:** 2026-03-03
 
-This document answers common questions about DojoLM, its features, usage, and troubleshooting.
+This document answers common questions about NODA Platform (DojoLM), its features, usage, and troubleshooting.
 
 ---
 
@@ -23,7 +23,7 @@ This document answers common questions about DojoLM, its features, usage, and tr
 
 ### What is DojoLM?
 
-**DojoLM** is a comprehensive LLM red teaming and security testing platform. The name combines "Dojo" (a place for immersive training and practice in martial arts) with "LM" (Language Models), representing a focused environment for testing, training, and hardening AI systems against adversarial attacks.
+**NODA** (formerly DojoLM) is a comprehensive LLM red teaming and security testing platform. The name combines "Dojo" (a place for immersive training and practice in martial arts) with "LM" (Language Models), representing a focused environment for testing, training, and hardening AI systems against adversarial attacks. NODA is the platform brand encompassing 12 specialized security modules.
 
 ### Who is DojoLM for?
 
@@ -53,6 +53,8 @@ Version 3.0 (internally called DojoV2) extends the original TPI coverage with 46
 - **MITRE ATLAS** tactics
 - **NIST AI RMF** risks
 - **ENISA AI** threats
+
+Version 4.0 (NODA-3, released 2026-03-06) adds 12 modules, the Belt system, BAISS unified standard, Ronin Hub, LLM Jutsu, Black Box Analysis, Adversarial Skills Library, and audio attack expansion.
 
 ### Is DojoLM open source?
 
@@ -140,7 +142,7 @@ curl "http://localhost:8089/api/scan?text=ignore+all+previous+instructions"
 
 **Via Web UI:**
 1. Open `http://localhost:3000`
-2. Go to the Scanner tab
+2. Go to the **Haiku Scanner** module
 3. Paste your text
 4. Click "Scan"
 
@@ -353,6 +355,7 @@ packages/
 ├── bu-tpi/              # Core scanner (TypeScript, zero deps, port 8089)
 ├── dojolm-scanner/      # Enhanced scanner package (web integration)
 ├── dojolm-web/          # Next.js web app (port 3000)
+├── dojolm-mcp/          # Model Context Protocol server
 └── bmad-cybersec/       # Multi-agent cybersecurity operations framework
 ```
 
@@ -420,6 +423,43 @@ npm run build
 1. For Ollama: Is it running? `ollama serve`
 2. Is `OLLAMA_BASE_URL` set correctly in `.env.local`?
 3. For cloud providers: Is your API key set?
+
+---
+
+## NODA Modules
+
+### What are the NODA modules?
+
+The NODA platform consists of 12 specialized modules:
+
+1. **NODA Dashboard** — Central command with customizable widgets and threat overview
+2. **Haiku Scanner** — Core prompt injection detection engine (505+ patterns, 23+ modules)
+3. **Armory** — Test fixture management, browsing, and comparison (formerly Test Lab)
+4. **Bushido Book** — Compliance center with 8 frameworks and audit trails (formerly Compliance Center)
+5. **LLM Dashboard** — Multi-provider LLM security testing with batch execution
+6. **Atemi Lab** — Adversarial red teaming with MCP integration (formerly Adversarial Lab)
+7. **The Kumite** — Strategic analysis hub with SAGE, Arena, and Mitsuke (formerly Strategic Hub)
+8. **Amaterasu DNA** — Attack lineage analysis with family trees and Black Box Analysis (formerly AttackDNA)
+9. **Hattori Guard** — Input/output protection with 4 guard modes (formerly LLM Guard)
+10. **Ronin Hub** — Bug bounty platform for security researchers
+11. **LLM Jutsu** — LLM testing command center with model cards and aggregation
+12. **Admin** — System settings, API keys, export, and scanner configuration
+
+### What is the Belt system?
+
+The Belt system ranks security posture using 7 levels inspired by martial arts: White, Yellow, Orange, Green, Blue, Brown, and Black. Belt rank is calculated based on overall security scores across scanner, compliance, and LLM testing results.
+
+### What is BAISS?
+
+**BAISS** (BlackUnicorn AI Security Standard) is a unified compliance standard with 32 controls across 10 categories. It maps 6 source frameworks (OWASP, NIST, MITRE, ISO, EU AI Act, ENISA) into a single actionable checklist.
+
+### What is Black Box Analysis?
+
+Black Box Analysis is an ablation study engine in the Amaterasu DNA module. It systematically removes components from attack patterns to identify which elements are essential for detection, producing token heatmaps and impact charts.
+
+### What is the Adversarial Skills Library?
+
+The Adversarial Skills Library in Atemi Lab provides 40 adversarial skills organized across 6 playbooks. Skills are categorized by difficulty, OWASP mapping, and attack type, and execute in a sandboxed environment with structured severity output.
 
 ---
 

@@ -11,13 +11,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scan } from '@dojolm/scanner';
 import type { ScanOptions } from '@dojolm/scanner';
+import { checkApiAuth } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { text, engines }: { text: string; engines?: string[] } = body;
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
 
-    // Input validation
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    const { text, engines } = body as { text: string; engines?: string[] };
+
+    // Input validation (BUG-022: text must be a non-empty string, max 100KB)
     if (!text || typeof text !== 'string') {
       return NextResponse.json(
         { error: 'Invalid input: text must be a non-empty string' },

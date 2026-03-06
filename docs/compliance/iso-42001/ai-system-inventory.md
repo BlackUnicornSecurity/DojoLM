@@ -19,13 +19,13 @@ This document provides the AI system inventory template for the DojoLM platform,
 | Field | Value |
 |-------|-------|
 | **System ID** | DOJOLM-SCAN-001 |
-| **Name** | DojoLM TPI Security Scanner |
+| **Name** | Haiku Scanner (Core Detection Engine) |
 | **Type** | AI Security Testing Tool |
 | **Risk Level** | Medium (testing/detection tool) |
 | **Owner** | Scanner Engineering Team |
 | **Version** | See package.json |
 | **Status** | Active |
-| **Modules** | 23 scanner modules (P1+P2.6+P3) |
+| **Modules** | 23+ scanner modules (P1+P2.6+P3) |
 | **Pattern Count** | 500+ detection patterns |
 | **Data Processed** | Text prompts, JSON fixtures, session data |
 | **PII Handling** | Hashed on input, redaction available |
@@ -52,14 +52,100 @@ This document provides the AI system inventory template for the DojoLM platform,
 | Field | Value |
 |-------|-------|
 | **System ID** | DOJOLM-ADV-001 |
-| **Name** | DojoLM Adversarial MCP Server |
+| **Name** | Atemi Lab (Adversarial MCP Server) |
 | **Type** | AI Red Team Testing Tool |
 | **Risk Level** | High (generates attack payloads) |
 | **Owner** | Security Research Team |
-| **Status** | Planned (P4) |
+| **Status** | Active |
 | **Data Processed** | Attack fixtures, model responses |
 | **Access Control** | RBAC-enforced (admin/analyst only) |
 | **Last Assessment** | _[Date of last risk assessment]_ |
+
+### 2.4 Bushido Book (Compliance Engine)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-BSH-001 |
+| **Name** | Bushido Book (Compliance Center) |
+| **Type** | Compliance Analysis Tool |
+| **Risk Level** | Medium |
+| **Owner** | Compliance Team |
+| **Status** | Active |
+| **Frameworks** | TPI, OWASP, NIST, MITRE, ISO, EU AI, ENISA, BAISS |
+| **Data Processed** | Coverage data, audit trails, compliance checklists |
+
+### 2.5 Hattori Guard (Input/Output Protection)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-HGD-001 |
+| **Name** | Hattori Guard |
+| **Type** | AI Defense System |
+| **Risk Level** | High (intercepts I/O) |
+| **Owner** | Security Engineering Team |
+| **Status** | Active |
+| **Modes** | Shinobi, Samurai, Sensei, Hattori |
+| **Data Processed** | User inputs, model outputs, audit logs |
+
+### 2.6 Ronin Hub (Bug Bounty Platform)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-RON-001 |
+| **Name** | Ronin Hub |
+| **Type** | Vulnerability Management |
+| **Risk Level** | Medium |
+| **Owner** | Security Research Team |
+| **Status** | Active |
+| **Data Processed** | Programs, submissions, CVE data |
+
+### 2.7 LLM Jutsu (Testing Command Center)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-JUT-001 |
+| **Name** | LLM Jutsu |
+| **Type** | AI Testing Tool |
+| **Risk Level** | Medium |
+| **Owner** | QA Team |
+| **Status** | Active |
+| **Data Processed** | Model test results, aggregated scores |
+
+### 2.8 Amaterasu DNA (Attack Analysis)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-AMA-001 |
+| **Name** | Amaterasu DNA |
+| **Type** | Attack Lineage Analysis |
+| **Risk Level** | Medium |
+| **Owner** | Security Research Team |
+| **Status** | Active |
+| **Data Processed** | Attack patterns, mutation data, ablation results |
+
+### 2.9 The Kumite (Strategic Hub)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-KUM-001 |
+| **Name** | The Kumite |
+| **Type** | Strategic Analysis Tool |
+| **Risk Level** | Medium |
+| **Owner** | Security Engineering Team |
+| **Status** | Active |
+| **Sub-modules** | SAGE, Arena, Mitsuke |
+
+### 2.10 Armory (Fixture Management)
+
+| Field | Value |
+|-------|-------|
+| **System ID** | DOJOLM-ARM-001 |
+| **Name** | Armory (formerly Test Lab) |
+| **Type** | Test Fixture Management |
+| **Risk Level** | Low |
+| **Owner** | QA Team |
+| **Status** | Active |
+| **Data Processed** | Attack fixtures, comparison data |
 
 ## 3. Inventory Template (Blank)
 

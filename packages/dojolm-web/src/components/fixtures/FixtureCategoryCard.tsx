@@ -1,7 +1,7 @@
 /**
  * File: FixtureCategoryCard.tsx
- * Purpose: Card component for fixture category grid view with icon, stats, and progress bar
- * Story: TPI-UIP-10
+ * Purpose: Card component for fixture category grid view with technique icon, severity distribution, brand badge
+ * Story: TPI-UIP-10, NODA-3 Story 4.2 (Armory Visual Refresh)
  * Index:
  * - CATEGORY_ICONS mapping (line 19)
  * - getCleanRatioColor helper (line 58)
@@ -13,11 +13,11 @@
 import { memo, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { GlowCard } from '@/components/ui/GlowCard'
-import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
 import { CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { FixtureCategory } from '@/lib/types'
+import { getBrandForCategory } from './CategoryTree'
 import {
   ShieldAlert,
   Lock,
@@ -40,6 +40,8 @@ import {
   Leaf,
   Search,
   ChevronRight,
+  ScanEye,
+  AudioLines,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -77,19 +79,15 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   'few-shot': Brain,
   images: Image,
   audio: Music,
+  'audio-attacks': AudioLines,
   environmental: Leaf,
-}
-
-function getCleanRatioColor(ratio: number): 'success' | 'warning' | 'danger' {
-  if (ratio > 90) return 'success'
-  if (ratio >= 50) return 'warning'
-  return 'danger'
 }
 
 interface FixtureCategoryCardProps {
   name: string
   category: FixtureCategory
   onViewFiles: (category: string) => void
+  onQuickScan?: (category: string) => void
   className?: string
 }
 
@@ -97,18 +95,30 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
   name,
   category,
   onViewFiles,
+  onQuickScan,
   className,
 }: FixtureCategoryCardProps) {
   const stats = useMemo(() => {
     const total = category.files.length
     const clean = category.files.filter(f => f.clean).length
     const attack = total - clean
-    const ratio = total > 0 ? Math.round((clean / total) * 100) : 100
-    return { total, clean, attack, ratio }
+    const critical = category.files.filter(f => f.severity === 'CRITICAL').length
+    const warning = category.files.filter(f => f.severity === 'WARNING').length
+    const info = category.files.filter(f => f.severity === 'INFO').length
+    // Normalize: files without severity assigned count toward clean segment
+    const segmentTotal = critical + warning + info + clean
+    const normalizer = segmentTotal > 0 ? total / segmentTotal : 1
+    return {
+      total, clean, attack, critical, warning, info,
+      pctCritical: total > 0 ? ((critical * normalizer) / total) * 100 : 0,
+      pctWarning: total > 0 ? ((warning * normalizer) / total) * 100 : 0,
+      pctInfo: total > 0 ? ((info * normalizer) / total) * 100 : 0,
+      pctClean: total > 0 ? ((clean * normalizer) / total) * 100 : 0,
+    }
   }, [category.files])
 
   const Icon = CATEGORY_ICONS[name] ?? FileText
-  const badgeColor = getCleanRatioColor(stats.ratio)
+  const brand = getBrandForCategory(name)
 
   return (
     <GlowCard
@@ -119,12 +129,12 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
         className
       )}
     >
-      <CardContent className="p-[var(--spacing-md)]">
-        {/* Top row: icon + name + status badge */}
+      <CardContent className="p-4">
+        {/* Top row: technique icon + name + fixture count */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--bg-quaternary)]">
-              <Icon className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+              <Icon className="w-5 h-5 text-[var(--bu-electric)]" aria-hidden="true" />
             </div>
             <div>
               <h3 className="text-sm font-semibold capitalize">{name}</h3>
@@ -133,43 +143,81 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
               </p>
             </div>
           </div>
-          <Badge
-            variant={badgeColor === 'success' ? 'success' : badgeColor === 'warning' ? 'warning' : 'error'}
-            className="text-[10px] shrink-0"
-          >
-            {stats.ratio}% Clean
+          <Badge variant="outline" className="text-xs shrink-0 tabular-nums">
+            {stats.total}
           </Badge>
         </div>
 
-        {/* Progress bar: clean/attack ratio */}
+        {/* Severity distribution bar */}
         <div className="mb-3">
-          <EnhancedProgress
-            value={stats.clean}
-            max={stats.total > 0 ? stats.total : 100}
-            color={badgeColor === 'success' ? 'success' : badgeColor === 'warning' ? 'warning' : 'danger'}
-            size="sm"
-            showLabel
-          />
+          <div className="flex h-1.5 rounded-full overflow-hidden bg-[var(--bg-quaternary)]" role="img" aria-label={`Severity: ${stats.critical} critical, ${stats.warning} warning, ${stats.info} info, ${stats.clean} clean`}>
+            {stats.pctCritical > 0 && (
+              <div
+                className="bg-[var(--severity-critical)]"
+                style={{ width: `${stats.pctCritical}%` }}
+              />
+            )}
+            {stats.pctWarning > 0 && (
+              <div
+                className="bg-[var(--warning)]"
+                style={{ width: `${stats.pctWarning}%` }}
+              />
+            )}
+            {stats.pctInfo > 0 && (
+              <div
+                className="bg-[var(--bu-electric)]"
+                style={{ width: `${stats.pctInfo}%` }}
+              />
+            )}
+            {stats.pctClean > 0 && (
+              <div
+                className="bg-[var(--success)] opacity-60"
+                style={{ width: `${stats.pctClean}%` }}
+              />
+            )}
+          </div>
+          <div className="flex gap-3 mt-1.5 text-xs text-muted-foreground">
+            {stats.critical > 0 && <span className="text-[var(--severity-critical)]">{stats.critical} crit</span>}
+            {stats.warning > 0 && <span className="text-[var(--warning)]">{stats.warning} warn</span>}
+            {stats.info > 0 && <span className="text-[var(--bu-electric)]">{stats.info} info</span>}
+            <span className="text-[var(--success)]">{stats.clean} clean</span>
+          </div>
         </div>
 
-        {/* Bottom row: file counts + View Files button */}
+        {/* Bottom row: brand badge + actions */}
         <div className="flex items-center justify-between">
-          <div className="flex gap-3 text-xs text-muted-foreground">
-            <span>{stats.total} files</span>
-            <span>{stats.clean} clean</span>
-            <span>{stats.attack} attack</span>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onViewFiles(name)}
-            className="h-7 px-2 gap-1 text-xs text-[var(--dojo-primary)]"
-            aria-label={`View files in ${name}`}
+          <span
+            className="text-xs px-1.5 py-0.5 rounded-full"
+            style={{ backgroundColor: `${brand.color}20`, color: brand.color }}
           >
-            View Files
-            <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </Button>
+            {brand.name}
+          </span>
+          <div className="flex gap-1">
+            {onQuickScan && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => onQuickScan(name)}
+                className="h-7 px-2 gap-1 text-xs text-[var(--bu-electric)]"
+                aria-label={`Quick scan ${name} category`}
+              >
+                <ScanEye className="h-3.5 w-3.5" aria-hidden="true" />
+                Scan
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onViewFiles(name)}
+              className="h-7 px-2 gap-1 text-xs text-[var(--dojo-primary)]"
+              aria-label={`View files in ${name}`}
+            >
+              View
+              <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </GlowCard>

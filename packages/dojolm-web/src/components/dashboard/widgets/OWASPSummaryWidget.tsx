@@ -16,7 +16,7 @@ export function OWASPSummaryWidget() {
       <div className="space-y-1.5">
         {OWASP_LLM_COVERAGE_DATA.map(entry => (
           <div key={entry.category} className="space-y-0.5">
-            <div className="flex items-center justify-between text-[10px]">
+            <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground truncate flex-1">{entry.category}</span>
               <span className="tabular-nums font-medium ml-2">{entry.post}%</span>
             </div>

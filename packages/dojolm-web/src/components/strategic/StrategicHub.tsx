@@ -1,12 +1,13 @@
 /**
  * File: StrategicHub.tsx
  * Purpose: Landing page for The Kumite with SAGE, Battle Arena, and Mitsuke subsystems
- * Story: S75, TPI-NODA-6.3
+ * Story: S75, TPI-NODA-6.3, NODA-3 Stories 7.1-7.3
  * Index:
- * - SubsystemKey type (line 22)
- * - SUBSYSTEM_CARDS config (line 24)
- * - GUIDE_CONTENT data (line 100)
- * - StrategicHub component (line 155)
+ * - SubsystemKey type (line 24)
+ * - SUBSYSTEM_CARDS config (line 26)
+ * - GUIDE_CONTENT data (line 102)
+ * - ONBOARDING_STEPS data (line 155)
+ * - StrategicHub component (line 210)
  */
 
 'use client'
@@ -19,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
+import { ModuleOnboarding, resetOnboarding, type OnboardingStep } from '@/components/ui/ModuleOnboarding'
 import { SAGEConfig, ArenaConfig, MitsukeConfig } from './KumiteConfig'
 import {
   Dna,
@@ -150,6 +152,68 @@ const GUIDE_CONTENT: Record<SubsystemKey, { title: string; description: string; 
   },
 }
 
+// --- Onboarding storage keys ---
+const ONBOARDING_KEYS: Record<SubsystemKey, string> = {
+  sage: 'sage-onboarded',
+  arena: 'arena-onboarded',
+  threatfeed: 'mitsuke-onboarded',
+}
+
+// --- Onboarding steps for each subsystem ---
+const ONBOARDING_STEPS: Record<SubsystemKey, OnboardingStep[]> = {
+  sage: [
+    {
+      title: 'Seed Library',
+      description: 'Start by loading or creating seed prompts. These serve as the foundation for evolutionary testing. SAGE ships with a built-in library, or paste your own.',
+      icon: BookOpen,
+    },
+    {
+      title: 'Configure Evolution',
+      description: 'Set mutation operator weights, generation limits, safety thresholds, and target model. Fine-tune how aggressively SAGE mutates prompts.',
+      icon: Settings,
+    },
+    {
+      title: 'Launch & Monitor',
+      description: 'Run the evolution engine and watch fitness scores climb in real-time. Quarantined prompts are isolated for manual review before re-use.',
+      icon: Zap,
+    },
+  ],
+  arena: [
+    {
+      title: 'Choose Fighters',
+      description: 'Select attacker and defender agents from the roster. Each agent has unique strategies and scoring multipliers. Mix agents for diverse scenarios.',
+      icon: Target,
+    },
+    {
+      title: 'Set Rules',
+      description: 'Pick a game mode (CTF, King of the Hill, or Red vs Blue), choose a scoring preset, and set the match duration.',
+      icon: BarChart3,
+    },
+    {
+      title: 'Enter the Arena',
+      description: 'Launch the match and observe real-time results. Review round-by-round scoring, replays, and the final match breakdown.',
+      icon: Trophy,
+    },
+  ],
+  threatfeed: [
+    {
+      title: 'Connect Sources',
+      description: 'Enable built-in feed sources (NIST NVD, MITRE ATT&CK, OWASP) or add custom RSS, API, and webhook sources for threat intelligence.',
+      icon: Rss,
+    },
+    {
+      title: 'Set Alerts',
+      description: 'Configure alert thresholds (low, medium, high, critical) and indicator extraction rules. Alerts appear in your activity feed.',
+      icon: AlertTriangle,
+    },
+    {
+      title: 'Monitor',
+      description: 'Watch the stream for new entries, investigate flagged items, and triage alerts as they arrive. Export findings to other modules.',
+      icon: Radio,
+    },
+  ],
+}
+
 /**
  * The Kumite - Main landing page and container for SAGE, Arena, Mitsuke
  */
@@ -157,9 +221,15 @@ export function StrategicHub() {
   const [activeSubsystem, setActiveSubsystem] = useState<SubsystemKey | null>(null)
   const [activeConfig, setActiveConfig] = useState<SubsystemKey | null>(null)
   const [activeGuide, setActiveGuide] = useState<SubsystemKey | null>(null)
+  const [onboardingResetKey, setOnboardingResetKey] = useState(0)
 
   const closeConfig = useCallback(() => setActiveConfig(null), [])
   const closeGuide = useCallback(() => setActiveGuide(null), [])
+
+  const handleResetOnboarding = useCallback((key: SubsystemKey) => {
+    resetOnboarding(ONBOARDING_KEYS[key])
+    setOnboardingResetKey((prev) => prev + 1)
+  }, [])
 
   // Render config/guide panels (always mounted so they can animate in/out)
   const renderPanels = (
@@ -196,15 +266,18 @@ export function StrategicHub() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setActiveGuide(activeSubsystem)}
-              className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+              onClick={() => {
+                handleResetOnboarding(activeSubsystem)
+                setActiveGuide(activeSubsystem)
+              }}
+              className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
               aria-label={`Open ${GUIDE_CONTENT[activeSubsystem].title}`}
             >
               <HelpCircle className="h-4 w-4" aria-hidden="true" />
             </button>
             <button
               onClick={() => setActiveConfig(activeSubsystem)}
-              className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+              className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
               aria-label={`Open ${activeSubsystem} configuration`}
             >
               <Settings className="h-4 w-4" aria-hidden="true" />
@@ -232,13 +305,37 @@ export function StrategicHub() {
           </TabsList>
 
           <TabsContent value="sage">
-            <SAGEDashboard />
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`sage-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.sage}
+                steps={ONBOARDING_STEPS.sage}
+                accentColor="var(--dojo-primary)"
+              />
+              <SAGEDashboard />
+            </div>
           </TabsContent>
           <TabsContent value="arena">
-            <ArenaBrowser />
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`arena-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.arena}
+                steps={ONBOARDING_STEPS.arena}
+                accentColor="var(--warning)"
+              />
+              <ArenaBrowser />
+            </div>
           </TabsContent>
           <TabsContent value="threatfeed">
-            <ThreatFeedStream />
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`mitsuke-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.threatfeed}
+                steps={ONBOARDING_STEPS.threatfeed}
+                accentColor="var(--severity-high)"
+              />
+              <ThreatFeedStream />
+            </div>
           </TabsContent>
         </Tabs>
 
@@ -261,7 +358,7 @@ export function StrategicHub() {
       </div>
 
       {/* Subsystem cards */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-3">
         {SUBSYSTEM_CARDS.map((card) => {
           const CardIcon = card.icon
           return (
@@ -279,14 +376,14 @@ export function StrategicHub() {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveGuide(card.key) }}
-                      className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
                       aria-label={`Help for ${card.title}`}
                     >
                       <HelpCircle className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveConfig(card.key) }}
-                      className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
                       aria-label={`Configure ${card.title}`}
                     >
                       <Settings className="h-3.5 w-3.5" aria-hidden="true" />
@@ -305,7 +402,7 @@ export function StrategicHub() {
                   {card.metrics.map((metric) => (
                     <div key={metric.label} className="text-center">
                       <p className="text-sm font-bold text-[var(--foreground)]">{metric.value}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">
                         {metric.label}
                       </p>
                     </div>
@@ -341,7 +438,7 @@ function SubsystemLoadingSkeleton() {
   return (
     <div className="space-y-4 animate-pulse motion-reduce:animate-none" aria-busy="true" aria-label="Loading subsystem">
       <div className="h-8 w-48 bg-[var(--bg-quaternary)] rounded" />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {[1, 2, 3].map((i) => (
           <div key={i} className="h-24 bg-[var(--bg-quaternary)] rounded-lg" />
         ))}

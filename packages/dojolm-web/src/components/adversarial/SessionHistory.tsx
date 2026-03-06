@@ -105,7 +105,7 @@ export function SessionHistory({ className }: SessionHistoryProps) {
       {/* Collapsible header */}
       <button
         onClick={() => setExpanded((prev) => !prev)}
-        className="flex items-center gap-2 w-full text-left px-1 py-1.5 rounded-md hover:bg-[var(--bg-quaternary)] min-h-[44px] motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]"
+        className="flex items-center gap-2 w-full text-left px-1 py-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] min-h-[44px] motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]"
         aria-expanded={expanded}
         aria-controls="session-history-list"
       >
@@ -113,7 +113,7 @@ export function SessionHistory({ className }: SessionHistoryProps) {
         <span className="text-sm font-semibold text-[var(--foreground)]">
           Session History
         </span>
-        <Badge variant="outline" className="text-[10px] ml-1">
+        <Badge variant="outline" className="text-xs ml-1">
           {sessions.length}
         </Badge>
         <span className="ml-auto">
@@ -200,7 +200,7 @@ function SessionRow({ session, isActive, onReview, onDelete }: SessionRowProps) 
       >
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-[var(--foreground)] truncate">{session.name}</p>
-          <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
             <span>{dateStr} {timeStr}</span>
             <span aria-hidden="true">|</span>
             <span>{duration}</span>
@@ -213,12 +213,12 @@ function SessionRow({ session, isActive, onReview, onDelete }: SessionRowProps) 
         {session.summary && (
           <div className="flex items-center gap-1 flex-shrink-0">
             {session.summary.bySeverity.critical > 0 && (
-              <Badge variant="outline" className="text-[9px] border-[var(--danger)]/30 text-[var(--danger)] px-1">
+              <Badge variant="outline" className="text-xs border-[var(--danger)]/30 text-[var(--danger)] px-1">
                 {session.summary.bySeverity.critical}C
               </Badge>
             )}
             {session.summary.bySeverity.high > 0 && (
-              <Badge variant="outline" className="text-[9px] border-[var(--severity-high)]/30 text-[var(--severity-high)] px-1">
+              <Badge variant="outline" className="text-xs border-[var(--severity-high)]/30 text-[var(--severity-high)] px-1">
                 {session.summary.bySeverity.high}H
               </Badge>
             )}
@@ -228,7 +228,7 @@ function SessionRow({ session, isActive, onReview, onDelete }: SessionRowProps) 
 
       <button
         onClick={onDelete}
-        className="p-1.5 rounded-md text-muted-foreground hover:text-[var(--danger)] hover:bg-[var(--bg-quaternary)] min-w-[32px] min-h-[32px] flex items-center justify-center"
+        className="p-1.5 rounded-lg text-muted-foreground hover:text-[var(--danger)] hover:bg-[var(--bg-quaternary)] min-w-[44px] min-h-[44px] flex items-center justify-center"
         aria-label={`Delete session: ${session.name}`}
       >
         <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -281,7 +281,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
         role="dialog"
         aria-label={`Session review: ${session.name}`}
         aria-modal="true"
-        className="fixed top-0 right-0 h-full w-full max-w-md z-50 bg-[var(--bg-secondary)] border-l border-[var(--border)] motion-safe:animate-slide-in-right flex flex-col"
+        className="fixed top-0 right-0 h-full w-full sm:max-w-md z-50 bg-[var(--bg-secondary)] border-l border-[var(--border)] motion-safe:animate-slide-in-right flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
@@ -292,7 +292,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Close session review"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -323,7 +323,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
                 <Badge
                   variant="outline"
                   className={cn(
-                    'text-[10px]',
+                    'text-xs',
                     session.status === 'completed'
                       ? 'border-[var(--success)]/30 text-[var(--success)]'
                       : 'border-[var(--warning)]/30 text-[var(--warning)]',
@@ -368,7 +368,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
                 <AlertTriangle className="h-3 w-3" aria-hidden="true" />
                 Summary
               </h3>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {(['critical', 'high', 'medium', 'low'] as const).map((sev) => {
                   const count = session.summary!.bySeverity[sev]
                   const colorMap = {
@@ -380,7 +380,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
                   return (
                     <div key={sev} className="text-center p-2 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border)]">
                       <p className={cn('text-lg font-bold', colorMap[sev])}>{count}</p>
-                      <p className="text-[10px] text-[var(--text-tertiary)] capitalize">{sev}</p>
+                      <p className="text-xs text-[var(--text-tertiary)] capitalize">{sev}</p>
                     </div>
                   )
                 })}
@@ -388,9 +388,9 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
 
               {session.summary.topTools.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
-                  <span className="text-[10px] text-[var(--text-tertiary)]">Top tools:</span>
+                  <span className="text-xs text-[var(--text-tertiary)]">Top tools:</span>
                   {session.summary.topTools.map((tool) => (
-                    <Badge key={tool} variant="outline" className="text-[9px]">
+                    <Badge key={tool} variant="outline" className="text-xs">
                       {tool}
                     </Badge>
                   ))}
@@ -429,7 +429,7 @@ function SessionReviewPanel({ session, onClose, onDelete }: SessionReviewPanelPr
                   return (
                     <div key={event.id} className="flex items-start gap-2 text-xs py-1 border-b border-[var(--border)] last:border-0">
                       <span className="text-[var(--text-tertiary)] font-mono flex-shrink-0">{time}</span>
-                      <span className={cn('font-medium flex-shrink-0 uppercase text-[9px]', sevColor)}>
+                      <span className={cn('font-medium flex-shrink-0 uppercase text-xs', sevColor)}>
                         {event.severity}
                       </span>
                       <span className="text-[var(--foreground)] break-words">{event.message}</span>

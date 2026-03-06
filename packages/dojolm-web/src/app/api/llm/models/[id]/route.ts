@@ -12,6 +12,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { LLMModelConfig } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { testModelConfig } from '@/lib/llm-providers';
+import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/models/[id] - Get a specific model
@@ -21,6 +23,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { id } = await params;
 
@@ -35,13 +40,9 @@ export async function GET(
 
     // Strip sensitive fields before returning
     const { apiKey: _key, ...safeModel } = model as unknown as Record<string, unknown>;
-    return NextResponse.json(safeModel);
+    return NextResponse.json({ model: safeModel });
   } catch (error) {
-    console.error('Error getting model:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return apiError('Failed to get model', 500, error);
   }
 }
 
@@ -53,9 +54,20 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { id } = await params;
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
     // Get existing model
     const existing = await fileStorage.getModelConfig(id);
@@ -68,7 +80,7 @@ export async function PATCH(
     }
 
     // Apply updates - allowlist only safe fields to prevent mass-assignment
-    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders'] as const;
+    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model'] as const;
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {
       if (key in body) patch[key] = body[key];
@@ -85,13 +97,11 @@ export async function PATCH(
     // Save updated model
     const saved = await fileStorage.saveModelConfig(updated);
 
-    return NextResponse.json(saved);
+    // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
+    const { apiKey: _patchKey, ...safePatch } = saved as unknown as Record<string, unknown>;
+    return NextResponse.json({ model: safePatch });
   } catch (error) {
-    console.error('Error updating model:', error);
-    return NextResponse.json(
-      { error: 'Failed to update model' },
-      { status: 500 }
-    );
+    return apiError('Failed to update model', 500, error);
   }
 }
 
@@ -103,6 +113,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { id } = await params;
 
@@ -117,10 +130,6 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting model:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete model' },
-      { status: 500 }
-    );
+    return apiError('Failed to delete model', 500, error);
   }
 }

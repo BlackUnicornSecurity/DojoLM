@@ -12,6 +12,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import { join } from 'path';
 
+import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
+
 /**
  * Test suite configuration
  * Maps test names to their execution scripts
@@ -165,8 +168,19 @@ function executeTest(
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { filter } = body;
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    const { filter } = body as { filter?: string };
 
     // Validate test filter
     const validation = validateTestFilter(filter);
@@ -216,19 +230,14 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error) {
-    console.error('Tests API error:', error);
-
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return apiError('Internal server error', 500, error);
   }
 }
 
 export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   // Return available test suites
   return NextResponse.json({
     available: Object.keys(TEST_SUITES),

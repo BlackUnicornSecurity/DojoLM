@@ -19,6 +19,7 @@
 'use client'
 
 import { createContext, useContext, useReducer, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import { safeUUID } from '@/lib/utils'
 
 export type EventType = 'scan_complete' | 'threat_detected' | 'test_passed' | 'test_failed' | 'model_added'
 
@@ -67,7 +68,7 @@ function activityReducer(state: ActivityState, action: ActivityAction): Activity
         return state
       }
       const newEvent: ActivityEvent = {
-        id: crypto.randomUUID(),
+        id: safeUUID(),
         ...action.payload,
         read: false,
       }

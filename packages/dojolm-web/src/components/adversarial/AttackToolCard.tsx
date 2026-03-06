@@ -108,14 +108,14 @@ export function AttackToolCard({
             <span>{name}</span>
           </CardTitle>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <Badge variant={sevCfg.variant} className="text-[10px] px-1.5 py-0">
+            <Badge variant={sevCfg.variant} className="text-xs px-1.5 py-0">
               {sevCfg.label}
             </Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Badge variant="outline" className={cn('text-[10px]', typCfg.badgeCn)}>
+        <Badge variant="outline" className={cn('text-xs', typCfg.badgeCn)}>
           {typCfg.label}
         </Badge>
 
@@ -124,7 +124,7 @@ export function AttackToolCard({
         </p>
 
         {!enabled && (
-          <p className="text-[10px] text-[var(--text-tertiary)] italic">
+          <p className="text-xs text-[var(--text-tertiary)] italic">
             Disabled in current mode
           </p>
         )}
@@ -134,7 +134,7 @@ export function AttackToolCard({
           <div>
             <button
               onClick={toggleLearnMore}
-              className="flex items-center gap-1 text-[10px] font-medium text-[var(--bu-electric)] hover:text-[var(--bu-electric)]/80 min-h-[44px]"
+              className="flex items-center gap-1 text-xs font-medium text-[var(--bu-electric)] hover:text-[var(--bu-electric)]/80 min-h-[44px]"
               aria-expanded={showLearnMore}
               aria-controls={`learn-more-${name.replace(/\s+/g, '-').toLowerCase()}`}
             >
@@ -149,10 +149,10 @@ export function AttackToolCard({
             {showLearnMore && (
               <div
                 id={`learn-more-${name.replace(/\s+/g, '-').toLowerCase()}`}
-                className="mt-2 p-2.5 rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] space-y-2"
+                className="mt-2 p-2.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border)] space-y-2"
               >
                 <div>
-                  <p className="text-[10px] font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
+                  <p className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
                     Technique
                   </p>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -160,7 +160,7 @@ export function AttackToolCard({
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
+                  <p className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
                     Expected Behavior
                   </p>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -168,7 +168,7 @@ export function AttackToolCard({
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
+                  <p className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-wider mb-0.5">
                     Defensive Implications
                   </p>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">

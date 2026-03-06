@@ -26,6 +26,20 @@ export const PUNYCODE_PATTERNS: RegexPattern[] = [
     re: /\bxn--[a-z0-9-]{1,59}\.[a-z]{2,63}/i, desc: 'Punycode/IDN domain (potential homoglyph)', source: 'S19', weight: 7 },
 ];
 
+/** Story 5.2: Expanded encoding detection patterns */
+export const EXPANDED_ENCODING_PATTERNS: RegexPattern[] = [
+  { name: 'utf7-encoding', cat: 'ENCODING_OBFUSCATION', sev: SEVERITY.WARNING,
+    re: /\+AD[wWoOIi0-9][-A-Za-z0-9+/]*-/, desc: 'UTF-7 encoded sequence (+ADw-, +AD4-, +ACI-)', source: 'S19', weight: 7 },
+  { name: 'quoted-printable', cat: 'ENCODING_OBFUSCATION', sev: SEVERITY.WARNING,
+    re: /(?:=[0-9A-Fa-f]{2}){3,}/, desc: 'Quoted-Printable encoding (RFC 2045 =XX)', source: 'S19', weight: 6 },
+  { name: 'octal-escape', cat: 'ENCODING_OBFUSCATION', sev: SEVERITY.WARNING,
+    re: /(?:\\[0-3][0-7]{2}){3,}/, desc: 'C-style octal escape sequence', source: 'S19', weight: 6 },
+  { name: 'mime-base64-wrapped', cat: 'ENCODING_OBFUSCATION', sev: SEVERITY.WARNING,
+    re: /(?:[A-Za-z0-9+/]{76}\r?\n){2,}/, desc: 'MIME Base64 with 76-char line wrapping', source: 'S19', weight: 6 },
+  { name: 'unicode-normalization-evasion', cat: 'ENCODING_OBFUSCATION', sev: SEVERITY.CRITICAL,
+    re: /[\u0300-\u036F\uFE00-\uFE0F\u200B-\u200F\u2028-\u202F]{2,}/, desc: 'Unicode normalization evasion (combining marks, variation selectors, zero-width)', source: 'S19', weight: 8 },
+];
+
 export const MIXED_ENCODING_PATTERNS: RegexPattern[] = [
   { name: 'mixed-url-unicode', cat: 'ENCODING_MIXED', sev: SEVERITY.CRITICAL,
     re: /(?:%[0-9A-Fa-f]{2}.*\\u[0-9A-Fa-f]{4}|\\u[0-9A-Fa-f]{4}.*%[0-9A-Fa-f]{2})/,
@@ -78,6 +92,18 @@ export function detectMultiLayerEncoding(text: string): Finding[] {
       const decoded = current.replace(/\\x([0-9A-Fa-f]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
       if (decoded !== current) recurse(decoded, depth + 1, [...layers, 'hex']);
     }
+    // Try octal decode (Story 5.2)
+    if (/\\[0-3][0-7]{2}/.test(current)) {
+      const decoded = current.replace(/\\([0-3][0-7]{2})/g, (_, o) => String.fromCharCode(parseInt(o, 8)));
+      if (decoded !== current) recurse(decoded, depth + 1, [...layers, 'octal']);
+    }
+    // Try Base64 decode (Story 5.2)
+    if (/^[A-Za-z0-9+/]{20,}={0,2}$/.test(current.trim())) {
+      try {
+        const decoded = Buffer.from(current.trim(), 'base64').toString('utf-8');
+        if (decoded !== current && /[\x20-\x7E]/.test(decoded)) recurse(decoded, depth + 1, [...layers, 'base64']);
+      } catch { /* invalid base64 */ }
+    }
   }
 
   recurse(text, 0, []);
@@ -108,6 +134,7 @@ export function detectRot13(text: string): Finding[] {
 
 const ENC_PATTERN_GROUPS: { patterns: RegexPattern[]; name: string }[] = [
   { patterns: ENCODING_DETECTION_PATTERNS, name: 'ENCODING_DETECTION' },
+  { patterns: EXPANDED_ENCODING_PATTERNS, name: 'EXPANDED_ENCODING' },
   { patterns: PUNYCODE_PATTERNS, name: 'PUNYCODE' },
   { patterns: MIXED_ENCODING_PATTERNS, name: 'MIXED_ENCODING' },
 ];

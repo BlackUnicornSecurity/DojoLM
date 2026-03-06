@@ -11,6 +11,7 @@ import { WidgetCard } from '../WidgetCard'
 import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
 import { cn } from '@/lib/utils'
 import { Play, Loader2 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface ModelOption {
   id: string
@@ -28,7 +29,7 @@ export function QuickLLMTestWidget() {
     let cancelled = false
     async function loadModels() {
       try {
-        const res = await fetch('/api/llm/models')
+        const res = await fetchWithAuth('/api/llm/models')
         if (res.ok) {
           const data = await res.json()
           const list: ModelOption[] = (Array.isArray(data) ? data : data.models ?? [])
@@ -53,7 +54,7 @@ export function QuickLLMTestWidget() {
     setProgress(0)
     setProgress(10)
     try {
-      const res = await fetch('/api/llm/batch', {
+      const res = await fetchWithAuth('/api/llm/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modelIds: [selectedModel], preset }),
@@ -76,7 +77,7 @@ export function QuickLLMTestWidget() {
         <select
           value={selectedModel}
           onChange={(e) => setSelectedModel(e.target.value)}
-          className="w-full px-2 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--dojo-primary)]"
+          className="w-full px-2 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--dojo-primary)]"
           disabled={running || models.length === 0}
         >
           {models.length === 0 && <option value="">No models available</option>}
@@ -90,7 +91,7 @@ export function QuickLLMTestWidget() {
               onClick={() => setPreset(p)}
               disabled={running}
               className={cn(
-                'flex-1 px-2 py-1 text-[10px] font-medium rounded',
+                'flex-1 px-2 py-1 text-xs font-medium rounded',
                 'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
                 preset === p
                   ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
@@ -108,7 +109,7 @@ export function QuickLLMTestWidget() {
           onClick={handleRun}
           disabled={running || !selectedModel}
           className={cn(
-            'w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
+            'w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
             'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
             'disabled:opacity-50'

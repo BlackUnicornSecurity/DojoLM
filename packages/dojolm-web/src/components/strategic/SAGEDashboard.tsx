@@ -179,7 +179,7 @@ export function SAGEDashboard() {
       </div>
 
       {/* Key Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-1">
@@ -218,7 +218,7 @@ export function SAGEDashboard() {
         </Card>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-3">
         {/* Fitness Chart */}
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
@@ -280,7 +280,7 @@ export function SAGEDashboard() {
         </Card>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-3">
         {/* Seed Library */}
         <Card>
           <CardHeader className="pb-2">
@@ -296,7 +296,7 @@ export function SAGEDashboard() {
                 <li key={cat.name}>
                   <button
                     className={cn(
-                      'w-full flex items-center justify-between p-2 rounded-md text-left',
+                      'w-full flex items-center justify-between p-2 rounded-lg text-left',
                       'hover:bg-[var(--bg-quaternary)]',
                       'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -393,7 +393,7 @@ function FitnessChart({ data }: { data: FitnessDataPoint[] }) {
         </div>
 
         {/* X-axis labels */}
-        <div className="absolute bottom-0 left-3 right-3 flex justify-between text-[10px] text-muted-foreground -mb-5">
+        <div className="absolute bottom-0 left-3 right-3 flex justify-between text-xs text-muted-foreground -mb-5">
           <span>Gen 1</span>
           <span>Gen {Math.round(maxGen / 2)}</span>
           <span>Gen {maxGen}</span>
@@ -414,7 +414,7 @@ function MutationOperatorRow({ operator }: { operator: MutationOperator }) {
     <div
       role="listitem"
       className={cn(
-        'flex items-center gap-3 p-2 rounded-md',
+        'flex items-center gap-3 p-2 rounded-lg',
         'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
         operator.enabled
           ? 'hover:bg-[var(--bg-quaternary)]'
@@ -431,7 +431,7 @@ function MutationOperatorRow({ operator }: { operator: MutationOperator }) {
 
       {/* Weight bar */}
       <div className="w-20 flex-shrink-0">
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-0.5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-0.5">
           <span>Weight</span>
           <span className="font-mono">{operator.weight.toFixed(2)}</span>
         </div>
@@ -446,7 +446,7 @@ function MutationOperatorRow({ operator }: { operator: MutationOperator }) {
       {/* Hit count */}
       <div className="text-right flex-shrink-0 w-16">
         <p className="text-sm font-mono font-semibold text-[var(--foreground)]">{operator.hitCount}</p>
-        <p className="text-[10px] text-muted-foreground">hits</p>
+        <p className="text-xs text-muted-foreground">hits</p>
       </div>
     </div>
   )

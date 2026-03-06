@@ -43,7 +43,7 @@ export default defineConfig({
 
     // Test files
     include: ['src/**/*.test.ts', 'tools/**/*.test.ts'],
-    exclude: ['node_modules/', 'dist/', 'fixtures/'],
+    exclude: ['node_modules/', 'dist/', 'fixtures/', '**/team/**'],
 
     // Reporters
     reporters: ['verbose', 'json'],

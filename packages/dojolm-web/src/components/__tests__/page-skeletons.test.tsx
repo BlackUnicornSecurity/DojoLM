@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
-import { ScannerPageSkeleton, TestLabSkeleton, CoverageSkeleton } from '@/components/ui/PageSkeletons'
+import { ScannerPageSkeleton, ArmorySkeleton, CoverageSkeleton } from '@/components/ui/PageSkeletons'
 
 describe('ScannerPageSkeleton', () => {
   it('renders with aria-busy attribute', () => {
@@ -23,16 +23,16 @@ describe('ScannerPageSkeleton', () => {
   })
 })
 
-describe('TestLabSkeleton', () => {
+describe('ArmorySkeleton', () => {
   it('renders with aria-busy attribute', () => {
-    const { container } = render(<TestLabSkeleton />)
+    const { container } = render(<ArmorySkeleton />)
     const root = container.firstElementChild as HTMLElement
     expect(root.getAttribute('aria-busy')).toBe('true')
-    expect(root.getAttribute('aria-label')).toBe('Loading test lab')
+    expect(root.getAttribute('aria-label')).toBe('Loading armory')
   })
 
   it('renders card grid skeleton items', () => {
-    const { container } = render(<TestLabSkeleton />)
+    const { container } = render(<ArmorySkeleton />)
     // Should render 6 card skeletons
     const gridItems = container.querySelectorAll('.grid > div')
     expect(gridItems.length).toBe(6)

@@ -11,6 +11,7 @@ import type { GuardConfig } from '@/lib/guard-types';
 import { GUARD_MODES, GUARD_MODE_ICONS } from '@/lib/guard-constants';
 import { cn } from '@/lib/utils';
 import { ShieldAlert } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 /**
  * GuardBadge: standalone badge that fetches its own state.
@@ -22,7 +23,7 @@ export function GuardBadge() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/llm/guard');
+        const res = await fetchWithAuth('/api/llm/guard');
         if (res.ok) {
           const { data } = await res.json();
           setConfig(data);
@@ -44,7 +45,7 @@ export function GuardBadge() {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium',
+        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium',
         config.enabled
           ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)] border border-[rgba(230,57,70,0.3)]'
           : 'bg-muted text-muted-foreground border border-border'

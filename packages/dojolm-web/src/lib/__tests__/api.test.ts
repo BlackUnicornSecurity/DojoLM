@@ -5,6 +5,15 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest"
+
+// Mock fetchWithAuth to pass through to global fetch (Story 13.9)
+vi.mock('@/lib/fetch-with-auth', () => ({
+  fetchWithAuth: vi.fn((...args: unknown[]) => global.fetch(...(args as Parameters<typeof fetch>))),
+  getApiKey: vi.fn(() => null),
+  setApiKey: vi.fn(),
+  clearApiKey: vi.fn(),
+}))
+
 import { scanText, getFixtures } from "@/lib/api"
 
 // Mock global fetch

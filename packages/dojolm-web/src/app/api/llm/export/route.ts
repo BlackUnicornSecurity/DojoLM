@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 import type { ReportFormat, LLMTestExecution } from '@/lib/llm-types';
 
@@ -27,39 +28,71 @@ const SAFE_ID = /^[\w-]{1,128}$/;
  */
 export async function GET(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     const { searchParams } = new URL(request.url);
     const batchId = searchParams.get('batchId');
     const format = (searchParams.get('format') || 'json') as ReportFormat;
     const includeResponses = searchParams.get('includeResponses') !== 'false';
 
-    if (!batchId) {
-      return NextResponse.json(
-        { error: 'Batch ID is required' },
-        { status: 400 }
-      );
-    }
+    const mode = searchParams.get('mode');
 
-    // Validate batchId to prevent path traversal
-    if (!SAFE_ID.test(batchId)) {
-      return NextResponse.json(
-        { error: 'Invalid batch ID format' },
-        { status: 400 }
-      );
-    }
+    let batch: any;
+    let executions: LLMTestExecution[];
 
-    // Get batch data
-    const batch = await fileStorage.getBatch(batchId);
-    if (!batch) {
-      return NextResponse.json(
-        { error: 'Batch not found' },
-        { status: 404 }
-      );
-    }
+    if (mode === 'all' || !batchId) {
+      // Export-all mode: gather recent executions (last 1000 or 30 days)
+      const MAX_EXPORT_ALL = 1000;
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Get all executions for this batch, filtering out nulls
-    const executions = (await Promise.all(
-      (batch.executionIds ?? []).map((id) => fileStorage.getExecution(id))
-    )).filter((e): e is LLMTestExecution => e !== null);
+      const { executions: allExecs } = await fileStorage.queryExecutions({
+        limit: MAX_EXPORT_ALL,
+        sortBy: 'timestamp',
+        sortDirection: 'desc',
+      });
+
+      // Filter to last 30 days
+      executions = allExecs.filter(
+        (e) => !e.timestamp || e.timestamp >= thirtyDaysAgo
+      );
+
+      // Synthesize a virtual batch for the report builder
+      batch = {
+        id: 'export-all',
+        startedAt: executions.length > 0
+          ? executions[executions.length - 1].timestamp
+          : new Date().toISOString(),
+        completedAt: executions.length > 0
+          ? executions[0].timestamp
+          : new Date().toISOString(),
+        totalTests: executions.length,
+        executionIds: executions.map((e) => e.id),
+      };
+    } else {
+      // Validate batchId to prevent path traversal
+      if (!SAFE_ID.test(batchId)) {
+        return NextResponse.json(
+          { error: 'Invalid batch ID format' },
+          { status: 400 }
+        );
+      }
+
+      // Get batch data
+      const fetchedBatch = await fileStorage.getBatch(batchId);
+      if (!fetchedBatch) {
+        return NextResponse.json(
+          { error: 'Batch not found' },
+          { status: 404 }
+        );
+      }
+      batch = fetchedBatch;
+
+      // Get all executions for this batch, filtering out nulls
+      executions = (await Promise.all(
+        (batch.executionIds ?? []).map((id: string) => fileStorage.getExecution(id))
+      )).filter((e): e is LLMTestExecution => e !== null);
+    }
 
     // Build model report for export
     const report = buildModelReport(batch, executions, includeResponses);
@@ -265,7 +298,7 @@ function exportAsJSON(report: any, includeResponses: boolean): NextResponse {
  */
 function exportAsPDF(report: any, includeResponses: boolean): NextResponse {
   const doc = new jsPDF();
-  let yPosition = 0;
+  let yPosition = 20;
 
   // Title
   doc.setFontSize(18);
@@ -273,127 +306,148 @@ function exportAsPDF(report: any, includeResponses: boolean): NextResponse {
   doc.text('LLM Security Test Report', 14, yPosition);
   yPosition += 10;
 
-  // Metadata
+  // Batch metadata
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Model: ${report.modelName}`, 14, yPosition);
-  doc.text(`Provider: ${report.provider}`, 14, yPosition + 7);
-  doc.text(`Generated: ${new Date(report.generatedAt).toLocaleString()}`, 14, yPosition + 14);
-  yPosition += 25;
+  doc.text(`Batch: ${report.batchId}`, 14, yPosition);
+  doc.text(`Generated: ${new Date(report.generatedAt).toLocaleString()}`, 14, yPosition + 7);
+  yPosition += 20;
 
-  // Overall Score
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Overall Resilience Score', 14, yPosition);
-  yPosition += 7;
+  for (const model of report.models) {
+    // Model header
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Model: ${model.modelName}`, 14, yPosition);
+    yPosition += 7;
 
-  doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${report.avgResilienceScore}/100`, 14, yPosition);
-  yPosition += 15;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Provider: ${model.provider}`, 14, yPosition);
+    yPosition += 10;
 
-  // Key Metrics Table
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Key Metrics', 14, yPosition);
-  yPosition += 7;
+    // Overall Score
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Overall Resilience Score', 14, yPosition);
+    yPosition += 7;
 
-  autoTable(doc, {
-    startY: yPosition,
-    head: [['Metric', 'Value']],
-    body: [
-      ['Tests Executed', `${report.testCount}`],
-      ['Avg Score', `${report.avgResilienceScore}/100`],
-      ['Injection Rate', `${(report.injectionSuccessRate * 100).toFixed(1)}%`],
-      ['Harmfulness Rate', `${(report.harmfulnessRate * 100).toFixed(1)}%`],
-      ['Coverage', `${report.overallCoveragePercent}%`],
-      ['Avg Duration', `${report.avgDuration_ms}ms`],
-    ],
-    theme: 'plain',
-    headStyles: { fillColor: [240, 240, 240] },
-    margin: { top: 5 },
-  });
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${model.avgResilienceScore}/100`, 14, yPosition);
+    yPosition += 15;
 
-  yPosition += 40;
-
-  // Category Breakdown Table
-  if (report.byCategory.length > 0) {
+    // Key Metrics Table
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Category Breakdown', 14, yPosition);
+    doc.text('Key Metrics', 14, yPosition);
     yPosition += 7;
 
     autoTable(doc, {
       startY: yPosition,
-      head: [['Category', 'Pass Rate', 'Avg Score', 'Tests']],
-      body: report.byCategory.map((cat: any) => [
-        cat.category,
-        `${(cat.passRate * 100).toFixed(1)}%`,
-        `${Math.round(cat.avgScore)}/100`,
-        `${cat.count}`,
-      ]),
+      head: [['Metric', 'Value']],
+      body: [
+        ['Tests Executed', `${model.testCount}`],
+        ['Avg Score', `${model.avgResilienceScore}/100`],
+        ['Injection Rate', `${(model.injectionSuccessRate * 100).toFixed(1)}%`],
+        ['Harmfulness Rate', `${(model.harmfulnessRate * 100).toFixed(1)}%`],
+        ['Coverage', `${model.overallCoveragePercent}%`],
+        ['Avg Duration', `${model.avgDuration_ms}ms`],
+      ],
       theme: 'plain',
       headStyles: { fillColor: [240, 240, 240] },
       margin: { top: 5 },
     });
 
     yPosition += 40;
-  }
 
-  // Page break for coverage
-  doc.addPage();
+    // Category Breakdown Table
+    if (model.byCategory.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Category Breakdown', 14, yPosition);
+      yPosition += 7;
 
-  yPosition = 20;
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Category', 'Pass Rate', 'Avg Score', 'Tests']],
+        body: model.byCategory.map((cat: any) => [
+          cat.category,
+          `${(cat.passRate * 100).toFixed(1)}%`,
+          `${Math.round(cat.avgScore)}/100`,
+          `${cat.count}`,
+        ]),
+        theme: 'plain',
+        headStyles: { fillColor: [240, 240, 240] },
+        margin: { top: 5 },
+      });
 
-  // OWASP Coverage Table
-  if (report.owaspCoverage.length > 0) {
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('OWASP LLM Top 10 Coverage', 14, yPosition);
-    yPosition += 7;
+      yPosition += 40;
+    }
 
-    autoTable(doc, {
-      startY: yPosition,
-      head: [['Category', 'Pass Rate', 'Tested']],
-      body: report.owaspCoverage.map((owasp: any) => [
-        owasp.category,
-        `${(owasp.passRate * 100).toFixed(1)}%`,
-        `${owasp.tested}`,
-      ]),
-      theme: 'plain',
-      headStyles: { fillColor: [240, 240, 240] },
-      margin: { top: 5 },
-    });
+    // Page break for coverage
+    doc.addPage();
 
-    yPosition += 40;
-  }
+    yPosition = 20;
 
-  // TPI Coverage Table
-  if (report.tpiCoverage.length > 0) {
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('CrowdStrike TPI Coverage', 14, yPosition);
-    yPosition += 7;
+    // OWASP Coverage Table
+    if (model.owaspCoverage.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('OWASP LLM Top 10 Coverage', 14, yPosition);
+      yPosition += 7;
 
-    autoTable(doc, {
-      startY: yPosition,
-      head: [['Story', 'Pass Rate', 'Tested']],
-      body: report.tpiCoverage.map((tpi: any) => [
-        tpi.story,
-        `${(tpi.passRate * 100).toFixed(1)}%`,
-        `${tpi.tested}`,
-      ]),
-      theme: 'plain',
-      headStyles: { fillColor: [240, 240, 240] },
-      margin: { top: 5 },
-    });
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Category', 'Pass Rate', 'Tested']],
+        body: model.owaspCoverage.map((owasp: any) => [
+          owasp.category,
+          `${(owasp.passRate * 100).toFixed(1)}%`,
+          `${owasp.tested}`,
+        ]),
+        theme: 'plain',
+        headStyles: { fillColor: [240, 240, 240] },
+        margin: { top: 5 },
+      });
+
+      yPosition += 40;
+    }
+
+    // TPI Coverage Table
+    if (model.tpiCoverage.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CrowdStrike TPI Coverage', 14, yPosition);
+      yPosition += 7;
+
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Story', 'Pass Rate', 'Tested']],
+        body: model.tpiCoverage.map((tpi: any) => [
+          tpi.story,
+          `${(tpi.passRate * 100).toFixed(1)}%`,
+          `${tpi.tested}`,
+        ]),
+        theme: 'plain',
+        headStyles: { fillColor: [240, 240, 240] },
+        margin: { top: 5 },
+      });
+
+      yPosition += 40;
+    }
+
+    // Add page break between models (except last)
+    if (model !== report.models[report.models.length - 1]) {
+      doc.addPage();
+      yPosition = 20;
+    }
   }
 
   // Generate PDF and return as base64
   const pdfBytes = doc.output('arraybuffer');
   const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
-  const safeModelName = (report.modelName || 'export').replace(/[^\w-]/g, '_');
+  const firstModelName = report.models[0]?.modelName || 'export';
+  const safeModelName = firstModelName.replace(/[^\w-]/g, '_');
 
   return NextResponse.json({
     format: 'pdf',
@@ -410,96 +464,104 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
 
   // Header
   lines.push('# LLM Security Test Report');
-  lines.push();
-  lines.push(`**Model:** ${report.modelName}`);
-  lines.push(`**Provider:** ${report.provider}`);
+  lines.push('');
+  lines.push(`**Batch:** ${report.batchId}`);
   lines.push(`**Generated:** ${new Date(report.generatedAt).toLocaleString()}`);
-  lines.push();
+  lines.push('');
 
-  // Overall Score
-  lines.push('## Overall Resilience Score');
-  lines.push();
-  lines.push(`**${report.avgResilienceScore}/100**`);
-  lines.push();
+  for (const model of report.models) {
+    lines.push(`## Model: ${model.modelName}`);
+    lines.push('');
+    lines.push(`**Provider:** ${model.provider}`);
+    lines.push('');
 
-  // Key Metrics
-  lines.push('## Key Metrics');
-  lines.push();
-  lines.push('| Metric | Value |');
-  lines.push('|--------|-------|');
-  lines.push(`| Tests Executed | ${report.testCount} |`);
-  lines.push(`| Avg Resilience Score | ${report.avgResilienceScore}/100 |`);
-  lines.push(`| Injection Success Rate | ${(report.injectionSuccessRate * 100).toFixed(1)}% |`);
-  lines.push(`| Harmfulness Rate | ${(report.harmfulnessRate * 100).toFixed(1)}% |`);
-  lines.push(`| Overall Coverage | ${report.overallCoveragePercent}% |`);
-  lines.push(`| Avg Duration | ${report.avgDuration_ms}ms |`);
-  lines.push();
+    // Overall Score
+    lines.push('### Overall Resilience Score');
+    lines.push('');
+    lines.push(`**${model.avgResilienceScore}/100**`);
+    lines.push('');
 
-  // Category Breakdown
-  if (report.byCategory.length > 0) {
-    lines.push('## Category Breakdown');
-    lines.push();
-    lines.push('| Category | Pass Rate | Avg Score | Count |');
-    lines.push('|----------|-----------|-----------|-------|');
+    // Key Metrics
+    lines.push('### Key Metrics');
+    lines.push('');
+    lines.push('| Metric | Value |');
+    lines.push('|--------|-------|');
+    lines.push(`| Tests Executed | ${model.testCount} |`);
+    lines.push(`| Avg Resilience Score | ${model.avgResilienceScore}/100 |`);
+    lines.push(`| Injection Success Rate | ${(model.injectionSuccessRate * 100).toFixed(1)}% |`);
+    lines.push(`| Harmfulness Rate | ${(model.harmfulnessRate * 100).toFixed(1)}% |`);
+    lines.push(`| Overall Coverage | ${model.overallCoveragePercent}% |`);
+    lines.push(`| Avg Duration | ${model.avgDuration_ms}ms |`);
+    lines.push('');
 
-    report.byCategory.forEach((cat: any) => {
-      lines.push(`| ${cat.category} | ${(cat.passRate * 100).toFixed(1)}% | ${Math.round(cat.avgScore)}/100 | ${cat.count} |`);
-    });
-    lines.push();
+    // Category Breakdown
+    if (model.byCategory.length > 0) {
+      lines.push('### Category Breakdown');
+      lines.push('');
+      lines.push('| Category | Pass Rate | Avg Score | Count |');
+      lines.push('|----------|-----------|-----------|-------|');
+
+      model.byCategory.forEach((cat: any) => {
+        lines.push(`| ${cat.category} | ${(cat.passRate * 100).toFixed(1)}% | ${Math.round(cat.avgScore)}/100 | ${cat.count} |`);
+      });
+      lines.push('');
+    }
+
+    // OWASP Coverage
+    if (model.owaspCoverage.length > 0) {
+      lines.push('### OWASP LLM Top 10 Coverage');
+      lines.push('');
+      lines.push('| Category | Pass Rate | Tested |');
+      lines.push('|----------|-----------|--------|');
+
+      model.owaspCoverage.forEach((owasp: any) => {
+        lines.push(`| ${owasp.category} | ${(owasp.passRate * 100).toFixed(1)}% | ${owasp.tested} |`);
+      });
+      lines.push('');
+    }
+
+    // TPI Coverage
+    if (model.tpiCoverage.length > 0) {
+      lines.push('### CrowdStrike TPI Coverage');
+      lines.push('');
+      lines.push('| Story | Pass Rate | Tested |');
+      lines.push('|-------|-----------|--------|');
+
+      model.tpiCoverage.forEach((tpi: any) => {
+        lines.push(`| ${tpi.story} | ${(tpi.passRate * 100).toFixed(1)}% | ${tpi.tested} |`);
+      });
+      lines.push('');
+    }
+
+    // Recommendations
+    lines.push('### Recommendations');
+    lines.push('');
+
+    if (model.injectionSuccessRate > 0.5) {
+      lines.push('- **HIGH PRIORITY**: Model shows high injection success rate. Consider implementing stricter system prompt enforcement.');
+    }
+
+    if (model.harmfulnessRate > 0.3) {
+      lines.push('- **HIGH PRIORITY**: Model frequently generates harmful responses. Implement additional content filtering.');
+    }
+
+    if (model.overallCoveragePercent < 80) {
+      lines.push('- **MEDIUM PRIORITY**: Test coverage is below 80%. Run additional tests to improve confidence in results.');
+    }
+
+    if (model.avgResilienceScore >= 80) {
+      lines.push('- Model shows strong security posture. Continue monitoring for regressions.');
+    }
+
+    lines.push('');
   }
 
-  // OWASP Coverage
-  if (report.owaspCoverage.length > 0) {
-    lines.push('## OWASP LLM Top 10 Coverage');
-    lines.push();
-    lines.push('| Category | Pass Rate | Tested |');
-    lines.push('|----------|-----------|--------|');
-
-    report.owaspCoverage.forEach((owasp: any) => {
-      lines.push(`| ${owasp.category} | ${(owasp.passRate * 100).toFixed(1)}% | ${owasp.tested} |`);
-    });
-    lines.push();
-  }
-
-  // TPI Coverage
-  if (report.tpiCoverage.length > 0) {
-    lines.push('## CrowdStrike TPI Coverage');
-    lines.push();
-    lines.push('| Story | Pass Rate | Tested |');
-    lines.push('|-------|-----------|--------|');
-
-    report.tpiCoverage.forEach((tpi: any) => {
-      lines.push(`| ${tpi.story} | ${(tpi.passRate * 100).toFixed(1)}% | ${tpi.tested} |`);
-    });
-    lines.push();
-  }
-
-  // Recommendations
-  lines.push('## Recommendations');
-  lines.push();
-
-  if (report.injectionSuccessRate > 0.5) {
-    lines.push('- **HIGH PRIORITY**: Model shows high injection success rate. Consider implementing stricter system prompt enforcement.');
-  }
-
-  if (report.harmfulnessRate > 0.3) {
-    lines.push('- **HIGH PRIORITY**: Model frequently generates harmful responses. Implement additional content filtering.');
-  }
-
-  if (report.overallCoveragePercent < 80) {
-    lines.push('- **MEDIUM PRIORITY**: Test coverage is below 80%. Run additional tests to improve confidence in results.');
-  }
-
-  if (report.avgResilienceScore >= 80) {
-    lines.push('- Model shows strong security posture. Continue monitoring for regressions.');
-  }
-
-  lines.push();
   lines.push('---');
-  lines.push();
+  lines.push('');
   lines.push('*Generated by DojoLM LLM Testing Dashboard*');
 
-  const safeModelName = (report.modelName || 'export').replace(/[^\w-]/g, '_');
+  const firstModelName = report.models[0]?.modelName || 'export';
+  const safeModelName = firstModelName.replace(/[^\w-]/g, '_');
 
   return NextResponse.json({
     format: 'md',
@@ -622,7 +684,7 @@ function exportAsSARIF(report: any): NextResponse {
       return {
         tool: {
           driver: {
-            name: 'DojoLM LLM Security Scanner',
+            name: 'NODA LLM Security Scanner',
             version: '2.0.0',
             informationUri: 'https://github.com/bu-tpi/dojolm',
             rules: categoryRules,

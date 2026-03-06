@@ -270,7 +270,7 @@ The BU-TPI scanner includes detection for:
 - [x] ENGINE_FILTERS updated
 - [x] Fixture manifest to be updated
 
-**Status:** ✅ IN PROGRESS (2026-02-27)
+**Status:** ✅ COMPLETE (2026-03-06)
 
 ---
 

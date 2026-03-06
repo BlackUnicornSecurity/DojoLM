@@ -356,7 +356,7 @@ const SearchResultRow = memo(function SearchResultRow({
       role="listitem"
       tabIndex={0}
       className={cn(
-        'flex items-center gap-2 px-3 py-2 mx-1 rounded-md cursor-pointer',
+        'flex items-center gap-2 px-3 py-2 mx-1 rounded-lg cursor-pointer',
         'motion-safe:transition-colors motion-safe:duration-150',
         'hover:bg-[var(--bg-secondary)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1'
@@ -380,15 +380,15 @@ const SearchResultRow = memo(function SearchResultRow({
           </span>
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {item.category}
           </span>
           {item.file.attack && (
             <>
-              <span className="text-[10px] text-muted-foreground" aria-hidden="true">
+              <span className="text-xs text-muted-foreground" aria-hidden="true">
                 /
               </span>
-              <span className="text-[10px] text-muted-foreground truncate max-w-[200px]">
+              <span className="text-xs text-muted-foreground truncate max-w-[200px]">
                 {item.file.attack}
               </span>
             </>
@@ -413,7 +413,7 @@ const SearchResultRow = memo(function SearchResultRow({
               ? 'warning'
               : 'info'
           }
-          className="text-[10px] px-1.5 py-0 h-4 shrink-0"
+          className="text-xs px-1.5 py-0 h-4 shrink-0"
         >
           {item.file.severity}
         </Badge>

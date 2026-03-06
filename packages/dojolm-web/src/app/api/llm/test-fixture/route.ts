@@ -10,8 +10,16 @@ import { executeSingleTest } from '@/lib/llm-execution';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { modelId, testCaseId } = body;
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    const { modelId, testCaseId } = body as { modelId?: string; testCaseId?: string };
 
     if (!modelId || !testCaseId) {
       return NextResponse.json(
@@ -58,8 +66,9 @@ export async function POST(request: NextRequest) {
       durationMs: execution.duration_ms,
     });
   } catch (error) {
+    console.error('Error running test fixture:', error);
     return NextResponse.json(
-      { error: `Test fixture failed: ${(error as Error).message}` },
+      { error: 'Test fixture failed' },
       { status: 500 }
     );
   }

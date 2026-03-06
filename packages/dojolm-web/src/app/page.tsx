@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useScanner } from '@/lib/ScannerContext'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityLogger } from '@/lib/contexts/ActivityContext'
@@ -19,13 +19,6 @@ import { FindingsList } from '@/components/scanner'
 import { FixtureDetail, FixtureComparison, FixtureExplorer } from '@/components/fixtures'
 import type { ComparisonItem } from '@/components/fixtures/FixtureComparison'
 import { PayloadCard } from '@/components/payloads'
-import { LLMDashboardWithProviders } from '@/components/llm'
-import { AdversarialLab } from '@/components/adversarial'
-import { ComplianceCenter } from '@/components/compliance'
-import { StrategicHub } from '@/components/strategic'
-import { AttackDNAExplorer } from '@/components/attackdna'
-import { GuardDashboard } from '@/components/guard'
-import { AdminPanel } from '@/components/admin'
 import { NODADashboard } from '@/components/dashboard'
 import { getFixtures, scanFixture, readFixture } from '@/lib/api'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -38,6 +31,26 @@ import { FilterPills } from '@/components/ui/FilterPills'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { useScannerMetrics } from '@/lib/hooks'
 
+// Lazy-loaded module components (Story 2.5 — C-05 code splitting)
+const LLMDashboardWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.LLMDashboardWithProviders })))
+const AdversarialLab = lazy(() => import('@/components/adversarial').then(m => ({ default: m.AdversarialLab })))
+const ComplianceCenter = lazy(() => import('@/components/compliance').then(m => ({ default: m.ComplianceCenter })))
+const StrategicHub = lazy(() => import('@/components/strategic').then(m => ({ default: m.StrategicHub })))
+const AttackDNAExplorer = lazy(() => import('@/components/attackdna').then(m => ({ default: m.AttackDNAExplorer })))
+const GuardDashboard = lazy(() => import('@/components/guard').then(m => ({ default: m.GuardDashboard })))
+const AdminPanel = lazy(() => import('@/components/admin').then(m => ({ default: m.AdminPanel })))
+const RoninHub = lazy(() => import('@/components/ronin').then(m => ({ default: m.RoninHub })))
+const LLMJutsu = lazy(() => import('@/components/jutsu').then(m => ({ default: m.LLMJutsu })))
+
+/** Minimal loading fallback for lazy-loaded modules */
+function ModuleLoading() {
+  return (
+    <div className="flex items-center justify-center h-64" aria-busy="true" aria-label="Loading module">
+      <div className="w-8 h-8 border-2 border-[var(--dojo-primary)] border-t-transparent rounded-full motion-safe:animate-spin" />
+    </div>
+  )
+}
+
 /**
  * Page content - routes activeTab from NavigationContext to the correct content section
  */
@@ -45,7 +58,7 @@ function PageContent() {
   const { activeTab, setActiveTab } = useNavigation()
   const { scanText, clear } = useScanner()
 
-  // Fixtures state (shared between scanner and test lab)
+  // Fixtures state (shared between scanner and armory)
   const [fixtureManifest, setFixtureManifest] = useState<FixtureManifest | null>(null)
   const [isLoadingFixtures, setIsLoadingFixtures] = useState(false)
   const [fixtureError, setFixtureError] = useState<string | null>(null)
@@ -80,7 +93,7 @@ function PageContent() {
       const result = await scanFixture(path)
       const content = await readFixture(path)
       setSelectedFixture({ path, content, scanResult: result })
-      setActiveTab('testing')
+      setActiveTab('armory')
     } catch {
       setFixtureError('Unable to scan fixture. Check connection and try again.')
     }
@@ -91,7 +104,7 @@ function PageContent() {
     try {
       const content = await readFixture(path)
       setSelectedFixture({ path, content, scanResult: null })
-      setActiveTab('testing')
+      setActiveTab('armory')
     } catch {
       setFixtureError('Unable to load fixture. Check connection and try again.')
     }
@@ -138,10 +151,10 @@ function PageContent() {
           </ErrorBoundary>
         </div>
       )}
-      {activeTab === 'testing' && (
+      {activeTab === 'armory' && (
         <div className="animate-fade-in">
-          <ErrorBoundary fallbackTitle="Test Lab Error" fallbackDescription="Unable to load test lab. Please try again.">
-            <TestLabContent
+          <ErrorBoundary fallbackTitle="Armory Error" fallbackDescription="Unable to load Armory. Please try again.">
+            <ArmoryContent
               manifest={fixtureManifest}
               isLoading={isLoadingFixtures}
               fixtureError={fixtureError}
@@ -161,49 +174,81 @@ function PageContent() {
       {activeTab === 'llm' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="LLM Dashboard Error" fallbackDescription="Unable to load LLM dashboard. Please try again.">
-            <LLMDashboardWithProviders />
+            <Suspense fallback={<ModuleLoading />}>
+              <LLMDashboardWithProviders />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'guard' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="Hattori Guard Error" fallbackDescription="Unable to load Hattori Guard. Please try again.">
-            <GuardDashboard />
+            <Suspense fallback={<ModuleLoading />}>
+              <GuardDashboard />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'admin' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="Admin Error" fallbackDescription="Unable to load admin panel. Please try again.">
-            <AdminPanel />
+            <Suspense fallback={<ModuleLoading />}>
+              <AdminPanel />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'adversarial' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="Atemi Lab Error" fallbackDescription="Unable to load Atemi Lab. Please try again.">
-            <AdversarialLab />
+            <Suspense fallback={<ModuleLoading />}>
+              <AdversarialLab />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'compliance' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="Bushido Book Error" fallbackDescription="Unable to load Bushido Book. Please try again.">
-            <ComplianceCenter />
+            <Suspense fallback={<ModuleLoading />}>
+              <ComplianceCenter />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'strategic' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="The Kumite Error" fallbackDescription="Unable to load The Kumite. Please try again.">
-            <StrategicHub />
+            <Suspense fallback={<ModuleLoading />}>
+              <StrategicHub />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'attackdna' && (
         <div className="animate-fade-in">
           <ErrorBoundary fallbackTitle="Amaterasu DNA Error" fallbackDescription="Unable to load Amaterasu DNA. Please try again.">
-            <AttackDNAExplorer />
+            <Suspense fallback={<ModuleLoading />}>
+              <AttackDNAExplorer />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+      {activeTab === 'llm-jutsu' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="LLM Jutsu Error" fallbackDescription="Unable to load LLM Jutsu. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <LLMJutsu />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+      {activeTab === 'ronin-hub' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Ronin Hub Error" fallbackDescription="Unable to load Ronin Hub. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <RoninHub />
+            </Suspense>
           </ErrorBoundary>
         </div>
       )}
@@ -236,13 +281,13 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
   return (
     <div className="space-y-6">
       <PageToolbar
-        title="Scanner"
+        title="Haiku Scanner"
         subtitle="Live prompt injection detection"
         searchPlaceholder="Search engines, patterns..."
       />
 
       {/* Metric Cards - Display-only metrics, NOT for security decisions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <MetricCard
           label="Total Scans"
           value={metrics.totalScans}
@@ -286,7 +331,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       )}
 
       {/* Scanner Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-3">
         <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
         <FindingsList result={scanResult} />
       </div>
@@ -295,9 +340,9 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
 }
 
 /**
- * Test Lab content - combines Fixtures + Test Payloads with sub-navigation
+ * Armory content - combines Fixtures + Test Payloads with sub-navigation
  */
-function TestLabContent({
+function ArmoryContent({
   manifest,
   isLoading,
   fixtureError,
@@ -329,14 +374,14 @@ function TestLabContent({
   return (
     <div className="space-y-6">
       <PageToolbar
-        title="Test Lab"
+        title="Armory"
         subtitle="Fixtures and test payloads"
         searchPlaceholder="Search fixtures, payloads..."
       />
 
       {/* Sub-navigation */}
       <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'fixtures' | 'payloads')}>
-        <TabsList aria-label="Test Lab sections" className="bg-muted/50">
+        <TabsList aria-label="Armory sections" className="bg-muted/50">
           <TabsTrigger value="fixtures" className="min-h-[44px]">
             Fixtures
           </TabsTrigger>
@@ -370,7 +415,7 @@ function TestLabContent({
 }
 
 /**
- * Fixtures section within Test Lab
+ * Fixtures section within Armory
  */
 function FixturesSection({
   manifest,
@@ -441,7 +486,7 @@ function FixturesSection({
 }
 
 /**
- * Payloads section within Test Lab
+ * Payloads section within Armory
  */
 function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
   const [showCurrent, setShowCurrent] = useState(true)
@@ -477,7 +522,7 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
         </label>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
         {filteredPayloads.map((payload) => (
           <PayloadCard
             key={payload.title}

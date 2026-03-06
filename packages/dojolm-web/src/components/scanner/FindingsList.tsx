@@ -22,6 +22,7 @@ import { ShieldAlert, CheckCircle2, Clock } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
 import { EmptyState, emptyStatePresets } from '@/components/ui/EmptyState'
+import { EncodingChainVisualizer } from './EncodingChainVisualizer'
 
 /** Max chars to show for a finding match before truncation */
 const MAX_MATCH_LENGTH = 200
@@ -64,12 +65,7 @@ export const FindingsList = memo(function FindingsList({ result, className }: Fi
 
         {result.findings.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-center space-y-2">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-[var(--success)]" aria-hidden="true" />
-              <p className="text-muted-foreground">
-                No findings detected. Text appears safe.
-              </p>
-            </div>
+            <EmptyState icon={CheckCircle2} title="Clean" description="No findings detected. Text appears safe." />
           </div>
         ) : (
           <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -102,7 +98,7 @@ const FindingCard = memo(function FindingCard({ finding }: FindingCardProps) {
 
   return (
     <div
-      className="p-4 rounded-xl border border-[rgba(255,255,255,0.06)] bg-muted/50"
+      className="p-4 rounded-lg border border-[rgba(255,255,255,0.06)] bg-muted/50"
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">
@@ -130,6 +126,11 @@ const FindingCard = memo(function FindingCard({ finding }: FindingCardProps) {
             </span>
           </code>
         </pre>
+      )}
+
+      {/* Encoding chain visualization for multi-layer findings (Story 5.4) */}
+      {finding.pattern_name === 'multi-layer-encoding' && (
+        <EncodingChainVisualizer finding={finding} />
       )}
 
       <div className="flex items-center justify-between gap-2 mt-2 text-xs text-muted-foreground">

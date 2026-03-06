@@ -263,7 +263,7 @@ export function ThreatFeedStream() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={cn(
-              'w-full pl-10 pr-4 py-2 rounded-md border border-[var(--border)]',
+              'w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border)]',
               'bg-[var(--bg-secondary)] text-[var(--foreground)] text-sm',
               'placeholder:text-muted-foreground',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -307,7 +307,7 @@ export function ThreatFeedStream() {
       </div>
 
       {/* Main layout: sources + entries + alerts */}
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid lg:grid-cols-4 gap-3">
         {/* Source list */}
         <SourceList sources={MOCK_SOURCES} />
 
@@ -415,7 +415,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
           aria-label="Threat intelligence entries"
         >
           {entries.length === 0 && (
-            <div className="p-8 text-center text-muted-foreground">
+            <div className="p-4 text-center text-muted-foreground">
               <Shield className="w-8 h-8 mx-auto mb-2 opacity-50" aria-hidden="true" />
               <p className="text-sm">No entries match your current filters.</p>
             </div>
@@ -440,7 +440,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
                   <div className="flex-1 min-w-0">
                     {/* Title and type */}
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <Badge variant="outline" className="text-[10px]">{entry.type}</Badge>
+                      <Badge variant="outline" className="text-xs">{entry.type}</Badge>
                       <span className="text-xs text-muted-foreground">
                         Confidence: {(entry.confidence * 100).toFixed(0)}%
                       </span>
@@ -475,7 +475,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
                         {entry.indicators.map((ind) => (
                           <span
                             key={ind}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--bg-quaternary)] text-muted-foreground"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-mono bg-[var(--bg-quaternary)] text-muted-foreground"
                           >
                             {ind}
                           </span>
@@ -541,14 +541,14 @@ function AlertPanel({ alerts }: { alerts: ThreatAlert[] }) {
                   aria-label={`${alert.severity} alert: ${alert.title}`}
                 >
                   <div className="flex items-start gap-2">
-                    <Badge variant={sevConfig.variant} className="flex-shrink-0 mt-0.5 text-[10px]">
+                    <Badge variant={sevConfig.variant} className="flex-shrink-0 mt-0.5 text-xs">
                       {sevConfig.label}
                     </Badge>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-[var(--foreground)] leading-snug">
                         {alert.title}
                       </p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         {alert.source} - {alert.timestamp}
                       </p>
                     </div>
@@ -561,7 +561,7 @@ function AlertPanel({ alerts }: { alerts: ThreatAlert[] }) {
                   {isExpanded && (
                     <div className="mt-2 pt-2 border-t border-[var(--border)]">
                       <div className="flex items-center gap-2">
-                        <Badge variant={alert.acknowledged ? 'success' : 'warning'} className="text-[10px]">
+                        <Badge variant={alert.acknowledged ? 'success' : 'warning'} className="text-xs">
                           {alert.acknowledged ? 'Acknowledged' : 'Pending'}
                         </Badge>
                       </div>
@@ -638,11 +638,11 @@ function IndicatorSearch({
                     className="border-b border-[var(--border)] last:border-0 hover:bg-muted/30 motion-safe:transition-colors"
                   >
                     <td className="py-2 px-3">
-                      <Badge variant="outline" className="text-[10px] uppercase">{ind.type}</Badge>
+                      <Badge variant="outline" className="text-xs uppercase">{ind.type}</Badge>
                     </td>
                     <td className="py-2 px-3 font-mono text-xs text-[var(--foreground)]">{ind.value}</td>
                     <td className="py-2 px-3">
-                      <Badge variant={sevConfig.variant} className="text-[10px]">{sevConfig.label}</Badge>
+                      <Badge variant={sevConfig.variant} className="text-xs">{sevConfig.label}</Badge>
                     </td>
                     <td className="py-2 px-3 text-xs text-muted-foreground">{ind.source}</td>
                     <td className="py-2 px-3 text-xs text-muted-foreground">{ind.firstSeen}</td>

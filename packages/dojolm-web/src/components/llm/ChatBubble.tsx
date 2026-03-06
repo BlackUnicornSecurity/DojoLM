@@ -62,7 +62,7 @@ export function ChatBubble({ role, content, timestamp, isCode }: ChatBubbleProps
         )}
         {timestamp && (
           <span className={cn(
-            "text-[10px] mt-1 block",
+            "text-xs mt-1 block",
             isUser ? "text-white/60" : "text-[var(--text-tertiary)]"
           )}>
             {timestamp}

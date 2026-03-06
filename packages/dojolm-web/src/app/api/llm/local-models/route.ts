@@ -7,6 +7,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
+
 /**
  * Standardized model info returned by this endpoint
  */
@@ -38,6 +41,9 @@ interface LocalModelInfo {
  */
 export async function GET(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     const { searchParams } = new URL(request.url);
     const provider = searchParams.get('provider') || 'ollama';
     const baseUrl = searchParams.get('baseUrl');
@@ -55,12 +61,19 @@ export async function GET(request: NextRequest) {
           );
         }
       } catch {
-        // Fallback: strict hostname check if bu-tpi import fails
+        // Fallback: hostname check if bu-tpi import fails
+        // Allow localhost and private network IPs for local/network LLM discovery
         try {
           const parsed = new URL(baseUrl);
-          if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
+          const host = parsed.hostname;
+          const isLocalhost = host === 'localhost' || host === '127.0.0.1';
+          const isPrivateNetwork =
+            host.startsWith('192.168.') ||
+            host.startsWith('10.') ||
+            /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+          if (!isLocalhost && !isPrivateNetwork) {
             return NextResponse.json(
-              { error: 'Only localhost URLs are allowed for local model discovery', models: [] },
+              { error: 'Only localhost and private network URLs are allowed for local model discovery', models: [] },
               { status: 400 }
             );
           }
@@ -107,17 +120,7 @@ export async function GET(request: NextRequest) {
       count: models.length,
     });
   } catch (error) {
-    console.error('Error fetching local models:', error);
-
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : 'Failed to fetch models',
-        provider: (new URL(request.url).searchParams.get('provider') || 'ollama'),
-        models: [],
-        count: 0,
-      },
-      { status: 500 }
-    );
+    return apiError('Failed to fetch local models', 500, error);
   }
 }
 

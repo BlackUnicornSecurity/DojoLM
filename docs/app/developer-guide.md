@@ -1,8 +1,8 @@
 # BU-TPI Developer Guide
 
 **Version:** 2.0
-**Last Updated:** 2026-02-26
-**Organization:** BlackUnicorn Laboratory / DojoLM
+**Last Updated:** 2026-03-06
+**Organization:** BlackUnicorn Laboratory / NODA Platform
 
 ---
 

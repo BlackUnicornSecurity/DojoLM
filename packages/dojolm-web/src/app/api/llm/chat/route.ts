@@ -35,8 +35,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = JSON.parse(rawBody);
-    const { modelId, messages, maxTokens, temperature, systemMessage } = body;
+    let body: Record<string, unknown>;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+    const { modelId, messages, maxTokens, temperature, systemMessage } = body as Record<string, unknown>;
 
     if (!modelId) {
       return NextResponse.json({ error: 'Missing required field: modelId' }, { status: 400 });
@@ -52,8 +60,9 @@ export async function POST(request: NextRequest) {
       }
       for (const msg of messages) {
         if (!VALID_ROLES.has(msg.role)) {
+          const safeRole = String(msg.role ?? '').slice(0, 50);
           return NextResponse.json(
-            { error: `Invalid role: ${msg.role}. Valid roles: system, user, assistant.` },
+            { error: `Invalid role: ${safeRole}. Valid roles: system, user, assistant.` },
             { status: 400 }
           );
         }
@@ -61,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const storage = await getStorage();
-    const config = await storage.getModelConfig(modelId);
+    const config = await storage.getModelConfig(modelId as string);
     if (!config) {
       return NextResponse.json({ error: 'Model not found' }, { status: 404 });
     }
@@ -72,15 +81,15 @@ export async function POST(request: NextRequest) {
     }
 
     const prompt = messages
-      ? messages.filter((m: any) => m.role === 'user').map((m: any) => m.content).join('\n')
-      : body.prompt || '';
+      ? (messages as Array<{ role: string; content: string }>).filter((m) => m.role === 'user').map((m) => m.content).join('\n')
+      : (body.prompt as string) || '';
 
     const startTime = performance.now();
     const response = await adapter.execute(config, {
       prompt,
-      maxTokens: maxTokens || config.maxTokens || 1024,
-      temperature: temperature ?? config.temperature ?? 0.7,
-      systemMessage,
+      maxTokens: (maxTokens as number) || config.maxTokens || 1024,
+      temperature: (temperature as number) ?? config.temperature ?? 0.7,
+      systemMessage: systemMessage as string | undefined,
     });
 
     const duration = Math.round(performance.now() - startTime);
@@ -97,8 +106,9 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Error in chat request:', error);
     return NextResponse.json(
-      { error: `Chat request failed: ${(error as Error).message}` },
+      { error: 'Chat request failed' },
       { status: 500 }
     );
   }

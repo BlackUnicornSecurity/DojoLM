@@ -40,7 +40,7 @@ export interface WidgetCatalogEntry {
   isDefault: boolean
 }
 
-/** Full widget catalog — all 27 available widgets */
+/** Full widget catalog — all 29 available widgets */
 export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   // Interactive / Action Widgets
   { id: 'quick-scan', label: 'Quick Scan Bar', description: 'Instant inline ALLOW/BLOCK verdict', category: 'interactive', defaultSize: 'full', isDefault: false },
@@ -71,7 +71,7 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
 
   // Reference Widgets
   { id: 'llm-models', label: 'LLM Models List', description: 'Configured models with provider and status', category: 'reference', defaultSize: 'half', isDefault: true },
-  { id: 'module-grid', label: 'Scanner Module Grid', description: '23 modules as colored dots/chips', category: 'reference', defaultSize: 'half', isDefault: false },
+  { id: 'module-grid', label: 'Haiku Scanner Module Grid', description: '23 modules as colored dots/chips', category: 'reference', defaultSize: 'half', isDefault: false },
   { id: 'compliance-bars', label: 'Compliance Mini-Bars', description: '6 horizontal bars for framework coverage', category: 'reference', defaultSize: 'half', isDefault: false },
   { id: 'coverage-heatmap', label: 'Coverage Heatmap', description: 'TPI categories as colored grid cells', category: 'reference', defaultSize: 'half', isDefault: false },
   { id: 'owasp-summary', label: 'OWASP LLM Top 10', description: '10-row compact list with coverage %', category: 'reference', defaultSize: 'half', isDefault: false },
@@ -80,6 +80,10 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
 
   // Ecosystem Widget
   { id: 'ecosystem-pulse', label: 'Ecosystem Pulse', description: 'Cross-module data flow health and metrics', category: 'dynamic', defaultSize: 'half', isDefault: false },
+
+  // Phase E Widgets (Stories 10.6, 11.4)
+  { id: 'ronin-hub', label: 'Ronin Hub', description: 'Bug bounty submissions, subscriptions, and CVE alerts', category: 'strategic', defaultSize: 'half', isDefault: false },
+  { id: 'llm-jutsu', label: 'LLM Jutsu', description: 'Model testing summary with belt distribution', category: 'strategic', defaultSize: 'half', isDefault: false },
 ]
 
 const CATALOG_MAP = new Map(WIDGET_CATALOG.map(w => [w.id, w]))
@@ -149,12 +153,14 @@ export function DashboardConfigProvider({ children }: { children: ReactNode }) {
   // Hydrate from localStorage on mount
   useEffect(() => {
     setConfig(loadConfig())
-    hydratedRef.current = true
   }, [])
 
-  // Persist to localStorage on change (skip until hydrated)
+  // Persist to localStorage on change (skip initial render)
   useEffect(() => {
-    if (!hydratedRef.current) return
+    if (!hydratedRef.current) {
+      hydratedRef.current = true
+      return
+    }
     saveConfig(config)
   }, [config])
 

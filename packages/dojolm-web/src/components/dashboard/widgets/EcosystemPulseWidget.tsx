@@ -13,14 +13,18 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { Activity, Layers, AlertTriangle, Zap, ChevronDown, ChevronUp } from 'lucide-react'
 import type { EcosystemStats } from '@/lib/ecosystem-types'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 const MODULE_LABELS: Record<string, string> = {
-  scanner: 'Scanner',
+  scanner: 'Haiku Scanner',
   atemi: 'Atemi Lab',
   sage: 'SAGE',
   arena: 'Arena',
   mitsuke: 'Mitsuke',
   attackdna: 'Amaterasu DNA',
+  ronin: 'Ronin Hub',
+  jutsu: 'LLM Jutsu',
+  guard: 'Hattori Guard',
 }
 
 const MODULE_COLORS: Record<string, string> = {
@@ -30,6 +34,9 @@ const MODULE_COLORS: Record<string, string> = {
   arena: 'var(--warning)',
   mitsuke: 'var(--severity-high)',
   attackdna: 'var(--success)',
+  ronin: 'var(--severity-medium)',
+  jutsu: 'var(--bu-electric)',
+  guard: 'var(--dojo-primary)',
 }
 
 export function EcosystemPulseWidget() {
@@ -42,7 +49,7 @@ export function EcosystemPulseWidget() {
 
     async function fetchStats() {
       try {
-        const res = await fetch('/api/ecosystem/findings?mode=stats')
+        const res = await fetchWithAuth('/api/ecosystem/findings?mode=stats')
         if (!res.ok) throw new Error('Failed to fetch stats')
         const json = await res.json()
         if (!cancelled) {
@@ -107,18 +114,18 @@ export function EcosystemPulseWidget() {
           {/* Severity breakdown */}
           <div className="flex gap-2">
             {stats.bySeverity.CRITICAL > 0 && (
-              <Badge variant="critical" className="text-[10px] gap-1">
+              <Badge variant="critical" className="text-xs gap-1">
                 <AlertTriangle className="w-3 h-3" aria-hidden="true" />
                 {stats.bySeverity.CRITICAL} critical
               </Badge>
             )}
             {stats.bySeverity.WARNING > 0 && (
-              <Badge variant="high" className="text-[10px]">
+              <Badge variant="high" className="text-xs">
                 {stats.bySeverity.WARNING} warning
               </Badge>
             )}
             {stats.bySeverity.INFO > 0 && (
-              <Badge variant="info" className="text-[10px]">
+              <Badge variant="info" className="text-xs">
                 {stats.bySeverity.INFO} info
               </Badge>
             )}
@@ -128,14 +135,14 @@ export function EcosystemPulseWidget() {
           <div>
             <p className="text-xs text-muted-foreground mb-1.5">Active Modules</p>
             <div className="flex flex-wrap gap-1.5">
-              {(['scanner', 'atemi', 'sage', 'arena', 'mitsuke', 'attackdna'] as const).map((mod) => {
+              {(['scanner', 'atemi', 'sage', 'arena', 'mitsuke', 'attackdna', 'ronin', 'jutsu', 'guard'] as const).map((mod) => {
                 const count = stats.byModule[mod] ?? 0
                 const isActive = stats.activeModules.includes(mod)
                 return (
                   <div
                     key={mod}
                     className={cn(
-                      'flex items-center gap-1.5 px-2 py-1 rounded-md text-xs',
+                      'flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs',
                       'border',
                       isActive
                         ? 'border-[var(--dojo-primary)]/30 bg-[var(--dojo-primary)]/5'

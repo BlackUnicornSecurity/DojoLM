@@ -153,7 +153,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Close config panel"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -176,7 +176,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
               className="w-full px-3 py-2 rounded-lg bg-[var(--input)] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--text-tertiary)] min-h-[44px]"
               aria-label="Target model name"
             />
-            <p className="text-[10px] text-[var(--text-tertiary)]">
+            <p className="text-xs text-[var(--text-tertiary)]">
               Model identifier from your configured LLM providers
             </p>
           </fieldset>
@@ -212,7 +212,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
           <fieldset className="space-y-2">
             <legend className="flex items-center justify-between text-sm font-semibold text-[var(--foreground)]">
               Concurrency
-              <Badge variant="outline" className="text-[10px]">{config.concurrency}</Badge>
+              <Badge variant="outline" className="text-xs">{config.concurrency}</Badge>
             </legend>
             <input
               type="range"
@@ -223,7 +223,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
               className="w-full accent-primary"
               aria-label="Concurrent attack threads"
             />
-            <div className="flex justify-between text-[10px] text-[var(--text-tertiary)]">
+            <div className="flex justify-between text-xs text-[var(--text-tertiary)]">
               <span>1</span>
               <span>5</span>
               <span>10</span>
@@ -235,7 +235,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
             <legend className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]">
               <Timer className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               Timeout
-              <Badge variant="outline" className="text-[10px]">{config.timeoutMs / 1000}s</Badge>
+              <Badge variant="outline" className="text-xs">{config.timeoutMs / 1000}s</Badge>
             </legend>
             <input
               type="range"
@@ -247,7 +247,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
               className="w-full accent-primary"
               aria-label="Request timeout in milliseconds"
             />
-            <div className="flex justify-between text-[10px] text-[var(--text-tertiary)]">
+            <div className="flex justify-between text-xs text-[var(--text-tertiary)]">
               <span>5s</span>
               <span>60s</span>
               <span>120s</span>
@@ -260,7 +260,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
               <ScrollText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <div>
                 <p className="text-sm font-medium text-[var(--foreground)]">Auto-log attacks</p>
-                <p className="text-[10px] text-[var(--text-tertiary)]">Automatically log all attack results</p>
+                <p className="text-xs text-[var(--text-tertiary)]">Automatically log all attack results</p>
               </div>
             </div>
             <button

@@ -12,7 +12,9 @@
  * - TreeNodeCard component (line 178)
  * - EdgeLabel component (line 239)
  * - TreeBranch recursive component (line 260)
- * - FamilyTreeView component (line 303)
+ * - TreeLegend component (line 357)
+ * - ZoomControls component (line 390)
+ * - FamilyTreeView component (line 425)
  */
 
 'use client'
@@ -28,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { GitBranch, ChevronDown, ChevronRight } from 'lucide-react'
+import { GitBranch, ChevronDown, ChevronRight, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
 import { NodeDetailPanel, type NodeData } from './NodeDetailPanel'
 
 interface TreeNode {
@@ -243,11 +245,11 @@ function TreeNodeCard({ node, isSelected, onSelect, focusedId, onFocusChange }: 
         />
         <Badge
           variant="outline"
-          className={cn('text-[10px] px-1.5 py-0', catClass)}
+          className={cn('text-xs px-1.5 py-0', catClass)}
         >
           {node.category}
         </Badge>
-        <span className="text-[10px] text-muted-foreground ml-auto font-mono">
+        <span className="text-xs text-muted-foreground ml-auto font-mono">
           {node.id}
         </span>
       </div>
@@ -265,10 +267,10 @@ function EdgeLabel({ edge }: { edge: TreeEdge }) {
   return (
     <div className="flex items-center gap-1 py-1 pl-6">
       <div className={cn('w-4 border-l-2 border-b-2 h-4 rounded-bl-md', colorClass)} aria-hidden="true" />
-      <span className={cn('text-[10px] font-medium', textClass)}>
+      <span className={cn('text-xs font-medium', textClass)}>
         {edge.mutationType}
       </span>
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-xs text-muted-foreground">
         ({(edge.similarity * 100).toFixed(0)}%)
       </span>
     </div>
@@ -354,6 +356,86 @@ function TreeBranch({
   )
 }
 
+// --- Legend ---
+
+function TreeLegend() {
+  return (
+    <Card>
+      <CardContent className="p-3">
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1.5">Severity</p>
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Severity color legend">
+              {Object.entries(severityIndicator).map(([level, cls]) => (
+                <div key={level} className="flex items-center gap-1.5" role="listitem">
+                  <span className={cn('w-2 h-2 rounded-full', cls)} aria-hidden="true" />
+                  <span className="text-xs text-[var(--foreground)] capitalize">{level}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-1.5">Mutation Type</p>
+            <div className="flex flex-wrap gap-2" role="list" aria-label="Mutation type color legend">
+              {Object.entries(mutationTextColor).map(([type, cls]) => (
+                <div key={type} className="flex items-center gap-1.5" role="listitem">
+                  <span className={cn('w-2 h-2 rounded-full', mutationEdgeColor[type]?.replace('border-', 'bg-').replace('/50', '') ?? 'bg-gray-400')} aria-hidden="true" />
+                  <span className="text-xs text-[var(--foreground)] capitalize">{type}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// --- Zoom Controls ---
+
+const ZOOM_STEP = 0.15
+const ZOOM_MIN = 0.5
+const ZOOM_MAX = 2.0
+
+function ZoomControls({ zoom, onZoomIn, onZoomOut, onZoomReset }: {
+  zoom: number
+  onZoomIn: () => void
+  onZoomOut: () => void
+  onZoomReset: () => void
+}) {
+  return (
+    <div className="flex items-center gap-1" role="group" aria-label="Zoom controls">
+      <button
+        onClick={onZoomOut}
+        disabled={zoom <= ZOOM_MIN}
+        className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] disabled:opacity-40 disabled:pointer-events-none min-w-[36px] min-h-[36px] flex items-center justify-center motion-safe:transition-colors"
+        aria-label="Zoom out"
+      >
+        <ZoomOut className="h-4 w-4" aria-hidden="true" />
+      </button>
+      <span className="text-xs font-mono text-muted-foreground min-w-[3ch] text-center" aria-live="polite">
+        {Math.round(zoom * 100)}%
+      </span>
+      <button
+        onClick={onZoomIn}
+        disabled={zoom >= ZOOM_MAX}
+        className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] disabled:opacity-40 disabled:pointer-events-none min-w-[36px] min-h-[36px] flex items-center justify-center motion-safe:transition-colors"
+        aria-label="Zoom in"
+      >
+        <ZoomIn className="h-4 w-4" aria-hidden="true" />
+      </button>
+      <button
+        onClick={onZoomReset}
+        disabled={Math.abs(zoom - 1) < 0.001}
+        className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] disabled:opacity-40 disabled:pointer-events-none min-w-[36px] min-h-[36px] flex items-center justify-center motion-safe:transition-colors"
+        aria-label="Reset zoom"
+      >
+        <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
+    </div>
+  )
+}
+
 // --- Main Component ---
 
 interface FamilyTreeViewProps {
@@ -364,6 +446,11 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
   const [selectedFamilyId, setSelectedFamilyId] = useState<string>(MOCK_FAMILIES[0].id)
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null)
   const [focusedId, setFocusedId] = useState<string | null>(null)
+  const [zoom, setZoom] = useState(1)
+
+  const handleZoomIn = useCallback(() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP)), [])
+  const handleZoomOut = useCallback(() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP)), [])
+  const handleZoomReset = useCallback(() => setZoom(1), [])
 
   const family = MOCK_FAMILIES.find((f) => f.id === selectedFamilyId) ?? MOCK_FAMILIES[0]
 
@@ -376,10 +463,13 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
     return map
   }, [family.nodes])
 
-  // Build a flat traversal order for keyboard navigation (depth-first)
-  const flatOrder = useCallback((): string[] => {
+  // Build a flat traversal order for keyboard navigation (depth-first, with cycle guard)
+  const flatOrder = useMemo((): string[] => {
     const order: string[] = []
+    const visited = new Set<string>()
     const visit = (id: string) => {
+      if (visited.has(id)) return
+      visited.add(id)
       const n = nodeRefs.get(id)
       if (!n) return
       order.push(id)
@@ -393,19 +483,18 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
 
   const handleKeyNav = useCallback(
     (currentId: string, direction: 'up' | 'down' | 'left' | 'right') => {
-      const order = flatOrder()
-      const currentIndex = order.indexOf(currentId)
+      const currentIndex = flatOrder.indexOf(currentId)
       if (currentIndex === -1) return
 
       let nextIndex = currentIndex
       if (direction === 'down' || direction === 'right') {
-        nextIndex = Math.min(currentIndex + 1, order.length - 1)
+        nextIndex = Math.min(currentIndex + 1, flatOrder.length - 1)
       } else if (direction === 'up' || direction === 'left') {
         nextIndex = Math.max(currentIndex - 1, 0)
       }
 
       if (nextIndex !== currentIndex) {
-        setFocusedId(order[nextIndex])
+        setFocusedId(flatOrder[nextIndex])
       }
     },
     [flatOrder]
@@ -432,30 +521,36 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Family Selector */}
-      <div className="flex items-center gap-3">
-        <GitBranch className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />
-        <label htmlFor="family-select" className="text-sm font-medium text-[var(--foreground)]">
-          Family
-        </label>
-        <Select value={selectedFamilyId} onValueChange={setSelectedFamilyId}>
-          <SelectTrigger className="w-64" aria-label="Select attack family">
-            <SelectValue placeholder="Select a family" />
-          </SelectTrigger>
-          <SelectContent>
-            {MOCK_FAMILIES.map((f) => (
-              <SelectItem key={f.id} value={f.id}>
-                {f.name} ({f.nodes.length} nodes)
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Legend */}
+      <TreeLegend />
+
+      {/* Family Selector + Zoom */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <GitBranch className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />
+          <label htmlFor="family-select" className="text-sm font-medium text-[var(--foreground)]">
+            Family
+          </label>
+          <Select value={selectedFamilyId} onValueChange={setSelectedFamilyId}>
+            <SelectTrigger className="w-64" aria-label="Select attack family">
+              <SelectValue placeholder="Select a family" />
+            </SelectTrigger>
+            <SelectContent>
+              {MOCK_FAMILIES.map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  {f.name} ({f.nodes.length} nodes)
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <ZoomControls zoom={zoom} onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} onZoomReset={handleZoomReset} />
       </div>
 
       {/* Tree + Detail Layout */}
       <div className="flex gap-4 items-start flex-col lg:flex-row">
         {/* Tree Panel */}
-        <Card className="flex-1 min-w-0 w-full">
+        <Card className="flex-1 min-w-0 w-full overflow-auto">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -469,7 +564,8 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
             <div
               role="tree"
               aria-label={`Family tree: ${family.name}`}
-              className="space-y-1"
+              className="space-y-1 origin-top-left motion-safe:transition-transform"
+              style={{ transform: `scale(${zoom})` }}
             >
               <TreeBranch
                 nodeId={family.rootId}

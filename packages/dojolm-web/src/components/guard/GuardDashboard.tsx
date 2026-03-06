@@ -12,7 +12,7 @@ import { GuardModeSelector } from './GuardModeSelector';
 import { GuardAuditLog } from './GuardAuditLog';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { GUARD_MODES } from '@/lib/guard-constants';
-import { ShieldAlert, ShieldOff, BarChart3, Eye } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, ShieldOff, BarChart3, Eye } from 'lucide-react';
 import { GuardProvider } from '@/lib/contexts/GuardContext';
 
 function GuardDashboardInner() {
@@ -39,11 +39,16 @@ function GuardDashboardInner() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold">Hattori Guard</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Configurable input/output guard for LLM test execution with audit trail
-        </p>
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
+          <ShieldCheck className="h-5 w-5 text-[var(--dojo-primary)]" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold">Hattori Guard</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Configurable input/output guard for LLM test execution with audit trail
+          </p>
+        </div>
       </div>
 
       {error && (

@@ -111,22 +111,22 @@ function ComparisonPane({ item, label }: { item: ComparisonItem; label: string }
             <div className="flex gap-2 flex-wrap mt-2">
               <Badge
                 variant={item.scanResult.verdict === 'BLOCK' ? 'critical' : 'success'}
-                className="text-[10px]"
+                className="text-xs"
               >
                 {item.scanResult.verdict}
               </Badge>
               {item.scanResult.counts.critical > 0 && (
-                <Badge variant="critical" className="text-[10px]">
+                <Badge variant="critical" className="text-xs">
                   {item.scanResult.counts.critical} critical
                 </Badge>
               )}
               {item.scanResult.counts.warning > 0 && (
-                <Badge variant="warning" className="text-[10px]">
+                <Badge variant="warning" className="text-xs">
                   {item.scanResult.counts.warning} warning
                 </Badge>
               )}
               {item.scanResult.counts.info > 0 && (
-                <Badge variant="info" className="text-[10px]">
+                <Badge variant="info" className="text-xs">
                   {item.scanResult.counts.info} info
                 </Badge>
               )}
@@ -192,7 +192,7 @@ function ScanDiffDisplay({
           <div className={cn('text-sm font-bold', left.verdict === 'BLOCK' ? 'text-red-500' : 'text-green-500')}>
             {left.verdict}
           </div>
-          <div className="text-[10px] text-muted-foreground truncate">{leftFilename}</div>
+          <div className="text-xs text-muted-foreground truncate">{leftFilename}</div>
         </div>
         <div className="flex items-center">
           <ArrowLeftRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
@@ -201,7 +201,7 @@ function ScanDiffDisplay({
           <div className={cn('text-sm font-bold', right.verdict === 'BLOCK' ? 'text-red-500' : 'text-green-500')}>
             {right.verdict}
           </div>
-          <div className="text-[10px] text-muted-foreground truncate">{rightFilename}</div>
+          <div className="text-xs text-muted-foreground truncate">{rightFilename}</div>
         </div>
       </div>
 

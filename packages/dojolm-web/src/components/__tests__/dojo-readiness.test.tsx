@@ -121,11 +121,11 @@ describe('DojoReadiness', () => {
       expect(mockSetActiveTab).toHaveBeenCalledWith('guard')
     })
 
-    it('clicking fixtures item navigates to testing', () => {
+    it('clicking fixtures item navigates to armory', () => {
       render(<DojoReadiness onDismiss={() => {}} />)
       const fixtureItem = screen.getByLabelText(/Explore attack fixtures/)
       fireEvent.click(fixtureItem)
-      expect(mockSetActiveTab).toHaveBeenCalledWith('testing')
+      expect(mockSetActiveTab).toHaveBeenCalledWith('armory')
     })
   })
 

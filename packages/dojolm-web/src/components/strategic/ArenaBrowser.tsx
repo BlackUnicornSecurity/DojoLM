@@ -266,7 +266,7 @@ export function ArenaBrowser() {
       </Tabs>
 
       {/* Main content: match table + leaderboard */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-3">
         {/* Match table */}
         <div className="lg:col-span-2 space-y-4">
           <MatchTable
@@ -502,7 +502,7 @@ function MatchDetailPanel({
 
         {/* Violations summary */}
         {match.violations > 0 && (
-          <div className="flex items-center gap-2 p-2 rounded-md bg-[var(--warning)]/10 border border-[var(--warning)]/20">
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20">
             <AlertTriangle className="w-4 h-4 text-[var(--warning)]" aria-hidden="true" />
             <span className="text-sm text-[var(--warning)]">
               {match.violations} violation{match.violations !== 1 ? 's' : ''} recorded
@@ -522,7 +522,7 @@ function MatchDetailPanel({
               <div
                 key={event.id}
                 className={cn(
-                  'flex items-start gap-3 p-2 rounded-md',
+                  'flex items-start gap-3 p-2 rounded-lg',
                   'hover:bg-[var(--bg-quaternary)]',
                   'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]'
                 )}

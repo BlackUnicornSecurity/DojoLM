@@ -1,8 +1,8 @@
 # BU-TPI Testing Documentation
 
-**Version:** 2.0
-**Last Updated:** 2026-02-26
-**Organization:** BlackUnicorn Laboratory / DojoLM
+**Version:** 3.0
+**Last Updated:** 2026-03-06
+**Organization:** BlackUnicorn Laboratory / NODA Platform
 
 ---
 
@@ -171,4 +171,14 @@ npx tsx tools/test-fp-check.ts
 ---
 
 *This documentation is maintained by BlackUnicorn Laboratory*
-*Last updated: 2026-02-26*
+*Last updated: 2026-03-06*
+
+---
+
+## NODA Platform Integration
+
+These testing documents are used within the NODA platform's modules:
+- **Armory** — Uses fixture library documented here
+- **Bushido Book** — References compliance checklists
+- **LLM Dashboard** — Executes test suites against LLM providers
+- **Haiku Scanner** — Runs regression and false-positive tests

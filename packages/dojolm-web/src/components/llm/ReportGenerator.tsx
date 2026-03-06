@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Download, FileJson, FileText, FileSpreadsheet, Shield, Loader2 } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 export type ExportFormatType = 'json' | 'csv' | 'sarif' | 'pdf';
 
@@ -80,11 +81,15 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
 
       // Build URL based on format
       const params = new URLSearchParams();
-      if (batchId) params.set('batchId', batchId);
+      if (batchId) {
+        params.set('batchId', batchId);
+      } else {
+        params.set('mode', 'all');
+      }
 
       if (format === 'pdf') {
         params.set('format', 'pdf');
-        const response = await fetch(`/api/llm/export?${params.toString()}`);
+        const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
         if (!response.ok) throw new Error('Failed to generate PDF');
 
         // PDF is returned as base64 in a JSON envelope
@@ -94,7 +99,7 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
         downloadBlob(blob, json.filename ?? `dojolm-report-${Date.now()}.pdf`);
       } else if (format === 'csv') {
         params.set('format', 'csv');
-        const response = await fetch(`/api/llm/export?${params.toString()}`);
+        const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
         if (!response.ok) throw new Error('Failed to generate CSV');
 
         const text = await response.text();
@@ -102,7 +107,7 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
         downloadBlob(blob, `dojolm-results-${Date.now()}.csv`);
       } else if (format === 'sarif') {
         params.set('format', 'sarif');
-        const response = await fetch(`/api/llm/export?${params.toString()}`);
+        const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
         if (!response.ok) throw new Error('Failed to generate SARIF');
 
         const data = await response.json();
@@ -111,7 +116,7 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
       } else {
         // JSON
         params.set('format', 'json');
-        const response = await fetch(`/api/llm/export?${params.toString()}`);
+        const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
         if (!response.ok) throw new Error('Failed to generate JSON');
 
         const data = await response.json();
@@ -119,7 +124,9 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
         downloadBlob(blob, `dojolm-results-${Date.now()}.json`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Download failed');
+      const message = err instanceof Error ? err.message : 'Download failed';
+      setError(message);
+      setTimeout(() => setError(null), 10000);
     } finally {
       isDownloadingRef.current = false;
       setIsDownloading(false);

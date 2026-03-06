@@ -13,18 +13,21 @@
  * - EcosystemEvent (line 103)
  */
 
-/** Modules that can produce ecosystem findings */
+/** Modules that can produce ecosystem findings (C-06: extended for new modules) */
 export type EcosystemSourceModule =
   | 'scanner'
   | 'atemi'
   | 'sage'
   | 'arena'
   | 'mitsuke'
-  | 'attackdna';
+  | 'attackdna'
+  | 'ronin'
+  | 'jutsu'
+  | 'guard';
 
 /** Validation set for source modules */
 export const VALID_SOURCE_MODULES = new Set<EcosystemSourceModule>([
-  'scanner', 'atemi', 'sage', 'arena', 'mitsuke', 'attackdna',
+  'scanner', 'atemi', 'sage', 'arena', 'mitsuke', 'attackdna', 'ronin', 'jutsu', 'guard',
 ]);
 
 /** Types of findings each module can emit */
@@ -118,6 +121,9 @@ export type EcosystemEventType =
   | 'sage:mutation_success'
   | 'mitsuke:threat_detected'
   | 'attackdna:node_classified'
+  | 'ronin:bounty_submitted'
+  | 'jutsu:test_complete'
+  | 'guard:scan_blocked'
   | 'ecosystem:finding_created';
 
 export const VALID_EVENT_TYPES = new Set<EcosystemEventType>([
@@ -127,6 +133,9 @@ export const VALID_EVENT_TYPES = new Set<EcosystemEventType>([
   'sage:mutation_success',
   'mitsuke:threat_detected',
   'attackdna:node_classified',
+  'ronin:bounty_submitted',
+  'jutsu:test_complete',
+  'guard:scan_blocked',
   'ecosystem:finding_created',
 ]);
 

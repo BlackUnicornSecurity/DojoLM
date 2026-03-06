@@ -89,7 +89,7 @@ Normalizes text by applying security-focused preprocessing:
 
 ### `getPatternCount(): number`
 
-Returns the total number of detection patterns (504+).
+Returns the total number of detection patterns (505+).
 
 ### `getPatternGroups(): PatternGroupInfo[]`
 
@@ -139,6 +139,16 @@ scan(text, { engines: ['Unicode'] });
 
 // All patterns (default behavior)
 scan(text);
+```
+
+## Testing
+
+```bash
+# Run tests
+npm test
+
+# Type check
+npm run typecheck
 ```
 
 ## Build

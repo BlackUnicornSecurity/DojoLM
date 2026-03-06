@@ -4,7 +4,7 @@
 export const fixtureManifest = {
   "generated": "2026-02-26T16:30:00.000Z",
   "version": "3.0.0",
-  "description": "TPI Security Test Lab — BlackUnicorn branded attack fixtures",
+  "description": "NODA Armory — BlackUnicorn branded attack fixtures",
   "company": "BlackUnicorn",
   "website": "blackunicorn.tech",
   "products": ["DojoLM", "BonkLM", "Basileak", "PantheonLM", "Marfaak"],

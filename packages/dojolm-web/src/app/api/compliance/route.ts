@@ -5,8 +5,9 @@
  * Story 8.5: Dynamic compliance coverage from LLM test execution data (SEC-5).
  */
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { BAISS_CONTROLS, BAISS_CATEGORIES, getBAISSSummary } from '@/lib/data/baiss-framework'
+import { checkApiAuth } from '@/lib/api-auth'
 import { fileStorage } from '@/lib/storage/file-storage'
 import type { LLMTestExecution } from '@/lib/llm-types'
 
@@ -335,7 +336,10 @@ function applyDynamicCoverage(
 
 // --- API Handler ---
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { searchParams } = new URL(request.url)
     const includeBAISS = searchParams.get('baiss') !== 'false'

@@ -7,6 +7,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Types ---
 
@@ -179,7 +180,7 @@ export default function ComplianceDashboard() {
   const [expandedFramework, setExpandedFramework] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/compliance')
+    fetchWithAuth('/api/compliance')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch compliance data')
         return res.json()
@@ -195,7 +196,7 @@ export default function ComplianceDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12" role="status" aria-label="Loading compliance data">
+      <div className="flex items-center justify-center p-4" role="status" aria-label="Loading compliance data">
         <div className="animate-spin motion-reduce:animate-none rounded-full h-8 w-8 border-b-2 border-blue-600" aria-hidden="true" />
         <span className="ml-3 text-gray-600 dark:text-gray-400">Loading compliance data...</span>
       </div>
@@ -204,7 +205,7 @@ export default function ComplianceDashboard() {
 
   if (error || !data) {
     return (
-      <div className="p-6 bg-red-50 dark:bg-red-900/20 rounded-lg" role="alert">
+      <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg" role="alert">
         <p className="text-red-700 dark:text-red-400">Error loading compliance data: {error}</p>
       </div>
     )
@@ -213,7 +214,7 @@ export default function ComplianceDashboard() {
   return (
     <div className="space-y-6">
       {/* Summary Header */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Compliance Coverage Dashboard</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">Last updated: {data.lastUpdated}</span>
@@ -247,7 +248,7 @@ export default function ComplianceDashboard() {
       </div>
 
       {/* Framework Details */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 p-4 border-b border-gray-200 dark:border-gray-700">
           Framework Details
         </h3>
@@ -311,7 +312,7 @@ export default function ComplianceDashboard() {
       </div>
 
       {/* Gap Analysis */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Gap Analysis</h3>
         <GapList frameworks={data.frameworks} />
       </div>

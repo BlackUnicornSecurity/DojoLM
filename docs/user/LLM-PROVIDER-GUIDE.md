@@ -1,16 +1,16 @@
 # LLM Provider Guide
 
-Complete guide for configuring and using the LLM provider system in DojoLM.
+Complete guide for configuring and using the LLM provider system in NODA Platform.
 
 ## Overview
 
-DojoLM supports 50+ LLM providers through a unified interface, enabling security testing across the broadest possible range of models. Providers range from major cloud APIs (OpenAI, Anthropic, Google) to local inference servers (Ollama, LM Studio, vLLM).
+The NODA Platform supports 50+ LLM providers through a unified interface, enabling security testing across the broadest possible range of models. Providers range from major cloud APIs (OpenAI, Anthropic, Google) to local inference servers (Ollama, LM Studio, vLLM).
 
 ## Quick Start
 
 ### 1. Add a Cloud Provider
 
-1. Navigate to **LLM Dashboard** > **Models** tab
+1. Navigate to **LLM Dashboard** module > **Models** section
 2. Click **Add Model**
 3. Select a provider (e.g., OpenAI)
 4. Enter your API key and select a model
@@ -20,17 +20,17 @@ DojoLM supports 50+ LLM providers through a unified interface, enabling security
 ### 2. Add a Local Provider
 
 1. Start your local inference server (e.g., `ollama serve`)
-2. Navigate to **LLM Dashboard** > **Models** tab
+2. Navigate to **LLM Dashboard** module > **Models** section
 3. Select provider: **Ollama** / **LM Studio** / **llama.cpp**
 4. Click **Discover Models** to auto-detect available models
 5. Select a model and save
 
 ### 3. Run Security Tests
 
-1. Go to **LLM Dashboard** > **Tests** tab
+1. Go to **LLM Dashboard** module > **Tests** section
 2. Select models and test categories
 3. Click **Run Test** — results appear in real time
-4. View results in **Results** or **Compare** tabs
+4. View results in **Results** or **Compare** sections
 
 ---
 
@@ -163,7 +163,7 @@ Variables like `PATH`, `HOME`, `DATABASE_URL`, `GITHUB_TOKEN` are blocked.
 
 For providers not in our preset list, use the **Custom Provider Builder**:
 
-1. Go to **LLM Dashboard** > **Custom** tab
+1. Go to **LLM Dashboard** module > **Custom** section
 2. Enter base URL, auth type, and model name
 3. Configure response path mapping if the API isn't OpenAI-compatible
 4. Test connection and save
@@ -238,3 +238,7 @@ AWS credentials are sourced from the AWS SDK credential chain only (environment,
 - Disable core dumps: `ulimit -c 0`
 - Ensure `dojolm.config.json` is in `.gitignore`
 - API keys are masked in all logs, errors, and API responses
+
+### Integration with NODA Modules
+
+Configured LLM providers are available across all NODA modules that use LLM inference: LLM Dashboard, LLM Jutsu, Atemi Lab (adversarial skills), and The Kumite (Arena battles).

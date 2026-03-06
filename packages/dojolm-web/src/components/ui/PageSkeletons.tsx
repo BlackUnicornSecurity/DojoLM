@@ -4,7 +4,7 @@
  * Story: TPI-UIP-09
  * Index:
  * - ScannerPageSkeleton (line 12)
- * - TestLabSkeleton (line 38)
+ * - ArmorySkeleton (line 38)
  * - CoverageSkeleton (line 59)
  */
 
@@ -21,7 +21,7 @@ export function ScannerPageSkeleton() {
       </div>
 
       {/* Metric cards row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" aria-hidden="true">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3" aria-hidden="true">
         <MetricCardSkeleton />
         <MetricCardSkeleton />
         <MetricCardSkeleton />
@@ -36,7 +36,7 @@ export function ScannerPageSkeleton() {
       </div>
 
       {/* Scanner grid skeleton */}
-      <div className="grid lg:grid-cols-2 gap-6" aria-hidden="true">
+      <div className="grid lg:grid-cols-2 gap-3" aria-hidden="true">
         <div className="rounded-lg border border-[var(--border)] bg-card p-[var(--spacing-md)] space-y-4">
           <ShimmerSkeleton variant="line" className="h-5 w-24" />
           <ShimmerSkeleton variant="card" className="h-[200px]" />
@@ -54,10 +54,10 @@ export function ScannerPageSkeleton() {
   )
 }
 
-/** Test Lab skeleton: sub-nav + grid of card skeletons */
-export function TestLabSkeleton() {
+/** Armory skeleton: sub-nav + grid of card skeletons */
+export function ArmorySkeleton() {
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="Loading test lab">
+    <div className="space-y-6" aria-busy="true" aria-label="Loading armory">
       {/* Toolbar skeleton */}
       <div className="space-y-2" aria-hidden="true">
         <ShimmerSkeleton variant="line" className="h-8 w-28" />
@@ -66,12 +66,12 @@ export function TestLabSkeleton() {
 
       {/* Sub-navigation skeleton */}
       <div className="flex gap-2 bg-muted/50 rounded-lg p-1" aria-hidden="true">
-        <ShimmerSkeleton variant="line" className="h-10 w-24 rounded-md" />
-        <ShimmerSkeleton variant="line" className="h-10 w-28 rounded-md" />
+        <ShimmerSkeleton variant="line" className="h-10 w-24 rounded-lg" />
+        <ShimmerSkeleton variant="line" className="h-10 w-28 rounded-lg" />
       </div>
 
       {/* Card grid skeleton */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3" aria-hidden="true">
         {[1, 2, 3, 4, 5, 6].map(i => (
           <div key={i} className="rounded-lg border border-[var(--border)] bg-card p-[var(--spacing-md)] space-y-3">
             <div className="flex items-center gap-3">
@@ -100,8 +100,8 @@ export function CoverageSkeleton() {
 
       {/* Sub-navigation skeleton */}
       <div className="flex gap-2 bg-muted/50 rounded-lg p-1" aria-hidden="true">
-        <ShimmerSkeleton variant="line" className="h-10 w-28 rounded-md" />
-        <ShimmerSkeleton variant="line" className="h-10 w-32 rounded-md" />
+        <ShimmerSkeleton variant="line" className="h-10 w-28 rounded-lg" />
+        <ShimmerSkeleton variant="line" className="h-10 w-32 rounded-lg" />
       </div>
 
       {/* Chart area skeleton */}
@@ -109,8 +109,8 @@ export function CoverageSkeleton() {
         <div className="flex items-center justify-between">
           <ShimmerSkeleton variant="line" className="h-6 w-40" />
           <div className="flex gap-2">
-            <ShimmerSkeleton variant="line" className="h-8 w-24 rounded-md" />
-            <ShimmerSkeleton variant="line" className="h-8 w-32 rounded-md" />
+            <ShimmerSkeleton variant="line" className="h-8 w-24 rounded-lg" />
+            <ShimmerSkeleton variant="line" className="h-8 w-32 rounded-lg" />
           </div>
         </div>
         {/* Progress bars skeleton */}

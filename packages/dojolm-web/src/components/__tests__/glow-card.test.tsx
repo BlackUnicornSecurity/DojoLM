@@ -124,7 +124,7 @@ describe('GlowCard', () => {
     it('renders as a Card element (div with card classes)', () => {
       const { container } = render(<GlowCard>Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('rounded-xl')
+      expect(card).toHaveClass('rounded-lg')
       expect(card).toHaveClass('border')
       expect(card).toHaveClass('shadow-sm')
     })
@@ -156,8 +156,8 @@ describe('GlowCard', () => {
       const glowCard = glowContainer.firstElementChild as HTMLElement
 
       // Both should have Card's core classes
-      expect(bareCard).toHaveClass('rounded-xl')
-      expect(glowCard).toHaveClass('rounded-xl')
+      expect(bareCard).toHaveClass('rounded-lg')
+      expect(glowCard).toHaveClass('rounded-lg')
 
       // Only GlowCard adds relative
       expect(glowCard).toHaveClass('relative')

@@ -13,6 +13,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Activity, Server, Shield, Database, Wifi, RefreshCw, Loader2, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface HealthData {
   scanner: { reachable: boolean; responseTimeMs?: number; lastScanTime?: string }
@@ -34,7 +35,7 @@ export function SystemHealth() {
 
   const fetchHealth = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/health')
+      const res = await fetchWithAuth('/api/admin/health')
       if (!res.ok) throw new Error('Health check failed')
       const data: HealthData = await res.json()
       setHealth(data)
@@ -99,7 +100,7 @@ export function SystemHealth() {
             type="button"
             onClick={fetchHealth}
             disabled={status === 'loading'}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-md text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors disabled:opacity-50"
             aria-label="Refresh health status"
           >
             {status === 'loading' ? (
@@ -121,7 +122,7 @@ export function SystemHealth() {
       <div className="grid gap-4 md:grid-cols-2">
         {/* Scanner Status */}
         <StatusCard
-          title="Scanner"
+          title="Haiku Scanner"
           icon={Server}
           status={health?.scanner.reachable ? 'online' : 'offline'}
           items={[
@@ -182,7 +183,7 @@ function StatusCard({
   items: { label: string; value: string }[]
 }) {
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-3">
+    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />

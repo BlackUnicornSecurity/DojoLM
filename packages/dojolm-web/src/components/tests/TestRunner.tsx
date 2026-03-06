@@ -140,7 +140,7 @@ interface TestSummaryProps {
 
 function TestSummary({ summary }: TestSummaryProps) {
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <Card>
         <CardContent className="p-4 text-center">
           <div className="text-2xl font-bold">{summary.total}</div>

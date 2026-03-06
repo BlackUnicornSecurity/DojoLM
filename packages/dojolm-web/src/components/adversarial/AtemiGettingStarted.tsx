@@ -87,7 +87,7 @@ export function AtemiGettingStarted({ completedSteps = [], className }: AtemiGet
             aria-expanded={expanded}
             aria-controls="atemi-getting-started-content"
           >
-            <Badge variant="active" className="text-[10px]">
+            <Badge variant="active" className="text-xs">
               Getting Started
             </Badge>
             <span className="text-sm font-medium text-[var(--foreground)]">
@@ -101,7 +101,7 @@ export function AtemiGettingStarted({ completedSteps = [], className }: AtemiGet
           </button>
           <button
             onClick={handleDismiss}
-            className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Dismiss getting started guide"
           >
             <X className="h-4 w-4" aria-hidden="true" />

@@ -510,3 +510,128 @@ describe('detectCrossModalInjection()', () => {
     expect(findings.length).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Story 12.1: Audio/Voice Attack Patterns (AUDIO_ATTACK_PATTERNS)
+// ---------------------------------------------------------------------------
+
+describe('Audio/Voice Attack Patterns (Story 12.1)', () => {
+  describe('Ultrasonic Command Injection', () => {
+    it('should detect ultrasonic command injection', () => {
+      const result = scan('ultrasonic command injection attack embedded at 22kHz carrier frequency');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'ultrasonic_command')).toBe(true);
+    });
+
+    it('should detect inaudible frequency injection', () => {
+      const result = scan('inaudible frequency injection exploit above human hearing threshold');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.category === 'AUDIO_ATTACK')).toBe(true);
+    });
+  });
+
+  describe('Voice Identity Spoofing', () => {
+    it('should detect voice cloning identity spoof', () => {
+      const result = scan('clone voice speaker identity to bypass biometric voiceprint verification');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'voice_identity_spoof')).toBe(true);
+    });
+
+    it('should detect speaker authentication bypass', () => {
+      const result = scan('speaker verification bypass via voice impersonation');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('Audio Steganography', () => {
+    it('should detect audio steganographic payload', () => {
+      const result = scan('audio steganography — hide payload in frequency domain');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'audio_steganography')).toBe(true);
+    });
+
+    it('should detect spectral domain steganography', () => {
+      const result = scan('spectral domain steganography embedding data within audio signal');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('Frequency Manipulation', () => {
+    it('should detect frequency domain manipulation attack', () => {
+      const result = scan('frequency domain manipulation attack to inject adversarial perturbation');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'frequency_manipulation')).toBe(true);
+    });
+
+    it('should detect adversarial audio perturbation', () => {
+      const result = scan('adversarial audio perturbation in spectrogram');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('ASR Evasion', () => {
+    it('should detect ASR evasion attack', () => {
+      const result = scan('ASR evasion attack bypass transcription safety filters');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'asr_evasion')).toBe(true);
+    });
+
+    it('should detect speech recognition evasion', () => {
+      const result = scan('adversarial speech input to evade automatic speech recognition');
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should detect ASR poisoning', () => {
+      const result = scan('fool speech recognition model with adversarial audio sample');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('Cross-Modal Audio', () => {
+    it('should detect cross-modal audio injection', () => {
+      const result = scan('audio to text cross-modal injection attack');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'cross_modal_audio')).toBe(true);
+    });
+
+    it('should detect audio-triggered injection', () => {
+      const result = scan('audio triggered injection exploit to bypass safety checks');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('Biometric Voice Bypass', () => {
+    it('should detect biometric voice bypass', () => {
+      const result = scan('biometric voice bypass attack to spoof voiceprint');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.findings.some(f => f.pattern_name === 'biometric_voice_bypass')).toBe(true);
+    });
+
+    it('should detect voiceprint forgery', () => {
+      const result = scan('voiceprint bypass spoof authentication verification');
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should detect biometric authentication bypass', () => {
+      const result = scan('circumvent voice biometric authentication verification check');
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
+  describe('Clean Audio Content', () => {
+    it('should allow clean voice queries', () => {
+      const result = scan('What is the weather forecast for today in San Francisco?');
+      expect(result.verdict).toBe('ALLOW');
+    });
+
+    it('should allow normal audio metadata', () => {
+      const result = scan('Title: Workout Playlist, Artist: DJ Mix, Album: Fitness Beats Vol 3');
+      expect(result.verdict).toBe('ALLOW');
+    });
+
+    it('should allow discussion about audio formats', () => {
+      const result = scan('MP3 uses lossy compression while FLAC provides lossless audio quality');
+      expect(result.verdict).toBe('ALLOW');
+    });
+  });
+});

@@ -1,5 +1,5 @@
 # Next.js Migration Plan
-## DojoLM - Modern Web Stack
+## NODA Platform (DojoLM) - Modern Web Stack
 
 **Current State:** Single `index.html` file (1900+ lines) with inline CSS/JS
 **Target Stack:** Next.js 15, TypeScript 5, Tailwind CSS 4, Shadcn UI

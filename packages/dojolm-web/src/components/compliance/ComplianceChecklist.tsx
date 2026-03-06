@@ -130,7 +130,7 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
           <h3 className="text-sm font-semibold text-[var(--foreground)]">
             Compliance Review Checklists
           </h3>
-          <Badge variant="outline" className="text-[10px]">
+          <Badge variant="outline" className="text-xs">
             {completedCount}/{NON_AUTOMATED_CONTROLS.length} complete
           </Badge>
         </div>
@@ -231,11 +231,11 @@ function ChecklistItemRow({
             </div>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <Badge className={cn('text-[10px] border', assessmentColors[control.assessmentType])}>
+            <Badge className={cn('text-xs border', assessmentColors[control.assessmentType])}>
               {control.assessmentType}
             </Badge>
             {category && (
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-xs">
                 {category.label}
               </Badge>
             )}
@@ -246,7 +246,7 @@ function ChecklistItemRow({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Evidence type */}
           <div>
-            <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
               <FileText className="h-3 w-3" aria-hidden="true" />
               Required Evidence
             </label>
@@ -257,7 +257,7 @@ function ChecklistItemRow({
 
           {/* Responsible role */}
           <div>
-            <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
               <User className="h-3 w-3" aria-hidden="true" />
               Responsible Role
             </label>
@@ -266,14 +266,14 @@ function ChecklistItemRow({
               value={item?.responsibleRole ?? ''}
               onChange={(e) => onUpdate('responsibleRole', e.target.value)}
               placeholder="e.g. Security Lead"
-              className="w-full px-2 py-1 rounded-md bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)]"
+              className="w-full px-2 py-1 rounded-lg bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)]"
               aria-label={`Responsible role for ${control.id}`}
             />
           </div>
 
           {/* Due date */}
           <div>
-            <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
               <Calendar className="h-3 w-3" aria-hidden="true" />
               Due Date
             </label>
@@ -281,14 +281,14 @@ function ChecklistItemRow({
               type="date"
               value={item?.dueDate ?? ''}
               onChange={(e) => onUpdate('dueDate', e.target.value)}
-              className="w-full px-2 py-1 rounded-md bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)]"
+              className="w-full px-2 py-1 rounded-lg bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)]"
               aria-label={`Due date for ${control.id}`}
             />
           </div>
 
           {/* Reviewer name */}
           <div>
-            <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
               <User className="h-3 w-3" aria-hidden="true" />
               Reviewer Name
             </label>
@@ -297,7 +297,7 @@ function ChecklistItemRow({
               value={item?.reviewerName ?? ''}
               onChange={(e) => onUpdate('reviewerName', e.target.value)}
               placeholder="e.g. John Smith"
-              className="w-full px-2 py-1 rounded-md bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)]"
+              className="w-full px-2 py-1 rounded-lg bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)]"
               aria-label={`Reviewer name for ${control.id}`}
             />
           </div>
@@ -305,7 +305,7 @@ function ChecklistItemRow({
 
         {/* Notes */}
         <div className="mt-3">
-          <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-1">
+          <label className="flex items-center gap-1 text-xs font-medium text-muted-foreground mb-1">
             <StickyNote className="h-3 w-3" aria-hidden="true" />
             Notes
           </label>
@@ -314,7 +314,7 @@ function ChecklistItemRow({
             onChange={(e) => onUpdate('notes', e.target.value)}
             placeholder="Add review notes, evidence links, or observations..."
             rows={2}
-            className="w-full px-2 py-1 rounded-md bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)] resize-y"
+            className="w-full px-2 py-1 rounded-lg bg-[var(--input)] border border-[var(--border)] text-xs text-[var(--foreground)] placeholder:text-[var(--text-tertiary)] resize-y"
             aria-label={`Notes for ${control.id}`}
           />
         </div>

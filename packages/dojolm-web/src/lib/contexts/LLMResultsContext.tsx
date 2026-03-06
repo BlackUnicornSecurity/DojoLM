@@ -20,6 +20,7 @@ import type {
   ManualEvaluation,
   ResultsFilter,
 } from '../llm-types';
+import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
 // API Client Functions
@@ -31,13 +32,13 @@ import type {
 const API_BASE = '/api/llm';
 
 /**
- * Fetch wrapper for API calls
+ * Fetch wrapper for API calls with auth (Story 13.9)
  */
 async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetchWithAuth(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -134,7 +135,7 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
       const params = new URLSearchParams();
 
       if (activeFilter.modelIds?.length) {
-        params.set('modelConfigId', activeFilter.modelIds[0]);
+        activeFilter.modelIds.forEach(id => params.append('modelId', id));
       }
       if (activeFilter.minScore !== undefined) {
         params.set('minScore', String(activeFilter.minScore));
@@ -187,7 +188,7 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
   // Get model report
   const getModelReport = useCallback(
     async (modelId: string): Promise<LLMModelReport> => {
-      return apiFetch<LLMModelReport>(`/reports?modelConfigId=${modelId}`);
+      return apiFetch<LLMModelReport>(`/reports?modelId=${modelId}`);
     },
     []
   );
@@ -258,7 +259,7 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
   const exportReport = useCallback(
     async (request: ReportRequest): Promise<string> => {
       const params = new URLSearchParams();
-      params.set('modelConfigId', request.modelConfigId);
+      params.set('modelId', request.modelConfigId);
       params.set('format', request.format);
       if (request.includeExecutions) params.set('includeExecutions', 'true');
       if (request.includeResponses) params.set('includeResponses', 'true');
@@ -301,22 +302,19 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
     []
   );
 
-  // Refresh by incrementing a counter to trigger dependent effects
-  const [refreshCounter, setRefreshCounter] = useState(0);
+  // Refresh by actually re-fetching data
   const refresh = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Force re-render with new filter reference to trigger dependent effects
-      setFilterState(prev => ({ ...prev }));
-      setRefreshCounter(c => c + 1);
+      await getExecutions(filter);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to refresh');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [getExecutions, filter]);
 
   const value: LLMResultsContextValue = {
     filter,

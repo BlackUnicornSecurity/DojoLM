@@ -60,7 +60,7 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
           )}
         >
           <span className="text-lg font-bold text-[var(--dojo-primary-lg)]">DojoLM</span>
-          <span className="text-xs text-[var(--text-quaternary)]">TPI Security Test Lab</span>
+          <span className="text-xs text-[var(--text-quaternary)]">NODA Security Platform</span>
         </div>
       </div>
 

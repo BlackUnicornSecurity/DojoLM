@@ -23,7 +23,7 @@ export function ScannerConfig() {
   return (
     <div className="space-y-6">
       {/* Scanner Engine Configuration */}
-      <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-6 space-y-4">
+      <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -68,7 +68,7 @@ function GuardConfigSection() {
   const { config, setMode, setEnabled, setBlockThreshold, error } = useGuard()
 
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-6 space-y-4">
+    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -84,7 +84,7 @@ function GuardConfigSection() {
           aria-pressed={config.enabled}
           onClick={() => setEnabled(!config.enabled)}
           className={cn(
-            'px-4 py-2 text-sm font-medium rounded-md motion-safe:transition-colors',
+            'px-4 py-2 text-sm font-medium rounded-lg motion-safe:transition-colors',
             config.enabled
               ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
               : 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
@@ -136,7 +136,7 @@ function GuardConfigSection() {
                   <span className="text-sm font-medium text-foreground">{mode.name}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">{mode.subtitle}</p>
-                <div className="flex gap-2 mt-2 text-[10px]">
+                <div className="flex gap-2 mt-2 text-xs">
                   {mode.inputScan && <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">Input</span>}
                   {mode.outputScan && <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">Output</span>}
                   {mode.canBlock && <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">Block</span>}
@@ -156,7 +156,7 @@ function GuardConfigSection() {
               type="button"
               onClick={() => setBlockThreshold('WARNING')}
               className={cn(
-                'flex items-center gap-2 px-3 py-2 text-sm rounded-md border motion-safe:transition-colors',
+                'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'WARNING'
                   ? 'border-[var(--warning)] bg-[var(--warning)]/10 text-[var(--warning)]'
                   : 'border-[rgba(255,255,255,0.06)] text-muted-foreground hover:text-foreground'
@@ -169,7 +169,7 @@ function GuardConfigSection() {
               type="button"
               onClick={() => setBlockThreshold('CRITICAL')}
               className={cn(
-                'flex items-center gap-2 px-3 py-2 text-sm rounded-md border motion-safe:transition-colors',
+                'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'CRITICAL'
                   ? 'border-red-500 bg-red-500/10 text-red-400'
                   : 'border-[rgba(255,255,255,0.06)] text-muted-foreground hover:text-foreground'

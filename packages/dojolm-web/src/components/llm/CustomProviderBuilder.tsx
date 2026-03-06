@@ -10,6 +10,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useModelContext } from '@/lib/contexts';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 interface CustomConfig {
   name: string;
@@ -45,7 +46,7 @@ export function CustomProviderBuilder() {
     setTestResult(null);
     try {
       // Test via server-side proxy endpoint
-      const response = await fetch('/api/llm/models', {
+      const response = await fetchWithAuth('/api/llm/models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -60,7 +61,7 @@ export function CustomProviderBuilder() {
       if (response.ok) {
         const data = await response.json();
         // Now test connection
-        const testResp = await fetch(`/api/llm/models/${data.id}/test`, {
+        const testResp = await fetchWithAuth(`/api/llm/models/${data.id}/test`, {
           method: 'POST',
         });
         const testData = await testResp.json();
@@ -71,7 +72,7 @@ export function CustomProviderBuilder() {
             : `Failed: ${testData.error || 'Unknown error'}`,
         });
         // Clean up test config
-        await fetch(`/api/llm/models/${data.id}`, { method: 'DELETE' });
+        await fetchWithAuth(`/api/llm/models/${data.id}`, { method: 'DELETE' });
       } else {
         setTestResult({ success: false, message: 'Failed to create test config' });
       }
@@ -193,7 +194,7 @@ export function CustomProviderBuilder() {
               <button
                 type="button"
                 onClick={() => setShowKey(!showKey)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-[var(--text-secondary)]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[var(--text-secondary)]"
                 aria-label={showKey ? 'Hide API key' : 'Show API key'}
               >
                 {showKey ? 'Hide' : 'Show'}

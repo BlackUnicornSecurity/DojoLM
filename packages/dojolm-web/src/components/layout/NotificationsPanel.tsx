@@ -62,19 +62,19 @@ export function NotificationsPanel() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-md text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors"
+        className="relative p-2 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors"
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span aria-hidden="true" className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--primary)] text-white text-[10px] flex items-center justify-center font-bold">
+          <span aria-hidden="true" className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--primary)] text-white text-xs flex items-center justify-center font-bold">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)] shadow-xl z-[var(--z-dropdown)]">
+        <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)] shadow-md z-[var(--z-dropdown)]">
           <div className="flex items-center justify-between p-3 border-b border-[var(--border)]">
             <span className="text-sm font-medium">Notifications</span>
             <div className="flex items-center gap-1">

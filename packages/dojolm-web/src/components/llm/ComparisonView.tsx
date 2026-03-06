@@ -121,7 +121,7 @@ export function ComparisonView() {
                 {comparisonData.map(d => (
                   <th key={d.modelId} className="p-2 text-center border-b border-[var(--border-primary)]">
                     {d.modelName}
-                    <div className="text-[10px] text-[var(--text-secondary)] font-normal">{d.provider}</div>
+                    <div className="text-xs text-[var(--text-secondary)] font-normal">{d.provider}</div>
                   </th>
                 ))}
               </tr>
@@ -145,7 +145,7 @@ export function ComparisonView() {
                     const rate = entry ? Math.round(entry.passRate * 100) : 0;
                     return (
                       <td key={d.modelId} className="p-2 text-center border-b border-[var(--border-primary)]">
-                        <span className={`px-2 py-0.5 rounded text-[10px] ${getScoreColor(rate)}`}>
+                        <span className={`px-2 py-0.5 rounded text-xs ${getScoreColor(rate)}`}>
                           {entry ? `${rate}%` : '—'}
                         </span>
                       </td>

@@ -15,6 +15,7 @@
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { CheckCircle, XCircle, AlertTriangle, Minus } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Types ---
 
@@ -100,7 +101,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
     setLoading(true)
     setError(null)
 
-    fetch('/api/compliance')
+    fetchWithAuth('/api/compliance')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch compliance data')
         return res.json()
@@ -251,7 +252,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
       </div>
 
       {/* Controls Table */}
-      <div className="overflow-x-auto rounded-md border border-[var(--border)]">
+      <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
         <table
           className="min-w-full text-sm"
           aria-label={`${data.frameworkName} gap matrix`}
@@ -338,7 +339,7 @@ export function GapMatrix({ framework, className }: GapMatrixProps) {
                       {control.relatedModules.map((mod, idx) => (
                         <span
                           key={`${control.id}-mod-${idx}`}
-                          className="inline-block px-1.5 py-0.5 rounded bg-[var(--bg-quaternary)] font-mono text-[10px]"
+                          className="inline-block px-1.5 py-0.5 rounded bg-[var(--bg-quaternary)] font-mono text-xs"
                         >
                           {mod}
                         </span>

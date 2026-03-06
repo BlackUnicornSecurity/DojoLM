@@ -3,10 +3,11 @@
 /**
  * File: ThreatRadar.tsx
  * Purpose: Animated SVG radar with 6 category sectors — pulse on detection, click to navigate
- * Story: TPI-NODA-1.5.7
+ * Story: TPI-NODA-1.5.7, NODA-3 Story 3.3 (Threat Radar Enhancement)
+ * Changes: Analogous blue spectrum, gradient fills, hover tooltips, minimum 280px height, pulse animation
  */
 
-import { useId, useMemo } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useScannerMetrics } from '@/lib/hooks'
 import { useScanner } from '@/lib/ScannerContext'
 import { useNavigation } from '@/lib/NavigationContext'
@@ -21,13 +22,14 @@ interface Sector {
   color: string
 }
 
+/** Analogous blue spectrum — 3-4 shades of cyan/blue per Story 3.3 */
 const SECTORS: Sector[] = [
-  { label: 'Prompt Injection', shortLabel: 'PI', engineId: 'Prompt Injection', angle: 0, color: '#E63946' },
-  { label: 'Jailbreak', shortLabel: 'JB', engineId: 'Jailbreak', angle: 60, color: '#F77F00' },
-  { label: 'Social Engineering', shortLabel: 'SE', engineId: 'TPI', angle: 120, color: '#FCBF49' },
-  { label: 'Evasion/Encoding', shortLabel: 'EE', engineId: 'Agent Security', angle: 180, color: '#90BE6D' },
-  { label: 'Multimodal', shortLabel: 'MM', engineId: 'Multimodal Security', angle: 240, color: '#577590' },
-  { label: 'Agent/Tool', shortLabel: 'AT', engineId: 'Supply Chain', angle: 300, color: '#9B5DE5' },
+  { label: 'Prompt Injection', shortLabel: 'PI', engineId: 'Prompt Injection', angle: 0, color: '#00D9FF' },
+  { label: 'Jailbreak', shortLabel: 'JB', engineId: 'Jailbreak', angle: 60, color: '#0EA5E9' },
+  { label: 'Social Engineering', shortLabel: 'SE', engineId: 'TPI', angle: 120, color: '#3B82F6' },
+  { label: 'Evasion/Encoding', shortLabel: 'EE', engineId: 'Agent Security', angle: 180, color: '#6366F1' },
+  { label: 'Multimodal', shortLabel: 'MM', engineId: 'Multimodal Security', angle: 240, color: '#8B5CF6' },
+  { label: 'Agent/Tool', shortLabel: 'AT', engineId: 'Supply Chain', angle: 300, color: '#A78BFA' },
 ]
 
 const RADIUS = 80
@@ -53,6 +55,7 @@ export function ThreatRadar() {
   const metrics = useScannerMetrics()
   const { scanResult, toggleFilter } = useScanner()
   const { setActiveTab } = useNavigation()
+  const [hoveredSector, setHoveredSector] = useState<string | null>(null)
 
   // Count detections per engine from latest scan
   const detectionMap = useMemo(() => {
@@ -73,18 +76,25 @@ export function ThreatRadar() {
 
   return (
     <WidgetCard title="Threat Radar">
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center" style={{ minHeight: 280 }}>
         <svg
           viewBox="0 0 200 200"
-          className="w-full max-w-[200px] h-auto"
+          className="w-full max-w-[280px] h-auto"
           role="img"
           aria-label={`Threat radar showing ${metrics.threatsDetected} total threats across 6 categories`}
         >
           <defs>
-            {/* Scan line gradient */}
+            {/* Gradient fills per sector */}
+            {SECTORS.map(sector => (
+              <radialGradient key={`grad-${sector.shortLabel}`} id={`${svgId}-grad-${sector.shortLabel}`} cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={sector.color} stopOpacity="0.4" />
+                <stop offset="100%" stopColor={sector.color} stopOpacity="0.08" />
+              </radialGradient>
+            ))}
+            {/* Scan line gradient — cyan accent */}
             <linearGradient id={`${svgId}-scan`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="rgba(230,57,70,0)" />
-              <stop offset="100%" stopColor="rgba(230,57,70,0.6)" />
+              <stop offset="0%" stopColor="rgba(0,217,255,0)" />
+              <stop offset="100%" stopColor="rgba(0,217,255,0.6)" />
             </linearGradient>
           </defs>
 
@@ -96,7 +106,7 @@ export function ThreatRadar() {
               cy={CENTER}
               r={RADIUS * scale}
               fill="none"
-              stroke="rgba(255,255,255,0.06)"
+              stroke="rgba(255,255,255,0.08)"
               strokeWidth="0.5"
             />
           ))}
@@ -111,35 +121,38 @@ export function ThreatRadar() {
                 y1={CENTER}
                 x2={p.x}
                 y2={p.y}
-                stroke="rgba(255,255,255,0.06)"
+                stroke="rgba(255,255,255,0.08)"
                 strokeWidth="0.5"
               />
             )
           })}
 
-          {/* Sectors */}
+          {/* Sectors with gradient fills */}
           {SECTORS.map((sector) => {
             const startAngle = sector.angle
             const endAngle = startAngle + 60
             const detections = detectionMap.get(sector.engineId) ?? 0
             const intensity = Math.min(detections / 3, 1)
+            const isHovered = hoveredSector === sector.shortLabel
 
             return (
               <g key={sector.label}>
+                {/* Gradient-filled sector */}
                 <path
                   d={sectorPath(startAngle, endAngle, RADIUS)}
-                  fill={sector.color}
-                  fillOpacity={detections > 0 ? 0.15 + intensity * 0.35 : 0.05}
-                  stroke={sector.color}
-                  strokeWidth="0.5"
-                  strokeOpacity={0.3}
+                  fill={detections > 0 ? `url(#${svgId}-grad-${sector.shortLabel})` : sector.color}
+                  fillOpacity={detections > 0 ? 0.2 + intensity * 0.5 : 0.05}
+                  stroke={isHovered ? '#FFFFFF' : sector.color}
+                  strokeWidth={isHovered ? '1.5' : '1'}
+                  strokeOpacity={isHovered ? 0.8 : 0.3}
                   className={cn(
                     'cursor-pointer',
-                    'motion-safe:transition-[fill-opacity] motion-safe:duration-[var(--transition-normal)]',
+                    'motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]',
                     'focus-visible:outline-2 focus-visible:outline-[var(--bu-electric)] focus-visible:outline-offset-1',
-                    detections > 0 && 'motion-safe:animate-pulse'
                   )}
                   onClick={() => handleSectorClick(sector.engineId)}
+                  onMouseEnter={() => setHoveredSector(sector.shortLabel)}
+                  onMouseLeave={() => setHoveredSector(null)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleSectorClick(sector.engineId) }}
@@ -162,9 +175,49 @@ export function ThreatRadar() {
                     </text>
                   )
                 })()}
+                {/* Hover tooltip */}
+                {isHovered && (() => {
+                  const tooltipAngle = startAngle + 30
+                  const tooltipPos = polarToCartesian(tooltipAngle, RADIUS + 12)
+                  return (
+                    <g className="pointer-events-none">
+                      <rect
+                        x={tooltipPos.x - 28}
+                        y={tooltipPos.y - 10}
+                        width="56"
+                        height="20"
+                        rx="4"
+                        fill="var(--bg-tertiary)"
+                        stroke="var(--border)"
+                        strokeWidth="0.5"
+                      />
+                      <text
+                        x={tooltipPos.x}
+                        y={tooltipPos.y + 1}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        className="text-[7px] fill-current text-foreground"
+                      >
+                        {detections} found
+                      </text>
+                    </g>
+                  )
+                })()}
               </g>
             )
           })}
+
+          {/* Subtle pulse animation on radar rings */}
+          <circle
+            cx={CENTER}
+            cy={CENTER}
+            r={RADIUS}
+            fill="none"
+            stroke="rgba(0,217,255,0.15)"
+            strokeWidth="1"
+            className="motion-safe:animate-ping motion-reduce:hidden"
+            style={{ animationDuration: '3s' }}
+          />
 
           {/* Rotating scan line */}
           <line

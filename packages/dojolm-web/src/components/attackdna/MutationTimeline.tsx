@@ -6,16 +6,20 @@
  * - TimelineEntry interface (line 16)
  * - MOCK_TIMELINE data (line 25)
  * - mutationTypeConfig color map (line 145)
- * - TimelineItem component (line 155)
- * - MutationTimeline component (line 217)
+ * - severityBadgeColor map (line 185)
+ * - getCategorySeverity helper (line 195)
+ * - TimelineItem component (line 210)
+ * - MutationTimeline component (line 285)
  */
 
 'use client'
 
+import { useState, useMemo, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Clock, GitCommit } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Clock, GitCommit, Filter } from 'lucide-react'
 
 interface TimelineEntry {
   id: string
@@ -182,6 +186,26 @@ const categoryBadgeColor: Record<string, string> = {
   dos: 'bg-pink-500/15 text-pink-400 border-pink-500/30',
 }
 
+const severityBadgeColor: Record<string, string> = {
+  critical: 'bg-red-500/15 text-red-400 border-red-500/30',
+  high: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+  medium: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+  low: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  info: 'bg-gray-500/15 text-gray-400 border-gray-500/30',
+}
+
+// Derive severity from category for timeline entries
+function getCategorySeverity(category: string): string {
+  const mapping: Record<string, string> = {
+    'prompt-injection': 'critical',
+    jailbreak: 'critical',
+    'social-engineering': 'high',
+    encoded: 'high',
+    dos: 'medium',
+  }
+  return mapping[category.toLowerCase()] ?? 'info'
+}
+
 // --- Sub-components ---
 
 function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean }) {
@@ -240,17 +264,23 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <Badge
               variant="outline"
-              className={cn('text-[10px] px-1.5 py-0', config.color)}
+              className={cn('text-xs px-1.5 py-0', config.color)}
             >
               {entry.mutationType}
             </Badge>
             <Badge
               variant="outline"
-              className={cn('text-[10px] px-1.5 py-0', catClass)}
+              className={cn('text-xs px-1.5 py-0', catClass)}
             >
               {entry.nodeCategory}
             </Badge>
-            <span className="text-[10px] text-muted-foreground font-mono ml-auto">
+            <Badge
+              variant="outline"
+              className={cn('text-xs px-1.5 py-0', severityBadgeColor[getCategorySeverity(entry.nodeCategory)])}
+            >
+              {getCategorySeverity(entry.nodeCategory)}
+            </Badge>
+            <span className="text-xs text-muted-foreground font-mono ml-auto">
               {(entry.similarity * 100).toFixed(0)}% sim
             </span>
           </div>
@@ -263,7 +293,7 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
           {/* Edge reference */}
           <div className="flex items-center gap-1.5 mt-2">
             <GitCommit className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
-            <span className="text-[10px] font-mono text-muted-foreground">
+            <span className="text-xs font-mono text-muted-foreground">
               {entry.fromNodeId} → {entry.toNodeId}
             </span>
           </div>
@@ -280,8 +310,25 @@ interface MutationTimelineProps {
 }
 
 export function MutationTimeline({ className }: MutationTimelineProps) {
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+
+  const handleStartChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setStartDate(e.target.value), [])
+  const handleEndChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setEndDate(e.target.value), [])
+  const handleClearFilter = useCallback(() => { setStartDate(''); setEndDate('') }, [])
+
+  // Filter entries by date range
+  const filteredTimeline = useMemo(() => {
+    return MOCK_TIMELINE.filter((entry) => {
+      const entryDate = entry.date.slice(0, 10) // YYYY-MM-DD
+      if (startDate && entryDate < startDate) return false
+      if (endDate && entryDate > endDate) return false
+      return true
+    })
+  }, [startDate, endDate])
+
   // Group timeline entries by date
-  const dateGroups = MOCK_TIMELINE.reduce<Record<string, TimelineEntry[]>>(
+  const dateGroups = useMemo(() => filteredTimeline.reduce<Record<string, TimelineEntry[]>>(
     (groups, entry) => {
       const dateKey = new Date(entry.date).toLocaleDateString('en-US', {
         month: 'long',
@@ -295,12 +342,56 @@ export function MutationTimeline({ className }: MutationTimelineProps) {
       return groups
     },
     {}
-  )
+  ), [filteredTimeline])
 
   const dateKeys = Object.keys(dateGroups)
+  const isFiltered = startDate !== '' || endDate !== ''
 
   return (
     <div className={cn('space-y-6', className)}>
+      {/* Date Range Filter */}
+      <Card>
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Filter className="h-4 w-4 text-[var(--dojo-primary)] shrink-0" aria-hidden="true" />
+            <span className="text-xs font-medium text-muted-foreground">Date Range</span>
+            <div className="flex items-center gap-2">
+              <label htmlFor="timeline-start" className="sr-only">Start date</label>
+              <Input
+                id="timeline-start"
+                type="date"
+                value={startDate}
+                onChange={handleStartChange}
+                className="h-8 w-36 text-xs"
+                aria-label="Filter start date"
+              />
+              <span className="text-xs text-muted-foreground">to</span>
+              <label htmlFor="timeline-end" className="sr-only">End date</label>
+              <Input
+                id="timeline-end"
+                type="date"
+                value={endDate}
+                onChange={handleEndChange}
+                className="h-8 w-36 text-xs"
+                aria-label="Filter end date"
+              />
+            </div>
+            {isFiltered && (
+              <button
+                onClick={handleClearFilter}
+                className="text-xs text-muted-foreground hover:text-[var(--foreground)] underline motion-safe:transition-colors"
+                aria-label="Clear date filter"
+              >
+                Clear
+              </button>
+            )}
+            <span className="text-xs text-muted-foreground ml-auto">
+              {filteredTimeline.length} of {MOCK_TIMELINE.length} entries
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Legend */}
       <Card>
         <CardHeader className="pb-2">
@@ -325,6 +416,13 @@ export function MutationTimeline({ className }: MutationTimelineProps) {
       </Card>
 
       {/* Timeline */}
+      {dateKeys.length === 0 && (
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-sm text-muted-foreground">No timeline entries match the selected date range.</p>
+          </CardContent>
+        </Card>
+      )}
       {dateKeys.map((dateKey) => {
         const entries = dateGroups[dateKey]
         return (

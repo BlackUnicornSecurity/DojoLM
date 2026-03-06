@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
 import { fetchCoverageMap } from '@/lib/llm-server-utils';
 
 // ===========================================================================
@@ -52,10 +53,6 @@ export async function GET(request: NextRequest) {
       summary,
     });
   } catch (error) {
-    console.error('Error getting coverage:', error);
-    return NextResponse.json(
-      { error: 'Failed to get coverage', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to get coverage', 500, error);
   }
 }

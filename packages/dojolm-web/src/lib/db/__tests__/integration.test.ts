@@ -22,7 +22,7 @@ describe('P2.5 Integration Tests', () => {
     db.pragma('busy_timeout = 5000');
 
     // Run all migrations
-    const migrationsDir = path.join(process.cwd(), 'migrations');
+    const migrationsDir = path.resolve(__dirname, '../../../../migrations');
     const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
     for (const file of files) {
       const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');

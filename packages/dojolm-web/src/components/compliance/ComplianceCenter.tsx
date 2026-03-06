@@ -33,10 +33,12 @@ import { AuditTrail } from './AuditTrail'
 import { ComplianceChecklist } from './ComplianceChecklist'
 import { FrameworkNavigator } from './FrameworkNavigator'
 import { CoverageMap } from '@/components/coverage'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { EnsoGauge } from '@/components/ui/EnsoGauge'
 import { COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import { baissControlsToCoverageEntries } from '@/lib/data/baiss-framework'
 import type { CoverageEntry } from '@/lib/types'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Constants ---
 
@@ -152,7 +154,7 @@ function FrameworkGapSummary({
     <button
       onClick={onSelect}
       className={cn(
-        'flex items-center justify-between w-full px-3 py-2 rounded-md text-left',
+        'flex items-center justify-between w-full px-3 py-2 rounded-lg text-left',
         'motion-safe:transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
         isSelected
           ? 'bg-[var(--bg-quaternary)] border border-[var(--dojo-primary)]'
@@ -201,7 +203,7 @@ export default function ComplianceCenter() {
     setLoading(true)
     setError(null)
 
-    fetch('/api/compliance')
+    fetchWithAuth('/api/compliance')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch compliance data')
         return res.json()
@@ -280,7 +282,7 @@ export default function ComplianceCenter() {
   if (loading) {
     return (
       <div
-        className="flex items-center justify-center p-12"
+        className="flex items-center justify-center p-4"
         role="status"
         aria-label="Loading Bushido Book"
       >
@@ -298,7 +300,7 @@ export default function ComplianceCenter() {
   // --- Error state ---
   if (error || !data) {
     return (
-      <div className="p-6 rounded-lg bg-[var(--danger)]/10" role="alert">
+      <div className="p-4 rounded-lg bg-[var(--danger)]/10" role="alert">
         <p className="text-[var(--danger)]">
           Error loading compliance data: {error}
         </p>
@@ -334,7 +336,7 @@ export default function ComplianceCenter() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Overall Score Meter */}
         <Card className="lg:col-span-3">
-          <CardContent className="p-6 flex flex-col items-center justify-center">
+          <CardContent className="p-4 flex flex-col items-center justify-center">
             <ScoreMeter value={data.overallScore} />
             <div className="mt-4 text-center">
               <p className="text-sm font-medium text-[var(--foreground)]">
@@ -583,7 +585,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
           <button
             onClick={() => setSubMode('changes')}
             className={cn(
-              'flex items-center gap-2 px-3 py-1.5 text-sm rounded-md',
+              'flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg',
               'border border-[var(--border)] text-muted-foreground',
               'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
@@ -595,7 +597,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
           <button
             onClick={() => setSubMode('comparison')}
             className={cn(
-              'flex items-center gap-2 px-3 py-1.5 text-sm rounded-md',
+              'flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg',
               'border border-[var(--border)] text-muted-foreground',
               'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
@@ -612,25 +614,25 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
       {coverageDataForFramework.length > 0 && (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-[var(--foreground)]">
                 {summaryStats.avgCoverage}%
               </p>
               <p className="text-xs text-muted-foreground">Avg Coverage</p>
             </div>
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-[var(--success)]">
                 {summaryStats.fullCoverage}
               </p>
               <p className="text-xs text-muted-foreground">Full ({'\u2265'}80%)</p>
             </div>
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-[var(--foreground)]">
                 {summaryStats.total}
               </p>
               <p className="text-xs text-muted-foreground">Categories</p>
             </div>
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className={cn(
                 'text-2xl font-bold',
                 summaryStats.gaps > 0 ? 'text-[var(--danger)]' : 'text-[var(--success)]'
@@ -653,15 +655,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
 
       {/* Empty state for frameworks with no data */}
       {coverageDataForFramework.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Layers className="w-12 h-12 text-muted-foreground mb-4" aria-hidden="true" />
-          <h3 className="text-lg font-semibold text-[var(--foreground)] mb-2">
-            No Coverage Data
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-md">
-            No coverage data available for {frameworkLabel}. Run a compliance assessment to generate coverage metrics.
-          </p>
-        </div>
+        <EmptyState icon={Layers} title="No Coverage Data" description="No coverage data available. Run a compliance assessment to populate." />
       )}
       </div>
     </div>
@@ -754,7 +748,7 @@ function CoverageDeltaView({
         <button
           onClick={onBack}
           className={cn(
-            'px-3 py-1.5 text-sm rounded-md',
+            'px-3 py-1.5 text-sm rounded-lg',
             'border border-[var(--border)] text-muted-foreground',
             'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
@@ -777,16 +771,16 @@ function CoverageDeltaView({
       ) : (
         <>
           {/* Delta summary */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-[var(--success)]">{improvements}</p>
               <p className="text-xs text-muted-foreground">Improvements</p>
             </div>
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-[var(--danger)]">{regressions}</p>
               <p className="text-xs text-muted-foreground">Regressions</p>
             </div>
-            <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+            <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
               <p className="text-2xl font-bold text-muted-foreground">{unchanged}</p>
               <p className="text-xs text-muted-foreground">Unchanged</p>
             </div>
@@ -922,7 +916,7 @@ function ComparisonView({
         <button
           onClick={onBack}
           className={cn(
-            'px-3 py-1.5 text-sm rounded-md',
+            'px-3 py-1.5 text-sm rounded-lg',
             'border border-[var(--border)] text-muted-foreground',
             'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
@@ -1028,25 +1022,25 @@ function OverviewPanel({
           {framework.name}
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
             <p className="text-2xl font-bold text-[var(--foreground)]">
               {framework.overallCoverage}%
             </p>
             <p className="text-xs text-muted-foreground">Coverage</p>
           </div>
-          <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
             <p className="text-2xl font-bold text-[var(--success)]">
               {framework.coveredControls}
             </p>
             <p className="text-xs text-muted-foreground">Covered</p>
           </div>
-          <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
             <p className="text-2xl font-bold text-[var(--warning)]">
               {framework.partialControls}
             </p>
             <p className="text-xs text-muted-foreground">Partial</p>
           </div>
-          <div className="rounded-md bg-[var(--bg-quaternary)] p-3 text-center">
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
             <p className="text-2xl font-bold text-[var(--danger)]">
               {framework.gapControls}
             </p>

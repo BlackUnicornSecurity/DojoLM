@@ -245,7 +245,7 @@ const ModuleToggle = memo(function ModuleToggle({
   return (
     <label
       className={cn(
-        'flex items-center gap-2.5 rounded-md px-2 py-1.5 cursor-pointer',
+        'flex items-center gap-2.5 rounded-lg px-2 py-1.5 cursor-pointer',
         'hover:bg-[var(--bg-quaternary)]/60',
         'focus-within:ring-2 focus-within:ring-[var(--ring)] focus-within:ring-offset-1',
         'motion-safe:transition-colors motion-safe:duration-100',

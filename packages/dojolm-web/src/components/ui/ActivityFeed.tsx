@@ -15,6 +15,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Shield, CheckCircle, XCircle, Brain, AlertTriangle, CheckCheck, type LucideIcon } from 'lucide-react'
 import { useActivityState, useActivityDispatch, type EventType, type ActivityEvent } from '@/lib/contexts/ActivityContext'
+import { EmptyState, emptyStatePresets } from '@/components/ui/EmptyState'
 
 /** Format ISO timestamp for display */
 function formatTimestamp(timestamp: string): string {
@@ -88,9 +89,7 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
 
   if (events.length === 0) {
     return (
-      <p className={cn("text-sm text-[var(--text-tertiary)] py-4 text-center", className)}>
-        No recent activity.
-      </p>
+      <EmptyState {...emptyStatePresets.noData} description="No recent activity." className={cn("py-4", className)} />
     )
   }
 
@@ -118,7 +117,7 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
 
       {/* Undo toast */}
       {undoSnapshot && (
-        <div className="mx-3 mb-2 flex items-center justify-between px-3 py-2 bg-[var(--bg-quaternary)] rounded-md text-xs">
+        <div className="mx-3 mb-2 flex items-center justify-between px-3 py-2 bg-[var(--bg-quaternary)] rounded-lg text-xs">
           <span className="text-muted-foreground">All marked as read</span>
           <button
             onClick={handleUndo}
@@ -136,7 +135,7 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
           return (
             <li
               key={event.id}
-              className="flex items-start gap-3 px-3 py-2 rounded-md hover:bg-[var(--bg-tertiary)] transition-colors"
+              className="flex items-start gap-3 px-3 py-2 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
             >
               {/* Unread dot */}
               <div className="flex-shrink-0 mt-1.5 w-2">

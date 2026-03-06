@@ -53,7 +53,7 @@ export function AttackOfTheDay() {
           <p className="text-xs text-muted-foreground mt-1">{payload.desc}</p>
         </div>
 
-        <pre className="text-[10px] font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all text-orange-500 max-h-16">
+        <pre className="text-xs font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all text-orange-500 max-h-16">
           {payload.example}
         </pre>
 
@@ -61,7 +61,7 @@ export function AttackOfTheDay() {
           onClick={handleTryIt}
           disabled={scanned}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md w-full justify-center',
+            'flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg w-full justify-center',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
             'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
             scanned

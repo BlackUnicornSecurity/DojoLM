@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
 import { seedTestCases } from '@/lib/data/sample-test-cases';
 
 // ===========================================================================
@@ -23,10 +24,6 @@ export async function POST(request: NextRequest) {
       message: `Seeded ${result.seeded} test cases${result.failed > 0 ? ` (${result.failed} failed)` : ''}`,
     });
   } catch (error) {
-    console.error('Error seeding test cases:', error);
-    return NextResponse.json(
-      { error: 'Failed to seed test cases', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to seed test cases', 500, error);
   }
 }

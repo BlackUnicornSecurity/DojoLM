@@ -92,7 +92,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
       aria-modal="false"
       onKeyDown={handleKeyDown}
       className={cn(
-        'border rounded-lg bg-card text-card-foreground shadow-lg',
+        'border rounded-lg bg-card text-card-foreground shadow-md',
         'motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-200',
         'motion-reduce:animate-none',
         'w-full max-w-md'
@@ -111,7 +111,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
           onClick={onClose}
           aria-label="Close node detail panel"
           className={cn(
-            'shrink-0 rounded-md p-1.5',
+            'shrink-0 rounded-lg p-1.5',
             'min-w-[44px] min-h-[44px] flex items-center justify-center',
             'text-muted-foreground hover:text-[var(--foreground)]',
             'hover:bg-[var(--bg-quaternary)]',
@@ -148,7 +148,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
         {/* Content Preview */}
         <div>
           <p className="text-xs font-medium text-muted-foreground mb-1">Content</p>
-          <pre className="text-xs font-mono p-3 rounded-md bg-[var(--bg-secondary)] border border-[var(--border)] whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
+          <pre className="text-xs font-mono p-3 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] whitespace-pre-wrap break-words max-h-40 overflow-y-auto">
             <code>{node.content}</code>
           </pre>
         </div>
@@ -175,7 +175,7 @@ export function NodeDetailPanel({ node, onClose }: NodeDetailPanelProps) {
                   >
                     <Badge
                       variant="outline"
-                      className={cn('shrink-0 text-[10px] px-1.5 py-0.5', colorClass)}
+                      className={cn('shrink-0 text-xs px-1.5 py-0.5', colorClass)}
                     >
                       {mutation.type}
                     </Badge>

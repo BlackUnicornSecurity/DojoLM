@@ -42,9 +42,10 @@ const DEFAULT_PARSE_TIMEOUT = 5000;
  * @param buffer - The binary file content as Buffer
  * @param filename - Optional filename for logging
  * @param timeout - Parse timeout in milliseconds (default 5000ms, range: 100-30000) (FIX-2.3)
+ * @param transcription - Optional speech-to-text transcript for dual-layer audio scanning (Story 12.1)
  * @returns Enhanced scan result with metadata sources
  */
-export async function scanBinary(buffer: Buffer, filename?: string, timeout = DEFAULT_PARSE_TIMEOUT): Promise<BinaryScanResult> {
+export async function scanBinary(buffer: Buffer, filename?: string, timeout = DEFAULT_PARSE_TIMEOUT, transcription?: string): Promise<BinaryScanResult> {
   // Validate timeout parameter (code-review fix)
   const effectiveTimeout = Math.min(Math.max(timeout, 100), 30000);
 
@@ -86,14 +87,32 @@ export async function scanBinary(buffer: Buffer, filename?: string, timeout = DE
   // Extract all text from metadata fields
   const extractedText = extractTextFields(parseResult.fields);
 
-  // Scan the extracted text using the existing scanner
-  const textScanResult = scan(extractedText);
+  // Story 12.1: Dual-layer audio scanning — append transcription for vocal layer
+  // H5 fix: cap transcription length and sanitize delimiter to prevent injection
+  const MAX_TRANSCRIPTION_LENGTH = 500_000; // 500KB cap
+  let sanitizedTranscription = transcription ?? '';
+  if (sanitizedTranscription.length > MAX_TRANSCRIPTION_LENGTH) {
+    sanitizedTranscription = sanitizedTranscription.slice(0, MAX_TRANSCRIPTION_LENGTH);
+  }
+  // Remove any embedded delimiter strings that could confuse layer separation
+  sanitizedTranscription = sanitizedTranscription.replace(/\[TRANSCRIPTION\]/gi, '[TRANSCRIPT_DATA]');
+  const fullScanText = sanitizedTranscription
+    ? `${extractedText}\n[TRANSCRIPTION]\n${sanitizedTranscription}`
+    : extractedText;
+
+  // Scan the extracted text (+ transcription if present) using the existing scanner
+  const textScanResult = scan(fullScanText);
 
   // Calculate elapsed time
   const elapsed = performance.now() - startTime;
 
   // Get metadata sources
   const sources = extractSources(parseResult.fields);
+
+  // Story 12.1: Add transcription as a scanned source if present
+  if (transcription) {
+    sources.push('TRANSCRIPTION');
+  }
 
   // Sanitize filename for use in findings
   const sanitizedFilename = filename?.replace(/[\x00-\x1F\x7F]/g, '').trim() || 'binary file';

@@ -12,6 +12,7 @@ import {
   queryFindings,
   getEcosystemStats,
 } from '@/lib/storage/ecosystem-storage';
+import { checkApiAuth } from '@/lib/api-auth';
 import {
   VALID_SOURCE_MODULES,
   VALID_FINDING_TYPES,
@@ -31,6 +32,9 @@ import type {
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode');
@@ -145,8 +149,19 @@ export async function GET(request: NextRequest) {
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
     if (!body || typeof body !== 'object') {
@@ -158,21 +173,21 @@ export async function POST(request: NextRequest) {
 
     const { sourceModule, findingType, severity, title, description, relatedModel, tpiStory, owaspMapping, evidence, metadata } = body;
 
-    if (!sourceModule || !VALID_SOURCE_MODULES.has(sourceModule)) {
+    if (!sourceModule || !VALID_SOURCE_MODULES.has(sourceModule as EcosystemSourceModule)) {
       return NextResponse.json(
         { error: `Invalid or missing sourceModule. Must be one of: ${[...VALID_SOURCE_MODULES].join(', ')}` },
         { status: 400 }
       );
     }
 
-    if (!findingType || !VALID_FINDING_TYPES.has(findingType)) {
+    if (!findingType || !VALID_FINDING_TYPES.has(findingType as EcosystemFindingType)) {
       return NextResponse.json(
         { error: `Invalid or missing findingType. Must be one of: ${[...VALID_FINDING_TYPES].join(', ')}` },
         { status: 400 }
       );
     }
 
-    if (!severity || !VALID_SEVERITIES.has(severity)) {
+    if (!severity || !VALID_SEVERITIES.has(severity as EcosystemSeverity)) {
       return NextResponse.json(
         { error: `Invalid or missing severity. Must be one of: ${[...VALID_SEVERITIES].join(', ')}` },
         { status: 400 }
@@ -227,17 +242,17 @@ export async function POST(request: NextRequest) {
 
     const finding: EcosystemFinding = {
       id: crypto.randomUUID(),
-      sourceModule,
-      findingType,
-      severity,
+      sourceModule: sourceModule as EcosystemSourceModule,
+      findingType: findingType as EcosystemFindingType,
+      severity: severity as EcosystemSeverity,
       timestamp: new Date().toISOString(),
-      title: title.trim(),
-      description: description.trim(),
-      relatedModel: relatedModel?.trim(),
-      tpiStory: tpiStory?.trim(),
-      owaspMapping: owaspMapping?.trim(),
-      evidence: evidence?.trim(),
-      metadata: metadata || {},
+      title: (title as string).trim(),
+      description: (description as string).trim(),
+      relatedModel: (relatedModel as string | undefined)?.trim(),
+      tpiStory: (tpiStory as string | undefined)?.trim(),
+      owaspMapping: (owaspMapping as string | undefined)?.trim(),
+      evidence: (evidence as string | undefined)?.trim(),
+      metadata: (metadata as Record<string, unknown>) || {},
     };
 
     const saved = await saveFinding(finding);

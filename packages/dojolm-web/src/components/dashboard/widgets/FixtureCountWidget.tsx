@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { WidgetCard } from '../WidgetCard'
 import { FlaskConical } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 export function FixtureCountWidget() {
   const [fixtureCount, setFixtureCount] = useState(0)
@@ -19,7 +20,7 @@ export function FixtureCountWidget() {
     let cancelled = false
     async function fetchFixtures() {
       try {
-        const res = await fetch('/api/fixtures')
+        const res = await fetchWithAuth('/api/fixtures')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled && data.categories) {

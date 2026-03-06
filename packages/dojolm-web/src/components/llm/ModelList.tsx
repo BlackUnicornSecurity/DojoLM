@@ -86,7 +86,7 @@ export function ModelList() {
   if (error) {
     return (
       <Card className="border-red-500/20 bg-red-500/10">
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <p className="text-red-500">Error loading models: {error}</p>
           <Button onClick={refresh} variant="outline" className="mt-4">
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -114,7 +114,7 @@ export function ModelList() {
 
       {models.length === 0 ? (
         <Card>
-          <CardContent className="p-12 text-center">
+          <CardContent className="p-4 text-center">
             <Brain className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">No models configured</h3>
             <p className="text-sm text-muted-foreground mb-4">
@@ -127,7 +127,7 @@ export function ModelList() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {models.map(model => (
             <ModelCard
               key={model.id}
@@ -174,10 +174,10 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
   const providerInfo = PROVIDER_INFO[model.provider];
 
   return (
-    <Card className={model.enabled ? '' : 'opacity-60'}>
+    <Card className={model.enabled ? '' : 'border-muted'}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
+          <div className={`flex-1 min-w-0 ${!model.enabled ? 'opacity-50' : ''}`}>
             <CardTitle className="text-base truncate">{model.name}</CardTitle>
             <CardDescription className="text-xs truncate">{model.model}</CardDescription>
           </div>
@@ -188,7 +188,7 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Provider badge */}
-        <div className="flex items-center gap-2">
+        <div className={`flex items-center gap-2 ${!model.enabled ? 'opacity-50' : ''}`}>
           <Badge variant="outline" className="text-xs">
             {providerInfo?.name || model.provider}
           </Badge>

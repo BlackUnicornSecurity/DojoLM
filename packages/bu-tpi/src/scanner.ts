@@ -1232,6 +1232,38 @@ export const MULTIMODAL_PATTERNS: RegexPattern[] = [
     desc: 'Steganographic attack in multimodal content', source: 'TPI-MM-01' },
 ];
 
+// TPI-MM-03: Audio/Voice Attack Patterns (Story 12.1)
+export const AUDIO_ATTACK_PATTERNS: RegexPattern[] = [
+  // Ultrasonic / Inaudible Command Injection
+  { name: 'ultrasonic_command', cat: 'AUDIO_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:ultrasonic\s+(?:command|injection|payload|signal)|inaudible\s+(?:command|frequency|injection)|near-ultrasound\s+(?:attack|injection)|above\s+(?:human\s+)?hearing\s+(?:range|threshold))(?:\s+(?:embed|inject|attack|transmit|exploit))?/i,
+    desc: 'Ultrasonic or inaudible command injection attack', source: 'TPI-MM-03' },
+  // Voice Cloning for Identity Spoofing
+  { name: 'voice_identity_spoof', cat: 'AUDIO_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:clone\s+(?:voice|speaker|identity)|impersonate\s+(?:via\s+)?(?:voice|audio)|voice\s+(?:identity|impersonation)\s+(?:spoof|attack)|speaker\s+(?:verification|authentication)\s+(?:bypass|spoof|attack))/i,
+    desc: 'Voice identity spoofing via cloning attack', source: 'TPI-MM-03' },
+  // Audio Steganography
+  { name: 'audio_steganography', cat: 'AUDIO_ATTACK', sev: SEVERITY.WARNING,
+    re: /(?:audio\s+steganograph(?:y|ic)|(?:hide|embed|conceal)\s+(?:data|payload|message)\s+(?:in|within|inside)\s+(?:audio|sound|music|wav|mp3)|(?:spectral|frequency)\s+(?:domain\s+)?(?:steganography|hiding|embedding))/i,
+    desc: 'Audio steganography payload concealment', source: 'TPI-MM-03' },
+  // Frequency-Domain Manipulation
+  { name: 'frequency_manipulation', cat: 'AUDIO_ATTACK', sev: SEVERITY.WARNING,
+    re: /(?:frequency\s+(?:domain\s+)?(?:manipulation|attack|exploit|injection)|spectral\s+(?:manipulation|poisoning|attack)|(?:modify|alter|inject)\s+(?:audio\s+)?(?:frequency|spectrum|spectrogram)|adversarial\s+(?:audio\s+)?(?:perturbation|noise))/i,
+    desc: 'Frequency-domain audio manipulation attack', source: 'TPI-MM-03' },
+  // ASR (Automatic Speech Recognition) Evasion
+  { name: 'asr_evasion', cat: 'AUDIO_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:(?:ASR|speech\s+recognition|transcription)\s+(?:evasion|bypass|attack|exploit|poisoning)|adversarial\s+(?:audio|speech)\s+(?:sample|example|input)|fool\s+(?:speech|audio)\s+(?:recognition|transcription)|(?:evade|bypass|trick)\s+(?:ASR|speech\s+(?:recognition|model)))/i,
+    desc: 'Automatic speech recognition evasion attack', source: 'TPI-MM-03' },
+  // Cross-Modal Audio Attack
+  { name: 'cross_modal_audio', cat: 'AUDIO_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:audio\s+(?:to\s+)?(?:text|visual)\s+(?:cross-modal|injection)|(?:audio|voice)\s+(?:triggered|activated)\s+(?:injection|exploit|payload)|(?:embed|hide)\s+(?:text\s+)?(?:injection|prompt)\s+(?:in|within)\s+(?:audio|speech|voice))/i,
+    desc: 'Cross-modal audio-to-text injection attack', source: 'TPI-MM-03' },
+  // Biometric Voice Bypass
+  { name: 'biometric_voice_bypass', cat: 'AUDIO_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:biometric\s+(?:voice|speaker|audio)\s+(?:bypass|spoof|attack|clone)|voiceprint\s+(?:bypass|spoof|clone|forge|replicate)|(?:bypass|defeat|circumvent)\s+(?:voice\s+)?(?:biometric|voiceprint)\s+(?:authentication|verification|check))/i,
+    desc: 'Biometric voice authentication bypass attack', source: 'TPI-MM-03' },
+];
+
 // TPI-5.3: OCR/Image Text Attacks
 export const OCR_ATTACK_PATTERNS: RegexPattern[] = [
   { name: 'hidden_text_indicator', cat: 'OCR_ATTACK', sev: SEVERITY.WARNING,
@@ -3492,6 +3524,8 @@ const ALL_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: st
   { patterns: MULTIMODAL_PATTERNS, engine: 'TPI', source: 'TPI-MM-01' },
   { patterns: OCR_ATTACK_PATTERNS, engine: 'TPI', source: 'TPI-5.3' },
   { patterns: ADVERSARIAL_MULTIMEDIA_PATTERNS, engine: 'TPI', source: 'TPI-MM-02' },
+  // Story 12.1: Audio/Voice Attack Patterns
+  { patterns: AUDIO_ATTACK_PATTERNS, engine: 'TPI', source: 'TPI-MM-03' },
   // Epic 6: Vector & Embeddings Weaknesses (TPI-LLM08)
   { patterns: VEC_PATTERNS, engine: 'TPI', source: 'TPI-VEC' },
 ];

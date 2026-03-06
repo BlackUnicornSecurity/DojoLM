@@ -1,10 +1,10 @@
-# dojolm-web
+# dojolm-web (NODA Platform)
 
-DojoLM Web Interface - Next.js application for LLM security testing and red teaming.
+NODA Platform Web Interface - Next.js application for LLM security testing and red teaming.
 
 ## Overview
 
-DojoLM Web is a comprehensive security testing platform for detecting prompt injection attacks in Large Language Models. It provides a 7-tab interface for scanning, testing, and benchmarking LLMs against the CrowdStrike TPI (Tactics, Techniques, and Procedures) taxonomy.
+NODA Platform is a comprehensive security testing platform for detecting prompt injection attacks in Large Language Models. It provides a 12-module interface with unified sidebar navigation for scanning, testing, and benchmarking LLMs against the CrowdStrike TPI (Tactics, Techniques, and Procedures) taxonomy.
 
 ## Technology Stack
 
@@ -102,12 +102,22 @@ src/
 │   │   ├── fixtures/      # Fixture management
 │   │   └── llm/           # LLM testing APIs
 │   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Main page (7 tabs)
+│   └── page.tsx           # Main page (module router)
 ├── components/
-│   ├── llm/               # LLM Dashboard components
-│   ├── scanner/           # Scanner UI components
-│   ├── fixtures/          # Fixture browser
-│   └── ui/                # shadcn/ui components
+│   ├── dashboard/          # NODA Dashboard & widgets
+│   ├── scanner/            # Haiku Scanner
+│   ├── fixtures/           # Armory
+│   ├── compliance/         # Bushido Book
+│   ├── llm/                # LLM Dashboard
+│   ├── adversarial/        # Atemi Lab
+│   ├── strategic/          # The Kumite
+│   ├── attackdna/          # Amaterasu DNA
+│   ├── guard/              # Hattori Guard
+│   ├── ronin/              # Ronin Hub
+│   ├── jutsu/              # LLM Jutsu
+│   ├── admin/              # Admin panel
+│   ├── layout/             # Sidebar, MobileNav, etc.
+│   └── ui/                 # shadcn/ui + shared components
 ├── lib/
 │   ├── contexts/          # React contexts
 │   ├── providers/         # LLM provider adapters
@@ -117,19 +127,22 @@ src/
     └── setup.ts           # Vitest configuration
 ```
 
-## Application Tabs
+## NODA Modules
 
-The main interface provides 7 functional tabs:
-
-| Tab | Description |
-|-----|-------------|
-| **Live Scanner** | Real-time prompt injection detection with 504+ patterns |
-| **Fixtures** | Browse 1,447+ attack fixture files across 30 categories |
-| **Test Payloads** | Catalog of attack patterns and payloads |
-| **Coverage Map** | TPI story coverage (21/21) and OWASP LLM Top 10 alignment |
-| **Pattern Reference** | Complete pattern documentation |
-| **Run Tests** | Regression test runner with false-positive detection |
-| **LLM Dashboard** | Test LLMs against attack scenarios with 10+ providers |
+| Module | Description |
+|--------|-------------|
+| **NODA Dashboard** | Configurable homepage with drag-and-drop widgets |
+| **Haiku Scanner** | Real-time prompt injection detection with 505+ patterns |
+| **Armory** | Browse 1,544+ attack fixture files across 30+ categories |
+| **Bushido Book** | Compliance center with 8 frameworks including BAISS |
+| **LLM Dashboard** | Multi-provider LLM benchmarking with SSE streaming |
+| **Atemi Lab** | Adversarial testing with MCP connector and skills library |
+| **The Kumite** | Strategic analysis (SAGE, Arena, Mitsuke) |
+| **Amaterasu DNA** | Attack lineage analysis with Black Box Analysis |
+| **Hattori Guard** | Input/output protection with 4 modes |
+| **Ronin Hub** | Bug bounty researcher platform |
+| **LLM Jutsu** | LLM testing command center |
+| **Admin** | System health, API keys, scanner config |
 
 ## API Routes
 
@@ -143,6 +156,15 @@ The main interface provides 7 functional tabs:
 | `/api/llm/models` | GET/POST | Manage LLM configurations |
 | `/api/llm/execute` | POST | Execute tests against models |
 | `/api/llm/results` | GET | Query test results |
+| `/api/llm/guard` | GET/POST | Hattori Guard config |
+| `/api/llm/export` | GET | Export results (JSON/CSV/SARIF/PDF) |
+| `/api/ronin/programs` | GET/POST | Manage bug bounty programs |
+| `/api/ronin/submissions` | GET/POST | Manage submissions |
+| `/api/ronin/cves` | GET | CVE data |
+| `/api/attackdna/analyze` | POST | Black Box Analysis |
+| `/api/ecosystem/findings` | GET/POST | Ecosystem findings |
+| `/api/compliance` | GET | Compliance data |
+| `/api/admin/health` | GET | System health |
 
 ## LLM Provider Support
 
@@ -169,7 +191,7 @@ npm run build:scanner
 ```
 
 The scanner provides:
-- 504+ detection patterns across 47 groups
+- 505+ detection patterns across 47 groups
 - 15 engine categories for filtering
 - TypeScript type definitions
 

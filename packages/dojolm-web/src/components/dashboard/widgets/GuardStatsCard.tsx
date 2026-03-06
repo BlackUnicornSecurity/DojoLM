@@ -39,7 +39,7 @@ export function GuardStatsCard() {
             className="border-0 shadow-none p-0"
           />
         ) : (
-          <div className="text-center py-4 text-[10px] text-muted-foreground">
+          <div className="text-center py-4 text-xs text-muted-foreground">
             No guard events yet
           </div>
         )}

@@ -3,7 +3,7 @@
 **Story:** 3.3 - Multimodal Security (MM-01 to MM-05)
 **Framework Mapping:** MITRE ATLAS, OWASP LLM Top 10
 **Date:** 2026-02-26
-**Fixtures:** 35 test files across 5 control areas
+**Fixtures:** 55+ test files across 5 control areas
 
 ---
 
@@ -96,6 +96,23 @@ This guide covers testing AI/LLM systems against multimodal security threats - a
 // Ultrasonic commands
 /(ultrasonic|inaudible\s+command|18-20khz)/i
 ```
+
+### NODA-3 Audio Attack Expansion
+
+NODA-3 (Phase F) added 20 new audio attack fixtures with dual-layer scanning:
+
+| Layer | Description |
+|-------|-------------|
+| **Vocal Layer** | ASR manipulation, phonetic attacks, ultrasonic commands |
+| **Metadata Layer** | ID3, Vorbis, FLAC, WAV, M4A metadata injection |
+
+**New audio-attacks category:** 18 attack + 2 clean fixtures covering:
+- Vocal injection via speech-to-text pipeline
+- Metadata injection across 5 audio formats
+- Dual-layer attacks combining both vectors
+- 7 new scanner patterns for audio-specific detection
+
+These fixtures are in `packages/bu-tpi/fixtures/audio-attacks/` and are scanned by the Haiku Scanner in the NODA platform.
 
 ---
 

@@ -169,16 +169,16 @@ describe('WidgetCard', () => {
   })
 
   describe('Padding correctness (BMAD review fix #12)', () => {
-    it('hero header uses pt-6 px-6 pb-3 not pb-3 p-6', () => {
+    it('hero header uses pt-5 px-5 pb-2', () => {
       const { container } = render(
         <WidgetCard title="Hero" priority="hero">Content</WidgetCard>
       )
       // Find header (first child div with flex-row)
       const header = container.querySelector('[class*="flex"][class*="flex-row"]') as HTMLElement
       expect(header).toBeInTheDocument()
-      expect(header).toHaveClass('pt-6')
-      expect(header).toHaveClass('px-6')
-      expect(header).toHaveClass('pb-3')
+      expect(header).toHaveClass('pt-5')
+      expect(header).toHaveClass('px-5')
+      expect(header).toHaveClass('pb-2')
     })
 
     it('compact header uses pt-3 px-3 pb-1', () => {

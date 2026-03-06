@@ -12,6 +12,7 @@ import { WidgetCard } from '../WidgetCard'
 import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
 import { Brain, Loader2 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface BatchInfo {
   id: string
@@ -35,7 +36,7 @@ export function LLMBatchProgress() {
     let cancelled = false
     async function fetchBatches() {
       try {
-        const res = await fetch('/api/llm/batch?status=running')
+        const res = await fetchWithAuth('/api/llm/batch?status=running')
         if (res.ok && !cancelled) {
           const data = await res.json()
           setBatches(Array.isArray(data) ? data : data.batches ?? [])
@@ -74,7 +75,7 @@ export function LLMBatchProgress() {
             <p className="text-xs text-muted-foreground">No active tests</p>
             <button
               onClick={() => setActiveTab('llm')}
-              className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
             >
               Go to LLM Dashboard
             </button>
@@ -93,7 +94,7 @@ export function LLMBatchProgress() {
                     'w-2 h-2 rounded-full',
                     batch.status === 'running' ? 'bg-blue-500 motion-safe:animate-pulse' : 'bg-green-500'
                   )} />
-                  <span className="text-[10px] text-muted-foreground tabular-nums">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {batch.completedTests}/{batch.totalTests}
                   </span>
                 </div>
@@ -111,7 +112,7 @@ export function LLMBatchProgress() {
         {overflow > 0 && (
           <button
             onClick={() => setActiveTab('llm')}
-            className="text-[10px] text-muted-foreground hover:text-foreground w-full text-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+            className="text-xs text-muted-foreground hover:text-foreground w-full text-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
           >
             +{overflow} more batch{overflow !== 1 ? 'es' : ''}
           </button>

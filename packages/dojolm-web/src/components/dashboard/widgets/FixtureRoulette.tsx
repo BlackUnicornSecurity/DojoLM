@@ -11,6 +11,7 @@ import { WidgetCard } from '../WidgetCard'
 import { SeverityBadge } from '@/components/ui/SeverityBadge'
 import { cn } from '@/lib/utils'
 import { Shuffle, ScanLine, Loader2 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface FixtureData {
   category: string
@@ -45,7 +46,7 @@ export function FixtureRoulette() {
     setLoading(true)
     setVerdict(null)
     try {
-      const manifestRes = await fetch('/api/fixtures')
+      const manifestRes = await fetchWithAuth('/api/fixtures')
       if (!manifestRes.ok) throw new Error('Failed to load fixtures')
       const manifest = await manifestRes.json()
 
@@ -67,7 +68,7 @@ export function FixtureRoulette() {
       let mimeType: string | null = null
       if (!isBinary) {
         try {
-          const readRes = await fetch(`/api/read-fixture?path=${encodeURIComponent(`${catName}/${fileName}`)}`)
+          const readRes = await fetchWithAuth(`/api/read-fixture?path=${encodeURIComponent(`${catName}/${fileName}`)}`)
           if (readRes.ok) {
             const data = await readRes.json()
             content = data.content ?? null
@@ -93,7 +94,7 @@ export function FixtureRoulette() {
     if (!fixture) return
     setScanning(true)
     try {
-      const res = await fetch(`/api/scan-fixture?path=${encodeURIComponent(`${fixture.category}/${fixture.file}`)}`)
+      const res = await fetchWithAuth(`/api/scan-fixture?path=${encodeURIComponent(`${fixture.category}/${fixture.file}`)}`)
       if (res.ok) {
         const data = await res.json()
         if (data.skipped) {
@@ -120,7 +121,7 @@ export function FixtureRoulette() {
           <>
             {/* Category badge + file name */}
             <div>
-              <span className="text-[10px] px-1.5 py-0.5 bg-[var(--dojo-subtle)] text-[var(--dojo-primary)] rounded font-medium">
+              <span className="text-xs px-1.5 py-0.5 bg-[var(--dojo-subtle)] text-[var(--dojo-primary)] rounded font-medium">
                 {fixture.category}
               </span>
               <div className="text-sm font-medium mt-1 truncate">{fixture.file}</div>
@@ -149,12 +150,12 @@ export function FixtureRoulette() {
                 )}
               </div>
             ) : fixture.content ? (
-              <pre className="text-[10px] font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all max-h-24 text-foreground/80">
+              <pre className="text-xs font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all max-h-24 text-foreground/80">
                 {fixture.content.slice(0, 300)}
                 {fixture.content.length > 300 ? '...' : ''}
               </pre>
             ) : (
-              <div className="p-2 bg-muted/50 rounded text-[10px] text-muted-foreground">
+              <div className="p-2 bg-muted/50 rounded text-xs text-muted-foreground">
                 Binary file — {fixture.file}
               </div>
             )}
@@ -179,7 +180,7 @@ export function FixtureRoulette() {
                 onClick={handleScan}
                 disabled={scanning}
                 className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
+                  'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
                   'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
                   'disabled:opacity-50'
@@ -192,7 +193,7 @@ export function FixtureRoulette() {
                 onClick={spinRoulette}
                 disabled={loading}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
+                  'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
                   'border border-[var(--border)] text-muted-foreground hover:text-foreground hover:bg-muted',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
                   'disabled:opacity-50'
@@ -208,7 +209,7 @@ export function FixtureRoulette() {
             onClick={spinRoulette}
             disabled={loading}
             className={cn(
-              'w-full flex items-center justify-center gap-2 px-4 py-6 text-sm font-medium rounded-md',
+              'w-full flex items-center justify-center gap-2 px-4 py-6 text-sm font-medium rounded-lg',
               'border-2 border-dashed border-[var(--border)] text-muted-foreground',
               'hover:text-foreground hover:border-[var(--dojo-primary)] hover:bg-[var(--dojo-subtle)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',

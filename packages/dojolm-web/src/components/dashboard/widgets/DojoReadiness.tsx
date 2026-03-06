@@ -12,7 +12,7 @@
 import { useNavigation } from '@/lib/NavigationContext'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
-import { Shield, Brain, ShieldCheck, FlaskConical, ArrowRight, X } from 'lucide-react'
+import { Radar, BrainCircuit, ShieldHalf, Warehouse, ArrowRight, X } from 'lucide-react'
 import type { NavId } from '@/lib/constants'
 import type { LucideIcon } from 'lucide-react'
 
@@ -24,10 +24,10 @@ interface ReadinessItem {
 }
 
 const READINESS_ITEMS: ReadinessItem[] = [
-  { label: 'Run your first scan', description: 'Detect prompt injection threats in text', icon: Shield, target: 'scanner' },
-  { label: 'Configure a model', description: 'Set up an LLM provider for testing', icon: Brain, target: 'llm' },
-  { label: 'Enable Hattori Guard', description: 'Activate real-time content protection', icon: ShieldCheck, target: 'guard' },
-  { label: 'Explore attack fixtures', description: 'Browse categorized test payloads', icon: FlaskConical, target: 'testing' },
+  { label: 'Run your first scan', description: 'Detect prompt injection threats in text', icon: Radar, target: 'scanner' },
+  { label: 'Configure a model', description: 'Set up an LLM provider for testing', icon: BrainCircuit, target: 'llm' },
+  { label: 'Enable Hattori Guard', description: 'Activate real-time content protection', icon: ShieldHalf, target: 'guard' },
+  { label: 'Explore attack fixtures', description: 'Browse categorized test payloads', icon: Warehouse, target: 'armory' },
 ]
 
 interface DojoReadinessProps {
@@ -48,7 +48,7 @@ export function DojoReadiness({ onDismiss }: DojoReadinessProps) {
       actions={
         <button
           onClick={onDismiss}
-          className="p-1.5 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
+          className="p-1.5 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
           aria-label="Dismiss onboarding"
         >
           <X className="w-4 h-4" aria-hidden="true" />

@@ -57,7 +57,7 @@ export function WidgetCard({ title, children, actions, className, contentClassNa
     )}>
       <CardHeader className={cn(
         'flex flex-row items-center justify-between',
-        priority === 'hero' ? 'pt-6 px-6 pb-3' : priority === 'compact' ? 'pt-3 px-3 pb-1' : 'pb-2',
+        priority === 'hero' ? 'pt-5 px-5 pb-2' : priority === 'compact' ? 'pt-3 px-3 pb-1' : 'pt-4 px-4 pb-2',
       )}>
         <CardTitle className={cn(
           priority === 'hero' && 'text-base font-bold',
@@ -67,7 +67,8 @@ export function WidgetCard({ title, children, actions, className, contentClassNa
         {actions && <div className="flex items-center gap-1">{actions}</div>}
       </CardHeader>
       <CardContent className={cn(
-        priority === 'hero' && 'px-6 pb-6',
+        priority === 'hero' && 'px-5 pb-5',
+        priority === 'standard' && 'px-4 pb-4',
         priority === 'compact' && 'px-3 pb-3',
         contentClassName
       )}>

@@ -11,6 +11,7 @@ import { useNavigation } from '@/lib/NavigationContext'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
 import { Brain, Play, Loader2 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface ModelInfo {
   id: string
@@ -29,7 +30,7 @@ export function LLMModelsWidget() {
     let cancelled = false
     async function fetchModels() {
       try {
-        const res = await fetch('/api/llm/models')
+        const res = await fetchWithAuth('/api/llm/models')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled) setModels(Array.isArray(data) ? data : data.models ?? [])
@@ -47,7 +48,7 @@ export function LLMModelsWidget() {
   const handleTest = async (modelId: string) => {
     setTestingId(modelId)
     try {
-      const res = await fetch(`/api/llm/models/${encodeURIComponent(modelId)}/test`, { method: 'POST' })
+      const res = await fetchWithAuth(`/api/llm/models/${encodeURIComponent(modelId)}/test`, { method: 'POST' })
       if (res.ok) {
         // Test succeeded — visual feedback via the status dot update
       }
@@ -64,7 +65,7 @@ export function LLMModelsWidget() {
       actions={
         <button
           onClick={() => setActiveTab('llm')}
-          className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
         >
           Manage
         </button>
@@ -83,7 +84,7 @@ export function LLMModelsWidget() {
             <p className="text-xs text-muted-foreground">No models configured</p>
             <button
               onClick={() => setActiveTab('llm')}
-              className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
             >
               Configure in LLM Dashboard
             </button>
@@ -98,7 +99,7 @@ export function LLMModelsWidget() {
             )} />
             <div className="flex-1 min-w-0">
               <div className="text-xs font-medium truncate">{model.name}</div>
-              <div className="text-[10px] text-muted-foreground">{model.provider}</div>
+              <div className="text-xs text-muted-foreground">{model.provider}</div>
             </div>
             <button
               onClick={() => handleTest(model.id)}

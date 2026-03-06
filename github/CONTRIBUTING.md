@@ -8,9 +8,9 @@ This guide covers everything you need to contribute effectively.
 
 ## Before You Start
 
-1. **Read `team/lessonslearned.md`** — The most important pre-contribution step. Every non-trivial bug we've hit is documented there with root cause and prevention. Check it before touching the scanner, fixture files, or engine filter logic.
-2. **Check open issues** — Avoid duplicate effort.
-3. **Understand the monorepo layout** — Contributions need to land in the right package.
+1. **Check open issues** — Avoid duplicate effort.
+2. **Understand the monorepo layout** — Contributions need to land in the right package.
+3. **Read the documentation** — Review [Architecture](../docs/ARCHITECTURE.md) and [API Reference](../docs/API_REFERENCE.md) before making changes.
 
 ---
 
@@ -51,7 +51,7 @@ dojolm/
 
 **Pattern contributions:**
 - Every new pattern must have corresponding test fixtures: at least one attack fixture that triggers BLOCK/WARN, and at least one clean fixture that passes ALLOW
-- Use `export const` for all top-level pattern arrays — pattern sub-arrays that aren't exported can't be used externally (this broke VEC patterns in Feb 2026, see `team/lessonslearned.md`)
+- Use `export const` for all top-level pattern arrays — pattern sub-arrays that aren't exported can't be used externally (this broke VEC patterns in Feb 2026)
 - Test your regex against clean English text before submitting — the `vec_sim_texttricker` incident (a pattern matching all text containing the letter "f") shows how easy it is to accidentally create overbroad patterns
 - Run `npm run typecheck` before opening a PR — TypeScript strict mode will catch issues the scanner could miss at runtime
 - Use `buf.readUInt8(i)` not `buf[i]` for buffer access (strict typing catches `number | undefined`)
@@ -95,7 +95,7 @@ dojolm/
 2. **All tests must pass** before requesting review: `npm test`
 3. **TypeScript must compile clean**: `npm run typecheck`
 4. **Zero false positives on clean fixtures** — run the regression suite: `npm run test:api` (server must be running)
-5. **Update `team/lessonslearned.md`** if you encountered and fixed a non-obvious bug
+5. **Document any non-obvious issues** in your PR description for future reference
 6. **Never commit** files from `team/` — it is gitignored for a reason (QA evidence, security audit results, internal planning)
 7. **Never commit** `node_modules/`, `.next/`, or build artifacts
 
@@ -119,7 +119,7 @@ dojolm/
 - [ ] False positive check: clean fixtures still ALLOW
 
 ## Lessons Learned (if applicable)
-[Any non-obvious issues encountered — add to team/lessonslearned.md]
+[Any non-obvious issues encountered — document in PR for future reference]
 ```
 
 ---

@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { useNavigation } from '@/lib/NavigationContext'
 import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
 import { WidgetCard } from '../WidgetCard'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface FrameworkCoverage {
   name: string
@@ -25,7 +26,7 @@ export function ComplianceBarsWidget() {
     let cancelled = false
     async function fetchCompliance() {
       try {
-        const res = await fetch('/api/compliance')
+        const res = await fetchWithAuth('/api/compliance')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled && data.frameworks) {
@@ -52,7 +53,7 @@ export function ComplianceBarsWidget() {
       actions={
         <button
           onClick={() => setActiveTab('compliance')}
-          className="text-[10px] text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
         >
           Bushido Book
         </button>
@@ -61,7 +62,7 @@ export function ComplianceBarsWidget() {
       <div className="space-y-2">
         {frameworks.map(fw => (
           <div key={fw.name} className="space-y-0.5">
-            <div className="flex items-center justify-between text-[10px]">
+            <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground truncate">{fw.name}</span>
               <span className="tabular-nums font-medium">{fw.coverage}%</span>
             </div>
@@ -74,10 +75,10 @@ export function ComplianceBarsWidget() {
           </div>
         ))}
         {loading && frameworks.length === 0 && (
-          <p className="text-[10px] text-muted-foreground text-center py-4">Loading compliance data...</p>
+          <p className="text-xs text-muted-foreground text-center py-4">Loading compliance data...</p>
         )}
         {!loading && frameworks.length === 0 && (
-          <p className="text-[10px] text-muted-foreground text-center py-4">No compliance data available</p>
+          <p className="text-xs text-muted-foreground text-center py-4">No compliance data available</p>
         )}
       </div>
     </WidgetCard>

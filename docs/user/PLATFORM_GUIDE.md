@@ -1,12 +1,12 @@
-# DojoLM Platform Guide
+# NODA Platform Guide
 
-**Version:** 3.0 (DojoV2)  
-**Last Updated:** 2026-03-03
+**Version:** 4.0 (NODA-3)
+**Last Updated:** 2026-03-06
 
-**DojoLM** is an LLM red teaming and security testing platform. It gives you the tools to test, evaluate, and understand how language models respond to adversarial inputs — before those inputs reach your production systems.
+**NODA** is an LLM red teaming and security testing platform. It gives you the tools to test, evaluate, and understand how language models respond to adversarial inputs — before those inputs reach your production systems.
 
 This guide covers:
-- What DojoLM does and how it works
+- What NODA does and how it works
 - Web interface features
 - Scanner API usage
 - Integration with local LLMs
@@ -14,23 +14,30 @@ This guide covers:
 
 ---
 
-## What DojoLM Does
+## What NODA Does
 
-DojoLM detects prompt injection attacks: attempts by adversarial text to hijack LLM behavior by overriding instructions, impersonating authority, encoding payloads, manipulating through social pressure, or exploiting the trust model of agentic systems.
+NODA detects prompt injection attacks: attempts by adversarial text to hijack LLM behavior by overriding instructions, impersonating authority, encoding payloads, manipulating through social pressure, or exploiting the trust model of agentic systems.
 
-The platform has two main modes:
+The platform has two main modes, accessible as modules in the NODA sidebar:
 
-**1. Scan mode** — Submit any text and get an immediate verdict (BLOCK / WARN / ALLOW) with a detailed breakdown of what patterns triggered, why, and how severe each finding is.
+**1. Scan mode** — Submit any text and get an immediate verdict (BLOCK / WARN / ALLOW) with a detailed breakdown of what patterns triggered, why, and how severe each finding is. Available via the **Haiku Scanner** module.
 
-**2. LLM benchmark mode** — Test a local or cloud LLM against the full attack fixture library. See which attack categories your model is vulnerable to, which it resists, and how it compares to other models.
+**2. LLM benchmark mode** — Test a local or cloud LLM against the full attack fixture library. See which attack categories your model is vulnerable to, which it resists, and how it compares to other models. Available via the **LLM Dashboard** and **LLM Jutsu** modules.
 
-### Version 3.0 (DojoV2) Extensions
+### Version 4.0 (NODA-3) Extensions
 
-This release extends DojoLM with 460+ new fixtures covering:
+This release extends NODA with major platform enhancements:
 - **OWASP LLM Top 10** — 100% coverage
 - **MITRE ATLAS** tactics
 - **NIST AI RMF** risks
 - **ENISA AI** threats
+- **Ronin Hub** — Bug bounty researcher platform
+- **LLM Jutsu** — Testing command center
+- **Belt color system** — 7 ranks (White through Black) based on security score
+- **Adversarial Skills Library** — 40 skills across 6 playbooks
+- **Audio/voice attack expansion** — Dual-layer scanning (vocal + metadata)
+- **Black Box Analysis** — Ablation engine for attack lineage study
+- **Unified sidebar navigation** — 12 modules in a single sidebar
 
 ---
 
@@ -165,87 +172,54 @@ Each category includes **clean/false-positive control files** to verify the scan
 
 ---
 
-## The Web Interface
+## The NODA Web Interface
 
-The DojoLM web app has seven tabs.
+The NODA platform uses a unified sidebar navigation with 12 modules:
 
-### Scanner Tab
+### NODA Dashboard
+The configurable homepage with drag-and-drop widgets: System Health, Fixture Count, Quick Scan, Threat Radar, Ecosystem Pulse, Guard Stats, LLM Models, Dojo Readiness, Attack of the Day, and more.
 
-The core tool. Paste any text into the input field and click Scan. The engine runs 505+ regex patterns plus 6 heuristic detectors and returns a verdict within milliseconds.
+### Haiku Scanner
+Real-time text scanning. Paste any text and get a verdict (BLOCK/WARN/ALLOW) with detailed pattern breakdown. Supports engine filtering for targeted scans.
 
-**Verdict meanings:**
-- **BLOCK** — One or more CRITICAL findings. Treat this text as a confirmed injection attempt.
-- **WARN** — One or more WARNING findings, no CRITICAL. Suspicious — review before use.
-- **ALLOW** — No significant findings. Text passes the injection filter.
+### Armory (formerly Test Lab)
+Browse the 1,544+ attack fixture files. Filter by category, severity, TPI story. Scan any fixture directly, compare fixtures side-by-side, and export test sets.
 
-**Engine filters** let you scope detection to specific engines:
-- *Prompt Injection* — Direct override attempts, system hijacking, instruction replacement
-- *Jailbreak* — DAN and roleplay-based restriction bypass
-- *Unicode* — Zero-width chars, confusable character substitution, Unicode tricks
-- *Encoding* — Base64, ROT13, ROT47, URL encoding, math notation, steganography
-- *TPI* — Advanced attack classes: OCR adversarial, cross-modal injection, context overload
+### Bushido Book (formerly Compliance Center)
+Compliance management with tabs: Overview, Coverage Map, Gap Matrix, Audit Trail, Checklists. Supports 8 frameworks: TPI, OWASP, NIST, MITRE, ISO, EU AI, ENISA, and BAISS (unified standard with 32 controls). Includes Coverage Delta View for snapshot comparison.
 
-**Quick chips** let you load pre-built example payloads: System Override, DAN, Base64, Unicode, HTML Inject.
+### LLM Dashboard
+Multi-provider LLM benchmarking with SSE real-time streaming, executive summary with resilience gauge, report downloads (JSON/CSV/SARIF/PDF), vulnerability panel with severity-grouped findings, and leaderboard with sparklines.
 
-### Fixtures Tab
+### Atemi Lab (formerly Adversarial Lab)
+Adversarial testing via the MCP server. Features include: getting started guide, MCP connector status, configuration panel, session recording with playback, and the Adversarial Skills Library (40 skills, 6 playbooks).
 
-Browse the 1,544 attack artifact files that form the detection test library. Each file is categorized, labeled with the TPI story it exercises, and tagged as either a malicious attack payload or a clean control file.
+### The Kumite (formerly Strategic Hub)
+Strategic analysis hub with three sub-modules:
+- **SAGE** — Strategic Analysis and Guidance Engine
+- **Arena** — Model comparison battles with live inference
+- **Mitsuke** — Real-time threat feed stream
 
-Use the Fixtures tab to:
-- See what real attack payloads look like in each category
-- Understand what format and content triggers each pattern group
-- Scan any fixture directly from the UI to see the detection breakdown
+### Amaterasu DNA (formerly AttackDNA)
+Attack lineage analysis with visualizations: Family Tree View, Cluster View, Mutation Timeline. Includes Black Box Analysis — an ablation study engine with token heatmap and impact charts. All views have legends, zoom controls, and cluster indicators.
 
-**Fixture categories:** images, audio, web, context, malformed, encoded, agent-output, search-results, social, code, boundary, untrusted-sources, vec, multimodal, dos, supply-chain, agent, model-theft, output, overreliance, bias, environmental, modern, cognitive, delivery-vectors, translation, session, few-shot, tool-manipulation, document-attacks
+### Hattori Guard (formerly LLM Guard)
+Input/output protection system with 4 modes:
+| Mode | Icon | Purpose |
+|------|------|---------|
+| Shinobi | Eye | Stealth monitoring — log only |
+| Samurai | Shield | Active defense — block inputs |
+| Sensei | ShieldAlert | Aggressive defense — block outputs |
+| Hattori | ShieldCheck | Full protection — block both |
 
-### Payloads Tab
+### Ronin Hub
+Bug bounty researcher platform. Browse security programs, submit vulnerability findings, track submissions, and correlate with CVE data. Features AI-powered severity calculator.
 
-A curated catalog of attack patterns with descriptions, TPI story references, and example payloads. Use this as a reference when building your own test cases or when explaining attack classes to your team.
+### LLM Jutsu
+LLM testing command center. View model cards with security scores, detailed test results per model, aggregated cross-model comparisons, and risk summaries.
 
-### Coverage Map Tab
-
-Shows how DojoLM's detection coverage maps to:
-- **CrowdStrike Taxonomy of Prompt Injection (TPI):** 21/21 stories covered
-- **OWASP LLM Top 10:** Full alignment
-
-Use this tab to verify that a specific threat class you care about is covered before relying on DojoLM for production filtering.
-
-### Pattern Reference Tab
-
-The full documentation of all 505+ regex patterns across 47 groups. Each pattern shows:
-- Pattern name and category
-- Severity (CRITICAL / WARNING / INFO)
-- The regex itself
-- A description of what it catches
-
-Use this as a reference when writing detection rules or auditing why a specific input was flagged.
-
-### Test Runner Tab
-
-Run the scanner's built-in test suite directly from the UI. Available suites:
-- **Regression** — Full fixture regression (every fixture file scanned and verified)
-- **False positive** — Verifies all clean fixtures return ALLOW
-- **Epic4** — EPIC 4 coverage test
-- **Epic8-session** — Session simulator
-- **Epic8-tool-output** — Tool output validation
-
-Run the regression suite any time you make changes to scanner patterns or fixtures to verify no regressions.
-
-### LLM Dashboard Tab
-
-The LLM benchmarking module. Connect a local or cloud LLM and run it against the full attack fixture library.
-
-**Supported providers:**
-- Claude (Anthropic API)
-- OpenAI
-- Ollama (local models)
-
-**What it tests:**
-- How the LLM responds to each attack payload from the fixture library
-- Whether the model complies with, resists, or partially resists each attack class
-- Aggregated results by TPI category and severity
-
-**Leaderboard** — Compare multiple models and configurations against the same fixture set. Track improvements as you harden prompts or switch models.
+### Admin
+System health monitoring, API key management, export settings, and scanner configuration.
 
 ---
 
@@ -394,10 +368,10 @@ The server is hardened for public-facing use:
 
 ## Integrating with a Local LLM
 
-To let a local LLM (Ollama, LM Studio, etc.) interact with DojoLM, add this to its system prompt:
+To let a local LLM (Ollama, LM Studio, etc.) interact with NODA, add this to its system prompt:
 
 ```
-You have access to the DojoLM TPI Security Lab at http://localhost:8089.
+You have access to the NODA TPI Security Lab at http://localhost:8089.
 
 Available endpoints:
 - List all fixtures: curl http://localhost:8089/api/fixtures
@@ -406,11 +380,9 @@ Available endpoints:
 - Scan arbitrary text: curl "http://localhost:8089/api/scan?text=<url-encoded-text>"
 - Get scanner stats: curl http://localhost:8089/api/stats
 
-Categories: images, audio, web, context, malformed, encoded, agent-output,
+Categories: images, audio, audio-attacks, web, context, malformed, encoded, agent-output,
 search-results, social, code, boundary, untrusted-sources, vec, multimodal, dos,
-supply-chain, agent, model-theft, output, overreliance, bias, environmental,
-modern, cognitive, delivery-vectors, translation, session, few-shot,
-tool-manipulation, document-attacks
+supply-chain, agent, model-theft, output, overreliance, bias, environmental
 
 Verdicts: BLOCK (critical injection), WARN (suspicious), ALLOW (clean)
 
@@ -468,7 +440,7 @@ curl http://localhost:8089/api/run-tests
 
 ## TPI Coverage Reference
 
-DojoLM implements the full CrowdStrike Taxonomy of Prompt Injection:
+NODA implements the full CrowdStrike Taxonomy of Prompt Injection:
 
 | Story | Attack Class | Detection Method |
 |-------|-------------|-----------------|
@@ -508,21 +480,21 @@ Each finding in a scan result includes:
 | `description` | Human-readable description of what was detected |
 | `match` | The substring that triggered the pattern |
 | `engine` | Which detection engine found it (Prompt Injection, Jailbreak, Unicode, Encoding, TPI) |
-| `pattern_name` | The specific pattern name — searchable in the Pattern Reference tab |
+| `pattern_name` | The specific pattern name — searchable in the Armory module |
 | `weight` | Detection weight (higher = stronger signal) |
 
 ---
 
-## What DojoLM Is Not
+## What NODA Is Not
 
-DojoLM is a detection and testing tool, not a production firewall. Key limitations:
+NODA is a detection and testing tool, not a production firewall. Key limitations:
 
 - The scanner operates on text content — it does not have context about how text will be used in your specific application
 - Zero false positives on the built-in fixture library does not guarantee zero false positives on your production traffic
 - New attack techniques not covered by the fixture library require new patterns to detect
-- DojoLM's LLM Dashboard benchmarks model behavior against known attacks — it cannot predict how a model will behave against novel, zero-day injection techniques
+- NODA's LLM Dashboard benchmarks model behavior against known attacks — it cannot predict how a model will behave against novel, zero-day injection techniques
 
-Use DojoLM as part of a defense-in-depth strategy: it's a powerful red-team and detection tool, not a complete security solution.
+Use NODA as part of a defense-in-depth strategy: it's a powerful red-team and detection tool, not a complete security solution.
 
 ---
 
@@ -533,6 +505,10 @@ Use DojoLM as part of a defense-in-depth strategy: it's a powerful red-team and 
 | [FAQ](./FAQ.md) | Frequently Asked Questions |
 | [Testing Checklist](../app/testing-checklist.md) | Human-readable testing checklists |
 | [Developer Guide](../app/developer-guide.md) | Developer documentation |
+| [LLM Provider Guide](./LLM-PROVIDER-GUIDE.md) | LLM provider setup instructions |
+| [Multimodal Testing](./multimodal-testing-guide.md) | Image/audio testing guide |
+
+Each NODA module includes built-in onboarding guides and contextual help accessible from the module header.
 
 ---
 

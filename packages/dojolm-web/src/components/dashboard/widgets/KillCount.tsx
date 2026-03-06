@@ -35,7 +35,7 @@ function Counter({ label, value, icon: Icon, accent }: CounterProps) {
         {trophy && <span className={cn('text-sm', trophy.color)} aria-label={`${label} milestone`}>{trophy.icon}</span>}
       </div>
       <div className="text-2xl font-bold tabular-nums">{value}</div>
-      <div className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</div>
+      <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
     </div>
   )
 }
@@ -57,7 +57,7 @@ export function KillCount() {
 
   return (
     <WidgetCard title="Kill Count">
-      <div className="grid grid-cols-3 gap-4 py-2">
+      <div className="grid grid-cols-3 gap-3 py-1">
         <Counter label="Threats" value={counts.threats} icon={ShieldAlert} accent="var(--danger)" />
         <Counter label="Scanned" value={counts.scans} icon={FlaskConical} accent="var(--warning)" />
         <Counter label="Tests" value={counts.tests} icon={Zap} accent="var(--success)" />

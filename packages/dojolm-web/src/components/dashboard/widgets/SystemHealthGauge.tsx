@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { EnsoGauge } from '@/components/ui/EnsoGauge'
 import { WidgetCard } from '../WidgetCard'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface HealthData {
   modulesLoaded: number
@@ -37,9 +38,9 @@ export function SystemHealthGauge() {
     async function fetchHealth() {
       try {
         const [statsRes, guardRes, fixturesRes] = await Promise.allSettled([
-          fetch('/api/stats'),
-          fetch('/api/llm/guard'),
-          fetch('/api/fixtures'),
+          fetchWithAuth('/api/stats'),
+          fetchWithAuth('/api/llm/guard'),
+          fetchWithAuth('/api/fixtures'),
         ])
 
         const stats = statsRes.status === 'fulfilled' && statsRes.value.ok

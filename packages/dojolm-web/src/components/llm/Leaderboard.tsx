@@ -19,6 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Trophy, Medal, RefreshCw, TrendingUp, TrendingDown, Minus, Play } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { getBeltRank } from '@/components/ui/BeltBadge';
 
 interface ScoreHistoryEntry {
   timestamp: string;
@@ -47,22 +50,6 @@ function getRankIcon(rank: number): ReactNode {
     default:
       return <span className="text-sm text-muted-foreground">#{rank}</span>;
   }
-}
-
-// Belt rank system — dojo identity for LLM resilience scores
-interface BeltRank {
-  label: string
-  color: string
-  kanji: string
-}
-
-function getBeltRank(score: number): BeltRank {
-  if (score >= 90) return { label: 'Black Belt', color: 'var(--belt-black)', kanji: '\u9ED2' }
-  if (score >= 80) return { label: 'Brown Belt', color: 'var(--belt-brown)', kanji: '\u8336' }
-  if (score >= 70) return { label: 'Blue Belt', color: 'var(--belt-blue)', kanji: '\u9752' }
-  if (score >= 60) return { label: 'Green Belt', color: 'var(--belt-green)', kanji: '\u7DD1' }
-  if (score >= 50) return { label: 'Yellow Belt', color: 'var(--belt-yellow)', kanji: '\u9EC4' }
-  return { label: 'White Belt', color: 'var(--belt-white)', kanji: '\u767D' }
 }
 
 // LLM resilience score thresholds
@@ -202,7 +189,7 @@ export function Leaderboard() {
 
     try {
       // Get latest batch for this model to re-use test cases
-      const batchResponse = await fetch('/api/llm/batch');
+      const batchResponse = await fetchWithAuth('/api/llm/batch');
       if (!batchResponse.ok) throw new Error(`Failed to fetch batches: ${batchResponse.status}`);
 
       const { batches } = await batchResponse.json();
@@ -216,7 +203,7 @@ export function Leaderboard() {
       }
 
       // Create new batch with same test cases
-      const response = await fetch('/api/llm/batch', {
+      const response = await fetchWithAuth('/api/llm/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -293,11 +280,7 @@ export function Leaderboard() {
       {sortedLeaderboard.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
-            <Trophy className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No leaderboard data</h3>
-            <p className="text-sm text-muted-foreground">
-              Run tests on models to populate the leaderboard
-            </p>
+            <EmptyState icon={Trophy} title="No leaderboard data" description="Run tests to populate the leaderboard" />
           </CardContent>
         </Card>
       ) : (
@@ -385,7 +368,7 @@ function LeaderboardRow({
   };
 
   return (
-    <div className={`flex items-center gap-4 p-4 hover:bg-muted/30 transition-colors ${!isEnabled ? 'opacity-50' : ''}`}>
+    <div className={`flex items-center gap-4 p-4 hover:border-[var(--dojo-primary)]/30 transition-colors ${!isEnabled ? 'opacity-50' : ''}`}>
       {/* Rank */}
       <div className="w-12 flex justify-center">
         {getRankIcon(entry.rank)}
@@ -404,7 +387,7 @@ function LeaderboardRow({
         <div className="flex items-center gap-1.5">
           <p className="font-semibold truncate">{entry.modelName}</p>
           <span className="text-xs opacity-50 flex-shrink-0" aria-hidden="true" style={{ color: belt.color }}>
-            {belt.kanji}
+            {belt.short}
           </span>
         </div>
         <p className="text-xs text-muted-foreground">{provider}</p>

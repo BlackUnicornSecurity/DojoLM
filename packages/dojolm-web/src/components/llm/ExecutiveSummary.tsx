@@ -21,6 +21,7 @@ import {
   AlertTriangle, TrendingUp, Lightbulb,
   ChevronDown, ChevronUp,
 } from 'lucide-react';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 interface ExecutiveSummaryData {
   overallScore: number;
@@ -75,7 +76,7 @@ export function ExecutiveSummary() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('/api/llm/summary', { signal: controller.signal });
+        const response = await fetchWithAuth('/api/llm/summary', { signal: controller.signal });
         if (!response.ok) {
           throw new Error('Failed to load summary');
         }
@@ -87,7 +88,9 @@ export function ExecutiveSummary() {
         setData(result);
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') return;
-        setError(err instanceof Error ? err.message : 'Failed to load executive summary');
+        const message = err instanceof Error ? err.message : 'Failed to load executive summary';
+        setError(message);
+        setTimeout(() => setError(null), 10000);
       } finally {
         setLoading(false);
       }
@@ -101,7 +104,7 @@ export function ExecutiveSummary() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-48 w-full" />
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-3">
           <Skeleton className="h-32" />
           <Skeleton className="h-32" />
         </div>
@@ -112,7 +115,7 @@ export function ExecutiveSummary() {
   if (error) {
     return (
       <Card className="border-red-500/20">
-        <CardContent className="p-8 text-center">
+        <CardContent className="p-4 text-center">
           <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-red-500" aria-hidden="true" />
           <p className="text-red-500">{error}</p>
         </CardContent>
@@ -123,7 +126,7 @@ export function ExecutiveSummary() {
   if (!data || data.totalTests === 0) {
     return (
       <Card>
-        <CardContent className="p-12 text-center">
+        <CardContent className="p-4 text-center">
           <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" aria-hidden="true" />
           <h3 className="text-lg font-semibold mb-2">No data available</h3>
           <p className="text-sm text-muted-foreground">
@@ -139,7 +142,7 @@ export function ExecutiveSummary() {
   return (
     <div className="space-y-6">
       {/* Top row: Score gauge + Risk tier */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-3">
         <ResilienceGauge score={data.overallScore} />
 
         <Card className="md:col-span-2">
@@ -160,7 +163,7 @@ export function ExecutiveSummary() {
       </div>
 
       {/* Vulnerabilities and Model Comparison */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-3">
         <VulnerabilityList vulnerabilities={data.topVulnerabilities} />
 
         {data.modelComparison.length > 1 && (
@@ -219,7 +222,7 @@ function ResilienceGauge({ score }: { score: number }) {
 
   return (
     <Card className={`${getBorderColor(safeScore)}`}>
-      <CardContent className="p-6 flex flex-col items-center justify-center text-center">
+      <CardContent className="p-4 flex flex-col items-center justify-center text-center">
         {getIcon(safeScore)}
         <p className={`text-metric-xl mt-2 ${getColor(safeScore)}`}>
           {safeScore}
@@ -284,7 +287,7 @@ function VulnerabilityList({
   return (
     <Card>
       <CardHeader
-        className="cursor-pointer hover:bg-muted/30 transition-colors"
+        className="cursor-pointer hover:border-[var(--dojo-primary)]/30 transition-colors"
         role="button"
         tabIndex={0}
         aria-expanded={expanded}

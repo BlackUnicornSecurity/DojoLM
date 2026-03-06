@@ -109,7 +109,7 @@ export function WidgetCard({ title, actions, children, className }: WidgetCardPr
                   onClick={action.onClick}
                   aria-label={action.label}
                   className={cn(
-                    "p-2 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center",
+                    "p-2 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center",
                     "text-muted-foreground",
                     "motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]",
                     "hover:text-[var(--foreground)] hover:bg-[var(--accent)]",

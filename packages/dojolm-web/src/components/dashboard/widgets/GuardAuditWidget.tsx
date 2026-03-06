@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface AuditEvent {
   id: string
@@ -25,7 +26,7 @@ export function GuardAuditWidget() {
     let cancelled = false
     async function fetchAudit() {
       try {
-        const res = await fetch('/api/llm/guard/audit?limit=5')
+        const res = await fetchWithAuth('/api/llm/guard/audit?limit=5')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled) setEvents(data.data ?? [])
@@ -42,10 +43,10 @@ export function GuardAuditWidget() {
     <WidgetCard title="Guard Audit Log">
       <div className="space-y-1">
         {events.length === 0 && (
-          <p className="text-[10px] text-muted-foreground text-center py-4">No guard events</p>
+          <p className="text-xs text-muted-foreground text-center py-4">No guard events</p>
         )}
         {events.map(event => (
-          <div key={event.id} className="flex items-center gap-2 py-1 text-[10px]">
+          <div key={event.id} className="flex items-center gap-2 py-1 text-xs">
             <span className={cn(
               'px-1 py-0.5 rounded font-medium',
               event.direction === 'input' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'

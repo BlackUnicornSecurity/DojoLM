@@ -44,6 +44,8 @@ import {
   Eye,
   ChevronRight,
   GitCompareArrows,
+  AudioLines,
+  Mic,
 } from 'lucide-react'
 
 type ViewMode = 'tree' | 'search' | 'grid'
@@ -72,7 +74,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
 }: FixtureExplorerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('tree')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   // For grid view: track drill-down category + scroll position restoration
   const [gridDrillCategory, setGridDrillCategory] = useState<string | null>(null)
   const scrollPositionRef = useRef(0)
@@ -219,7 +221,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
         <Separator orientation="vertical" className="h-5" />
 
         {/* View mode toggle — Tree | Search | Grid */}
-        <div className="flex rounded-md border border-[var(--border)] overflow-hidden" role="group" aria-label="View mode">
+        <div className="flex rounded-lg border border-[var(--border)] overflow-hidden" role="group" aria-label="View mode">
           <button
             type="button"
             onClick={() => { setViewMode('tree'); setGridDrillCategory(null) }}
@@ -287,7 +289,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
           <GitCompareArrows className="h-3.5 w-3.5" aria-hidden="true" />
           Compare
           {compareMode && compareSelections.length > 0 && (
-            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 ml-0.5">
+            <Badge variant="secondary" className="text-xs h-4 px-1.5 ml-0.5">
               {compareSelections.length}/2
             </Badge>
           )}
@@ -323,7 +325,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             <>
               {/* Breadcrumb */}
               <Breadcrumb
-                path={['Test Lab', gridDrillCategory]}
+                path={['Armory', gridDrillCategory]}
                 onNavigate={(index) => {
                   if (index === 0) handleGridBack()
                 }}
@@ -614,11 +616,29 @@ const FileRow = memo(function FileRow({
             {file.attack}
           </span>
         )}
+        {/* Story 12.1: Audio dual-layer indicators */}
+        {file.audioLayers && (
+          <div className="flex gap-2 mt-1" role="group" aria-label="Dual-layer audio attack indicators">
+            <span className="inline-flex items-center gap-1 text-xs text-[var(--dojo-primary)]">
+              <Mic className="h-3 w-3" aria-hidden="true" />
+              Vocal
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs text-[var(--severity-warning)]">
+              <AudioLines className="h-3 w-3" aria-hidden="true" />
+              Metadata
+            </span>
+          </div>
+        )}
+        {file.transcription && (
+          <span className="text-xs text-muted-foreground/70 italic truncate block max-w-full mt-0.5" title={file.transcription}>
+            &ldquo;{file.transcription}&rdquo;
+          </span>
+        )}
       </div>
 
       {/* Product badge */}
       {file.product && (
-        <Badge variant="outline" className="text-[10px] shrink-0">
+        <Badge variant="outline" className="text-xs shrink-0">
           {file.product}
         </Badge>
       )}
@@ -633,7 +653,7 @@ const FileRow = memo(function FileRow({
               ? 'warning'
               : 'info'
           }
-          className="text-[10px] shrink-0"
+          className="text-xs shrink-0"
         >
           {file.severity}
         </Badge>

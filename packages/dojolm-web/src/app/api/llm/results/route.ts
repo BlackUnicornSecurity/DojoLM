@@ -8,6 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 
 // ===========================================================================
@@ -50,11 +52,7 @@ export async function GET(request: NextRequest) {
       total,
     });
   } catch (error) {
-    console.error('Error querying results:', error);
-    return NextResponse.json(
-      { error: 'Failed to query results', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to query results', 500, error);
   }
 }
 
@@ -64,12 +62,14 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     const { searchParams } = new URL(request.url);
 
-    // Get retention days (default: 90)
-    const retentionDays = searchParams.get('retentionDays')
-      ? parseInt(searchParams.get('retentionDays')!, 10)
-      : 90;
+    // Get retention days (default: 90, bounded 1-3650)
+    const rawDays = parseInt(searchParams.get('retentionDays') ?? '90', 10);
+    const retentionDays = Number.isFinite(rawDays) && rawDays >= 1 && rawDays <= 3650 ? rawDays : 90;
 
     // Clear old executions
     const deleted = await fileStorage.clearOldExecutions(retentionDays);
@@ -80,10 +80,6 @@ export async function DELETE(request: NextRequest) {
       message: `Deleted ${deleted} old execution(s) older than ${retentionDays} days`,
     });
   } catch (error) {
-    console.error('Error deleting old results:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete old results', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to delete old results', 500, error);
   }
 }

@@ -5,14 +5,14 @@ import { join, resolve } from 'path';
 // Base path to fixtures directory in bu-tpi package
 function getFixturesBasePath(): string {
   const possiblePaths = [
+    // Environment variable override (deployment-safe)
+    ...(process.env['FIXTURES_PATH'] ? [process.env['FIXTURES_PATH']] : []),
     // If started from repo root
     resolve(process.cwd(), 'packages/bu-tpi/fixtures'),
     // If started from dojolm-web package
     resolve(process.cwd(), '../bu-tpi/fixtures'),
     // If started from .next directory
     resolve(process.cwd(), '../../bu-tpi/fixtures'),
-    // Majutsu deployment path
-    '/home/paul/dojolm/bu-tpi/fixtures',
   ];
 
   for (const path of possiblePaths) {
@@ -37,7 +37,7 @@ function loadManifest() {
     return {
       generated: new Date().toISOString(),
       version: '3.0.0',
-      description: 'TPI Security Test Lab — BlackUnicorn branded attack fixtures',
+      description: 'NODA Armory — BlackUnicorn branded attack fixtures',
       categories: {},
       error: 'Manifest not found'
     };

@@ -21,7 +21,7 @@ export function ThreatTrendWidget() {
   if (data.length === 0) {
     return (
       <WidgetCard title="Threat Trend">
-        <p className="text-[10px] text-muted-foreground text-center py-6">
+        <p className="text-xs text-muted-foreground text-center py-6">
           Run scans to see threat trends
         </p>
       </WidgetCard>

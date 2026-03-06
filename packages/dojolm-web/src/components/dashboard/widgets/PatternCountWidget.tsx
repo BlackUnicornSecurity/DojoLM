@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { WidgetCard } from '../WidgetCard'
 import { Layers } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 export function PatternCountWidget() {
   const [patternCount, setPatternCount] = useState(0)
@@ -19,7 +20,7 @@ export function PatternCountWidget() {
     let cancelled = false
     async function fetchStats() {
       try {
-        const res = await fetch('/api/stats')
+        const res = await fetchWithAuth('/api/stats')
         if (res.ok) {
           const data = await res.json()
           if (!cancelled) {

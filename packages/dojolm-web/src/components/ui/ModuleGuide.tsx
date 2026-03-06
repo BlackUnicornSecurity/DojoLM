@@ -70,7 +70,7 @@ export function ModuleGuide({ isOpen, onClose, title, description, sections, cla
           <button
             ref={closeRef}
             onClick={onClose}
-            className="p-2 rounded-md hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-2 rounded-lg hover:bg-[var(--bg-quaternary)] text-muted-foreground hover:text-[var(--foreground)] min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Close guide"
           >
             <X className="h-5 w-5" aria-hidden="true" />

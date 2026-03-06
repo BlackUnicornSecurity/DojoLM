@@ -49,7 +49,7 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
       className={cn(
         "flex items-start gap-3 p-4 rounded-lg border-l-4 min-w-[320px] max-w-[420px]",
         "bg-[var(--bg-tertiary)] border border-[var(--border)]",
-        "shadow-lg animate-slide-in-right"
+        "shadow-md animate-slide-in-right"
       )}
       style={{ borderLeftColor: borderColor }}
     >

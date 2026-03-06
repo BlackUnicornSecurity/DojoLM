@@ -15,7 +15,7 @@
 
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +38,10 @@ import { McpConnectorStatus } from './McpConnectorStatus'
 import { AtemiConfig } from './AtemiConfig'
 import { SessionRecorder } from './SessionRecorder'
 import { SessionHistory } from './SessionHistory'
+import { SkillsLibrary } from './SkillsLibrary'
+import { executeSkill } from '@/lib/adversarial-skill-engine'
+import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
+import type { EcosystemSeverity } from '@/lib/ecosystem-types'
 
 // ---------------------------------------------------------------------------
 // Types & Configuration
@@ -377,6 +381,49 @@ export function AdversarialLab({
 }: AdversarialLabProps) {
   const [mode, setMode] = useState<AttackMode>(initialMode)
   const [configOpen, setConfigOpen] = useState(false)
+  const [executingSkill, setExecutingSkill] = useState<string | null>(null)
+  const [skillError, setSkillError] = useState<string | null>(null)
+  const executingRef = useRef(false)
+  const { emitFinding } = useEcosystemEmit('atemi')
+
+  /** Map skill severity to ecosystem severity */
+  const toEcoSeverity = useCallback((sev: string): EcosystemSeverity => {
+    if (sev === 'critical') return 'CRITICAL'
+    if (sev === 'high') return 'WARNING'
+    return 'INFO'
+  }, [])
+
+  /** Execute a skill and emit the result to the ecosystem */
+  const handleExecuteSkill = useCallback(async (skillId: string) => {
+    if (executingRef.current) return // prevent concurrent executions (ref = stable)
+    executingRef.current = true
+    setExecutingSkill(skillId)
+    setSkillError(null)
+    try {
+      const result = await executeSkill(skillId)
+      // Emit finding to ecosystem
+      await emitFinding({
+        findingType: 'attack_variant',
+        severity: toEcoSeverity(result.severity),
+        title: `Skill Execution: ${skillId}`,
+        description: result.summary,
+        owaspMapping: undefined,
+        evidence: result.rawContent.slice(0, 500),
+        metadata: {
+          skillId: result.skillId,
+          success: result.success,
+          durationMs: result.durationMs,
+          stepsTotal: result.stepResults.length,
+          stepsPassed: result.stepResults.filter(s => s.status === 'passed').length,
+        },
+      })
+    } catch (err) {
+      setSkillError(err instanceof Error ? err.message : 'Skill execution failed')
+    } finally {
+      executingRef.current = false
+      setExecutingSkill(null)
+    }
+  }, [emitFinding, toEcoSeverity])
 
   const activeTools = useMemo(
     () => ATTACK_TOOLS.filter((t) => isToolEnabledAtMode(t, mode)),
@@ -395,13 +442,18 @@ export function AdversarialLab({
     <div className={cn('space-y-6', className)}>
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--foreground)]">
-            Atemi Lab
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            MCP protocol and tool integration attack simulation dashboard
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
+            <Swords className="h-5 w-5 text-[var(--dojo-primary)]" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
+              Atemi Lab
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              MCP protocol and tool integration attack simulation dashboard
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <SessionRecorder mode={mode} />
@@ -476,33 +528,33 @@ export function AdversarialLab({
       </Card>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Active Tools</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length}</p>
-            <p className="text-[10px] text-[var(--text-tertiary)]">of {ATTACK_TOOLS.length} total</p>
+            <p className="text-xs text-[var(--text-tertiary)]">of {ATTACK_TOOLS.length} total</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">MCP Attacks</p>
             <p className="text-xl font-bold text-[var(--dojo-primary)]">{mcpCount}</p>
-            <p className="text-[10px] text-[var(--text-tertiary)]">protocol-level</p>
+            <p className="text-xs text-[var(--text-tertiary)]">protocol-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Tool Attacks</p>
             <p className="text-xl font-bold text-[var(--severity-low)]">{toolCount}</p>
-            <p className="text-[10px] text-[var(--text-tertiary)]">integration-level</p>
+            <p className="text-xs text-[var(--text-tertiary)]">integration-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Scenarios</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length * 3}</p>
-            <p className="text-[10px] text-[var(--text-tertiary)]">test permutations</p>
+            <p className="text-xs text-[var(--text-tertiary)]">test permutations</p>
           </CardContent>
         </Card>
       </div>
@@ -515,18 +567,18 @@ export function AdversarialLab({
             Attack Tools
           </h3>
           <div className="flex items-center gap-1.5 ml-auto">
-            <Badge variant="outline" className="text-[10px] border-[var(--dojo-primary)]/30 bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]">
+            <Badge variant="outline" className="text-xs border-[var(--dojo-primary)]/30 bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]">
               <Shield className="h-3 w-3 mr-1" aria-hidden="true" />
               MCP ({ATTACK_TOOLS.filter((t) => t.type === 'mcp').length})
             </Badge>
-            <Badge variant="outline" className="text-[10px] border-[var(--severity-low)]/30 bg-[var(--severity-low)]/10 text-[var(--severity-low)]">
+            <Badge variant="outline" className="text-xs border-[var(--severity-low)]/30 bg-[var(--severity-low)]/10 text-[var(--severity-low)]">
               <Wrench className="h-3 w-3 mr-1" aria-hidden="true" />
               Tool ({ATTACK_TOOLS.filter((t) => t.type === 'tool').length})
             </Badge>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 stagger-children">
           {ATTACK_TOOLS.map((tool) => (
             <AttackToolCard
               key={tool.id}
@@ -540,6 +592,31 @@ export function AdversarialLab({
           ))}
         </div>
       </div>
+
+      {/* Skill execution error banner */}
+      {skillError && (
+        <Card className="border-[var(--severity-high)]">
+          <CardContent className="p-3 flex items-center justify-between">
+            <p className="text-sm text-[var(--severity-high)]">
+              Skill execution error: {skillError}
+            </p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSkillError(null)}
+              className="h-7 text-xs"
+            >
+              Dismiss
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Adversarial Skills Library (Story 12.2b + 12.2c) */}
+      <SkillsLibrary
+        onExecuteSkill={handleExecuteSkill}
+      />
 
       {/* Attack Log */}
       <AttackLog />

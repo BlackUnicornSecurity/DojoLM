@@ -8,6 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
 import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeBatchTests } from '@/lib/llm-execution';
@@ -21,10 +23,21 @@ import type { GuardConfig } from '@/lib/guard-types';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
     // Validate required fields
-    const { modelIds, testCaseIds } = body;
+    const { modelIds, testCaseIds } = body as { modelIds?: string[]; testCaseIds?: string[] };
 
     if (!modelIds?.length || !testCaseIds?.length) {
       return NextResponse.json(
@@ -113,10 +126,10 @@ export async function POST(request: NextRequest) {
           });
         });
     } else {
-      // Standard batch (no guard)
-      executeBatchTests(models, testCases)
+      // Standard batch (no guard) — pass route batchId to avoid mismatch (BUG-003)
+      executeBatchTests(models, testCases, undefined, undefined, initialBatch.id)
         .then(async (batch) => {
-          await fileStorage.updateBatch(batch.id, {
+          await fileStorage.updateBatch(initialBatch.id, {
             status: batch.status,
             completedTests: batch.completedTests,
             failedTests: batch.failedTests,
@@ -136,11 +149,7 @@ export async function POST(request: NextRequest) {
       batch: runningBatch || initialBatch,
     }, { status: 202 });
   } catch (error) {
-    console.error('Error starting batch:', error);
-    return NextResponse.json(
-      { error: 'Failed to start batch', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to start batch', 500, error);
   }
 }
 
@@ -150,6 +159,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const status = searchParams.get('status');
@@ -178,11 +190,7 @@ export async function GET(request: NextRequest) {
     const { batches } = await fileStorage.queryBatches({});
     return NextResponse.json({ batches });
   } catch (error) {
-    console.error('Error getting batch:', error);
-    return NextResponse.json(
-      { error: 'Failed to get batch', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to get batch', 500, error);
   }
 }
 
@@ -192,6 +200,9 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
@@ -213,11 +224,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting batch:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete batch', message: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    return apiError('Failed to delete batch', 500, error);
   }
 }
 

@@ -14,10 +14,11 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS } from '@/lib/constants'
+import type { NavId } from '@/lib/constants'
 import { MoreHorizontal, X } from 'lucide-react'
 
 /** Primary nav items shown in bottom bar (6 items per UX requirement) */
-const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'testing', 'llm', 'guard', 'adversarial'])
+const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'armory', 'llm', 'guard', 'adversarial'])
 
 const primaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
 const moreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
@@ -26,8 +27,8 @@ export function MobileNav() {
   const { activeTab, setActiveTab } = useNavigation()
   const [moreOpen, setMoreOpen] = useState(false)
 
-  const handleNavClick = useCallback((id: string) => {
-    setActiveTab(id as typeof activeTab)
+  const handleNavClick = useCallback((id: NavId) => {
+    setActiveTab(id)
     setMoreOpen(false)
   }, [setActiveTab])
 
@@ -58,7 +59,7 @@ export function MobileNav() {
                 )}
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
-                <span className="text-[9px] mt-0.5 whitespace-nowrap">{item.label}</span>
+                <span className="text-xs mt-0.5 whitespace-nowrap">{item.label}</span>
               </button>
             )
           })}
@@ -76,7 +77,7 @@ export function MobileNav() {
             )}
           >
             <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
-            <span className="text-[9px] mt-0.5 whitespace-nowrap">More</span>
+            <span className="text-xs mt-0.5 whitespace-nowrap">More</span>
           </button>
         </div>
       </nav>
@@ -101,8 +102,8 @@ function MoreDrawer({
   onClose,
 }: {
   items: ReadonlyArray<typeof NAV_ITEMS[number]>
-  activeTab: string
-  onSelect: (id: string) => void
+  activeTab: NavId
+  onSelect: (id: NavId) => void
   onClose: () => void
 }) {
   const drawerRef = useRef<HTMLDivElement>(null)
@@ -149,7 +150,7 @@ function MoreDrawer({
           <span className="text-sm font-medium">More</span>
           <button
             onClick={onClose}
-            className="p-1 rounded-md hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="p-1 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
             aria-label="Close more menu"
           >
             <X className="w-4 h-4" aria-hidden="true" />

@@ -23,7 +23,7 @@ import { Settings, Key, Shield, Activity, FileOutput } from 'lucide-react'
 const ADMIN_TABS = [
   { id: 'general', label: 'General', icon: Settings },
   { id: 'apikeys', label: 'API Keys', icon: Key },
-  { id: 'scanner', label: 'Scanner & Guard', icon: Shield },
+  { id: 'scanner', label: 'Haiku Scanner & Guard', icon: Shield },
   { id: 'health', label: 'System Health', icon: Activity },
   { id: 'export', label: 'Export', icon: FileOutput },
 ] as const
@@ -72,12 +72,12 @@ export function AdminPanel() {
 
 function GeneralSettings() {
   return (
-    <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-card p-6 space-y-4">
+    <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-card p-4 space-y-4">
       <h3 className="text-lg font-semibold text-foreground">General Settings</h3>
       <p className="text-sm text-muted-foreground">
         Application-wide configuration and preferences.
       </p>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--bg-tertiary)] p-4">
           <p className="text-sm font-medium text-foreground">Application</p>
           <p className="text-xs text-muted-foreground mt-1">NODA Platform</p>

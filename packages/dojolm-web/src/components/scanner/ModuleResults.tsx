@@ -181,7 +181,7 @@ const ModuleSection = memo(function ModuleSection({ group }: ModuleSectionProps)
         <div className="flex items-center gap-3 min-w-0">
           <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           <ModuleBadge moduleName={group.engine} />
-          <Badge variant="info" className="text-[10px] px-1.5 py-0">
+          <Badge variant="info" className="text-xs px-1.5 py-0">
             {group.phaseLabel}
           </Badge>
         </div>
@@ -266,7 +266,7 @@ const ModuleFindingRow = memo(function ModuleFindingRow({
                 ? 'warning'
                 : 'info'
           }
-          className="text-[10px] shrink-0"
+          className="text-xs shrink-0"
         >
           {finding.severity}
         </Badge>
@@ -301,17 +301,17 @@ const SeverityCountBadges = memo(function SeverityCountBadges({
   return (
     <div className="flex items-center gap-1">
       {counts.critical > 0 && (
-        <Badge variant="critical" className="text-[10px] px-1.5 py-0 tabular-nums">
+        <Badge variant="critical" className="text-xs px-1.5 py-0 tabular-nums">
           {counts.critical}C
         </Badge>
       )}
       {counts.warning > 0 && (
-        <Badge variant="warning" className="text-[10px] px-1.5 py-0 tabular-nums">
+        <Badge variant="warning" className="text-xs px-1.5 py-0 tabular-nums">
           {counts.warning}W
         </Badge>
       )}
       {counts.info > 0 && (
-        <Badge variant="info" className="text-[10px] px-1.5 py-0 tabular-nums">
+        <Badge variant="info" className="text-xs px-1.5 py-0 tabular-nums">
           {counts.info}I
         </Badge>
       )}

@@ -1,6 +1,6 @@
-# TPI Security Test Lab
+# bu-tpi — Haiku Scanner Core Engine
 
-Prompt injection detection toolkit based on the **CrowdStrike Taxonomy of Prompt Injection (TPI)**. Built for the cybersecurity community to test, evaluate, and benchmark LLM security defenses.
+Core prompt injection detection engine powering the NODA platform's Haiku Scanner.
 
 Zero runtime dependencies. Pure TypeScript. Runs with `tsx`.
 
@@ -19,7 +19,7 @@ src/
   types.ts                 # Core type definitions (Finding, ScanResult, Severity, etc.)
   scanner.ts               # Detection engine — 505+ patterns, 47 groups, 6 heuristic detectors
   serve.ts                 # Hardened HTTP server with API endpoints
-  generate-fixtures.ts     # Generates 1,544 attack/clean fixture files across 12 categories
+  generate-fixtures.ts     # Generates 1,544 attack/clean fixture files across 30 categories
 fixtures/                  # Generated attack artifacts (git-tracked)
 ```
 
@@ -223,7 +223,7 @@ Give your local LLM (Ollama, LM Studio, etc.) these instructions to let it inter
 **System prompt addition:**
 
 ```
-You have access to the TPI Security Test Lab at http://localhost:8089.
+You have access to the Haiku Scanner API at http://localhost:8089.
 Use curl or HTTP requests to interact with it.
 
 Available endpoints:
@@ -243,11 +243,10 @@ Available endpoints:
 5. Get scanner stats:
    curl http://localhost:8089/api/stats
 
-Categories: images, audio, web, context, malformed, encoded, agent-output,
-search-results, social, code, boundary, untrusted-sources, vec, multimodal, dos,
-supply-chain, agent, model-theft, output, overreliance, bias, environmental,
-modern, cognitive, delivery-vectors, translation, session, few-shot,
-tool-manipulation, document-attacks
+Categories: images, audio, audio-attacks, web, context, malformed, encoded,
+agent-output, search-results, social, code, boundary, untrusted-sources, vec,
+multimodal, dos, supply-chain, agent, model-theft, output, overreliance, bias,
+environmental
 
 Verdicts: BLOCK (critical injection found), WARN (suspicious patterns),
 ALLOW (clean text)

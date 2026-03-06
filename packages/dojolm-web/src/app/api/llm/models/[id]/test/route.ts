@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { fileStorage } from '@/lib/storage/file-storage';
 import { testModelConfig } from '@/lib/llm-providers';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // POST /api/llm/models/[id]/test - Test model connection
@@ -17,6 +18,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { id } = await params;
 
@@ -36,7 +40,7 @@ export async function POST(
   } catch (error) {
     console.error('Error testing model:', error);
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : String(error) },
+      { success: false, error: 'Model connection test failed' },
       { status: 500 }
     );
   }

@@ -115,6 +115,13 @@ export interface FixtureFile {
   severity: Severity | null;
   clean: boolean;
   product?: string;
+  /** Speech-to-text transcript for audio fixtures (Story 12.1) */
+  transcription?: string;
+  /** Dual-layer audio attack descriptor: vocal content + metadata content (Story 12.1) */
+  audioLayers?: {
+    vocal: string;
+    metadata: string;
+  };
 }
 
 export interface FixtureCategory {

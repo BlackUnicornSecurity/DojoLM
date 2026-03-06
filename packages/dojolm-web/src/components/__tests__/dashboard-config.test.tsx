@@ -36,8 +36,8 @@ beforeEach(() => {
 })
 
 describe('WIDGET_CATALOG', () => {
-  it('contains exactly 27 widgets', () => {
-    expect(WIDGET_CATALOG).toHaveLength(27)
+  it('contains exactly 29 widgets', () => {
+    expect(WIDGET_CATALOG).toHaveLength(29)
   })
 
   it('has unique widget IDs', () => {

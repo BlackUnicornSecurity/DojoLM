@@ -41,8 +41,8 @@ export default defineConfig({
     // Include files
     include: ["**/*.{test,spec}.{js,jsx,ts,tsx}"],
 
-    // Exclude files
-    exclude: ["node_modules/", "dist/", ".next/"],
+    // Exclude files (team/ for backup pollution, e2e/ for Playwright — Story 0.1, 0.4)
+    exclude: ["node_modules/", "dist/", ".next/", "**/team/**", "e2e/**"],
   },
 
   // Path aliases

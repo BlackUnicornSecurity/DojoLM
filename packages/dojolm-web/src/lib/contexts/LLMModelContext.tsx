@@ -13,6 +13,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 import type { LLMModelConfig, LLMProvider } from '../llm-types';
+import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
 // API Client Functions
@@ -24,13 +25,13 @@ import type { LLMModelConfig, LLMProvider } from '../llm-types';
 const API_BASE = '/api/llm';
 
 /**
- * Fetch wrapper for API calls
+ * Fetch wrapper for API calls with auth (Story 13.9)
  */
 async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetchWithAuth(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

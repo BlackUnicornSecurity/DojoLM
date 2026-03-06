@@ -1,7 +1,7 @@
 /**
  * File: CategoryTree.tsx
- * Purpose: Collapsible tree showing all fixture categories with brand colors and counts
- * Story: S72 - Fixture Explorer
+ * Purpose: Flat category list showing attack technique categories with brand as secondary metadata
+ * Story: S72, NODA-3 Story 4.1 (Reclassify by Attack Technique)
  * Index:
  * - BRAND_COLORS mapping (line 22)
  * - getBrandForCategory helper (line 46)
@@ -45,13 +45,14 @@ const CATEGORY_BRAND_MAP: Record<string, string> = {
   'agent-output': 'Marfaak', cognitive: 'Marfaak', output: 'Marfaak',
   agent: 'Marfaak', session: 'Marfaak', 'few-shot': 'Marfaak',
   images: 'BlackUnicorn', audio: 'BlackUnicorn', environmental: 'BlackUnicorn',
+  'audio-attacks': 'BlackUnicorn',
 }
 
-function getBrandForCategory(category: string): { name: string; color: string } {
+export function getBrandForCategory(category: string): { name: string; color: string } {
   const brandName = CATEGORY_BRAND_MAP[category] || 'BlackUnicorn'
   return {
     name: brandName,
-    color: BRAND_COLORS[brandName] || '#000000',
+    color: BRAND_COLORS[brandName] || '#4B5563',
   }
 }
 
@@ -62,6 +63,7 @@ interface CategoryTreeProps {
   className?: string
 }
 
+/** Flat category list — sorted alphabetically by technique, brand shown as secondary badge */
 export const CategoryTree = memo(function CategoryTree({
   categories,
   selectedCategory,
@@ -82,20 +84,6 @@ export const CategoryTree = memo(function CategoryTree({
     [sortedEntries]
   )
 
-  /** Group categories by brand for tree structure */
-  const groupedByBrand = useMemo(() => {
-    const groups: Record<string, { color: string; categories: [string, FixtureCategory][] }> = {}
-    for (const entry of sortedEntries) {
-      const [key] = entry
-      const brand = getBrandForCategory(key)
-      if (!groups[brand.name]) {
-        groups[brand.name] = { color: brand.color, categories: [] }
-      }
-      groups[brand.name].categories.push(entry)
-    }
-    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
-  }, [sortedEntries])
-
   const toggleExpand = useCallback((category: string) => {
     setExpandedCategories(prev => {
       const next = new Set(prev)
@@ -113,101 +101,44 @@ export const CategoryTree = memo(function CategoryTree({
       {/* Header with total count */}
       <div className="flex items-center gap-2 px-3 py-3 border-b border-[var(--border)]">
         <Database className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-        <span className="text-sm font-semibold">Categories</span>
+        <span className="text-sm font-semibold">Attack Techniques</span>
         <Badge variant="secondary" className="ml-auto text-xs">
           {totalFixtures.toLocaleString()} fixtures
         </Badge>
       </div>
 
-      {/* Scrollable tree */}
+      {/* Scrollable flat list — no brand grouping per Story 4.1 */}
       <ScrollArea className="flex-1">
         <nav aria-label="Fixture categories" className="py-2">
-          {groupedByBrand.map(([brandName, group]) => (
-            <BrandGroup
-              key={brandName}
-              brandName={brandName}
-              brandColor={group.color}
-              categories={group.categories}
-              expandedCategories={expandedCategories}
-              selectedCategory={selectedCategory}
-              onToggleExpand={toggleExpand}
-              onSelectCategory={onSelectCategory}
-            />
-          ))}
+          <ul role="list" className="space-y-0.5">
+            {sortedEntries.map(([key, category]) => {
+              const brand = getBrandForCategory(key)
+              return (
+                <CategoryNode
+                  key={key}
+                  categoryKey={key}
+                  category={category}
+                  brandName={brand.name}
+                  brandColor={brand.color}
+                  isExpanded={expandedCategories.has(key)}
+                  isSelected={selectedCategory === key}
+                  onToggle={toggleExpand}
+                  onSelect={onSelectCategory}
+                />
+              )
+            })}
+          </ul>
         </nav>
       </ScrollArea>
     </div>
   )
 })
 
-/** Brand group header in the tree */
-interface BrandGroupProps {
-  brandName: string
-  brandColor: string
-  categories: [string, FixtureCategory][]
-  expandedCategories: Set<string>
-  selectedCategory: string | null
-  onToggleExpand: (category: string) => void
-  onSelectCategory: (category: string) => void
-}
-
-const BrandGroup = memo(function BrandGroup({
-  brandName,
-  brandColor,
-  categories,
-  expandedCategories,
-  selectedCategory,
-  onToggleExpand,
-  onSelectCategory,
-}: BrandGroupProps) {
-  const totalInBrand = useMemo(
-    () => categories.reduce((sum, [, cat]) => sum + cat.files.length, 0),
-    [categories]
-  )
-
-  return (
-    <div className="mb-1">
-      {/* Brand label */}
-      <div className="flex items-center gap-2 px-3 py-1.5">
-        <span
-          className="w-2 h-2 rounded-full shrink-0"
-          style={{
-            backgroundColor: brandColor,
-            boxShadow: brandColor !== '#000000' ? `0 0 6px ${brandColor}40` : undefined,
-          }}
-          aria-hidden="true"
-        />
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {brandName}
-        </span>
-        <span className="text-xs text-muted-foreground ml-auto">
-          {totalInBrand}
-        </span>
-      </div>
-
-      {/* Category nodes */}
-      <ul role="list" className="space-y-0.5">
-        {categories.map(([key, category]) => (
-          <CategoryNode
-            key={key}
-            categoryKey={key}
-            category={category}
-            brandColor={brandColor}
-            isExpanded={expandedCategories.has(key)}
-            isSelected={selectedCategory === key}
-            onToggle={onToggleExpand}
-            onSelect={onSelectCategory}
-          />
-        ))}
-      </ul>
-    </div>
-  )
-})
-
-/** Single category node with expand/collapse */
+/** Single category node with expand/collapse — brand shown as secondary badge */
 interface CategoryNodeProps {
   categoryKey: string
   category: FixtureCategory
+  brandName: string
   brandColor: string
   isExpanded: boolean
   isSelected: boolean
@@ -218,6 +149,7 @@ interface CategoryNodeProps {
 const CategoryNode = memo(function CategoryNode({
   categoryKey,
   category,
+  brandName,
   brandColor,
   isExpanded,
   isSelected,
@@ -264,29 +196,28 @@ const CategoryNode = memo(function CategoryNode({
   return (
     <li role="listitem">
       <div
-        role="button"
-        tabIndex={0}
-        aria-label={`${categoryKey} category, ${stats.total} fixtures, ${stats.attack} attack, ${stats.clean} clean`}
-        aria-expanded={isExpanded}
         className={cn(
-          'flex items-center gap-2 px-3 py-1.5 mx-1 rounded-md cursor-pointer',
+          'flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg',
           'motion-safe:transition-colors motion-safe:duration-150',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
           isSelected
             ? 'bg-[var(--bg-quaternary)] text-foreground'
             : 'text-muted-foreground hover:bg-[var(--bg-secondary)] hover:text-foreground'
         )}
-        style={isSelected ? { borderLeft: `2px solid ${brandColor}` } : undefined}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
       >
-        {/* Expand/collapse chevron */}
+        {/* Expand/collapse chevron — independent button for ARIA compliance */}
         <button
           type="button"
-          tabIndex={-1}
+          tabIndex={0}
           onClick={handleToggle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onToggle(categoryKey)
+            }
+          }}
           className="p-0.5 -ml-0.5 rounded hover:bg-[var(--bg-quaternary)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           aria-label={isExpanded ? `Collapse ${categoryKey}` : `Expand ${categoryKey}`}
+          aria-expanded={isExpanded}
         >
           <ChevronRight
             className={cn(
@@ -297,18 +228,36 @@ const CategoryNode = memo(function CategoryNode({
           />
         </button>
 
-        {/* Folder icon */}
-        {isExpanded ? (
-          <FolderOpen className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: brandColor }} />
-        ) : (
-          <Folder className="h-4 w-4 shrink-0" aria-hidden="true" style={{ color: brandColor }} />
-        )}
+        {/* Category select button — independent for ARIA compliance */}
+        <button
+          type="button"
+          tabIndex={0}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer bg-transparent border-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded"
+          aria-label={`${categoryKey} category, ${stats.total} fixtures, ${stats.attack} attack, ${stats.clean} clean`}
+        >
+          {/* Folder icon */}
+          {isExpanded ? (
+            <FolderOpen className="h-4 w-4 shrink-0 text-[var(--bu-electric)]" aria-hidden="true" />
+          ) : (
+            <Folder className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          )}
 
-        {/* Category name */}
-        <span className="text-sm truncate flex-1">{categoryKey}</span>
+          {/* Category name */}
+          <span className="text-sm truncate flex-1">{categoryKey}</span>
+        </button>
+
+        {/* Brand badge — secondary metadata per Story 4.1 */}
+        <span
+          className="text-xs px-1.5 py-0.5 rounded-full shrink-0"
+          style={{ backgroundColor: `${brandColor}20`, color: brandColor }}
+        >
+          {brandName}
+        </span>
 
         {/* File count badge */}
-        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 shrink-0">
+        <Badge variant="outline" className="text-xs px-1.5 py-0 h-5 shrink-0">
           {stats.total}
         </Badge>
       </div>
@@ -324,10 +273,10 @@ const CategoryNode = memo(function CategoryNode({
             {category.desc}
           </div>
           <div className="flex gap-2 px-2">
-            <Badge variant="success" className="text-[10px]">
+            <Badge variant="success" className="text-xs">
               {stats.clean} clean
             </Badge>
-            <Badge variant="error" className="text-[10px]">
+            <Badge variant="error" className="text-xs">
               {stats.attack} attack
             </Badge>
           </div>

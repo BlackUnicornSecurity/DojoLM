@@ -111,7 +111,7 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
             aria-checked={direction === 'baiss-to-source'}
             onClick={() => { setDirection('baiss-to-source'); setSelectedControl(null) }}
             className={cn(
-              'px-3 py-1.5 rounded-md text-xs font-medium min-h-[36px]',
+              'px-3 py-1.5 rounded-lg text-xs font-medium min-h-[36px]',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               direction === 'baiss-to-source'
                 ? 'bg-[var(--bg-secondary)] text-[var(--foreground)] shadow-sm'
@@ -125,7 +125,7 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
             aria-checked={direction === 'source-to-baiss'}
             onClick={() => { setDirection('source-to-baiss'); setSelectedControl(null) }}
             className={cn(
-              'px-3 py-1.5 rounded-md text-xs font-medium min-h-[36px]',
+              'px-3 py-1.5 rounded-lg text-xs font-medium min-h-[36px]',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               direction === 'source-to-baiss'
                 ? 'bg-[var(--bg-secondary)] text-[var(--foreground)] shadow-sm'
@@ -192,7 +192,7 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
                   key={control.id}
                   onClick={() => setSelectedControl(control.id)}
                   className={cn(
-                    'flex items-center justify-between w-full px-3 py-2 rounded-md text-left text-xs min-h-[40px]',
+                    'flex items-center justify-between w-full px-3 py-2 rounded-lg text-left text-xs min-h-[40px]',
                     'motion-safe:transition-colors',
                     selectedControl === control.id
                       ? 'bg-[var(--bu-electric-muted)] text-[var(--foreground)]'
@@ -213,7 +213,7 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
                   key={sourceId}
                   onClick={() => setSelectedControl(sourceId)}
                   className={cn(
-                    'flex items-center justify-between w-full px-3 py-2 rounded-md text-left text-xs min-h-[40px]',
+                    'flex items-center justify-between w-full px-3 py-2 rounded-lg text-left text-xs min-h-[40px]',
                     'motion-safe:transition-colors',
                     selectedControl === sourceId
                       ? 'bg-[var(--bu-electric-muted)] text-[var(--foreground)]'
@@ -250,9 +250,9 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
                   <p className="text-sm font-semibold text-[var(--foreground)]">{selectedBAISS.id}: {selectedBAISS.title}</p>
                   <p className="text-xs text-muted-foreground mt-1">{selectedBAISS.description}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge variant="outline" className="text-[10px]">{selectedBAISS.assessmentType}</Badge>
+                    <Badge variant="outline" className="text-xs">{selectedBAISS.assessmentType}</Badge>
                     {BAISS_CATEGORIES.find((c) => c.id === selectedBAISS.category) && (
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-xs">
                         {BAISS_CATEGORIES.find((c) => c.id === selectedBAISS.category)!.label}
                       </Badge>
                     )}
@@ -281,13 +281,13 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
                 </div>
                 <div className="space-y-2">
                   {(reverseIndex[selectedSourceFramework]?.[selectedControl] ?? []).map((baissControl) => (
-                    <div key={baissControl.id} className="p-2.5 rounded-md border border-[var(--border)] bg-[var(--bg-secondary)]">
+                    <div key={baissControl.id} className="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)]">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-mono text-xs font-semibold text-[var(--bu-electric)]">{baissControl.id}</span>
                         <span className="text-xs font-medium text-[var(--foreground)]">{baissControl.title}</span>
                       </div>
                       <p className="text-[11px] text-muted-foreground">{baissControl.description}</p>
-                      <Badge variant="outline" className="text-[10px] mt-1.5">{baissControl.assessmentType}</Badge>
+                      <Badge variant="outline" className="text-xs mt-1.5">{baissControl.assessmentType}</Badge>
                     </div>
                   ))}
                 </div>
@@ -302,13 +302,13 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
 
 function MappingRow({ frameworkLabel, controlIds }: { frameworkLabel: string; controlIds: string[] }) {
   return (
-    <div className="p-2.5 rounded-md border border-[var(--border)] bg-[var(--bg-secondary)]">
-      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+    <div className="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)]">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
         {frameworkLabel}
       </p>
       <div className="flex flex-wrap gap-1">
         {controlIds.map((id) => (
-          <Badge key={id} variant="outline" className="text-[10px] font-mono">
+          <Badge key={id} variant="outline" className="text-xs font-mono">
             {id}
           </Badge>
         ))}

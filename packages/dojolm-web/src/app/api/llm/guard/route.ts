@@ -1,29 +1,31 @@
 /**
  * File: api/llm/guard/route.ts
- * Purpose: Guard config GET/PUT API
+ * Purpose: Guard config GET/PUT/POST API
  * Story: TPI-UIP-11
- * Methods: GET (read config), PUT (update config)
+ * Methods: GET (read config), PUT (update config), POST (alias for PUT)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getGuardConfig, saveGuardConfig } from '@/lib/storage/guard-storage';
-import { VALID_GUARD_MODES, VALID_BLOCK_THRESHOLDS } from '@/lib/guard-constants';
+import { VALID_GUARD_MODES, VALID_BLOCK_THRESHOLDS, DEFAULT_GUARD_CONFIG } from '@/lib/guard-constants';
 import type { GuardConfig } from '@/lib/guard-types';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/guard - Read guard config
 // ===========================================================================
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const config = await getGuardConfig();
     return NextResponse.json({ data: config });
   } catch (error) {
-    console.error('Error reading guard config:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Error reading guard config, returning defaults:', error);
+    // Return sensible default config instead of 500
+    return NextResponse.json({ data: DEFAULT_GUARD_CONFIG });
   }
 }
 
@@ -32,8 +34,19 @@ export async function GET() {
 // ===========================================================================
 
 export async function PUT(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
     // Validate config structure
     const config = body as Partial<GuardConfig>;
@@ -47,11 +60,10 @@ export async function PUT(request: NextRequest) {
 
     // Normalize old mode names for backward compat (metsuke→shinobi, ninja→samurai)
     const OLD_MODE_MAP: Record<string, string> = { metsuke: 'shinobi', ninja: 'samurai' };
-    if (config.mode && OLD_MODE_MAP[config.mode]) {
-      config.mode = OLD_MODE_MAP[config.mode] as GuardConfig['mode'];
-    }
+    const rawMode = config.mode;
+    const normalizedMode = (rawMode && OLD_MODE_MAP[rawMode]) ? OLD_MODE_MAP[rawMode] as GuardConfig['mode'] : rawMode;
 
-    if (!config.mode || !VALID_GUARD_MODES.has(config.mode)) {
+    if (!normalizedMode || !VALID_GUARD_MODES.has(normalizedMode)) {
       return NextResponse.json(
         { error: `mode must be one of: ${[...VALID_GUARD_MODES].join(', ')}` },
         { status: 400 }
@@ -86,7 +98,7 @@ export async function PUT(request: NextRequest) {
 
     const validatedConfig: GuardConfig = {
       enabled: config.enabled,
-      mode: config.mode,
+      mode: normalizedMode,
       blockThreshold: config.blockThreshold,
       engines: config.engines ?? null,
       persist: typeof config.persist === 'boolean' ? config.persist : false,
@@ -102,4 +114,12 @@ export async function PUT(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// ===========================================================================
+// POST /api/llm/guard - Alias for PUT (backward compatibility)
+// ===========================================================================
+
+export async function POST(request: NextRequest) {
+  return PUT(request);
 }

@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fileStorage } from '@/lib/storage/file-storage';
 import type { LLMTestExecution, LLMModelConfig } from '@/lib/llm-types';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const SAFE_ID = /^[\w-]{1,128}$/;
 
@@ -22,6 +23,9 @@ const SAFE_ID = /^[\w-]{1,128}$/;
  * Returns executive summary with resilience score, risk tier, top vulnerabilities
  */
 export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
     const batchId = searchParams.get('batchId');

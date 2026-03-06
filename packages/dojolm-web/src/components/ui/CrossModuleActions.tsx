@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { Swords, Dna, Radio, Shield, Send, Check, Loader2, ChevronDown } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { EcosystemSourceModule, EcosystemFindingType, EcosystemSeverity } from '@/lib/ecosystem-types'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 /** Action target definition */
 interface CrossModuleAction {
@@ -42,13 +43,16 @@ const ACTION_CATALOG: CrossModuleAction[] = [
 
 /** Get relevant actions for a source module (avoids self-referencing actions) */
 function getActionsForModule(sourceModule: EcosystemSourceModule): CrossModuleAction[] {
-  const excludeMap: Record<string, string[]> = {
+  const excludeMap: Partial<Record<EcosystemSourceModule, string[]>> = {
     scanner: ['check-bushido'],     // Scanner → Atemi, SAGE, DNA, Mitsuke
     atemi: ['test-atemi'],          // Atemi → SAGE, DNA, Mitsuke, Bushido
     sage: ['add-sage'],             // SAGE → Atemi, DNA, Mitsuke, Bushido
     arena: [],                      // Arena → all
     mitsuke: ['alert-mitsuke'],     // Mitsuke → Atemi, SAGE, DNA, Bushido
     attackdna: ['classify-dna'],    // DNA → Atemi, SAGE, Mitsuke, Bushido
+    ronin: [],                      // Ronin Hub → all cross-module actions valid
+    jutsu: ['test-atemi'],          // Jutsu → avoid loop to Atemi
+    guard: ['test-atemi'],          // Guard → avoid sending blocks to adversarial testing
   }
   const excluded = excludeMap[sourceModule] || []
   return ACTION_CATALOG.filter((a) => !excluded.includes(a.id))
@@ -141,7 +145,7 @@ export function CrossModuleActions({
     setPendingAction(action.id)
 
     try {
-      const res = await fetch('/api/ecosystem/findings', {
+      const res = await fetchWithAuth('/api/ecosystem/findings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -188,7 +192,7 @@ export function CrossModuleActions({
               onClick={() => handleAction(action)}
               disabled={isPending || isCompleted}
               className={cn(
-                'flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-left text-xs min-h-[40px]',
+                'flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left text-xs min-h-[40px]',
                 'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                 'hover:bg-[var(--bg-tertiary)]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
@@ -208,7 +212,7 @@ export function CrossModuleActions({
                 <p className="text-muted-foreground">{action.description}</p>
               </div>
               {isCompleted && (
-                <span className="text-[10px] text-[var(--success)]">Sent</span>
+                <span className="text-xs text-[var(--success)]">Sent</span>
               )}
             </button>
           )
@@ -223,7 +227,7 @@ export function CrossModuleActions({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium',
+          'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium',
           'border border-[var(--border)] bg-[var(--bg-secondary)]',
           'hover:bg-[var(--bg-tertiary)]',
           'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
@@ -243,7 +247,7 @@ export function CrossModuleActions({
         <div
           className={cn(
             'absolute right-0 top-full mt-1 z-50 w-64',
-            'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] shadow-lg',
+            'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] shadow-md',
             'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-150',
           )}
           role="menu"
@@ -265,7 +269,7 @@ export function CrossModuleActions({
                   }}
                   disabled={isPending || isCompleted}
                   className={cn(
-                    'flex items-center gap-2.5 w-full px-3 py-2 rounded-md text-left text-xs',
+                    'flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left text-xs',
                     'hover:bg-[var(--bg-tertiary)]',
                     'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
@@ -286,7 +290,7 @@ export function CrossModuleActions({
                     <p className="text-muted-foreground">{action.description}</p>
                   </div>
                   {isCompleted && (
-                    <span className="text-[10px] text-[var(--success)]">Sent</span>
+                    <span className="text-xs text-[var(--success)]">Sent</span>
                   )}
                 </button>
               )

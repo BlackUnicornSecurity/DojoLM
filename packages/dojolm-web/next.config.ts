@@ -21,6 +21,9 @@ const nextConfig: NextConfig = withBundleAnalyzer({
   // Enable React strict mode for better development experience
   reactStrictMode: true,
 
+  // Disable X-Powered-By header (BUG-015 / Story 13.3)
+  poweredByHeader: false,
+
   // Enable source maps in production for debugging
   productionBrowserSourceMaps: false,
 
@@ -56,7 +59,7 @@ const nextConfig: NextConfig = withBundleAnalyzer({
           },
           {
             key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            value: "DENY",
           },
           {
             key: "X-Content-Type-Options",
@@ -65,6 +68,16 @@ const nextConfig: NextConfig = withBundleAnalyzer({
           {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
+          },
+          // BUG-013 / Story 13.3: HSTS header
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          // BUG-016 / Story 13.3: Permissions-Policy header
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
           },
           {
             key: "Content-Security-Policy",
@@ -79,12 +92,27 @@ const nextConfig: NextConfig = withBundleAnalyzer({
               "font-src 'self'",
               // All LLM API calls are server-side proxied; browser only talks to local server
               "connect-src 'self'",
+              // Story 13.7: frame-ancestors 'none' to prevent clickjacking
+              "frame-ancestors 'none'",
               "frame-src 'self'",
               "worker-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
+              // Story 13.7: upgrade-insecure-requests — only when explicitly enabled via NODA_FORCE_HTTPS
+              // BUG-031 fix: was NODE_ENV-gated, breaking HTTP deployments
+              ...(process.env.NODA_FORCE_HTTPS === "true" ? ["upgrade-insecure-requests"] : []),
             ].join("; "),
+          },
+        ],
+      },
+      // BUG-020 / Story 13.3: Cache-Control on API responses
+      {
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
           },
         ],
       },

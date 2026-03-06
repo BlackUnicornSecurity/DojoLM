@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollText, Filter } from 'lucide-react'
 import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
 import { toEcosystemSeverity } from '@/lib/ecosystem-types'
+import { EmptyState, emptyStatePresets } from '@/components/ui/EmptyState'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -202,7 +203,7 @@ export function AttackLog({ className }: AttackLogProps) {
               key={opt.value}
               onClick={() => setFilter(opt.value)}
               className={cn(
-                'px-2 py-0.5 text-[10px] font-medium rounded-full',
+                'px-2 py-0.5 text-xs font-medium rounded-full',
                 'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]',
                 filter === opt.value
@@ -219,32 +220,30 @@ export function AttackLog({ className }: AttackLogProps) {
       </div>
 
       {/* Log entries - scrollable */}
-      <ScrollArea className="h-[400px] rounded-md border border-[var(--border)] bg-[var(--bg-secondary)]">
+      <ScrollArea className="h-[400px] rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)]">
         <div className="p-3 space-y-1" role="log" aria-label="Attack event log">
           {filteredEntries.length === 0 ? (
-            <p className="text-sm text-[var(--text-tertiary)] text-center py-8">
-              No log entries match the current filter.
-            </p>
+            <EmptyState {...emptyStatePresets.noResults} description="No log entries match the current filter." className="py-4" />
           ) : (
             filteredEntries.map((entry) => (
               <div
                 key={entry.id}
                 className={cn(
-                  'flex flex-col gap-1 p-2 rounded-md',
+                  'flex flex-col gap-1 p-2 rounded-lg',
                   'hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
                 )}
               >
                 {/* Top row: timestamp + attack type + severity */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-mono text-[var(--text-tertiary)] flex-shrink-0">
+                  <span className="text-xs font-mono text-[var(--text-tertiary)] flex-shrink-0">
                     {formatTimestamp(entry.timestamp)}
                   </span>
-                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {entry.attackType}
                   </span>
                   <Badge
                     variant={severityBadgeVariant[entry.severity]}
-                    className="text-[9px] px-1.5 py-0 leading-tight"
+                    className="text-xs px-1.5 py-0 leading-tight"
                   >
                     {entry.severity}
                   </Badge>

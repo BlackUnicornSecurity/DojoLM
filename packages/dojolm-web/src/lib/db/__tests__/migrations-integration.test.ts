@@ -22,7 +22,7 @@ describe('Migration integration', () => {
   });
 
   function runMigrationFile(filename: string): void {
-    const migrationsDir = path.join(process.cwd(), 'migrations');
+    const migrationsDir = path.resolve(__dirname, '../../../../migrations');
     const sql = fs.readFileSync(path.join(migrationsDir, filename), 'utf-8');
     db.exec(sql);
   }

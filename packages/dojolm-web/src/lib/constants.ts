@@ -2,40 +2,38 @@
  * File: constants.ts
  * Purpose: Application constants and data definitions
  * Index:
- * - NAV_ITEMS (line 39)
- * - NavItem / NavId types (line 106)
- * - QUICK_PAYLOADS (line 112)
- * - PAYLOAD_CATALOG (line 138)
- * - COVERAGE_DATA (line 226)
- * - OWASP_LLM_COVERAGE_DATA (line 408)
- * - ENGINE_FILTERS (line 493)
- * - SEVERITY_ORDER (line 512)
- * - APP_METADATA (line 517)
+ * - NAV_ITEMS (line 37)
+ * - NavItem / NavId types (line 113)
+ * - NAV_ID_ALIASES (line 120)
+ * - QUICK_PAYLOADS (line 128)
+ * - PAYLOAD_CATALOG (line 154)
+ * - COVERAGE_DATA (line 242)
+ * - OWASP_LLM_COVERAGE_DATA (line 424)
+ * - ENGINE_FILTERS (line 509)
+ * - SEVERITY_ORDER (line 528)
+ * - APP_METADATA (line 533)
  */
 
 import type { QuickPayload, PayloadEntry, CoverageEntry } from './types'
 import {
-  Shield,
-  FlaskConical,
-  Brain,
-  ShieldAlert,
-  Swords,
-  ShieldCheck,
-  Layers,
-  Dna,
-  Settings,
+  Radar,
+  Warehouse,
+  ScrollText,
+  BrainCircuit,
+  ShieldHalf,
+  Crosshair,
+  BookOpen,
+  Trophy,
+  Fingerprint,
+  Bug,
+  SlidersHorizontal,
   LayoutDashboard,
-  type LucideIcon
 } from 'lucide-react'
 
 /**
- * Navigation section identifiers
- */
-export type NavSection = 'core' | 'advanced'
-
-/**
  * Navigation items for sidebar and mobile nav
- * Organized into core detection and advanced analysis sections
+ * Flat list — no section dividers (Story 2.2)
+ * Order per Story 2.4: Dashboard → Haiku Scanner → Armory → LLM Jutsu → LLM Dashboard → Hattori Guard → Atemi Lab → Bushido Book → The Kumite → Amaterasu DNA → Ronin Hub → Admin
  */
 export const NAV_ITEMS = [
   {
@@ -43,76 +41,87 @@ export const NAV_ITEMS = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     description: 'System overview and quick actions',
-    section: 'core' as NavSection,
   },
   {
     id: 'scanner',
-    label: 'Scanner',
-    icon: Shield,
+    label: 'Haiku Scanner',
+    icon: Radar,
     description: 'Live prompt injection detection',
-    section: 'core' as NavSection,
   },
   {
-    id: 'testing',
-    label: 'Test Lab',
-    icon: FlaskConical,
+    id: 'armory',
+    label: 'Armory',
+    icon: Warehouse,
     description: 'Fixtures and test payloads',
-    section: 'core' as NavSection,
+  },
+  {
+    id: 'llm-jutsu',
+    label: 'LLM Jutsu',
+    icon: ScrollText,
+    description: 'LLM testing command center',
   },
   {
     id: 'llm',
     label: 'LLM Dashboard',
-    icon: Brain,
+    icon: BrainCircuit,
     description: 'LLM testing interface',
-    section: 'core' as NavSection,
   },
   {
     id: 'guard',
     label: 'Hattori Guard',
-    icon: ShieldAlert,
+    icon: ShieldHalf,
     description: 'LLM input/output protection',
-    section: 'core' as NavSection,
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    icon: Settings,
-    description: 'Settings, validation, and configuration',
-    section: 'core' as NavSection,
   },
   {
     id: 'adversarial',
     label: 'Atemi Lab',
-    icon: Swords,
+    icon: Crosshair,
     description: 'MCP adversarial attack simulation',
-    section: 'advanced' as NavSection,
   },
   {
     id: 'compliance',
     label: 'Bushido Book',
-    icon: ShieldCheck,
+    icon: BookOpen,
     description: 'Coverage, compliance, and audit book',
-    section: 'advanced' as NavSection,
   },
   {
     id: 'strategic',
     label: 'The Kumite',
-    icon: Layers,
+    icon: Trophy,
     description: 'SAGE, Battle Arena, and Mitsuke',
-    section: 'advanced' as NavSection,
   },
   {
     id: 'attackdna',
     label: 'Amaterasu DNA',
-    icon: Dna,
+    icon: Fingerprint,
     description: 'Attack lineage and mutation analysis',
-    section: 'advanced' as NavSection,
+  },
+  {
+    id: 'ronin-hub',
+    label: 'Ronin Hub',
+    icon: Bug,
+    description: 'Bug bounty research and submissions',
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: SlidersHorizontal,
+    description: 'Settings, validation, and configuration',
   },
 ] as const
 
 // Derive type from const array
 export type NavItem = typeof NAV_ITEMS[number]
 export type NavId = NavItem['id']
+
+/**
+ * NavId aliases for backward compatibility (Story 2.9)
+ * Maps retired NavIds to current NavIds for deep-link resolution
+ */
+type RetiredNavId = 'testing'
+export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
+  testing: 'armory',
+}
 
 /**
  * Quick payloads for the scanner
@@ -523,7 +532,7 @@ export const SEVERITY_ORDER = ['CRITICAL', 'WARNING', 'INFO'] as const
  * App metadata
  */
 export const APP_METADATA = {
-  title: 'TPI Security Test Lab',
-  description: 'Interactive prompt injection detection testing',
-  version: '2.0.0',
+  title: 'NODA — DojoLM Security Platform',
+  description: 'AI security testing, adversarial analysis, and compliance platform',
+  version: '3.0.0',
 } as const

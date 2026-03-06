@@ -47,7 +47,7 @@ export function GuardQuickPanel() {
                   'w-2 h-2 rounded-full',
                   config.enabled ? 'bg-green-500' : 'bg-muted-foreground'
                 )} />
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   {config.enabled ? 'Online' : 'Offline'}
                 </span>
               </div>
@@ -56,7 +56,7 @@ export function GuardQuickPanel() {
           <button
             onClick={() => setEnabled(!config.enabled)}
             className={cn(
-              'p-2 rounded-md',
+              'p-2 rounded-lg',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
               config.enabled
                 ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)]'
@@ -77,7 +77,7 @@ export function GuardQuickPanel() {
                 key={mode.id}
                 onClick={() => setMode(mode.id as GuardMode)}
                 className={cn(
-                  'flex-1 px-1.5 py-1 text-[10px] font-medium rounded',
+                  'flex-1 px-1.5 py-1 text-xs font-medium rounded',
                   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
                   config.mode === mode.id
                     ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
@@ -97,12 +97,12 @@ export function GuardQuickPanel() {
         {/* Block threshold */}
         {config.enabled && (
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-muted-foreground">Block threshold:</span>
+            <span className="text-xs text-muted-foreground">Block threshold:</span>
             <div className="flex gap-1">
               <button
                 onClick={() => setBlockThreshold('WARNING')}
                 className={cn(
-                  'px-1.5 py-0.5 text-[9px] rounded',
+                  'px-1.5 py-0.5 text-xs rounded',
                   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
                   config.blockThreshold === 'WARNING'
                     ? 'bg-[var(--severity-medium-bg)] text-[var(--severity-medium)]'
@@ -116,7 +116,7 @@ export function GuardQuickPanel() {
               <button
                 onClick={() => setBlockThreshold('CRITICAL')}
                 className={cn(
-                  'px-1.5 py-0.5 text-[9px] rounded',
+                  'px-1.5 py-0.5 text-xs rounded',
                   'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
                   config.blockThreshold === 'CRITICAL'
                     ? 'bg-[var(--status-block-bg)] text-[var(--status-block)]'
@@ -134,9 +134,9 @@ export function GuardQuickPanel() {
         {/* Last 3 block events */}
         {last3.length > 0 && (
           <div className="space-y-1 border-t border-[var(--border)] pt-2">
-            <div className="text-[10px] text-muted-foreground font-medium">Recent Events</div>
+            <div className="text-xs text-muted-foreground font-medium">Recent Events</div>
             {last3.map(event => (
-              <div key={event.id} className="flex items-center justify-between text-[10px]">
+              <div key={event.id} className="flex items-center justify-between text-xs">
                 <span className={cn(
                   'px-1 py-0.5 rounded font-medium',
                   event.action === 'block' ? 'bg-[var(--status-block-bg)] text-[var(--status-block)]' :
@@ -155,7 +155,7 @@ export function GuardQuickPanel() {
 
         {/* Empty state */}
         {last3.length === 0 && !isLoading && (
-          <p className="text-[10px] text-muted-foreground text-center py-2">No recent events</p>
+          <p className="text-xs text-muted-foreground text-center py-2">No recent events</p>
         )}
       </div>
     </WidgetCard>

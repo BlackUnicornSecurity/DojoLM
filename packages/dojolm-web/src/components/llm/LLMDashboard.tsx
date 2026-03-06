@@ -53,11 +53,16 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">LLM Testing Dashboard</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Configure, test, and analyze LLM models against security test cases
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-[var(--dojo-primary)]/10 flex items-center justify-center">
+            <Brain className="h-5 w-5 text-[var(--dojo-primary)]" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">LLM Testing Dashboard</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Configure, test, and analyze LLM models against security test cases
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <ReportGenerator compact />
