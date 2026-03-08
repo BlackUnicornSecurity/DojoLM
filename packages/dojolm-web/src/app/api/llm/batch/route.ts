@@ -14,7 +14,7 @@ import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-t
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeBatchTests } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
-import { getGuardConfig, saveGuardEvent } from '@/lib/storage/guard-storage';
+import { getGuardConfig, saveGuardEvent, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
 import type { GuardConfig } from '@/lib/guard-types';
 
 // ===========================================================================
@@ -39,9 +39,24 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     const { modelIds, testCaseIds } = body as { modelIds?: string[]; testCaseIds?: string[] };
 
-    if (!modelIds?.length || !testCaseIds?.length) {
+    if (!Array.isArray(modelIds) || !modelIds.length || !Array.isArray(testCaseIds) || !testCaseIds.length) {
       return NextResponse.json(
         { error: 'Missing required fields: modelIds and testCaseIds must be non-empty arrays' },
+        { status: 400 }
+      );
+    }
+
+    // Validate array element types (CR-4)
+    const idPattern = /^[\w.\-]+$/;
+    if (!modelIds.every(id => typeof id === 'string' && idPattern.test(id))) {
+      return NextResponse.json(
+        { error: 'modelIds must be an array of valid ID strings' },
+        { status: 400 }
+      );
+    }
+    if (!testCaseIds.every(id => typeof id === 'string' && idPattern.test(id))) {
+      return NextResponse.json(
+        { error: 'testCaseIds must be an array of valid ID strings' },
         { status: 400 }
       );
     }
@@ -112,7 +127,18 @@ export async function POST(request: NextRequest) {
     });
 
     // Read guard config ONCE before batch starts, freeze as Readonly (S5)
-    const guardConfig: Readonly<GuardConfig> = Object.freeze(await getGuardConfig());
+    let guardConfig: Readonly<GuardConfig>;
+    try {
+      guardConfig = Object.freeze(await getGuardConfig());
+    } catch (guardError) {
+      if (guardError instanceof GuardConfigSecretMissingError) {
+        return NextResponse.json(
+          { error: 'Server misconfiguration: GUARD_CONFIG_SECRET env var is required in production. See .env.example.' },
+          { status: 503 }
+        );
+      }
+      throw guardError;
+    }
 
     // Start execution in background
     if (guardConfig.enabled) {
@@ -134,6 +160,7 @@ export async function POST(request: NextRequest) {
             completedTests: batch.completedTests,
             failedTests: batch.failedTests,
             avgResilienceScore: batch.avgResilienceScore,
+            executionIds: batch.executionIds,
           });
         })
         .catch(async (error) => {
@@ -166,6 +193,9 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
     const status = searchParams.get('status');
 
+    // F-10: Stale batch timeout constant (1 hour)
+    const STALE_TIMEOUT_MS = 60 * 60 * 1000;
+
     // If id is provided, return specific batch
     if (id) {
       const batch = await fileStorage.getBatch(id);
@@ -177,12 +207,38 @@ export async function GET(request: NextRequest) {
         );
       }
 
+      // CR-5: Auto-fail stale running batches on per-ID access too
+      if (batch.status === 'running' && batch.createdAt) {
+        const batchAge = Date.now() - new Date(batch.createdAt).getTime();
+        if (batchAge > STALE_TIMEOUT_MS) {
+          await fileStorage.updateBatch(batch.id, { status: 'failed' });
+          batch.status = 'failed';
+        }
+      }
+
       return NextResponse.json(batch);
     }
 
     // If status is provided, return all batches with that status
     if (status) {
+      const validStatuses: BatchStatus[] = ['pending', 'running', 'completed', 'failed', 'cancelled'];
+      if (!validStatuses.includes(status as BatchStatus)) {
+        return NextResponse.json({ error: 'Invalid status value' }, { status: 400 });
+      }
       const { batches } = await fileStorage.queryBatches({ status: status as BatchStatus });
+
+      // F-10: Auto-fail stale "running" batches older than 1 hour
+      const now = Date.now();
+      for (const batch of batches) {
+        if (batch.status === 'running' && batch.createdAt) {
+          const batchAge = now - new Date(batch.createdAt).getTime();
+          if (batchAge > STALE_TIMEOUT_MS) {
+            await fileStorage.updateBatch(batch.id, { status: 'failed' });
+            batch.status = 'failed';
+          }
+        }
+      }
+
       return NextResponse.json({ batches });
     }
 

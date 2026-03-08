@@ -71,7 +71,9 @@ describe('GET /api/admin/health', () => {
 
     // App section
     expect(body.app).toHaveProperty('version');
-    expect(body.app.version).toBe('1.0.0');
+    expect(body.app.version).toBe('0.1.0');
+    expect(body.app).toHaveProperty('nodeVersion');
+    expect(body.app.nodeVersion).toMatch(/^v\d+/);
     expect(body.app).toHaveProperty('uptimeMs');
   });
 

@@ -52,6 +52,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required field: model' }, { status: 400 });
     }
 
+    // F-07: SSRF protection — validate baseUrl before saving
+    const safeBaseUrl = (baseUrl as string) || undefined;
+    if (safeBaseUrl) {
+      const { validateProviderUrl } = await import('bu-tpi/llm');
+      const isLocalProvider = ['ollama', 'lmstudio', 'llamacpp'].includes(provider);
+      if (!validateProviderUrl(safeBaseUrl, isLocalProvider)) {
+        return NextResponse.json(
+          { error: 'Invalid or unsafe baseUrl: private IPs, cloud metadata endpoints, and non-HTTPS URLs are blocked' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Server-generated UUID (never user-supplied)
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
@@ -61,7 +74,7 @@ export async function POST(request: NextRequest) {
       name: (name as string) || `${provider}/${model}`,
       provider: provider as import('@/lib/llm-types').LLMProvider,
       model: model as string,
-      baseUrl: (baseUrl as string) || undefined,
+      baseUrl: safeBaseUrl,
       enabled: (enabled as boolean) ?? true,
       maxTokens: (maxTokens as number) || undefined,
       temperature: (temperature as number) || undefined,
@@ -72,10 +85,11 @@ export async function POST(request: NextRequest) {
       // API key is handled separately — NOT included in response
     };
 
+    // CR-4: Count attempt before storage call (rate-limit on attempt, not success)
+    registrationTimestamps.push(Date.now());
+
     const storage = await getStorage();
     const saved = await storage.saveModelConfig(config);
-
-    registrationTimestamps.push(Date.now());
 
     // Strip ALL auth details from response
     return NextResponse.json({

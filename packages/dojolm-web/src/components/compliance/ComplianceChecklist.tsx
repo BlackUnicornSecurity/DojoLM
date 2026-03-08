@@ -3,11 +3,11 @@
  * Purpose: Review checklists for non-automated compliance controls with PDF export
  * Story: TPI-NODA-6.2 - Bushido Book Compliance Checklists
  * Index:
- * - STORAGE_KEY (line 17)
- * - ChecklistItem interface (line 19)
- * - ComplianceChecklist component (line 37)
- * - ChecklistItemRow component (line 130)
- * - generateChecklistPDF helper (line 200)
+ * - STORAGE_KEY, NON_AUTOMATED_CONTROLS, CHECKLIST_CATEGORY_IDS constants
+ * - ChecklistItem interface, FilterMode type
+ * - ComplianceChecklist component (category grouping + accordion)
+ * - ChecklistItemRow component
+ * - generateChecklistPDF helper
  */
 
 'use client'
@@ -25,6 +25,7 @@ import {
   FileText,
   StickyNote,
   Filter,
+  ChevronDown,
 } from 'lucide-react'
 import {
   BAISS_CONTROLS,
@@ -50,6 +51,11 @@ const NON_AUTOMATED_CONTROLS = BAISS_CONTROLS.filter(
   (c) => c.assessmentType === 'manual' || c.assessmentType === 'semi-automated'
 )
 
+/** Category IDs present in non-automated controls, for filter chips */
+const CHECKLIST_CATEGORY_IDS = Array.from(
+  new Set(NON_AUTOMATED_CONTROLS.map((c) => c.category))
+)
+
 export interface ComplianceChecklistProps {
   className?: string
 }
@@ -57,6 +63,8 @@ export interface ComplianceChecklistProps {
 export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
   const [items, setItems] = useState<Record<string, ChecklistItem>>({})
   const [filter, setFilter] = useState<FilterMode>('all')
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
 
   // Load from localStorage
   useEffect(() => {
@@ -86,13 +94,31 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
       }
       const updated = { ...prev, [controlId]: { ...existing, [field]: value } }
       if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+        } catch {
+          // QuotaExceededError — gracefully degrade, data won't persist
+        }
       }
       return updated
     })
   }, [])
 
+  const toggleCategory = useCallback((categoryId: string) => {
+    setCollapsedCategories((prev) => {
+      const next = new Set(prev)
+      if (next.has(categoryId)) {
+        next.delete(categoryId)
+      } else {
+        next.add(categoryId)
+      }
+      return next
+    })
+  }, [])
+
   const filteredControls = NON_AUTOMATED_CONTROLS.filter((control) => {
+    // Category filter
+    if (categoryFilter && control.category !== categoryFilter) return false
     const item = items[control.id]
     switch (filter) {
       case 'manual':
@@ -108,11 +134,23 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
     }
   })
 
+  /** Group filtered controls by category */
+  const groupedControls = filteredControls.reduce<Record<string, BAISSControl[]>>((acc, control) => {
+    if (!acc[control.category]) acc[control.category] = []
+    acc[control.category].push(control)
+    return acc
+  }, {})
+
+  /** Ordered category IDs (preserve BAISS_CATEGORIES order) */
+  const orderedCategoryIds = BAISS_CATEGORIES
+    .map((c) => c.id)
+    .filter((id) => id in groupedControls)
+
   const completedCount = NON_AUTOMATED_CONTROLS.filter((c) => items[c.id]?.signedOff).length
 
   const handleExport = useCallback(() => {
     generateChecklistPDF(NON_AUTOMATED_CONTROLS, items)
-  }, [NON_AUTOMATED_CONTROLS, items])
+  }, [items])
 
   const filterOptions: { value: FilterMode; label: string }[] = [
     { value: 'all', label: `All (${NON_AUTOMATED_CONTROLS.length})` },
@@ -165,22 +203,98 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
         ))}
       </div>
 
-      {/* Checklist items */}
-      <div className="space-y-3">
-        {filteredControls.length === 0 ? (
+      {/* Category filter chips */}
+      <div className="flex items-center gap-1.5 flex-wrap" role="group" aria-label="Filter by category">
+        <button
+          onClick={() => setCategoryFilter(null)}
+          aria-pressed={categoryFilter === null}
+          className={cn(
+            'px-2.5 py-1 text-xs font-medium rounded-full min-h-[32px]',
+            'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+            categoryFilter === null
+              ? 'bg-[var(--bu-electric)] text-white'
+              : 'bg-[var(--bg-quaternary)] text-muted-foreground hover:bg-[var(--bg-tertiary)]'
+          )}
+        >
+          All Categories
+        </button>
+        {CHECKLIST_CATEGORY_IDS.map((catId) => {
+          const cat = BAISS_CATEGORIES.find((c) => c.id === catId)
+          return (
+            <button
+              key={catId}
+              onClick={() => setCategoryFilter(catId)}
+              aria-pressed={categoryFilter === catId}
+              className={cn(
+                'px-2.5 py-1 text-xs font-medium rounded-full min-h-[32px]',
+                'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+                categoryFilter === catId
+                  ? 'bg-[var(--bu-electric)] text-white'
+                  : 'bg-[var(--bg-quaternary)] text-muted-foreground hover:bg-[var(--bg-tertiary)]'
+              )}
+            >
+              {cat?.label ?? catId}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Checklist items grouped by category */}
+      <div className="space-y-4">
+        {orderedCategoryIds.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <CheckSquare className="w-10 h-10 text-muted-foreground mb-3" aria-hidden="true" />
             <p className="text-sm text-muted-foreground">No controls match the current filter.</p>
           </div>
         ) : (
-          filteredControls.map((control) => (
-            <ChecklistItemRow
-              key={control.id}
-              control={control}
-              item={items[control.id]}
-              onUpdate={(field, value) => updateItem(control.id, field, value)}
-            />
-          ))
+          orderedCategoryIds.map((catId) => {
+            const cat = BAISS_CATEGORIES.find((c) => c.id === catId)
+            const controls = groupedControls[catId]
+            const isCollapsed = collapsedCategories.has(catId)
+            const catCompleted = controls.filter((c) => items[c.id]?.signedOff).length
+
+            return (
+              <div key={catId} className="border border-[var(--border)] rounded-lg overflow-hidden">
+                {/* Category header (collapsible) */}
+                <button
+                  onClick={() => toggleCategory(catId)}
+                  className="flex items-center justify-between w-full px-4 py-3 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[44px]"
+                  aria-expanded={!isCollapsed}
+                  aria-label={`${cat?.label ?? catId}: ${catCompleted}/${controls.length} complete`}
+                >
+                  <div className="flex items-center gap-2">
+                    <ChevronDown
+                      className={cn(
+                        'h-4 w-4 text-muted-foreground motion-safe:transition-transform',
+                        isCollapsed && '-rotate-90'
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span className="text-sm font-semibold text-[var(--foreground)]">
+                      {cat?.label ?? catId}
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {catCompleted}/{controls.length}
+                  </Badge>
+                </button>
+
+                {/* Category controls */}
+                {!isCollapsed && (
+                  <div className="p-3 space-y-3">
+                    {controls.map((control) => (
+                      <ChecklistItemRow
+                        key={control.id}
+                        control={control}
+                        item={items[control.id]}
+                        onUpdate={(field, value) => updateItem(control.id, field, value)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })
         )}
       </div>
     </div>

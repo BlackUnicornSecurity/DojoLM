@@ -3,10 +3,12 @@
  * Purpose: Bidirectional BAISS to source framework control mapping navigator
  * Story: TPI-NODA-6.2 - Bushido Book Framework Navigator
  * Index:
- * - FRAMEWORK_LABELS constant (line 20)
- * - FrameworkNavigatorProps interface (line 32)
- * - FrameworkNavigator component (line 37)
- * - MappingRow component (line 150)
+ * - FRAMEWORK_LABELS constant
+ * - FRAMEWORK_TIERS constant
+ * - FRAMEWORK_KEYS derived constant
+ * - FrameworkNavigatorProps interface
+ * - FrameworkNavigator component
+ * - MappingRow component
  */
 
 'use client'
@@ -27,14 +29,51 @@ import {
   type BAISSControl,
 } from '@/lib/data/baiss-framework'
 
+/** Framework labels grouped by tier for selector display */
 const FRAMEWORK_LABELS: Record<string, string> = {
+  // Implemented (original 6)
   owasp: 'OWASP LLM Top 10',
   nist: 'NIST AI 600-1',
   mitre: 'MITRE ATLAS',
   iso: 'ISO 42001',
   euAi: 'EU AI Act',
   enisa: 'ENISA AI Security',
+  // HIGH-priority
+  nist218a: 'NIST 800-218A',
+  iso23894: 'ISO 23894',
+  iso24027: 'ISO 24027',
+  iso24028: 'ISO 24028',
+  saif: 'Google SAIF',
+  cisaNcsc: 'CISA/NCSC',
+  // MEDIUM-priority
+  slsa: 'SLSA v1.0',
+  mlBom: 'ML-BOM',
+  openssf: 'OpenSSF',
+  nistCsf2: 'NIST CSF 2.0',
+  ukDsit: 'UK DSIT',
+  ieeeP7000: 'IEEE P7000',
+  nistAi1004: 'NIST AI 100-4',
+  euAiGpai: 'EU AI GPAI',
+  // Regional
+  sgMgaf: 'SG MGAF',
+  caAia: 'CA AIA',
+  auAie: 'AU AIE',
+  // Referenced
+  iso27001: 'ISO 27001 AI',
+  owaspAsvs: 'OWASP ASVS',
+  owaspApi: 'OWASP API',
+  nist80053: 'NIST 800-53',
+  gdpr: 'GDPR AI',
 }
+
+/** Tier grouping for framework selector */
+const FRAMEWORK_TIERS: { label: string; keys: string[] }[] = [
+  { label: 'Implemented', keys: ['owasp', 'nist', 'mitre', 'iso', 'euAi', 'enisa'] },
+  { label: 'High Priority', keys: ['nist218a', 'iso23894', 'iso24027', 'iso24028', 'saif', 'cisaNcsc'] },
+  { label: 'Medium Priority', keys: ['slsa', 'mlBom', 'openssf', 'nistCsf2', 'ukDsit', 'ieeeP7000', 'nistAi1004', 'euAiGpai'] },
+  { label: 'Regional & Sector', keys: ['sgMgaf', 'caAia', 'auAie'] },
+  { label: 'Referenced Standards', keys: ['iso27001', 'owaspAsvs', 'owaspApi', 'nist80053', 'gdpr'] },
+]
 
 const FRAMEWORK_KEYS = Object.keys(FRAMEWORK_LABELS) as (keyof BAISSControl['mappedFrameworks'])[]
 
@@ -153,25 +192,34 @@ export function FrameworkNavigator({ className }: FrameworkNavigatorProps) {
         />
       </div>
 
-      {/* Source framework selector (source-to-baiss mode) */}
+      {/* Source framework selector (source-to-baiss mode) — grouped by tier */}
       {direction === 'source-to-baiss' && (
-        <div className="flex items-center gap-1.5 flex-wrap" role="radiogroup" aria-label="Source framework">
-          {FRAMEWORK_KEYS.map((fw) => (
-            <button
-              key={fw}
-              role="radio"
-              aria-checked={selectedSourceFramework === fw}
-              onClick={() => { setSelectedSourceFramework(fw); setSelectedControl(null) }}
-              className={cn(
-                'px-2.5 py-1 text-xs font-medium rounded-full min-h-[32px]',
-                'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                selectedSourceFramework === fw
-                  ? 'bg-[var(--bu-electric)] text-white'
-                  : 'bg-[var(--bg-quaternary)] text-muted-foreground hover:bg-[var(--bg-tertiary)]'
-              )}
-            >
-              {FRAMEWORK_LABELS[fw]}
-            </button>
+        <div className="space-y-2">
+          {FRAMEWORK_TIERS.map((tier) => (
+            <div key={tier.label} className="space-y-1">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1">
+                {tier.label}
+              </p>
+              <div className="flex items-center gap-1.5 flex-wrap" role="radiogroup" aria-label={`${tier.label} frameworks`}>
+                {tier.keys.map((fw) => (
+                  <button
+                    key={fw}
+                    role="radio"
+                    aria-checked={selectedSourceFramework === fw}
+                    onClick={() => { setSelectedSourceFramework(fw); setSelectedControl(null) }}
+                    className={cn(
+                      'px-2.5 py-1 text-xs font-medium rounded-full min-h-[32px]',
+                      'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+                      selectedSourceFramework === fw
+                        ? 'bg-[var(--bu-electric)] text-white'
+                        : 'bg-[var(--bg-quaternary)] text-muted-foreground hover:bg-[var(--bg-tertiary)]'
+                    )}
+                  >
+                    {FRAMEWORK_LABELS[fw]}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}

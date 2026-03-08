@@ -63,7 +63,7 @@ describe('POST /api/scan', () => {
     expect(body.error).toContain('non-empty string');
   });
 
-  // API-S-003: Reject oversized payload (>100KB)
+  // API-S-003: Reject oversized payload (>10K chars, F-06)
   it('API-S-003: rejects oversized payload', async () => {
     const { POST } = await import('@/app/api/scan/route');
 

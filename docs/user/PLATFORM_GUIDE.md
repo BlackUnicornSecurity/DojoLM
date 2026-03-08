@@ -186,7 +186,7 @@ Real-time text scanning. Paste any text and get a verdict (BLOCK/WARN/ALLOW) wit
 Browse the 1,544+ attack fixture files. Filter by category, severity, TPI story. Scan any fixture directly, compare fixtures side-by-side, and export test sets.
 
 ### Bushido Book (formerly Compliance Center)
-Compliance management with tabs: Overview, Coverage Map, Gap Matrix, Audit Trail, Checklists. Supports 8 frameworks: TPI, OWASP, NIST, MITRE, ISO, EU AI, ENISA, and BAISS (unified standard with 32 controls). Includes Coverage Delta View for snapshot comparison.
+Compliance management with tabs: Overview, Coverage Map, Gap Matrix, Audit Trail, Checklists, Navigator. Supports 28 frameworks across 5 tiers (Implemented, High Priority, Medium Priority, Regional, Referenced) with BAISS v2.0 (unified standard with 45 controls across 10 categories mapping all 28 source frameworks). Includes Coverage Delta View, cross-framework gap matrix with column selector, category-based checklist accordion, and bidirectional framework navigator.
 
 ### LLM Dashboard
 Multi-provider LLM benchmarking with SSE real-time streaming, executive summary with resilience gauge, report downloads (JSON/CSV/SARIF/PDF), vulnerability panel with severity-grouped findings, and leaderboard with sparklines.

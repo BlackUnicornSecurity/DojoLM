@@ -38,8 +38,10 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
               src="/branding/blackunicorn.png"
               alt="BlackUnicorn logo"
               fill
+              sizes="32px"
               className="object-contain"
               priority
+              unoptimized
               onError={() => setImgError(true)}
             />
           ) : (

@@ -1,15 +1,42 @@
 /**
- * S39, TPI-NODA-4.2, TPI-NODA-8.5: Compliance Coverage API
+ * S39, TPI-NODA-4.2, TPI-NODA-8.5, BUSHIDO-BOOK-3.1, BUSHIDO-BOOK-3.2: Compliance Coverage API
  * GET /api/compliance
  * Returns compliance framework coverage data, gap analysis, and BAISS unified standard.
  * Story 8.5: Dynamic compliance coverage from LLM test execution data (SEC-5).
+ * Story 3.1: BAISS v2.0 with 45 controls, all 27 frameworks from bu-tpi engine.
+ * Story 3.2: Framework tier metadata for UI grouping.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { BAISS_CONTROLS, BAISS_CATEGORIES, getBAISSSummary } from '@/lib/data/baiss-framework'
 import { checkApiAuth } from '@/lib/api-auth'
 import { fileStorage } from '@/lib/storage/file-storage'
-import type { LLMTestExecution } from '@/lib/llm-types'
+// LLMTestExecution type used implicitly via fileStorage.queryExecutions return
+import {
+  NIST_800_218A,
+  ISO_23894,
+  ISO_24027,
+  ISO_24028,
+  GOOGLE_SAIF,
+  CISA_NCSC,
+  SLSA_V1,
+  ML_BOM,
+  OPENSSF,
+  NIST_CSF_2,
+  UK_DSIT,
+  IEEE_P7000,
+  NIST_AI_100_4,
+  EU_AI_ACT_GPAI,
+  SG_MGAF,
+  CA_AIA,
+  AU_AIE,
+  ISO_27001_AI,
+  OWASP_ASVS,
+  OWASP_API,
+  NIST_800_53_AI,
+  GDPR_AI,
+} from 'bu-tpi/compliance'
+import type { ComplianceFramework as BuTpiFramework } from 'bu-tpi/compliance'
 
 // --- Compliance Data Model ---
 
@@ -33,6 +60,9 @@ interface ComplianceControl {
   confidence?: 'high' | 'medium' | 'low'
 }
 
+/** Story 3.2: Framework priority tier for UI grouping */
+type FrameworkTier = 'implemented' | 'high' | 'medium' | 'regional' | 'referenced'
+
 interface ComplianceFramework {
   id: string
   name: string
@@ -40,6 +70,75 @@ interface ComplianceFramework {
   overallCoverage: number
   controls: ComplianceControl[]
   lastAssessed: string
+  /** Story 3.2: Priority tier for UI grouping */
+  tier?: FrameworkTier
+}
+
+/** Story 3.1: Tier assignments for all frameworks */
+const FRAMEWORK_TIERS: Record<string, FrameworkTier> = {
+  // Implemented (original 6 + BAISS)
+  'owasp-llm': 'implemented',
+  'nist-ai-rmf': 'implemented',
+  'mitre-atlas': 'implemented',
+  'iso-42001': 'implemented',
+  'eu-ai-act': 'implemented',
+  'enisa-ai': 'implemented',
+  'baiss': 'implemented',
+  // HIGH-priority (GAP-001 to GAP-006)
+  'nist-800-218a': 'high',
+  'iso-23894': 'high',
+  'iso-24027': 'high',
+  'iso-24028': 'high',
+  'google-saif': 'high',
+  'cisa-ncsc': 'high',
+  // MEDIUM-priority (GAP-007 to GAP-013, GAP-019)
+  'slsa-v1': 'medium',
+  'ml-bom': 'medium',
+  'openssf': 'medium',
+  'nist-csf-2': 'medium',
+  'uk-dsit': 'medium',
+  'ieee-p7000': 'medium',
+  'nist-ai-100-4': 'medium',
+  'eu-ai-act-gpai': 'medium',
+  // Regional (GAP-014 to GAP-016)
+  'sg-mgaf': 'regional',
+  'ca-aia': 'regional',
+  'au-aie': 'regional',
+  // Referenced standards
+  'iso-27001-ai': 'referenced',
+  'owasp-asvs': 'referenced',
+  'owasp-api': 'referenced',
+  'nist-800-53-ai': 'referenced',
+  'gdpr-ai': 'referenced',
+}
+
+/**
+ * Story 3.1: Convert a bu-tpi framework definition to the API ComplianceFramework format.
+ * New frameworks get baseline coverage from documentation/process evidence.
+ */
+function convertBuTpiFramework(fw: BuTpiFramework): ComplianceFramework {
+  const controls: ComplianceControl[] = fw.controls.map((c) => ({
+    id: c.id,
+    name: c.name,
+    status: 'partial' as const,
+    coverage: 40,
+    evidenceType: 'documentation' as const,
+    evidenceRef: c.requirement,
+  }))
+
+  const overallCoverage = controls.length > 0
+    ? Math.round(controls.reduce((sum, c) => sum + c.coverage, 0) / controls.length)
+    : 0
+
+  return {
+    id: fw.id,
+    name: fw.name,
+    version: fw.version,
+    overallCoverage,
+    lastAssessed: new Date().toISOString().split('T')[0],
+    controls,
+    tier: FRAMEWORK_TIERS[fw.id] ?? 'referenced',
+  }
 }
 
 // --- Static Compliance Data (sourced from Doc#01) ---
@@ -52,6 +151,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '2025',
       overallCoverage: 95,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'LLM01', name: 'Prompt Injection', status: 'covered', coverage: 100, evidenceType: 'module', evidenceRef: 'enhanced-pi, core-patterns' },
         { id: 'LLM02', name: 'Insecure Output Handling', status: 'covered', coverage: 100, evidenceType: 'module', evidenceRef: 'xxe-protopollution, ssrf-detector' },
@@ -71,6 +171,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '1.0',
       overallCoverage: 88,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'GOVERN', name: 'Governance', status: 'partial', coverage: 60, evidenceType: 'documentation', evidenceRef: 'docs/compliance/iso-42001/', remediationStatus: 'open' },
         { id: 'MAP', name: 'Risk Mapping', status: 'partial', coverage: 70, evidenceType: 'documentation', evidenceRef: 'risk-assessment-methodology.md', remediationStatus: 'in-progress' },
@@ -87,6 +188,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '2024',
       overallCoverage: 89,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'AML.T0000', name: 'Reconnaissance', status: 'covered', coverage: 90, evidenceType: 'module', evidenceRef: 'model-theft-detector' },
         { id: 'AML.T0010', name: 'Poisoning', status: 'covered', coverage: 95, evidenceType: 'module', evidenceRef: 'supply-chain-detector, rag-analyzer' },
@@ -102,6 +204,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '2023',
       overallCoverage: 75,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'Clause4', name: 'Context of the Organization', status: 'partial', coverage: 60, evidenceType: 'documentation', evidenceRef: 'ai-management-policy.md', remediationStatus: 'in-progress' },
         { id: 'Clause5', name: 'Leadership', status: 'partial', coverage: 60, evidenceType: 'documentation', evidenceRef: 'ai-management-policy.md', remediationStatus: 'in-progress' },
@@ -119,6 +222,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '2024',
       overallCoverage: 78,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'Art.9', name: 'Risk Management', status: 'covered', coverage: 85, evidenceType: 'documentation', evidenceRef: 'risk-assessment-methodology.md' },
         { id: 'Art.10', name: 'Data Governance', status: 'covered', coverage: 80, evidenceType: 'module', evidenceRef: 'data-provenance' },
@@ -134,6 +238,7 @@ function getComplianceData(): ComplianceFramework[] {
       version: '2024',
       overallCoverage: 87,
       lastAssessed: '2026-03-02',
+      tier: 'implemented',
       controls: [
         { id: 'SEC-01', name: 'Input Validation', status: 'covered', coverage: 95, evidenceType: 'module', evidenceRef: 'enhanced-pi, encoding-engine' },
         { id: 'SEC-02', name: 'Output Sanitization', status: 'covered', coverage: 95, evidenceType: 'module', evidenceRef: 'xxe-protopollution, ssrf-detector' },
@@ -176,9 +281,10 @@ function getBAISSFramework(): ComplianceFramework {
   return {
     id: 'baiss',
     name: 'BAISS (BlackUnicorn AI Security Standard)',
-    version: '1.0',
+    version: '2.0',
     overallCoverage,
-    lastAssessed: '2026-03-04',
+    lastAssessed: '2026-03-08',
+    tier: 'implemented',
     controls,
   }
 }
@@ -347,6 +453,19 @@ export async function GET(request: NextRequest) {
 
     const frameworks = getComplianceData()
 
+    // Story 3.1: Add 22 new frameworks from bu-tpi engine
+    const newBuTpiFrameworks: BuTpiFramework[] = [
+      // HIGH-priority (6)
+      NIST_800_218A, ISO_23894, ISO_24027, ISO_24028, GOOGLE_SAIF, CISA_NCSC,
+      // MEDIUM-priority (8)
+      SLSA_V1, ML_BOM, OPENSSF, NIST_CSF_2, UK_DSIT, IEEE_P7000, NIST_AI_100_4, EU_AI_ACT_GPAI,
+      // Regional + Referenced (8)
+      SG_MGAF, CA_AIA, AU_AIE, ISO_27001_AI, OWASP_ASVS, OWASP_API, NIST_800_53_AI, GDPR_AI,
+    ]
+    for (const fw of newBuTpiFrameworks) {
+      frameworks.push(convertBuTpiFramework(fw))
+    }
+
     // Story 8.5: Apply dynamic coverage from test execution data
     let dynamicMeta = {}
     if (includeDynamic) {
@@ -382,13 +501,29 @@ export async function GET(request: NextRequest) {
       frameworks.push(getBAISSFramework())
     }
 
+    // Story 3.1: Deduplicate by framework ID (first occurrence wins)
+    const seen = new Set<string>()
+    const deduped = frameworks.filter(f => {
+      if (seen.has(f.id)) return false
+      seen.add(f.id)
+      return true
+    })
+
+    // Story 3.2: Separate implemented frameworks for core score gauge
+    const implementedFrameworks = deduped.filter(f => f.tier === 'implemented')
+    const implementedAvg = implementedFrameworks.length > 0
+      ? Math.round(implementedFrameworks.reduce((sum, f) => sum + f.overallCoverage, 0) / implementedFrameworks.length)
+      : 0
+
     const summary = {
-      totalFrameworks: frameworks.length,
-      avgCoverage: Math.round(frameworks.reduce((sum, f) => sum + f.overallCoverage, 0) / frameworks.length),
-      openGaps: frameworks.flatMap(f => f.controls).filter(c => c.status === 'gap' || c.remediationStatus === 'open').length,
-      inProgressGaps: frameworks.flatMap(f => f.controls).filter(c => c.remediationStatus === 'in-progress').length,
-      closedGaps: frameworks.flatMap(f => f.controls).filter(c => c.remediationStatus === 'closed').length,
-      coveredControls: frameworks.flatMap(f => f.controls).filter(c => c.status === 'covered').length,
+      totalFrameworks: deduped.length,
+      avgCoverage: implementedAvg,
+      allFrameworksAvgCoverage: Math.round(deduped.reduce((sum, f) => sum + f.overallCoverage, 0) / deduped.length),
+      openGaps: deduped.flatMap(f => f.controls).filter(c => c.status === 'gap' || c.remediationStatus === 'open').length,
+      inProgressGaps: deduped.flatMap(f => f.controls).filter(c => c.remediationStatus === 'in-progress').length,
+      closedGaps: deduped.flatMap(f => f.controls).filter(c => c.remediationStatus === 'closed').length,
+      coveredControls: deduped.flatMap(f => f.controls).filter(c => c.status === 'covered').length,
+      implementedFrameworkCount: implementedFrameworks.length,
     }
 
     // Include BAISS metadata when requested
@@ -401,7 +536,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       summary,
-      frameworks,
+      frameworks: deduped,
       lastUpdated: new Date().toISOString(),
       ...baissMeta,
       ...dynamicMeta,

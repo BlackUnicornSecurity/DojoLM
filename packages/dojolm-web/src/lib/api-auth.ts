@@ -20,6 +20,27 @@ import { NextRequest, NextResponse } from 'next/server';
  * breaking development workflows. A console warning is emitted in production.
  */
 export function checkApiAuth(request: NextRequest): NextResponse | null {
+  // F-05: Allow same-origin browser requests without API key.
+  // Sec-Fetch-Site is a browser "forbidden header" (cannot be set by JS fetch).
+  // Combined with Origin/Referer check to prevent non-browser spoofing.
+  // Note: Browsers do NOT send Origin on GET requests, so Referer is used as fallback.
+  const secFetchSite = request.headers.get('sec-fetch-site');
+  if (secFetchSite === 'same-origin') {
+    const origin = request.headers.get('origin') ?? '';
+    const host = request.headers.get('host') ?? '';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    if (origin === appUrl || origin === `http://${host}` || origin === `https://${host}`) {
+      return null;
+    }
+    // Fallback: check Referer header (sent on GET requests where Origin is absent)
+    if (!origin) {
+      const referer = request.headers.get('referer') ?? '';
+      if (referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`)) {
+        return null;
+      }
+    }
+  }
+
   // Read per-request to pick up runtime changes (not frozen at module load)
   const apiKey = process.env.NODA_API_KEY;
 

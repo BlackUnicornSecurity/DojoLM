@@ -47,6 +47,9 @@ const nextConfig: NextConfig = withBundleAnalyzer({
     optimizeCss: true,
   },
 
+  // F-12: Turbopack config (Next.js 16 default bundler)
+  turbopack: {},
+
   // Headers for security and performance
   async headers() {
     return [

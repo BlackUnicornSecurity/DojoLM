@@ -55,17 +55,36 @@ const PATHS = {
 } as const;
 
 /**
+ * Validate storage IDs to prevent path traversal (CR-1)
+ */
+function isValidStorageId(id: string): boolean {
+  return /^[\w.-]+$/.test(id) && !id.includes('..');
+}
+
+function safeFilePath(baseDir: string, id: string, ext: string = '.json'): string {
+  if (!isValidStorageId(id)) {
+    throw new Error(`Invalid storage ID: contains unsafe characters`);
+  }
+  const resolved = path.resolve(baseDir, `${id}${ext}`);
+  const resolvedBase = path.resolve(baseDir);
+  if (!resolved.startsWith(resolvedBase + path.sep)) {
+    throw new Error(`Invalid storage ID: path traversal detected`);
+  }
+  return resolved;
+}
+
+/**
  * Get the file path for a batch's JSON data
  */
 export function getBatchFilePath(batchId: string): string {
-  return path.join(PATHS.batches, `${batchId}.json`);
+  return safeFilePath(PATHS.batches, batchId);
 }
 
 /**
  * Get the file path for a model's results summary
  */
 export function getModelSummaryPath(modelId: string): string {
-  return path.join(PATHS.modelsResults, `${modelId}.json`);
+  return safeFilePath(PATHS.modelsResults, modelId);
 }
 
 // ===========================================================================
@@ -104,8 +123,8 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
     }
   }
 
-  // Write atomically
-  const tmpPath = `${filePath}.tmp`;
+  // Write atomically — unique temp file to prevent race conditions (F-10)
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmpPath, filePath);
 }
@@ -344,9 +363,9 @@ export class FileStorage implements IStorageBackend {
       await writeJSON(PATHS.executionsIndex, { executions });
     }
 
-    // Save individual execution file
+    // Save individual execution file (CR-1: safe path)
     const executionsDir = path.dirname(PATHS.executionsIndex);
-    const executionPath = path.join(executionsDir, `${execution.id}.json`);
+    const executionPath = safeFilePath(executionsDir, execution.id);
     await writeJSON(executionPath, execution);
 
     // Update model summary if needed
@@ -357,7 +376,7 @@ export class FileStorage implements IStorageBackend {
 
   async getExecution(id: string): Promise<LLMTestExecution | null> {
     const executionsDir = path.dirname(PATHS.executionsIndex);
-    const executionPath = path.join(executionsDir, `${id}.json`);
+    const executionPath = safeFilePath(executionsDir, id);
     return await readJSON<LLMTestExecution>(executionPath);
   }
 
@@ -430,7 +449,7 @@ export class FileStorage implements IStorageBackend {
 
   async deleteExecution(id: string): Promise<boolean> {
     const executionsDir = path.dirname(PATHS.executionsIndex);
-    const executionPath = path.join(executionsDir, `${id}.json`);
+    const executionPath = safeFilePath(executionsDir, id);
 
     try {
       await fs.unlink(executionPath);
@@ -510,6 +529,7 @@ export class FileStorage implements IStorageBackend {
       | 'completedTests'
       | 'failedTests'
       | 'avgResilienceScore'
+      | 'executionIds'
       | 'error'
     >>
   ): Promise<LLMBatchExecution | null> {

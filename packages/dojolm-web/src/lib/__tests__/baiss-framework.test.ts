@@ -13,6 +13,8 @@ import {
   getControlsBySourceFramework,
   findBAISSBySourceControl,
   getSourceMappings,
+  getBAISSSummary,
+  baissControlsToCoverageEntries,
 } from '../data/baiss-framework';
 
 describe('BAISS Framework', () => {
@@ -21,9 +23,9 @@ describe('BAISS Framework', () => {
     expect(BAISS_CATEGORIES).toHaveLength(10);
   });
 
-  // BAISS-002: Has exactly 32 controls
-  it('BAISS-002: has 32 controls', () => {
-    expect(BAISS_CONTROLS).toHaveLength(32);
+  // BAISS-002: Has exactly 45 controls (v2.0)
+  it('BAISS-002: has 45 controls', () => {
+    expect(BAISS_CONTROLS).toHaveLength(45);
   });
 
   // BAISS-003: All control IDs are unique
@@ -105,5 +107,40 @@ describe('BAISS Framework', () => {
   it('BAISS-012: getSourceMappings returns empty for invalid ID', () => {
     const mappings = getSourceMappings('BAISS-999');
     expect(Object.keys(mappings)).toHaveLength(0);
+  });
+
+  // BAISS-013: getBAISSSummary returns correct aggregate counts
+  it('BAISS-013: getBAISSSummary returns correct totals', () => {
+    const summary = getBAISSSummary();
+    expect(summary.totalControls).toBe(45);
+    expect(summary.automated + summary.semiAutomated + summary.manual).toBe(45);
+    expect(summary.categories).toBe(10);
+    expect(summary.frameworksCovered).toBeGreaterThanOrEqual(20);
+    expect(summary.uniqueSourceMappings).toBeGreaterThan(0);
+  });
+
+  // BAISS-014: baissControlsToCoverageEntries returns entry for each control
+  it('BAISS-014: baissControlsToCoverageEntries returns 45 entries', () => {
+    const entries = baissControlsToCoverageEntries();
+    expect(entries).toHaveLength(45);
+    for (const entry of entries) {
+      expect(entry.category).toBeTruthy();
+      expect(entry.pre).toBeGreaterThanOrEqual(0);
+      expect(entry.post).toBeGreaterThanOrEqual(50);
+      expect(entry.stories).toMatch(/^BAISS-\d{3}$/);
+      expect(typeof entry.gap).toBe('boolean');
+    }
+  });
+
+  // BAISS-015: findBAISSBySourceControl works for new v2.0 framework keys
+  it('BAISS-015: findBAISSBySourceControl works for gdpr key', () => {
+    const gdprControls = findBAISSBySourceControl('gdpr', 'Art.25');
+    expect(gdprControls.length).toBeGreaterThan(0);
+  });
+
+  // BAISS-016: findBAISSBySourceControl works for saif key
+  it('BAISS-016: findBAISSBySourceControl works for saif key', () => {
+    const saifControls = getControlsBySourceFramework('saif');
+    expect(saifControls.length).toBeGreaterThan(0);
   });
 });

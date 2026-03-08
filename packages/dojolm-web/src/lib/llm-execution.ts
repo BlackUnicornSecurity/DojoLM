@@ -12,7 +12,7 @@ import type { LLMModelConfig, LLMPromptTestCase, LLMTestExecution, LLMBatchExecu
 import type { ProviderResponse } from './llm-providers';
 
 import { getProviderAdapter } from './llm-providers';
-import { generateExecutionHash, generateContentHash } from './storage/file-storage';
+import { generateExecutionHash, generateContentHash, fileStorage } from './storage/file-storage';
 
 import { scan } from '@dojolm/scanner';
 import type { Finding } from '@dojolm/scanner';
@@ -273,6 +273,9 @@ export async function executeBatchTests(
       await Promise.allSettled(
         concurrentSlice.map(async ({ model, testCase }) => {
           const execution = await executeSingleTest(model, testCase);
+
+          // F-09: Persist individual execution records (was only done in guarded path)
+          await fileStorage.saveExecution(execution);
 
           if (onExecutionProgress) {
             onExecutionProgress(execution);

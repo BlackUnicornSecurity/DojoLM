@@ -24,8 +24,8 @@ import {
 } from './index.js';
 
 describe('Framework Definitions', () => {
-  it('should have 5 frameworks', () => {
-    expect(ALL_FRAMEWORKS.length).toBe(5);
+  it('should have 27 frameworks', () => {
+    expect(ALL_FRAMEWORKS.length).toBe(27);
   });
 
   it('OWASP LLM Top 10 should have 10 controls', () => {
@@ -35,6 +35,12 @@ describe('Framework Definitions', () => {
   it('all frameworks should have unique IDs', () => {
     const ids = ALL_FRAMEWORKS.map((f) => f.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('each framework should have at least 1 control', () => {
+    for (const fw of ALL_FRAMEWORKS) {
+      expect(fw.controls.length).toBeGreaterThan(0);
+    }
   });
 });
 
@@ -110,7 +116,7 @@ describe('Report Generator', () => {
 
   it('should generate full report', () => {
     const report = generateFullReport(moduleNames, fixtures);
-    expect(report.frameworks.length).toBe(5);
+    expect(report.frameworks.length).toBe(27);
     expect(report.overallScore).toBeGreaterThan(0);
   });
 
@@ -125,6 +131,6 @@ describe('Report Generator', () => {
     const report = generateFullReport(moduleNames, fixtures);
     const json = formatReportAsJSON(report);
     const parsed = JSON.parse(json);
-    expect(parsed.frameworks.length).toBe(5);
+    expect(parsed.frameworks.length).toBe(27);
   });
 });

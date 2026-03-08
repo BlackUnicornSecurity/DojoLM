@@ -7,6 +7,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
+// Mock api-auth to bypass auth in tests
+vi.mock('@/lib/api-auth', () => ({
+  checkApiAuth: vi.fn().mockReturnValue(null),
+}));
+
 // Mock api-error
 vi.mock('@/lib/api-error', () => ({
   apiError: vi.fn().mockImplementation((msg: string, status: number) => {

@@ -146,8 +146,7 @@ describe('BSH-001: ComplianceCenter sub-tabs', () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
       const allTabs = screen.getAllByRole('tab')
-      // Should have framework tabs (5) + sub-view tabs (6) = 11 tabs
-      // Verify the sub-view tabs exist by their values
+      // Sub-view tabs (6) — framework selector is now a collapsible tier list, not tabs
       const subViewValues = ['overview', 'coverage', 'gap-matrix', 'audit-trail', 'checklists', 'navigator']
       for (const val of subViewValues) {
         const tabsWithValue = allTabs.filter(t => t.getAttribute('data-value') === val)
@@ -168,16 +167,14 @@ describe('BSH-002: Framework selector', () => {
     })
   })
 
-  it('renders framework tab triggers', async () => {
+  it('renders framework items in tier sections', async () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
-      // The FRAMEWORKS constant has 5 entries (owasp, nist, mitre, iso, eu-ai)
-      // Plus ENISA, BAISS, TPI are in COVERAGE_FRAMEWORKS but not in framework selector
-      const allTabs = screen.getAllByRole('tab')
-      const fwValues = ['owasp-llm-top10', 'nist-ai-600-1', 'mitre-atlas', 'iso-42001', 'eu-ai-act']
-      for (const val of fwValues) {
-        const found = allTabs.some(t => t.getAttribute('data-value') === val)
-        expect(found).toBe(true)
+      // Frameworks now appear as FrameworkGapSummary buttons with aria-label
+      const fwNames = ['OWASP LLM Top 10', 'NIST AI 600-1', 'MITRE ATLAS', 'ISO 42001', 'EU AI Act']
+      for (const name of fwNames) {
+        const btn = screen.getByLabelText(new RegExp(name))
+        expect(btn).toBeInTheDocument()
       }
     })
   })
@@ -205,8 +202,8 @@ describe('BSH-003: Framework selection', () => {
 // BSH-004: BAISS shows controls across categories
 // ===========================================================================
 describe('BSH-004: BAISS controls and categories', () => {
-  it('BAISS_CONTROLS has 32 controls', () => {
-    expect(BAISS_CONTROLS.length).toBe(32)
+  it('BAISS_CONTROLS has 45 controls', () => {
+    expect(BAISS_CONTROLS.length).toBe(45)
   })
 
   it('BAISS_CATEGORIES has 10 categories', () => {
@@ -334,11 +331,14 @@ describe('BSH-008: ComplianceChecklist sign-off', () => {
 
   it('renders filter pills (All, Manual, Semi-Auto, Pending, Completed)', () => {
     render(<ComplianceChecklist />)
-    expect(screen.getByText(/^All/)).toBeInTheDocument()
+    // "All (N)" filter pill — use regex to match "All (" prefix to avoid matching "All Categories"
+    expect(screen.getByText(/^All \(/)).toBeInTheDocument()
     expect(screen.getByText('Manual')).toBeInTheDocument()
     expect(screen.getByText('Semi-Auto')).toBeInTheDocument()
     expect(screen.getByText('Pending')).toBeInTheDocument()
     expect(screen.getByText('Completed')).toBeInTheDocument()
+    // Also verify category filter is present
+    expect(screen.getByText('All Categories')).toBeInTheDocument()
   })
 
   it('toggles sign-off state and persists to localStorage', () => {
@@ -497,7 +497,7 @@ describe('BSH-013: Coverage comparison', () => {
       expect(Array.isArray(entries)).toBe(true)
     } else {
       // The function exists - verify BAISS_CONTROLS is exported
-      expect(baissModule.BAISS_CONTROLS.length).toBe(32)
+      expect(baissModule.BAISS_CONTROLS.length).toBe(45)
     }
   })
 })
@@ -527,7 +527,7 @@ describe('BSH-014: ComplianceCenter renders overall score', () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
       expect(screen.getByText('5 Frameworks')).toBeInTheDocument()
-      expect(screen.getByText(/total gaps/)).toBeInTheDocument()
+      expect(screen.getByText(/gaps \(implemented\)/)).toBeInTheDocument()
     })
   })
 })

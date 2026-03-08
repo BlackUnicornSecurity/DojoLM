@@ -7,10 +7,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
+import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
-import { getGuardConfig, saveGuardEvent, getConfigHash } from '@/lib/storage/guard-storage';
+import { getGuardConfig, saveGuardEvent, getConfigHash, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
 
 // ===========================================================================
 // POST /api/llm/execute - Execute a single test
@@ -18,6 +19,9 @@ import { getGuardConfig, saveGuardEvent, getConfigHash } from '@/lib/storage/gua
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = checkApiAuth(request);
+    if (authResult) return authResult;
+
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -82,7 +86,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Load guard config (S3: cache key includes guard config hash)
-    const guardConfig = await getGuardConfig();
+    let guardConfig;
+    try {
+      guardConfig = await getGuardConfig();
+    } catch (guardError) {
+      if (guardError instanceof GuardConfigSecretMissingError) {
+        return NextResponse.json(
+          { error: 'Server misconfiguration: GUARD_CONFIG_SECRET env var is required in production. See .env.example.' },
+          { status: 503 }
+        );
+      }
+      throw guardError;
+    }
 
     // Check cache if requested — cache key includes guard config hash (S3)
     if (useCache) {

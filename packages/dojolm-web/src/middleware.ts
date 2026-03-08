@@ -129,7 +129,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Auth check
+  // F-05: Allow same-origin browser requests without API key.
+  // Sec-Fetch-Site is a browser "forbidden header" (cannot be set by JS fetch).
+  // Combined with Origin/Referer check to prevent non-browser spoofing.
+  // Note: Browsers do NOT send Origin on GET requests, so Referer is used as fallback.
+  const secFetchSite = request.headers.get('sec-fetch-site');
+  if (secFetchSite === 'same-origin') {
+    const origin = request.headers.get('origin') ?? '';
+    const host = request.headers.get('host') ?? '';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    // Verify Origin matches either the configured app URL or the Host header
+    if (origin === appUrl || origin === `http://${host}` || origin === `https://${host}`) {
+      return NextResponse.next();
+    }
+    // Fallback: check Referer header (sent on GET requests where Origin is absent)
+    if (!origin) {
+      const referer = request.headers.get('referer') ?? '';
+      if (referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`)) {
+        return NextResponse.next();
+      }
+    }
+  }
+
+  // Auth check (for external/programmatic API access)
   if (!isAuthenticated(request)) {
     const ip = getClientIp(request);
 

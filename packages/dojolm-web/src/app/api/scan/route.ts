@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Size limit validation (100KB max)
-    const MAX_SIZE = 100_000;
+    // Size limit validation (F-06: lowered from 100K to 10K to prevent event loop blocking)
+    const MAX_SIZE = 10_000;
     if (text.length > MAX_SIZE) {
       return NextResponse.json(
         { error: `Input too large: maximum ${MAX_SIZE} characters allowed` },
@@ -70,6 +70,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Run scanner with optional engine filter
+    // F-06/F-08: 10K char limit above is the primary DoS protection.
+    // scan() is synchronous — cannot be interrupted by setTimeout on the same thread.
     const scanOptions: ScanOptions = (engines && engines.length > 0) ? { engines } : {};
     const result = scan(trimmedText, scanOptions);
 
@@ -82,7 +84,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    // Error handling
     console.error('Scan API error:', error);
 
     return NextResponse.json(

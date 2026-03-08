@@ -11,6 +11,15 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { checkApiAuth } from '@/lib/api-auth'
+import { readFileSync } from 'fs'
+import { join } from 'path'
+
+// Read version at module load — safe for server-side API route
+let appVersion = '0.1.0';
+try {
+  const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8'));
+  appVersion = pkg.version || appVersion;
+} catch { /* fallback to default */ }
 
 export async function GET(request: NextRequest) {
   // BUG-004: Admin endpoint requires authentication
@@ -77,7 +86,8 @@ export async function GET(request: NextRequest) {
           modelsCount,
         },
         app: {
-          version: '1.0.0',
+          version: appVersion,
+          nodeVersion: process.version.split('.')[0],
           uptimeMs: Date.now() - startTime,
         },
       },

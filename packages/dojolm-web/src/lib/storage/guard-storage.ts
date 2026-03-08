@@ -68,11 +68,16 @@ const PATHS = {
 // HMAC Signing (S1)
 // ===========================================================================
 
+export class GuardConfigSecretMissingError extends Error {
+  readonly code = 'GUARD_CONFIG_SECRET_MISSING';
+  constructor() { super('GUARD_CONFIG_SECRET must be set in production'); }
+}
+
 function getHmacSecret(): string {
   const secret = process.env.GUARD_CONFIG_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === 'production') {
-      throw new Error('GUARD_CONFIG_SECRET must be set in production');
+      throw new GuardConfigSecretMissingError();
     }
     console.warn('[SECURITY] GUARD_CONFIG_SECRET not set — using insecure default. Set this in .env.local.');
     return 'dojolm-guard-dev-only-secret';
@@ -131,7 +136,7 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
     if (errno.code !== 'EEXIST') throw error;
   }
 
-  const tmpPath = `${filePath}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmpPath, filePath);
 }

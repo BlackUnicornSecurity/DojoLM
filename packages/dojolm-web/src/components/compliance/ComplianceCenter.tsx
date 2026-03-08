@@ -1,13 +1,14 @@
 /**
  * File: ComplianceCenter.tsx
  * Purpose: Main Bushido Book page with framework selector, overall score, gap summary, and sub-views
- * Story: S74, TPI-NODA-4.1
+ * Story: S74, TPI-NODA-4.1, BUSHIDO-BOOK-4.1
  * Index:
- * - FRAMEWORKS, COVERAGE_FRAMEWORKS constants
- * - ComplianceFrameworkData, ComplianceCenterData interfaces
+ * - TIER_LABELS, TIER_ORDER constants
+ * - FrameworkTier, ComplianceFrameworkData, ComplianceCenterData interfaces
  * - SubView, CoverageSubMode types
  * - ScoreMeter, FrameworkGapSummary components
- * - ComplianceCenter (main), CoveragePanel, CoverageDeltaView
+ * - ComplianceCenter (main), TierSection
+ * - CoveragePanel, CoverageDeltaView
  * - ComparisonView, OverviewPanel components
  */
 
@@ -26,6 +27,7 @@ import {
   Layers,
   ListChecks,
   GitCompareArrows,
+  ChevronDown,
 } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
@@ -43,32 +45,21 @@ import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Constants ---
 
-const FRAMEWORKS = [
-  { id: 'owasp-llm-top10', label: 'OWASP LLM Top 10', shortLabel: 'OWASP' },
-  { id: 'nist-ai-600-1', label: 'NIST AI 600-1', shortLabel: 'NIST' },
-  { id: 'mitre-atlas', label: 'MITRE ATLAS', shortLabel: 'ATLAS' },
-  { id: 'iso-42001', label: 'ISO 42001', shortLabel: 'ISO' },
-  { id: 'eu-ai-act', label: 'EU AI Act', shortLabel: 'EU AI' },
-  { id: 'enisa', label: 'ENISA', shortLabel: 'ENISA' },
-] as const
+/** Tier display labels */
+const TIER_LABELS: Record<string, string> = {
+  implemented: 'Implemented Frameworks',
+  high: 'High Priority',
+  medium: 'Medium Priority',
+  regional: 'Regional & Sector',
+  referenced: 'Referenced Standards',
+}
 
-/** Framework options for the Coverage tab selector */
-const COVERAGE_FRAMEWORKS = [
-  { id: 'tpi', label: 'CrowdStrike TPI', shortLabel: 'TPI' },
-  { id: 'owasp', label: 'OWASP LLM Top 10', shortLabel: 'OWASP' },
-  { id: 'nist', label: 'NIST AI 600-1', shortLabel: 'NIST' },
-  { id: 'mitre', label: 'MITRE ATLAS', shortLabel: 'ATLAS' },
-  { id: 'iso', label: 'ISO 42001', shortLabel: 'ISO' },
-  { id: 'eu-ai', label: 'EU AI Act', shortLabel: 'EU AI' },
-  { id: 'enisa', label: 'ENISA', shortLabel: 'ENISA' },
-  { id: 'baiss', label: 'BAISS', shortLabel: 'BAISS' },
-] as const
-
-type CoverageFrameworkId = (typeof COVERAGE_FRAMEWORKS)[number]['id']
-
-type FrameworkId = (typeof FRAMEWORKS)[number]['id']
+/** Tier display order */
+const TIER_ORDER = ['implemented', 'high', 'medium', 'regional', 'referenced']
 
 // --- Types ---
+
+type FrameworkTier = 'implemented' | 'high' | 'medium' | 'regional' | 'referenced'
 
 interface ComplianceFrameworkData {
   id: string
@@ -80,6 +71,7 @@ interface ComplianceFrameworkData {
   partialControls: number
   lastAssessed: string
   controls?: ComplianceControlData[]
+  tier?: FrameworkTier
 }
 
 interface ComplianceControlData {
@@ -196,7 +188,7 @@ export default function ComplianceCenter() {
   const [data, setData] = useState<ComplianceCenterData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedFramework, setSelectedFramework] = useState<FrameworkId>('owasp-llm-top10')
+  const [selectedFramework, setSelectedFramework] = useState<string>('owasp-llm')
   const [subView, setSubView] = useState<SubView>('overview')
 
   useEffect(() => {
@@ -227,6 +219,10 @@ export default function ComplianceCenter() {
                   testCaseCount: typeof c.testCaseCount === 'number' ? c.testCaseCount : undefined,
                 }))
               : undefined
+            // Parse tier from API response
+            const rawTier = String(f.tier ?? 'implemented')
+            const tier: FrameworkTier = (['implemented', 'high', 'medium', 'regional', 'referenced'].includes(rawTier)
+              ? rawTier : 'implemented') as FrameworkTier
             return {
               id: String(f.id ?? ''),
               name: String(f.name ?? ''),
@@ -243,14 +239,19 @@ export default function ComplianceCenter() {
                 : Number(f.partialControls ?? 0),
               lastAssessed: String(f.lastAssessed ?? ''),
               controls,
+              tier,
             }
           }
         )
+        // Use API summary avgCoverage (implemented frameworks only) for the overall score
         const overallScore =
           apiData.summary?.avgCoverage ??
-          (frameworks.length > 0
-            ? Math.round(frameworks.reduce((sum: number, f: ComplianceFrameworkData) => sum + f.overallCoverage, 0) / frameworks.length)
-            : 0)
+          (() => {
+            const impl = frameworks.filter((f) => f.tier === 'implemented')
+            return impl.length > 0
+              ? Math.round(impl.reduce((sum: number, f: ComplianceFrameworkData) => sum + f.overallCoverage, 0) / impl.length)
+              : 0
+          })()
 
         setData({
           overallScore,
@@ -271,13 +272,25 @@ export default function ComplianceCenter() {
     }
   }, [])
 
-  const handleFrameworkSelect = useCallback((id: FrameworkId) => {
+  const handleFrameworkSelect = useCallback((id: string) => {
     setSelectedFramework(id)
   }, [])
 
   const handleSubViewChange = useCallback((view: SubView) => {
     setSubView(view)
   }, [])
+
+  /** Group frameworks by tier for display — must be before early returns (Rules of Hooks) */
+  const frameworksByTier = useMemo(() => {
+    if (!data) return {}
+    const groups: Record<string, ComplianceFrameworkData[]> = {}
+    for (const fw of data.frameworks) {
+      const tier = fw.tier ?? 'implemented'
+      if (!groups[tier]) groups[tier] = []
+      groups[tier].push(fw)
+    }
+    return groups
+  }, [data])
 
   // --- Loading state ---
   if (loading) {
@@ -310,7 +323,8 @@ export default function ComplianceCenter() {
   }
 
   const selectedFw = data.frameworks.find((f) => f.id === selectedFramework) ?? data.frameworks[0]
-  const totalGaps = data.frameworks.reduce((sum, f) => sum + f.gapControls + f.partialControls, 0)
+  const implementedFrameworks = data.frameworks.filter((f) => f.tier === 'implemented')
+  const totalGaps = implementedFrameworks.reduce((sum, f) => sum + f.gapControls + f.partialControls, 0)
 
   const subTabs: { id: SubView; label: string; icon: typeof BarChart3 }[] = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -330,7 +344,7 @@ export default function ComplianceCenter() {
         icon={Shield}
       />
 
-      {/* Top Section: Score + Framework Selector + Gap Summary */}
+      {/* Top Section: Score + Framework Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Overall Score Meter */}
         <Card className="lg:col-span-3">
@@ -341,56 +355,34 @@ export default function ComplianceCenter() {
                 {data.frameworks.length} Frameworks
               </p>
               <p className="text-xs text-muted-foreground">
-                {totalGaps} total gaps
+                {totalGaps} gaps (implemented)
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Framework Selector Tabs */}
+        {/* Framework list grouped by tier */}
         <Card className="lg:col-span-9">
           <CardContent className="p-4">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
             Framework Coverage
           </h3>
-
-          {/* Framework selector tabs */}
-          <Tabs value={selectedFramework} onValueChange={(v) => handleFrameworkSelect(v as FrameworkId)}>
-            <TabsList aria-label="Compliance framework selector" className="flex flex-wrap h-auto gap-1 mb-4 bg-transparent border-b border-border pb-3">
-              {FRAMEWORKS.map((fw) => (
-                <TabsTrigger
-                  key={fw.id}
-                  value={fw.id}
-                  className="data-[state=active]:bg-[var(--dojo-primary)] data-[state=active]:text-white data-[state=active]:shadow-none"
-                >
-                  <span className="hidden sm:inline">{fw.label}</span>
-                  <span className="sm:hidden">{fw.shortLabel}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {/* Per-framework gap list (shown for all tabs) */}
-            {FRAMEWORKS.map((fw) => (
-              <TabsContent key={fw.id} value={fw.id} className="mt-0">
-                {data.frameworks.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
-                    No framework data available.
-                  </p>
-                ) : (
-                  <div className="space-y-1.5">
-                    {data.frameworks.map((f) => (
-                      <FrameworkGapSummary
-                        key={f.id}
-                        framework={f}
-                        isSelected={f.id === fw.id}
-                        onSelect={() => handleFrameworkSelect(f.id as FrameworkId)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </TabsContent>
-            ))}
-          </Tabs>
+          <div className="space-y-1">
+            {TIER_ORDER.map((tier) => {
+              const tierFrameworks = frameworksByTier[tier]
+              if (!tierFrameworks || tierFrameworks.length === 0) return null
+              return (
+                <TierSection
+                  key={tier}
+                  tier={tier}
+                  frameworks={tierFrameworks}
+                  selectedFrameworkId={selectedFramework}
+                  onSelect={handleFrameworkSelect}
+                  defaultExpanded={tier === 'implemented'}
+                />
+              )
+            })}
+          </div>
           </CardContent>
         </Card>
       </div>
@@ -423,7 +415,7 @@ export default function ComplianceCenter() {
               <CoveragePanel frameworks={data.frameworks} />
             </TabsContent>
             <TabsContent value="gap-matrix" className="mt-0">
-              <GapMatrix framework={selectedFramework} />
+              <GapMatrix />
             </TabsContent>
             <TabsContent value="audit-trail" className="mt-0">
               <AuditTrail />
@@ -441,10 +433,69 @@ export default function ComplianceCenter() {
   )
 }
 
-// --- Coverage Panel (Story 4.1) ---
+// --- Tier Section (collapsible framework group) ---
 
-/** Maps compliance API framework IDs to coverage framework selector IDs */
-const COMPLIANCE_TO_COVERAGE_ID: Record<string, CoverageFrameworkId> = {
+function TierSection({
+  tier,
+  frameworks,
+  selectedFrameworkId,
+  onSelect,
+  defaultExpanded,
+}: {
+  tier: string
+  frameworks: ComplianceFrameworkData[]
+  selectedFrameworkId: string
+  onSelect: (id: string) => void
+  defaultExpanded: boolean
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
+  const tierAvg = frameworks.length > 0
+    ? Math.round(frameworks.reduce((sum, f) => sum + f.overallCoverage, 0) / frameworks.length)
+    : 0
+
+  return (
+    <div className="border border-[var(--border)] rounded-lg overflow-hidden">
+      <button
+        onClick={() => setExpanded((p) => !p)}
+        className="flex items-center justify-between w-full px-3 py-2 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[40px]"
+        aria-expanded={expanded}
+        aria-label={`${TIER_LABELS[tier] ?? tier}: ${frameworks.length} frameworks, ${tierAvg}% average coverage`}
+      >
+        <div className="flex items-center gap-2">
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-muted-foreground motion-safe:transition-transform',
+              !expanded && '-rotate-90'
+            )}
+            aria-hidden="true"
+          />
+          <span className="text-xs font-semibold text-[var(--foreground)]">
+            {TIER_LABELS[tier] ?? tier}
+          </span>
+          <span className="text-[10px] text-muted-foreground">({frameworks.length})</span>
+        </div>
+        <span className="text-xs font-mono text-muted-foreground">{tierAvg}%</span>
+      </button>
+      {expanded && (
+        <div className="p-1.5 space-y-0.5">
+          {frameworks.map((f) => (
+            <FrameworkGapSummary
+              key={f.id}
+              framework={f}
+              isSelected={f.id === selectedFrameworkId}
+              onSelect={() => onSelect(f.id)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// --- Coverage Panel (Story 4.1, BUSHIDO-BOOK-4.1) ---
+
+/** Maps compliance API framework IDs to legacy coverage IDs for static data lookup */
+const COMPLIANCE_TO_LEGACY_ID: Record<string, string> = {
   'owasp-llm': 'owasp',
   'nist-ai-rmf': 'nist',
   'mitre-atlas': 'mitre',
@@ -469,16 +520,32 @@ function controlsToCoverageEntries(controls: ComplianceControlData[]): CoverageE
 type CoverageSubMode = 'coverage' | 'comparison' | 'changes'
 
 function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }) {
-  const [selectedCovFw, setSelectedCovFw] = useState<CoverageFrameworkId>('tpi')
+  const [selectedCovFw, setSelectedCovFw] = useState<string>('tpi')
   const [subMode, setSubMode] = useState<CoverageSubMode>('coverage')
+
+  /** Build coverage framework options from API data, grouped by tier */
+  const coverageOptions = useMemo(() => {
+    const special = [
+      { id: 'tpi', name: 'CrowdStrike TPI', tier: 'implemented' as const },
+      { id: 'baiss', name: 'BAISS Unified', tier: 'implemented' as const },
+    ]
+    const apiOptions = frameworks.map((fw) => ({
+      id: fw.id,
+      name: fw.name,
+      tier: fw.tier ?? 'implemented',
+    }))
+    return [...special, ...apiOptions]
+  }, [frameworks])
 
   /** Build a lookup from compliance API framework ID → controls */
   const controlsByFramework = useMemo(() => {
     const map: Record<string, ComplianceControlData[]> = {}
     for (const fw of frameworks) {
-      const covId = COMPLIANCE_TO_COVERAGE_ID[fw.id]
-      if (covId && fw.controls) {
-        map[covId] = fw.controls
+      // Map by both the API id and legacy id
+      if (fw.controls) {
+        map[fw.id] = fw.controls
+        const legacyId = COMPLIANCE_TO_LEGACY_ID[fw.id]
+        if (legacyId) map[legacyId] = fw.controls
       }
     }
     return map
@@ -487,8 +554,11 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
   /** Returns CoverageEntry[] for the selected coverage framework */
   const coverageDataForFramework = useMemo((): CoverageEntry[] => {
     if (selectedCovFw === 'tpi') return COVERAGE_DATA
-    if (selectedCovFw === 'owasp') return OWASP_LLM_COVERAGE_DATA
     if (selectedCovFw === 'baiss') return baissControlsToCoverageEntries()
+    // Check legacy OWASP static data
+    const legacyId = Object.entries(COMPLIANCE_TO_LEGACY_ID).find(([, v]) => v === selectedCovFw)?.[0]
+    if (selectedCovFw === 'owasp' || legacyId === 'owasp-llm') return OWASP_LLM_COVERAGE_DATA
+    // Dynamic: use API controls
     const controls = controlsByFramework[selectedCovFw]
     return controls ? controlsToCoverageEntries(controls) : []
   }, [selectedCovFw, controlsByFramework])
@@ -506,8 +576,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
     return { avgCoverage, gaps, fullCoverage, total: coverageDataForFramework.length }
   }, [coverageDataForFramework])
 
-  const frameworkLabel =
-    COVERAGE_FRAMEWORKS.find((f) => f.id === selectedCovFw)?.label ?? selectedCovFw
+  const frameworkLabel = coverageOptions.find((f) => f.id === selectedCovFw)?.name ?? selectedCovFw
 
   // Save current snapshot to localStorage whenever coverage data changes
   useEffect(() => {
@@ -544,7 +613,6 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
     return (
       <ComparisonView
         frameworks={frameworks}
-        controlsByFramework={controlsByFramework}
         onBack={() => setSubMode('coverage')}
       />
     )
@@ -565,20 +633,30 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
     <div className="space-y-6">
       {/* Framework Selector + Comparison Toggle */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <Tabs value={selectedCovFw} onValueChange={(v) => setSelectedCovFw(v as CoverageFrameworkId)}>
-          <TabsList aria-label="Coverage framework selector" className="flex flex-wrap h-auto bg-transparent gap-1">
-            {COVERAGE_FRAMEWORKS.map((fw) => (
-              <TabsTrigger
-                key={fw.id}
-                value={fw.id}
-                className="data-[state=active]:bg-[var(--dojo-primary)] data-[state=active]:text-white data-[state=active]:shadow-none"
-              >
-                <span className="hidden sm:inline">{fw.label}</span>
-                <span className="sm:hidden">{fw.shortLabel}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2">
+          <label htmlFor="coverage-framework-select" className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+            Framework:
+          </label>
+          <select
+            id="coverage-framework-select"
+            value={selectedCovFw}
+            onChange={(e) => setSelectedCovFw(e.target.value)}
+            className="px-3 py-2 rounded-lg bg-[var(--input)] border border-[var(--border)] text-sm text-[var(--foreground)] min-h-[44px] min-w-[200px]"
+            aria-label="Coverage framework selector"
+          >
+            {TIER_ORDER.map((tier) => {
+              const tierOptions = coverageOptions.filter((o) => o.tier === tier)
+              if (tierOptions.length === 0) return null
+              return (
+                <optgroup key={tier} label={TIER_LABELS[tier] ?? tier}>
+                  {tierOptions.map((opt) => (
+                    <option key={opt.id} value={opt.id}>{opt.name}</option>
+                  ))}
+                </optgroup>
+              )
+            })}
+          </select>
+        </div>
         <div className="flex gap-2">
           <button
             onClick={() => setSubMode('changes')}
@@ -677,7 +755,7 @@ function CoverageDeltaView({
   onBack,
 }: {
   currentData: CoverageEntry[]
-  frameworkId: CoverageFrameworkId
+  frameworkId: string
   frameworkLabel: string
   onBack: () => void
 }) {
@@ -863,47 +941,57 @@ function CoverageDeltaView({
 
 function ComparisonView({
   frameworks,
-  controlsByFramework,
   onBack,
 }: {
   frameworks: ComplianceFrameworkData[]
-  controlsByFramework: Record<string, ComplianceControlData[]>
   onBack: () => void
 }) {
-  /** Build comparison data: for each coverage framework, compute stats */
+  /** Build comparison data from all frameworks */
   const comparisonData = useMemo(() => {
-    return COVERAGE_FRAMEWORKS.map((fw) => {
-      let avgCoverage = 0
-      let totalCategories = 0
-      let gaps = 0
+    // TPI and BAISS as special entries
+    const tpiAvg = COVERAGE_DATA.length > 0
+      ? Math.round(COVERAGE_DATA.reduce((s, e) => s + e.post, 0) / COVERAGE_DATA.length)
+      : 0
+    const baissData = baissControlsToCoverageEntries()
+    const baissAvg = baissData.length > 0
+      ? Math.round(baissData.reduce((s, e) => s + e.post, 0) / baissData.length)
+      : 0
 
-      if (fw.id === 'tpi') {
-        avgCoverage = Math.round(COVERAGE_DATA.reduce((s, e) => s + e.post, 0) / COVERAGE_DATA.length)
-        totalCategories = COVERAGE_DATA.length
-        gaps = COVERAGE_DATA.filter((e) => e.gap).length
-      } else if (fw.id === 'owasp') {
-        avgCoverage = Math.round(OWASP_LLM_COVERAGE_DATA.reduce((s, e) => s + e.post, 0) / OWASP_LLM_COVERAGE_DATA.length)
-        totalCategories = OWASP_LLM_COVERAGE_DATA.length
-        gaps = OWASP_LLM_COVERAGE_DATA.filter((e) => e.gap).length
-      } else if (fw.id === 'baiss') {
-        const baissData = baissControlsToCoverageEntries()
-        if (baissData.length > 0) {
-          avgCoverage = Math.round(baissData.reduce((s, e) => s + e.post, 0) / baissData.length)
-          totalCategories = baissData.length
-          gaps = baissData.filter((e) => e.gap).length
-        }
-      } else {
-        const controls = controlsByFramework[fw.id]
-        if (controls && controls.length > 0) {
-          avgCoverage = Math.round(controls.reduce((s, c) => s + c.coverage, 0) / controls.length)
-          totalCategories = controls.length
-          gaps = controls.filter((c) => c.status === 'gap').length
-        }
-      }
+    const rows: { id: string; label: string; avgCoverage: number; totalCategories: number; gaps: number; tier: string }[] = [
+      {
+        id: 'tpi',
+        label: 'CrowdStrike TPI',
+        avgCoverage: tpiAvg,
+        totalCategories: COVERAGE_DATA.length,
+        gaps: COVERAGE_DATA.filter((e) => e.gap).length,
+        tier: 'implemented',
+      },
+    ]
 
-      return { id: fw.id, label: fw.label, avgCoverage, totalCategories, gaps }
+    // Add all API frameworks
+    for (const fw of frameworks) {
+      rows.push({
+        id: fw.id,
+        label: fw.name,
+        avgCoverage: fw.overallCoverage,
+        totalCategories: fw.totalControls,
+        gaps: fw.gapControls,
+        tier: fw.tier ?? 'implemented',
+      })
+    }
+
+    // Add BAISS as final entry
+    rows.push({
+      id: 'baiss',
+      label: 'BAISS Unified',
+      avgCoverage: baissAvg,
+      totalCategories: baissData.length,
+      gaps: baissData.filter((e) => e.gap).length,
+      tier: 'implemented',
     })
-  }, [controlsByFramework])
+
+    return rows
+  }, [frameworks])
 
   return (
     <div className="space-y-6">
@@ -1052,98 +1140,59 @@ function OverviewPanel({
         )}
       </div>
 
-      {/* All frameworks summary table */}
-      <div>
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-          All Frameworks Summary
-        </h3>
-        <div className="overflow-x-auto">
-          <table
-            className="min-w-full text-sm"
-            aria-label="All frameworks compliance summary"
-          >
-            <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th
-                  scope="col"
-                  className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase"
-                >
-                  Framework
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase"
-                >
-                  Coverage
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase"
-                >
-                  Controls
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase"
-                >
-                  Gaps
-                </th>
-                <th
-                  scope="col"
-                  className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase"
-                >
-                  Partial
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {allFrameworks.map((fw) => (
-                <tr
-                  key={fw.id}
-                  className={cn(
-                    'border-b border-[var(--border)] last:border-0',
-                    fw.id === framework.id && 'bg-[var(--bg-quaternary)]'
-                  )}
-                >
-                  <td className="px-3 py-2 font-medium text-[var(--foreground)]">
-                    {fw.name}
-                  </td>
-                  <td className="px-3 py-2 text-right font-mono text-[var(--foreground)]">
-                    {fw.overallCoverage}%
-                  </td>
-                  <td className="px-3 py-2 text-right text-muted-foreground">
-                    {fw.totalControls}
-                  </td>
-                  <td className="px-3 py-2 text-right">
-                    <span
+      {/* All frameworks summary table grouped by tier */}
+      {TIER_ORDER.map((tier) => {
+        const tierFrameworks = allFrameworks.filter((fw) => (fw.tier ?? 'implemented') === tier)
+        if (tierFrameworks.length === 0) return null
+        return (
+          <div key={tier}>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              {TIER_LABELS[tier] ?? tier}
+            </h3>
+            <div className="overflow-x-auto mb-4">
+              <table
+                className="min-w-full text-sm"
+                aria-label={`${TIER_LABELS[tier] ?? tier} compliance summary`}
+              >
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Framework</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Coverage</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Controls</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Gaps</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Partial</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tierFrameworks.map((fw) => (
+                    <tr
+                      key={fw.id}
                       className={cn(
-                        'font-medium',
-                        fw.gapControls > 0
-                          ? 'text-[var(--danger)]'
-                          : 'text-[var(--success)]'
+                        'border-b border-[var(--border)] last:border-0',
+                        fw.id === framework.id && 'bg-[var(--bg-quaternary)]'
                       )}
                     >
-                      {fw.gapControls}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-right">
-                    <span
-                      className={cn(
-                        'font-medium',
-                        fw.partialControls > 0
-                          ? 'text-[var(--warning)]'
-                          : 'text-[var(--success)]'
-                      )}
-                    >
-                      {fw.partialControls}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                      <td className="px-3 py-2 font-medium text-[var(--foreground)]">{fw.name}</td>
+                      <td className="px-3 py-2 text-right font-mono text-[var(--foreground)]">{fw.overallCoverage}%</td>
+                      <td className="px-3 py-2 text-right text-muted-foreground">{fw.totalControls}</td>
+                      <td className="px-3 py-2 text-right">
+                        <span className={cn('font-medium', fw.gapControls > 0 ? 'text-[var(--danger)]' : 'text-[var(--success)]')}>
+                          {fw.gapControls}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <span className={cn('font-medium', fw.partialControls > 0 ? 'text-[var(--warning)]' : 'text-[var(--success)]')}>
+                          {fw.partialControls}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }

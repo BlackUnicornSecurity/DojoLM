@@ -234,7 +234,7 @@ The web interface provides 12 modules accessible via a unified sidebar navigatio
 | **NODA Dashboard** | `NODADashboard` | Homepage with configurable widget grid (20+ widgets) |
 | **Haiku Scanner** | `FindingsList`, `ModuleResults` | Real-time text scanning with pattern detection |
 | **Armory** | `FixtureExplorer`, `FixtureCategoryCard` | 1,544+ test fixtures across 30+ categories |
-| **Bushido Book** | `ComplianceCenter` | Compliance: Overview, Coverage, Gap Matrix, Audit Trail, Checklists; BAISS unified standard (32 controls, 10 categories, 6 frameworks) |
+| **Bushido Book** | `ComplianceCenter` | Compliance: Overview, Coverage, Gap Matrix, Audit Trail, Checklists, Navigator; BAISS v2.0 (45 controls, 10 categories, 28 frameworks) |
 | **LLM Dashboard** | `LLMDashboard`, `ExecutiveSummary` | Multi-provider benchmarking with SSE streaming, SARIF export |
 | **Atemi Lab** | `AdversarialLab`, `SkillsLibrary` | Adversarial testing with MCP connector, 40 skills, session recording |
 | **The Kumite** | `StrategicHub` | Strategic hub: SAGE engine, Arena battles, Mitsuke threat feed |
@@ -405,7 +405,7 @@ LLM Dashboard / LLM Jutsu ──► Fixture Selection ──► LLM Provider API
 | CrowdStrike TPI | 21 stories | Pattern comments |
 | EU AI Act | Risk-based compliance | Bushido Book |
 | ENISA | AI threat landscape | Bushido Book |
-| **BAISS** | **Unified standard** | **32 controls, 10 categories mapping all 6 frameworks above** |
+| **BAISS** | **Unified standard v2.0** | **45 controls, 10 categories mapping 28 frameworks (6 implemented + 22 expanded)** |
 
 ---
 

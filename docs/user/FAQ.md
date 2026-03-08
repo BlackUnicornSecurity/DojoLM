@@ -435,7 +435,7 @@ The NODA platform consists of 12 specialized modules:
 1. **NODA Dashboard** — Central command with customizable widgets and threat overview
 2. **Haiku Scanner** — Core prompt injection detection engine (505+ patterns, 23+ modules)
 3. **Armory** — Test fixture management, browsing, and comparison (formerly Test Lab)
-4. **Bushido Book** — Compliance center with 8 frameworks and audit trails (formerly Compliance Center)
+4. **Bushido Book** — Compliance center with 28 frameworks across 5 tiers and audit trails (formerly Compliance Center)
 5. **LLM Dashboard** — Multi-provider LLM security testing with batch execution
 6. **Atemi Lab** — Adversarial red teaming with MCP integration (formerly Adversarial Lab)
 7. **The Kumite** — Strategic analysis hub with SAGE, Arena, and Mitsuke (formerly Strategic Hub)
@@ -451,7 +451,7 @@ The Belt system ranks security posture using 7 levels inspired by martial arts: 
 
 ### What is BAISS?
 
-**BAISS** (BlackUnicorn AI Security Standard) is a unified compliance standard with 32 controls across 10 categories. It maps 6 source frameworks (OWASP, NIST, MITRE, ISO, EU AI Act, ENISA) into a single actionable checklist.
+**BAISS** (BlackUnicorn AI Security Standard) is a unified compliance standard v2.0 with 45 controls across 10 categories. It maps 28 source frameworks — including OWASP LLM Top 10, NIST AI 600-1, MITRE ATLAS, ISO 42001, EU AI Act, ENISA, plus 22 additional standards (NIST 800-218A, ISO 23894/24027/24028, Google SAIF, CISA/NCSC, SLSA, ML-BOM, OpenSSF, GDPR, and more) — into a single actionable checklist with bidirectional navigation.
 
 ### What is Black Box Analysis?
 

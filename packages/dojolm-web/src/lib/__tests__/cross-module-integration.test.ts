@@ -161,8 +161,8 @@ describe('State Persistence Integration', () => {
   });
 
   // STP-002: BAISS controls count is fixed
-  it('STP-002: BAISS controls count is 32', () => {
-    expect(BAISS_CONTROLS).toHaveLength(32);
+  it('STP-002: BAISS controls count is 45', () => {
+    expect(BAISS_CONTROLS).toHaveLength(45);
   });
 
   // STP-003: Skills count is fixed at 40
