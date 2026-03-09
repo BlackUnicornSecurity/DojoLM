@@ -42,10 +42,10 @@ const trendConfig = {
 
 // Subtle corner gradient overlays per accent (Exon-inspired, replaces thick left border)
 const accentGradients = {
-  primary: 'linear-gradient(135deg, rgba(198, 40, 40, 0.08) 0%, transparent 60%)',
-  success: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, transparent 60%)',
-  warning: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, transparent 60%)',
-  danger: 'linear-gradient(135deg, rgba(198, 40, 40, 0.12) 0%, transparent 60%)',
+  primary: 'linear-gradient(135deg, rgba(204, 58, 47, 0.08) 0%, transparent 60%)',
+  success: 'linear-gradient(135deg, rgba(52, 199, 106, 0.08) 0%, transparent 60%)',
+  warning: 'linear-gradient(135deg, rgba(229, 160, 48, 0.08) 0%, transparent 60%)',
+  danger: 'linear-gradient(135deg, rgba(204, 58, 47, 0.12) 0%, transparent 60%)',
 }
 
 const accentIconColors = {

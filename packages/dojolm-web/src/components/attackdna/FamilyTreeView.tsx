@@ -440,11 +440,48 @@ function ZoomControls({ zoom, onZoomIn, onZoomOut, onZoomReset }: {
 
 interface FamilyTreeViewProps {
   className?: string
+  families?: unknown[]
+  activeTiers?: Set<string>
 }
 
-export function FamilyTreeView({ className }: FamilyTreeViewProps) {
-  const [selectedFamilyId, setSelectedFamilyId] = useState<string>(MOCK_FAMILIES[0].id)
+function convertAPIFamilies(raw: unknown[]): TreeFamily[] {
+  if (!raw || raw.length === 0) return []
+  return raw.map((item) => {
+    const f = item as Record<string, unknown>
+    return {
+      id: String(f.id ?? ''),
+      name: String(f.name ?? 'Unknown Family'),
+      rootId: String(f.rootNodeId ?? ''),
+      nodes: Array.isArray(f.nodeIds)
+        ? (f.nodeIds as string[]).map((nodeId) => ({
+            id: nodeId,
+            content: nodeId,
+            category: String(f.category ?? 'unknown'),
+            severity: 'info',
+            source: '',
+            children: [],
+            mutations: [],
+          }))
+        : [],
+      edges: [],
+    }
+  })
+}
+
+export function FamilyTreeView({ className, families: familiesProp }: FamilyTreeViewProps) {
+  const resolvedFamilies = familiesProp && familiesProp.length > 0
+    ? convertAPIFamilies(familiesProp)
+    : MOCK_FAMILIES
+  const [selectedFamilyId, setSelectedFamilyId] = useState<string>(resolvedFamilies[0]?.id ?? '')
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null)
+
+  // Reset selection when family data source changes
+  useEffect(() => {
+    if (resolvedFamilies[0]?.id && selectedFamilyId !== resolvedFamilies[0].id) {
+      const current = resolvedFamilies.find((f) => f.id === selectedFamilyId)
+      if (!current) setSelectedFamilyId(resolvedFamilies[0].id)
+    }
+  }, [resolvedFamilies, selectedFamilyId])
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const [zoom, setZoom] = useState(1)
 
@@ -452,19 +489,20 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
   const handleZoomOut = useCallback(() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP)), [])
   const handleZoomReset = useCallback(() => setZoom(1), [])
 
-  const family = MOCK_FAMILIES.find((f) => f.id === selectedFamilyId) ?? MOCK_FAMILIES[0]
+  const family = resolvedFamilies.find((f) => f.id === selectedFamilyId) ?? resolvedFamilies[0]
 
-  // Build a lookup map from id to node
+  // All hooks must be called before any conditional return (Rules of Hooks)
   const nodeRefs = useMemo(() => {
+    if (!family) return new Map<string, TreeNode>()
     const map = new Map<string, TreeNode>()
     for (const n of family.nodes) {
       map.set(n.id, n)
     }
     return map
-  }, [family.nodes])
+  }, [family?.nodes])
 
-  // Build a flat traversal order for keyboard navigation (depth-first, with cycle guard)
   const flatOrder = useMemo((): string[] => {
+    if (!family) return []
     const order: string[] = []
     const visited = new Set<string>()
     const visit = (id: string) => {
@@ -479,7 +517,7 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
     }
     visit(family.rootId)
     return order
-  }, [family.rootId, nodeRefs])
+  }, [family?.rootId, nodeRefs])
 
   const handleKeyNav = useCallback(
     (currentId: string, direction: 'up' | 'down' | 'left' | 'right') => {
@@ -507,6 +545,18 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
   const handleCloseDetail = useCallback(() => {
     setSelectedNode(null)
   }, [])
+
+  if (!family) {
+    return (
+      <div className={cn('space-y-4', className)}>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-sm text-muted-foreground">No data — run a scan or trigger ingestion</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   const selectedNodeData: NodeData | null = selectedNode
     ? {
@@ -536,7 +586,7 @@ export function FamilyTreeView({ className }: FamilyTreeViewProps) {
               <SelectValue placeholder="Select a family" />
             </SelectTrigger>
             <SelectContent>
-              {MOCK_FAMILIES.map((f) => (
+              {resolvedFamilies.map((f) => (
                 <SelectItem key={f.id} value={f.id}>
                   {f.name} ({f.nodes.length} nodes)
                 </SelectItem>

@@ -61,10 +61,10 @@ function CoverageGauge({ value, label, size = 'md' }: { value: number; label: st
   }
 
   const getStrokeColor = (v: number) => {
-    if (v >= 90) return '#22c55e'
-    if (v >= 75) return '#eab308'
-    if (v >= 50) return '#f97316'
-    return '#ef4444'
+    if (v >= 90) return 'var(--success)'
+    if (v >= 75) return 'var(--warning)'
+    if (v >= 50) return 'var(--severity-high)'
+    return 'var(--danger)'
   }
 
   return (

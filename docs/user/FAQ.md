@@ -1,476 +1,326 @@
-# NODA Platform — Frequently Asked Questions (FAQ)
+# Frequently Asked Questions
 
-**Last Updated:** 2026-03-03
+## General
 
-This document answers common questions about NODA Platform (DojoLM), its features, usage, and troubleshooting.
+### What is NODA?
 
----
+NODA is a comprehensive LLM security testing platform that helps you detect prompt injection attacks, benchmark model security, and maintain compliance with industry frameworks like OWASP LLM Top 10 and MITRE ATLAS.
 
-## Table of Contents
+### What does "NODA" stand for?
 
-1. [General Questions](#general-questions)
-2. [Installation & Setup](#installation--setup)
-3. [Scanner Usage](#scanner-usage)
-4. [Understanding Results](#understanding-results)
-5. [Performance & Optimization](#performance--optimization)
-6. [Integration](#integration)
-7. [Development & Contributing](#development--contributing)
-8. [Troubleshooting](#troubleshooting)
+NODA stands for **N**etworked **O**perations for **D**efensive **A**I - though we mostly just call it NODA.
 
----
+### Is NODA open source?
 
-## General Questions
-
-### What is DojoLM?
-
-**NODA** (formerly DojoLM) is a comprehensive LLM red teaming and security testing platform. The name combines "Dojo" (a place for immersive training and practice in martial arts) with "LM" (Language Models), representing a focused environment for testing, training, and hardening AI systems against adversarial attacks. NODA is the platform brand encompassing 12 specialized security modules.
-
-### Who is DojoLM for?
-
-DojoLM is designed for:
-- **Security researchers** testing LLM vulnerabilities
-- **AI developers** hardening their applications against prompt injection
-- **Red teams** evaluating AI system security
-- **Compliance teams** verifying OWASP LLM Top 10 coverage
-- **LLM operators** monitoring production inputs for attacks
-
-### What is the CrowdStrike TPI Taxonomy?
-
-The **Taxonomy of Prompt Injection (TPI)** is CrowdStrike's comprehensive classification system for prompt injection attacks. It defines 21 distinct attack stories covering:
-- Direct system overrides (TPI-PRE-4)
-- Web fetch output injection (TPI-02)
-- Social engineering (TPI-06, TPI-07, TPI-08)
-- Encoding attacks (TPI-10, TPI-13, TPI-17)
-- Media metadata injection (TPI-18, TPI-20)
-- And more...
-
-DojoLM implements detection for all 21 TPI stories.
-
-### What does "DojoV2" or "Version 3.0" mean?
-
-Version 3.0 (internally called DojoV2) extends the original TPI coverage with 460+ additional fixtures covering:
-- **OWASP LLM Top 10** — 100% coverage
-- **MITRE ATLAS** tactics
-- **NIST AI RMF** risks
-- **ENISA AI** threats
-
-Version 4.0 (NODA-3, released 2026-03-06) adds 12 modules, the Belt system, BAISS unified standard, Ronin Hub, LLM Jutsu, Black Box Analysis, Adversarial Skills Library, and audio attack expansion.
-
-### Is DojoLM open source?
-
-The project is currently **UNLICENSED / Private**. See the repository for current licensing status.
-
----
+Most of NODA is open source under MIT license. The core scanner engine (bu-tpi) is source-available but not open source.
 
 ## Installation & Setup
 
 ### What are the system requirements?
 
-| Requirement | Minimum Version |
-|-------------|----------------|
-| Node.js | 20.0.0 |
-| npm | 10.0.0 |
-| TypeScript | 5.3.0 (dev dependency) |
+- Node.js 20+
+- 4GB RAM minimum (8GB recommended)
+- 10GB disk space
+- Modern browser (Chrome, Firefox, Safari, Edge)
 
-### How do I install DojoLM?
+### Can I run NODA in Docker?
+
+Yes, Docker support is available:
 
 ```bash
-git clone https://github.com/dojolm/dojolm.git
-cd dojolm
+docker build -t dojolm:latest .
+docker run -p 3000:3000 -p 8089:8089 dojolm:latest
+```
+
+### How do I update NODA?
+
+```bash
+git pull
 npm install
-```
-
-This installs dependencies for all workspaces. Node modules are hoisted to the root where possible.
-
-### Do I need to build anything?
-
-**No build step is required** for the scanner. The TypeScript files are executed directly via `tsx`:
-
-```bash
-npm start --workspace=packages/bu-tpi
-```
-
-The web UI (`dojolm-web`) does require a build for production:
-
-```bash
-cd packages/dojolm-web
 npm run build
 ```
 
-### What are the fixture files and do I need to generate them?
+### Can I run NODA offline?
 
-Fixtures are 1,544 attack artifact files used for testing. They should already be present in `packages/bu-tpi/fixtures/`. If not, or after making changes to `generate-fixtures.ts`, run:
+Yes! The scanner works completely offline. LLM testing requires internet connection unless using local models (Ollama, LM Studio).
 
-```bash
-npm run generate --workspace=packages/bu-tpi
-```
+## Scanner & Detection
 
-> ⚠️ Always run `npm run generate` after cloning and after any fixture changes.
+### How many patterns does the scanner detect?
 
-### Which port does the scanner run on?
+The scanner includes **505+ detection patterns** across 47 pattern groups, covering:
+- Prompt injection
+- Jailbreak attempts
+- Encoded payloads
+- Multilingual attacks
+- Social engineering
+- And more
 
-The scanner API runs on **port 8089** by default. You can specify a custom port:
+### What's the detection speed?
 
-```bash
-npx tsx packages/bu-tpi/src/serve.ts 9000
-```
+The scanner operates in **sub-millisecond** time for typical inputs. Average scan time is 0.5ms.
 
-### How do I run both the scanner and web UI?
+### Can I add custom patterns?
 
-You need two terminals:
+Yes! Edit `packages/bu-tpi/src/patterns.ts` and add your patterns following the existing format.
 
-```bash
-# Terminal 1: Scanner API (required by web app)
-npm start --workspace=packages/bu-tpi
+### Does the scanner support non-English text?
 
-# Terminal 2: Next.js dev server
-npm run dev:web
-```
+Yes, the scanner includes multilingual detection capabilities and Unicode normalization.
 
-The web UI will be available at `http://localhost:3000`.
+## LLM Testing
 
----
+### Which LLM providers are supported?
 
-## Scanner Usage
+- OpenAI (GPT-4, GPT-3.5)
+- Anthropic (Claude)
+- Ollama (local models)
+- LM Studio
+- Custom OpenAI-compatible endpoints
 
-### How do I scan text for prompt injection?
+### Do I need API keys?
 
-**Via API:**
-```bash
-curl "http://localhost:8089/api/scan?text=ignore+all+previous+instructions"
-```
+Only for cloud providers (OpenAI, Anthropic). Local models (Ollama, LM Studio) don't require keys.
 
-**Via Web UI:**
-1. Open `http://localhost:3000`
-2. Go to the **Haiku Scanner** module
-3. Paste your text
-4. Click "Scan"
+### What's the belt ranking system?
 
-### What are the engine filters?
+Models are ranked by security score:
+- White Belt: < 30
+- Yellow Belt: 30-49
+- Green Belt: 50-64
+- Blue Belt: 65-79
+- Purple Belt: 80-89
+- Brown Belt: 90-94
+- Black Belt: ≥ 95
 
-Engine filters let you scope detection to specific attack types:
+### Can I run tests in parallel?
 
-| Engine | Detects |
+Yes! Batch testing supports concurrent execution. Default limit is 5 concurrent tests, configurable via environment.
+
+## Security
+
+### Is NODA secure?
+
+Yes. NODA implements:
+- Path traversal protection
+- Rate limiting
+- Input validation
+- Content Security Policy
+- Secure headers
+
+See [security documentation](../../team/security/) for details.
+
+### Where is my data stored?
+
+All data is stored locally in the `data/` directory. No data is sent to external servers unless you configure external LLM providers.
+
+### Can I use NODA in production?
+
+Yes, but we recommend:
+- Running behind a reverse proxy (nginx/caddy)
+- Enabling authentication
+- Setting up regular backups
+- Reviewing security hardening guide
+
+### How do I report security vulnerabilities?
+
+Email security@dojolm.dev with details. See our [security policy](../../team/security/policies/VULNERABILITY-DISCLOSURE.md).
+
+## Compliance
+
+### Which frameworks are supported?
+
+NODA supports 8 compliance frameworks:
+- OWASP LLM Top 10 (2025)
+- MITRE ATLAS v4
+- NIST AI RMF
+- NIST AI 600-1
+- ISO 42001
+- ENISA AI
+- EU AI Act (GPAI)
+- BAISS
+
+### How do I generate compliance reports?
+
+1. Go to **Bushido Book**
+2. Select your framework
+3. Review checklist completion
+4. Click **Export Report**
+
+### Can I add custom frameworks?
+
+Yes! Contact us for framework customization options.
+
+## Features
+
+### What's the difference between modules?
+
+| Module | Purpose |
 |--------|---------|
-| Prompt Injection | Direct override attempts, system hijacking |
-| Jailbreak | DAN and roleplay-based restriction bypass |
-| Unicode | Zero-width chars, confusable substitution |
-| Encoding | Base64, ROT13, URL encoding, steganography |
-| TPI | Advanced attack classes: OCR adversarial, context overload |
-
-### What happens if I don't select any engine filters?
-
-If no engines are selected, **all engines are active** — the scanner uses its full detection capability.
-
-### How do I scan a fixture file?
-
-```bash
-curl "http://localhost:8089/api/scan-fixture?path=social/authority-impersonation.txt"
-```
-
-### Can I read the raw content of a fixture?
-
-Yes:
-
-```bash
-curl "http://localhost:8089/api/read-fixture?path=social/authority-impersonation.txt"
-```
-
-For binary files (images, audio), this returns metadata including hex preview and extracted text.
-
----
-
-## Understanding Results
-
-### What's the difference between BLOCK, WARN, and ALLOW?
-
-| Verdict | Meaning | When It Triggers |
-|---------|---------|------------------|
-| **BLOCK** | Confirmed injection attempt | Any CRITICAL severity finding |
-| **WARN** | Suspicious — review before use | Any WARNING finding (no CRITICAL) |
-| **ALLOW** | Clean text | No findings, or only INFO |
-
-### What is cross-category escalation?
-
-Even if no single finding is high severity, DojoLM will escalate to WARNING if:
-- More than **5 INFO findings** across **more than 3 different categories**
-
-This catches fragmented and multi-vector attacks that might otherwise slip through.
-
-### What do the severity levels mean?
-
-| Severity | Description | Example |
-|----------|-------------|---------|
-| **CRITICAL** | Direct system compromise | "Ignore all previous instructions" |
-| **WARNING** | Suspicious patterns requiring review | Encoded payloads, unusual Unicode |
-| **INFO** | Notable but not inherently dangerous | Common formatting patterns |
-
-### Why did my clean text get flagged?
-
-Possible reasons:
-
-1. **False positive** — A pattern is too broad. Report this as a bug.
-2. **Encoded content** — Base64 or other encoding in your text decodes to suspicious content
-3. **Special characters** — Zero-width characters or Unicode confusables
-4. **Structure similarity** — Your text structurally resembles an attack (e.g., many instruction-like sentences)
-
-To verify: Check if the finding makes sense given your text content. If not, it may be a false positive that needs pattern tuning.
-
-### What's the difference between "pattern" and "engine"?
-
-- **Pattern** — A specific regex rule (e.g., `ignore_instructions`)
-- **Engine** — A category of detection (e.g., "Prompt Injection", "Unicode")
-
-One engine contains many patterns. For example, the "Prompt Injection" engine includes patterns for system override, role hijacking, and instruction ignoring.
-
-### What TPI stories are covered?
-
-All 21 TPI stories are covered:
-
-| Story | Name | Coverage |
-|-------|------|----------|
-| TPI-PRE-4 | Settings.json Write Protection | ✅ Patterns + Fixtures |
-| TPI-02 | WebFetch Output Injection | ✅ Patterns + Fixtures |
-| TPI-03 | Agent-to-Agent Output Validation | ✅ Patterns + Fixtures |
-| TPI-04 | Context Window Injection | ✅ Patterns + Fixtures |
-| TPI-05 | WebSearch Output Validation | ✅ Patterns + Fixtures |
-| TPI-06 | Social Engineering Detection | ✅ Patterns + Fixtures |
-| TPI-07 | Trust & Rapport Exploitation | ✅ Patterns + Fixtures |
-| TPI-08 | Emotional Manipulation | ✅ Patterns + Fixtures |
-| TPI-09 | Code-Format Injection | ✅ Patterns + Fixtures |
-| TPI-10 | Character-Level Encoding | ✅ Patterns + Decoders |
-| TPI-11 | Context Overload | ✅ Patterns + Heuristics |
-| TPI-12 | Synonym Substitution | ✅ Patterns + Fixtures |
-| TPI-13 | Payload Fragmentation | ✅ Patterns + Fixtures |
-| TPI-14 | Control Tokens & Boundaries | ✅ Patterns + Fixtures |
-| TPI-15 | Multilingual Injection | ✅ 40+ patterns (10 langs) |
-| TPI-17 | Whitespace & Formatting Evasion | ✅ Patterns + Fixtures |
-| TPI-18 | Image Metadata Injection | ✅ Patterns + Fixtures |
-| TPI-19 | Format Mismatch / Polyglots | ✅ Patterns + Binary Analysis |
-| TPI-20 | Audio/Media Metadata | ✅ Patterns + Fixtures |
-| TPI-21 | Untrusted Source Indicators | ✅ Patterns + Fixtures |
-
----
-
-## Performance & Optimization
-
-### How fast is the scanner?
-
-Scanning typically completes in **1-3 milliseconds** for text inputs up to 100KB. The API response includes an `elapsed` field showing the exact time.
-
-### What's the maximum input size?
-
-**100KB** maximum on `/api/scan`. Larger inputs will be rejected with a 413 error.
-
-### Does the scanner use a lot of memory?
-
-No. The scanner:
-- Has **zero runtime dependencies**
-- Loads patterns once at startup
-- Processes text in a single pass
-- Uses streaming for binary file analysis
-
-### How many patterns are there?
-
-- **505+ patterns** across **47 groups**
-- Plus **6 heuristic detectors** (Base64, HTML injection, Context overload, etc.)
-
-### What are the rate limits?
-
-**120 requests per 60 seconds per IP**. This applies to all endpoints.
-
----
-
-## Integration
-
-### How do I integrate DojoLM with my LLM application?
-
-**Option 1: Pre-filter inputs**
-```javascript
-const result = await fetch('http://localhost:8089/api/scan?text=' + encodeURIComponent(userInput));
-const data = await result.json();
-
-if (data.verdict === 'BLOCK') {
-  return "Input rejected: potential prompt injection detected";
-}
-// Proceed to LLM
-```
-
-**Option 2: Post-process LLM outputs**
-Scan LLM outputs before displaying them to users, especially for agent-to-agent communication.
-
-**Option 3: Use as a benchmark**
-Test your LLM against the fixture library to understand its vulnerabilities.
-
-### Can I use DojoLM with Ollama?
-
-Yes. Add the scanner endpoints to your Ollama system prompt (see [Integrating with a Local LLM](./PLATFORM_GUIDE.md#integrating-with-a-local-llm) in the Platform Guide).
-
-### Can I deploy to Vercel?
-
-The **web UI** (`dojolm-web`) can be deployed to Vercel. The **scanner API** (`bu-tpi`) is a long-running Node.js process and is not suited for serverless deployment. Host it on a persistent server and point the web app's `SCANNER_API_URL` at it.
-
-### What's the Docker setup?
-
-See `packages/dojolm-web/Dockerfile` for the web UI Docker configuration. The scanner can run in a container but requires the fixture files to be present.
-
----
-
-## Development & Contributing
-
-### How do I add a new pattern?
-
-1. Add the regex pattern to the appropriate pattern group in `packages/bu-tpi/src/scanner.ts`
-2. Create an attack fixture that triggers the pattern
-3. Create a clean fixture that does NOT trigger it
-4. Run the regression suite: `npm run test:api`
-5. Run the false-positive suite to ensure no regressions
-
-See [github/CONTRIBUTING.md](../../github/CONTRIBUTING.md) for detailed guidelines.
-
-### What should I read before contributing?
-
-**Read `team/lessonslearned.md`** — Every non-trivial bug we've hit is documented there with root cause and prevention.
-
-### How do I run the tests?
-
-```bash
-# TypeScript check
-npm run typecheck
-
-# Start scanner (required for API tests)
-npm start --workspace=packages/bu-tpi
-
-# Full regression
-curl "http://localhost:8089/api/run-tests?filter=regression"
-
-# False positive check
-curl "http://localhost:8089/api/run-tests?filter=false-positive"
-```
-
-### What's the monorepo structure?
-
-```
-packages/
-├── bu-tpi/              # Core scanner (TypeScript, zero deps, port 8089)
-├── dojolm-scanner/      # Enhanced scanner package (web integration)
-├── dojolm-web/          # Next.js web app (port 3000)
-├── dojolm-mcp/          # Model Context Protocol server
-└── bmad-cybersec/       # Multi-agent cybersecurity operations framework
-```
-
----
+| Haiku Scanner | Quick text scanning |
+| Armory | Browse attack fixtures |
+| Bushido Book | Compliance tracking |
+| LLM Dashboard | Model testing |
+| Atemi Lab | Adversarial testing |
+| The Kumite | Strategic analysis |
+| Amaterasu DNA | Attack intelligence |
+| Hattori Guard | I/O protection |
+| Ronin Hub | Bug bounty |
+| LLM Jutsu | Test command center |
+
+### What's Amaterasu DNA?
+
+DNA is an attack intelligence system with three tiers:
+- **Dojo Local:** Your internal findings
+- **DojoLM Global:** Cross-instance intelligence (coming soon)
+- **Master:** External threat feeds (MITRE, OWASP, NVD)
+
+### What's the Arena?
+
+The Arena is a gamified battle system where AI models compete:
+- **CTF:** Capture The Flag
+- **KOTH:** King of the Hill
+- **RvB:** Red vs Blue
+
+### What's Hattori Guard?
+
+Hattori Guard provides input/output protection with 4 modes:
+- **Audit:** Log only
+- **Block:** Block attacks
+- **Sanitize:** Clean inputs
+- **Honeypot:** Deceptive responses
 
 ## Troubleshooting
 
-### "api/fixtures returns empty or 404"
+### Scanner returns no findings
 
-**Cause:** Fixtures manifest not generated  
-**Fix:**
+1. Check text is not empty
+2. Verify scanner health in Admin panel
+3. Review pattern configuration
+
+### LLM tests timeout
+
+1. Check provider connection
+2. Increase timeout in settings
+3. Try with smaller model
+
+### Dashboard not loading
+
+1. Clear browser cache
+2. Check API is accessible
+3. Review browser console for errors
+
+### Batch tests fail
+
+1. Check concurrent limit
+2. Verify provider rate limits
+3. Review logs for errors
+
+## API & Integration
+
+### Is there an API?
+
+Yes! NODA provides RESTful APIs for all functionality. See [API Reference](API_REFERENCE.md).
+
+### Can I integrate NODA into my CI/CD?
+
+Yes, using the API:
+
 ```bash
-npm run generate --workspace=packages/bu-tpi
+curl -X POST http://localhost:8089/api/scan \
+  -H "Content-Type: application/json" \
+  -d '{"text": "'$INPUT_TEXT'"}'
 ```
 
-### "Engine filters have no effect"
+### Are there SDKs?
 
-**Cause:** Stale build or wrong engine IDs  
-**Fix:** 
-1. Verify `ENGINE_FILTERS` in `constants.ts` use exact engine names: `"Prompt Injection"`, `"Jailbreak"`, `"Unicode"`, `"Encoding"`, `"TPI"`
-2. Rebuild the web app: `rm -rf .next && npm run build`
+Not yet, but the REST API is straightforward to use with any HTTP client.
 
-### "Scan returns ALLOW for obvious injection"
+### Can I use webhooks?
 
-**Cause:** Empty engines array passed to scanner  
-**Fix:** Check that your code uses the guard: `engines && engines.length > 0` before passing the engines option
+Webhook support is planned for a future release.
 
-### "Web app shows 500 for static JS chunk"
+## Performance
 
-**Cause:** Stale `.next` cache  
-**Fix:**
-```bash
-cd packages/dojolm-web
-rm -rf .next
-npm run build
-```
+### How much RAM does NODA need?
 
-### "Scanner detects injection in clean content"
+- Minimum: 4GB
+- Recommended: 8GB
+- For heavy batch testing: 16GB
 
-**Cause:** False positive in fixtures or new pattern too broad  
-**Fix:**
-1. Run false-positive suite: `curl "http://localhost:8089/api/run-tests?filter=false-positive"`
-2. Check new patterns against clean English text
+### Can NODA handle high traffic?
 
-### "EEXIST error on LLM execution"
+Yes, with proper configuration:
+- Rate limiting: 100 req/min default
+- Concurrent LLM tests: 5 default (configurable)
+- Stateless design supports horizontal scaling
 
-**Cause:** Path construction error (file path treated as directory)  
-**Fix:** Use `path.dirname()` for file-path constants
+### How do I optimize performance?
 
-### "TypeScript errors on build"
+1. Use local models for testing
+2. Adjust concurrent limits
+3. Enable caching
+4. Use SSD for data storage
 
-**Cause:** Strict mode violations  
-**Fix:**
-- Use `buf.readUInt8(i)` instead of `buf[i]` for buffer access
-- Use conditional spread for optional properties: `...(p.weight !== undefined && { weight: p.weight })`
+## Contributing
 
-### "Fixture scan returns empty findings for binary file"
+### How can I contribute?
 
-**Cause:** Binary file read as UTF-8 text  
-**Fix:** Ensure files are read as Buffer first, magic bytes checked, then decoded
+See [Contributing Guide](../../github/CONTRIBUTING.md):
+1. Fork the repository
+2. Create a branch
+3. Make changes
+4. Submit PR
 
-### "LLM Dashboard can't connect to my model"
+### What can I contribute?
 
-**Check:**
-1. For Ollama: Is it running? `ollama serve`
-2. Is `OLLAMA_BASE_URL` set correctly in `.env.local`?
-3. For cloud providers: Is your API key set?
+- New detection patterns
+- Attack fixtures
+- Bug fixes
+- Documentation
+- Feature requests
 
----
+### Is there a contributor license agreement?
 
-## NODA Modules
+No, but you must agree to license your contributions under MIT.
 
-### What are the NODA modules?
+## Support
 
-The NODA platform consists of 12 specialized modules:
+### Where can I get help?
 
-1. **NODA Dashboard** — Central command with customizable widgets and threat overview
-2. **Haiku Scanner** — Core prompt injection detection engine (505+ patterns, 23+ modules)
-3. **Armory** — Test fixture management, browsing, and comparison (formerly Test Lab)
-4. **Bushido Book** — Compliance center with 28 frameworks across 5 tiers and audit trails (formerly Compliance Center)
-5. **LLM Dashboard** — Multi-provider LLM security testing with batch execution
-6. **Atemi Lab** — Adversarial red teaming with MCP integration (formerly Adversarial Lab)
-7. **The Kumite** — Strategic analysis hub with SAGE, Arena, and Mitsuke (formerly Strategic Hub)
-8. **Amaterasu DNA** — Attack lineage analysis with family trees and Black Box Analysis (formerly AttackDNA)
-9. **Hattori Guard** — Input/output protection with 4 guard modes (formerly LLM Guard)
-10. **Ronin Hub** — Bug bounty platform for security researchers
-11. **LLM Jutsu** — LLM testing command center with model cards and aggregation
-12. **Admin** — System settings, API keys, export, and scanner configuration
+- Documentation: [docs/](../)
+- GitHub Issues: Bug reports and features
+- Email: support@dojolm.dev
 
-### What is the Belt system?
+### Is there paid support?
 
-The Belt system ranks security posture using 7 levels inspired by martial arts: White, Yellow, Orange, Green, Blue, Brown, and Black. Belt rank is calculated based on overall security scores across scanner, compliance, and LLM testing results.
+Enterprise support options are available. Contact sales@dojolm.dev.
 
-### What is BAISS?
+### How do I report bugs?
 
-**BAISS** (BlackUnicorn AI Security Standard) is a unified compliance standard v2.0 with 45 controls across 10 categories. It maps 28 source frameworks — including OWASP LLM Top 10, NIST AI 600-1, MITRE ATLAS, ISO 42001, EU AI Act, ENISA, plus 22 additional standards (NIST 800-218A, ISO 23894/24027/24028, Google SAIF, CISA/NCSC, SLSA, ML-BOM, OpenSSF, GDPR, and more) — into a single actionable checklist with bidirectional navigation.
+Open a GitHub issue with:
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Environment details
 
-### What is Black Box Analysis?
+## Roadmap
 
-Black Box Analysis is an ablation study engine in the Amaterasu DNA module. It systematically removes components from attack patterns to identify which elements are essential for detection, producing token heatmaps and impact charts.
+### What's coming next?
 
-### What is the Adversarial Skills Library?
+See [KASHIWA Update](../../team/docs/KASHIWA-UPDATE.md) for current development.
 
-The Adversarial Skills Library in Atemi Lab provides 40 adversarial skills organized across 6 playbooks. Skills are categorized by difficulty, OWASP mapping, and attack type, and execute in a sandboxed environment with structured severity output.
+Planned features:
+- DuckDB integration for analytics
+- Real-time collaboration
+- Advanced visualizations
+- More LLM providers
+- Additional compliance frameworks
 
----
+### How can I request features?
 
-## Additional Resources
-
-- [Platform Guide](./PLATFORM_GUIDE.md) — Complete user documentation
-- [Contributing Guide](../../github/CONTRIBUTING.md) — Contribution guidelines
-- [Testing Checklist](../app/testing-checklist.md) — Testing procedures
-- [Deployment Guide](../../internal/DEPLOYMENT_GUIDE.md) — Deployment instructions
-- [Lessons Learned](../../internal/LESSONS_DIGEST.md) — Engineering lessons
+Open a GitHub issue with the "feature request" label.
 
 ---
 
-*Can't find your question? Open a GitHub Discussion or check the internal documentation in `internal/`.*
+**Didn't find your answer?** Contact support@dojolm.dev

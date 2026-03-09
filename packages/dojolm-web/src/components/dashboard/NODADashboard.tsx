@@ -5,16 +5,16 @@
  * Purpose: Main dashboard layout engine — reads config, renders visible widgets in sections
  * Story: TPI-NODA-1.5.1, TPI-NODA-9.5
  * Index:
- * - WIDGET_COMPONENTS map (line 24)
- * - WIDGET_META map (line 63)
- * - SECTION_DEFS (line 82)
- * - WidgetShell (line 102)
- * - DashboardContent (line 126)
- * - NODADashboard (line 183)
+ * - WIDGET_COMPONENTS map (line 37)
+ * - WIDGET_META map (line 77)
+ * - SECTION_DEFS (line 92)
+ * - WidgetShell (line 115)
+ * - DashboardContent (line 138)
+ * - NODADashboard (line 218)
  */
 
 import { Suspense, useState, useRef, lazy, type ComponentType } from 'react'
-import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot } from './DashboardConfigContext'
+import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot, type WidgetSize } from './DashboardConfigContext'
 import { DashboardCustomizer } from './DashboardCustomizer'
 import { WidgetMetaProvider } from './WidgetCard'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -26,7 +26,7 @@ import type { GlowCardProps } from '@/components/ui/GlowCard'
 /** Skeleton placeholder for lazy-loaded widgets */
 function WidgetSkeleton() {
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse" aria-busy="true" aria-hidden="true">
+    <div className="rounded-xl border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse" aria-busy="true" aria-hidden="true">
       <div className="h-4 w-24 bg-muted rounded mb-3" />
       <div className="h-20 bg-muted/50 rounded" />
     </div>
@@ -98,14 +98,17 @@ const SECTION_DEFS: { label: string; ids: string[] }[] = [
 /** Set of all widget IDs assigned to a section */
 const SECTIONED_IDS = new Set(SECTION_DEFS.flatMap(s => s.ids))
 
-/** Grid size class mapping */
-function getSizeClass(size: WidgetSlot['size']): string {
-  switch (size) {
-    case 'full': return 'col-span-full'
-    case 'half': return 'col-span-full md:col-span-1'
-    case 'third': return 'col-span-full md:col-span-1 lg:col-span-1'
-    default: return 'col-span-full md:col-span-1'
+/** Grid size class mapping — 12-column bento-box layout */
+function getSizeClass(size: WidgetSize, rowSpan?: 1 | 2): string {
+  const colClass: Record<WidgetSize, string> = {
+    3:  'col-span-12 sm:col-span-6 lg:col-span-3',
+    4:  'col-span-12 sm:col-span-6 lg:col-span-4',
+    6:  'col-span-12 md:col-span-6',
+    8:  'col-span-12 lg:col-span-8',
+    12: 'col-span-12',
   }
+  const row = rowSpan === 2 ? ' row-span-2' : ''
+  return (colClass[size] ?? 'col-span-12 md:col-span-6') + row
 }
 
 /** Single widget shell with error boundary, suspense, and priority/glow context */
@@ -116,13 +119,13 @@ function WidgetShell({ slot }: { slot: WidgetSlot }) {
   const meta = WIDGET_META[slot.id] ?? DEFAULT_META
 
   return (
-    <div className={getSizeClass(slot.size)}>
+    <div className={getSizeClass(slot.size, slot.rowSpan)}>
       <ErrorBoundary
         fallbackTitle={`Widget Error`}
         fallbackDescription={`Unable to load this widget. Try refreshing.`}
       >
         <Suspense fallback={<WidgetSkeleton />}>
-          <WidgetMetaProvider priority={meta.priority} glow={meta.glow}>
+          <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2}>
             <Widget />
           </WidgetMetaProvider>
         </Suspense>
@@ -147,11 +150,11 @@ function DashboardContent() {
   const unsectionedWidgets = visibleWidgets.filter(w => !SECTIONED_IDS.has(w.id))
 
   return (
-    <div className="space-y-6" aria-live="polite" aria-atomic="false">
+    <div className="space-y-6 max-w-[1400px] mx-auto" aria-live="polite" aria-atomic="false">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Dashboard</h2>
+          <h2 className="text-xl font-bold tracking-tight">Dashboard</h2>
           <p className="text-sm text-muted-foreground">System overview and quick actions</p>
         </div>
         <Button
@@ -176,12 +179,12 @@ function DashboardContent() {
         if (sectionSlots.length === 0) return null
 
         return (
-          <div key={section.label} className={cn(sectionIdx > 0 && 'mt-8')}>
+          <div key={section.label} className={cn(sectionIdx > 0 && 'mt-10')}>
             {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" />}
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               {section.label}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+            <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)] stagger-children">
               {sectionSlots.map(slot => (
                 <WidgetShell key={slot.id} slot={slot} />
               ))}
@@ -193,7 +196,7 @@ function DashboardContent() {
       {/* Unsectioned widgets (fallback) */}
       {unsectionedWidgets.length > 0 && (
         <div className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)]">
             {unsectionedWidgets.map(slot => (
               <WidgetShell key={slot.id} slot={slot} />
             ))}

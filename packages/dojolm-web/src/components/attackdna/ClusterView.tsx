@@ -396,9 +396,36 @@ function ClusterCard({ cluster, isExpanded, onToggle }: ClusterCardProps) {
 
 interface ClusterViewProps {
   className?: string
+  clusters?: unknown[]
+  activeTiers?: Set<string>
 }
 
-export function ClusterView({ className }: ClusterViewProps) {
+function convertAPIClusters(raw: unknown[]): Cluster[] {
+  if (!raw || raw.length === 0) return []
+  return raw.map((item) => {
+    const c = item as Record<string, unknown>
+    return {
+      id: String(c.id ?? ''),
+      label: String(c.category ?? 'Unknown Cluster'),
+      nodeCount: Array.isArray(c.nodeIds) ? c.nodeIds.length : 0,
+      avgSimilarity: typeof c.avgSimilarity === 'number' ? c.avgSimilarity : 0,
+      primaryCategory: String(c.category ?? 'unknown'),
+      members: Array.isArray(c.nodeIds)
+        ? (c.nodeIds as string[]).slice(0, 5).map((nodeId) => ({
+            id: nodeId,
+            category: String(c.category ?? 'unknown'),
+            severity: 'info',
+            content: nodeId,
+          }))
+        : [],
+    }
+  })
+}
+
+export function ClusterView({ className, clusters: clustersProp }: ClusterViewProps) {
+  const resolvedClusters = clustersProp && clustersProp.length > 0
+    ? convertAPIClusters(clustersProp)
+    : MOCK_CLUSTERS
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set())
 
   const toggleCluster = useCallback((id: string) => {
@@ -413,6 +440,18 @@ export function ClusterView({ className }: ClusterViewProps) {
     })
   }, [])
 
+  if (resolvedClusters.length === 0) {
+    return (
+      <div className={cn('space-y-4', className)}>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-sm text-muted-foreground">No data — run a scan or trigger ingestion</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className={cn('space-y-4', className)}>
       {/* Legend */}
@@ -422,16 +461,16 @@ export function ClusterView({ className }: ClusterViewProps) {
       <div className="flex items-center gap-3 flex-wrap">
         <Layers className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />
         <span className="text-sm font-medium text-[var(--foreground)]">
-          {MOCK_CLUSTERS.length} clusters detected
+          {resolvedClusters.length} clusters detected
         </span>
         <span className="text-xs text-muted-foreground">
-          ({MOCK_CLUSTERS.reduce((sum, c) => sum + c.nodeCount, 0)} total nodes)
+          ({resolvedClusters.reduce((sum, c) => sum + c.nodeCount, 0)} total nodes)
         </span>
       </div>
 
       {/* Cluster Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {MOCK_CLUSTERS.map((cluster) => (
+        {resolvedClusters.map((cluster) => (
           <ClusterCard
             key={cluster.id}
             cluster={cluster}

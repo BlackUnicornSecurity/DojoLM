@@ -41,7 +41,8 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
   // Always initialize to 'dashboard' for SSR/client hydration parity (H3)
   const [activeTab, setActiveTabState] = useState<NavId>('dashboard')
 
-  /** Wrapped setter that also updates the URL hash */
+/** Wrapped setter that also updates the URL hash.
+   *  Uses replaceState (no hashchange event fired), so no guard needed. */
   const setActiveTab = useCallback((tab: NavId) => {
     setActiveTabState(tab)
     if (typeof window !== 'undefined') {

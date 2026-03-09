@@ -1,25 +1,9 @@
-/**
- * File: ArenaBrowser.tsx
- * Purpose: Battle Arena match browser with leaderboard and match detail view
- * Story: S75
- * Index:
- * - GameMode type (line 22)
- * - MatchStatus type (line 23)
- * - AgentRole type (line 24)
- * - ArenaMatch interface (line 26)
- * - ArenaAgent interface (line 38)
- * - MatchEvent interface (line 47)
- * - LeaderboardEntry interface (line 54)
- * - Mock data (line 62)
- * - ArenaBrowser component (line 190)
- * - MatchTable component (line 278)
- * - MatchDetailPanel component (line 348)
- * - LeaderboardSidebar component (line 446)
- */
-
 'use client'
 
-import { useState, useMemo } from 'react'
+// ArenaBrowser — Battle Arena match browser with leaderboard, match detail, wizard, and live view
+// Story: S75 (original), 15.5 (wizard + API integration)
+
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -46,31 +30,43 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
+  Plus,
+  Loader2,
+  Download,
 } from 'lucide-react'
+import type {
+  GameMode,
+  MatchStatus,
+  ArenaMatch as ArenaMatchType,
+  MatchConfig,
+  MatchFighter,
+  WarriorCard as WarriorCardType,
+} from '@/lib/arena-types'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { MatchCreationWizard } from './arena/MatchCreationWizard'
+import { LiveMatchView } from './arena/LiveMatchView'
+import { WarriorCardGrid } from './arena/WarriorCardGrid'
+import { BattleLogExporter } from './arena/BattleLogExporter'
 
-type GameMode = 'CTF' | 'KOTH' | 'RvB'
-type MatchStatus = 'running' | 'completed' | 'aborted'
-type AgentRole = 'attacker' | 'defender' | 'observer'
+// ===========================================================================
+// Display Types (for match table — adapts ArenaMatch to display format)
+// ===========================================================================
 
-interface ArenaMatch {
+type FighterRole = 'attacker' | 'defender'
+
+interface DisplayMatch {
   id: string
-  agents: { name: string; role: AgentRole }[]
+  agents: { name: string; role: FighterRole }[]
   mode: GameMode
   status: MatchStatus
   winner: string | null
   duration: string
   rounds: number
   startedAt: string
-  violations: number
+  raw: ArenaMatchType
 }
 
-interface ArenaAgent {
-  name: string
-  role: AgentRole
-  score: number
-}
-
-interface MatchEvent {
+interface DisplayEvent {
   id: string
   round: number
   timestamp: string
@@ -79,131 +75,14 @@ interface MatchEvent {
   description: string
 }
 
-interface LeaderboardEntry {
-  rank: number
-  name: string
-  wins: number
-  losses: number
-  draws: number
-  score: number
-  winRate: number
+// ===========================================================================
+// Display Helpers
+// ===========================================================================
+
+const ROLE_CONFIG: Record<FighterRole, { icon: typeof Swords; color: string }> = {
+  attacker: { icon: Swords, color: 'text-[var(--danger)]' },
+  defender: { icon: Shield, color: 'text-[var(--success)]' },
 }
-
-// ---------------------------------------------------------------------------
-// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
-// ---------------------------------------------------------------------------
-
-const MOCK_MATCHES: ArenaMatch[] = [
-  {
-    id: 'M-001',
-    agents: [
-      { name: 'RedStrike-v3', role: 'attacker' },
-      { name: 'Sentinel-v4', role: 'defender' },
-    ],
-    mode: 'CTF',
-    status: 'running',
-    winner: null,
-    duration: '14m 32s',
-    rounds: 7,
-    startedAt: '2 min ago',
-    violations: 0,
-  },
-  {
-    id: 'M-002',
-    agents: [
-      { name: 'ChaosBot-v2', role: 'attacker' },
-      { name: 'Bastion-v1', role: 'defender' },
-      { name: 'Watcher-v1', role: 'observer' },
-    ],
-    mode: 'KOTH',
-    status: 'running',
-    winner: null,
-    duration: '8m 15s',
-    rounds: 4,
-    startedAt: '8 min ago',
-    violations: 1,
-  },
-  {
-    id: 'M-003',
-    agents: [
-      { name: 'Phantom-v2', role: 'attacker' },
-      { name: 'IronWall-v3', role: 'defender' },
-    ],
-    mode: 'RvB',
-    status: 'completed',
-    winner: 'IronWall-v3',
-    duration: '22m 47s',
-    rounds: 12,
-    startedAt: '35 min ago',
-    violations: 2,
-  },
-  {
-    id: 'M-004',
-    agents: [
-      { name: 'RedStrike-v3', role: 'attacker' },
-      { name: 'Guardian-v2', role: 'defender' },
-    ],
-    mode: 'CTF',
-    status: 'completed',
-    winner: 'RedStrike-v3',
-    duration: '18m 03s',
-    rounds: 10,
-    startedAt: '1 hour ago',
-    violations: 0,
-  },
-  {
-    id: 'M-005',
-    agents: [
-      { name: 'ShadowNet-v1', role: 'attacker' },
-      { name: 'Sentinel-v4', role: 'defender' },
-    ],
-    mode: 'KOTH',
-    status: 'completed',
-    winner: 'Sentinel-v4',
-    duration: '25m 11s',
-    rounds: 15,
-    startedAt: '2 hours ago',
-    violations: 3,
-  },
-  {
-    id: 'M-006',
-    agents: [
-      { name: 'ChaosBot-v2', role: 'attacker' },
-      { name: 'IronWall-v3', role: 'defender' },
-    ],
-    mode: 'RvB',
-    status: 'aborted',
-    winner: null,
-    duration: '3m 44s',
-    rounds: 2,
-    startedAt: '3 hours ago',
-    violations: 5,
-  },
-]
-
-const MOCK_MATCH_EVENTS: MatchEvent[] = [
-  { id: 'e1', round: 1, timestamp: '00:00:12', type: 'attack', agent: 'RedStrike-v3', description: 'Launched delimiter-break probe against system prompt boundary' },
-  { id: 'e2', round: 1, timestamp: '00:00:14', type: 'defend', agent: 'Sentinel-v4', description: 'Detected and blocked delimiter injection attempt' },
-  { id: 'e3', round: 1, timestamp: '00:00:15', type: 'score', agent: 'Sentinel-v4', description: 'Defense score +10 for successful block' },
-  { id: 'e4', round: 2, timestamp: '00:02:33', type: 'attack', agent: 'RedStrike-v3', description: 'Deployed Base64-encoded role swap payload' },
-  { id: 'e5', round: 2, timestamp: '00:02:35', type: 'defend', agent: 'Sentinel-v4', description: 'Decoded and neutralized encoded payload' },
-  { id: 'e6', round: 3, timestamp: '00:05:01', type: 'attack', agent: 'RedStrike-v3', description: 'Context injection via conversation history manipulation' },
-  { id: 'e7', round: 3, timestamp: '00:05:04', type: 'flag_capture', agent: 'RedStrike-v3', description: 'Captured flag: Bypassed context boundary check' },
-  { id: 'e8', round: 3, timestamp: '00:05:04', type: 'score', agent: 'RedStrike-v3', description: 'Attack score +25 for flag capture' },
-  { id: 'e9', round: 4, timestamp: '00:07:22', type: 'violation', agent: 'RedStrike-v3', description: 'Warning: Payload exceeded content safety threshold' },
-]
-
-const MOCK_LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, name: 'Sentinel-v4', wins: 47, losses: 8, draws: 3, score: 2840, winRate: 81.0 },
-  { rank: 2, name: 'IronWall-v3', wins: 42, losses: 12, draws: 4, score: 2650, winRate: 72.4 },
-  { rank: 3, name: 'RedStrike-v3', wins: 39, losses: 15, draws: 2, score: 2510, winRate: 69.6 },
-  { rank: 4, name: 'ChaosBot-v2', wins: 31, losses: 22, draws: 5, score: 2120, winRate: 53.4 },
-  { rank: 5, name: 'Guardian-v2', wins: 28, losses: 24, draws: 6, score: 1950, winRate: 48.3 },
-  { rank: 6, name: 'Phantom-v2', wins: 25, losses: 27, draws: 4, score: 1780, winRate: 44.6 },
-  { rank: 7, name: 'ShadowNet-v1', wins: 18, losses: 34, draws: 2, score: 1340, winRate: 33.3 },
-  { rank: 8, name: 'Bastion-v1', wins: 15, losses: 36, draws: 3, score: 1150, winRate: 27.8 },
-  { rank: 9, name: 'Watcher-v1', wins: 10, losses: 5, draws: 40, score: 980, winRate: 18.2 },
-]
 
 const GAME_MODE_TABS: { key: GameMode | 'ALL'; label: string }[] = [
   { key: 'ALL', label: 'All Modes' },
@@ -212,29 +91,148 @@ const GAME_MODE_TABS: { key: GameMode | 'ALL'; label: string }[] = [
   { key: 'RvB', label: 'Red vs Blue' },
 ]
 
-const ROLE_CONFIG: Record<AgentRole, { icon: typeof Swords; color: string }> = {
-  attacker: { icon: Swords, color: 'text-[var(--danger)]' },
-  defender: { icon: Shield, color: 'text-[var(--success)]' },
-  observer: { icon: Eye, color: 'text-muted-foreground' },
+function formatDuration(ms: number): string {
+  if (ms <= 0) return '0s'
+  const seconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  if (minutes === 0) return `${secs}s`
+  return `${minutes}m ${secs.toString().padStart(2, '0')}s`
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+function formatTimeAgo(iso: string | null): string {
+  if (!iso) return 'Just now'
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'Just now'
+  if (mins < 60) return `${mins} min ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
 
-/**
- * Arena Browser - Match listing, detail view, and leaderboard
- */
+function toDisplayMatch(match: ArenaMatchType): DisplayMatch {
+  return {
+    id: match.id,
+    agents: match.fighters.map((f) => ({ name: f.modelName, role: f.initialRole })),
+    mode: match.config.gameMode,
+    status: match.status,
+    winner: match.winnerId
+      ? (match.fighters.find((f) => f.modelId === match.winnerId)?.modelName ?? null)
+      : null,
+    duration: formatDuration(match.totalDurationMs),
+    rounds: match.rounds.length,
+    startedAt: formatTimeAgo(match.startedAt),
+    raw: match,
+  }
+}
+
+function toDisplayEvents(match: ArenaMatchType): DisplayEvent[] {
+  return match.events.slice(0, 50).map((e) => {
+    const eventTypeMap: Record<string, DisplayEvent['type']> = {
+      attack_sent: 'attack',
+      attack_success: 'attack',
+      attack_blocked: 'defend',
+      defense_hold: 'defend',
+      flag_captured: 'flag_capture',
+      score_update: 'score',
+      fighter_error: 'violation',
+    }
+    const fighterName = match.fighters.find((f) => f.modelId === e.fighterId)?.modelName ?? e.fighterId
+    return {
+      id: e.id,
+      round: e.round,
+      timestamp: new Date(e.timestamp).toLocaleTimeString(),
+      type: eventTypeMap[e.type] ?? 'score',
+      agent: fighterName,
+      description: typeof e.data?.description === 'string' ? e.data.description : e.type,
+    }
+  })
+}
+
+// ===========================================================================
+// Component
+// ===========================================================================
+
 export function ArenaBrowser() {
   const [selectedMode, setSelectedMode] = useState<GameMode | 'ALL'>('ALL')
-  const [selectedMatch, setSelectedMatch] = useState<ArenaMatch | null>(null)
+  const [selectedMatch, setSelectedMatch] = useState<DisplayMatch | null>(null)
+  const [wizardOpen, setWizardOpen] = useState(false)
+  const [liveMatchId, setLiveMatchId] = useState<string | null>(null)
+  const [liveMatch, setLiveMatch] = useState<ArenaMatchType | null>(null)
+  const [exportMatch, setExportMatch] = useState<ArenaMatchType | null>(null)
+
+  // API state
+  const [matches, setMatches] = useState<ArenaMatchType[]>([])
+  const [warriors, setWarriors] = useState<WarriorCardType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch matches
+  const fetchMatches = useCallback(async () => {
+    try {
+      const res = await fetchWithAuth('/api/arena?limit=50')
+      if (res.ok) {
+        const data = await res.json()
+        setMatches(data.matches ?? [])
+      }
+    } catch { /* silently fail for now */ }
+  }, [])
+
+  // Fetch warriors for leaderboard
+  const fetchWarriors = useCallback(async () => {
+    try {
+      const res = await fetchWithAuth('/api/arena/warriors')
+      if (res.ok) {
+        const data = await res.json()
+        setWarriors(data.warriors ?? [])
+      }
+    } catch { /* warriors endpoint may not exist yet */ }
+  }, [])
+
+  useEffect(() => {
+    setLoading(true)
+    Promise.all([fetchMatches(), fetchWarriors()]).finally(() => setLoading(false))
+  }, [fetchMatches, fetchWarriors])
+
+  // Display matches
+  const displayMatches = useMemo(() => matches.map(toDisplayMatch), [matches])
 
   const filteredMatches = useMemo(() => {
-    if (selectedMode === 'ALL') return MOCK_MATCHES
-    return MOCK_MATCHES.filter((m) => m.mode === selectedMode)
-  }, [selectedMode])
+    if (selectedMode === 'ALL') return displayMatches
+    return displayMatches.filter((m) => m.mode === selectedMode)
+  }, [selectedMode, displayMatches])
 
-  const activeCount = MOCK_MATCHES.filter((m) => m.status === 'running').length
+  const activeCount = displayMatches.filter((m) => m.status === 'running').length
+
+  // Create match
+  const handleCreateMatch = useCallback(async (config: MatchConfig, fighters: MatchFighter[], openLiveView: boolean) => {
+    try {
+      const res = await fetchWithAuth('/api/arena', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...config, fighters }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.matchId) {
+          await fetchMatches()
+          if (openLiveView) {
+            setLiveMatchId(data.matchId)
+            const matchRes = await fetchWithAuth(`/api/arena/${encodeURIComponent(data.matchId)}`)
+            if (matchRes.ok) {
+              setLiveMatch(await matchRes.json())
+            }
+          }
+        }
+      }
+    } catch { /* error handled in UI */ }
+  }, [fetchMatches])
+
+  // Selected match detail events
+  const selectedMatchEvents = useMemo(() => {
+    if (!selectedMatch) return []
+    return toDisplayEvents(selectedMatch.raw)
+  }, [selectedMatch])
 
   return (
     <div className="space-y-6">
@@ -249,9 +247,20 @@ export function ArenaBrowser() {
             </p>
           </div>
         </div>
-        <Badge variant={activeCount > 0 ? 'active' : 'pending'} dot>
-          {activeCount} active {activeCount === 1 ? 'match' : 'matches'}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Badge variant={activeCount > 0 ? 'active' : 'pending'} dot>
+            {activeCount} active {activeCount === 1 ? 'match' : 'matches'}
+          </Badge>
+          <Button
+            variant="gradient"
+            size="sm"
+            onClick={() => setWizardOpen(true)}
+            className="gap-1"
+          >
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            Forge New Battle
+          </Button>
+        </div>
       </div>
 
       {/* Game mode selector */}
@@ -265,29 +274,77 @@ export function ArenaBrowser() {
         </TabsList>
       </Tabs>
 
-      {/* Main content: match table + leaderboard */}
-      <div className="grid lg:grid-cols-3 gap-3">
-        {/* Match table */}
-        <div className="lg:col-span-2 space-y-4">
-          <MatchTable
-            matches={filteredMatches}
-            onSelectMatch={setSelectedMatch}
-            selectedMatchId={selectedMatch?.id ?? null}
-          />
-
-          {/* Match detail panel */}
-          {selectedMatch && (
-            <MatchDetailPanel
-              match={selectedMatch}
-              events={MOCK_MATCH_EVENTS}
-              onClose={() => setSelectedMatch(null)}
-            />
-          )}
+      {/* Loading state */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" aria-hidden="true" />
+          <span className="ml-2 text-sm text-muted-foreground">Loading matches...</span>
         </div>
+      )}
 
-        {/* Leaderboard sidebar */}
-        <LeaderboardSidebar entries={MOCK_LEADERBOARD} />
-      </div>
+      {/* Main content: match table + leaderboard */}
+      {!loading && (
+        <div className="grid lg:grid-cols-3 gap-4">
+          {/* Match table */}
+          <div className="lg:col-span-2 space-y-4">
+            <MatchTable
+              matches={filteredMatches}
+              onSelectMatch={setSelectedMatch}
+              selectedMatchId={selectedMatch?.id ?? null}
+            />
+
+            {/* Match detail panel */}
+            {selectedMatch && (
+              <MatchDetailPanel
+                match={selectedMatch}
+                events={selectedMatchEvents}
+                onClose={() => setSelectedMatch(null)}
+                onExport={() => {
+                  const raw = matches.find(m => m.id === selectedMatch.id)
+                  if (raw) setExportMatch(raw)
+                }}
+              />
+            )}
+          </div>
+
+          {/* Warrior cards leaderboard */}
+          <WarriorCardGrid warriors={warriors} />
+        </div>
+      )}
+
+      {/* Wizard dialog */}
+      <MatchCreationWizard
+        open={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        onSubmit={handleCreateMatch}
+      />
+
+      {/* Live match view */}
+      {liveMatchId && liveMatch && (
+        <LiveMatchView
+          matchId={liveMatchId}
+          match={liveMatch}
+          onClose={() => {
+            setLiveMatchId(null)
+            setLiveMatch(null)
+            fetchMatches()
+          }}
+          onRematch={() => {
+            setLiveMatchId(null)
+            setLiveMatch(null)
+            setWizardOpen(true)
+          }}
+        />
+      )}
+
+      {/* Battle Log Exporter */}
+      {exportMatch && (
+        <BattleLogExporter
+          match={exportMatch}
+          open={true}
+          onClose={() => setExportMatch(null)}
+        />
+      )}
     </div>
   )
 }
@@ -296,20 +353,19 @@ export function ArenaBrowser() {
 // Sub-components
 // ---------------------------------------------------------------------------
 
-/**
- * Match table listing all matches with filters applied
- */
 function MatchTable({
   matches,
   onSelectMatch,
   selectedMatchId,
 }: {
-  matches: ArenaMatch[]
-  onSelectMatch: (match: ArenaMatch) => void
+  matches: DisplayMatch[]
+  onSelectMatch: (match: DisplayMatch) => void
   selectedMatchId: string | null
 }) {
   const getStatusBadge = (status: MatchStatus) => {
     switch (status) {
+      case 'pending':
+        return <Badge variant="pending">Pending</Badge>
       case 'running':
         return <Badge variant="active" dot>Live</Badge>
       case 'completed':
@@ -341,7 +397,7 @@ function MatchTable({
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
-              <TableHead>Agents</TableHead>
+              <TableHead>Fighters</TableHead>
               <TableHead>Mode</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Winner</TableHead>
@@ -359,14 +415,14 @@ function MatchTable({
                 )}
                 onClick={() => onSelectMatch(match)}
               >
-                <TableCell className="font-mono text-xs">{match.id}</TableCell>
+                <TableCell className="font-mono text-xs">{match.id.slice(0, 8)}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {match.agents.map((agent) => {
                       const config = ROLE_CONFIG[agent.role]
                       const RoleIcon = config.icon
                       return (
-                        <span key={agent.name} className="inline-flex items-center gap-1 text-xs">
+                        <span key={agent.name + agent.role} className="inline-flex items-center gap-1 text-xs">
                           <RoleIcon className={cn('w-3 h-3', config.color)} aria-hidden="true" />
                           <span className="text-[var(--foreground)]">{agent.name}</span>
                         </span>
@@ -397,7 +453,7 @@ function MatchTable({
             {matches.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No matches found for the selected game mode.
+                  No matches found. Click &quot;Forge New Battle&quot; to start one.
                 </TableCell>
               </TableRow>
             )}
@@ -408,19 +464,18 @@ function MatchTable({
   )
 }
 
-/**
- * Match detail panel showing events, scores, and violations
- */
 function MatchDetailPanel({
   match,
   events,
   onClose,
+  onExport,
 }: {
-  match: ArenaMatch
-  events: MatchEvent[]
+  match: DisplayMatch
+  events: DisplayEvent[]
   onClose: () => void
+  onExport: () => void
 }) {
-  const getEventIcon = (type: MatchEvent['type']) => {
+  const getEventIcon = (type: DisplayEvent['type']) => {
     switch (type) {
       case 'attack':
         return <Swords className="w-4 h-4 text-[var(--danger)]" aria-hidden="true" />
@@ -435,7 +490,7 @@ function MatchDetailPanel({
     }
   }
 
-  const getEventTypeBadge = (type: MatchEvent['type']) => {
+  const getEventTypeBadge = (type: DisplayEvent['type']) => {
     switch (type) {
       case 'attack':
         return <Badge variant="error">Attack</Badge>
@@ -455,19 +510,29 @@ function MatchDetailPanel({
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base">Match {match.id} Detail</CardTitle>
+            <CardTitle className="text-base">Match {match.id.slice(0, 8)} Detail</CardTitle>
             <CardDescription>
               {match.mode} - {match.rounds} rounds - Started {match.startedAt}
             </CardDescription>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            aria-label="Close match detail"
-          >
-            <X className="w-4 h-4" aria-hidden="true" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onExport}
+              aria-label="Export match data"
+            >
+              <Download className="w-4 h-4" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              aria-label="Close match detail"
+            >
+              <X className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -479,7 +544,7 @@ function MatchDetailPanel({
             const isWinner = match.winner === agent.name
             return (
               <div
-                key={agent.name}
+                key={agent.name + agent.role}
                 className={cn(
                   'flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)]',
                   isWinner && 'border-[var(--success)] bg-[var(--success)]/5'
@@ -499,16 +564,6 @@ function MatchDetailPanel({
             )
           })}
         </div>
-
-        {/* Violations summary */}
-        {match.violations > 0 && (
-          <div className="flex items-center gap-2 p-2 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20">
-            <AlertTriangle className="w-4 h-4 text-[var(--warning)]" aria-hidden="true" />
-            <span className="text-sm text-[var(--warning)]">
-              {match.violations} violation{match.violations !== 1 ? 's' : ''} recorded
-            </span>
-          </div>
-        )}
 
         {/* Event log */}
         <div>
@@ -540,6 +595,11 @@ function MatchDetailPanel({
                 </div>
               </div>
             ))}
+            {events.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-4">
+                No events recorded yet.
+              </p>
+            )}
           </div>
         </div>
       </CardContent>
@@ -547,73 +607,3 @@ function MatchDetailPanel({
   )
 }
 
-/**
- * Leaderboard sidebar showing agent rankings
- */
-function LeaderboardSidebar({ entries }: { entries: LeaderboardEntry[] }) {
-  const getRankDisplay = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Trophy className="w-5 h-5 text-yellow-500" aria-hidden="true" />
-      case 2:
-        return <Trophy className="w-5 h-5 text-gray-400" aria-hidden="true" />
-      case 3:
-        return <Trophy className="w-5 h-5 text-amber-600" aria-hidden="true" />
-      default:
-        return <span className="text-sm text-muted-foreground font-mono">#{rank}</span>
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-[var(--warning)]" aria-hidden="true" />
-          <CardTitle className="text-base">Leaderboard</CardTitle>
-        </div>
-        <CardDescription>{entries.length} agents ranked</CardDescription>
-      </CardHeader>
-      <CardContent className="p-0">
-        <ul className="divide-y divide-[var(--border)]" aria-label="Agent leaderboard">
-          {entries.map((entry) => (
-            <li
-              key={entry.name}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3',
-                'hover:bg-muted/30 motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]'
-              )}
-            >
-              {/* Rank */}
-              <div className="w-8 flex justify-center flex-shrink-0">
-                {getRankDisplay(entry.rank)}
-              </div>
-
-              {/* Agent info */}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[var(--foreground)] truncate">{entry.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {entry.wins}W / {entry.losses}L / {entry.draws}D
-                </p>
-              </div>
-
-              {/* Score and win rate */}
-              <div className="text-right flex-shrink-0">
-                <p className="text-sm font-bold text-[var(--foreground)]">{entry.score.toLocaleString()}</p>
-                <p className={cn(
-                  'text-xs font-medium',
-                  entry.winRate >= 60
-                    ? 'text-[var(--success)]'
-                    : entry.winRate >= 40
-                      ? 'text-[var(--warning)]'
-                      : 'text-[var(--danger)]'
-                )}>
-                  {entry.winRate.toFixed(1)}%
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
-  )
-}

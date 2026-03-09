@@ -41,9 +41,9 @@ describe('DojoReadiness', () => {
 
     it('renders as a hero-priority WidgetCard', () => {
       const { container } = render(<DojoReadiness onDismiss={() => {}} />)
-      // Hero cards have border-t-2
+      // Hero cards have widget-hero-border (KASHIWA Story 4.2)
       const root = container.firstElementChild as HTMLElement
-      expect(root).toHaveClass('border-t-2')
+      expect(root).toHaveClass('widget-hero-border')
     })
   })
 

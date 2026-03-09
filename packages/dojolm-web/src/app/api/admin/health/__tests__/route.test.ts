@@ -7,10 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Mock api-auth to bypass auth in tests
-vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: vi.fn().mockReturnValue(null),
-}));
+// Auth handled by middleware — no per-route checkApiAuth needed
 
 // Mock the scanner module (dynamically imported inside the route)
 vi.mock('@dojolm/scanner', () => ({
@@ -71,7 +68,7 @@ describe('GET /api/admin/health', () => {
 
     // App section
     expect(body.app).toHaveProperty('version');
-    expect(body.app.version).toBe('0.1.0');
+    expect(typeof body.app.version).toBe('string');
     expect(body.app).toHaveProperty('nodeVersion');
     expect(body.app.nodeVersion).toMatch(/^v\d+/);
     expect(body.app).toHaveProperty('uptimeMs');

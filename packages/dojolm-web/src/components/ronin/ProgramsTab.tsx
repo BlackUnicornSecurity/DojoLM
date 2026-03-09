@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { ProgramCard } from './ProgramCard'
 import { ProgramDetail } from './ProgramDetail'
@@ -45,8 +45,17 @@ function saveSubscriptions(subs: Set<string>): void {
 export function ProgramsTab() {
   const [programs, setPrograms] = useState<BountyProgram[]>(SEED_PROGRAMS)
   const [subscriptions, setSubscriptions] = useState<Set<string>>(new Set())
+  const hydrated = useRef(false)
   const [selectedProgram, setSelectedProgram] = useState<BountyProgram | null>(null)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value)
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => setDebouncedSearch(value), 300)
+  }, [])
+  useEffect(() => () => clearTimeout(debounceRef.current), [])
   const [platformFilter, setPlatformFilter] = useState<BountyPlatform | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<ProgramStatus | 'all'>('all')
   const [showSubscribedOnly, setShowSubscribedOnly] = useState(false)
@@ -54,6 +63,7 @@ export function ProgramsTab() {
   // Hydrate subscriptions from localStorage
   useEffect(() => {
     setSubscriptions(loadSubscriptions())
+    hydrated.current = true
   }, [])
 
   // Try loading from API, fallback to seed data
@@ -87,11 +97,10 @@ export function ProgramsTab() {
     })
   }, [])
 
-  // Persist subscriptions on change
+  // Persist subscriptions on change (only after hydration to prevent wiping stored data)
   useEffect(() => {
-    if (subscriptions.size > 0 || localStorage.getItem(STORAGE_KEY)) {
-      saveSubscriptions(subscriptions)
-    }
+    if (!hydrated.current) return
+    saveSubscriptions(subscriptions)
   }, [subscriptions])
 
   const filteredPrograms = useMemo(() => {
@@ -99,8 +108,8 @@ export function ProgramsTab() {
       if (showSubscribedOnly && !subscriptions.has(p.id)) return false
       if (platformFilter !== 'all' && p.platform !== platformFilter) return false
       if (statusFilter !== 'all' && p.status !== statusFilter) return false
-      if (search) {
-        const s = search.toLowerCase()
+      if (debouncedSearch) {
+        const s = debouncedSearch.toLowerCase()
         return (
           p.name.toLowerCase().includes(s) ||
           p.company.toLowerCase().includes(s) ||
@@ -111,7 +120,7 @@ export function ProgramsTab() {
       }
       return true
     })
-  }, [programs, search, platformFilter, statusFilter, showSubscribedOnly, subscriptions])
+  }, [programs, debouncedSearch, platformFilter, statusFilter, showSubscribedOnly, subscriptions])
 
   return (
     <div className="space-y-4">
@@ -123,7 +132,7 @@ export function ProgramsTab() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search programs, companies, tags..."
             className={cn(
               'w-full pl-9 pr-3 py-2 rounded-lg text-sm min-h-[40px]',
@@ -200,7 +209,7 @@ export function ProgramsTab() {
 
       {/* Program Grid */}
       {filteredPrograms.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPrograms.map(program => (
             <ProgramCard
               key={program.id}

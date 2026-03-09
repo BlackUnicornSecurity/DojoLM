@@ -29,6 +29,7 @@ import {
   useDashboardConfig,
   WIDGET_CATALOG,
   DEFAULT_DASHBOARD_CONFIG,
+  migrateSize,
   type DashboardConfig,
   type WidgetSlot,
 } from '../dashboard/DashboardConfigContext'
@@ -163,8 +164,8 @@ describe('DashboardConfigContext (DSH-001 to DSH-008)', () => {
   it('DSH-008: loads config from localStorage', async () => {
     const customConfig: DashboardConfig = {
       widgets: [
-        { id: 'quick-launch', visible: true, order: 0, size: 'full' },
-        { id: 'health-gauge', visible: false, order: 1, size: 'third' },
+        { id: 'quick-launch', visible: true, order: 0, size: 12 },
+        { id: 'health-gauge', visible: false, order: 1, size: 4 },
       ],
       layout: 'default',
     }
@@ -196,7 +197,7 @@ describe('WIDGET_CATALOG (DSH-009 to DSH-030)', () => {
       expect(entry.label).toBeTruthy()
       expect(entry.description).toBeTruthy()
       expect(['interactive', 'dynamic', 'visual', 'strategic', 'reference']).toContain(entry.category)
-      expect(['full', 'half', 'third']).toContain(entry.defaultSize)
+      expect([3, 4, 6, 8, 12]).toContain(entry.defaultSize)
       expect(typeof entry.isDefault).toBe('boolean')
     }
   })
@@ -409,7 +410,7 @@ describe('DEFAULT_DASHBOARD_CONFIG (DSH extra)', () => {
 
   it('all default widgets have valid size', () => {
     for (const w of DEFAULT_DASHBOARD_CONFIG.widgets) {
-      expect(['full', 'half', 'third']).toContain(w.size)
+      expect([3, 4, 6, 8, 12]).toContain(w.size)
     }
   })
 
@@ -418,5 +419,216 @@ describe('DEFAULT_DASHBOARD_CONFIG (DSH extra)', () => {
     for (let i = 0; i < orders.length; i++) {
       expect(orders[i]).toBe(i)
     }
+  })
+
+  it('rowSpan-2 widgets have rowSpan property', () => {
+    const tallIds = ['guard-controls', 'threat-radar', 'activity-feed', 'llm-models']
+    for (const w of DEFAULT_DASHBOARD_CONFIG.widgets) {
+      if (tallIds.includes(w.id)) {
+        expect(w.rowSpan).toBe(2)
+      }
+    }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// KASHIWA 1.1: migrateSize() unit tests
+// ---------------------------------------------------------------------------
+
+describe('migrateSize (KASHIWA-1.1)', () => {
+  it('migrates "full" to 12', () => {
+    expect(migrateSize('full')).toBe(12)
+  })
+
+  it('migrates "half" to 6', () => {
+    expect(migrateSize('half')).toBe(6)
+  })
+
+  it('migrates "third" to 4', () => {
+    expect(migrateSize('third')).toBe(4)
+  })
+
+  it('preserves valid numeric 6', () => {
+    expect(migrateSize(6)).toBe(6)
+  })
+
+  it('preserves valid numeric 3', () => {
+    expect(migrateSize(3)).toBe(3)
+  })
+
+  it('preserves valid numeric 12', () => {
+    expect(migrateSize(12)).toBe(12)
+  })
+
+  it('falls back to 6 for unknown string', () => {
+    expect(migrateSize('unknown')).toBe(6)
+  })
+
+  it('falls back to 6 for invalid number', () => {
+    expect(migrateSize(99999)).toBe(6)
+  })
+
+  it('falls back to 6 for null', () => {
+    expect(migrateSize(null)).toBe(6)
+  })
+
+  it('falls back to 6 for undefined', () => {
+    expect(migrateSize(undefined)).toBe(6)
+  })
+
+  it('falls back to 6 for string "12"', () => {
+    // String number should not match numeric check
+    expect(migrateSize('12')).toBe(6)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// KASHIWA 1.1: localStorage migration INTEGRATION tests
+// ---------------------------------------------------------------------------
+
+describe('localStorage migration (KASHIWA-1.1)', () => {
+  beforeEach(() => {
+    localStorage.removeItem('noda-dashboard-config')
+    localStorage.removeItem('noda-dashboard-config-backup')
+  })
+
+  afterEach(() => {
+    localStorage.removeItem('noda-dashboard-config')
+    localStorage.removeItem('noda-dashboard-config-backup')
+    vi.restoreAllMocks()
+  })
+
+  it('migrates old string sizes to numeric on load', async () => {
+    const oldConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 'full' },
+        { id: 'health-gauge', visible: true, order: 1, size: 'third' },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(oldConfig))
+
+    function SizeReader() {
+      const { config } = useDashboardConfig()
+      return (
+        <div>
+          {config.widgets.map(w => (
+            <span key={w.id} data-testid={`size-${w.id}`}>{w.size}</span>
+          ))}
+        </div>
+      )
+    }
+
+    render(
+      <DashboardConfigProvider>
+        <SizeReader />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('size-quick-launch').textContent).toBe('12')
+      expect(screen.getByTestId('size-health-gauge').textContent).toBe('4')
+    })
+  })
+
+  it('strips __proto__ pollution from localStorage via reviver', async () => {
+    // Must use raw JSON string — JSON.stringify strips __proto__ due to JS prototype semantics
+    const poisoned = '{"__proto__":{"polluted":true},"widgets":[{"id":"quick-launch","visible":true,"order":0,"size":12}],"layout":"default"}'
+    localStorage.setItem('noda-dashboard-config', poisoned)
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    // Reviver strips __proto__ but valid data still loads (1 widget)
+    await waitFor(() => {
+      const count = Number(screen.getByTestId('visible-count').textContent)
+      expect(count).toBe(1)
+    })
+    // Critical: verify Object.prototype not polluted
+    expect(Object.prototype.hasOwnProperty.call(Object.prototype, 'polluted')).toBe(false)
+  })
+
+  it('strips constructor.prototype pollution via reviver', async () => {
+    const poisoned = '{"constructor":{"prototype":{"polluted":true}},"widgets":[{"id":"quick-launch","visible":true,"order":0,"size":12}],"layout":"default"}'
+    localStorage.setItem('noda-dashboard-config', poisoned)
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    // Reviver strips constructor but valid data still loads
+    await waitFor(() => {
+      const count = Number(screen.getByTestId('visible-count').textContent)
+      expect(count).toBe(1)
+    })
+    expect(Object.prototype.hasOwnProperty.call(Object.prototype, 'polluted')).toBe(false)
+  })
+
+  it('rejects invalid size 99999', async () => {
+    const badConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 99999 },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(badConfig))
+
+    function SizeReader() {
+      const { config } = useDashboardConfig()
+      return (
+        <div>
+          {config.widgets.map(w => (
+            <span key={w.id} data-testid={`size-${w.id}`}>{w.size}</span>
+          ))}
+        </div>
+      )
+    }
+
+    render(
+      <DashboardConfigProvider>
+        <SizeReader />
+      </DashboardConfigProvider>
+    )
+
+    // 99999 gets migrated to 6 (fallback)
+    await waitFor(() => {
+      expect(screen.getByTestId('size-quick-launch').textContent).toBe('6')
+    })
+  })
+
+  it('rejects invalid rowSpan -1', async () => {
+    const badConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 12, rowSpan: -1 },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(badConfig))
+
+    function RowSpanReader() {
+      const { config } = useDashboardConfig()
+      return (
+        <div>
+          {config.widgets.map(w => (
+            <span key={w.id} data-testid={`rowspan-${w.id}`}>{w.rowSpan ?? 'none'}</span>
+          ))}
+        </div>
+      )
+    }
+
+    render(
+      <DashboardConfigProvider>
+        <RowSpanReader />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('rowspan-quick-launch').textContent).toBe('none')
+    })
   })
 })

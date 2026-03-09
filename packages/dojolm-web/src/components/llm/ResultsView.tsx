@@ -228,10 +228,10 @@ export function ResultsView() {
       ) : (
         <div className="space-y-4">
           <div className="text-sm text-muted-foreground">
-            Showing {Math.min(executions.length, 100)} of {executions.length} results
+            Showing {executions.length} result{executions.length !== 1 ? 's' : ''}
           </div>
 
-          {executions.slice(0, 100).map(execution => {
+          {executions.map(execution => {
             const isExpanded = expandedCards.has(execution.id);
             const model = models.find(m => m.id === execution.modelConfigId);
 

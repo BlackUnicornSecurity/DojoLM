@@ -69,7 +69,7 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
       <Tabs value={activeTab} onValueChange={(v) => {
         if ((validTabs as readonly string[]).includes(v)) setActiveTab(v as DashboardTab);
       }} className="space-y-4">
-        <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1.5 overflow-x-auto scrollbar-hide">
+        <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1 rounded-full overflow-x-auto scrollbar-hide">
           <TabsTrigger value="models" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Brain className="h-4 w-4" />
             <span className="hidden sm:inline">Models</span>

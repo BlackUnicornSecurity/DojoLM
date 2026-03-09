@@ -21,18 +21,26 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export function checkApiAuth(request: NextRequest): NextResponse | null {
   // F-05: Allow same-origin browser requests without API key.
-  // Sec-Fetch-Site is a browser "forbidden header" (cannot be set by JS fetch).
-  // Combined with Origin/Referer check to prevent non-browser spoofing.
-  // Note: Browsers do NOT send Origin on GET requests, so Referer is used as fallback.
+  // Multi-header validation (R2-C1): Sec-Fetch-Site alone is insufficient.
+  // Require Sec-Fetch-Site: same-origin AND valid Mode AND valid Dest.
   const secFetchSite = request.headers.get('sec-fetch-site');
-  if (secFetchSite === 'same-origin') {
+  const secFetchMode = request.headers.get('sec-fetch-mode');
+  const secFetchDest = request.headers.get('sec-fetch-dest');
+
+  const VALID_SEC_FETCH_MODES = new Set(['cors', 'same-origin', 'navigate']);
+  const VALID_SEC_FETCH_DESTS = new Set(['empty', 'document']);
+
+  if (
+    secFetchSite === 'same-origin' &&
+    secFetchMode && VALID_SEC_FETCH_MODES.has(secFetchMode) &&
+    secFetchDest && VALID_SEC_FETCH_DESTS.has(secFetchDest)
+  ) {
     const origin = request.headers.get('origin') ?? '';
     const host = request.headers.get('host') ?? '';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
     if (origin === appUrl || origin === `http://${host}` || origin === `https://${host}`) {
       return null;
     }
-    // Fallback: check Referer header (sent on GET requests where Origin is absent)
     if (!origin) {
       const referer = request.headers.get('referer') ?? '';
       if (referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`)) {

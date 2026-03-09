@@ -27,7 +27,7 @@ export function GuardModeSelector() {
             size="sm"
             onClick={() => setEnabled(!config.enabled)}
             className={cn(
-              config.enabled && 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)] border border-[rgba(230,57,70,0.5)] hover:bg-[var(--dojo-subtle)]'
+              config.enabled && 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)] border border-[var(--dojo-primary)]/50 hover:bg-[var(--dojo-subtle)]'
             )}
             aria-pressed={config.enabled}
             aria-label={config.enabled ? 'Guard enabled, click to disable' : 'Guard disabled, click to enable'}
@@ -76,7 +76,7 @@ export function GuardModeSelector() {
       </div>
 
       {/* Mode Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-label="Guard mode selection">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" role="radiogroup" aria-label="Guard mode selection">
         {GUARD_MODES.map((mode) => {
           const Icon = mode.icon;
           const isActive = config.mode === mode.id;
@@ -91,7 +91,8 @@ export function GuardModeSelector() {
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',
                 !config.enabled && 'opacity-50 cursor-not-allowed'
               )}
-              aria-pressed={isActive}
+              role="radio"
+              aria-checked={isActive}
               aria-label={`Select ${mode.name} mode: ${mode.description}`}
             >
               <GlowCard
@@ -100,7 +101,7 @@ export function GuardModeSelector() {
                   'p-4 h-full',
                   'motion-safe:transition-[background-color,border-color]',
                   isActive
-                    ? 'bg-[rgba(230,57,70,0.1)] border-[rgba(230,57,70,0.5)]'
+                    ? 'bg-[var(--dojo-primary)]/10 border-[var(--dojo-primary)]/50'
                     : 'hover:bg-[var(--bg-quaternary)]'
                 )}
               >

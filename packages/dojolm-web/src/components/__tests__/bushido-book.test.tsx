@@ -114,8 +114,8 @@ const MOCK_COMPLIANCE_DATA = {
   lastUpdated: '2026-03-05',
   summary: { avgCoverage: 72 },
   frameworks: [
-    { id: 'owasp-llm-top10', name: 'OWASP LLM Top 10', totalControls: 10, coveredControls: 7, partialControls: 2, gapControls: 1, overallCoverage: 70 },
-    { id: 'nist-ai-600-1', name: 'NIST AI 600-1', totalControls: 15, coveredControls: 10, partialControls: 3, gapControls: 2, overallCoverage: 67 },
+    { id: 'owasp-llm', name: 'OWASP LLM Top 10', totalControls: 10, coveredControls: 7, partialControls: 2, gapControls: 1, overallCoverage: 70 },
+    { id: 'nist-ai-rmf', name: 'NIST AI 600-1', totalControls: 15, coveredControls: 10, partialControls: 3, gapControls: 2, overallCoverage: 67 },
     { id: 'mitre-atlas', name: 'MITRE ATLAS', totalControls: 12, coveredControls: 9, partialControls: 2, gapControls: 1, overallCoverage: 75 },
     { id: 'iso-42001', name: 'ISO 42001', totalControls: 8, coveredControls: 6, partialControls: 1, gapControls: 1, overallCoverage: 75 },
     { id: 'eu-ai-act', name: 'EU AI Act', totalControls: 10, coveredControls: 8, partialControls: 1, gapControls: 1, overallCoverage: 80 },

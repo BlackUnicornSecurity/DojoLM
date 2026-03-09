@@ -22,14 +22,14 @@ interface Sector {
   color: string
 }
 
-/** Analogous blue spectrum — 3-4 shades of cyan/blue per Story 3.3 */
+/** Steel blue -> violet spectrum — KASHIWA palette (Story 7.1) */
 const SECTORS: Sector[] = [
-  { label: 'Prompt Injection', shortLabel: 'PI', engineId: 'Prompt Injection', angle: 0, color: '#00D9FF' },
-  { label: 'Jailbreak', shortLabel: 'JB', engineId: 'Jailbreak', angle: 60, color: '#0EA5E9' },
-  { label: 'Social Engineering', shortLabel: 'SE', engineId: 'TPI', angle: 120, color: '#3B82F6' },
-  { label: 'Evasion/Encoding', shortLabel: 'EE', engineId: 'Agent Security', angle: 180, color: '#6366F1' },
-  { label: 'Multimodal', shortLabel: 'MM', engineId: 'Multimodal Security', angle: 240, color: '#8B5CF6' },
-  { label: 'Agent/Tool', shortLabel: 'AT', engineId: 'Supply Chain', angle: 300, color: '#A78BFA' },
+  { label: 'Prompt Injection', shortLabel: 'PI', engineId: 'Prompt Injection', angle: 0, color: '#5B8DEF' },
+  { label: 'Jailbreak', shortLabel: 'JB', engineId: 'Jailbreak', angle: 60, color: '#4E7ED8' },
+  { label: 'Social Engineering', shortLabel: 'SE', engineId: 'TPI', angle: 120, color: '#4170C4' },
+  { label: 'Evasion/Encoding', shortLabel: 'EE', engineId: 'Agent Security', angle: 180, color: '#5B6BAF' },
+  { label: 'Multimodal', shortLabel: 'MM', engineId: 'Multimodal Security', angle: 240, color: '#6E68B8' },
+  { label: 'Agent/Tool', shortLabel: 'AT', engineId: 'Supply Chain', angle: 300, color: '#8B7BF5' },
 ]
 
 const RADIUS = 80
@@ -79,6 +79,7 @@ export function ThreatRadar() {
       <div className="flex flex-col items-center" style={{ minHeight: 280 }}>
         <svg
           viewBox="0 0 200 200"
+          overflow="visible"
           className="w-full max-w-[280px] h-auto"
           role="img"
           aria-label={`Threat radar showing ${metrics.threatsDetected} total threats across 6 categories`}
@@ -93,8 +94,8 @@ export function ThreatRadar() {
             ))}
             {/* Scan line gradient — cyan accent */}
             <linearGradient id={`${svgId}-scan`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="rgba(0,217,255,0)" />
-              <stop offset="100%" stopColor="rgba(0,217,255,0.6)" />
+              <stop offset="0%" stopColor="rgba(91,141,239,0)" />
+              <stop offset="100%" stopColor="rgba(91,141,239,0.6)" />
             </linearGradient>
           </defs>
 
@@ -213,7 +214,7 @@ export function ThreatRadar() {
             cy={CENTER}
             r={RADIUS}
             fill="none"
-            stroke="rgba(0,217,255,0.15)"
+            stroke="rgba(91,141,239,0.15)"
             strokeWidth="1"
             className="motion-safe:animate-ping motion-reduce:hidden"
             style={{ animationDuration: '3s' }}

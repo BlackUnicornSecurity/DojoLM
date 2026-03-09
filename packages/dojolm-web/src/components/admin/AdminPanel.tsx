@@ -41,7 +41,7 @@ export function AdminPanel() {
       />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as AdminTabId)}>
-        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto bg-muted/50">
+        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto bg-muted/50 rounded-xl">
           {ADMIN_TABS.map(({ id, label, icon: TabIcon }) => (
             <TabsTrigger key={id} value={id} className="min-h-[44px] gap-2">
               <TabIcon className="w-4 h-4" aria-hidden="true" />
@@ -73,11 +73,11 @@ export function AdminPanel() {
 function GeneralSettings() {
   return (
     <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
-      <h3 className="text-lg font-semibold text-foreground">General Settings</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">General Settings</h3>
       <p className="text-sm text-muted-foreground">
         Application-wide configuration and preferences.
       </p>
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
           <p className="text-sm font-medium text-foreground">Application</p>
           <p className="text-xs text-muted-foreground mt-1">NODA Platform</p>

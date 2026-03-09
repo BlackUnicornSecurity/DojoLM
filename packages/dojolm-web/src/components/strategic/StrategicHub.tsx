@@ -352,19 +352,19 @@ export function StrategicHub() {
       />
 
       {/* Subsystem cards */}
-      <div className="grid md:grid-cols-3 gap-3">
+      <div className="grid md:grid-cols-3 gap-5">
         {SUBSYSTEM_CARDS.map((card) => {
           const CardIcon = card.icon
           return (
             <Card
               key={card.key}
               variant="glass"
-              className="border-l-4 motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]"
+              className="border-l-4 bg-[var(--card-elevated)] motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]"
               style={{ borderLeftColor: card.accent }}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-lg bg-[var(--bg-quaternary)] flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--bg-quaternary)] flex items-center justify-center">
                     <CardIcon className="w-5 h-5 text-[var(--foreground)]" aria-hidden="true" />
                   </div>
                   <div className="flex items-center gap-1">
@@ -434,7 +434,7 @@ function SubsystemLoadingSkeleton() {
   return (
     <div className="space-y-4 animate-pulse motion-reduce:animate-none" aria-busy="true" aria-label="Loading subsystem">
       <div className="h-8 w-48 bg-[var(--bg-quaternary)] rounded" />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="h-24 bg-[var(--bg-quaternary)] rounded-lg" />
         ))}

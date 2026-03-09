@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Bug, Search, Send, Brain, Radio, HelpCircle, Settings } from 'lucide-react'
@@ -81,6 +81,16 @@ export function RoninHub() {
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
   const [configValues, setConfigValues] = useState<Record<string, unknown>>(DEFAULT_CONFIG)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  // Refresh data when tab becomes visible again
+  useEffect(() => {
+    function handleVisibility() {
+      if (!document.hidden) setRefreshKey(k => k + 1)
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [])
 
   const handleConfigChange = useCallback((key: string, value: unknown) => {
     setConfigValues(prev => ({ ...prev, [key]: value }))
@@ -137,7 +147,7 @@ export function RoninHub() {
         }}
         className="space-y-4"
       >
-        <TabsList className="grid grid-cols-4 w-full h-auto gap-2 bg-muted/50 p-2" aria-label="Ronin Hub sections">
+        <TabsList className="grid grid-cols-4 w-full h-auto gap-1 bg-muted/50 p-1 rounded-full" aria-label="Ronin Hub sections">
           {TAB_CONFIG.map(tab => {
             const Icon = tab.icon
             return (
@@ -150,10 +160,10 @@ export function RoninHub() {
         </TabsList>
 
         <TabsContent value="programs">
-          <ProgramsTab />
+          <ProgramsTab key={refreshKey} />
         </TabsContent>
         <TabsContent value="submissions">
-          <SubmissionsTab />
+          <SubmissionsTab key={refreshKey} />
         </TabsContent>
         <TabsContent value="planning">
           <EmptyState

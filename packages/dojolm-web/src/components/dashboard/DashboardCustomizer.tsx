@@ -5,14 +5,23 @@
  * Purpose: Slide-in panel for toggling/reordering dashboard widgets
  * Story: TPI-NODA-1.5.1
  * Index:
- * - CategorySection (line 22)
- * - DashboardCustomizer (line 55)
+ * - SIZE_OPTIONS (line 16)
+ * - CategorySection (line 33)
+ * - DashboardCustomizer (line 142)
  */
 
 import { useEffect, useRef, useCallback } from 'react'
-import { useDashboardConfig, WIDGET_CATALOG, type WidgetCatalogEntry } from './DashboardConfigContext'
+import { useDashboardConfig, WIDGET_CATALOG, type WidgetCatalogEntry, type WidgetSize } from './DashboardConfigContext'
 import { cn } from '@/lib/utils'
 import { X, RotateCcw, ChevronUp, ChevronDown } from 'lucide-react'
+
+const SIZE_OPTIONS: { value: WidgetSize; label: string }[] = [
+  { value: 3, label: 'Quarter' },
+  { value: 4, label: 'Third' },
+  { value: 6, label: 'Half' },
+  { value: 8, label: 'Wide' },
+  { value: 12, label: 'Full' },
+]
 
 const CATEGORIES: Array<{ key: WidgetCatalogEntry['category']; label: string }> = [
   { key: 'interactive', label: 'Interactive / Action' },
@@ -26,14 +35,18 @@ function CategorySection({
   label,
   widgets,
   config,
+  widgetSizes,
   onToggle,
   onMove,
+  onResize,
 }: {
   label: string
   widgets: WidgetCatalogEntry[]
   config: Map<string, boolean>
+  widgetSizes: Map<string, WidgetSize>
   onToggle: (id: string) => void
   onMove: (id: string, direction: 'up' | 'down') => void
+  onResize: (id: string, size: WidgetSize) => void
 }) {
   return (
     <div className="space-y-1">
@@ -42,6 +55,7 @@ function CategorySection({
       </h3>
       {widgets.map(widget => {
         const isEnabled = config.get(widget.id) ?? false
+        const currentSize = widgetSizes.get(widget.id) ?? widget.defaultSize
         return (
           <div
             key={widget.id}
@@ -74,6 +88,27 @@ function CategorySection({
             <div className="flex-1 min-w-0">
               <div className="text-xs font-medium truncate">{widget.label}</div>
               <div className="text-xs text-muted-foreground truncate">{widget.description}</div>
+              {isEnabled && (
+                <div className="flex gap-1 mt-1">
+                  {SIZE_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => onResize(widget.id, opt.value)}
+                      className={cn(
+                        'px-1.5 py-0.5 text-xs rounded border',
+                        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                        currentSize === opt.value
+                          ? 'border-[var(--dojo-primary)] bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
+                          : 'border-[var(--border)] text-muted-foreground hover:bg-muted'
+                      )}
+                      aria-label={`Set ${widget.label} width to ${opt.label} (${opt.value}/12)`}
+                      aria-pressed={currentSize === opt.value}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             {isEnabled && (
               <div className="flex flex-col gap-0.5">
@@ -106,13 +141,15 @@ interface DashboardCustomizerProps {
 }
 
 export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps) {
-  const { config, toggleWidget, resetToDefaults, moveWidget } = useDashboardConfig()
+  const { config, toggleWidget, resetToDefaults, moveWidget, resizeWidget } = useDashboardConfig()
   const panelRef = useRef<HTMLDivElement>(null)
 
-  // Build visibility map
+  // Build visibility and size maps
   const visibilityMap = new Map<string, boolean>()
+  const sizeMap = new Map<string, WidgetSize>()
   for (const slot of config.widgets) {
     visibilityMap.set(slot.id, slot.visible)
+    sizeMap.set(slot.id, slot.size)
   }
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -207,8 +244,10 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
                 label={cat.label}
                 widgets={widgets}
                 config={visibilityMap}
+                widgetSizes={sizeMap}
                 onToggle={toggleWidget}
                 onMove={moveWidget}
+                onResize={resizeWidget}
               />
             )
           })}

@@ -261,7 +261,7 @@ export function SafeCodeBlock({ code, language, className, maxLines }: SafeCodeB
       <pre
         className={cn(
           'overflow-x-auto p-4 m-0',
-          'bg-[rgba(0,0,0,0.3)]',
+          'bg-[rgba(0,0,0,0.2)]',
           'text-sm leading-relaxed font-mono',
         )}
       >
@@ -277,7 +277,7 @@ export function SafeCodeBlock({ code, language, className, maxLines }: SafeCodeB
 
       {/* Truncation indicator */}
       {isTruncated && (
-        <div className="px-4 py-2 text-xs text-muted-foreground bg-[rgba(0,0,0,0.2)] border-t border-[var(--border)]">
+        <div className="px-4 py-2 text-xs text-muted-foreground bg-[rgba(0,0,0,0.15)] border-t border-[var(--border)]">
           ... ({hiddenCount} more line{hiddenCount !== 1 ? 's' : ''})
         </div>
       )}

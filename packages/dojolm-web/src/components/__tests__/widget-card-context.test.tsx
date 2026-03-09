@@ -35,18 +35,18 @@ describe('WidgetCard', () => {
   })
 
   describe('Priority tiers', () => {
-    it('hero priority adds border-t-2 and border-t-[var(--dojo-primary)]', () => {
+    it('hero priority adds widget-hero-border class and elevated bg', () => {
       const { container } = render(
         <WidgetCard title="Hero Widget" priority="hero">Content</WidgetCard>
       )
       const root = container.firstElementChild as HTMLElement
-      expect(root).toHaveClass('border-t-2')
+      expect(root).toHaveClass('widget-hero-border')
     })
 
-    it('hero priority title has text-base and font-bold', () => {
+    it('hero priority title has text-lg and font-bold', () => {
       render(<WidgetCard title="Hero Widget" priority="hero">Content</WidgetCard>)
       const title = screen.getByText('Hero Widget')
-      expect(title).toHaveClass('text-base')
+      expect(title).toHaveClass('text-lg')
       expect(title).toHaveClass('font-bold')
     })
 
@@ -64,20 +64,20 @@ describe('WidgetCard', () => {
       expect(title).toHaveClass('font-semibold')
     })
 
-    it('standard priority does not add border-t-2', () => {
+    it('standard priority does not add widget-hero-border', () => {
       const { container } = render(
         <WidgetCard title="Standard" priority="standard">Content</WidgetCard>
       )
       const root = container.firstElementChild as HTMLElement
-      expect(root).not.toHaveClass('border-t-2')
+      expect(root).not.toHaveClass('widget-hero-border')
     })
 
-    it('compact priority does not add border-t-2', () => {
+    it('compact priority does not add widget-hero-border', () => {
       const { container } = render(
         <WidgetCard title="Compact" priority="compact">Content</WidgetCard>
       )
       const root = container.firstElementChild as HTMLElement
-      expect(root).not.toHaveClass('border-t-2')
+      expect(root).not.toHaveClass('widget-hero-border')
     })
   })
 
@@ -111,7 +111,7 @@ describe('WidgetCard', () => {
         </WidgetMetaProvider>
       )
       const title = screen.getByText('Context Hero')
-      expect(title).toHaveClass('text-base')
+      expect(title).toHaveClass('text-lg')
       expect(title).toHaveClass('font-bold')
     })
 
@@ -168,27 +168,49 @@ describe('WidgetCard', () => {
     })
   })
 
-  describe('Padding correctness (BMAD review fix #12)', () => {
-    it('hero header uses pt-5 px-5 pb-2', () => {
+  describe('Padding correctness (KASHIWA Story 4.2 — compact breathing room)', () => {
+    it('hero header uses pt-3 px-4 pb-1.5', () => {
       const { container } = render(
         <WidgetCard title="Hero" priority="hero">Content</WidgetCard>
       )
-      // Find header (first child div with flex-row)
       const header = container.querySelector('[class*="flex"][class*="flex-row"]') as HTMLElement
       expect(header).toBeInTheDocument()
-      expect(header).toHaveClass('pt-5')
-      expect(header).toHaveClass('px-5')
-      expect(header).toHaveClass('pb-2')
+      expect(header).toHaveClass('pt-3')
+      expect(header).toHaveClass('px-4')
     })
 
-    it('compact header uses pt-3 px-3 pb-1', () => {
+    it('compact header uses pt-3 px-4 pb-1.5', () => {
       const { container } = render(
         <WidgetCard title="Compact" priority="compact">Content</WidgetCard>
       )
       const header = container.querySelector('[class*="flex"][class*="flex-row"]') as HTMLElement
       expect(header).toHaveClass('pt-3')
-      expect(header).toHaveClass('px-3')
-      expect(header).toHaveClass('pb-1')
+      expect(header).toHaveClass('px-4')
+    })
+
+    it('hero/standard tiers have header/content divider', () => {
+      const { container } = render(
+        <WidgetCard title="Hero" priority="hero">Content</WidgetCard>
+      )
+      const divider = container.querySelector('.mx-4.h-px') as HTMLElement
+      expect(divider).toBeInTheDocument()
+    })
+
+    it('compact tier has no header/content divider', () => {
+      const { container } = render(
+        <WidgetCard title="Compact" priority="compact">Content</WidgetCard>
+      )
+      const divider = container.querySelector('.mx-4.h-px') as HTMLElement
+      expect(divider).not.toBeInTheDocument()
+    })
+
+    it('hover lift classes applied', () => {
+      const { container } = render(
+        <WidgetCard title="Widget">Content</WidgetCard>
+      )
+      const root = container.firstElementChild as HTMLElement
+      expect(root.className).toContain('motion-safe:hover:-translate-y-px')
+      expect(root.className).toContain('motion-safe:hover:shadow-md')
     })
   })
 })

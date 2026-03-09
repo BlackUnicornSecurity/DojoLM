@@ -2,14 +2,14 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-4.0-blue.svg)](github/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-5.0_KASHIWA-blue.svg)](github/CHANGELOG.md)
 [![Node.js 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5.3-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Comprehensive prompt injection detection and LLM security testing based on the CrowdStrike TPI Taxonomy**
 
-[Quick Start](#-quick-start) · [Features](#-features) · [Packages](#-packages) · [Documentation](#-documentation) · [Contributing](github/CONTRIBUTING.md)
+[Quick Start](#-quick-start) · [Features](#-features) · [Documentation](#-documentation) · [Changelog](github/CHANGELOG.md)
 
 </div>
 
@@ -17,23 +17,25 @@
 
 ## Overview
 
-NODA is a full-stack platform for testing, evaluating, and benchmarking LLM security defenses. It uses a unified sidebar with 12 modules (Haiku Scanner, Armory, Bushido Book, LLM Dashboard, Atemi Lab, The Kumite, Amaterasu DNA, Hattori Guard, Ronin Hub, LLM Jutsu, and Admin). It provides:
+NODA is a full-stack platform for testing, evaluating, and benchmarking LLM security defenses. Built with a modern tech stack and a refined dark UI (KASHIWA design system), it provides comprehensive security testing capabilities across 12 integrated modules.
+
+### What's New in KASHIWA (v5.0)
+
+- **Complete Visual Overhaul:** Near-true-black design with Torii Vermillion accents
+- **Bento-Box Dashboard:** Flexible 12-column widget grid
+- **Plus Jakarta Sans:** Modern typography with refined hierarchy
+- **Amaterasu DNA Upgrade:** Three-tier intelligence system with external threat feeds
+- **Arena Rework:** Gamified AI model combat system
+- **Enhanced Security:** Hardened authentication and rate limiting
+
+### Key Capabilities
 
 - **505+ detection patterns** across 47 pattern groups
 - **1,544 attack fixtures** across 30 categories
 - **6 heuristic detectors** for advanced attack detection
 - **100% OWASP LLM Top 10 coverage**
 - **MITRE ATLAS** and **NIST AI RMF** alignment
-
-The platform detects prompt injection attacks including:
-- System override and role hijacking
-- Jailbreak and DAN patterns
-- Multilingual injection attempts
-- Encoded payloads (Base64, ROT13, etc.)
-- Hidden Unicode and homoglyph attacks
-- Social engineering manipulation
-- Agent output manipulation
-- Supply chain and RAG poisoning
+- **Multi-provider LLM testing** (OpenAI, Anthropic, Ollama, and more)
 
 ---
 
@@ -55,29 +57,26 @@ cd dojolm
 npm install
 ```
 
-### Run the Scanner API
+### Run the Platform
 
 ```bash
-# Start scanner server (port 8089)
+# Terminal 1: Start scanner API (port 8089)
 npm start --workspace=packages/bu-tpi
-```
 
-### Run the Web UI
-
-```bash
-# Start Next.js development server (port 3000)
+# Terminal 2: Start web UI (port 3000)
 npm run dev:web
 ```
 
-### Quick Test
+Access the platform at `http://localhost:3000`
+
+### Quick API Test
 
 ```bash
 # Scan text for prompt injection
-curl "http://localhost:8089/api/scan?text=Ignore%20previous%20instructions"
+curl -X POST http://localhost:8089/api/scan \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Ignore previous instructions"}'
 ```
-
-**Scanner API:** `http://localhost:8089`
-**Web UI:** `http://localhost:3000`
 
 ---
 
@@ -107,22 +106,23 @@ curl "http://localhost:8089/api/scan?text=Ignore%20previous%20instructions"
 
 ### Web Interface (NODA Modules)
 
-- **Haiku Scanner** — Real-time text scanning with 505+ patterns
-- **Armory** — Browse and test 1,544+ attack fixtures
-- **Bushido Book** — Compliance center with 8 frameworks including BAISS
-- **LLM Dashboard** — Multi-provider benchmarking with SSE streaming
-- **Atemi Lab** — Adversarial testing with MCP and skills library
-- **The Kumite** — Strategic analysis (SAGE, Arena, Mitsuke)
-- **Amaterasu DNA** — Attack lineage analysis with Black Box Analysis
-- **Hattori Guard** — Input/output protection (4 modes)
-- **Ronin Hub** — Bug bounty researcher platform
-- **LLM Jutsu** — Testing command center
+| Module | Description | Status |
+|--------|-------------|--------|
+| **Haiku Scanner** | Real-time text scanning with 505+ patterns | ✅ |
+| **Armory** | Browse and test 1,544+ attack fixtures | ✅ |
+| **Bushido Book** | Compliance center with 8 frameworks | ✅ |
+| **LLM Dashboard** | Multi-provider benchmarking with SSE streaming | ✅ |
+| **Atemi Lab** | Adversarial testing with MCP integration | ✅ |
+| **The Kumite** | Strategic analysis with Arena battles | 🔄 |
+| **Amaterasu DNA** | Attack lineage with 3-tier intelligence | 🔄 |
+| **Hattori Guard** | Input/output protection (4 modes) | ✅ |
+| **Ronin Hub** | Bug bounty researcher platform | ✅ |
+| **LLM Jutsu** | Testing command center | ✅ |
+| **Admin Panel** | Configuration and management | ✅ |
 
 ---
 
 ## 📦 Packages
-
-This is a monorepo containing multiple packages:
 
 ### Core Packages
 
@@ -130,7 +130,7 @@ This is a monorepo containing multiple packages:
 |---------|-------------|------|
 | [`packages/bu-tpi`](packages/bu-tpi/README.md) | Core scanner engine with 505+ patterns | 8089 |
 | [`packages/dojolm-scanner`](packages/dojolm-scanner/README.md) | Enhanced scanner with engine filtering | - |
-| [`packages/dojolm-web`](packages/dojolm-web/README.md) | Next.js web application | 3000 |
+| [`packages/dojolm-web`](packages/dojolm-web/README.md) | Next.js 15 web application | 3000 |
 | [`packages/dojolm-mcp`](packages/dojolm-mcp/README.md) | Model Context Protocol server | - |
 
 ### Framework
@@ -139,7 +139,7 @@ This is a monorepo containing multiple packages:
 |---------|-------------|
 | [`packages/bmad-cybersec`](packages/bmad-cybersec/README.md) | Multi-agent cybersecurity operations framework |
 
-### Package Dependencies
+### Dependencies
 
 ```
 dojolm-web ──► dojolm-scanner ──► bu-tpi
@@ -155,19 +155,16 @@ bmad-cybersec ──────────────────► bu-tpi
 dojolm/
 ├── packages/
 │   ├── bu-tpi/                 # Core scanner (TypeScript, zero deps)
-│   │   ├── src/
-│   │   │   ├── scanner.ts      # Detection engine
-│   │   │   ├── serve.ts        # HTTP server
-│   │   │   └── types.ts        # Type definitions
-│   │   └── fixtures/           # 1,544 attack artifacts
 │   ├── dojolm-scanner/         # Enhanced scanner wrapper
-│   ├── dojolm-web/             # Next.js application
-│   ├── dojolm-mcp/             # MCP server for AI tools
+│   ├── dojolm-web/             # Next.js 15 application
+│   ├── dojolm-mcp/             # MCP server
 │   └── bmad-cybersec/          # Multi-agent framework
-├── docs/                       # Documentation
-│   ├── user/                   # User-facing docs
-│   ├── app/                    # App-specific docs
-│   └── compliance/             # Compliance documentation
+├── docs/                       # User documentation
+├── team/                       # Team documentation
+│   ├── dev/                    # Development docs
+│   ├── ops/                    # Operations docs
+│   ├── security/               # Security docs
+│   └── testing/                # Testing docs
 └── github/                     # GitHub templates
 ```
 
@@ -180,23 +177,19 @@ dojolm/
 | Document | Description |
 |----------|-------------|
 | [Platform Guide](docs/user/PLATFORM_GUIDE.md) | Complete user documentation |
+| [Getting Started](docs/user/GETTING_STARTED.md) | Quick start guide |
 | [FAQ](docs/user/FAQ.md) | Frequently asked questions |
 | [LLM Provider Guide](docs/user/LLM-PROVIDER-GUIDE.md) | Provider setup instructions |
-| [Multimodal Testing](docs/user/multimodal-testing-guide.md) | Image/audio testing |
+| [API Reference](docs/user/API-REFERENCE.md) | API documentation |
 
 ### Developer Documentation
 
 | Document | Description |
 |----------|-------------|
+| [Team Docs](team/README.md) | Internal documentation index |
+| [Architecture](team/dev/architecture/SYSTEM-ARCHITECTURE.md) | System architecture |
+| [Development Guide](team/dev/guides/GETTING-STARTED.md) | Developer setup |
 | [Contributing](github/CONTRIBUTING.md) | Contribution guidelines |
-| [Style Guide](docs/STYLE-GUIDE.md) | Documentation style guide |
-| [Maintenance](docs/MAINTENANCE.md) | Documentation maintenance process |
-
-### Compliance
-
-| Document | Description |
-|----------|-------------|
-| [ISO 42001](docs/compliance/iso-42001/) | AI management system documentation |
 
 ---
 
@@ -219,9 +212,6 @@ npm run type-check
 
 # Security audit
 npm run security:scan
-
-# Generate SBOM
-npm run sbom:generate
 ```
 
 ### Workspace Commands
@@ -245,14 +235,13 @@ Key points:
 - All PRs must include documentation updates
 - Pattern contributions require corresponding test fixtures
 - Run `npm run verify:docs` before submitting
+- Follow [code standards](team/dev/guides/CODE-STANDARDS.md)
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-Individual packages may have additional license terms:
 
 | Package | License |
 |---------|---------|
@@ -275,5 +264,7 @@ Individual packages may have additional license terms:
 <div align="center">
 
 **Built by the NODA Team**
+
+KASHIWA Update — March 2026
 
 </div>

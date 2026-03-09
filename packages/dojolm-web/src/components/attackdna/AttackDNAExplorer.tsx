@@ -1,29 +1,32 @@
 /**
  * File: AttackDNAExplorer.tsx
- * Purpose: Main Amaterasu DNA page with sub-tab navigation, search, and stats bar
- * Story: S76, TPI-NODA-6.4 - Amaterasu DNA
+ * Purpose: Main Amaterasu DNA page with sub-tab navigation, search, stats bar, and tier filtering
+ * Story: S76, KASHIWA-12.3
  * Index:
- * - Dynamic imports for sub-views (line 22)
- * - STATS mock data (line 35)
- * - GUIDE_SECTIONS data (line 43)
- * - LoadingFallback component (line 65)
- * - StatsBar component (line 78)
- * - AttackDNAExplorer component (line 116)
+ * - Dynamic imports for sub-views (line 24)
+ * - useDNAData hook (line 50)
+ * - GUIDE_SECTIONS data (line 115)
+ * - LoadingFallback component (line 125)
+ * - StatsBar component (line 140)
+ * - AttackDNAExplorer component (line 170)
  */
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { AmaterasuGuide, resetAmaterasuGuide, TabHelpButton } from './AmaterasuGuide'
 import { Button } from '@/components/ui/button'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { AmaterasuConfig } from './AmaterasuConfig'
+import { DataSourceSelector, type MasterSyncStatus } from './DataSourceSelector'
+import { DATA_SOURCE_TIERS, mergeStats, type TierStats } from './data-source-tiers'
+import type { DataSourceTier } from 'bu-tpi/attackdna'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import {
   Dna,
   Search,
@@ -37,7 +40,6 @@ import {
   HelpCircle,
   Settings,
   Target,
-  BookOpen,
   Microscope,
 } from 'lucide-react'
 
@@ -63,13 +65,125 @@ const BlackBoxAnalysis = dynamic(
   { loading: () => <LoadingFallback label="Loading Analysis..." />, ssr: false }
 )
 
-// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
+// ===========================================================================
+// Data Hook — fetches from API based on active tiers
+// ===========================================================================
 
-const STATS = {
-  totalNodes: 51,
-  totalEdges: 38,
-  totalFamilies: 7,
-  totalClusters: 5,
+const EMPTY_STATS: TierStats = {
+  totalNodes: 0,
+  totalEdges: 0,
+  totalFamilies: 0,
+  totalClusters: 0,
+  byCategory: {},
+  bySeverity: {},
+  bySource: {},
+}
+
+interface DNAData {
+  stats: TierStats
+  families: unknown[]
+  clusters: unknown[]
+  timeline: unknown[]
+  masterSyncStatus: MasterSyncStatus | null
+  loading: boolean
+}
+
+function useDNAData(activeTiers: Set<DataSourceTier>): DNAData {
+  const [stats, setStats] = useState<TierStats>(EMPTY_STATS)
+  const [families, setFamilies] = useState<unknown[]>([])
+  const [clusters, setClusters] = useState<unknown[]>([])
+  const [timeline, setTimeline] = useState<unknown[]>([])
+  const [masterSyncStatus, setMasterSyncStatus] = useState<MasterSyncStatus | null>(null)
+  const [loading, setLoading] = useState(true)
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    // Cancel previous fetch
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    async function fetchData() {
+      setLoading(true)
+      const tierArr = Array.from(activeTiers)
+      const allStats: TierStats[] = []
+      let allFamilies: unknown[] = []
+      let allClusters: unknown[] = []
+      let allTimeline: unknown[] = []
+
+      try {
+        for (const tier of tierArr) {
+          if (controller.signal.aborted) return
+
+          const tierParam = `sourceTier=${tier}`
+
+          // Fetch stats, families, clusters, timeline in parallel per tier
+          const [statsRes, familiesRes, clustersRes, timelineRes] = await Promise.all([
+            fetchWithAuth(`/api/attackdna/query?type=stats&${tierParam}`, { signal: controller.signal }),
+            fetchWithAuth(`/api/attackdna/query?type=families&${tierParam}`, { signal: controller.signal }),
+            fetchWithAuth(`/api/attackdna/query?type=clusters&${tierParam}`, { signal: controller.signal }),
+            fetchWithAuth(`/api/attackdna/query?type=timeline&${tierParam}`, { signal: controller.signal }),
+          ])
+
+          if (statsRes.ok) {
+            const d = await statsRes.json()
+            if (d.stats) allStats.push(d.stats)
+          }
+          if (familiesRes.ok) {
+            const d = await familiesRes.json()
+            if (d.families) allFamilies = allFamilies.concat(d.families)
+          }
+          if (clustersRes.ok) {
+            const d = await clustersRes.json()
+            if (d.clusters) allClusters = allClusters.concat(d.clusters)
+          }
+          if (timelineRes.ok) {
+            const d = await timelineRes.json()
+            if (d.timeline) allTimeline = allTimeline.concat(d.timeline)
+          }
+        }
+
+        // Fetch master sync status if master tier active
+        if (activeTiers.has('master') && !controller.signal.aborted) {
+          try {
+            const syncRes = await fetchWithAuth('/api/attackdna/sync', { signal: controller.signal })
+            if (syncRes.ok) {
+              const d = await syncRes.json()
+              setMasterSyncStatus({
+                lastSyncAt: d.config?.lastSyncAt ?? null,
+                syncInProgress: d.syncInProgress ?? false,
+              })
+            }
+          } catch {
+            // Non-critical — sync status is informational
+          }
+        }
+
+        if (!controller.signal.aborted) {
+          setStats(allStats.length > 0 ? mergeStats(...allStats) : EMPTY_STATS)
+          setFamilies(allFamilies)
+          setClusters(allClusters)
+          setTimeline(allTimeline)
+        }
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('DNA data fetch failed:', err)
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchData()
+
+    return () => {
+      controller.abort()
+    }
+  }, [activeTiers])
+
+  return { stats, families, clusters, timeline, masterSyncStatus, loading }
 }
 
 // --- Guide sections ---
@@ -95,17 +209,22 @@ function LoadingFallback({ label }: { label: string }) {
   )
 }
 
-function StatsBar() {
-  const stats = [
-    { label: 'Nodes', value: STATS.totalNodes, icon: Network },
-    { label: 'Edges', value: STATS.totalEdges, icon: ArrowRightLeft },
-    { label: 'Families', value: STATS.totalFamilies, icon: Users },
-    { label: 'Clusters', value: STATS.totalClusters, icon: LayoutGrid },
+interface StatsBarProps {
+  stats: TierStats
+  loading: boolean
+}
+
+function StatsBar({ stats, loading }: StatsBarProps) {
+  const items = [
+    { label: 'Nodes', value: stats.totalNodes, icon: Network },
+    { label: 'Edges', value: stats.totalEdges, icon: ArrowRightLeft },
+    { label: 'Families', value: stats.totalFamilies, icon: Users },
+    { label: 'Clusters', value: stats.totalClusters, icon: LayoutGrid },
   ]
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" role="list" aria-label="Amaterasu DNA statistics">
-      {stats.map((stat) => {
+      {items.map((stat) => {
         const StatIcon = stat.icon
         return (
           <Card key={stat.label} role="listitem">
@@ -115,7 +234,7 @@ function StatsBar() {
               </div>
               <div className="min-w-0">
                 <p className="text-lg font-bold text-[var(--foreground)] leading-tight">
-                  {stat.value.toLocaleString()}
+                  {loading ? '—' : stat.value.toLocaleString()}
                 </p>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </div>
@@ -152,6 +271,11 @@ export function AttackDNAExplorer() {
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
   const [guideResetKey, setGuideResetKey] = useState(0)
+  const [activeTiers, setActiveTiers] = useState<Set<DataSourceTier>>(
+    () => new Set<DataSourceTier>(['dojo-local'])
+  )
+
+  const { stats, families, clusters, timeline, masterSyncStatus, loading } = useDNAData(activeTiers)
 
   const closeGuide = useCallback(() => setGuideOpen(false), [])
   const closeConfig = useCallback(() => setConfigOpen(false), [])
@@ -169,7 +293,23 @@ export function AttackDNAExplorer() {
     []
   )
 
-  // Keyboard navigation handled by Radix Tabs
+  const handleTierToggle = useCallback((tier: DataSourceTier) => {
+    setActiveTiers((prev) => {
+      const next = new Set(prev)
+      if (next.has(tier)) {
+        // Don't allow deselecting the last tier
+        if (next.size > 1) next.delete(tier)
+      } else {
+        next.add(tier)
+      }
+      return next
+    })
+  }, [])
+
+  const handleTierReset = useCallback(() => {
+    const available = DATA_SOURCE_TIERS.filter((t) => t.available).map((t) => t.id)
+    setActiveTiers(new Set(available))
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -203,8 +343,16 @@ export function AttackDNAExplorer() {
       {/* Getting started tutorial (first visit) */}
       <AmaterasuGuide key={`guide-${guideResetKey}`} />
 
+      {/* Data Source Selector */}
+      <DataSourceSelector
+        activeTiers={activeTiers}
+        onToggle={handleTierToggle}
+        onReset={handleTierReset}
+        masterSyncStatus={masterSyncStatus}
+      />
+
       {/* Stats Bar */}
-      <StatsBar />
+      <StatsBar stats={stats} loading={loading} />
 
       {/* Search */}
       <div className="relative">
@@ -241,7 +389,7 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="family-tree" />
             </div>
-            <FamilyTreeView />
+            <FamilyTreeView families={families} activeTiers={activeTiers} />
           </div>
         </TabsContent>
         <TabsContent value="clusters">
@@ -249,7 +397,7 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="clusters" />
             </div>
-            <ClusterView />
+            <ClusterView clusters={clusters} activeTiers={activeTiers} />
           </div>
         </TabsContent>
         <TabsContent value="timeline">
@@ -257,7 +405,7 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="timeline" />
             </div>
-            <MutationTimeline />
+            <MutationTimeline timelineEntries={timeline} activeTiers={activeTiers} />
           </div>
         </TabsContent>
         <TabsContent value="analysis">

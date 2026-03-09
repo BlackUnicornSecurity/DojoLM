@@ -127,4 +127,41 @@ export interface TimelineEntry {
   readonly event: 'first-observed' | 'mutation' | 'cluster-formed';
 }
 
+// --- DNA Data Source Tiers (Epic 9) ---
+
+export type DataSourceTier = 'dojo-local' | 'dojolm-global' | 'master';
+
+export interface MasterThreatEntry {
+  readonly id: string;
+  readonly sourceId: string;
+  readonly sourceTier: DataSourceTier;
+  readonly title: string;
+  readonly description: string;
+  readonly category: string;
+  readonly severity: 'INFO' | 'WARNING' | 'CRITICAL';
+  readonly confidence: number;
+  readonly techniqueIds: string[];
+  readonly indicators: string[];
+  readonly rawContent: string;
+  readonly firstSeen: string;
+  readonly lastUpdated: string;
+  readonly metadata: Record<string, unknown>;
+}
+
+export interface MasterSyncConfig {
+  readonly syncSchedule: string;
+  readonly enabledSources: string[];
+  readonly lastSyncAt: string | null;
+  readonly autoSyncEnabled: boolean;
+}
+
+export interface MasterSyncResult {
+  readonly syncedAt: string;
+  readonly sourcesProcessed: number;
+  readonly entriesFetched: number;
+  readonly entriesAfterDedup: number;
+  readonly entriesClassified: number;
+  readonly errors: string[];
+}
+
 export const MAX_INPUT_LENGTH = 500_000;

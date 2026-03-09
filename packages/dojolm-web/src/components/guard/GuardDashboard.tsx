@@ -87,13 +87,13 @@ function GuardDashboardInner() {
 
       {/* Mode Selector */}
       <section aria-label="Guard mode configuration">
-        <h3 className="text-lg font-semibold mb-3">Guard Mode</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Guard Mode</h3>
         <GuardModeSelector />
       </section>
 
       {/* Audit Log */}
       <section aria-label="Guard audit log">
-        <h3 className="text-lg font-semibold mb-3">Audit Log</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Audit Log</h3>
         <GuardAuditLog />
       </section>
     </div>

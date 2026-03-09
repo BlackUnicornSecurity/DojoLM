@@ -10,7 +10,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { checkApiAuth } from '@/lib/api-auth'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
@@ -21,10 +20,8 @@ try {
   appVersion = pkg.version || appVersion;
 } catch { /* fallback to default */ }
 
-export async function GET(request: NextRequest) {
-  // BUG-004: Admin endpoint requires authentication
-  const authResult = checkApiAuth(request);
-  if (authResult) return authResult;
+export async function GET(_request: NextRequest) {
+  // Auth handled by middleware — /api/admin/health is in PUBLIC_ROUTES
   try {
     const startTime = Date.now()
 

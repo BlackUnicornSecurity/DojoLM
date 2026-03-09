@@ -60,7 +60,7 @@ describe('WIDGET_CATALOG', () => {
       expect(entry.id).toBeTruthy()
       expect(entry.label).toBeTruthy()
       expect(entry.description).toBeTruthy()
-      expect(['full', 'half', 'third']).toContain(entry.defaultSize)
+      expect([3, 4, 6, 8, 12]).toContain(entry.defaultSize)
       expect(typeof entry.isDefault).toBe('boolean')
     }
   })

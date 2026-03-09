@@ -39,11 +39,11 @@ const colorMap: Record<NonNullable<EnhancedProgressProps['color']>, string> = {
 }
 
 const glowMap: Record<NonNullable<EnhancedProgressProps['color']>, string> = {
-  primary: '0 0 8px rgba(198, 40, 40, 0.4), 0 0 16px rgba(198, 40, 40, 0.2)',
-  success: '0 0 8px rgba(34, 197, 94, 0.6)',
-  warning: '0 0 8px rgba(245, 158, 11, 0.6)',
-  danger: '0 0 8px rgba(198, 40, 40, 0.6)',
-  info: '0 0 8px rgba(59, 130, 246, 0.6)',
+  primary: '0 0 8px rgba(204, 58, 47, 0.4), 0 0 16px rgba(204, 58, 47, 0.2)',
+  success: '0 0 8px rgba(52, 199, 106, 0.6)',
+  warning: '0 0 8px rgba(229, 160, 48, 0.6)',
+  danger: '0 0 8px rgba(212, 64, 64, 0.6)',
+  info: '0 0 8px rgba(91, 141, 239, 0.6)',
 }
 
 const heightMap: Record<NonNullable<EnhancedProgressProps['size']>, string> = {

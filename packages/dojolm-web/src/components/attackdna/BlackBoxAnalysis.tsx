@@ -507,8 +507,8 @@ function TokenHeatmap({ entries }: { entries: TokenHeatmapEntry[] }) {
       <div className="flex flex-wrap gap-0.5 p-3 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)]">
         {entries.map((entry, idx) => {
           const normalizedContribution = entry.contribution / maxContribution
-          const red = normalizedContribution > 0 ? Math.round(normalizedContribution * 220) : 0
-          const blue = normalizedContribution < 0 ? Math.round(Math.abs(normalizedContribution) * 220) : 0
+          const red = normalizedContribution > 0 ? Math.round(normalizedContribution * 204) : 0
+          const blue = normalizedContribution < 0 ? Math.round(Math.abs(normalizedContribution) * 239) : 0
           const alpha = Math.max(0.15, Math.abs(normalizedContribution) * 0.8)
 
           return (
@@ -531,15 +531,15 @@ function TokenHeatmap({ entries }: { entries: TokenHeatmapEntry[] }) {
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(0, 0, 220, 0.6)' }} aria-hidden="true" />
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(91, 141, 239, 0.6)' }} aria-hidden="true" />
           Defensive
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(100, 100, 100, 0.2)' }} aria-hidden="true" />
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(62, 67, 80, 0.3)' }} aria-hidden="true" />
           Neutral
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(220, 0, 0, 0.6)' }} aria-hidden="true" />
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'rgba(204, 58, 47, 0.6)' }} aria-hidden="true" />
           Critical
         </div>
       </div>
@@ -658,9 +658,9 @@ function SensitivityHeatmap({ sensitivityResults }: { sensitivityResults: Sensit
                   const delta = original > 0 ? (v.score - original) / original : 0
                   const alpha = Math.min(0.8, Math.abs(delta) * 3)
                   const bg = delta < -0.1
-                    ? `rgba(220, 50, 50, ${alpha})`
+                    ? `rgba(204, 58, 47, ${alpha})`
                     : delta > 0.1
-                      ? `rgba(50, 220, 50, ${alpha})`
+                      ? `rgba(52, 199, 106, ${alpha})`
                       : 'transparent'
                   return (
                     <td

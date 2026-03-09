@@ -3,16 +3,16 @@
  * Purpose: File-based storage for Hattori Guard config, events, and stats
  * Story: TPI-UIP-11
  * Index:
- * - PATHS (line 24)
- * - HMAC signing (line 34)
- * - readJSON / writeJSON (line 60)
- * - saveGuardConfig() (line 93)
- * - getGuardConfig() (line 120)
- * - saveGuardEvent() (line 154)
- * - queryGuardEvents() (line 207)
- * - getGuardStats() (line 253)
- * - getConfigHash() (line 306)
- * - clearOldEvents() (line 316)
+ * - PATHS + path traversal validation (line 24)
+ * - HMAC signing (line 50)
+ * - readJSON / writeJSON (line 78)
+ * - saveGuardConfig() (line 111)
+ * - getGuardConfig() (line 138)
+ * - saveGuardEvent() (line 172)
+ * - queryGuardEvents() (line 227)
+ * - getGuardStats() (line 275)
+ * - getConfigHash() (line 330)
+ * - clearOldEvents() (line 340)
  */
 
 import crypto from 'node:crypto';
@@ -63,6 +63,24 @@ const PATHS = {
   index: path.join(DATA_BASE_DIR, 'index.json'),
   events: path.join(DATA_BASE_DIR, 'events'),
 } as const;
+
+// ===========================================================================
+// Path Traversal Validation (R2-C4 fix — matches ecosystem-storage.ts pattern)
+// ===========================================================================
+
+/** Path-safe ID validation — only alphanumeric, dash, underscore */
+function isValidEventId(id: string): boolean {
+  return id.length > 0 && id.length <= 128 && /^[\w-]+$/.test(id);
+}
+
+/** Resolve an event file path safely, or return null on traversal attempt */
+function safeResolveEvent(id: string): string | null {
+  if (!isValidEventId(id)) return null;
+  const resolved = path.resolve(PATHS.events, `${id}.json`);
+  if (!resolved.startsWith(path.resolve(PATHS.events) + path.sep)) return null;
+  return resolved;
+}
+
 
 // ===========================================================================
 // HMAC Signing (S1)
@@ -219,6 +237,22 @@ export async function getGuardConfig(): Promise<GuardConfig> {
  * Uses atomic write (temp+rename) and caps event index at GUARD_MAX_EVENTS.
  */
 export async function saveGuardEvent(event: GuardEvent): Promise<GuardAuditEntry> {
+  // Fire-and-forget: emit ecosystem finding on block action (Story 10.4)
+  if (event.action === 'block') {
+    try {
+      const { emitGuardFinding } = await import('../ecosystem-emitters');
+      emitGuardFinding({
+        mode: event.mode,
+        direction: event.direction,
+        action: event.action,
+        findings: event.scanResult ? [{ severity: event.scanResult.severity || undefined }] : [],
+        content: event.scannedText,
+      });
+    } catch {
+      // Fire-and-forget — ignore emission failures
+    }
+  }
+
   // Read current index
   const index = (await readJSON<EventIndex>(PATHS.index)) || { eventIds: [] };
 
@@ -237,8 +271,9 @@ export async function saveGuardEvent(event: GuardEvent): Promise<GuardAuditEntry
     contentHash,
   };
 
-  // Write event file
-  const eventPath = path.join(PATHS.events, `${event.id}.json`);
+  // Write event file (path traversal protection)
+  const eventPath = safeResolveEvent(event.id);
+  if (!eventPath) throw new Error('Invalid event: Invalid id format');
   await writeJSON(eventPath, auditEntry);
 
   // Update index (cap at GUARD_MAX_EVENTS)
@@ -246,10 +281,12 @@ export async function saveGuardEvent(event: GuardEvent): Promise<GuardAuditEntry
   if (index.eventIds.length > GUARD_MAX_EVENTS) {
     // Remove oldest events
     const toRemove = index.eventIds.splice(0, index.eventIds.length - GUARD_MAX_EVENTS);
-    // Best-effort cleanup of old event files
+    // Best-effort cleanup of old event files (path traversal protection)
     for (const oldId of toRemove) {
+      const oldPath = safeResolveEvent(oldId);
+      if (!oldPath) continue;
       try {
-        await fs.unlink(path.join(PATHS.events, `${oldId}.json`));
+        await fs.unlink(oldPath);
       } catch {
         // Ignore cleanup failures
       }
@@ -275,9 +312,10 @@ export async function queryGuardEvents(
   const reversed = [...index.eventIds].reverse();
 
   for (const eventId of reversed) {
-    const event = await readJSON<GuardAuditEntry>(
-      path.join(PATHS.events, `${eventId}.json`)
-    );
+    // Sanitize index-sourced IDs before path construction
+    const eventPath = safeResolveEvent(eventId);
+    if (!eventPath) continue;
+    const event = await readJSON<GuardAuditEntry>(eventPath);
     if (!event) continue;
 
     // Apply filters (normalize old mode names for backward compat)
@@ -321,9 +359,10 @@ export async function getGuardStats(): Promise<GuardStats> {
   const recentIds = index.eventIds.slice(-100); // Last 100 events for stats
 
   for (const eventId of recentIds) {
-    const event = await readJSON<GuardAuditEntry>(
-      path.join(PATHS.events, `${eventId}.json`)
-    );
+    // Sanitize index-sourced IDs before path construction
+    const eventPath = safeResolveEvent(eventId);
+    if (!eventPath) continue;
+    const event = await readJSON<GuardAuditEntry>(eventPath);
     if (!event) continue;
 
     stats.totalEvents++;
@@ -383,13 +422,15 @@ export async function clearOldEvents(retentionDays: number): Promise<number> {
   const remaining: string[] = [];
 
   for (const eventId of index.eventIds) {
-    const event = await readJSON<GuardAuditEntry>(
-      path.join(PATHS.events, `${eventId}.json`)
-    );
+    // Sanitize index-sourced IDs before path construction
+    const eventPath = safeResolveEvent(eventId);
+    if (!eventPath) continue;
+
+    const event = await readJSON<GuardAuditEntry>(eventPath);
 
     if (!event || event.timestamp < cutoffStr) {
       try {
-        await fs.unlink(path.join(PATHS.events, `${eventId}.json`));
+        await fs.unlink(eventPath);
       } catch {
         // Ignore
       }

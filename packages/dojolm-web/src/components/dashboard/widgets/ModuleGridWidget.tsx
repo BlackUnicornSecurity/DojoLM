@@ -57,9 +57,9 @@ export function ModuleGridWidget() {
   return (
     <WidgetCard title={`Haiku Scanner Modules (${modules.length})`}>
       <div className="flex flex-wrap gap-1.5">
-        {modules.map(mod => (
+        {modules.map((mod, idx) => (
           <span
-            key={mod.name}
+            key={`${mod.name}-${mod.source}-${idx}`}
             className={cn(
               'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium',
               'bg-muted hover:bg-[var(--bg-quaternary)] cursor-default'

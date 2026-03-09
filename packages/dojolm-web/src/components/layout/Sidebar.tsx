@@ -81,7 +81,7 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "group hidden md:flex fixed left-0 top-0 h-screen bg-[var(--bg-secondary)] flex-col z-[var(--z-sidebar)] shadow-sm",
+      "group hidden md:flex fixed left-0 top-0 h-screen bg-[var(--background)] border-r border-[var(--border-subtle)] flex-col z-[var(--z-sidebar)]",
       "motion-safe:transition-[width] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-in-out",
       collapsed ? "w-[var(--sidebar-collapsed)]" : "w-[var(--sidebar-width)]",
       "md:max-lg:w-[var(--sidebar-collapsed)] md:max-lg:hover:w-[var(--sidebar-width)]"
@@ -100,6 +100,7 @@ export function Sidebar() {
           if (items.length === 0) return null
           return (
             <div key={group.id} className="mt-4 first:mt-2">
+              <div className="w-6 h-px bg-[var(--border-subtle)] mx-6 mb-1" aria-hidden="true" />
               <span
                 aria-hidden={collapsed ? true : undefined}
                 className={cn(

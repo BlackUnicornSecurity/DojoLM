@@ -138,9 +138,13 @@ export type NavId = NavItem['id']
  * NavId aliases for backward compatibility (Story 2.9)
  * Maps retired NavIds to current NavIds for deep-link resolution
  */
-type RetiredNavId = 'testing'
+type RetiredNavId = 'testing' | 'jutsu' | 'ronin' | 'atemi' | 'kumite'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   testing: 'armory',
+  jutsu: 'llm-jutsu',
+  ronin: 'ronin-hub',
+  atemi: 'adversarial',
+  kumite: 'strategic',
 }
 
 /**

@@ -47,7 +47,7 @@ export function GuardBadge() {
       className={cn(
         'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium',
         config.enabled
-          ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)] border border-[rgba(230,57,70,0.3)]'
+          ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)] border border-[var(--dojo-primary)]/30'
           : 'bg-muted text-muted-foreground border border-border'
       )}
       aria-label={config.enabled ? `Guard active: ${modeInfo?.name ?? config.mode} mode` : 'Guard disabled'}

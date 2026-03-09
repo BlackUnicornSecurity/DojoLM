@@ -112,10 +112,10 @@ const COVERAGE_MODERATE = 50
 
 function ScoreMeter({ value, className }: { value: number; className?: string }) {
   const getColor = (v: number): string => {
-    if (v >= SCORE_EXCELLENT) return 'var(--success, #22c55e)'
-    if (v >= SCORE_GOOD) return 'var(--warning, #eab308)'
-    if (v >= SCORE_FAIR) return 'var(--dojo-primary, #FF5252)'
-    return 'var(--danger, #ef4444)'
+    if (v >= SCORE_EXCELLENT) return 'var(--success)'
+    if (v >= SCORE_GOOD) return 'var(--warning)'
+    if (v >= SCORE_FAIR) return 'var(--dojo-primary)'
+    return 'var(--danger)'
   }
 
   return (
@@ -454,7 +454,7 @@ function TierSection({
     : 0
 
   return (
-    <div className="border border-[var(--border)] rounded-lg overflow-hidden">
+    <div className="border border-[var(--border)] rounded-xl overflow-hidden">
       <button
         onClick={() => setExpanded((p) => !p)}
         className="flex items-center justify-between w-full px-3 py-2 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[40px]"
@@ -505,16 +505,18 @@ const COMPLIANCE_TO_LEGACY_ID: Record<string, string> = {
 }
 
 /** Converts compliance API controls to CoverageEntry format for CoverageMap.
- *  pre = 60% of post: approximates baseline coverage before TPI implementation. */
+ *  pre ratio varies by control status to show distinct pre vs post values. */
 function controlsToCoverageEntries(controls: ComplianceControlData[]): CoverageEntry[] {
-  const PRE_TPI_RATIO = 0.6
-  return controls.map((c) => ({
-    category: `${c.id}: ${c.name}`,
-    pre: Math.round(c.coverage * PRE_TPI_RATIO),
-    post: c.coverage,
-    stories: c.id,
-    gap: c.status === 'gap',
-  }))
+  return controls.map((c) => {
+    const ratio = c.status === 'gap' ? 0.3 : c.status === 'partial' ? 0.6 : 0.85
+    return {
+      category: `${c.id}: ${c.name}`,
+      pre: Math.round(c.coverage * ratio),
+      post: c.coverage,
+      stories: c.id,
+      gap: c.status === 'gap',
+    }
+  })
 }
 
 type CoverageSubMode = 'coverage' | 'comparison' | 'changes'

@@ -3,14 +3,13 @@
  * POST /api/llm/batch-test — Start batch test (returns batch ID)
  * GET /api/llm/batch-test — List batches
  *
- * Server-side concurrency cap: max 10 concurrent, max 500 per batch, max 3 batches.
+ * Server-side concurrency cap: configurable concurrent limit, configurable batch size, max 3 batches.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTest } from '@/lib/llm-execution';
+import { getConcurrentLimit, getMaxBatchSize } from '@/lib/llm-constants';
 
-const MAX_CONCURRENT = 10;
-const MAX_TESTS_PER_BATCH = 500;
 const MAX_CONCURRENT_BATCHES = 3;
 
 // Track running batches
@@ -44,9 +43,10 @@ export async function POST(request: NextRequest) {
     }
 
     const totalTests = modelIds.length * testCaseIds.length;
-    if (totalTests > MAX_TESTS_PER_BATCH) {
+    const maxBatchSize = getMaxBatchSize();
+    if (totalTests > maxBatchSize) {
       return NextResponse.json(
-        { error: `Batch too large. Max ${MAX_TESTS_PER_BATCH} tests (${modelIds.length} models × ${testCaseIds.length} cases = ${totalTests}).` },
+        { error: `Batch too large. Max ${maxBatchSize} tests (${modelIds.length} models × ${testCaseIds.length} cases = ${totalTests}).` },
         { status: 400 }
       );
     }
@@ -68,10 +68,8 @@ export async function POST(request: NextRequest) {
 
     runningBatches.add(batch.id);
 
-    // Run batch in background
-    executeBatchInBackground(batch.id, modelIds, testCaseIds, storage).catch(() => {
-      runningBatches.delete(batch.id);
-    });
+    // Run batch in background (cleanup handled by finally block inside)
+    executeBatchInBackground(batch.id, modelIds, testCaseIds, storage);
 
     return NextResponse.json({
       batchId: batch.id,
@@ -167,7 +165,7 @@ async function executeBatchInBackground(
       executing.add(p);
       p.finally(() => executing.delete(p));
 
-      if (executing.size >= MAX_CONCURRENT) {
+      if (executing.size >= getConcurrentLimit()) {
         await Promise.race(executing);
       }
     }

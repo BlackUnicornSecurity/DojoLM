@@ -22,6 +22,24 @@ import { JutsuModelCard } from './JutsuModelCard'
 import { ModelDetailView } from './ModelDetailView'
 import { aggregateByModel, type AggregatedModel, type TestExecution } from './JutsuAggregation'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { useNavigation } from '@/lib/NavigationContext'
+
+/** Human-readable provider display names */
+const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
+  ollama: 'Ollama',
+  lmstudio: 'LM Studio',
+  llamacpp: 'llama.cpp',
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  google: 'Google',
+  mistral: 'Mistral',
+  meta: 'Meta',
+  cohere: 'Cohere',
+}
+
+function getProviderDisplayName(provider: string): string {
+  return PROVIDER_DISPLAY_NAMES[provider.toLowerCase()] ?? provider
+}
 
 /** Demo test execution data for when no real data exists */
 const DEMO_EXECUTIONS: TestExecution[] = [
@@ -89,6 +107,7 @@ const DEFAULT_CONFIG: Record<string, unknown> = {
  * LLMJutsu — Main LLM testing command center
  */
 export function LLMJutsu() {
+  const { setActiveTab } = useNavigation()
   const [executions, setExecutions] = useState<TestExecution[]>(DEMO_EXECUTIONS)
   const [search, setSearch] = useState('')
   const [providerFilter, setProviderFilter] = useState<string>('all')
@@ -96,6 +115,10 @@ export function LLMJutsu() {
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
   const [configValues, setConfigValues] = useState<Record<string, unknown>>(DEFAULT_CONFIG)
+
+  const handleRunTest = useCallback(() => {
+    setActiveTab('llm')
+  }, [setActiveTab])
 
   // Try to load real results from API
   useEffect(() => {
@@ -182,7 +205,7 @@ export function LLMJutsu() {
       />
 
       {/* Global Filters */}
-      <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-muted/30 border border-[var(--border)]">
+      <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-muted/30 border border-[var(--border)]">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <input
@@ -211,7 +234,7 @@ export function LLMJutsu() {
         >
           <option value="all">All Providers</option>
           {providers.map(p => (
-            <option key={p} value={p}>{p}</option>
+            <option key={p} value={p}>{getProviderDisplayName(p)}</option>
           ))}
         </select>
       </div>
@@ -223,12 +246,13 @@ export function LLMJutsu() {
 
       {/* Model Grid */}
       {filteredModels.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredModels.map(model => (
             <JutsuModelCard
               key={model.modelId}
               model={model}
               onView={setSelectedModel}
+              onRetest={handleRunTest}
             />
           ))}
         </div>

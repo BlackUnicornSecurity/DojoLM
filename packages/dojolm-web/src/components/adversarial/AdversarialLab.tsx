@@ -481,7 +481,7 @@ export function AdversarialLab({
         </CardHeader>
         <CardContent className="space-y-3">
           <div
-            className="grid grid-cols-2 lg:grid-cols-4 gap-2"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3"
             role="radiogroup"
             aria-label="Select attack mode"
           >
@@ -521,7 +521,7 @@ export function AdversarialLab({
       </Card>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Active Tools</p>
@@ -571,7 +571,7 @@ export function AdversarialLab({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
           {ATTACK_TOOLS.map((tool) => (
             <AttackToolCard
               key={tool.id}

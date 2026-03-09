@@ -94,7 +94,7 @@ export function SubmissionsTab() {
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-4">
         <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-center">
           <p className="text-xs text-muted-foreground">Total</p>
           <p className="text-lg font-bold">{stats.total}</p>

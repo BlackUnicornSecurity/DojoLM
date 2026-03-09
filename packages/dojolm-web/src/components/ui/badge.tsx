@@ -26,8 +26,8 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground border-[var(--border)]",
         // Severity variants (all using design tokens)
-        critical: "border-transparent bg-[var(--danger)] text-white",
-        high: "border-transparent bg-[var(--severity-high)] text-white",
+        critical: "border-transparent bg-[var(--danger)] text-white shadow-[0_0_8px_rgba(212,64,64,0.3)]",
+        high: "border-transparent bg-[var(--severity-high)] text-white shadow-[0_0_6px_rgba(224,96,48,0.2)]",
         medium: "border-transparent bg-[var(--warning)] text-[var(--background)]",
         low: "border-transparent bg-[var(--severity-low)] text-white",
         info: "border-transparent bg-[var(--bg-quaternary)] text-muted-foreground",

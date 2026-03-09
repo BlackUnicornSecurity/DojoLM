@@ -22,7 +22,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border border-[var(--border-subtle)] bg-card text-card-foreground shadow-sm",
+      "rounded-xl border border-[var(--border-subtle)] bg-card text-card-foreground shadow-sm card-gradient",
       "motion-safe:transition-[border-color] motion-safe:duration-[var(--transition-normal)]",
       "motion-safe:hover:border-[var(--overlay-hover)]",
       variant === 'glass' && "glass-card",

@@ -16,10 +16,10 @@ import { GlowCard } from '@/components/ui/GlowCard'
 
 describe('Card hover isolation (BMAD review fix #2)', () => {
   describe('Card base classes', () => {
-    it('has rounded-lg border', () => {
+    it('has rounded-xl border', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('rounded-lg')
+      expect(card).toHaveClass('rounded-xl')
       expect(card).toHaveClass('border')
     })
 
@@ -94,8 +94,8 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       const { container: glowContainer } = render(<GlowCard>Wrapped</GlowCard>)
       const bareCard = bareContainer.firstElementChild as HTMLElement
       const glowCard = glowContainer.firstElementChild as HTMLElement
-      expect(bareCard).toHaveClass('rounded-lg')
-      expect(glowCard).toHaveClass('rounded-lg')
+      expect(bareCard).toHaveClass('rounded-xl')
+      expect(glowCard).toHaveClass('rounded-xl')
       expect(bareCard).toHaveClass('bg-card')
       expect(glowCard).toHaveClass('bg-card')
     })

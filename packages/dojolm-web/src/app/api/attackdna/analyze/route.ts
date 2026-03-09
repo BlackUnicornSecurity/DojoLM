@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server'
 import { createApiHandler } from '@/lib/api-handler'
 import { analyzeAttack } from '@/lib/ablation-engine'
+import { emitAnalyzeFinding } from '@/lib/ecosystem-emitters'
 
 const MAX_PAYLOAD_LENGTH = 10_000
 const MAX_ABLATION_COMPONENTS = 20
@@ -47,12 +48,22 @@ export const POST = createApiHandler(
     // Run analysis with component cap enforced BEFORE expensive work (S-07 amplification protection)
     const result = analyzeAttack(payload.trim(), safeModelId, undefined, MAX_ABLATION_COMPONENTS)
 
+    const criticalCount = result.ablationResults.filter((r) => r.isCritical).length
+
+    // Fire-and-forget: emit ecosystem finding (Story 10.5)
+    emitAnalyzeFinding({
+      payload: payload.trim(),
+      modelId: safeModelId,
+      components: result.components.length,
+      criticalComponents: criticalCount,
+    })
+
     return NextResponse.json({
       success: true,
       analysis: result,
       meta: {
         componentCount: result.components.length,
-        criticalCount: result.ablationResults.filter((r) => r.isCritical).length,
+        criticalCount,
         maxComponentsEnforced: MAX_ABLATION_COMPONENTS,
       },
     })

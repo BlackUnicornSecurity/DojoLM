@@ -13,6 +13,7 @@ import type { ProviderResponse } from './llm-providers';
 
 import { getProviderAdapter } from './llm-providers';
 import { generateExecutionHash, generateContentHash, fileStorage } from './storage/file-storage';
+import { getConcurrentLimit } from './llm-constants';
 
 import { scan } from '@dojolm/scanner';
 import type { Finding } from '@dojolm/scanner';
@@ -185,7 +186,6 @@ interface ExecutionProgressCallback {
 
 /** Chunk size for large batch execution (Story 6.1) */
 const CHUNK_SIZE = 50;
-const CONCURRENT_LIMIT = 5;
 
 /**
  * Estimate execution time based on rolling average (Story 6.1)
@@ -200,7 +200,7 @@ export function estimateExecutionTime(
   // Default: ~3 seconds per test if no rolling average available
   const avgMs = avgDurationMs ?? 3000;
   // With concurrency of 5, effective time = (total / concurrency) * avg
-  const totalMs = (totalExecutions / CONCURRENT_LIMIT) * avgMs;
+  const totalMs = (totalExecutions / getConcurrentLimit()) * avgMs;
   const estimateMinutes = Math.max(1, Math.ceil(totalMs / 60000));
   return { estimateMinutes, totalExecutions };
 }
@@ -267,8 +267,8 @@ export async function executeBatchTests(
     const chunkExecutions = executions.slice(chunkStart, chunkEnd);
 
     // Execute within chunk with concurrency limit
-    for (let i = 0; i < chunkExecutions.length; i += CONCURRENT_LIMIT) {
-      const concurrentSlice = chunkExecutions.slice(i, i + CONCURRENT_LIMIT);
+    for (let i = 0; i < chunkExecutions.length; i += getConcurrentLimit()) {
+      const concurrentSlice = chunkExecutions.slice(i, i + getConcurrentLimit());
 
       await Promise.allSettled(
         concurrentSlice.map(async ({ model, testCase }) => {

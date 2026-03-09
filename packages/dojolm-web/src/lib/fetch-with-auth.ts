@@ -17,6 +17,9 @@
 
 const API_KEY_STORAGE_KEY = 'noda-api-key';
 
+/** Throttle 401 warnings to at most once per 5 seconds */
+let lastWarningTime = 0;
+
 /**
  * Get API key from localStorage.
  * Returns null if not set.
@@ -74,15 +77,25 @@ export async function fetchWithAuth(
     headers.set('X-API-Key', apiKey);
   }
 
+  // Auto-set Content-Type for mutation requests with a string body
+  // Skip for FormData, Blob, ArrayBuffer etc. — browser sets correct Content-Type automatically
+  const method = (init?.method ?? 'GET').toUpperCase();
+  if (init?.body && typeof init.body === 'string' && !headers.has('Content-Type') && ['POST', 'PUT', 'PATCH'].includes(method)) {
+    headers.set('Content-Type', 'application/json');
+  }
+
   const response = await fetch(input, {
     ...init,
     headers,
   });
 
-  // Handle 401 — API key invalid or missing
+  // Handle 401 — API key invalid or missing (throttled to once per 5s)
   if (response.status === 401) {
-    console.warn('[fetch-with-auth] 401 Unauthorized — API key may be invalid');
-    // Don't clear key automatically — let the user decide
+    const now = Date.now();
+    if (now - lastWarningTime > 5000) {
+      console.warn('[fetch-with-auth] 401 Unauthorized — API key may be invalid');
+      lastWarningTime = now;
+    }
   }
 
   return response;

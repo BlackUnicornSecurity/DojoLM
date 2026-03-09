@@ -18,15 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChevronRight, FolderOpen, Folder, Database } from 'lucide-react'
 
-/** Brand color mapping by product name */
-const BRAND_COLORS: Record<string, string> = {
-  DojoLM: '#E63946',
-  BonkLM: '#FFD700',
-  Basileak: '#8A2BE2',
-  PantheonLM: '#39FF14',
-  Marfaak: '#FF10F0',
-  BlackUnicorn: '#666666',
-}
+import { BRAND_COLORS } from './brand-colors'
 
 /**
  * Category-to-brand mapping, mirrors branding-helpers.ts getBrandForCategory

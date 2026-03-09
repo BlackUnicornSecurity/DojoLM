@@ -1,20 +1,25 @@
 /**
  * File: middleware.ts
- * Purpose: Next.js middleware for API auth + rate limiting (Story 13.1)
+ * Purpose: Next.js middleware for API auth + rate limiting (Story 13.1 / Story 8.3)
  *
  * Provides Node.js-runtime auth checking for all /api/* routes.
  * Public routes (health) are whitelisted.
  * Admin routes require elevated auth (future: role-based).
  * Auth failures are recorded via the security audit logger (Story 13.6).
  *
+ * Story 8.3 Security Hardening:
+ * - Multi-header Sec-Fetch validation (R2-C1)
+ * - Sliding window rate limiter (R2-S3)
+ * - Environment-dependent CORS origins
+ *
  * Index:
- * - Runtime config (line 19)
- * - Public route whitelist (line 22)
- * - Client IP extraction (line 29)
- * - Auth check (line 44)
- * - Middleware function (line 64)
- * - Content-Type validation (line 84)
- * - Config matcher (line 120)
+ * - Runtime config (line ~25)
+ * - Public route whitelist (line ~28)
+ * - Client IP extraction (line ~35)
+ * - Auth check (line ~50)
+ * - Rate limiter (line ~75)
+ * - Middleware function (line ~140)
+ * - Config matcher (end of file)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -44,6 +49,87 @@ function getClientIp(request: NextRequest): string {
     if (first) return first;
   }
   return request.headers.get('x-real-ip') ?? 'unknown';
+}
+
+// ===========================================================================
+// In-Memory Sliding Window Rate Limiter (R2-S3)
+// ===========================================================================
+
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_GENERAL = 100; // 100 req/min per IP
+const RATE_LIMIT_AUTH_FAILURE = 10; // 10 auth failures/min per IP
+const RATE_LIMIT_MAP_CAP = 10_000; // LRU eviction cap (R2-S3)
+
+interface RateLimitEntry {
+  timestamps: number[];
+  authFailures: number[];
+  lastAccess: number;
+}
+
+const rateLimitMap = new Map<string, RateLimitEntry>();
+
+// Cleanup stale entries every 60s
+let lastCleanup = Date.now();
+function cleanupRateLimiter() {
+  const now = Date.now();
+  if (now - lastCleanup < RATE_LIMIT_WINDOW_MS) return;
+  lastCleanup = now;
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  for (const [key, entry] of rateLimitMap) {
+    if (entry.lastAccess < cutoff) {
+      rateLimitMap.delete(key);
+    }
+  }
+  // LRU eviction if map exceeds cap
+  if (rateLimitMap.size > RATE_LIMIT_MAP_CAP) {
+    const entries = Array.from(rateLimitMap.entries())
+      .sort((a, b) => a[1].lastAccess - b[1].lastAccess);
+    const toRemove = entries.slice(0, rateLimitMap.size - RATE_LIMIT_MAP_CAP);
+    for (const [key] of toRemove) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
+
+function checkRateLimit(ip: string): { limited: boolean; retryAfter?: number } {
+  cleanupRateLimiter();
+  const now = Date.now();
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+
+  let entry = rateLimitMap.get(ip);
+  if (!entry) {
+    entry = { timestamps: [], authFailures: [], lastAccess: now };
+    rateLimitMap.set(ip, entry);
+  }
+
+  entry.lastAccess = now;
+  entry.timestamps = entry.timestamps.filter(t => t > cutoff);
+  entry.authFailures = entry.authFailures.filter(t => t > cutoff);
+
+  if (entry.timestamps.length >= RATE_LIMIT_GENERAL) {
+    return { limited: true, retryAfter: 60 };
+  }
+  if (entry.authFailures.length >= RATE_LIMIT_AUTH_FAILURE) {
+    return { limited: true, retryAfter: 60 };
+  }
+
+  // Push timestamp AFTER both checks pass — only count non-limited requests
+  entry.timestamps.push(now);
+  return { limited: false };
+}
+
+function recordAuthFailure(ip: string) {
+  let entry = rateLimitMap.get(ip);
+  if (!entry) {
+    entry = { timestamps: [], authFailures: [], lastAccess: Date.now() };
+    rateLimitMap.set(ip, entry);
+  }
+  entry.authFailures.push(Date.now());
+}
+
+/** Reset rate limiter state — exported for test isolation */
+export function resetRateLimiter() {
+  rateLimitMap.clear();
 }
 
 /**
@@ -90,12 +176,27 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  // Rate limiting (R2-S3)
+  const ip = getClientIp(request);
+  const rateCheck = checkRateLimit(ip);
+  if (rateCheck.limited) {
+    return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        'Retry-After': String(rateCheck.retryAfter ?? 60),
+      },
+    });
+  }
+
   // Allow CORS preflight requests without auth (BUG-034)
   // Origin validation: only reflect known origins, deny unknown in production
   if (request.method === 'OPTIONS') {
     const requestOrigin = request.headers.get('origin') ?? '';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-    const allowedOrigins = new Set([appUrl, 'http://localhost:3000', 'http://localhost:3001']);
+    const allowedOrigins = process.env.NODE_ENV === 'production'
+      ? new Set([appUrl])
+      : new Set([appUrl, 'http://localhost:3000', 'http://localhost:3001']);
     const corsOrigin = allowedOrigins.has(requestOrigin) ? requestOrigin : appUrl;
 
     return new NextResponse(null, {
@@ -130,19 +231,26 @@ export async function middleware(request: NextRequest) {
   }
 
   // F-05: Allow same-origin browser requests without API key.
-  // Sec-Fetch-Site is a browser "forbidden header" (cannot be set by JS fetch).
-  // Combined with Origin/Referer check to prevent non-browser spoofing.
-  // Note: Browsers do NOT send Origin on GET requests, so Referer is used as fallback.
+  // Multi-header validation (R2-C1): Sec-Fetch-Site alone is insufficient.
+  // Require Sec-Fetch-Site: same-origin AND valid Mode AND valid Dest.
   const secFetchSite = request.headers.get('sec-fetch-site');
-  if (secFetchSite === 'same-origin') {
+  const secFetchMode = request.headers.get('sec-fetch-mode');
+  const secFetchDest = request.headers.get('sec-fetch-dest');
+
+  const VALID_SEC_FETCH_MODES = new Set(['cors', 'same-origin', 'navigate']);
+  const VALID_SEC_FETCH_DESTS = new Set(['empty', 'document']);
+
+  if (
+    secFetchSite === 'same-origin' &&
+    secFetchMode && VALID_SEC_FETCH_MODES.has(secFetchMode) &&
+    secFetchDest && VALID_SEC_FETCH_DESTS.has(secFetchDest)
+  ) {
     const origin = request.headers.get('origin') ?? '';
     const host = request.headers.get('host') ?? '';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-    // Verify Origin matches either the configured app URL or the Host header
     if (origin === appUrl || origin === `http://${host}` || origin === `https://${host}`) {
       return NextResponse.next();
     }
-    // Fallback: check Referer header (sent on GET requests where Origin is absent)
     if (!origin) {
       const referer = request.headers.get('referer') ?? '';
       if (referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`)) {
@@ -153,7 +261,7 @@ export async function middleware(request: NextRequest) {
 
   // Auth check (for external/programmatic API access)
   if (!isAuthenticated(request)) {
-    const ip = getClientIp(request);
+    recordAuthFailure(ip);
 
     // Fire-and-forget: audit log should never block the response
     auditLog.authFailure({ endpoint: pathname, ip }).catch(() => {

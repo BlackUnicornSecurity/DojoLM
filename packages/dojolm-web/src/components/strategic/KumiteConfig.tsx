@@ -38,6 +38,10 @@ export interface ArenaConfigData {
   matchDuration: number
   scoringPreset: 'default' | 'aggressive' | 'balanced' | 'defensive'
   gameMode: 'ctf' | 'koth' | 'redblue'
+  attackMode: 'kunai' | 'shuriken' | 'naginata' | 'musashi'
+  soundMuted: boolean
+  temperature: number
+  maxTokens: number
 }
 
 export interface MitsukeConfigData {
@@ -62,6 +66,10 @@ const DEFAULT_ARENA: ArenaConfigData = {
   matchDuration: 300,
   scoringPreset: 'default',
   gameMode: 'ctf',
+  attackMode: 'kunai',
+  soundMuted: true,
+  temperature: 0.7,
+  maxTokens: 1024,
 }
 
 const DEFAULT_MITSUKE: MitsukeConfigData = {
@@ -92,7 +100,9 @@ function loadConfig<T>(key: string, defaults: T): T {
 
 function saveConfig(key: string, data: unknown) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(key, JSON.stringify(data))
+    try {
+      localStorage.setItem(key, JSON.stringify(data))
+    } catch { /* QuotaExceededError — silently ignore */ }
   }
 }
 
@@ -283,6 +293,8 @@ export function ArenaConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   const handleChange = useCallback((key: string, value: unknown) => {
     if (key === 'agents') {
       setConfig((prev) => ({ ...prev, agents: value as string[] }))
+    } else if (key === 'soundMuted') {
+      setConfig((prev) => ({ ...prev, soundMuted: value === 'true' }))
     } else {
       setConfig((prev) => ({ ...prev, [key]: value }))
     }
@@ -347,6 +359,39 @@ export function ArenaConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           columns: 3,
           accentColor: 'var(--warning)',
         },
+        {
+          type: 'radiogroup' as const,
+          key: 'attackMode',
+          label: 'Attack Mode',
+          options: [
+            { value: 'kunai', label: 'Kunai Strike' },
+            { value: 'shuriken', label: 'Shuriken Storm' },
+            { value: 'naginata', label: 'Naginata Sweep' },
+            { value: 'musashi', label: 'Way of Musashi' },
+          ],
+          columns: 2,
+          accentColor: 'var(--dojo-primary)',
+        },
+      ],
+    },
+    {
+      id: 'model-defaults',
+      label: 'Model Defaults',
+      defaultOpen: true,
+      controls: [
+        { type: 'number' as const, key: 'temperature', label: 'Temperature', min: 0, max: 2, step: 0.1 },
+        { type: 'number' as const, key: 'maxTokens', label: 'Max Tokens', min: 128, max: 4096, step: 128 },
+        {
+          type: 'radiogroup' as const,
+          key: 'soundMuted',
+          label: 'Sound Effects',
+          options: [
+            { value: 'true', label: 'Muted' },
+            { value: 'false', label: 'Enabled' },
+          ],
+          columns: 2,
+          accentColor: 'var(--bu-electric)',
+        },
       ],
     },
   ]
@@ -356,6 +401,10 @@ export function ArenaConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     matchDuration: config.matchDuration,
     scoringPreset: config.scoringPreset,
     gameMode: config.gameMode,
+    attackMode: config.attackMode,
+    soundMuted: String(config.soundMuted),
+    temperature: config.temperature,
+    maxTokens: config.maxTokens,
   }
 
   return (

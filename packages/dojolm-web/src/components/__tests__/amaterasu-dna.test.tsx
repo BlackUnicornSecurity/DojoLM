@@ -17,33 +17,51 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 vi.mock('@/lib/fetch-with-auth', () => ({
-  fetchWithAuth: vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({
-      analysis: {
-        components: [
-          { id: 'comp-1', type: 'trigger', content: 'Ignore instructions' },
-          { id: 'comp-2', type: 'payload', content: 'reveal secrets' },
-        ],
-        baselineScore: 0.85,
-        ablationResults: [
-          { componentId: 'comp-1', componentType: 'trigger', scoreDelta: 0.45, scoreWithout: 0.4, isCritical: true },
-          { componentId: 'comp-2', componentType: 'payload', scoreDelta: 0.2, scoreWithout: 0.65, isCritical: false },
-        ],
-        tokenHeatmap: [
-          { index: 0, token: 'Ignore', contribution: 0.8 },
-          { index: 1, token: 'instructions', contribution: 0.6 },
-        ],
-        sensitivityResults: [
-          { componentId: 'comp-1', componentType: 'trigger', sensitivity: 0.85, variations: [{ modification: 'original', score: 0.85 }, { modification: 'synonym', score: 0.6 }] },
-        ],
-        explanation: {
-          summary: 'Attack relies heavily on trigger component.',
-          criticalComponents: ['Trigger keyword "Ignore" is critical for attack success.'],
-          defenseRecommendations: ['Implement trigger word detection.', 'Use instruction-data separation.'],
+  fetchWithAuth: vi.fn().mockImplementation(async (url: URL | RequestInfo) => {
+    const urlStr = String(url)
+    if (urlStr.includes('type=stats')) {
+      return { ok: true, json: async () => ({ stats: { totalNodes: 51, totalEdges: 38, totalFamilies: 7, totalClusters: 5, byCategory: {}, bySeverity: {}, bySource: {} } }) }
+    }
+    if (urlStr.includes('type=families')) {
+      return { ok: true, json: async () => ({ families: [] }) }
+    }
+    if (urlStr.includes('type=clusters')) {
+      return { ok: true, json: async () => ({ clusters: [] }) }
+    }
+    if (urlStr.includes('type=timeline')) {
+      return { ok: true, json: async () => ({ timeline: [] }) }
+    }
+    if (urlStr.includes('/api/attackdna/sync')) {
+      return { ok: true, json: async () => ({ config: { lastSyncAt: null }, syncInProgress: false }) }
+    }
+    return {
+      ok: true,
+      json: async () => ({
+        analysis: {
+          components: [
+            { id: 'comp-1', type: 'trigger', content: 'Ignore instructions' },
+            { id: 'comp-2', type: 'payload', content: 'reveal secrets' },
+          ],
+          baselineScore: 0.85,
+          ablationResults: [
+            { componentId: 'comp-1', componentType: 'trigger', scoreDelta: 0.45, scoreWithout: 0.4, isCritical: true },
+            { componentId: 'comp-2', componentType: 'payload', scoreDelta: 0.2, scoreWithout: 0.65, isCritical: false },
+          ],
+          tokenHeatmap: [
+            { index: 0, token: 'Ignore', contribution: 0.8 },
+            { index: 1, token: 'instructions', contribution: 0.6 },
+          ],
+          sensitivityResults: [
+            { componentId: 'comp-1', componentType: 'trigger', sensitivity: 0.85, variations: [{ modification: 'original', score: 0.85 }, { modification: 'synonym', score: 0.6 }] },
+          ],
+          explanation: {
+            summary: 'Attack relies heavily on trigger component.',
+            criticalComponents: ['Trigger keyword "Ignore" is critical for attack success.'],
+            defenseRecommendations: ['Implement trigger word detection.', 'Use instruction-data separation.'],
+          },
         },
-      },
-    }),
+      }),
+    }
   }),
 }))
 
@@ -74,7 +92,7 @@ vi.mock('@/components/ui/SafeCodeBlock', () => ({
   SafeCodeBlock: ({ code }: { code: string }) => <pre data-testid="safe-code-block">{code}</pre>,
 }))
 
-vi.mock('@/components/ui/Input', () => ({
+vi.mock('@/components/ui/input', () => ({
   Input: (props: React.InputHTMLAttributes<HTMLInputElement>) => <input {...props} />,
 }))
 
@@ -126,15 +144,18 @@ describe('AttackDNAExplorer (DNA-001 to DNA-005, DNA-020, DNA-024-025)', () => {
     expect(screen.getByText(/Analyze attack lineage/)).toBeInTheDocument()
   })
 
-  it('DNA-002: renders stats bar with Nodes, Edges, Families, Clusters', () => {
+  it('DNA-002: renders stats bar with Nodes, Edges, Families, Clusters', async () => {
     render(<AttackDNAExplorer />)
     expect(screen.getByText('Nodes')).toBeInTheDocument()
     expect(screen.getByText('Edges')).toBeInTheDocument()
     expect(screen.getByText('Families')).toBeInTheDocument()
     // "Clusters" appears both as a stat label and a tab label
     expect(screen.getAllByText('Clusters').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getByText('51')).toBeInTheDocument()
-    expect(screen.getByText('38')).toBeInTheDocument()
+    // Stats load asynchronously via useDNAData hook
+    await waitFor(() => {
+      expect(screen.getByText('51')).toBeInTheDocument()
+      expect(screen.getByText('38')).toBeInTheDocument()
+    })
   })
 
   it('DNA-003: renders search input', () => {

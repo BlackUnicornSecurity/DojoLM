@@ -307,9 +307,31 @@ function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: boolean
 
 interface MutationTimelineProps {
   className?: string
+  timelineEntries?: unknown[]
+  activeTiers?: Set<string>
 }
 
-export function MutationTimeline({ className }: MutationTimelineProps) {
+function convertAPITimeline(raw: unknown[]): TimelineEntry[] {
+  if (!raw || raw.length === 0) return []
+  return raw.map((item) => {
+    const e = item as Record<string, unknown>
+    return {
+      id: String(e.nodeId ?? e.id ?? ''),
+      date: String(e.date ?? ''),
+      mutationType: String(e.event ?? 'mutation').replace('first-observed', 'insertion').replace('cluster-formed', 'structural'),
+      nodeCategory: String(e.category ?? 'unknown'),
+      description: `${String(e.event ?? 'event')} — ${String(e.category ?? '')} node ${String(e.nodeId ?? '')}`,
+      fromNodeId: String(e.nodeId ?? ''),
+      toNodeId: '',
+      similarity: 0,
+    }
+  })
+}
+
+export function MutationTimeline({ className, timelineEntries: timelineProp }: MutationTimelineProps) {
+  const resolvedTimeline = timelineProp && timelineProp.length > 0
+    ? convertAPITimeline(timelineProp)
+    : MOCK_TIMELINE
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
@@ -319,13 +341,13 @@ export function MutationTimeline({ className }: MutationTimelineProps) {
 
   // Filter entries by date range
   const filteredTimeline = useMemo(() => {
-    return MOCK_TIMELINE.filter((entry) => {
+    return resolvedTimeline.filter((entry) => {
       const entryDate = entry.date.slice(0, 10) // YYYY-MM-DD
       if (startDate && entryDate < startDate) return false
       if (endDate && entryDate > endDate) return false
       return true
     })
-  }, [startDate, endDate])
+  }, [startDate, endDate, resolvedTimeline])
 
   // Group timeline entries by date
   const dateGroups = useMemo(() => filteredTimeline.reduce<Record<string, TimelineEntry[]>>(
@@ -386,7 +408,7 @@ export function MutationTimeline({ className }: MutationTimelineProps) {
               </button>
             )}
             <span className="text-xs text-muted-foreground ml-auto">
-              {filteredTimeline.length} of {MOCK_TIMELINE.length} entries
+              {filteredTimeline.length} of {resolvedTimeline.length} entries
             </span>
           </div>
         </CardContent>
@@ -419,7 +441,11 @@ export function MutationTimeline({ className }: MutationTimelineProps) {
       {dateKeys.length === 0 && (
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-sm text-muted-foreground">No timeline entries match the selected date range.</p>
+            <p className="text-sm text-muted-foreground">
+              {resolvedTimeline.length === 0
+                ? 'No data — run a scan or trigger ingestion'
+                : 'No timeline entries match the selected date range.'}
+            </p>
           </CardContent>
         </Card>
       )}

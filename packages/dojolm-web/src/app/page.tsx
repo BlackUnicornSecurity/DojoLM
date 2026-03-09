@@ -288,7 +288,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       />
 
       {/* Metric Cards - Display-only metrics, NOT for security decisions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           label="Total Scans"
           value={metrics.totalScans}
@@ -332,9 +332,13 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       )}
 
       {/* Scanner Grid */}
-      <div className="grid lg:grid-cols-2 gap-3">
-        <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
-        <FindingsList result={scanResult} />
+      <div className="grid lg:grid-cols-2 gap-4 lg:gap-5">
+        <div className="clean-context">
+          <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
+        </div>
+        <div className="blundesi-context">
+          <FindingsList result={scanResult} />
+        </div>
       </div>
     </div>
   )

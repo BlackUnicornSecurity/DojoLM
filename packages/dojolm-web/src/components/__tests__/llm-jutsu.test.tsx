@@ -18,6 +18,11 @@ vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: (...args: unknown[]) => mockFetchWithAuth(...args),
 }))
 
+const mockSetActiveTab = vi.fn()
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ activeTab: 'llm-jutsu', setActiveTab: mockSetActiveTab }),
+}))
+
 // Mock UI components
 vi.mock('@/components/ui/ModuleHeader', () => ({
   ModuleHeader: ({ title, subtitle, actions }: { title: string; subtitle: string; actions?: ReactNode }) => (

@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { scan } from '@dojolm/scanner';
 import type { ScanOptions } from '@dojolm/scanner';
 import { checkApiAuth } from '@/lib/api-auth';
+import { emitScannerFindings } from '@/lib/ecosystem-emitters';
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,6 +75,11 @@ export async function POST(request: NextRequest) {
     // scan() is synchronous — cannot be interrupted by setTimeout on the same thread.
     const scanOptions: ScanOptions = (engines && engines.length > 0) ? { engines } : {};
     const result = scan(trimmedText, scanOptions);
+
+    // Fire-and-forget: emit ecosystem findings for scanner results (Story 10.2)
+    if (result.findings.length > 0) {
+      emitScannerFindings(result.findings, trimmedText);
+    }
 
     // Return scan result
     return NextResponse.json(result, {

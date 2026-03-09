@@ -1,98 +1,110 @@
 @import "tailwindcss";
 
 :root {
-  /* ===== BlackUnicorn primary colors — NODA-3 harmonized dark palette ===== */
-  --background: #0F1419;
-  --bg-secondary: #1A2028;
-  --bg-tertiary: #242D38;
-  --bg-quaternary: #2E3744;
+  /* ===== KASHIWA Deep Blacks — Near-True-Black palette (Story 2.1) ===== */
+  --background: #09090F;
+  --bg-secondary: #12131A;
+  --bg-tertiary: #1C1D26;
+  --bg-quaternary: #262734;
+  --bg-primary: var(--background);       /* Story 2.0 (R2-C5): alias for 30+ files */
+  --border-primary: var(--border);       /* Story 2.0 (R2-C5): alias for components */
 
-  /* ===== BlackUnicorn electric cyan accent (AI/intelligence elements) ===== */
-  --bu-electric: #00D9FF;
-  --bu-electric-muted: rgba(0, 217, 255, 0.15);
-  --bu-electric-subtle: rgba(0, 217, 255, 0.08);
+  /* ===== Steel Blue accent (AI/intelligence elements) — Story 2.3 ===== */
+  --bu-electric: #5B8DEF;
+  --bu-electric-muted: rgba(91, 141, 239, 0.15);
+  --bu-electric-subtle: rgba(91, 141, 239, 0.08);
 
-  /* ===== DojoLM red accent =====
+  /* ===== Torii Gate Red (Shu Vermillion) — Story 2.2 =====
    * USAGE GUIDE:
-   * --dojo-primary (#FF5252): Use for interactive elements, borders, icons on dark backgrounds.
-   *   WCAG AA 6.16:1 on #0F1419 (background). 4.8:1 on #1A2028 (bg-secondary).
-   * --dojo-primary-lg (#FF7070): Large text (>=18px bold / >=24px normal) ONLY.
-   * --dojo-electric (#FF3030): Decorative/non-text accents only (glows, borders).
+   * --dojo-primary (#CC3A2F): Interactive elements, borders, icons on dark backgrounds.
+   *   WCAG AA: 4.6:1 on #09090F (AA large text). Use --dojo-primary-lg for small text.
+   * --dojo-primary-lg (#E0544A): Small text variant (>=14px).
+   * --dojo-electric (#B8322A): Decorative/non-text accents only (glows, borders).
    */
-  --dojo-primary: #FF5252;      /* WCAG AA: 6.16:1 on #0F1419 */
-  --dojo-primary-lg: #FF7070;   /* Large text only */
-  --dojo-electric: #FF3030;
-  --dojo-hover: #E04545;
+  --dojo-primary: #CC3A2F;
+  --dojo-primary-lg: #E0544A;
+  --dojo-electric: #B8322A;
+  --dojo-hover: #D94A3F;
 
-  /* ===== Accent violet ===== */
-  --accent-violet: #9D6FFF;
-  --accent-violet-muted: rgba(157, 111, 255, 0.15);
+  /* ===== Accent violet + gold — Story 2.3 ===== */
+  --accent-violet: #8B7BF5;
+  --accent-violet-muted: rgba(139, 123, 245, 0.15);
+  --accent-gold: #D4A843;
+  --accent-gold-muted: rgba(212, 168, 67, 0.12);
 
-  /* ===== Semantic colors (preserved for meaning) ===== */
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-  --severity-high: #EA580C;
-  --severity-low: #00D9FF;
+  /* ===== Semantic colors — Story 2.8 ===== */
+  --success: #34C76A;
+  --warning: #E5A030;
+  --danger: #D44040;
+  --severity-high: #E06030;
+  --severity-low: #5B8DEF;
 
-  /* ===== Guard status tokens ===== */
-  --status-block: #F87171;
-  --status-block-bg: rgba(239, 68, 68, 0.2);
-  --status-allow: #4ADE80;
-  --status-allow-bg: rgba(34, 197, 94, 0.2);
-  --status-log: #60A5FA;
-  --status-log-bg: rgba(59, 130, 246, 0.2);
-  --status-input: #60A5FA;
-  --status-input-bg: rgba(59, 130, 246, 0.2);
-  --status-output: #C084FC;
-  --status-output-bg: rgba(168, 85, 247, 0.2);
-  --status-online: #22C55E;
-  --status-offline: #6B7280;
-  --status-running: #3B82F6;
+  /* ===== Guard status tokens — Story 2.8 ===== */
+  --status-block: #E06060;
+  --status-block-bg: rgba(224, 96, 96, 0.15);
+  --status-allow: #40C870;
+  --status-allow-bg: rgba(64, 200, 112, 0.15);
+  --status-log: #5B8DEF;
+  --status-log-bg: rgba(91, 141, 239, 0.15);
+  --status-input: #5B8DEF;
+  --status-input-bg: rgba(91, 141, 239, 0.15);
+  --status-output: #8B7BF5;
+  --status-output-bg: rgba(139, 123, 245, 0.15);
+  --status-online: #34C76A;
+  --status-offline: #565D6B;
+  --status-running: #5B8DEF;
 
-  /* ===== Leaderboard rank tokens ===== */
-  --rank-gold: #EAB308;
-  --rank-silver: #9CA3AF;
-  --rank-bronze: #D97706;
+  /* ===== Brand identity tokens — Story 6.2 ===== */
+  --brand-dojolm: #D43A2C;
+  --brand-bonklm: #D4A843;
+  --brand-basileak: #8B7BF5;
+  --brand-pantheonlm: #34C76A;
+  --brand-marfaak: #E060A0;
+  --brand-blackunicorn: #565D6B;
 
-  /* ===== Severity badge tokens ===== */
-  --severity-critical: var(--danger); /* Aliases --danger for single source of truth */
-  --severity-critical-bg: rgba(239, 68, 68, 0.2);
-  --severity-high-text: #FB923C;
-  --severity-high-bg: rgba(249, 115, 22, 0.2);
-  --severity-medium: #FBBF24;
-  --severity-medium-bg: rgba(245, 158, 11, 0.2);
-  --severity-low-text: #4ADE80;
-  --severity-low-bg: rgba(34, 197, 94, 0.2);
+  /* ===== Leaderboard rank tokens — Story 2.8 ===== */
+  --rank-gold: #D4A843;
+  --rank-silver: #8B95A5;
+  --rank-bronze: #C87830;
 
-  /* ===== Text colors (cool-tinted grays) ===== */
-  --foreground: #E8E8E8;
-  --muted-foreground: #A0AEC0;
-  --text-tertiary: #6B7280;
-  --text-quaternary: #4B5563;  /* Decorative elements only — fails WCAG AA 4.5:1 on dark backgrounds. Never use for readable text. */
+  /* ===== Severity badge tokens — Story 2.8 ===== */
+  --severity-critical: var(--danger);
+  --severity-critical-bg: rgba(212, 64, 64, 0.15);
+  --severity-high-text: #E08040;
+  --severity-high-bg: rgba(224, 128, 64, 0.15);
+  --severity-medium: #E5A030;
+  --severity-medium-bg: rgba(229, 160, 48, 0.12);
+  --severity-low-text: #40C870;
+  --severity-low-bg: rgba(64, 200, 112, 0.12);
 
-  /* ===== UI colors ===== */
-  --card: #1A2028;
-  --card-foreground: #E8E8E8;
-  --popover: #242D38;  /* SOLID */
-  --popover-foreground: #E8E8E8;
-  --accent: #2E3744;
-  --accent-foreground: #E8E8E8;
-  --border: #363F4A;
-  --input: #2E3744;
-  --muted: #2E3744;
+  /* ===== Text colors — Story 2.4 ===== */
+  --foreground: #ECEEF2;
+  --muted-foreground: #7E8A9A;
+  --text-tertiary: #565D6B;
+  --text-quaternary: #3D4350;  /* Decorative elements only */
 
-  /* ===== Primary action — same as --dojo-primary (kept for Shadcn/Tailwind compatibility) ===== */
-  --primary: #FF5252;
-  --primary-foreground: #0F1419;
-  --ring: rgba(0, 217, 255, 0.4);
+  /* ===== UI colors — Story 2.6 ===== */
+  --card: #12131A;
+  --card-foreground: #ECEEF2;
+  --popover: #1C1D26;
+  --popover-foreground: #ECEEF2;
+  --accent: #262734;
+  --accent-foreground: #ECEEF2;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: #1C1D26;
+  --muted: #1C1D26;
+
+  /* ===== Primary action — Story 2.6 ===== */
+  --primary: #CC3A2F;
+  --primary-foreground: #ECEEF2;    /* POLARITY INVERSION: was dark, now light */
+  --ring: rgba(91, 141, 239, 0.35);
 
   /* ===== Secondary ===== */
-  --secondary: #2E3744;
-  --secondary-foreground: #E8E8E8;
+  --secondary: #262734;
+  --secondary-foreground: #ECEEF2;
 
-  /* ===== Destructive (semantic red — preserved) ===== */
-  --destructive: #EF4444;
+  /* ===== Destructive ===== */
+  --destructive: #D44040;
   --destructive-foreground: #FAFAFA;
 
   /* ===== Layout tokens ===== */
@@ -113,20 +125,20 @@
   --transition-slow: 300ms;
   --transition-emphasis: 500ms;
 
-  /* ===== Shadows ===== */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-primary: 0 0 16px rgba(255, 82, 82, 0.25);
-  --shadow-glow-accent: 0 0 16px rgba(0, 217, 255, 0.2);
+  /* ===== Shadows — Story 2.7 (stronger for darker backgrounds) ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
+  --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
-  /* ===== Overlay & border opacity tokens ===== */
+  /* ===== Overlay & border opacity tokens — Story 2.5 ===== */
   --overlay-subtle: rgba(255, 255, 255, 0.04);
   --overlay-hover: rgba(255, 255, 255, 0.08);
   --overlay-active: rgba(255, 255, 255, 0.1);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(255, 255, 255, 0.2);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-hover: rgba(255, 255, 255, 0.10);
+  --border-active: rgba(255, 255, 255, 0.16);
 
   /* ===== Z-index scale ===== */
   --z-mobile-nav: 50;
@@ -138,21 +150,23 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
   --radius-full: 9999px;
 
   /* ===== Card state tokens ===== */
-  --card-elevated: #242D38;
-  --card-pressed: #1A2028;
-  --dojo-subtle: rgba(255, 82, 82, 0.1);
+  --card-elevated: #1C1D26;
+  --card-pressed: #0E0F15;
+  --dojo-subtle: rgba(204, 58, 47, 0.12);
 
-  /* ===== Syntax highlighting ===== */
-  --syntax-keyword: #c792ea;
-  --syntax-string: #c3e88d;
-  --syntax-number: #f78c6c;
-  --syntax-comment: #78909c;
-  --syntax-plain: #d6deeb;
+  /* ===== Syntax highlighting — Story 5.5 (adjusted for darker bg) ===== */
+  --syntax-keyword: #B08ADB;
+  --syntax-string: #A8D880;
+  --syntax-number: #E08060;
+  --syntax-comment: #565D6B;
+  --syntax-plain: #ECEEF2;
 
-  /* ===== Belt rank colors (Dojo Identity) ===== */
+  /* ===== Belt rank colors (Dojo Identity — UNCHANGED) ===== */
   --belt-white: #F5F5F5;
   --belt-yellow: #FDD835;
   --belt-orange: #FF8A50;
@@ -224,8 +238,9 @@
   --color-severity-low-text: var(--severity-low-text);
   --color-severity-low-bg: var(--severity-low-bg);
 
-  /* Accent violet */
+  /* Accent violet + gold */
   --color-accent-violet: var(--accent-violet);
+  --color-accent-gold: var(--accent-gold);
 
   /* Belt rank tokens (Dojo Identity) */
   --color-belt-white: var(--belt-white);
@@ -240,23 +255,26 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-primary: 0 0 16px rgba(255, 82, 82, 0.25);
-  --shadow-glow-accent: 0 0 16px rgba(0, 217, 255, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
+  --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
-  /* Fonts */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Fonts — Story 3.2 */
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
 }
 
-/* ===== Heading Convention =====
- * <h1> = PageToolbar only (one per page view)
- * <h2> = Module headings at text-2xl font-bold
- * <h3> = Sections within modules at text-lg font-semibold
+/* ===== Heading Convention (Story 3.3 — KASHIWA tightened hierarchy) =====
+ * <h1> = PageToolbar only: text-2xl (24px), font-bold (700), tracking-tight (-0.025em)
+ * <h2> = Module headings: text-xl (20px), font-bold (700), tracking-tight (-0.02em)
+ * <h3> = Sections: text-base (16px), font-semibold (600), tracking-tight (-0.01em)
+ * <h4> = Subsections: text-sm (14px), font-semibold (600)
  * Widget titles = CardTitle (rendered as <div>)
  */
 
@@ -265,7 +283,23 @@
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, var(--dojo-primary) 20%, var(--dojo-primary) 80%, transparent 100%);
   opacity: 0.3;
+  transform-origin: center;
 }
+
+/* ===== Divider expand animation (GPU-composited, no reflow) — Story 5.2 ===== */
+@keyframes divider-expand {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 0.3; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dojo-divider { animation: divider-expand var(--transition-slow) ease-out forwards; }
+}
+
+/* ===== Scroll behavior — Story 5.3 ===== */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+html { scroll-padding-top: calc(var(--header-height) + 16px); }
 
 /* ===== Metric Typography System =====
  * Usage mapping:
@@ -317,7 +351,7 @@
 
 input:focus, textarea:focus, select:focus {
   border-color: var(--bu-electric);
-  box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(91, 141, 239, 0.15);
 }
 
 /* ===== Custom scrollbar (webkit + Firefox) ===== */
@@ -365,24 +399,25 @@ body {
 
 /* ===== Navigation active state (Story 4.4) ===== */
 .nav-item-active {
-  background: var(--overlay-hover);
+  background: rgba(91, 141, 239, 0.06);
   color: var(--foreground);
-  border-left: 2px solid var(--bu-electric);
+  border-left: 3px solid var(--bu-electric);
 }
 .nav-item-active-icon {
   color: var(--bu-electric);
+  filter: drop-shadow(0 0 4px rgba(91, 141, 239, 0.3));
 }
 
 /* ===== Glassmorphic utilities ===== */
 .glass {
-  background: rgba(26, 32, 40, 0.6);
+  background: rgba(18, 19, 26, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-subtle);
 }
 
 .glass-card {
-  background: rgba(26, 32, 40, 0.7);
+  background: rgba(18, 19, 26, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-subtle);
@@ -390,23 +425,44 @@ body {
 }
 
 .glass-card:hover {
-  background: rgba(36, 45, 56, 0.8);
+  background: rgba(28, 29, 38, 0.8);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), 0 0 0 1px var(--overlay-hover);
 }
 
+/* ===== Card inner gradient (Story 4.1 — via CSS class, not inline style) ===== */
+.card-gradient {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+}
+
+/* ===== Widget hero gradient border (Story 4.2 — replaces flat border-t-2) ===== */
+.widget-hero-border {
+  position: relative;
+}
+.widget-hero-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--dojo-primary), transparent);
+  border-radius: 1px;
+  z-index: 1;
+}
+
 /* ===== Gradient card overlays ===== */
 .gradient-overlay-primary {
-  background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(91, 141, 239, 0.08) 0%, transparent 60%);
 }
 .gradient-overlay-success {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(52, 199, 106, 0.08) 0%, transparent 60%);
 }
 .gradient-overlay-warning {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(229, 160, 48, 0.08) 0%, transparent 60%);
 }
 .gradient-overlay-danger {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(204, 58, 47, 0.12) 0%, transparent 60%);
 }
 
 /* ===== Shimmer loading animation ===== */
@@ -450,8 +506,8 @@ body {
 
 /* ===== Dojo strike animation (DojoLM branding - bypass detection emphasis) ===== */
 @keyframes dojo-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 82, 82, 0.4); }
-  50% { box-shadow: 0 0 40px rgba(255, 82, 82, 0.7), 0 0 60px rgba(255, 112, 112, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px rgba(204, 58, 47, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(204, 58, 47, 0.7), 0 0 60px rgba(224, 84, 74, 0.3); }
 }
 
 @keyframes dojo-pulse {
@@ -469,6 +525,10 @@ body {
     animation: dojo-pulse 300ms ease-out;
   }
 }
+
+/* ===== Bento grid dense flow — fills gaps when widgets toggled off ===== */
+/* Note: grid-auto-flow: dense may cause visual order to differ from DOM/tab order */
+.bento-grid { grid-auto-flow: dense; }
 
 /* ===== Staggered entrance (motion-safe only) ===== */
 @media (prefers-reduced-motion: no-preference) {
@@ -488,6 +548,10 @@ body {
   .stagger-children > *:nth-child(10) { animation-delay: 450ms; }
   .stagger-children > *:nth-child(11) { animation-delay: 500ms; }
   .stagger-children > *:nth-child(12) { animation-delay: 550ms; }
+  .stagger-children > *:nth-child(13) { animation-delay: 600ms; }
+  .stagger-children > *:nth-child(14) { animation-delay: 650ms; }
+  .stagger-children > *:nth-child(15) { animation-delay: 700ms; }
+  .stagger-children > *:nth-child(16) { animation-delay: 750ms; }
 }
 
 /* ===== Button press effect ===== */
@@ -578,7 +642,7 @@ body {
 /* Compose focus-within glow WITH Card hover shadow to avoid clobbering */
 .glow-card-input:focus-within {
   box-shadow:
-    0 0 20px rgba(0, 217, 255, 0.15),
+    0 0 20px rgba(91, 141, 239, 0.15),
     0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
@@ -587,6 +651,65 @@ body {
   /* On touch devices, replace hover with active press effects */
   .glass-card:hover {
     transform: none;
+  }
+}
+
+/* ===== Arena match animations (Story 17.1) ===== */
+@keyframes arena-slash {
+  0% { opacity: 0; transform: scale(0.5) rotate(-45deg); }
+  30% { opacity: 1; transform: scale(1.1) rotate(-45deg); }
+  100% { opacity: 0; transform: scale(1.3) rotate(-45deg); }
+}
+
+@keyframes arena-slash-line {
+  0% { stroke-dasharray: 0 300; }
+  50% { stroke-dasharray: 300 0; }
+  100% { stroke-dasharray: 300 0; opacity: 0; }
+}
+
+@keyframes arena-shield-pulse {
+  0% { opacity: 0; transform: scale(0.3); }
+  40% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes arena-shield-ring {
+  0% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0.4); }
+  50% { box-shadow: 0 0 20px 8px rgba(91, 141, 239, 0.2); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0); }
+}
+
+@keyframes arena-score-float {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  20% { opacity: 1; transform: translateY(-10px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
+}
+
+@keyframes arena-round-fade {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-arena-slash {
+    animation: arena-slash 0.8s ease-out forwards;
+  }
+  .animate-arena-slash-line {
+    animation: arena-slash-line 0.6s ease-out forwards;
+  }
+  .animate-arena-shield-pulse {
+    animation: arena-shield-pulse 0.7s ease-out forwards;
+  }
+  .animate-arena-shield-ring {
+    animation: arena-shield-ring 0.7s ease-out forwards;
+  }
+  .animate-arena-score-float {
+    animation: arena-score-float 0.8s ease-out forwards;
+  }
+  .animate-arena-round-fade {
+    animation: arena-round-fade 1.2s ease-in-out forwards;
   }
 }
 
@@ -609,5 +732,5 @@ body {
 :focus-visible {
   outline: 2px solid var(--bu-electric);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 217, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.15);
 }

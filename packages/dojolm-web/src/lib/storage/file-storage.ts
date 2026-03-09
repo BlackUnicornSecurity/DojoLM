@@ -436,7 +436,7 @@ export class FileStorage implements IStorageBackend {
     return { executions, total };
   }
 
-  async getRecentExecutions(modelConfigId: string, limit: number = 100): Promise<LLMTestExecution[]> {
+  async getRecentExecutions(modelConfigId: string, limit: number = 1000): Promise<LLMTestExecution[]> {
     const { executions } = await this.queryExecutions({
       modelConfigId,
       limit,

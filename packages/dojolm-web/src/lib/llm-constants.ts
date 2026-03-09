@@ -270,9 +270,33 @@ export const ALLOWED_URL_PROTOCOLS = ['https:', 'http:'] as const;
 // ===========================================================================
 
 /**
- * Maximum tests per batch execution
+ * Default concurrent execution limit for batch tests.
+ * Configurable via LLM_CONCURRENT_LIMIT env var (1-50).
  */
-export const MAX_TESTS_PER_BATCH = 100;
+export const DEFAULT_CONCURRENT_LIMIT = 5;
+
+export function getConcurrentLimit(): number {
+  if (typeof window !== 'undefined') return DEFAULT_CONCURRENT_LIMIT;
+  const envVal = process.env.LLM_CONCURRENT_LIMIT;
+  if (envVal) {
+    const parsed = parseInt(envVal, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 50) return parsed;
+  }
+  return DEFAULT_CONCURRENT_LIMIT;
+}
+
+/**
+ * Maximum batch size (configurable via LLM_MAX_BATCH_SIZE env var, default 10000, range 1-50000).
+ */
+export function getMaxBatchSize(): number {
+  if (typeof window !== 'undefined') return 10000;
+  const envVal = process.env.LLM_MAX_BATCH_SIZE;
+  if (envVal) {
+    const parsed = parseInt(envVal, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 50000) return parsed;
+  }
+  return 10000;
+}
 
 /**
  * Maximum batch size in bytes (input)

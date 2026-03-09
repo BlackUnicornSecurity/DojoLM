@@ -71,6 +71,7 @@ export function ScannerInput({
           onKeyDown={handleKeyDown}
           className="min-h-[200px] font-mono text-sm"
           disabled={isScanning}
+          aria-label="Enter text to scan for prompt injection"
         />
 
         {/* ScanningState unmounts when not scanning (per Architect/Security requirement) */}

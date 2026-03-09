@@ -24,6 +24,7 @@ type WizardStep = 0 | 1 | 2 | 3
 interface SubmissionWizardProps {
   onSave: (submission: BountySubmission) => void
   onClose: () => void
+  initialProgramId?: string
 }
 
 const STEP_LABELS = [
@@ -33,7 +34,7 @@ const STEP_LABELS = [
   { label: 'Review & Submit', icon: Eye },
 ]
 
-export function SubmissionWizard({ onSave, onClose }: SubmissionWizardProps) {
+export function SubmissionWizard({ onSave, onClose, initialProgramId }: SubmissionWizardProps) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
@@ -43,7 +44,7 @@ export function SubmissionWizard({ onSave, onClose }: SubmissionWizardProps) {
   const [step, setStep] = useState<WizardStep>(0)
 
   // Step 1: Program + Title
-  const [programId, setProgramId] = useState('')
+  const [programId, setProgramId] = useState(initialProgramId ?? '')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 

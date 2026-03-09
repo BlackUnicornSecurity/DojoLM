@@ -12,6 +12,7 @@ import { fileStorage } from '@/lib/storage/file-storage';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
 import { getGuardConfig, saveGuardEvent, getConfigHash, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
+import { emitExecutionFinding } from '@/lib/ecosystem-emitters';
 
 // ===========================================================================
 // POST /api/llm/execute - Execute a single test
@@ -125,12 +126,33 @@ export async function POST(request: NextRequest) {
 
       // Save execution
       await fileStorage.saveExecution(execution);
+
+      // Fire-and-forget: emit ecosystem finding (Story 10.3)
+      emitExecutionFinding({
+        modelId,
+        testCaseId,
+        injectionSuccess: execution.injectionSuccess,
+        resilienceScore: execution.resilienceScore,
+        category: testCase.category,
+        prompt: testCase.prompt,
+      });
+
       return NextResponse.json(execution);
     }
 
     // Standard execution (no guard)
     const execution = await executeSingleTest(model, testCase);
     await fileStorage.saveExecution(execution);
+
+    // Fire-and-forget: emit ecosystem finding (Story 10.3)
+    emitExecutionFinding({
+      modelId,
+      testCaseId,
+      injectionSuccess: execution.injectionSuccess,
+      resilienceScore: execution.resilienceScore,
+      category: testCase.category,
+      prompt: testCase.prompt,
+    });
 
     return NextResponse.json(execution);
   } catch (error) {

@@ -13,6 +13,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { executeBatchTests } from '@/lib/llm-execution';
+import { getConcurrentLimit } from '@/lib/llm-constants';
 import { executeWithGuard } from '@/lib/guard-middleware';
 import { getGuardConfig, saveGuardEvent, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
 import type { GuardConfig } from '@/lib/guard-types';
@@ -57,17 +58,6 @@ export async function POST(request: NextRequest) {
     if (!testCaseIds.every(id => typeof id === 'string' && idPattern.test(id))) {
       return NextResponse.json(
         { error: 'testCaseIds must be an array of valid ID strings' },
-        { status: 400 }
-      );
-    }
-
-    // Validate batch size
-    const maxTestsPerBatch = 100;
-    const totalTests = modelIds.length * testCaseIds.length;
-
-    if (totalTests > maxTestsPerBatch) {
-      return NextResponse.json(
-        { error: `Batch size exceeds maximum of ${maxTestsPerBatch} tests` },
         { status: 400 }
       );
     }
@@ -294,7 +284,7 @@ async function executeGuardedBatch(
   frozenGuardConfig: Readonly<GuardConfig>,
   batchId: string
 ): Promise<void> {
-  const CONCURRENT_LIMIT = 5;
+  const CONCURRENT_LIMIT = getConcurrentLimit();
   const executions: Array<{ model: LLMModelConfig; testCase: LLMPromptTestCase }> = [];
 
   for (const model of models) {
