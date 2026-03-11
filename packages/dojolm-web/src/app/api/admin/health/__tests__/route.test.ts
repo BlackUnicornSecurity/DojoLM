@@ -69,9 +69,9 @@ describe('GET /api/admin/health', () => {
     // App section
     expect(body.app).toHaveProperty('version');
     expect(typeof body.app.version).toBe('string');
-    expect(body.app).toHaveProperty('nodeVersion');
-    expect(body.app.nodeVersion).toMatch(/^v\d+/);
-    expect(body.app).toHaveProperty('uptimeMs');
+    // R3-010: nodeVersion removed to prevent fingerprinting
+    expect(body.app).not.toHaveProperty('nodeVersion');
+    expect(body.app).toHaveProperty('responseTimeMs');
   });
 
   it('includes security headers', async () => {

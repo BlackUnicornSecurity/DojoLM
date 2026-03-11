@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { checkApiAuth } from '@/lib/api-auth'
 
 // Read version at module load — safe for server-side API route
 let appVersion = '0.1.0';
@@ -20,10 +21,29 @@ try {
   appVersion = pkg.version || appVersion;
 } catch { /* fallback to default */ }
 
-export async function GET(_request: NextRequest) {
-  // Auth handled by middleware — /api/admin/health is in PUBLIC_ROUTES
+export async function GET(request: NextRequest) {
+  // ADM-SEC-01: Two-tier response — minimal for unauthenticated, full for authenticated
+  const isAuthenticated = checkApiAuth(request) === null;
+
   try {
     const startTime = Date.now()
+
+    // Unauthenticated callers get minimal health status only
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { status: 'ok', timestamp: Date.now() },
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Content-Type-Options': 'nosniff',
+            'Cache-Control': 'no-store',
+          },
+        }
+      )
+    }
+
+    // Authenticated callers get full details
 
     // Scanner health check — direct import, no HTTP self-call
     let scannerReachable = false
@@ -68,6 +88,7 @@ export async function GET(_request: NextRequest) {
 
     return NextResponse.json(
       {
+        status: 'ok',
         scanner: {
           reachable: scannerReachable,
           responseTimeMs: scannerResponseTime,
@@ -84,8 +105,8 @@ export async function GET(_request: NextRequest) {
         },
         app: {
           version: appVersion,
-          nodeVersion: process.version.split('.')[0],
-          uptimeMs: Date.now() - startTime,
+          // R3-010: Removed nodeVersion — aids attacker fingerprinting
+          responseTimeMs: Date.now() - startTime,
         },
       },
       {

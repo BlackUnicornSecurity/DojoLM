@@ -5,11 +5,13 @@
  * Index:
  * - EXTENDED_SKILLS array (line 12) — 20 skills
  * - Categories: evasion (5), tool-abuse (5), compliance (5), audio-voice (5)
- * - ALL_SKILLS combined export (line 380)
+ * - ADVANCED_SKILLS import (line 13) — 10 skills from adversarial-skills-advanced.ts
+ * - ALL_SKILLS combined export (line 366) — 50 total (20 core + 20 extended + 10 advanced)
  */
 
 import type { AdversarialSkill, OwaspLlmMapping } from './adversarial-skills-types'
 import { CORE_SKILLS } from './adversarial-skills-data'
+import { ADVANCED_SKILLS } from './adversarial-skills-advanced'
 
 /** 20 extended adversarial skills — evasion, tool-abuse, compliance, audio-voice */
 export const EXTENDED_SKILLS: AdversarialSkill[] = [
@@ -360,8 +362,8 @@ export const EXTENDED_SKILLS: AdversarialSkill[] = [
   },
 ]
 
-/** All 40 adversarial skills (20 core + 20 extended) */
-export const ALL_SKILLS: AdversarialSkill[] = [...CORE_SKILLS, ...EXTENDED_SKILLS]
+/** All 50 adversarial skills (20 core + 20 extended + 10 advanced) */
+export const ALL_SKILLS: AdversarialSkill[] = [...CORE_SKILLS, ...EXTENDED_SKILLS, ...ADVANCED_SKILLS]
 
 /** Look up any skill by its unique ID across all skills */
 export function getAnySkillById(id: string): AdversarialSkill | undefined {

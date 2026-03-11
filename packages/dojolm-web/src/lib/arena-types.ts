@@ -164,6 +164,12 @@ export interface WarriorCard {
   bestScore: number;
   favoriteGameMode: GameMode | null;
   lastMatchAt: string | null;
+  /** Story 7.5 enrichment: recent match scores for sparkline (last 10) */
+  recentScores?: number[];
+  /** Story 7.5 enrichment: recent match results for streak display */
+  recentResults?: ('W' | 'L' | 'D')[];
+  /** Story 7.5 enrichment: current win/loss streak */
+  currentStreak?: { type: 'W' | 'L' | 'D'; count: number };
 }
 
 // ===========================================================================

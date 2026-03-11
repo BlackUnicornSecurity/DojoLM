@@ -25,36 +25,62 @@ interface BatchInfo {
 }
 
 const MAX_SHOWN = 3
-const POLL_INTERVAL = 5000
+const POLL_INTERVAL_BASE = 5000
+const POLL_INTERVAL_IDLE = 30000
+const POLL_INTERVAL_MAX = 60000
+const MAX_CONSECUTIVE_ERRORS = 5
 
 export function LLMBatchProgress() {
   const [batches, setBatches] = useState<BatchInfo[]>([])
   const [loading, setLoading] = useState(true)
   const { setActiveTab } = useNavigation()
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const errorCountRef = useRef(0)
 
   useEffect(() => {
     let cancelled = false
+
+    function scheduleNext(delayMs: number) {
+      if (cancelled) return
+      timeoutRef.current = setTimeout(fetchBatches, delayMs)
+    }
+
     async function fetchBatches() {
       try {
         const res = await fetchWithAuth('/api/llm/batch?status=running')
         if (res.ok && !cancelled) {
           const data = await res.json()
-          setBatches(Array.isArray(data) ? data : data.batches ?? [])
+          const list = Array.isArray(data) ? data : data.batches ?? []
+          setBatches(list)
+          errorCountRef.current = 0
+          // Poll frequently when batches are running, slowly when idle
+          scheduleNext(list.length > 0 ? POLL_INTERVAL_BASE : POLL_INTERVAL_IDLE)
+        } else if (!cancelled) {
+          errorCountRef.current++
+          if (errorCountRef.current < MAX_CONSECUTIVE_ERRORS) {
+            const backoff = Math.min(POLL_INTERVAL_BASE * 2 ** errorCountRef.current, POLL_INTERVAL_MAX)
+            scheduleNext(backoff)
+          }
+          // Stop polling after MAX_CONSECUTIVE_ERRORS
         }
       } catch {
-        // Silent failure
+        if (!cancelled) {
+          errorCountRef.current++
+          if (errorCountRef.current < MAX_CONSECUTIVE_ERRORS) {
+            const backoff = Math.min(POLL_INTERVAL_BASE * 2 ** errorCountRef.current, POLL_INTERVAL_MAX)
+            scheduleNext(backoff)
+          }
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
 
     fetchBatches()
-    intervalRef.current = setInterval(fetchBatches, POLL_INTERVAL)
 
     return () => {
       cancelled = true
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
   }, [])
 

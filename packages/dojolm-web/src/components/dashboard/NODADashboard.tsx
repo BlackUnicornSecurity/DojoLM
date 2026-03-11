@@ -13,7 +13,7 @@
  * - NODADashboard (line 218)
  */
 
-import { Suspense, useState, useRef, lazy, type ComponentType } from 'react'
+import { Suspense, useState, useRef, useEffect, lazy, type ComponentType } from 'react'
 import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot, type WidgetSize } from './DashboardConfigContext'
 import { DashboardCustomizer } from './DashboardCustomizer'
 import { WidgetMetaProvider } from './WidgetCard'
@@ -111,9 +111,25 @@ function getSizeClass(size: WidgetSize, rowSpan?: 1 | 2): string {
   return (colClass[size] ?? 'col-span-12 md:col-span-6') + row
 }
 
-/** Single widget shell with error boundary, suspense, and priority/glow context */
-function WidgetShell({ slot }: { slot: WidgetSlot }) {
+/**
+ * R4-002: Stagger interval — widgets mount in groups to avoid overwhelming the rate limiter.
+ * 4 widgets per group, 200ms between groups.
+ */
+const STAGGER_GROUP_SIZE = 4
+const STAGGER_DELAY_MS = 200
+
+/** Single widget shell with error boundary, suspense, staggered mount, and priority/glow context */
+function WidgetShell({ slot, mountIndex }: { slot: WidgetSlot; mountIndex: number }) {
   const Widget = getLazyWidget(slot.id)
+  const [ready, setReady] = useState(mountIndex < STAGGER_GROUP_SIZE)
+
+  useEffect(() => {
+    if (ready) return
+    const delay = Math.floor(mountIndex / STAGGER_GROUP_SIZE) * STAGGER_DELAY_MS
+    const timer = setTimeout(() => setReady(true), delay)
+    return () => clearTimeout(timer)
+  }, [mountIndex, ready])
+
   if (!Widget) return null
 
   const meta = WIDGET_META[slot.id] ?? DEFAULT_META
@@ -124,11 +140,15 @@ function WidgetShell({ slot }: { slot: WidgetSlot }) {
         fallbackTitle={`Widget Error`}
         fallbackDescription={`Unable to load this widget. Try refreshing.`}
       >
-        <Suspense fallback={<WidgetSkeleton />}>
-          <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2}>
-            <Widget />
-          </WidgetMetaProvider>
-        </Suspense>
+        {ready ? (
+          <Suspense fallback={<WidgetSkeleton />}>
+            <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2}>
+              <Widget />
+            </WidgetMetaProvider>
+          </Suspense>
+        ) : (
+          <WidgetSkeleton />
+        )}
       </ErrorBoundary>
     </div>
   )
@@ -169,40 +189,49 @@ function DashboardContent() {
         </Button>
       </div>
 
-      {/* Sectioned Widget Grid */}
-      {SECTION_DEFS.map((section, sectionIdx) => {
-        const sectionSlots = section.ids
-          .filter(id => visibleSet.has(id))
-          .map(id => visibleWidgets.find(w => w.id === id)!)
-          .filter(Boolean)
-
-        if (sectionSlots.length === 0) return null
-
+      {/* Sectioned Widget Grid — R4-002: track global mount index for stagger */}
+      {(() => {
+        let globalIdx = 0
         return (
-          <div key={section.label} className={cn(sectionIdx > 0 && 'mt-10')}>
-            {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" />}
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              {section.label}
-            </h3>
-            <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)] stagger-children">
-              {sectionSlots.map(slot => (
-                <WidgetShell key={slot.id} slot={slot} />
-              ))}
-            </div>
-          </div>
-        )
-      })}
+          <>
+            {SECTION_DEFS.map((section, sectionIdx) => {
+              const sectionSlots = section.ids
+                .filter(id => visibleSet.has(id))
+                .map(id => visibleWidgets.find(w => w.id === id)!)
+                .filter(Boolean)
 
-      {/* Unsectioned widgets (fallback) */}
-      {unsectionedWidgets.length > 0 && (
-        <div className="mt-8">
-          <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)]">
-            {unsectionedWidgets.map(slot => (
-              <WidgetShell key={slot.id} slot={slot} />
-            ))}
-          </div>
-        </div>
-      )}
+              if (sectionSlots.length === 0) return null
+
+              return (
+                <div key={section.label} className={cn(sectionIdx > 0 && 'mt-10')}>
+                  {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" />}
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                    {section.label}
+                  </h3>
+                  <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)] stagger-children">
+                    {sectionSlots.map(slot => {
+                      const idx = globalIdx++
+                      return <WidgetShell key={slot.id} slot={slot} mountIndex={idx} />
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+
+            {/* Unsectioned widgets (fallback) */}
+            {unsectionedWidgets.length > 0 && (
+              <div className="mt-8">
+                <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)]">
+                  {unsectionedWidgets.map(slot => {
+                    const idx = globalIdx++
+                    return <WidgetShell key={slot.id} slot={slot} mountIndex={idx} />
+                  })}
+                </div>
+              </div>
+            )}
+          </>
+        )
+      })()}
 
       {/* Customizer Panel */}
       <DashboardCustomizer open={customizerOpen} onClose={() => {

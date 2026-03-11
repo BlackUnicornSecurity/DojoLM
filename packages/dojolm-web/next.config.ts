@@ -118,6 +118,11 @@ const nextConfig: NextConfig = withBundleAnalyzer({
             key: "Cache-Control",
             value: "no-store, no-cache, must-revalidate",
           },
+          // SEC-001: Signal allowed methods — helps clients understand TRACE is not supported
+          {
+            key: "Allow",
+            value: "GET, POST, OPTIONS",
+          },
         ],
       },
     ];

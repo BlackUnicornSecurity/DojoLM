@@ -49,6 +49,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run regression tests (scanner vs fixtures)
+        run: cd packages/bu-tpi && npm run test:regression
+
   # ============================================
   # Security Scan
   # ============================================

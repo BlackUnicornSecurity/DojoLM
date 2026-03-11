@@ -37,12 +37,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { text, engines } = body as { text: string; engines?: string[] };
+    // INT-BUG-001: Accept both "text" and "content" field names for backward compatibility
+    const { text: textField, content: contentField, engines } = body as { text?: string; content?: string; engines?: string[] };
+    const text = textField ?? contentField;
 
     // Input validation (BUG-022: text must be a non-empty string, max 100KB)
     if (!text || typeof text !== 'string') {
       return NextResponse.json(
-        { error: 'Invalid input: text must be a non-empty string' },
+        { error: 'Invalid input: text (or content) must be a non-empty string' },
         { status: 400 }
       );
     }
@@ -53,6 +55,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: `Input too large: maximum ${MAX_SIZE} characters allowed` },
         { status: 413 }
+      );
+    }
+
+    // R4-005: Strip null bytes from input
+    if (/\x00/.test(text)) {
+      return NextResponse.json(
+        { error: 'Invalid input: null bytes are not allowed' },
+        { status: 400 }
       );
     }
 

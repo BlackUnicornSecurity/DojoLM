@@ -213,41 +213,99 @@ function WarriorGridCard({
 
       {/* Expanded detail */}
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-[var(--border-subtle)] grid grid-cols-2 gap-3 text-xs">
-          <div>
-            <span className="text-muted-foreground">Total Matches</span>
-            <p className="font-mono text-[var(--foreground)]">{warrior.totalMatches}</p>
+        <div className="mt-3 pt-3 border-t border-[var(--border-subtle)] space-y-3 text-xs">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <span className="text-muted-foreground">Total Matches</span>
+              <p className="font-mono text-[var(--foreground)]">{warrior.totalMatches}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Avg Score</span>
+              <p className="font-mono text-[var(--foreground)]">{Math.round(warrior.avgScore)}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Best Score</span>
+              <p className="font-mono text-[var(--foreground)]">{warrior.bestScore}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Favorite Mode</span>
+              <p className="text-[var(--foreground)]">
+                {warrior.favoriteGameMode ? (
+                  <Badge variant="outline" className="text-[10px]">{warrior.favoriteGameMode}</Badge>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Provider</span>
+              <p className="text-[var(--foreground)] truncate">{warrior.provider}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Last Match</span>
+              <p className="text-[var(--foreground)]">
+                {warrior.lastMatchAt
+                  ? new Date(warrior.lastMatchAt).toLocaleDateString()
+                  : '—'}
+              </p>
+            </div>
           </div>
-          <div>
-            <span className="text-muted-foreground">Avg Score</span>
-            <p className="font-mono text-[var(--foreground)]">{Math.round(warrior.avgScore)}</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Best Score</span>
-            <p className="font-mono text-[var(--foreground)]">{warrior.bestScore}</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Favorite Mode</span>
-            <p className="text-[var(--foreground)]">
-              {warrior.favoriteGameMode ? (
-                <Badge variant="outline" className="text-[10px]">{warrior.favoriteGameMode}</Badge>
-              ) : (
-                <span className="text-muted-foreground">—</span>
-              )}
-            </p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Provider</span>
-            <p className="text-[var(--foreground)] truncate">{warrior.provider}</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Last Match</span>
-            <p className="text-[var(--foreground)]">
-              {warrior.lastMatchAt
-                ? new Date(warrior.lastMatchAt).toLocaleDateString()
-                : '—'}
-            </p>
-          </div>
+
+          {/* Story 7.5: Win streak */}
+          {warrior.currentStreak && warrior.currentStreak.count > 1 && (
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground">Streak</span>
+              <Badge
+                variant={warrior.currentStreak.type === 'W' ? 'success' : warrior.currentStreak.type === 'L' ? 'error' : 'outline'}
+                className="text-[10px]"
+              >
+                {warrior.currentStreak.count}{warrior.currentStreak.type}
+              </Badge>
+            </div>
+          )}
+
+          {/* Story 7.5: Recent results */}
+          {warrior.recentResults && warrior.recentResults.length > 0 && (
+            <div>
+              <span className="text-muted-foreground">Recent</span>
+              <div className="flex gap-0.5 mt-1">
+                {warrior.recentResults.map((result, i) => (
+                  <span
+                    key={i}
+                    className={cn(
+                      'w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold',
+                      result === 'W' && 'bg-[var(--success)]/20 text-[var(--success)]',
+                      result === 'L' && 'bg-[var(--danger)]/20 text-[var(--danger)]',
+                      result === 'D' && 'bg-muted text-muted-foreground',
+                    )}
+                  >
+                    {result}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Story 7.5: Score sparkline (CSS mini-bar chart) */}
+          {warrior.recentScores && warrior.recentScores.length > 1 && (
+            <div>
+              <span className="text-muted-foreground">Score Trend</span>
+              <div className="flex items-end gap-px mt-1 h-6">
+                {warrior.recentScores.map((score, i) => {
+                  const max = Math.max(...(warrior.recentScores ?? [1]))
+                  const pct = max > 0 ? (score / max) * 100 : 0
+                  return (
+                    <div
+                      key={i}
+                      className="flex-1 bg-[var(--bu-electric)]/60 rounded-t"
+                      style={{ height: `${Math.max(pct, 4)}%` }}
+                      title={`Score: ${score}`}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

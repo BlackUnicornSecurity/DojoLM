@@ -42,7 +42,7 @@ export function SystemHealth() {
       setError(null)
       setLastRefresh(new Date().toISOString())
 
-      if (!data.scanner.reachable) {
+      if (!data.scanner.reachable || !data.guard.enabled) {
         setStatus('degraded')
       } else {
         setStatus('healthy')

@@ -150,7 +150,7 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
             <Label htmlFor="provider">Provider</Label>
             <Select
               value={formData.provider}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value as LLMProvider, model: '', baseUrl: value === 'ollama' || value === 'lmstudio' || value === 'llamacpp' ? PROVIDER_BASE_URLS[value] : prev.baseUrl }))}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value as LLMProvider, model: '', baseUrl: value === 'ollama' || value === 'lmstudio' || value === 'llamacpp' ? (PROVIDER_BASE_URLS[value] ?? '') : prev.baseUrl }))}
             >
               <SelectTrigger id="provider">
                 <SelectValue />

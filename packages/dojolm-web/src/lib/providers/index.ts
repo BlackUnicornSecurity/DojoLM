@@ -23,7 +23,7 @@ import type { LLMProviderAdapter } from '../llm-providers';
 /**
  * Map of all available providers to their adapters
  */
-const PROVIDER_ADAPTERS: Record<LLMProvider, LLMProviderAdapter> = {
+const PROVIDER_ADAPTERS: Partial<Record<LLMProvider, LLMProviderAdapter>> = {
   openai: openaiProvider,
   anthropic: anthropicProvider,
   ollama: ollamaProvider,

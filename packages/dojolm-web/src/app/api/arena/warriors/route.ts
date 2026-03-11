@@ -13,7 +13,7 @@ import * as arenaStorage from '@/lib/storage/arena-storage';
 import type { GameMode } from '@/lib/arena-types';
 
 const VALID_GAME_MODES: GameMode[] = ['CTF', 'KOTH', 'RvB'];
-const SAFE_MODEL_ID = /^[\w-]{1,128}$/;
+const SAFE_MODEL_ID = /^[\w.-]{1,128}$/;
 const MAX_NAME_LENGTH = 256;
 const SAFE_NAME = /^[^<>&"']+$/;
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -29,7 +30,13 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:z-[9999] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--bg-primary,#0a0a0a)] focus:text-[var(--foreground,#fafafa)] focus:ring-2 focus:ring-[var(--dojo-primary,#CC3A2F)] focus:outline-none"
+        >
+          Skip to main content
+        </a>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

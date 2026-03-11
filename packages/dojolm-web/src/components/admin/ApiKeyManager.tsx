@@ -29,7 +29,7 @@ interface ProviderRow {
 
 type ConnectionStatus = 'idle' | 'testing' | 'success' | 'error'
 
-const PROVIDER_LABELS: Record<LLMProvider, string> = {
+const PROVIDER_LABELS: Partial<Record<LLMProvider, string>> = {
   openai: 'OpenAI',
   anthropic: 'Anthropic',
   ollama: 'Ollama',

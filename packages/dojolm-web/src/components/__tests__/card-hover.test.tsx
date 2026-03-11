@@ -29,10 +29,10 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       expect(card).toHaveClass('shadow-sm')
     })
 
-    it('has motion-safe transition for border-color', () => {
+    it('has motion-safe transition for border-color, transform, and box-shadow', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('motion-safe:transition-[border-color]')
+      expect(card.className).toContain('motion-safe:transition-[border-color,transform,box-shadow]')
     })
 
     it('has hover border color change', () => {
@@ -42,25 +42,23 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
     })
   })
 
-  describe('Card hover isolation — no transform or box-shadow', () => {
-    it('does NOT have hover translate-y class', () => {
+  describe('Card hover effects (A4 remediation — NODA Story 1.7.2)', () => {
+    it('has hover translate-y-0.5 lift', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.className).not.toContain('hover:-translate-y')
-      expect(card.className).not.toContain('hover:translate-y')
+      expect(card.className).toContain('motion-safe:hover:-translate-y-0.5')
     })
 
-    it('does NOT have hover shadow-[0_8px_24px] class', () => {
+    it('has hover shadow-md enhancement', () => {
+      const { container } = render(<Card>Content</Card>)
+      const card = container.firstElementChild as HTMLElement
+      expect(card.className).toContain('motion-safe:hover:shadow-md')
+    })
+
+    it('does NOT have excessive hover shadow-[0_8px_24px] class', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
       expect(card.className).not.toContain('hover:shadow-[0_8px_24px')
-    })
-
-    it('does NOT transition transform or box-shadow', () => {
-      const { container } = render(<Card>Content</Card>)
-      const card = container.firstElementChild as HTMLElement
-      expect(card.className).not.toContain('transition-[transform')
-      expect(card.className).not.toContain('transition-[box-shadow')
     })
   })
 

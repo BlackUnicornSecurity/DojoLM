@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
       maxTokens: (maxTokens as number) || config.maxTokens || 1024,
       temperature: (temperature as number) ?? config.temperature ?? 0.7,
       systemMessage: systemMessage as string | undefined,
+      ...(config.requestTimeout ? { timeout: config.requestTimeout } : {}),
     });
 
     const duration = Math.round(performance.now() - startTime);

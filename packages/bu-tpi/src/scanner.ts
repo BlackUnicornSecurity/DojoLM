@@ -44,6 +44,10 @@ import './modules/data-provenance.js';
 import './modules/deepfake-detector.js';
 import './modules/session-bypass.js';
 
+// P4 detection gap modules (S38-S39) — self-register on import
+import './modules/social-engineering-detector.js';
+import './modules/output-detector.js';
+
 // ============================================================================
 // TEXT NORMALIZATION
 // ============================================================================
@@ -3471,6 +3475,42 @@ export const TOOL_MANIPULATION_PATTERNS: RegexPattern[] = [
 ];
 
 // ============================================================================
+// R3-014: SQL INJECTION DETECTION PATTERNS
+// ============================================================================
+
+/**
+ * SQL injection patterns — detect SQL injection payloads embedded in prompts.
+ * These patterns catch attempts to use LLMs as SQL injection vectors or to
+ * embed SQL attack strings in prompts for exfiltration/testing.
+ */
+export const SQL_INJECTION_PATTERNS: RegexPattern[] = [
+  { name: 'sql_union_select', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /\bUNION\s+(?:ALL\s+)?SELECT\b/i,
+    desc: 'SQL UNION SELECT injection pattern' },
+  { name: 'sql_drop_table', cat: 'SQL_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\bDROP\s+(?:TABLE|DATABASE|INDEX|VIEW)\s+\w/i,
+    desc: 'SQL DROP statement — destructive SQL injection' },
+  { name: 'sql_delete_truncate', cat: 'SQL_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\b(?:DELETE\s+FROM|TRUNCATE\s+TABLE)\s+\w/i,
+    desc: 'SQL DELETE/TRUNCATE — data destruction attempt' },
+  { name: 'sql_or_true', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /'\s*(?:OR|AND)\s+['"]?\d*['"]?\s*=\s*['"]?\d*['"]?\s*(?:--|;|$)/i,
+    desc: 'SQL OR 1=1 tautology injection' },
+  { name: 'sql_comment_bypass', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /(?:'|")\s*;\s*--\s|\/\*.*?\*\/.*?(?:SELECT|INSERT|UPDATE|DELETE|DROP)\b/i,
+    desc: 'SQL comment-based injection bypass' },
+  { name: 'sql_stacked_query', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /(?:'|")\s*;\s*(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|EXEC)\b/i,
+    desc: 'SQL stacked query injection' },
+  { name: 'sql_sleep_benchmark', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /\b(?:SLEEP|BENCHMARK|WAITFOR\s+DELAY|pg_sleep)\s*\(/i,
+    desc: 'SQL time-based blind injection (SLEEP/BENCHMARK)' },
+  { name: 'sql_information_schema', cat: 'SQL_INJECTION', sev: SEVERITY.WARNING,
+    re: /\b(?:information_schema|sys\.(?:tables|columns|databases)|sqlite_master)\b/i,
+    desc: 'SQL schema enumeration attempt' },
+];
+
+// ============================================================================
 // MAIN SCAN ENGINE
 // ============================================================================
 
@@ -3528,6 +3568,8 @@ const ALL_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: st
   { patterns: AUDIO_ATTACK_PATTERNS, engine: 'TPI', source: 'TPI-MM-03' },
   // Epic 6: Vector & Embeddings Weaknesses (TPI-LLM08)
   { patterns: VEC_PATTERNS, engine: 'TPI', source: 'TPI-VEC' },
+  // R3-014: SQL Injection Detection
+  { patterns: SQL_INJECTION_PATTERNS, engine: 'TPI', source: 'TPI-SQLI' },
 ];
 
 // ============================================================================
@@ -3635,6 +3677,51 @@ export interface ScanOptions {
   engines?: string[];
 }
 
+// ============================================================================
+// REFUSAL FALSE POSITIVE FILTER (LLM-BUG-005)
+// ============================================================================
+
+/**
+ * Pre-compiled refusal context regex.
+ * Matches text that indicates the model is REFUSING an attack rather than complying.
+ */
+const REFUSAL_CONTEXT_RE = /(?:I\s+(?:cannot|can'?t|will\s+not|won'?t|am\s+(?:not\s+able|unable)\s+to|must\s+not|should\s+not|refuse\s+to|decline\s+to)|(?:not\s+(?:appropriate|possible|allowed|permitted|ethical|safe)|against\s+(?:my|the)\s+(?:guidelines|rules|ethics|training|programming|policy|instructions)|(?:violates?|contradicts?|goes\s+against)\s+(?:my|the)\s+(?:guidelines|rules|ethics|training)))/i;
+
+/**
+ * Downgrade findings where the matched text appears within a refusal context.
+ * When a model correctly refuses a DAN/jailbreak attempt, the refusal text
+ * often contains the attack keywords — these should be INFO, not WARNING/CRITICAL.
+ */
+function filterRefusalFalsePositives(findings: Finding[], text: string): Finding[] {
+  // Only apply if the text itself contains refusal language
+  if (!REFUSAL_CONTEXT_RE.test(text)) return findings;
+
+  return findings.map(f => {
+    // Only downgrade WARNING/CRITICAL findings that match near refusal text
+    if (f.severity === 'INFO') return f;
+    if (!f.match) return f;
+
+    // Check if the matched text is within 200 chars of a refusal phrase
+    const matchIdx = text.indexOf(f.match);
+    if (matchIdx === -1) return f;
+
+    // Extract context window around the match
+    const contextStart = Math.max(0, matchIdx - 200);
+    const contextEnd = Math.min(text.length, matchIdx + f.match.length + 200);
+    const context = text.slice(contextStart, contextEnd);
+
+    if (REFUSAL_CONTEXT_RE.test(context)) {
+      return {
+        ...f,
+        severity: 'INFO' as const,
+        description: `[Refusal context — downgraded] ${f.description}`,
+      };
+    }
+
+    return f;
+  });
+}
+
 /**
  * Run all detectors against input text.
  *
@@ -3649,7 +3736,18 @@ export function scan(text: string, options?: ScanOptions): ScanResult {
   const normalized = normalizeText(text);
 
   // Delegate to all registered scanner modules via the registry
-  const findings: Finding[] = scannerRegistry.scan(text, normalized);
+  let findings: Finding[] = scannerRegistry.scan(text, normalized);
+
+  // Filter by engine if specified (SCN-008 fix)
+  if (options?.engines && options.engines.length > 0) {
+    const allowedEngines = new Set(options.engines);
+    findings = findings.filter(f => allowedEngines.has(f.engine));
+  }
+
+  // LLM-BUG-005: Downgrade false positives when match appears in a refusal context.
+  // When a model correctly REFUSES an attack, the refusal text may contain attack keywords
+  // (e.g., "I cannot act as bypass"). These should not trigger BLOCK verdicts.
+  findings = filterRefusalFalsePositives(findings, normalized);
 
   // Cross-category aggregation: >5 INFO across >3 categories → WARNING
   const infoFindings = findings.filter(f => f.severity === SEVERITY.INFO);

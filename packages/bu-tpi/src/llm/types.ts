@@ -42,13 +42,16 @@ export type LLMProvider =
   | 'ollama'
   | 'lmstudio'
   | 'llamacpp'
+  | 'zai'
+  | 'moonshot'
   | 'custom';
 
 /** All provider values as const array for iteration/validation */
 export const LLM_PROVIDERS: readonly LLMProvider[] = [
   'openai', 'anthropic', 'google', 'cohere', 'ai21',
   'replicate', 'cloudflare', 'groq', 'together', 'fireworks',
-  'deepseek', 'mistral', 'ollama', 'lmstudio', 'llamacpp', 'custom',
+  'deepseek', 'mistral', 'ollama', 'lmstudio', 'llamacpp',
+  'zai', 'moonshot', 'custom',
 ] as const;
 
 // ===========================================================================
@@ -170,6 +173,12 @@ export interface LLMModelConfig {
   temperature?: number;
   /** Top-p sampling parameter */
   topP?: number;
+  /** Per-model request timeout in ms (overrides default timeout) */
+  requestTimeout?: number;
+  /** Safety risk tier from QA testing */
+  safetyRisk?: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'SAFE';
+  /** Whether Hattori Guard must be enabled to use this model */
+  requiresGuard?: boolean;
   /** When this configuration was created */
   createdAt: string;
   /** When this configuration was last updated */
@@ -342,6 +351,9 @@ export const TEST_SCENARIOS: readonly TestScenario[] = [
   'S-011', 'S-012', 'S-013', 'S-014', 'S-015', 'S-016',
 ] as const;
 
+/** Test suite preset types for Quick, Compliance, and Full modes */
+export type TestSuitePreset = 'quick' | 'compliance' | 'full';
+
 /** Single test prompt case for LLM safety evaluation */
 export interface LLMPromptTestCase {
   id: string;
@@ -470,7 +482,7 @@ export interface CoverageMap {
 }
 
 /** Supported report export formats */
-export type ReportFormat = 'json' | 'markdown' | 'pdf' | 'csv';
+export type ReportFormat = 'json' | 'markdown' | 'pdf' | 'csv' | 'sarif';
 
 /** Filter options for querying results */
 export interface ResultsFilter {

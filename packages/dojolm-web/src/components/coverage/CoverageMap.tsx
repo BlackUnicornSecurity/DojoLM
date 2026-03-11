@@ -56,8 +56,8 @@ export function CoverageMap({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {coverageData.map((item, index) => (
-              <TableRow key={index}>
+            {coverageData.map((item) => (
+              <TableRow key={`${item.category}-${item.pre}-${item.post}`}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
                     {item.category}

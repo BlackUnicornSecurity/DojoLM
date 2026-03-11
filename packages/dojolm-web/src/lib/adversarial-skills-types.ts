@@ -24,6 +24,8 @@ export type SkillCategory =
   | 'tool-abuse'
   | 'compliance'
   | 'audio-voice'
+  | 'social-engineering'
+  | 'supply-chain'
 
 /** OWASP LLM Top 10 (2023 v1.1) mapping IDs */
 export type OwaspLlmMapping =
@@ -124,4 +126,6 @@ export const CATEGORY_CONFIG: Record<SkillCategory, { label: string; description
   'tool-abuse': { label: 'Tool Abuse', description: 'MCP tool and plugin exploitation' },
   compliance: { label: 'Compliance', description: 'Policy and guideline testing' },
   'audio-voice': { label: 'Audio/Voice', description: 'Audio and voice-based attack vectors' },
+  'social-engineering': { label: 'Social Engineering', description: 'Persuasion, manipulation, and trust exploitation' },
+  'supply-chain': { label: 'Supply Chain', description: 'Model, data, and dependency supply chain attacks' },
 }

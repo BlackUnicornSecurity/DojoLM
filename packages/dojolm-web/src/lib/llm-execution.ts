@@ -66,15 +66,35 @@ export async function executeSingleTest(
   };
 
   try {
+    // R3-004: Block execution for models flagged as requiring Guard when Guard is not active
+    if (model.requiresGuard || model.safetyRisk === 'CRITICAL') {
+      let guardEnabled = false;
+      try {
+        const { getGuardConfig } = await import('./storage/guard-storage');
+        const config = await getGuardConfig();
+        guardEnabled = config?.enabled ?? false;
+      } catch { /* guard storage may not be initialized */ }
+
+      if (!guardEnabled) {
+        execution.status = 'failed';
+        execution.error = model.safetyRisk === 'CRITICAL'
+          ? `Model "${model.name}" has CRITICAL safety risk. Enable Hattori Guard (input+output scanning) before use, or remove from deployment.`
+          : `Model "${model.name}" requires Hattori Guard to be enabled. Activate Guard in Admin settings.`;
+        execution.duration_ms = Date.now() - startTime;
+        return execution;
+      }
+    }
+
     // Get provider adapter
     const adapter = await getProviderAdapter(model.provider);
 
-    // Execute the prompt
+    // Execute the prompt (pass per-model timeout if configured)
     const response: ProviderResponse = await adapter.execute(model, {
       prompt: testCase.prompt,
       maxTokens: model.maxTokens || 4096,
       temperature: model.temperature,
       topP: model.topP,
+      ...(model.requestTimeout ? { timeout: model.requestTimeout } : {}),
     });
 
     // Handle filtered responses

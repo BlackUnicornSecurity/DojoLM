@@ -33,6 +33,7 @@ export type {
   LLMProviderAdapter,
   TestCaseSeverity,
   TestScenario,
+  TestSuitePreset,
   LLMPromptTestCase,
   ExecutionStatus,
   LLMTestExecution,

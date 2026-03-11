@@ -246,7 +246,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // H-01: Apply PATCHABLE whitelist to prevent mass assignment (match [id]/route.ts pattern)
-    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model'] as const;
+    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model', 'safetyRisk', 'requiresGuard'] as const;
     const STRING_FIELDS = new Set(['name', 'description', 'baseUrl', 'model']);
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {

@@ -573,6 +573,7 @@ export default function Home() {
 
         {/* Main Content - offset for sidebar */}
         <main
+          id="main-content"
           aria-label="Main content"
           className={cn(
             "pt-8 pb-16 md:pb-8 pr-6 pl-6",

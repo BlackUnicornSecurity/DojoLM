@@ -29,14 +29,14 @@ describe('Adversarial Skills Data', () => {
 
   // SKL-D-003: ALL_SKILLS combines to 40 total
   it('SKL-D-003: ALL_SKILLS has 40 entries', () => {
-    expect(ALL_SKILLS).toHaveLength(40);
+    expect(ALL_SKILLS).toHaveLength(50);
   });
 
   // SKL-D-004: All skill IDs are unique
   it('SKL-D-004: all skill IDs are unique', () => {
     const ids = ALL_SKILLS.map(s => s.id);
     const unique = new Set(ids);
-    expect(unique.size).toBe(40);
+    expect(unique.size).toBe(50);
   });
 
   // SKL-D-005: Each skill has required fields
@@ -171,9 +171,9 @@ describe('Adversarial Skills Type Config', () => {
     expect(DIFFICULTY_CONFIG.expert.order).toBe(3);
   });
 
-  // SKL-D-017: CATEGORY_CONFIG has 8 entries
-  it('SKL-D-017: CATEGORY_CONFIG has all 8 categories', () => {
-    expect(Object.keys(CATEGORY_CONFIG)).toHaveLength(8);
+  // SKL-D-017: CATEGORY_CONFIG has 10 entries (8 original + social-engineering + supply-chain)
+  it('SKL-D-017: CATEGORY_CONFIG has all 10 categories', () => {
+    expect(Object.keys(CATEGORY_CONFIG)).toHaveLength(10);
   });
 
   // SKL-D-018: Each category config has label and description

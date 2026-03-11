@@ -18,7 +18,7 @@ import type { LLMProvider } from './llm-types';
 /**
  * Base API URLs for each provider
  */
-export const PROVIDER_BASE_URLS: Record<LLMProvider, string> = {
+export const PROVIDER_BASE_URLS: Partial<Record<LLMProvider, string>> = {
   openai: 'https://api.openai.com/v1',
   anthropic: 'https://api.anthropic.com',
   ollama: 'http://localhost:11434',
@@ -34,7 +34,7 @@ export const PROVIDER_BASE_URLS: Record<LLMProvider, string> = {
 /**
  * Default models for each provider
  */
-export const DEFAULT_MODELS: Record<LLMProvider, string[]> = {
+export const DEFAULT_MODELS: Partial<Record<LLMProvider, string[]>> = {
   openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],
   anthropic: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022'],
   ollama: ['llama3.2', 'llama3.1', 'mistral', 'qwen2.5', 'phi3'],
@@ -50,7 +50,7 @@ export const DEFAULT_MODELS: Record<LLMProvider, string[]> = {
 /**
  * Provider display names and descriptions
  */
-export const PROVIDER_INFO: Record<LLMProvider, { name: string; description: string; officialUrl: string }> = {
+export const PROVIDER_INFO: Partial<Record<LLMProvider, { name: string; description: string; officialUrl: string }>> = {
   openai: {
     name: 'OpenAI',
     description: 'GPT-4, GPT-4o, and other OpenAI models',
@@ -133,7 +133,7 @@ export const NATIVE_SDK_PROVIDERS: readonly LLMProvider[] = [
  * Default rate limits per provider (requests per minute)
  * Used for preventing API quota exhaustion
  */
-export const DEFAULT_RATE_LIMITS: Record<LLMProvider, { rpm: number; tpm: number }> = {
+export const DEFAULT_RATE_LIMITS: Partial<Record<LLMProvider, { rpm: number; tpm: number }>> = {
   openai: { rpm: 3000, tpm: 200000 }, // 3K RPM, 200K TPM
   anthropic: { rpm: 1000, tpm: 80000 },  // 1K RPM, 80K TPM
   ollama: { rpm: 10000, tpm: 600000 },  // Local: high limits
@@ -149,7 +149,7 @@ export const DEFAULT_RATE_LIMITS: Record<LLMProvider, { rpm: number; tpm: number
 /**
  * Maximum concurrent requests per provider
  */
-export const MAX_CONCURRENT_REQUESTS: Record<LLMProvider, number> = {
+export const MAX_CONCURRENT_REQUESTS: Partial<Record<LLMProvider, number>> = {
   openai: 10,
   anthropic: 5,
   ollama: 20,
@@ -189,7 +189,7 @@ export const BATCH_TIMEOUT_MS = 300000; // 5 minutes
  * Estimated costs per 1M tokens (input/output) in USD
  * Used for cost calculation before execution
  */
-export const TOKEN_COSTS: Record<LLMProvider, { input: number; output: number }> = {
+export const TOKEN_COSTS: Partial<Record<LLMProvider, { input: number; output: number }>> = {
   openai: { input: 2.50, output: 10.00 },     // GPT-4o approx
   anthropic: { input: 3.00, output: 15.00 }, // Claude 3.5 Sonnet approx
   ollama: { input: 0, output: 0 },           // Free (local)
@@ -213,7 +213,7 @@ export const BUDGET_ALERTS = {
 /**
  * Default monthly budgets per provider (USD)
  */
-export const DEFAULT_MONTHLY_BUDGETS: Record<LLMProvider, number> = {
+export const DEFAULT_MONTHLY_BUDGETS: Partial<Record<LLMProvider, number>> = {
   openai: 100,
   anthropic: 100,
   ollama: 0,      // No cost for local
@@ -382,7 +382,7 @@ export function validateApiKey(provider: LLMProvider, apiKey: string): boolean {
   }
 
   // Provider-specific validation patterns
-  const patterns: Record<LLMProvider, RegExp> = {
+  const patterns: Partial<Record<LLMProvider, RegExp>> = {
     openai: /^sk-[a-zA-Z0-9]{32,}$/,
     anthropic: /^sk-ant-[a-zA-Z0-9_-]{32,95}$/,
     google: /^AIza[a-zA-Z0-9_-]{35}$/,
@@ -408,7 +408,7 @@ export function estimateCost(
   inputTokens: number,
   outputTokens: number
 ): number {
-  const costs = TOKEN_COSTS[provider];
+  const costs = TOKEN_COSTS[provider] ?? { input: 0, output: 0 };
   const inputCost = (inputTokens / 1_000_000) * costs.input;
   const outputCost = (outputTokens / 1_000_000) * costs.output;
   return inputCost + outputCost;

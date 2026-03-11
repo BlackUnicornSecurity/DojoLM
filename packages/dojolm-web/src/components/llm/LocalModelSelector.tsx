@@ -55,7 +55,7 @@ export function LocalModelSelector({
   onBaseUrlChange,
 }: LocalModelSelectorProps) {
   const [baseUrl, setBaseUrl] = useState(
-    currentBaseUrl || PROVIDER_BASE_URLS[provider]
+    currentBaseUrl || PROVIDER_BASE_URLS[provider] || ''
   );
   const [models, setModels] = useState<LocalModelInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);

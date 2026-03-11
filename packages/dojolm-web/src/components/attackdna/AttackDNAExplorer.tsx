@@ -351,8 +351,12 @@ export function AttackDNAExplorer() {
         masterSyncStatus={masterSyncStatus}
       />
 
-      {/* Stats Bar */}
-      <StatsBar stats={stats} loading={loading} />
+      {/* Stats Bar — DNA-BUG-001: use actual fetched counts when stats endpoint returns 0 */}
+      <StatsBar stats={{
+        ...stats,
+        totalFamilies: families.length > stats.totalFamilies ? families.length : stats.totalFamilies,
+        totalClusters: clusters.length > stats.totalClusters ? clusters.length : stats.totalClusters,
+      }} loading={loading} />
 
       {/* Search */}
       <div className="relative">

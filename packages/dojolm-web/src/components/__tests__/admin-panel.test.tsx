@@ -119,6 +119,15 @@ vi.mock('../admin/ExportSettings', () => ({
 vi.mock('../admin/SystemHealth', () => ({
   SystemHealth: () => <div data-testid="system-health">SystemHealth</div>,
 }));
+vi.mock('../admin/UserManagement', () => ({
+  UserManagement: () => <div data-testid="user-management">UserManagement</div>,
+}));
+vi.mock('../admin/Scoreboard', () => ({
+  Scoreboard: () => <div data-testid="scoreboard">Scoreboard</div>,
+}));
+vi.mock('../admin/AdminSettings', () => ({
+  AdminSettings: () => <div data-testid="admin-settings">AdminSettings</div>,
+}));
 
 import { AdminPanel } from '../admin/AdminPanel';
 
@@ -139,29 +148,32 @@ describe('AdminPanel', () => {
   });
 
   // ADM-001: AdminPanel renders with all tabs/sections
-  it('ADM-001: renders with page toolbar and all 5 admin tabs', () => {
+  it('ADM-001: renders with page toolbar and all 8 admin tabs', () => {
     render(<AdminPanel />);
 
     expect(screen.getByText('Admin & Settings')).toBeInTheDocument();
     // Check tab triggers by role
     const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(5);
+    expect(tabs).toHaveLength(8);
     expect(tabs[0]).toHaveTextContent('General');
-    expect(tabs[1]).toHaveTextContent('API Keys');
-    expect(tabs[2]).toHaveTextContent('Haiku Scanner & Guard');
-    expect(tabs[3]).toHaveTextContent('System Health');
-    expect(tabs[4]).toHaveTextContent('Export');
+    expect(tabs[1]).toHaveTextContent('Users');
+    expect(tabs[2]).toHaveTextContent('Scoreboard');
+    expect(tabs[3]).toHaveTextContent('API Keys');
+    expect(tabs[4]).toHaveTextContent('Haiku Scanner & Guard');
+    expect(tabs[5]).toHaveTextContent('System Health');
+    expect(tabs[6]).toHaveTextContent('Export');
+    expect(tabs[7]).toHaveTextContent('Admin Settings');
   });
 
   // ADM-009: Panel navigation between sections
-  it('ADM-009: renders all tab panels (General, API Keys, Scanner, Health, Export)', () => {
+  it('ADM-009: renders all tab panels', () => {
     const { container } = render(<AdminPanel />);
 
     // All TabsContent are rendered with data-tab attribute
     const panels = container.querySelectorAll('[data-tab]');
-    expect(panels).toHaveLength(5);
+    expect(panels).toHaveLength(8);
     const tabIds = Array.from(panels).map(p => p.getAttribute('data-tab'));
-    expect(tabIds).toEqual(['general', 'apikeys', 'scanner', 'health', 'export']);
+    expect(tabIds).toEqual(['general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings']);
   });
 
   // ADM-010: General settings section renders content
@@ -171,6 +183,24 @@ describe('AdminPanel', () => {
     expect(screen.getByText('General Settings')).toBeInTheDocument();
     expect(screen.getByText('NODA Platform')).toBeInTheDocument();
     expect(screen.getByText('Dark (default)')).toBeInTheDocument();
+  });
+
+  // ADM-011: Users tab renders UserManagement mock
+  it('ADM-011: Users tab renders UserManagement component', () => {
+    render(<AdminPanel />);
+    expect(screen.getByTestId('user-management')).toBeInTheDocument();
+  });
+
+  // ADM-012: Scoreboard tab renders Scoreboard mock
+  it('ADM-012: Scoreboard tab renders Scoreboard component', () => {
+    render(<AdminPanel />);
+    expect(screen.getByTestId('scoreboard')).toBeInTheDocument();
+  });
+
+  // ADM-013: Admin Settings tab renders AdminSettings mock
+  it('ADM-013: Admin Settings tab renders AdminSettings component', () => {
+    render(<AdminPanel />);
+    expect(screen.getByTestId('admin-settings')).toBeInTheDocument();
   });
 });
 
@@ -376,7 +406,7 @@ describe('SystemHealth', () => {
       ok: true,
       json: async () => ({
         scanner: { reachable: true },
-        guard: { enabled: false, mode: 'shinobi', eventCount: 0 },
+        guard: { enabled: true, mode: 'shinobi', eventCount: 0 },
         storage: { type: 'filesystem', modelsCount: 0 },
         app: { version: '1.0.0' },
       }),

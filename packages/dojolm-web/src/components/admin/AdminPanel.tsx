@@ -18,14 +18,20 @@ import { ApiKeyManager } from './ApiKeyManager'
 import { ScannerConfig } from './ScannerConfig'
 import { ExportSettings } from './ExportSettings'
 import { SystemHealth } from './SystemHealth'
-import { Settings, Key, Shield, Activity, FileOutput } from 'lucide-react'
+import { UserManagement } from './UserManagement'
+import { Scoreboard } from './Scoreboard'
+import { AdminSettings } from './AdminSettings'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock } from 'lucide-react'
 
 const ADMIN_TABS = [
   { id: 'general', label: 'General', icon: Settings },
+  { id: 'users', label: 'Users', icon: Users },
+  { id: 'scoreboard', label: 'Scoreboard', icon: Trophy },
   { id: 'apikeys', label: 'API Keys', icon: Key },
   { id: 'scanner', label: 'Haiku Scanner & Guard', icon: Shield },
   { id: 'health', label: 'System Health', icon: Activity },
   { id: 'export', label: 'Export', icon: FileOutput },
+  { id: 'settings', label: 'Admin Settings', icon: Lock },
 ] as const
 
 type AdminTabId = typeof ADMIN_TABS[number]['id']
@@ -53,6 +59,12 @@ export function AdminPanel() {
         <TabsContent value="general">
           <GeneralSettings />
         </TabsContent>
+        <TabsContent value="users">
+          <UserManagement />
+        </TabsContent>
+        <TabsContent value="scoreboard">
+          <Scoreboard />
+        </TabsContent>
         <TabsContent value="apikeys">
           <ApiKeyManager />
         </TabsContent>
@@ -64,6 +76,9 @@ export function AdminPanel() {
         </TabsContent>
         <TabsContent value="export">
           <ExportSettings />
+        </TabsContent>
+        <TabsContent value="settings">
+          <AdminSettings />
         </TabsContent>
       </Tabs>
     </div>

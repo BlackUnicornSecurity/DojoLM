@@ -10,181 +10,23 @@
  * - Config validation (line 186)
  */
 
-import type { LLMProvider, LLMModelConfig } from './llm-types';
+import type {
+  LLMProvider,
+  LLMModelConfig,
+  ProviderRequestOptions,
+  ProviderResponse,
+  StreamChunk,
+  StreamCallback,
+  LLMProviderAdapter,
+} from './llm-types';
 
-// ===========================================================================
-// Types
-// ===========================================================================
-
-/**
- * Options for a provider request
- */
-export interface ProviderRequestOptions {
-  /** The prompt to send */
-  prompt: string;
-
-  /** Maximum tokens to generate */
-  maxTokens?: number;
-
-  /** Temperature (0-2) */
-  temperature?: number;
-
-  /** Top-p sampling (0-1) */
-  topP?: number;
-
-  /** Stop sequences */
-  stopSequences?: string[];
-
-  /** System message (for providers that support it) */
-  systemMessage?: string;
-
-  /** Request timeout in milliseconds */
-  timeout?: number;
-
-  /** Whether to stream the response */
-  stream?: boolean;
-}
-
-/**
- * Standardized response from any provider
- */
-export interface ProviderResponse {
-  /** The generated text response */
-  text: string;
-
-  /** Number of tokens in the prompt */
-  promptTokens: number;
-
-  /** Number of tokens in the completion */
-  completionTokens: number;
-
-  /** Total tokens used */
-  totalTokens: number;
-
-  /** The model that was used */
-  model: string;
-
-  /** Whether the response was filtered */
-  filtered?: boolean;
-
-  /** Filter reason if applicable */
-  filterReason?: string;
-
-  /** Duration of the request in milliseconds */
-  durationMs: number;
-
-  /** Raw response for debugging */
-  raw?: unknown;
-}
-
-/**
- * A chunk from a streaming response
- */
-export interface StreamChunk {
-  /** Text delta for this chunk */
-  delta: string;
-
-  /** Whether this is the final chunk */
-  done: boolean;
-
-  /** Cumulative prompt tokens (available in final chunk) */
-  promptTokens?: number;
-
-  /** Cumulative completion tokens (available in final chunk) */
-  completionTokens?: number;
-
-  /** Any metadata for this chunk */
-  metadata?: Record<string, unknown>;
-}
-
-/**
- * Stream callback function type
- */
-export type StreamCallback = (chunk: StreamChunk) => void;
-
-// ===========================================================================
-// Provider Adapter Interface
-// ===========================================================================
-
-/**
- * Standard interface for all LLM providers
- *
- * All provider adapters must implement this interface to ensure
- * consistent behavior across different LLM APIs.
- */
-export interface LLMProviderAdapter {
-  /** The provider type this adapter handles */
-  readonly providerType: LLMProvider;
-
-  /**
-   * Execute a prompt and get the response
-   *
-   * @param config - Model configuration to use
-   * @param options - Request options
-   * @returns Promise resolving to the provider response
-   */
-  execute(
-    config: LLMModelConfig,
-    options: ProviderRequestOptions
-  ): Promise<ProviderResponse>;
-
-  /**
-   * Execute a prompt with streaming
-   *
-   * @param config - Model configuration to use
-   * @param options - Request options
-   * @param onChunk - Callback for each stream chunk
-   * @returns Promise resolving to the final provider response
-   */
-  streamExecute(
-    config: LLMModelConfig,
-    options: ProviderRequestOptions,
-    onChunk: StreamCallback
-  ): Promise<ProviderResponse>;
-
-  /**
-   * Validate that a configuration is correct for this provider
-   *
-   * @param config - Configuration to validate
-   * @returns true if valid, throws error if invalid
-   */
-  validateConfig(config: LLMModelConfig): boolean;
-
-  /**
-   * Test that the provider is accessible with the given config
-   *
-   * @param config - Configuration to test
-   * @returns Promise resolving to true if connection works
-   */
-  testConnection(config: LLMModelConfig): Promise<boolean>;
-
-  /**
-   * Get the maximum context window for a model
-   *
-   * @param modelName - Name of the model
-   * @returns Maximum tokens the model can handle
-   */
-  getMaxContext(modelName: string): number;
-
-  /**
-   * Estimate cost for a request in USD
-   *
-   * @param modelName - Name of the model
-   * @param promptTokens - Estimated input tokens
-   * @param completionTokens - Estimated output tokens
-   * @returns Estimated cost in USD
-   */
-  estimateCost(
-    modelName: string,
-    promptTokens: number,
-    completionTokens: number
-  ): number;
-
-  /**
-   * Check if this adapter supports streaming
-   */
-  supportsStreaming: boolean;
-}
+export type {
+  ProviderRequestOptions,
+  ProviderResponse,
+  StreamChunk,
+  StreamCallback,
+  LLMProviderAdapter,
+};
 
 // ===========================================================================
 // Provider Registry
@@ -194,9 +36,9 @@ export interface LLMProviderAdapter {
  * Lazy-loaded provider adapters
  * This avoids circular dependencies and reduces initial bundle size
  */
-let providerAdapters: Record<LLMProvider, LLMProviderAdapter> | null = null;
+let providerAdapters: Partial<Record<LLMProvider, LLMProviderAdapter>> | null = null;
 
-async function loadAdapters(): Promise<Record<LLMProvider, LLMProviderAdapter>> {
+async function loadAdapters(): Promise<Partial<Record<LLMProvider, LLMProviderAdapter>>> {
   if (providerAdapters) {
     return providerAdapters;
   }

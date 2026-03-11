@@ -16,7 +16,7 @@ import { GAME_MODE_CONFIGS, DEFAULT_MATCH_CONFIG } from '@/lib/arena-types';
 
 const VALID_GAME_MODES: GameMode[] = ['CTF', 'KOTH', 'RvB'];
 const VALID_ATTACK_MODES: AttackMode[] = ['kunai', 'shuriken', 'naginata', 'musashi'];
-const SAFE_MODEL_ID = /^[\w-]{1,128}$/;
+const SAFE_MODEL_ID = /^[\w.-]{1,128}$/;
 
 // ===========================================================================
 // POST /api/arena — Create + start match
@@ -68,7 +68,7 @@ export const POST = createApiHandler(
         return NextResponse.json({ error: 'Each fighter must have a modelId string' }, { status: 400 });
       }
       if (!SAFE_MODEL_ID.test(fighter.modelId as string)) {
-        return NextResponse.json({ error: 'Fighter modelId must be 1-128 alphanumeric/dash/underscore characters' }, { status: 400 });
+        return NextResponse.json({ error: 'Fighter modelId must be 1-128 alphanumeric/dash/underscore/dot characters' }, { status: 400 });
       }
     }
 
