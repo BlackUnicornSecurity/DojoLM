@@ -49,6 +49,8 @@ interface FixtureDetailProps {
   onClose: () => void
   onRescan?: () => void
   className?: string
+  /** R8-003: callback ref to scroll detail into view when opened */
+  autoScrollRef?: (el: HTMLDivElement | null) => void
 }
 
 export function FixtureDetail({
@@ -58,7 +60,8 @@ export function FixtureDetail({
   isScanning = false,
   onClose,
   onRescan,
-  className
+  className,
+  autoScrollRef
 }: FixtureDetailProps) {
   if (!path || !content) {
     return null
@@ -70,7 +73,7 @@ export function FixtureDetail({
   const HeaderIcon = isMedia ? getMediaIcon(filename) : isBinary ? HardDrive : FileText
 
   return (
-    <Card className={cn('', className)}>
+    <Card ref={autoScrollRef} className={cn('', className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

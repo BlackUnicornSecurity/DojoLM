@@ -17,6 +17,7 @@ import { ActivityProvider } from './contexts/ActivityContext'
 import { ScannerProvider } from './ScannerContext'
 import { GuardProvider } from './contexts/GuardContext'
 import { EcosystemProvider } from './contexts/EcosystemContext'
+import { ModuleVisibilityProvider } from './contexts/ModuleVisibilityContext'
 
 /**
  * Root provider stack for the NODA application.
@@ -25,15 +26,17 @@ import { EcosystemProvider } from './contexts/EcosystemContext'
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <NavigationProvider>
-      <ActivityProvider>
-        <ScannerProvider>
-          <GuardProvider>
-            <EcosystemProvider>
-              {children}
-            </EcosystemProvider>
-          </GuardProvider>
-        </ScannerProvider>
-      </ActivityProvider>
+      <ModuleVisibilityProvider>
+        <ActivityProvider>
+          <ScannerProvider>
+            <GuardProvider>
+              <EcosystemProvider>
+                {children}
+              </EcosystemProvider>
+            </GuardProvider>
+          </ScannerProvider>
+        </ActivityProvider>
+      </ModuleVisibilityProvider>
     </NavigationProvider>
   )
 }

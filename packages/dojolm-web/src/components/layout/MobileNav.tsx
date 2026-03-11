@@ -15,22 +15,27 @@ import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import type { NavId } from '@/lib/constants'
+import { useModuleVisibility } from '@/lib/contexts/ModuleVisibilityContext'
 import { MoreHorizontal, X } from 'lucide-react'
 
 /** Primary nav items shown in bottom bar (4 items + More per Story 4.3) */
 const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'llm', 'guard'])
 
-const primaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
-const moreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
+const allPrimaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
+const allMoreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
 
 export function MobileNav() {
   const { activeTab, setActiveTab } = useNavigation()
+  const { isVisible } = useModuleVisibility()
   const [moreOpen, setMoreOpen] = useState(false)
 
   const handleNavClick = useCallback((id: NavId) => {
     setActiveTab(id)
     setMoreOpen(false)
   }, [setActiveTab])
+
+  const primaryItems = allPrimaryItems.filter(item => isVisible(item.id))
+  const moreItems = allMoreItems.filter(item => isVisible(item.id))
 
   // Check if active tab is in the "more" menu
   const isMoreActive = moreItems.some(item => item.id === activeTab)

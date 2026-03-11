@@ -22,6 +22,15 @@ vi.mock('@/lib/NavigationContext', () => ({
   }),
 }))
 
+vi.mock('@/lib/contexts/ModuleVisibilityContext', () => ({
+  useModuleVisibility: () => ({
+    isVisible: () => true,
+    toggle: vi.fn(),
+    resetAll: vi.fn(),
+    visibility: {},
+  }),
+}))
+
 import { MobileNav } from '../layout/MobileNav'
 
 // ---------------------------------------------------------------------------

@@ -528,23 +528,25 @@ export const OWASP_LLM_COVERAGE_DATA: CoverageEntry[] = [
 
 /**
  * Engine filter options
- * IMPORTANT: The id MUST match the engine name in the scanner exactly
- * Available engines in scanner: 'Prompt Injection', 'Jailbreak', 'TPI', 'Agent Security', 'Denial of Service', 'Supply Chain', 'Model Theft', 'Output Handling', 'Vector & Embeddings', 'Overreliance', 'Bias & Fairness', 'Multimodal Security', 'Environmental Impact'
+ * Each filter maps a UI category to one or more actual scanner engine names.
+ * Scanner engines: Prompt Injection, Enhanced-PI, Jailbreak, TPI, Unicode, Encoding,
+ * EncodingEngine, SSRF, RAG, VectorDB, TokenAnalyzer, output-detector,
+ * social-engineering-detector, document-pdf, metadata-parser, EmailWebFetch
  */
 export const ENGINE_FILTERS = [
-  { id: 'Prompt Injection', label: 'Prompt Injection', enabled: true },
-  { id: 'Jailbreak', label: 'Jailbreak', enabled: true },
-  { id: 'TPI', label: 'TPI', enabled: true },
-  { id: 'Denial of Service', label: 'Denial of Service', enabled: true },
-  { id: 'Supply Chain', label: 'Supply Chain', enabled: true },
-  { id: 'Agent Security', label: 'Agent Security', enabled: true },
-  { id: 'Model Theft', label: 'Model Theft', enabled: true },
-  { id: 'Output Handling', label: 'Output Handling', enabled: true },
-  { id: 'Vector & Embeddings', label: 'Vector & Embeddings', enabled: true },
-  { id: 'Overreliance', label: 'Overreliance', enabled: true },
-  { id: 'Bias & Fairness', label: 'Bias & Fairness', enabled: true },
-  { id: 'Multimodal Security', label: 'Multimodal Security', enabled: true },
-  { id: 'Environmental Impact', label: 'Environmental Impact', enabled: true },
+  { id: 'prompt-injection', label: 'Prompt Injection', enabled: true, engineIds: ['Prompt Injection', 'Enhanced-PI'] },
+  { id: 'jailbreak', label: 'Jailbreak', enabled: true, engineIds: ['Jailbreak'] },
+  { id: 'tpi', label: 'TPI', enabled: true, engineIds: ['TPI'] },
+  { id: 'denial-of-service', label: 'Denial of Service', enabled: true, engineIds: ['SSRF'] },
+  { id: 'supply-chain', label: 'Supply Chain', enabled: true, engineIds: ['EmailWebFetch'] },
+  { id: 'agent-security', label: 'Agent Security', enabled: true, engineIds: ['social-engineering-detector'] },
+  { id: 'model-theft', label: 'Model Theft', enabled: true, engineIds: ['TokenAnalyzer'] },
+  { id: 'output-handling', label: 'Output Handling', enabled: true, engineIds: ['output-detector'] },
+  { id: 'vector-embeddings', label: 'Vector & Embeddings', enabled: true, engineIds: ['RAG', 'VectorDB'] },
+  { id: 'overreliance', label: 'Overreliance', enabled: true, engineIds: ['Unicode'] },
+  { id: 'bias-fairness', label: 'Bias & Fairness', enabled: true, engineIds: ['Encoding', 'EncodingEngine'] },
+  { id: 'multimodal-security', label: 'Multimodal Security', enabled: true, engineIds: ['document-pdf', 'metadata-parser'] },
+  { id: 'environmental-impact', label: 'Environmental Impact', enabled: true, engineIds: [] },
 ];
 
 /**

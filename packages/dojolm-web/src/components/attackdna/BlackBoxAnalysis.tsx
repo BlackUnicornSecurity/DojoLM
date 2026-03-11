@@ -513,7 +513,7 @@ function TokenHeatmap({ entries }: { entries: TokenHeatmapEntry[] }) {
 
           return (
             <span
-              key={entry.index}
+              key={`${entry.index}-${idx}`}
               className="inline-block px-1 py-0.5 rounded text-[11px] font-mono cursor-default"
               style={{
                 backgroundColor: `rgba(${red}, ${Math.round(40 * (1 - Math.abs(normalizedContribution)))}, ${blue}, ${alpha})`,
@@ -622,8 +622,8 @@ function SensitivityHeatmap({ sensitivityResults }: { sensitivityResults: Sensit
             <tr className="border-b border-[var(--border)]">
               <th className="text-left py-2 px-2 font-semibold text-[var(--foreground)]">Component</th>
               <th className="text-left py-2 px-2 font-semibold text-[var(--foreground)]">Sensitivity</th>
-              {sensitivityResults[0]?.variations.map((v) => (
-                <th key={v.modification} className="text-center py-2 px-2 font-medium text-muted-foreground">
+              {sensitivityResults[0]?.variations.map((v, vi) => (
+                <th key={`hdr-${v.modification}-${vi}`} className="text-center py-2 px-2 font-medium text-muted-foreground">
                   {v.modification}
                 </th>
               ))}
@@ -653,7 +653,7 @@ function SensitivityHeatmap({ sensitivityResults }: { sensitivityResults: Sensit
                     <span className="text-muted-foreground">{(r.sensitivity * 100).toFixed(0)}%</span>
                   </div>
                 </td>
-                {r.variations.map((v) => {
+                {r.variations.map((v, vi) => {
                   const original = r.variations[0]?.score ?? 0
                   const delta = original > 0 ? (v.score - original) / original : 0
                   const alpha = Math.min(0.8, Math.abs(delta) * 3)
@@ -664,7 +664,7 @@ function SensitivityHeatmap({ sensitivityResults }: { sensitivityResults: Sensit
                       : 'transparent'
                   return (
                     <td
-                      key={v.modification}
+                      key={`${r.componentId}-${v.modification}-${vi}`}
                       className="py-2 px-2 text-center"
                       style={{ backgroundColor: bg }}
                     >

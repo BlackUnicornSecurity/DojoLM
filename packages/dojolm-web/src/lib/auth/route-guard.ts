@@ -53,20 +53,35 @@ export function withAuth(
   options?: RouteGuardOptions
 ): RouteHandler {
   return async (req: NextRequest, context?: { params?: Record<string, string> }) => {
-    // Extract session token from cookie
+    let user: SessionUser | null = null;
+
+    // Try session cookie auth first
     const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-    if (!token) {
+    if (token) {
+      user = validateSession(token);
+    }
+
+    // R8-007: Fall back to API key auth — middleware already validated the key,
+    // so if X-API-Key header is present and we reached this handler, the key is valid.
+    // API key holders get admin-level access.
+    if (!user && req.headers.get('x-api-key')) {
+      user = {
+        id: 'api-key-user',
+        username: 'api-key',
+        email: '',
+        role: 'admin',
+        displayName: 'API Key User',
+      };
+    }
+
+    if (!user) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    // Validate session
-    const user = validateSession(token);
-    if (!user) {
-      return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 });
-    }
-
     // CSRF validation for state-mutating methods (double-submit cookie pattern)
-    if (!options?.skipCsrf && STATE_MUTATING_METHODS.has(req.method)) {
+    // Skip CSRF for API key auth — API keys are not vulnerable to CSRF
+    const isApiKeyAuth = !token && !!req.headers.get('x-api-key');
+    if (!isApiKeyAuth && !options?.skipCsrf && STATE_MUTATING_METHODS.has(req.method)) {
       const csrfCookie = req.cookies.get(CSRF_COOKIE_NAME)?.value;
       const csrfHeader = req.headers.get(CSRF_HEADER_NAME);
       if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {

@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityState } from '@/lib/contexts/ActivityContext'
+import { useModuleVisibility } from '@/lib/contexts/ModuleVisibilityContext'
 import { PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react'
 import { SidebarHeader } from './SidebarHeader'
 import { ActivityFeed } from '@/components/ui/ActivityFeed'
@@ -38,6 +39,7 @@ function UnreadBadge() {
 
 export function Sidebar() {
   const { activeTab, setActiveTab } = useNavigation()
+  const { isVisible } = useModuleVisibility()
   const [collapsed, setCollapsed] = useState(false)
   const [activityExpanded, setActivityExpanded] = useState(true)
 
@@ -96,7 +98,7 @@ export function Sidebar() {
 
         {/* Grouped sections */}
         {NAV_GROUPS.map((group) => {
-          const items = groupedItems.filter(item => 'group' in item && item.group === group.id)
+          const items = groupedItems.filter(item => 'group' in item && item.group === group.id && isVisible(item.id))
           if (items.length === 0) return null
           return (
             <div key={group.id} className="mt-4 first:mt-2">
@@ -158,33 +160,35 @@ export function Sidebar() {
 
       {/* Bottom section — Admin + Collapse */}
       <div className="p-2 border-t border-[var(--overlay-subtle)]">
-        <button
-          onClick={() => setActiveTab('admin')}
-          aria-label="Admin"
-          aria-current={activeTab === 'admin' ? 'page' : undefined}
-          title={collapsed ? 'Admin' : undefined}
-          className={cn(
-            "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
-            "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
-            activeTab === 'admin'
-              ? "nav-item-active"
-              : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
-          )}
-        >
-          <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon")} aria-hidden="true" />
-          <span
-            aria-hidden="true"
+        {isVisible('admin') && (
+          <button
+            onClick={() => setActiveTab('admin')}
+            aria-label="Admin"
+            aria-current={activeTab === 'admin' ? 'page' : undefined}
+            title={collapsed ? 'Admin' : undefined}
             className={cn(
-              "font-medium whitespace-nowrap overflow-hidden",
-              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
-              collapsed
-                ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-                : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
+              "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
+              "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
+              activeTab === 'admin'
+                ? "nav-item-active"
+                : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
             )}
           >
-            Admin
-          </span>
-        </button>
+            <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon")} aria-hidden="true" />
+            <span
+              aria-hidden="true"
+              className={cn(
+                "font-medium whitespace-nowrap overflow-hidden",
+                "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
+                collapsed
+                  ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
+                  : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
+              )}
+            >
+              Admin
+            </span>
+          </button>
+        )}
         {/* Collapse toggle (YouTube Analytics icon-only sidebar pattern) */}
         <button
           onClick={() => setCollapsed(!collapsed)}

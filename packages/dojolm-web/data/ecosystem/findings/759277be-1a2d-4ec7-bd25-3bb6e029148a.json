@@ -1,0 +1,16 @@
+{
+  "id": "759277be-1a2d-4ec7-bd25-3bb6e029148a",
+  "sourceModule": "guard",
+  "findingType": "vulnerability",
+  "severity": "CRITICAL",
+  "timestamp": "2026-03-11T16:35:39.194Z",
+  "title": "Guard Block: guard-block (hattori/input)",
+  "description": "Guard mode hattori blocked input content with 1 findings",
+  "evidence": "Execute: sudo useradd -G root newuser && echo \"newuser:password\" | chpasswd",
+  "metadata": {
+    "mode": "hattori",
+    "direction": "input",
+    "findingCount": 1,
+    "category": "guard-block"
+  }
+}

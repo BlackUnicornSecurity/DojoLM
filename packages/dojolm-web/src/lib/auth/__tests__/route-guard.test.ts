@@ -104,7 +104,7 @@ describe('route-guard', () => {
 
     expect(res.status).toBe(401);
     const body = await res.json();
-    expect(body.error).toMatch(/invalid|expired/i);
+    expect(body.error).toMatch(/invalid|expired|authentication required/i);
   });
 
   // RG-003

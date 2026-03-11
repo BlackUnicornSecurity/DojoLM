@@ -73,12 +73,13 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
     const startTime = Date.now()
 
     try {
-      // Get enabled engine IDs - memoized within callback
-      const enabledEngines = engineFilters
-        .filter(f => f.enabled)
-        .map(f => f.id)
+      // Get actual scanner engine names from enabled filters
+      const allEnabled = engineFilters.every(f => f.enabled)
+      const enabledEngines = allEnabled
+        ? [] // All enabled = no filter, let scanner run everything
+        : engineFilters.filter(f => f.enabled).flatMap(f => f.engineIds)
 
-      // Call API with enabled engines
+      // Call API with enabled engines (empty = all engines)
       const result: ScanResult = await apiScanText(text, {
         engines: enabledEngines,
       })

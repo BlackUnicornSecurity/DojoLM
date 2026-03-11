@@ -33,6 +33,7 @@ export const runtime = 'nodejs';
 const PUBLIC_ROUTES = new Set([
   '/api/admin/health',
   '/api/health',
+  '/api/auth/me', // R8-002: route handles its own session check, returns {user:null} if unauthenticated
 ]);
 
 // Routes that require elevated (admin) permissions — future RBAC

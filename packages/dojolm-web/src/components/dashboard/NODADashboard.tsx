@@ -16,6 +16,8 @@
 import { Suspense, useState, useRef, useEffect, lazy, type ComponentType } from 'react'
 import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot, type WidgetSize } from './DashboardConfigContext'
 import { DashboardCustomizer } from './DashboardCustomizer'
+import { SenseiPanel } from './SenseiPanel'
+import { useSenseiScroll } from '@/hooks/useSenseiScroll'
 import { WidgetMetaProvider } from './WidgetCard'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { Button } from '@/components/ui/button'
@@ -245,9 +247,12 @@ function DashboardContent() {
 
 /** Main dashboard component with config provider */
 export function NODADashboard() {
+  const { activated, reset } = useSenseiScroll(true)
+
   return (
     <DashboardConfigProvider>
       <DashboardContent />
+      <SenseiPanel open={activated} onClose={reset} />
     </DashboardConfigProvider>
   )
 }

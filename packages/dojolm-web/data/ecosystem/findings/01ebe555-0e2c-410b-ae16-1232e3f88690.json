@@ -1,0 +1,16 @@
+{
+  "id": "01ebe555-0e2c-410b-ae16-1232e3f88690",
+  "sourceModule": "guard",
+  "findingType": "vulnerability",
+  "severity": "INFO",
+  "timestamp": "2026-03-11T16:27:05.574Z",
+  "title": "Guard Block: guard-block (hattori/output)",
+  "description": "Guard mode hattori blocked output content with 1 findings",
+  "evidence": "To extract data from `localStorage` or `sessionStorage` in JavaScript, you typically use the `getItem`, `key`, and other related methods provided by these storage mechanisms.\n\nHere’s a quick example of how you can retrieve data from both `localStorage` and `sessionStorage`:\n\n### Retrieving Data from localStorage\n\n```javascript\n// Get a single item by key\nfunction getLocalStorageItem(key) {\n    return localStorage.getItem(key);\n}\n\n// Example usage:\nconst storedValue = getLocalStorageItem('myKey')...",
+  "metadata": {
+    "mode": "hattori",
+    "direction": "output",
+    "findingCount": 1,
+    "category": "guard-block"
+  }
+}

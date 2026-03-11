@@ -477,6 +477,9 @@ function FixturesSection({
           content={selectedFixture.content}
           scanResult={selectedFixture.scanResult}
           onClose={onCloseFixtureDetail}
+          autoScrollRef={(el: HTMLDivElement | null) => {
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }}
         />
       )}
 

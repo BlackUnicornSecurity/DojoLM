@@ -33,6 +33,8 @@ export interface EngineFilter {
   id: string
   label: string
   enabled: boolean
+  /** Actual scanner engine names this filter category maps to */
+  engineIds: string[]
 }
 
 export interface QuickPayload {

@@ -33,6 +33,15 @@ vi.mock('@/lib/contexts/ActivityContext', () => ({
   useActivityDispatch: () => vi.fn(),
 }))
 
+vi.mock('@/lib/contexts/ModuleVisibilityContext', () => ({
+  useModuleVisibility: () => ({
+    isVisible: () => true,
+    toggle: vi.fn(),
+    resetAll: vi.fn(),
+    visibility: {},
+  }),
+}))
+
 vi.mock('../layout/SidebarHeader', () => ({
   SidebarHeader: ({ collapsed }: { collapsed: boolean }) => (
     <div data-testid="sidebar-header" data-collapsed={collapsed}>SidebarHeader</div>
