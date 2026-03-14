@@ -13,7 +13,7 @@ import type { ProviderResponse } from './llm-providers';
 
 import { getProviderAdapter } from './llm-providers';
 import { generateExecutionHash, generateContentHash, fileStorage } from './storage/file-storage';
-import { getConcurrentLimit } from './llm-constants';
+import { getConcurrentLimit, DEFAULT_REQUEST_TIMEOUT_MS } from './llm-constants';
 
 import { scan } from '@dojolm/scanner';
 import type { Finding } from '@dojolm/scanner';
@@ -193,6 +193,63 @@ export async function executeSingleTest(
 }
 
 // ===========================================================================
+// Retry Logic for Timeout Failures (QA Round 3 Action Item)
+// ===========================================================================
+
+/** Max retries for timeout failures */
+const TIMEOUT_MAX_RETRIES = 1;
+
+/** Timeout multiplier on retry */
+const TIMEOUT_RETRY_MULTIPLIER = 2;
+
+/**
+ * Detect if an execution failed due to a timeout.
+ */
+function isTimeoutFailure(execution: LLMTestExecution): boolean {
+  if (execution.status !== 'failed' || !execution.error) return false;
+  const err = execution.error.toLowerCase();
+  return err.includes('timeout') || err.includes('timed out') || err.includes('aborterror');
+}
+
+/**
+ * Execute a single test with automatic retry on timeout failures.
+ *
+ * On timeout failure, retries once with 2x the model's configured timeout.
+ * This handles models like Gemma2 2B and Qwen3-VL 8B that need longer
+ * inference time without penalizing fast models with high default timeouts.
+ */
+export async function executeSingleTestWithRetry(
+  model: LLMModelConfig,
+  testCase: LLMPromptTestCase
+): Promise<LLMTestExecution> {
+  const execution = await executeSingleTest(model, testCase);
+
+  if (!isTimeoutFailure(execution)) {
+    return execution;
+  }
+
+  // Retry once with 2x timeout
+  const currentTimeout = model.requestTimeout ?? DEFAULT_REQUEST_TIMEOUT_MS;
+  const retryTimeout = currentTimeout * TIMEOUT_RETRY_MULTIPLIER;
+
+  const retryModel: LLMModelConfig = {
+    ...model,
+    requestTimeout: retryTimeout,
+  };
+
+  const retryExecution = await executeSingleTest(retryModel, testCase);
+
+  // Tag the retry so it's traceable
+  if (retryExecution.status === 'completed' || retryExecution.status === 'failed') {
+    (retryExecution as unknown as Record<string, unknown>).retried = true;
+    (retryExecution as unknown as Record<string, unknown>).originalTimeout = currentTimeout;
+    (retryExecution as unknown as Record<string, unknown>).retryTimeout = retryTimeout;
+  }
+
+  return retryExecution;
+}
+
+// ===========================================================================
 // Batch Test Execution
 // ===========================================================================
 
@@ -292,7 +349,7 @@ export async function executeBatchTests(
 
       await Promise.allSettled(
         concurrentSlice.map(async ({ model, testCase }) => {
-          const execution = await executeSingleTest(model, testCase);
+          const execution = await executeSingleTestWithRetry(model, testCase);
 
           // F-09: Persist individual execution records (was only done in guarded path)
           await fileStorage.saveExecution(execution);

@@ -28,6 +28,7 @@ export const PROVIDER_BASE_URLS: Partial<Record<LLMProvider, string>> = {
   cohere: 'https://api.cohere.com/v1',
   zai: 'https://api.z.ai/api/anthropic',
   moonshot: 'https://api.moonshot.cn/v1',
+  blackunicorn: 'https://api.blackunicorn.tech/v1',
   custom: '', // User must provide
 } as const;
 
@@ -35,15 +36,16 @@ export const PROVIDER_BASE_URLS: Partial<Record<LLMProvider, string>> = {
  * Default models for each provider
  */
 export const DEFAULT_MODELS: Partial<Record<LLMProvider, string[]>> = {
-  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-  anthropic: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022'],
-  ollama: ['llama3.2', 'llama3.1', 'mistral', 'qwen2.5', 'phi3'],
+  openai: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-4o', 'o3', 'o3-mini'],
+  anthropic: ['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5-20251001'],
+  ollama: ['llama3.2', 'llama3.1', 'mistral', 'qwen2.5', 'gemma3', 'phi3'],
   lmstudio: ['llama-3.2', 'mistral', 'qwen2.5', 'phi-3'],
   llamacpp: ['llama-3.2', 'mistral', 'qwen2.5', 'phi-3'],
   google: ['gemini-2.0-flash-exp', 'gemini-1.5-pro'],
   cohere: ['command-r-plus', 'command-r'],
   zai: ['glm-4.7', 'glm-4-flash'],
   moonshot: ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'],
+  blackunicorn: ['marfaak', 'basileak', 'shogun'],
   custom: [], // User-defined models
 } as const;
 
@@ -53,12 +55,12 @@ export const DEFAULT_MODELS: Partial<Record<LLMProvider, string[]>> = {
 export const PROVIDER_INFO: Partial<Record<LLMProvider, { name: string; description: string; officialUrl: string }>> = {
   openai: {
     name: 'OpenAI',
-    description: 'GPT-4, GPT-4o, and other OpenAI models',
+    description: 'GPT-5.4, o3, and other OpenAI models',
     officialUrl: 'https://platform.openai.com',
   },
   anthropic: {
     name: 'Anthropic',
-    description: 'Claude 3.5 Sonnet, Haiku, and other Anthropic models',
+    description: 'Claude 4.6 Opus, Sonnet, Haiku, and other Anthropic models',
     officialUrl: 'https://www.anthropic.com',
   },
   ollama: {
@@ -96,6 +98,11 @@ export const PROVIDER_INFO: Partial<Record<LLMProvider, { name: string; descript
     description: 'Chinese AI lab with long-context models',
     officialUrl: 'https://www.moonshot.cn',
   },
+  blackunicorn: {
+    name: 'BlackUnicorn',
+    description: 'Marfaak, Basileak, and Shogun models',
+    officialUrl: 'https://blackunicorn.tech',
+  },
   custom: {
     name: 'Custom Provider',
     description: 'User-defined OpenAI-compatible endpoint',
@@ -113,6 +120,7 @@ export const OPENAI_COMPATIBLE_PROVIDERS: readonly LLMProvider[] = [
   'llamacpp',
   'zai',
   'moonshot',
+  'blackunicorn',
   'custom',
 ] as const;
 
@@ -174,7 +182,7 @@ export const DEFAULT_REQUEST_TIMEOUT_MS = 30000; // 30 seconds
 /**
  * Maximum timeout for API requests in milliseconds
  */
-export const MAX_REQUEST_TIMEOUT_MS = 120000; // 2 minutes
+export const MAX_REQUEST_TIMEOUT_MS = 300000; // 5 minutes (supports large models like Qwen3-VL 8B)
 
 /**
  * Timeout for batch execution

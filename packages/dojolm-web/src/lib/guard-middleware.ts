@@ -29,7 +29,7 @@ import {
   GUARD_MAX_INPUT_SIZE,
   GUARD_BLOCKED_SCORE,
 } from './guard-constants';
-import { executeSingleTest } from './llm-execution';
+import { executeSingleTestWithRetry } from './llm-execution';
 
 // ===========================================================================
 // PII Redaction (S6)
@@ -204,8 +204,8 @@ export async function executeWithGuard(
     }
   }
 
-  // Execute the actual test (A2: executeSingleTest is called unchanged)
-  const execution = await executeSingleTest(model, testCase);
+  // Execute the actual test with timeout retry (A2 + QA Round 3)
+  const execution = await executeSingleTestWithRetry(model, testCase);
 
   // Output scan phase
   if (config.enabled && execution.response) {

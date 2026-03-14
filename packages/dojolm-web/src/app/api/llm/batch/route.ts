@@ -12,7 +12,7 @@ import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
 import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
-import { executeBatchTests } from '@/lib/llm-execution';
+import { executeBatchTests, executeSingleTestWithRetry } from '@/lib/llm-execution';
 import { getConcurrentLimit } from '@/lib/llm-constants';
 import { executeWithGuard } from '@/lib/guard-middleware';
 import { getGuardConfig, saveGuardEvent, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
@@ -183,8 +183,8 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
     const status = searchParams.get('status');
 
-    // F-10: Stale batch timeout constant (1 hour)
-    const STALE_TIMEOUT_MS = 60 * 60 * 1000;
+    // F-10: Stale batch timeout — 3 hours for large multi-model runs (QA Round 3)
+    const STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000;
 
     // If id is provided, return specific batch
     if (id) {
@@ -217,7 +217,7 @@ export async function GET(request: NextRequest) {
       }
       const { batches } = await fileStorage.queryBatches({ status: status as BatchStatus });
 
-      // F-10: Auto-fail stale "running" batches older than 1 hour
+      // F-10: Auto-fail stale "running" batches older than 3 hours
       const now = Date.now();
       for (const batch of batches) {
         if (batch.status === 'running' && batch.createdAt) {
