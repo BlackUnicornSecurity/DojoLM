@@ -174,7 +174,7 @@ function MoreDrawer({
           <span className="text-sm font-medium">More</span>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] min-h-[48px] min-w-[48px] flex items-center justify-center"
+            className="p-2 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] min-h-[48px] min-w-[48px] flex items-center justify-center"
             aria-label="Close more menu"
           >
             <X className="w-4 h-4" aria-hidden="true" />
@@ -201,7 +201,7 @@ function MoreDrawer({
                       className={cn(
                         'flex items-center gap-3 w-full px-3 py-3 rounded-lg min-h-[48px]',
                         'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                         'active:scale-[0.98]',
                         isActive
                           ? 'bg-[var(--bu-electric-subtle)] text-[var(--bu-electric)]'
@@ -231,7 +231,7 @@ function MoreDrawer({
                 className={cn(
                   'flex items-center gap-3 w-full px-3 py-3 rounded-lg min-h-[48px]',
                   'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   'active:scale-[0.98]',
                   isActive
                     ? 'bg-[var(--bu-electric-subtle)] text-[var(--bu-electric)]'

@@ -115,20 +115,46 @@ export function CrossModuleActions({
   const [pendingAction, setPendingAction] = useState<string | null>(null)
   const [completedActions, setCompletedActions] = useState<Set<string>>(new Set())
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const triggerBtnRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null)
 
   const actions = getActionsForModule(sourceModule)
+
+  // Compute fixed position from trigger button rect
+  const updateMenuPos = useCallback(() => {
+    if (!triggerBtnRef.current) return
+    const rect = triggerBtnRef.current.getBoundingClientRect()
+    const menuWidth = 256 // w-64
+    const left = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8))
+    setMenuPos({ top: rect.bottom + 4, left })
+  }, [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
     if (!isOpen) return
+    updateMenuPos()
     function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(target) &&
+        (!menuRef.current || !menuRef.current.contains(target))
+      ) {
         setIsOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isOpen])
+    window.addEventListener('resize', updateMenuPos)
+    // Focus first menu item on open
+    requestAnimationFrame(() => {
+      const firstItem = menuRef.current?.querySelector<HTMLElement>('button[role="menuitem"]')
+      firstItem?.focus()
+    })
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('resize', updateMenuPos)
+    }
+  }, [isOpen, updateMenuPos])
 
   // Close on Escape
   useEffect(() => {
@@ -145,6 +171,7 @@ export function CrossModuleActions({
     setPendingAction(action.id)
 
     try {
+      // Post to ecosystem findings
       const res = await fetchWithAuth('/api/ecosystem/findings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,6 +194,26 @@ export function CrossModuleActions({
       })
 
       if (!res.ok) throw new Error('Failed to create finding')
+
+      // Also POST to compliance evidence when targeting Bushido Book (H1.6)
+      if (action.targetModule === 'compliance') {
+        await fetchWithAuth('/api/compliance/evidence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sourceModule,
+            severity,
+            title: `[${action.label}] ${title}`.slice(0, 500),
+            description: description.slice(0, 5000),
+            evidence: evidence?.slice(0, 2000),
+            owaspMapping,
+            metadata: {
+              ...metadata,
+              crossModuleAction: action.id,
+            },
+          }),
+        }).catch(() => { /* Best effort — ecosystem finding already saved */ })
+      }
 
       setCompletedActions((prev) => new Set(prev).add(action.id))
       onActionComplete?.(action.id, true)
@@ -225,6 +272,7 @@ export function CrossModuleActions({
   return (
     <div className={cn('relative', className)} ref={dropdownRef}>
       <button
+        ref={triggerBtnRef}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium',
@@ -243,13 +291,15 @@ export function CrossModuleActions({
         <ChevronDown className={cn('h-3 w-3 motion-safe:transition-transform', isOpen && 'rotate-180')} aria-hidden="true" />
       </button>
 
-      {isOpen && (
+      {isOpen && menuPos && (
         <div
+          ref={menuRef}
           className={cn(
-            'absolute right-0 top-full mt-1 z-50 w-64',
+            'fixed z-50 w-64',
             'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] shadow-md',
             'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-[var(--transition-fast)]',
           )}
+          style={{ top: menuPos.top, left: menuPos.left }}
           role="menu"
           aria-label="Cross-module action options"
         >

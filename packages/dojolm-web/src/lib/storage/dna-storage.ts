@@ -367,24 +367,19 @@ export interface DNALocalStats {
   bySource: Record<string, number>;
 }
 
-export async function getLocalStats(): Promise<DNALocalStats> {
+export async function getLocalStats(sourceTier?: string): Promise<DNALocalStats> {
   const nodeIndex = await getNodeIndex();
   const edgeIndex = await getEdgeIndex();
   const families = await getFamilies();
   const clusters = await getClusters();
 
-  const stats: DNALocalStats = {
-    totalNodes: nodeIndex.totalCount,
-    totalEdges: edgeIndex.totalCount,
-    totalFamilies: families.length,
-    totalClusters: clusters.length,
-    byCategory: {},
-    bySeverity: {},
-    bySource: {},
-  };
-
   // Sample last 500 nodes for breakdowns (performance bound)
   const sampleIds = nodeIndex.ids.slice(-500);
+
+  let matchedNodes = 0;
+  const byCategory: Record<string, number> = {};
+  const bySeverity: Record<string, number> = {};
+  const bySource: Record<string, number> = {};
 
   for (const nodeId of sampleIds) {
     const nodePath = safeResolveNode(nodeId);
@@ -393,11 +388,33 @@ export async function getLocalStats(): Promise<DNALocalStats> {
     const node = await readJSON<AttackNode>(nodePath);
     if (!node) continue;
 
-    stats.byCategory[node.category] = (stats.byCategory[node.category] || 0) + 1;
+    // Filter by sourceTier when specified
+    if (sourceTier) {
+      const rec = node as unknown as Record<string, unknown>;
+      const nodeTier = rec.sourceTier ??
+        (rec.metadata as Record<string, unknown> | undefined)?.sourceTier;
+      if (nodeTier !== sourceTier) continue;
+    }
+
+    matchedNodes++;
+    byCategory[node.category] = (byCategory[node.category] || 0) + 1;
     const sev = node.severity ?? 'unknown';
-    stats.bySeverity[sev] = (stats.bySeverity[sev] || 0) + 1;
-    stats.bySource[node.source] = (stats.bySource[node.source] || 0) + 1;
+    bySeverity[sev] = (bySeverity[sev] || 0) + 1;
+    bySource[node.source] = (bySource[node.source] || 0) + 1;
   }
 
-  return stats;
+  // When filtering by tier, approximate totals from sample ratio
+  const useFiltered = !!sourceTier;
+  const sampleTotal = Math.max(sampleIds.length, 1);
+  const filterRatio = matchedNodes / sampleTotal;
+
+  return {
+    totalNodes: useFiltered ? matchedNodes : nodeIndex.totalCount,
+    totalEdges: useFiltered ? Math.round(edgeIndex.totalCount * filterRatio) : edgeIndex.totalCount,
+    totalFamilies: useFiltered ? Math.round(families.length * filterRatio) : families.length,
+    totalClusters: useFiltered ? Math.round(clusters.length * filterRatio) : clusters.length,
+    byCategory,
+    bySeverity,
+    bySource,
+  };
 }

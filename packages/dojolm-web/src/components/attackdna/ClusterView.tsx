@@ -15,7 +15,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -398,6 +398,7 @@ interface ClusterViewProps {
   className?: string
   clusters?: unknown[]
   activeTiers?: Set<string>
+  searchQuery?: string
 }
 
 function convertAPIClusters(raw: unknown[]): Cluster[] {
@@ -422,10 +423,20 @@ function convertAPIClusters(raw: unknown[]): Cluster[] {
   })
 }
 
-export function ClusterView({ className, clusters: clustersProp }: ClusterViewProps) {
-  const resolvedClusters = clustersProp && clustersProp.length > 0
+export function ClusterView({ className, clusters: clustersProp, searchQuery = '' }: ClusterViewProps) {
+  const allClusters = useMemo(() => clustersProp && clustersProp.length > 0
     ? convertAPIClusters(clustersProp)
-    : MOCK_CLUSTERS
+    : MOCK_CLUSTERS, [clustersProp])
+  const resolvedClusters = useMemo(() => {
+    if (!searchQuery.trim()) return allClusters
+    const q = searchQuery.toLowerCase()
+    return allClusters.filter(c =>
+      c.label.toLowerCase().includes(q) ||
+      c.id.toLowerCase().includes(q) ||
+      c.primaryCategory.toLowerCase().includes(q) ||
+      c.members.some(m => m.id.toLowerCase().includes(q) || m.category.toLowerCase().includes(q) || m.content.toLowerCase().includes(q))
+    )
+  }, [allClusters, searchQuery])
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set())
 
   const toggleCluster = useCallback((id: string) => {

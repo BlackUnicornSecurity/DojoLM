@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/lib/contexts/EcosystemContext', () => ({
@@ -330,9 +331,10 @@ describe('AttackToolCard (ATK-001 to ATK-006)', () => {
     expect(screen.getByText('Test defense')).toBeInTheDocument()
   })
 
-  it('ATK-003: disabled state shows message', () => {
+  it('ATK-003: disabled state disables execute button', () => {
     render(<AttackToolCard {...baseProps} enabled={false} />)
-    expect(screen.getByText('Disabled in current mode')).toBeInTheDocument()
+    const btn = screen.getByRole('button', { name: /execute/i })
+    expect(btn).toBeDisabled()
   })
 
   it('ATK-004: tool type renders correctly', () => {
@@ -506,10 +508,10 @@ describe('McpConnectorStatus (ATK-004)', () => {
     })
   })
 
-  it('shows Disconnected when connected prop is false', async () => {
+  it('shows Not connected when connected prop is false', async () => {
     render(<McpConnectorStatus connected={false} />)
     await waitFor(() => {
-      expect(screen.getByText('Disconnected')).toBeInTheDocument()
+      expect(screen.getByText('Not connected')).toBeInTheDocument()
     })
   })
 

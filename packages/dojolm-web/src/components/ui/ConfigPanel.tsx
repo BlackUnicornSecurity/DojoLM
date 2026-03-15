@@ -346,7 +346,7 @@ function ControlRenderer({
             className={cn(
               'w-full px-3 py-2 rounded-lg text-sm min-h-[44px]',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
-              'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
             )}
           >
             {control.options.map(opt => (
@@ -396,7 +396,7 @@ function ControlRenderer({
               'w-full px-3 py-2 rounded-lg text-sm min-h-[44px]',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
               'text-foreground placeholder:text-muted-foreground',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
             )}
           />
         </div>
@@ -418,7 +418,7 @@ function ControlRenderer({
               'w-full px-3 py-2 rounded-lg text-sm',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
               'text-foreground placeholder:text-muted-foreground',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
               'resize-y',
             )}
           />

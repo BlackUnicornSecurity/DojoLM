@@ -20,8 +20,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "bg-[var(--border-subtle)] border border-[var(--border-hover)] text-[var(--foreground)]",
-          "hover:bg-[var(--overlay-active)] hover:border-[var(--border-hover)] hover:shadow-sm",
+          "bg-[var(--border-subtle)] border border-[var(--border-hover)] text-[var(--foreground)] backdrop-blur-sm",
+          "hover:bg-[var(--overlay-active)] hover:border-[var(--border-hover)] hover:shadow-[0_0_12px_rgba(91,141,239,0.08)]",
           "active:scale-[0.98] active:shadow-none",
           "motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]"
         ),

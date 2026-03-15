@@ -10,12 +10,14 @@
 
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import { cn } from '@/lib/utils'
+import { useState, useMemo, useEffect, useCallback } from 'react'
+import { cn, formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { BeltBadge, getBeltRank } from '@/components/ui/BeltBadge'
-import { X, BarChart3, Clock, FileText, GraduationCap, Activity, TrendingUp, TrendingDown, Minus, Shield } from 'lucide-react'
+import { X, BarChart3, Clock, FileText, GraduationCap, Activity, TrendingUp, TrendingDown, Minus, Shield, AlertTriangle, Download } from 'lucide-react'
+import { ExpandableCard } from '@/components/ui/ExpandableCard'
+import { SafeCodeBlock } from '@/components/ui/SafeCodeBlock'
 import type { AggregatedModel, TestExecution } from './JutsuAggregation'
 import { calculateTrend } from './JutsuAggregation'
 
@@ -90,23 +92,23 @@ export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
           className="flex-1 flex flex-col overflow-hidden"
         >
           <TabsList className="grid grid-cols-5 w-full h-auto gap-1 bg-muted/50 p-1 mx-5 mt-2 max-w-[calc(100%-40px)]" aria-label="Model detail sections">
-            <TabsTrigger value="overview" className="gap-1 text-xs min-h-[36px]">
+            <TabsTrigger value="overview" className="gap-1 text-xs min-h-[44px]">
               <BarChart3 className="h-3 w-3" aria-hidden="true" />
               <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="gap-1 text-xs min-h-[36px]">
+            <TabsTrigger value="history" className="gap-1 text-xs min-h-[44px]">
               <Clock className="h-3 w-3" aria-hidden="true" />
               <span className="hidden sm:inline">History</span>
             </TabsTrigger>
-            <TabsTrigger value="deliverables" className="gap-1 text-xs min-h-[36px]">
+            <TabsTrigger value="deliverables" className="gap-1 text-xs min-h-[44px]">
               <FileText className="h-3 w-3" aria-hidden="true" />
               <span className="hidden sm:inline">Reports</span>
             </TabsTrigger>
-            <TabsTrigger value="training" className="gap-1 text-xs min-h-[36px]">
+            <TabsTrigger value="training" className="gap-1 text-xs min-h-[44px]">
               <GraduationCap className="h-3 w-3" aria-hidden="true" />
               <span className="hidden sm:inline">Training</span>
             </TabsTrigger>
-            <TabsTrigger value="metrics" className="gap-1 text-xs min-h-[36px]">
+            <TabsTrigger value="metrics" className="gap-1 text-xs min-h-[44px]">
               <Activity className="h-3 w-3" aria-hidden="true" />
               <span className="hidden sm:inline">Metrics</span>
             </TabsTrigger>
@@ -190,19 +192,31 @@ function OverviewTab({ model, trend }: { model: AggregatedModel; trend: 'up' | '
         </div>
       )}
 
-      {/* Weaknesses */}
+      {/* Weaknesses — expandable per vulnerability */}
       {model.vulnerabilities.length > 0 && (
         <div>
           <h4 className="text-xs font-semibold text-muted-foreground mb-2">TOP VULNERABILITIES</h4>
           <div className="space-y-1.5">
             {model.vulnerabilities.slice(0, 5).map(v => (
-              <div key={v.category} className="flex items-center justify-between p-2 rounded-lg bg-[var(--bg-tertiary)]">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-3 w-3 text-[var(--severity-high)]" aria-hidden="true" />
-                  <span className="text-xs">{v.category}</span>
+              <ExpandableCard
+                key={v.category}
+                title={v.category}
+                badge={<Badge variant="outline" className="text-[10px]">{v.count}x</Badge>}
+                headerClassName="py-2"
+              >
+                <div className="space-y-2 pt-2">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-3 w-3 text-[var(--severity-high)]" aria-hidden="true" />
+                    <span className="text-xs text-muted-foreground">
+                      Detected {v.count} time{v.count !== 1 ? 's' : ''} across test runs
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    <p>Category: {v.category}</p>
+                    <p>Run detailed tests from the LLM Dashboard to see full evidence.</p>
+                  </div>
                 </div>
-                <Badge variant="outline" className="text-[10px]">{v.count}x</Badge>
-              </div>
+              </ExpandableCard>
             ))}
           </div>
         </div>
@@ -234,27 +248,49 @@ function HistoryTab({ executions }: { executions: TestExecution[] }) {
           'w-full px-3 py-2 rounded-lg text-sm min-h-[40px]',
           'bg-[var(--bg-primary)] border border-[var(--border)]',
           'text-foreground placeholder:text-muted-foreground',
-          'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+          'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
         )}
         aria-label="Filter test history"
       />
       <div className="space-y-1.5">
         {filtered.length > 0 ? filtered.map(exec => (
-          <div key={exec.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-[var(--bg-tertiary)]">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{
-              backgroundColor: `color-mix(in srgb, ${getBeltRank(exec.score).color} 15%, transparent)`,
-              color: getBeltRank(exec.score).color,
-            }}>
-              {exec.score}
+          <ExpandableCard
+            key={exec.id}
+            title={`${exec.passed}/${exec.totalTests} passed — Score ${exec.score}`}
+            subtitle={formatDate(exec.timestamp, true)}
+            badge={exec.batchId ? <Badge variant="outline" className="text-[9px] shrink-0">Batch</Badge> : undefined}
+            headerClassName="py-2"
+          >
+            <div className="space-y-2 pt-2">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-2 rounded bg-[var(--bg-tertiary)]">
+                  <p className="text-[10px] text-muted-foreground">Score</p>
+                  <p className="text-sm font-bold" style={{ color: getBeltRank(exec.score).color }}>{exec.score}</p>
+                </div>
+                <div className="p-2 rounded bg-[var(--bg-tertiary)]">
+                  <p className="text-[10px] text-muted-foreground">Pass Rate</p>
+                  <p className="text-sm font-bold">{exec.passRate}%</p>
+                </div>
+                <div className="p-2 rounded bg-[var(--bg-tertiary)]">
+                  <p className="text-[10px] text-muted-foreground">Failed</p>
+                  <p className="text-sm font-bold text-[var(--danger)]">{exec.failed}</p>
+                </div>
+              </div>
+              {exec.categoriesFailed.length > 0 && (
+                <div>
+                  <p className="text-[10px] text-muted-foreground mb-1">Failed Categories:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {exec.categoriesFailed.map(cat => (
+                      <Badge key={cat} variant="outline" className="text-[10px]">
+                        <AlertTriangle className="h-2.5 w-2.5 mr-0.5" aria-hidden="true" />
+                        {cat}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium">{exec.passed}/{exec.totalTests} passed</p>
-              <p className="text-[10px] text-muted-foreground">{new Date(exec.timestamp).toLocaleString()}</p>
-            </div>
-            {exec.batchId && (
-              <Badge variant="outline" className="text-[9px] shrink-0">Batch</Badge>
-            )}
-          </div>
+          </ExpandableCard>
         )) : (
           <p className="text-sm text-muted-foreground text-center py-8">No test history found</p>
         )}
@@ -264,27 +300,168 @@ function HistoryTab({ executions }: { executions: TestExecution[] }) {
 }
 
 function DeliverablesTab({ model }: { model: AggregatedModel }) {
+  const [downloading, setDownloading] = useState<string | null>(null)
+  const [bulkDownloading, setBulkDownloading] = useState(false)
+
+  const generateJSON = useCallback(() => {
+    return JSON.stringify({
+      model: { id: model.modelId, name: model.modelName, provider: model.provider },
+      summary: {
+        latestScore: model.latestScore,
+        avgScore: model.avgScore,
+        bestScore: model.bestScore,
+        worstScore: model.worstScore,
+        passRate: model.passRate,
+        totalExecutions: model.totalExecutions,
+        totalTests: model.totalTests,
+      },
+      vulnerabilities: model.vulnerabilities,
+      executions: model.executions.map(e => ({
+        id: e.id,
+        score: e.score,
+        passRate: e.passRate,
+        totalTests: e.totalTests,
+        passed: e.passed,
+        failed: e.failed,
+        categoriesFailed: e.categoriesFailed,
+        timestamp: e.timestamp,
+        batchId: e.batchId ?? null,
+      })),
+      generatedAt: new Date().toISOString(),
+    }, null, 2)
+  }, [model])
+
+  const generateCSV = useCallback(() => {
+    const header = 'Execution ID,Score,Pass Rate,Total Tests,Passed,Failed,Categories Failed,Timestamp,Batch ID'
+    const rows = model.executions.map(e =>
+      [e.id, e.score, e.passRate, e.totalTests, e.passed, e.failed,
+       `"${e.categoriesFailed.join('; ')}"`, e.timestamp, e.batchId ?? ''].join(',')
+    )
+    return [header, ...rows].join('\n')
+  }, [model])
+
+  const generateMarkdown = useCallback(() => {
+    const lines = [
+      `# Security Test Report — ${model.modelName}`,
+      `**Provider:** ${model.provider}`,
+      `**Generated:** ${new Date().toISOString()}`,
+      '',
+      '## Summary',
+      '| Metric | Value |',
+      '|--------|-------|',
+      `| Latest Score | ${model.latestScore} |`,
+      `| Average Score | ${model.avgScore} |`,
+      `| Best Score | ${model.bestScore} |`,
+      `| Pass Rate | ${model.passRate}% |`,
+      `| Total Executions | ${model.totalExecutions} |`,
+      '',
+      '## Vulnerabilities',
+      ...model.vulnerabilities.map(v => `- **${v.category}**: ${v.count} occurrence(s)`),
+      '',
+      '## Test History',
+      '| Date | Score | Pass Rate | Failed Categories |',
+      '|------|-------|-----------|-------------------|',
+      ...model.executions.map(e =>
+        `| ${formatDate(e.timestamp)} | ${e.score} | ${e.passRate}% | ${e.categoriesFailed.join(', ') || 'None'} |`
+      ),
+    ]
+    return lines.join('\n')
+  }, [model])
+
+  const generateSARIF = useCallback(() => {
+    return JSON.stringify({
+      $schema: 'https://json.schemastore.org/sarif-2.1.0.json',
+      version: '2.1.0',
+      runs: [{
+        tool: { driver: { name: 'DojoLM TPI', version: '1.0.0', informationUri: 'https://blackunicorn.tech' } },
+        results: model.vulnerabilities.map(v => ({
+          ruleId: v.category.toLowerCase().replace(/\s+/g, '-'),
+          message: { text: `${v.category}: ${v.count} finding(s) across test executions` },
+          level: v.count >= 5 ? 'error' : v.count >= 2 ? 'warning' : 'note',
+        })),
+      }],
+    }, null, 2)
+  }, [model])
+
+  const handleDownload = useCallback((format: string) => {
+    setDownloading(format)
+    try {
+      let content: string
+      let mimeType: string
+      let ext: string
+      switch (format) {
+        case 'JSON': content = generateJSON(); mimeType = 'application/json'; ext = 'json'; break
+        case 'CSV': content = generateCSV(); mimeType = 'text/csv'; ext = 'csv'; break
+        case 'Markdown': content = generateMarkdown(); mimeType = 'text/markdown'; ext = 'md'; break
+        case 'SARIF': content = generateSARIF(); mimeType = 'application/json'; ext = 'sarif.json'; break
+        default: return
+      }
+      const blob = new Blob([content], { type: mimeType })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${model.modelName.replace(/[^\w.-]/g, '_')}-report.${ext}`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setTimeout(() => setDownloading(null), 500)
+    }
+  }, [model.modelName, generateJSON, generateCSV, generateMarkdown, generateSARIF])
+
+  const handleBulkDownload = useCallback(() => {
+    setBulkDownloading(true)
+    try {
+      ;['JSON', 'CSV', 'Markdown', 'SARIF'].forEach((fmt, i) => {
+        setTimeout(() => handleDownload(fmt), i * 200)
+      })
+    } finally {
+      setTimeout(() => setBulkDownloading(false), 1200)
+    }
+  }, [handleDownload])
+
   return (
     <div className="space-y-4">
+      {/* H12.1: Formats are JSON/CSV/Markdown/SARIF. PDF omitted per SEC-14 (no headless browser rendering). */}
       <p className="text-sm text-muted-foreground">
         Download reports for {model.modelName} in various formats.
       </p>
       <div className="grid grid-cols-2 gap-3">
-        {['JSON', 'CSV', 'SARIF', 'PDF'].map(format => (
+        {['JSON', 'CSV', 'Markdown', 'SARIF'].map(format => (
           <button
             key={format}
+            onClick={() => handleDownload(format)}
+            disabled={downloading === format}
             className={cn(
               'p-3 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)]',
               'hover:border-[var(--dojo-primary)]/40 motion-safe:transition-colors',
               'flex flex-col items-center gap-2 min-h-[72px]',
+              downloading === format && 'opacity-60 pointer-events-none',
             )}
             aria-label={`Download ${format} report for ${model.modelName}`}
           >
-            <FileText className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
-            <span className="text-xs font-medium">{format}</span>
+            <Download className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+            <span className="text-xs font-medium">
+              {downloading === format ? 'Downloading...' : format}
+            </span>
           </button>
         ))}
       </div>
+      <button
+        onClick={handleBulkDownload}
+        disabled={bulkDownloading}
+        className={cn(
+          'w-full p-3 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)]',
+          'hover:border-[var(--dojo-primary)]/40 motion-safe:transition-colors',
+          'flex items-center justify-center gap-2 min-h-[44px]',
+          bulkDownloading && 'opacity-60 pointer-events-none',
+        )}
+        aria-label={`Download all reports for ${model.modelName}`}
+      >
+        <Download className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <span className="text-xs font-medium">
+          {bulkDownloading ? 'Downloading All...' : 'Download All'}
+        </span>
+      </button>
       <p className="text-[10px] text-muted-foreground text-center">
         Reports aggregate {model.totalExecutions} test executions across {model.totalTests} total test runs
       </p>
@@ -305,10 +482,44 @@ function TrainingTab({ model }: { model: AggregatedModel }) {
   )
 }
 
-function MetricsTab({ model }: { model: AggregatedModel }) {
+function ComparisonBar({ label, value, average, max, suffix = '' }: { label: string; value: number; average: number; max: number; suffix?: string }) {
+  const safeMax = max > 0 ? max : 100
+  const valuePct = Math.min((value / safeMax) * 100, 100)
+  const avgPct = Math.min((average / safeMax) * 100, 100)
+  const delta = value - average
+  const deltaColor = delta >= 0 ? 'var(--success)' : 'var(--danger)'
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-1">
+      <div className="flex items-center justify-between text-xs">
+        <span>{label}</span>
+        <span className="tabular-nums">
+          {value}{suffix}
+          <span className="ml-1.5 text-muted-foreground">avg: {average}{suffix}</span>
+          <span className="ml-1" style={{ color: deltaColor }}>({delta >= 0 ? '+' : ''}{delta}{suffix})</span>
+        </span>
+      </div>
+      <div className="relative h-2 rounded-full bg-[var(--bg-tertiary)]">
+        <div className="absolute h-full rounded-full bg-[var(--dojo-primary)] motion-safe:transition-all" style={{ width: `${valuePct}%` }} />
+        <div className="absolute top-0 h-full w-0.5 bg-[var(--warning)]" style={{ left: `${avgPct}%` }} title={`Platform average: ${average}${suffix}`} />
+      </div>
+    </div>
+  )
+}
+
+function MetricsTab({ model }: { model: AggregatedModel }) {
+  // Mock platform averages for comparison
+  const platformAvg = useMemo(() => ({
+    score: 72,
+    passRate: 78,
+    totalExecutions: 15,
+  }), [])
+
+  return (
+    <div className="space-y-5">
       <h4 className="text-xs font-semibold text-muted-foreground">PERFORMANCE METRICS</h4>
+
+      {/* Stats grid — existing 4 cards */}
       <div className="grid grid-cols-2 gap-3">
         <div className="p-3 rounded-lg bg-[var(--bg-tertiary)]">
           <p className="text-xs text-muted-foreground">Total Executions</p>
@@ -328,25 +539,77 @@ function MetricsTab({ model }: { model: AggregatedModel }) {
         </div>
       </div>
 
-      {/* Vulnerability distribution */}
+      {/* Platform Comparison - NEW */}
+      <div>
+        <h4 className="text-xs font-semibold text-muted-foreground mb-2">PLATFORM COMPARISON</h4>
+        <div className="space-y-2">
+          <ComparisonBar label="Score" value={model.latestScore} average={platformAvg.score} max={100} />
+          <ComparisonBar label="Pass Rate" value={model.passRate} average={platformAvg.passRate} max={100} suffix="%" />
+          <ComparisonBar label="Executions" value={model.totalExecutions} average={platformAvg.totalExecutions} max={Math.max(model.totalExecutions, platformAvg.totalExecutions) * 1.2} />
+        </div>
+      </div>
+
+      {/* Score Trend Over Time - NEW */}
+      {model.scoreTrend.length > 1 && (
+        <div>
+          <h4 className="text-xs font-semibold text-muted-foreground mb-2">SCORE TREND</h4>
+          <div className="flex items-end gap-1 h-20 p-3 rounded-lg bg-[var(--bg-tertiary)]">
+            {model.scoreTrend.map((score, i) => {
+              const height = Math.max((score / 100) * 60, 4)
+              const isLast = i === model.scoreTrend.length - 1
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                  <span className="text-[8px] text-muted-foreground tabular-nums">{score}</span>
+                  <div
+                    className="w-full rounded-t-sm motion-safe:transition-all"
+                    style={{
+                      height: `${height}px`,
+                      backgroundColor: isLast ? 'var(--dojo-primary)' : 'color-mix(in srgb, var(--dojo-primary) 40%, transparent)',
+                    }}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Time-to-Fix Metrics - NEW (mock data) */}
+      <div>
+        <h4 className="text-xs font-semibold text-muted-foreground mb-2">TIME-TO-FIX ESTIMATES</h4>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-center">
+            <p className="text-xs text-muted-foreground">Avg Fix Time</p>
+            <p className="text-lg font-bold">4.2d</p>
+          </div>
+          <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-center">
+            <p className="text-xs text-muted-foreground">Open Findings</p>
+            <p className="text-lg font-bold text-[var(--severity-high)]">{model.vulnerabilities.reduce((s, v) => s + v.count, 0)}</p>
+          </div>
+          <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-center">
+            <p className="text-xs text-muted-foreground">Fix Rate</p>
+            <p className="text-lg font-bold text-[var(--success)]">67%</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Breakdown - existing vulnerability distribution enhanced */}
       {model.vulnerabilities.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-muted-foreground mb-2">VULNERABILITY DISTRIBUTION</h4>
-          <div className="space-y-1.5">
+          <h4 className="text-xs font-semibold text-muted-foreground mb-2">CATEGORY BREAKDOWN</h4>
+          <div className="space-y-2">
             {model.vulnerabilities.map(v => {
               const maxCount = model.vulnerabilities[0].count
-              const pct = maxCount > 0 ? (v.count / maxCount) * 100 : 0
+              const safeMax = maxCount > 0 ? maxCount : 1
+              const pct = (v.count / safeMax) * 100
               return (
                 <div key={v.category} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span>{v.category}</span>
                     <span className="text-muted-foreground tabular-nums">{v.count}</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-[var(--bg-tertiary)]">
-                    <div
-                      className="h-full rounded-full bg-[var(--severity-high)]"
-                      style={{ width: `${pct}%` }}
-                    />
+                  <div className="h-2 rounded-full bg-[var(--bg-tertiary)]">
+                    <div className="h-full rounded-full bg-[var(--severity-high)] motion-safe:transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               )

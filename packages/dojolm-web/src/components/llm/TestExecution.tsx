@@ -2,14 +2,14 @@
  * File: TestExecution.tsx
  * Purpose: Test execution interface with real-time SSE progress
  * Index:
- * - TestExecution component (line 30)
- * - ModelProgressCard component (line 250)
- * - BatchProgressPanel component (line 210)
+ * - H7.4 Test Category constants (line 24)
+ * - TestExecution component (line 104)
+ * - ModelProgressCard component (line 889)
  */
 
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useModelContext, useExecutionContext } from '@/lib/contexts';
 import type { LLMModelConfig, LLMPromptTestCase, LLMBatchExecution } from '@/lib/llm-types';
 import { Button } from '@/components/ui/button';
@@ -19,8 +19,64 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff, Timer } from 'lucide-react';
+import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff, Timer, BarChart3, Filter } from 'lucide-react';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
+
+// ===========================================================================
+// H7.4: Test Case Categorization
+// ===========================================================================
+
+const TEST_CATEGORIES = [
+  { id: 'all', label: 'All Tests' },
+  { id: 'security', label: 'Security' },
+  { id: 'compliance', label: 'Compliance' },
+  { id: 'performance', label: 'Performance' },
+  { id: 'custom', label: 'Custom' },
+] as const;
+
+type TestCategoryId = typeof TEST_CATEGORIES[number]['id'];
+
+/** Map compliance framework IDs to OWASP/standard identifiers for pre-population */
+const FRAMEWORK_TEST_MAP: Record<string, string[]> = {
+  'owasp-llm': ['LLM01', 'LLM02', 'LLM03', 'LLM04', 'LLM05', 'LLM06', 'LLM07', 'LLM08', 'LLM09', 'LLM10'],
+  'nist-ai-rmf': ['NIST-VALID', 'NIST-BIAS', 'NIST-EXPLAIN', 'NIST-PRIV', 'NIST-SEC', 'NIST-SAFE', 'NIST-ACCOUNT', 'NIST-ROBUST'],
+  'mitre-atlas': ['AML.T0000', 'AML.T0010', 'AML.T0020', 'AML.T0030', 'AML.T0040', 'AML.T0050', 'AML.T0060', 'AML.T0070'],
+};
+
+/** Categories that map to the "security" super-category */
+const SECURITY_CATEGORIES = new Set([
+  'prompt_injection', 'jailbreak', 'indirect_injection', 'data_exfiltration',
+  'harmful_content', 'content_policy', 'tool_abuse', 'social',
+]);
+
+/** Categories that map to the "performance" super-category */
+const PERFORMANCE_CATEGORIES = new Set(['dos', 'performance', 'token']);
+
+/** Classify a test case into a super-category */
+function classifyTestCase(test: { category: string; severity: string; owaspCategory?: string; tags?: string[] }): TestCategoryId {
+  const cat = test.category.toLowerCase();
+
+  // Custom: explicit tag or category
+  if (cat === 'custom' || test.tags?.some(t => t.toLowerCase() === 'custom')) return 'custom';
+
+  // Performance
+  if (PERFORMANCE_CATEGORIES.has(cat) || test.tags?.some(t => PERFORMANCE_CATEGORIES.has(t.toLowerCase()))) return 'performance';
+
+  // Security: matching categories or CRITICAL severity (checked before compliance
+  // so that security-focused tests with OWASP mapping stay in security)
+  if (SECURITY_CATEGORIES.has(cat) || test.severity === 'CRITICAL') return 'security';
+
+  // Compliance: has OWASP mapping or compliance-related tags
+  if (test.owaspCategory || test.tags?.some(t =>
+    t.toLowerCase().includes('compliance') ||
+    t.toLowerCase().includes('owasp') ||
+    t.toLowerCase().includes('nist') ||
+    t.toLowerCase().includes('mitre')
+  )) return 'compliance';
+
+  // Default to security for unmatched categories (most LLM tests are security-focused)
+  return 'security';
+}
 
 /** Estimate execution time (Story 6.1) — inlined to avoid Node.js import chain */
 function estimateExecutionTime(modelCount: number, testCount: number) {
@@ -45,9 +101,12 @@ interface PerModelProgress {
  * Interface for selecting models, test cases, and running tests.
  * Uses SSE for real-time progress with polling fallback.
  */
-export function TestExecution() {
+export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: () => void }) {
   const { models, getEnabledModels } = useModelContext();
-  const { executeTest, executeBatch, getBatch, cancelBatch, state, refreshState } = useExecutionContext();
+  const {
+    executeTest, executeBatch, getBatch, cancelBatch, state, refreshState,
+    activeBatchId, reconnectingBatchId, setActiveBatch, clearActiveBatch,
+  } = useExecutionContext();
 
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [selectedTests, setSelectedTests] = useState<Set<string>>(new Set());
@@ -57,10 +116,15 @@ export function TestExecution() {
   const [testCases, setTestCases] = useState<LLMPromptTestCase[]>([]);
   const [isLoadingTests, setIsLoadingTests] = useState(true);
 
+  // H7.4: Category filter state
+  const [activeCategory, setActiveCategory] = useState<TestCategoryId>('all');
+  const [activeFramework, setActiveFramework] = useState<string | null>(null);
+
   // SSE-specific state
   const [perModelProgress, setPerModelProgress] = useState<Record<string, PerModelProgress>>({});
   const [sseConnected, setSseConnected] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [isReconnecting, setIsReconnecting] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fallbackPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -95,6 +159,51 @@ export function TestExecution() {
     loadTestCases();
   }, []);
 
+  // H7.4/H8.3: Read compliance framework from Bushido Book cross-module link
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const framework = localStorage.getItem('llm-compliance-framework');
+      if (framework && Object.hasOwn(FRAMEWORK_TEST_MAP, framework)) {
+        setActiveCategory('compliance');
+        setActiveFramework(framework);
+        localStorage.removeItem('llm-compliance-framework');
+      }
+    } catch {
+      // localStorage may be unavailable
+    }
+  }, []);
+
+  // H7.4: Framework auto-selection — pre-populate test cases when framework changes
+  useEffect(() => {
+    if (!activeFramework || testCases.length === 0) return;
+    const frameworkIds = FRAMEWORK_TEST_MAP[activeFramework];
+    if (!frameworkIds) return;
+
+    const matchingIds = new Set<string>();
+    for (const test of testCases) {
+      if (test.owaspCategory && frameworkIds.includes(test.owaspCategory)) {
+        matchingIds.add(test.id);
+      }
+      if (test.tags?.some(t => frameworkIds.some(fid => t.includes(fid)))) {
+        matchingIds.add(test.id);
+      }
+    }
+    if (matchingIds.size > 0) {
+      setSelectedTests(prev => {
+        const merged = new Set(prev);
+        for (const id of matchingIds) merged.add(id);
+        return merged;
+      });
+    }
+  }, [activeFramework, testCases]);
+
+  // H7.4: Memoized filtered test cases based on active category
+  const filteredTestCases = useMemo(() => {
+    if (activeCategory === 'all') return testCases;
+    return testCases.filter(test => classifyTestCase(test) === activeCategory);
+  }, [testCases, activeCategory]);
+
   // Cleanup SSE, timer, and fallback on unmount
   useEffect(() => {
     return () => {
@@ -127,6 +236,8 @@ export function TestExecution() {
           if (batch.status === 'completed' || batch.status === 'failed' || batch.status === 'cancelled') {
             setIsRunning(false);
             isRunningRef.current = false;
+            // H1.5: Clear persisted batch on terminal state
+            clearActiveBatch();
             if (fallbackPollRef.current) {
               clearInterval(fallbackPollRef.current);
               fallbackPollRef.current = null;
@@ -140,8 +251,8 @@ export function TestExecution() {
       } catch {
         // Continue polling
       }
-    }, 2000);
-  }, [refreshState, getBatch]);
+    }, 5000); // BUG-002: 5s interval avoids 429 rate limit during long batch runs
+  }, [refreshState, getBatch, clearActiveBatch]);
 
   // Connect SSE for batch progress
   const connectSSE = useCallback((batchId: string) => {
@@ -207,6 +318,8 @@ export function TestExecution() {
         } : prev);
         setIsRunning(false);
         isRunningRef.current = false;
+        // H1.5: Clear persisted batch on completion
+        clearActiveBatch();
         es.close();
         eventSourceRef.current = null;
         setSseConnected(false);
@@ -230,7 +343,46 @@ export function TestExecution() {
       eventSourceRef.current = null;
       startPollingFallback(batchId);
     });
-  }, [startPollingFallback]);
+  }, [startPollingFallback, clearActiveBatch]);
+
+  // H1.5: Reconnect to in-progress batch on mount
+  useEffect(() => {
+    if (!reconnectingBatchId) return;
+
+    let cancelled = false;
+
+    (async () => {
+      setIsReconnecting(true);
+      try {
+        const batch = await getBatch(reconnectingBatchId);
+        if (cancelled) return;
+
+        if (batch && (batch.status === 'running' || batch.status === 'pending')) {
+          setCurrentBatch(batch);
+          setIsRunning(true);
+          isRunningRef.current = true;
+          startTimeRef.current = Date.now();
+
+          // Start elapsed timer
+          timerRef.current = setInterval(() => {
+            setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+          }, 1000);
+
+          // Connect SSE for real-time progress
+          connectSSE(reconnectingBatchId);
+        } else {
+          // Batch finished or missing — clear
+          clearActiveBatch();
+        }
+      } catch {
+        if (!cancelled) clearActiveBatch();
+      } finally {
+        if (!cancelled) setIsReconnecting(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [reconnectingBatchId, getBatch, clearActiveBatch, connectSSE]);
 
   const enabledModels = models.filter(m => selectedModels.has(m.id) && m.enabled);
 
@@ -296,6 +448,8 @@ export function TestExecution() {
           (updated) => setCurrentBatch(updated)
         );
         setCurrentBatch(batch);
+        // H1.5: Persist batch ID for reconnection
+        setActiveBatch(batch.id);
         // Connect SSE for real-time progress
         connectSSE(batch.id);
       }
@@ -320,6 +474,8 @@ export function TestExecution() {
       }
       setCurrentBatch(null);
     }
+    // H1.5: Clear persisted batch on cancel
+    clearActiveBatch();
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
@@ -359,11 +515,24 @@ export function TestExecution() {
   };
 
   const selectAllTests = () => {
-    setSelectedTests(new Set(testCases.map(t => t.id)));
+    setSelectedTests(prev => {
+      const merged = new Set(prev);
+      for (const t of filteredTestCases) merged.add(t.id);
+      return merged;
+    });
   };
 
   const clearAllTests = () => {
-    setSelectedTests(new Set());
+    if (activeCategory === 'all') {
+      setSelectedTests(new Set());
+    } else {
+      const filteredIds = new Set(filteredTestCases.map(t => t.id));
+      setSelectedTests(prev => {
+        const next = new Set(prev);
+        for (const id of filteredIds) next.delete(id);
+        return next;
+      });
+    }
   };
 
   const overallProgress = currentBatch && currentBatch.totalTests > 0
@@ -378,6 +547,14 @@ export function TestExecution() {
 
   return (
     <div className="space-y-6">
+      {/* H1.5: Reconnection banner */}
+      {isReconnecting && (
+        <div className="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-500 text-sm" data-testid="reconnection-banner">
+          <RefreshCw className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" />
+          <span>Reconnecting to test in progress...</span>
+        </div>
+      )}
+
       {/* Active batch progress with per-model cards */}
       {currentBatch && (currentBatch.status === 'running' || currentBatch.status === 'pending') && (
         <div className="space-y-4">
@@ -492,6 +669,7 @@ export function TestExecution() {
                 <CardTitle className="text-base">Select Test Cases</CardTitle>
                 <CardDescription>
                   {selectedTests.size} test{selectedTests.size !== 1 ? 's' : ''} selected
+                  {activeCategory !== 'all' && ` (showing ${filteredTestCases.length} ${activeCategory})`}
                 </CardDescription>
               </div>
               <div className="flex gap-1">
@@ -503,6 +681,50 @@ export function TestExecution() {
                 </Button>
               </div>
             </div>
+            {/* H7.4: Category filter pills */}
+            <div className="flex flex-wrap gap-1.5 pt-2" role="radiogroup" aria-label="Test category filter" data-testid="category-filters">
+              {TEST_CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={activeCategory === cat.id}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    if (cat.id !== 'compliance') setActiveFramework(null);
+                  }}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] ${
+                    activeCategory === cat.id
+                      ? 'bg-[var(--bu-electric)] text-white'
+                      : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                  }`}
+                  data-testid={`category-pill-${cat.id}`}
+                >
+                  {cat.id === 'all' && <Filter className="h-3 w-3" aria-hidden="true" />}
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+            {/* H7.4: Framework selector for compliance category */}
+            {activeCategory === 'compliance' && (
+              <div className="pt-2" data-testid="framework-selector">
+                <label htmlFor="framework-select" className="text-xs text-muted-foreground block mb-1">
+                  Pre-populate from framework:
+                </label>
+                <select
+                  id="framework-select"
+                  value={activeFramework ?? ''}
+                  onChange={(e) => setActiveFramework(e.target.value || null)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                  data-testid="framework-dropdown"
+                >
+                  <option value="">Select framework...</option>
+                  <option value="owasp-llm">OWASP LLM Top 10</option>
+                  <option value="nist-ai-rmf">NIST AI RMF</option>
+                  <option value="mitre-atlas">MITRE ATLAS</option>
+                </select>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-64">
@@ -521,9 +743,19 @@ export function TestExecution() {
                     Load Sample Test Cases
                   </Button>
                 </div>
+              ) : filteredTestCases.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full space-y-2">
+                  <Filter className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                  <p className="text-sm text-muted-foreground text-center">
+                    No tests match the &quot;{activeCategory}&quot; category
+                  </p>
+                  <Button size="sm" variant="ghost" onClick={() => setActiveCategory('all')}>
+                    Show all tests
+                  </Button>
+                </div>
               ) : (
                 <div className="space-y-2 pr-4">
-                {testCases.map(test => (
+                {filteredTestCases.map(test => (
                   <div key={test.id} className="p-3 rounded border space-y-1">
                     <div className="flex items-start gap-2">
                       <Checkbox
@@ -533,12 +765,25 @@ export function TestExecution() {
                         className="mt-0.5"
                       />
                       <div className="flex-1 min-w-0">
-                        <label
-                          htmlFor={`test-${test.id}`}
-                          className="text-sm font-medium cursor-pointer block"
-                        >
-                          {test.name}
-                        </label>
+                        {currentBatch?.status === 'completed' && onNavigateToResults ? (
+                          <button
+                            type="button"
+                            onClick={onNavigateToResults}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigateToResults(); } }}
+                            aria-label={`View results for ${test.name}`}
+                            className="text-sm font-medium cursor-pointer block text-left text-[var(--bu-electric)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] rounded"
+                            data-testid={`test-case-link-${test.id}`}
+                          >
+                            {test.name}
+                          </button>
+                        ) : (
+                          <label
+                            htmlFor={`test-${test.id}`}
+                            className="text-sm font-medium cursor-pointer block"
+                          >
+                            {test.name}
+                          </label>
+                        )}
                         <p className="text-xs text-muted-foreground truncate">
                           {test.prompt}
                         </p>
@@ -600,7 +845,7 @@ export function TestExecution() {
           <CardHeader>
             <CardTitle className="text-lg">Batch Complete</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
                 <p className="text-2xl font-bold">{currentBatch.completedTests}</p>
@@ -617,6 +862,20 @@ export function TestExecution() {
                 <p className="text-sm text-muted-foreground">Avg Score</p>
               </div>
             </div>
+            {onNavigateToResults && (
+              <div className="flex justify-center">
+                <Button
+                  variant="outline"
+                  onClick={onNavigateToResults}
+                  aria-label="View test results"
+                  className="gap-2 cursor-pointer"
+                  data-testid="view-results-btn"
+                >
+                  <BarChart3 className="h-4 w-4" aria-hidden="true" />
+                  View Results
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

@@ -141,6 +141,18 @@ vi.mock('lucide-react', () => ({
   XCircle: () => <span>x</span>,
   LayoutGrid: () => <span>Grid</span>,
   List: () => <span>List</span>,
+  Eye: () => <span>Eye</span>,
+  EyeOff: () => <span>EyeOff</span>,
+  Shield: () => <span>Shield</span>,
+  ShieldAlert: () => <span>ShieldAlert</span>,
+  ShieldCheck: () => <span>ShieldCheck</span>,
+  ShieldX: () => <span>ShieldX</span>,
+  TrendingUp: () => <span>TrendingUp</span>,
+  Lightbulb: () => <span>Lightbulb</span>,
+  Copy: () => <span>Copy</span>,
+  Check: () => <span>Check</span>,
+  AlertCircle: () => <span>AlertCircle</span>,
+  Info: () => <span>Info</span>,
 }))
 
 // Mock URL.createObjectURL

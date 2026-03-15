@@ -114,7 +114,7 @@ export function EcosystemPulseWidget() {
           {/* Severity breakdown */}
           <div className="flex gap-2">
             {stats.bySeverity.CRITICAL > 0 && (
-              <Badge variant="critical" className="text-xs gap-1">
+              <Badge variant="outline" className="text-xs gap-1 border-[var(--danger)]/40 text-[var(--danger)]">
                 <AlertTriangle className="w-3 h-3" aria-hidden="true" />
                 {stats.bySeverity.CRITICAL} critical
               </Badge>

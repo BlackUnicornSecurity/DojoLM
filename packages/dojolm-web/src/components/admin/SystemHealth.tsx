@@ -7,7 +7,8 @@
  * Index:
  * - HealthData type (line 16)
  * - SystemHealth component (line 32)
- * - StatusCard sub-component (line 112)
+ * - MCP status fetch (line 34)
+ * - StatusCard sub-component (line 132)
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
@@ -22,12 +23,18 @@ interface HealthData {
   app: { version: string; nodeVersion?: string }
 }
 
+interface McpStatus {
+  connected: boolean
+  message: string
+}
+
 type HealthStatus = 'loading' | 'healthy' | 'degraded' | 'error'
 
 const AUTO_REFRESH_INTERVAL = 30_000
 
 export function SystemHealth() {
   const [health, setHealth] = useState<HealthData | null>(null)
+  const [mcpStatus, setMcpStatus] = useState<McpStatus | null>(null)
   const [status, setStatus] = useState<HealthStatus>('loading')
   const [error, setError] = useState<string | null>(null)
   const [lastRefresh, setLastRefresh] = useState<string | null>(null)
@@ -35,12 +42,24 @@ export function SystemHealth() {
 
   const fetchHealth = useCallback(async () => {
     try {
-      const res = await fetchWithAuth('/api/admin/health')
-      if (!res.ok) throw new Error('Health check failed')
-      const data: HealthData = await res.json()
+      const [healthRes, mcpRes] = await Promise.all([
+        fetchWithAuth('/api/admin/health'),
+        fetchWithAuth('/api/mcp/status').catch(() => null),
+      ])
+
+      if (!healthRes.ok) throw new Error('Health check failed')
+      const data: HealthData = await healthRes.json()
       setHealth(data)
       setError(null)
       setLastRefresh(new Date().toISOString())
+
+      // Parse MCP status (non-blocking — failure does not affect overall health)
+      if (mcpRes && mcpRes.ok) {
+        const mcp: McpStatus = await mcpRes.json()
+        setMcpStatus(mcp)
+      } else {
+        setMcpStatus({ connected: false, message: 'Unable to reach MCP endpoint' })
+      }
 
       if (!data.scanner.reachable || !data.guard.enabled) {
         setStatus('degraded')
@@ -57,6 +76,7 @@ export function SystemHealth() {
         storage: { type: 'unknown', modelsCount: 0 },
         app: { version: '1.0.0' },
       })
+      setMcpStatus({ connected: false, message: 'Health check failed' })
       setLastRefresh(new Date().toISOString())
     }
   }, [])
@@ -164,6 +184,17 @@ export function SystemHealth() {
             { label: 'Version', value: health?.app.version ?? '1.0.0' },
             { label: 'Node', value: health?.app.nodeVersion ?? 'N/A' },
             { label: 'Last Check', value: lastRefresh ? new Date(lastRefresh).toLocaleTimeString('en-US') : 'Never' },
+          ]}
+        />
+
+        {/* MCP Server Status */}
+        <StatusCard
+          title="MCP Server"
+          icon={Server}
+          status={mcpStatus?.connected ? 'online' : 'offline'}
+          items={[
+            { label: 'Status', value: mcpStatus?.connected ? 'Connected' : 'Disconnected' },
+            { label: 'Message', value: mcpStatus?.message ?? 'Checking...' },
           ]}
         />
       </div>

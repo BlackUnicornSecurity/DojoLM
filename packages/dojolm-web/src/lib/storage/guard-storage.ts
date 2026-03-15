@@ -210,9 +210,10 @@ export async function getGuardConfig(): Promise<GuardConfig> {
     return { ...DEFAULT_GUARD_CONFIG };
   }
 
-  // Verify HMAC signature
+  // Verify HMAC signature (BUG-007: surface failure clearly)
   if (!verifyConfigSignature(signed)) {
-    console.error('Guard config HMAC verification failed — config may be tampered');
+    console.error('[Guard] HMAC verification FAILED — returning default config (guard disabled). ' +
+      'Fix: re-save guard config with correct GUARD_CONFIG_SECRET or delete config.json to reset.');
     return { ...DEFAULT_GUARD_CONFIG };
   }
 

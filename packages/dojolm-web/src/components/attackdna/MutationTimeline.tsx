@@ -309,6 +309,7 @@ interface MutationTimelineProps {
   className?: string
   timelineEntries?: unknown[]
   activeTiers?: Set<string>
+  searchQuery?: string
 }
 
 function convertAPITimeline(raw: unknown[]): TimelineEntry[] {
@@ -328,10 +329,20 @@ function convertAPITimeline(raw: unknown[]): TimelineEntry[] {
   })
 }
 
-export function MutationTimeline({ className, timelineEntries: timelineProp }: MutationTimelineProps) {
-  const resolvedTimeline = timelineProp && timelineProp.length > 0
+export function MutationTimeline({ className, timelineEntries: timelineProp, searchQuery = '' }: MutationTimelineProps) {
+  const allTimeline = useMemo(() => timelineProp && timelineProp.length > 0
     ? convertAPITimeline(timelineProp)
-    : MOCK_TIMELINE
+    : MOCK_TIMELINE, [timelineProp])
+  const resolvedTimeline = useMemo(() => {
+    if (!searchQuery.trim()) return allTimeline
+    const q = searchQuery.toLowerCase()
+    return allTimeline.filter(e =>
+      e.id.toLowerCase().includes(q) ||
+      e.nodeCategory.toLowerCase().includes(q) ||
+      e.description.toLowerCase().includes(q) ||
+      e.mutationType.toLowerCase().includes(q)
+    )
+  }, [allTimeline, searchQuery])
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 

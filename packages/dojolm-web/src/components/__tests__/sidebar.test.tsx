@@ -144,9 +144,10 @@ describe('Sidebar', () => {
 
   it('SB-013: renders grouped navigation sections', () => {
     render(<Sidebar />)
-    // Should have nav group labels
-    expect(screen.getByText('Testing')).toBeInTheDocument()
+    // Should have nav group labels (updated H6.1)
+    expect(screen.getByText('Attack')).toBeInTheDocument()
     expect(screen.getByText('Defense')).toBeInTheDocument()
+    expect(screen.getByText('Red Team')).toBeInTheDocument()
     expect(screen.getByText('Analysis')).toBeInTheDocument()
   })
 

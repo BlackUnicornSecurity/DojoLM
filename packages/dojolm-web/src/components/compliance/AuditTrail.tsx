@@ -13,7 +13,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { FileText, Filter, RefreshCw, Clock, Search } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
@@ -179,22 +179,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
   }, [entries, actionFilter, dateFrom, dateTo, searchQuery])
 
   // --- Format timestamp for display ---
-  const formatTimestamp = (ts: string): string => {
-    try {
-      const d = new Date(ts)
-      if (isNaN(d.getTime())) return ts
-      return d.toLocaleString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-    } catch {
-      return ts
-    }
-  }
+  const formatTimestamp = (ts: string): string => formatDate(ts, true)
 
   // --- Loading ---
   if (loading) {
@@ -224,7 +209,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
         </p>
         <button
           onClick={fetchAuditLog}
-          className="mt-2 text-sm text-[var(--dojo-primary)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] rounded"
+          className="mt-2 text-sm text-[var(--dojo-primary)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] rounded"
         >
           Retry
         </button>
@@ -251,7 +236,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             onChange={(e) => setActionFilter(e.target.value as ActionType)}
             className={cn(
               'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           >
             {ACTION_TYPES.map((type) => (
@@ -278,7 +263,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             onChange={(e) => setDateFrom(e.target.value)}
             className={cn(
               'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           />
         </div>
@@ -299,7 +284,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             onChange={(e) => setDateTo(e.target.value)}
             className={cn(
               'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           />
         </div>
@@ -322,7 +307,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             className={cn(
               'rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1.5 text-sm text-[var(--foreground)]',
               'placeholder:text-muted-foreground',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           />
         </div>
@@ -335,7 +320,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
             'text-muted-foreground hover:text-[var(--foreground)]',
             'border border-[var(--border)] hover:bg-[var(--bg-quaternary)]',
             'transition-colors',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
           )}
           aria-label="Refresh audit log"
         >

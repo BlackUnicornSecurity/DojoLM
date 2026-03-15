@@ -35,7 +35,7 @@ export function SAGEStatusWidget() {
             onClick={() => setIsRunning(!isRunning)}
             className={cn(
               'p-1 rounded',
-              'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+              'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
               isRunning ? 'text-[var(--dojo-primary)]' : 'text-muted-foreground'
             )}
             aria-label={isRunning ? 'Pause SAGE (preview only)' : 'Resume SAGE (preview only)'}
@@ -48,7 +48,7 @@ export function SAGEStatusWidget() {
           </button>
           <button
             onClick={() => setActiveTab('strategic')}
-            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           >
             Open
           </button>

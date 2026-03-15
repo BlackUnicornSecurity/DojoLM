@@ -140,14 +140,13 @@ describe('POST /api/auth/users', () => {
     expect((await res.json()).error).toMatch(/required/i);
   });
 
-  // USR-007: POST missing email returns 400
-  it('USR-007: returns 400 when email is missing', async () => {
+  // USR-007: POST without email succeeds (email is optional)
+  it('USR-007: returns 201 when email is omitted (optional field)', async () => {
     const { POST } = await import('@/app/api/auth/users/route');
     const res = await POST(
-      createPostRequest({ username: 'user', password: 'pw' })
+      createPostRequest({ username: 'user-no-email', password: 'password123' })
     );
-    expect(res.status).toBe(400);
-    expect((await res.json()).error).toMatch(/required/i);
+    expect(res.status).toBe(201);
   });
 
   // USR-008: POST missing password returns 400

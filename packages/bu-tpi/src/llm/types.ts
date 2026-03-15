@@ -44,6 +44,7 @@ export type LLMProvider =
   | 'llamacpp'
   | 'zai'
   | 'moonshot'
+  | 'blackunicorn'
   | 'custom';
 
 /** All provider values as const array for iteration/validation */
@@ -51,7 +52,7 @@ export const LLM_PROVIDERS: readonly LLMProvider[] = [
   'openai', 'anthropic', 'google', 'cohere', 'ai21',
   'replicate', 'cloudflare', 'groq', 'together', 'fireworks',
   'deepseek', 'mistral', 'ollama', 'lmstudio', 'llamacpp',
-  'zai', 'moonshot', 'custom',
+  'zai', 'moonshot', 'blackunicorn', 'custom',
 ] as const;
 
 // ===========================================================================

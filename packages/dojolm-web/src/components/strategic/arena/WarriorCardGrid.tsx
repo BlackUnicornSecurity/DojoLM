@@ -18,7 +18,7 @@
  */
 
 import { useState, useMemo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -107,7 +107,7 @@ export function WarriorCardGrid({ warriors }: { warriors: WarriorCardType[] }) {
       <CardContent className="pt-0 space-y-2">
         {sorted.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-6">
-            No warriors yet. Complete matches to populate.
+            No warriors yet. Warriors appear after matches are completed.
           </p>
         )}
 
@@ -245,7 +245,7 @@ function WarriorGridCard({
               <span className="text-muted-foreground">Last Match</span>
               <p className="text-[var(--foreground)]">
                 {warrior.lastMatchAt
-                  ? new Date(warrior.lastMatchAt).toLocaleDateString()
+                  ? formatDate(warrior.lastMatchAt)
                   : '—'}
               </p>
             </div>

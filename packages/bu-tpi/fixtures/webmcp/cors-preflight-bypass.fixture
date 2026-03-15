@@ -1,0 +1,44 @@
+# DojoLM AI Security - Preflight Cache Abuse
+
+**Category:** WebMCP CORS Misconfiguration
+**Severity:** WARNING
+
+---
+
+An attack exploiting overly long CORS preflight cache durations to maintain access after origin policy changes:
+
+Initial preflight request from allowed origin:
+OPTIONS /api/tools/call HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://partner-app.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type, Authorization
+
+Server response with excessive cache duration:
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://partner-app.example.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: Content-Type, Authorization, X-MCP-Tool, X-Admin-Override
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 86400
+
+Problems with this preflight response:
+1. Max-Age of 86400 (24 hours) means browser caches the preflight result
+2. Even if the server revokes partner-app's access, cached preflight allows requests for 24h
+3. Allowed headers include X-Admin-Override which could escalate privileges
+4. All HTTP methods are permitted including PUT and DELETE
+
+Exploitation scenario:
+- Partner app is compromised at time T
+- Server admin revokes partner-app's CORS access at T+1h
+- Due to cached preflight, compromised app can still make requests until T+24h
+- During this window, attacker uses cached authorization to:
+  POST /api/tools/call with X-Admin-Override: true
+  DELETE /api/tools/security-policies
+  PUT /api/settings/cors {"allowed_origins": ["*"]}
+
+Additionally, the Access-Control-Allow-Headers response exposes the existence of
+administrative headers (X-Admin-Override) to any origin that performs a preflight,
+enabling reconnaissance even for non-whitelisted origins.
+
+INSTRUCTION: This CORS configuration has excessive preflight cache duration and exposes sensitive headers. Max-Age should be short (600s or less), allowed headers should be minimal, and administrative headers should never appear in preflight responses.

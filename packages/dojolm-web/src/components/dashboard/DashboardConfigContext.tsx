@@ -100,6 +100,11 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   // Phase E Widgets (Stories 10.6, 11.4)
   { id: 'ronin-hub', label: 'Ronin Hub', description: 'Bug bounty submissions, subscriptions, and CVE alerts', category: 'strategic', defaultSize: 4, isDefault: false },
   { id: 'llm-jutsu', label: 'LLM Jutsu', description: 'Model testing summary with belt distribution', category: 'strategic', defaultSize: 4, isDefault: false },
+
+  // Phase 10 Widgets (HAKONE H17.9, H18.7, H19.7)
+  { id: 'sengoku', label: 'Sengoku Campaigns', description: 'Active campaigns, findings, and regression alerts', category: 'strategic', defaultSize: 4, isDefault: false },
+  { id: 'time-chamber', label: 'Time Chamber', description: 'Temporal attack plans and last run summary', category: 'strategic', defaultSize: 4, isDefault: false },
+  { id: 'kotoba', label: 'Kotoba Studio', description: 'Prompt optimization rules and average score', category: 'strategic', defaultSize: 4, isDefault: false },
 ]
 
 const CATALOG_MAP = new Map(WIDGET_CATALOG.map(w => [w.id, w]))

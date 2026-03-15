@@ -38,7 +38,7 @@ export function GuardBadge() {
   if (!config) return null;
 
   const modeInfo = GUARD_MODES.find((m) => m.id === config.mode);
-  const ModeIcon = (config.mode in GUARD_MODE_ICONS)
+  const ModeIcon = Object.hasOwn(GUARD_MODE_ICONS, config.mode)
     ? GUARD_MODE_ICONS[config.mode]
     : ShieldAlert;
 

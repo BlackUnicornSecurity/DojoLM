@@ -8,6 +8,7 @@
  * - SIZE_OPTIONS (line 16)
  * - CategorySection (line 33)
  * - DashboardCustomizer (line 142)
+ * - preserveScroll / handleToggle / handleMove (line 155)
  */
 
 import { useEffect, useRef, useCallback } from 'react'
@@ -70,7 +71,7 @@ function CategorySection({
               className={cn(
                 'relative w-8 h-[18px] rounded-full flex-shrink-0',
                 'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',
                 isEnabled ? 'bg-[var(--dojo-primary)]' : 'bg-[var(--border)]'
               )}
               role="switch"
@@ -96,7 +97,7 @@ function CategorySection({
                       onClick={() => onResize(widget.id, opt.value)}
                       className={cn(
                         'px-1.5 py-0.5 text-xs rounded border',
-                        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                         currentSize === opt.value
                           ? 'border-[var(--dojo-primary)] bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
                           : 'border-[var(--border)] text-muted-foreground hover:bg-muted'
@@ -114,14 +115,14 @@ function CategorySection({
               <div className="flex flex-col gap-0.5">
                 <button
                   onClick={() => onMove(widget.id, 'up')}
-                  className="p-0.5 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+                  className="p-0.5 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
                   aria-label={`Move ${widget.label} up`}
                 >
                   <ChevronUp className="w-3 h-3" aria-hidden="true" />
                 </button>
                 <button
                   onClick={() => onMove(widget.id, 'down')}
-                  className="p-0.5 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+                  className="p-0.5 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
                   aria-label={`Move ${widget.label} down`}
                 >
                   <ChevronDown className="w-3 h-3" aria-hidden="true" />
@@ -143,6 +144,28 @@ interface DashboardCustomizerProps {
 export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps) {
   const { config, toggleWidget, resetToDefaults, moveWidget, resizeWidget } = useDashboardConfig()
   const panelRef = useRef<HTMLDivElement>(null)
+  const scrollPosRef = useRef<number>(0)
+
+  // Preserve scroll position across state changes (BUG-037/038)
+  const preserveScroll = useCallback((action: () => void) => {
+    if (panelRef.current) {
+      scrollPosRef.current = panelRef.current.scrollTop
+    }
+    action()
+    requestAnimationFrame(() => {
+      if (panelRef.current) {
+        panelRef.current.scrollTop = scrollPosRef.current
+      }
+    })
+  }, [])
+
+  const handleToggle = useCallback((id: string) => {
+    preserveScroll(() => toggleWidget(id))
+  }, [preserveScroll, toggleWidget])
+
+  const handleMove = useCallback((id: string, direction: 'up' | 'down') => {
+    preserveScroll(() => moveWidget(id, direction))
+  }, [preserveScroll, moveWidget])
 
   // Build visibility and size maps
   const visibilityMap = new Map<string, boolean>()
@@ -219,7 +242,7 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+              className="p-1.5 rounded-lg hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
               aria-label="Close customizer"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -227,7 +250,7 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
           </div>
           <button
             onClick={resetToDefaults}
-            className="flex items-center gap-1.5 mt-2 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="flex items-center gap-1.5 mt-2 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
           >
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
             Reset to Defaults
@@ -245,8 +268,8 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
                 widgets={widgets}
                 config={visibilityMap}
                 widgetSizes={sizeMap}
-                onToggle={toggleWidget}
-                onMove={moveWidget}
+                onToggle={handleToggle}
+                onMove={handleMove}
                 onResize={resizeWidget}
               />
             )

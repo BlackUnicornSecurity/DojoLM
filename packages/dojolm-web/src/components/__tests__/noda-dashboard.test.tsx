@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/components/ui/ErrorBoundary', () => ({
@@ -187,8 +188,8 @@ describe('DashboardConfigContext (DSH-001 to DSH-008)', () => {
 // ---------------------------------------------------------------------------
 
 describe('WIDGET_CATALOG (DSH-009 to DSH-030)', () => {
-  it('DSH-009: catalog has 27 entries', () => {
-    expect(WIDGET_CATALOG.length).toBe(27)
+  it('DSH-009: catalog has 30 entries', () => {
+    expect(WIDGET_CATALOG.length).toBe(30)
   })
 
   it('DSH-010: all catalog entries have required fields', () => {

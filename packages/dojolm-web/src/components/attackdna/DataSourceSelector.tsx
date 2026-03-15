@@ -12,7 +12,6 @@
 
 import { useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import { DATA_SOURCE_TIERS } from './data-source-tiers'
 import type { DataSourceTier } from 'bu-tpi/attackdna'
 
@@ -74,28 +73,28 @@ export function DataSourceSelector({
         const isActive = activeTiers.has(tier.id)
         const isDisabled = !tier.available
 
+        if (isDisabled) return null
+
         return (
           <button
             key={tier.id}
-            onClick={() => !isDisabled && handleToggle(tier.id)}
-            disabled={isDisabled}
+            onClick={() => handleToggle(tier.id)}
             aria-pressed={isActive}
-            aria-label={`${tier.label}${isDisabled ? ' (Coming Soon)' : ''}`}
+            aria-label={tier.label}
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium',
               'border motion-safe:transition-all',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               'min-h-[36px]',
-              isDisabled && 'opacity-50 cursor-not-allowed',
-              !isDisabled && !isActive && [
+              !isActive && [
                 'border-[var(--border)] text-muted-foreground',
                 'hover:border-[var(--border-hover)] hover:text-[var(--foreground)]',
               ],
-              !isDisabled && isActive && tier.id === 'master' && [
+              isActive && tier.id === 'master' && [
                 'border-[var(--accent-gold)]/50 bg-[var(--accent-gold-muted)]',
                 'text-[var(--accent-gold)]',
               ],
-              !isDisabled && isActive && tier.id !== 'master' && [
+              isActive && tier.id !== 'master' && [
                 'border-[var(--bu-electric)]/50 bg-[var(--bu-electric-subtle)]',
                 'text-[var(--bu-electric)]',
               ],
@@ -104,18 +103,8 @@ export function DataSourceSelector({
             <TierIcon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>{tier.label}</span>
 
-            {/* Coming Soon badge for unavailable tiers */}
-            {isDisabled && (
-              <Badge
-                variant="outline"
-                className="text-[10px] px-1 py-0 border-[var(--accent-gold)]/30 text-[var(--accent-gold)] ml-0.5"
-              >
-                Soon
-              </Badge>
-            )}
-
             {/* Master sync status indicator */}
-            {tier.id === 'master' && masterSyncStatus && !isDisabled && (
+            {tier.id === 'master' && masterSyncStatus && (
               <span className="flex items-center gap-1 ml-0.5">
                 <span
                   className={cn(

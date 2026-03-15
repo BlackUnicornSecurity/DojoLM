@@ -39,9 +39,11 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
+  RefreshCw,
   X,
 } from 'lucide-react'
 import { CrossModuleActions } from '@/components/ui/CrossModuleActions'
+import { ExpandableCard } from '@/components/ui/ExpandableCard'
 import { toEcosystemSeverity } from '@/lib/ecosystem-types'
 
 type SourceType = 'rss' | 'api' | 'webhook'
@@ -357,40 +359,64 @@ function SourceList({ sources }: { sources: ThreatSource[] }) {
         <CardDescription>{sources.filter(s => s.status === 'active').length} of {sources.length} active</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        <ul className="divide-y divide-[var(--border)]" aria-label="Threat intelligence sources">
+        <div className="divide-y divide-[var(--border)]" role="list" aria-label="Threat intelligence sources">
           {sources.map((source) => {
             const statusCfg = getStatusConfig(source.status)
             const TypeIcon = SOURCE_TYPE_ICONS[source.type]
             return (
-              <li
-                key={source.id}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3',
-                  'hover:bg-muted/30 motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]'
-                )}
-              >
-                {/* Status dot */}
-                <span className="relative flex flex-shrink-0" role="status" aria-label={`${source.name}: ${statusCfg.label}`}>
-                  <span className={cn('w-2.5 h-2.5 rounded-full', statusCfg.color)} />
-                  {statusCfg.pulse && (
-                    <span className={cn('absolute inset-0 rounded-full motion-safe:animate-ping opacity-75', statusCfg.color)} />
-                  )}
-                </span>
-
-                {/* Source info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <TypeIcon className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
-                    <p className="text-sm font-medium text-[var(--foreground)] truncate">{source.name}</p>
+              <div key={source.id} role="listitem" className="px-2 py-1">
+                <ExpandableCard
+                  title={source.name}
+                  subtitle={`${source.entriesCount} entries - ${source.lastPoll}`}
+                  badge={
+                    <span className="relative flex flex-shrink-0" role="status" aria-label={`${source.name}: ${statusCfg.label}`}>
+                      <span className={cn('w-2.5 h-2.5 rounded-full', statusCfg.color)} />
+                      {statusCfg.pulse && (
+                        <span className={cn('absolute inset-0 rounded-full motion-safe:animate-ping opacity-75', statusCfg.color)} />
+                      )}
+                    </span>
+                  }
+                  className="border-0 bg-transparent"
+                  headerClassName="py-1.5"
+                >
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <TypeIcon className="w-3 h-3" aria-hidden="true" />
+                      <span className="uppercase font-medium">{source.type}</span>
+                      <Badge variant={statusCfg.label === 'Active' ? 'success' : statusCfg.label === 'Error' ? 'critical' : 'outline'} className="text-[10px]">
+                        {statusCfg.label}
+                      </Badge>
+                    </div>
+                    {/* URL displayed as text only — no clickable link for SSRF safety */}
+                    <p className="text-xs text-muted-foreground font-mono break-all">
+                      {source.url}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Last polled: {source.lastPoll}
+                    </p>
+                    {source.status === 'error' && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <p className="text-[10px] text-[var(--danger)]">
+                          Source failed to respond. Check URL and credentials.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 gap-1 text-[10px] px-2"
+                          aria-label={`Retry ${source.name}`}
+                        >
+                          <RefreshCw className="w-3 h-3" aria-hidden="true" />
+                          Retry
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {source.entriesCount} entries - {source.lastPoll}
-                  </p>
-                </div>
-              </li>
+                </ExpandableCard>
+              </div>
             )
           })}
-        </ul>
+        </div>
       </CardContent>
     </Card>
   )
@@ -425,30 +451,28 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
             return (
               <article
                 key={entry.id}
-                className={cn(
-                  'px-4 py-3',
-                  'hover:bg-muted/30 motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]'
-                )}
+                className="px-2 py-1"
                 aria-label={`${entry.severity} severity: ${entry.title}`}
               >
-                <div className="flex items-start gap-3">
-                  {/* Severity badge */}
-                  <Badge variant={sevConfig.variant} className="flex-shrink-0 mt-0.5">
-                    {sevConfig.label}
-                  </Badge>
-
-                  <div className="flex-1 min-w-0">
-                    {/* Title and type */}
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                <ExpandableCard
+                  title={entry.title}
+                  subtitle={`${entry.type} — ${entry.source} — ${entry.timestamp}`}
+                  badge={<Badge variant={sevConfig.variant} className="text-[10px]">{sevConfig.label}</Badge>}
+                  className="border-0 bg-transparent"
+                  headerClassName="py-1.5"
+                >
+                  <div className="space-y-2 pt-1">
+                    {/* Entry details */}
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="outline" className="text-xs">{entry.type}</Badge>
                       <span className="text-xs text-muted-foreground">
                         Confidence: {(entry.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
-                    <p className="text-sm text-[var(--foreground)] leading-snug">{entry.title}</p>
+                    <p className="text-xs text-muted-foreground">{entry.title}</p>
 
-                    {/* Metadata row + cross-module actions */}
-                    <div className="flex items-center justify-between gap-3 mt-1.5 flex-wrap">
+                    {/* Metadata + cross-module actions */}
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-3 flex-wrap">
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Eye className="w-3 h-3" aria-hidden="true" />
@@ -471,7 +495,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
 
                     {/* Indicators */}
                     {entry.indicators.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
+                      <div className="flex flex-wrap gap-1">
                         {entry.indicators.map((ind) => (
                           <span
                             key={ind}
@@ -483,7 +507,7 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
                       </div>
                     )}
                   </div>
-                </div>
+                </ExpandableCard>
               </article>
             )
           })}
@@ -497,16 +521,27 @@ function ThreatEntryStream({ entries }: { entries: ThreatEntry[] }) {
  * Alert panel showing active alerts with severity
  */
 function AlertPanel({ alerts }: { alerts: ThreatAlert[] }) {
-  const [expandedAlert, setExpandedAlert] = useState<string | null>(null)
+  const [alertStates, setAlertStates] = useState<Record<string, boolean>>(() => {
+    const states: Record<string, boolean> = {}
+    for (const a of alerts) {
+      states[a.id] = a.acknowledged
+    }
+    return states
+  })
+
+  const handleAction = (alertId: string, action: 'approve' | 'reject') => {
+    setAlertStates(prev => ({ ...prev, [alertId]: action === 'approve' }))
+  }
 
   const sortedAlerts = useMemo(() => {
     const sevOrder: Record<ThreatSeverity, number> = { critical: 0, high: 1, medium: 2, low: 3, info: 4 }
     return [...alerts].sort((a, b) => {
-      // Unacknowledged first, then by severity
-      if (a.acknowledged !== b.acknowledged) return a.acknowledged ? 1 : -1
+      const aAck = alertStates[a.id] ?? a.acknowledged
+      const bAck = alertStates[b.id] ?? b.acknowledged
+      if (aAck !== bAck) return aAck ? 1 : -1
       return sevOrder[a.severity] - sevOrder[b.severity]
     })
-  }, [alerts])
+  }, [alerts, alertStates])
 
   return (
     <Card>
@@ -516,62 +551,61 @@ function AlertPanel({ alerts }: { alerts: ThreatAlert[] }) {
           <CardTitle className="text-base">Alerts</CardTitle>
         </div>
         <CardDescription>
-          {alerts.filter(a => !a.acknowledged).length} unacknowledged
+          {alerts.filter(a => !(alertStates[a.id] ?? a.acknowledged)).length} unacknowledged
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        <ul
+        <div
           className="divide-y divide-[var(--border)] max-h-[500px] overflow-y-auto"
+          role="list"
           aria-label="Active threat alerts"
         >
           {sortedAlerts.map((alert) => {
             const sevConfig = SEVERITY_CONFIG[alert.severity]
-            const isExpanded = expandedAlert === alert.id
+            const isAcknowledged = alertStates[alert.id] ?? alert.acknowledged
             return (
-              <li key={alert.id}>
-                <button
-                  onClick={() => setExpandedAlert(isExpanded ? null : alert.id)}
-                  className={cn(
-                    'w-full text-left px-4 py-3',
-                    'hover:bg-muted/30 motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
-                    alert.acknowledged && 'opacity-60'
-                  )}
-                  aria-expanded={isExpanded}
-                  aria-label={`${alert.severity} alert: ${alert.title}`}
+              <div key={alert.id} role="listitem" className={cn('px-2 py-1', isAcknowledged && 'opacity-60')}>
+                <ExpandableCard
+                  title={alert.title}
+                  subtitle={`${alert.source} - ${alert.timestamp}`}
+                  badge={<Badge variant={sevConfig.variant} className="text-[10px]">{sevConfig.label}</Badge>}
+                  className="border-0 bg-transparent"
+                  headerClassName="py-1.5"
                 >
-                  <div className="flex items-start gap-2">
-                    <Badge variant={sevConfig.variant} className="flex-shrink-0 mt-0.5 text-xs">
-                      {sevConfig.label}
-                    </Badge>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-[var(--foreground)] leading-snug">
-                        {alert.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {alert.source} - {alert.timestamp}
-                      </p>
+                  <div className="space-y-2 pt-1">
+                    <div className="text-xs text-muted-foreground">
+                      <p>Source: {alert.source}</p>
+                      <p>Reported: {alert.timestamp}</p>
+                      <p>Severity: {alert.severity}</p>
                     </div>
-                    {isExpanded ? (
-                      <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden="true" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      {!isAcknowledged ? (
+                        <>
+                          <button
+                            onClick={() => handleAction(alert.id, 'approve')}
+                            className="px-2 py-1 rounded text-xs font-medium bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/20 motion-safe:transition-colors min-h-[32px]"
+                            aria-label={`Acknowledge alert: ${alert.title}`}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleAction(alert.id, 'reject')}
+                            className="px-2 py-1 rounded text-xs font-medium bg-[var(--danger)]/10 text-[var(--danger)] hover:bg-[var(--danger)]/20 motion-safe:transition-colors min-h-[32px]"
+                            aria-label={`Reject alert: ${alert.title}`}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      ) : (
+                        <Badge variant="success" className="text-xs">Acknowledged</Badge>
+                      )}
+                    </div>
                   </div>
-                  {isExpanded && (
-                    <div className="mt-2 pt-2 border-t border-[var(--border)]">
-                      <div className="flex items-center gap-2">
-                        <Badge variant={alert.acknowledged ? 'success' : 'warning'} className="text-xs">
-                          {alert.acknowledged ? 'Acknowledged' : 'Pending'}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                </button>
-              </li>
+                </ExpandableCard>
+              </div>
             )
           })}
-        </ul>
+        </div>
       </CardContent>
     </Card>
   )

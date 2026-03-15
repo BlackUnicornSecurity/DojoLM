@@ -25,6 +25,7 @@ vi.mock('@/lib/NavigationContext', () => ({
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/components/ui/ModuleHeader', () => ({

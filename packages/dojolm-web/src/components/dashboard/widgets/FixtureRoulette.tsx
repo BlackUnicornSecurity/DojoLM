@@ -182,7 +182,7 @@ export function FixtureRoulette() {
                 className={cn(
                   'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
                   'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   'disabled:opacity-50'
                 )}
               >
@@ -195,7 +195,7 @@ export function FixtureRoulette() {
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
                   'border border-[var(--border)] text-muted-foreground hover:text-foreground hover:bg-muted',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   'disabled:opacity-50'
                 )}
               >
@@ -212,7 +212,7 @@ export function FixtureRoulette() {
               'w-full flex items-center justify-center gap-2 px-4 py-6 text-sm font-medium rounded-lg',
               'border-2 border-dashed border-[var(--border)] text-muted-foreground',
               'hover:text-foreground hover:border-[var(--dojo-primary)] hover:bg-[var(--dojo-subtle)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               'disabled:opacity-50'
             )}

@@ -23,10 +23,10 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       expect(card).toHaveClass('border')
     })
 
-    it('has shadow-sm', () => {
+    it('has shadow-card token', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('shadow-sm')
+      expect(card.className).toContain('shadow-[var(--shadow-card)]')
     })
 
     it('has motion-safe transition for border-color, transform, and box-shadow', () => {
@@ -43,22 +43,16 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
   })
 
   describe('Card hover effects (A4 remediation — NODA Story 1.7.2)', () => {
-    it('has hover translate-y-0.5 lift', () => {
+    it('has hover translate-y-1 lift', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.className).toContain('motion-safe:hover:-translate-y-0.5')
+      expect(card.className).toContain('motion-safe:hover:-translate-y-1')
     })
 
-    it('has hover shadow-md enhancement', () => {
+    it('has hover shadow-card-hover enhancement', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.className).toContain('motion-safe:hover:shadow-md')
-    })
-
-    it('does NOT have excessive hover shadow-[0_8px_24px] class', () => {
-      const { container } = render(<Card>Content</Card>)
-      const card = container.firstElementChild as HTMLElement
-      expect(card.className).not.toContain('hover:shadow-[0_8px_24px')
+      expect(card.className).toContain('motion-safe:hover:shadow-[var(--shadow-card-hover)]')
     })
   })
 

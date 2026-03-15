@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/lib/fetch-with-auth', () => ({
@@ -180,12 +181,12 @@ describe('AttackDNAExplorer (DNA-001 to DNA-005, DNA-020, DNA-024-025)', () => {
     expect(screen.getAllByTestId('dynamic-view').length).toBeGreaterThan(0)
   })
 
-  it('DNA-020: all 4 tabs are accessible via keyboard', () => {
+  it('DNA-020: all 5 tabs are accessible via keyboard', () => {
     render(<AttackDNAExplorer />)
     const tabList = screen.getByRole('tablist', { name: 'Amaterasu DNA views' })
     expect(tabList).toBeInTheDocument()
     const tabs = screen.getAllByRole('tab')
-    expect(tabs.length).toBe(4)
+    expect(tabs.length).toBe(5)
   })
 
   it('DNA-024: help button renders', () => {

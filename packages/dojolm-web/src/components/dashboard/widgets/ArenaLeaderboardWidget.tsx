@@ -42,7 +42,7 @@ export function ArenaLeaderboardWidget() {
       actions={
         <button
           onClick={() => setActiveTab('strategic')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
         >
           View Arena
         </button>

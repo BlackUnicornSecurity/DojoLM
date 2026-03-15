@@ -118,6 +118,7 @@ export async function POST(request: NextRequest) {
 
     // Read guard config ONCE before batch starts, freeze as Readonly (S5)
     let guardConfig: Readonly<GuardConfig>;
+    let guardHmacWarning: string | undefined;
     try {
       guardConfig = Object.freeze(await getGuardConfig());
     } catch (guardError) {
@@ -128,6 +129,26 @@ export async function POST(request: NextRequest) {
         );
       }
       throw guardError;
+    }
+
+    // BUG-007: Warn if guard config fell back to defaults (HMAC failure)
+    // getGuardConfig() returns DEFAULT_GUARD_CONFIG silently on HMAC failure.
+    // Check if guard was expected to be enabled but fell back to disabled.
+    if (!guardConfig.enabled) {
+      try {
+        const { readFileSync, existsSync } = await import('node:fs');
+        const { join } = await import('node:path');
+        const configPath = join(process.cwd(), 'data', 'llm-results', 'guard', 'config.json');
+        if (existsSync(configPath)) {
+          const raw = JSON.parse(readFileSync(configPath, 'utf-8'));
+          if (raw?.config?.enabled) {
+            guardHmacWarning = 'Guard HMAC verification failed — running batch without guard protection. Re-save guard config to fix.';
+            console.warn(`[Batch ${initialBatch.id}] ${guardHmacWarning}`);
+          }
+        }
+      } catch {
+        // Config check is best-effort
+      }
     }
 
     // Start execution in background
@@ -161,9 +182,10 @@ export async function POST(request: NextRequest) {
         });
     }
 
-    // Return batch object immediately
+    // Return batch object immediately (BUG-007: include guard warning if applicable)
     return NextResponse.json({
       batch: runningBatch || initialBatch,
+      ...(guardHmacWarning ? { warning: guardHmacWarning } : {}),
     }, { status: 202 });
   } catch (error) {
     return apiError('Failed to start batch', 500, error);

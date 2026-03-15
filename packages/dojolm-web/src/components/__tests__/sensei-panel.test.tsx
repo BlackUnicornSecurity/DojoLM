@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 // Mock the dialog UI wrapper to render inline (no portal, no Radix)
@@ -103,10 +104,11 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(screen.getByText('Toggle modules on or off')).toBeInTheDocument()
   })
 
-  it('SP-005: shows all group labels (Testing, Defense, Analysis)', () => {
+  it('SP-005: shows all group labels (Attack, Defense, Red Team, Analysis)', () => {
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
-    expect(screen.getByText('Testing')).toBeInTheDocument()
+    expect(screen.getByText('Attack')).toBeInTheDocument()
     expect(screen.getByText('Defense')).toBeInTheDocument()
+    expect(screen.getByText('Red Team')).toBeInTheDocument()
     expect(screen.getByText('Analysis')).toBeInTheDocument()
   })
 

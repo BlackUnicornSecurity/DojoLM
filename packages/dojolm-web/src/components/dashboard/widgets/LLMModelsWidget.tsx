@@ -65,7 +65,7 @@ export function LLMModelsWidget() {
       actions={
         <button
           onClick={() => setActiveTab('llm')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
         >
           Manage
         </button>
@@ -84,7 +84,7 @@ export function LLMModelsWidget() {
             <p className="text-xs text-muted-foreground">No models configured</p>
             <button
               onClick={() => setActiveTab('llm')}
-              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
             >
               Configure in LLM Dashboard
             </button>
@@ -106,7 +106,7 @@ export function LLMModelsWidget() {
               disabled={testingId === model.id}
               className={cn(
                 'p-1 rounded text-muted-foreground hover:text-foreground',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                 'disabled:opacity-50'
               )}
               aria-label={`Test ${model.name}`}

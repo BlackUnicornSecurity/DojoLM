@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Bell, X, Check, CheckCheck } from 'lucide-react'
 
@@ -26,12 +26,30 @@ export function NotificationsPanel() {
   const [open, setOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const panelRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const firstFocusRef = useRef<HTMLButtonElement>(null)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; right: number } | null>(null)
+
+  // Compute fixed position from trigger button rect
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return
+    const rect = triggerRef.current.getBoundingClientRect()
+    setDropdownPos({
+      top: rect.bottom + 8,
+      right: Math.max(8, window.innerWidth - rect.right),
+    })
+  }, [])
 
   useEffect(() => {
     if (!open) return
+    updatePosition()
     const handleClickOutside = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        panelRef.current && !panelRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setOpen(false)
       }
     }
@@ -40,13 +58,15 @@ export function NotificationsPanel() {
     }
     document.addEventListener('mousedown', handleClickOutside)
     document.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('resize', updatePosition)
     // Focus first action button on open
     requestAnimationFrame(() => firstFocusRef.current?.focus())
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('resize', updatePosition)
     }
-  }, [open])
+  }, [open, updatePosition])
 
   const unreadCount = notifications.filter(n => !n.read).length
 
@@ -61,6 +81,7 @@ export function NotificationsPanel() {
   return (
     <div className="relative" ref={panelRef}>
       <button
+        ref={triggerRef}
         onClick={() => setOpen(!open)}
         className="relative p-3 rounded-lg text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
         aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
@@ -73,8 +94,12 @@ export function NotificationsPanel() {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)] shadow-md z-[var(--z-dropdown)]">
+      {open && dropdownPos && (
+        <div
+          ref={dropdownRef}
+          className="fixed w-72 sm:w-80 rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)] shadow-md z-[var(--z-dropdown)]"
+          style={{ top: dropdownPos.top, right: dropdownPos.right }}
+        >
           <div className="flex items-center justify-between p-3 border-b border-[var(--border)]">
             <span className="text-sm font-medium">Notifications</span>
             <div className="flex items-center gap-1">

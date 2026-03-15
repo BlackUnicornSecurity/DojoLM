@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/components/ui/tabs', () => ({
@@ -168,9 +169,9 @@ describe('ArenaBrowser', () => {
     expect(screen.getByText('Multi-agent adversarial sandbox')).toBeInTheDocument()
   })
 
-  it('AB-002: renders "Forge New Battle" button', async () => {
+  it('AB-002: renders "New Stand Off" button', async () => {
     render(<ArenaBrowser />)
-    expect(screen.getByText('Forge New Battle')).toBeInTheDocument()
+    expect(screen.getByText('New Stand Off')).toBeInTheDocument()
   })
 
   it('AB-003: renders game mode tabs', () => {
@@ -242,13 +243,13 @@ describe('ArenaBrowser', () => {
     })
   })
 
-  it('AB-011: opens wizard when Forge New Battle is clicked', async () => {
+  it('AB-011: opens wizard when New Stand Off is clicked', async () => {
     setupMockFetch([])
     render(<ArenaBrowser />)
     await waitFor(() => {
       expect(screen.queryByTestId('match-wizard')).not.toBeInTheDocument()
     })
-    fireEvent.click(screen.getByText('Forge New Battle'))
+    fireEvent.click(screen.getByText('New Stand Off'))
     expect(screen.getByTestId('match-wizard')).toBeInTheDocument()
   })
 

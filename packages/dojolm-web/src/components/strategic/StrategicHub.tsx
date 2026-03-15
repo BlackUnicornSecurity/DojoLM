@@ -13,6 +13,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { cn } from '@/lib/utils'
 import dynamic from 'next/dynamic'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -359,7 +360,10 @@ export function StrategicHub() {
             <Card
               key={card.key}
               variant="glass"
-              className="border-l-4 bg-[var(--card-elevated)] motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]"
+              className={cn(
+                "border-l-4 bg-[var(--card-elevated)] motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
+                card.key === 'arena' && card.metrics[0].value === '0' && 'opacity-80',
+              )}
               style={{ borderLeftColor: card.accent }}
             >
               <CardHeader className="pb-3">
@@ -384,7 +388,7 @@ export function StrategicHub() {
                     >
                       <Settings className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
-                    <Badge variant="outline">{card.badge}</Badge>
+                    <Badge variant="outline" title={card.key === 'sage' ? 'Genetic evolution of attack prompts' : card.key === 'arena' ? 'Real-time multi-agent matches' : 'Live threat intelligence feed'}>{card.badge}</Badge>
                   </div>
                 </div>
                 <CardTitle className="text-lg mt-3">{card.title}</CardTitle>

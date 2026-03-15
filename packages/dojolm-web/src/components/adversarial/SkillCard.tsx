@@ -21,6 +21,7 @@ import {
   ChevronDown,
   ChevronUp,
   Play,
+  Loader2,
   Clock,
   BookOpen,
   Shield,
@@ -29,12 +30,14 @@ import {
 export interface SkillCardProps {
   skill: AdversarialSkill
   onExecute?: (skillId: string) => void
+  executing?: boolean
   className?: string
 }
 
 export const SkillCard = memo(function SkillCard({
   skill,
   onExecute,
+  executing = false,
   className,
 }: SkillCardProps) {
   const [expanded, setExpanded] = useState(false)
@@ -128,11 +131,16 @@ export const SkillCard = memo(function SkillCard({
               variant="default"
               size="sm"
               onClick={handleExecute}
+              disabled={executing}
               className="h-7 gap-1 text-xs ml-auto"
-              aria-label={`Execute ${skill.name}`}
+              aria-label={executing ? `Executing ${skill.name}` : `Execute ${skill.name}`}
             >
-              <Play className="h-3.5 w-3.5" aria-hidden="true" />
-              Execute
+              {executing ? (
+                <Loader2 className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden="true" />
+              ) : (
+                <Play className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              {executing ? 'Executing...' : 'Execute'}
             </Button>
           )}
         </div>

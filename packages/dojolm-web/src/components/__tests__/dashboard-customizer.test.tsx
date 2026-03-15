@@ -1,7 +1,7 @@
 /**
  * File: dashboard-customizer.test.tsx
  * Purpose: Unit tests for DashboardCustomizer component
- * Test IDs: DC-001 to DC-012
+ * Test IDs: DC-001 to DC-014
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 const mockToggleWidget = vi.fn()
@@ -136,5 +137,22 @@ describe('DashboardCustomizer', () => {
     expect(backdrop).toBeInTheDocument()
     fireEvent.click(backdrop!)
     expect(onClose).toHaveBeenCalled()
+  })
+
+  it('DC-013: toggle preserves scroll position', () => {
+    render(<DashboardCustomizer open={true} onClose={onClose} />)
+    const dialog = screen.getByRole('dialog')
+    // Simulate scrolled state
+    Object.defineProperty(dialog, 'scrollTop', { value: 150, writable: true })
+    fireEvent.click(screen.getByLabelText('Toggle Quick Scan Bar'))
+    expect(mockToggleWidget).toHaveBeenCalledWith('quick-scan')
+  })
+
+  it('DC-014: move preserves scroll position', () => {
+    render(<DashboardCustomizer open={true} onClose={onClose} />)
+    const dialog = screen.getByRole('dialog')
+    Object.defineProperty(dialog, 'scrollTop', { value: 200, writable: true })
+    fireEvent.click(screen.getByLabelText('Move Quick Scan Bar up'))
+    expect(mockMoveWidget).toHaveBeenCalledWith('quick-scan', 'up')
   })
 })

@@ -22,19 +22,13 @@ function renderSelector(overrides: Partial<Parameters<typeof DataSourceSelector>
 }
 
 describe('DataSourceSelector', () => {
-  it('renders 3 tier pills', () => {
+  it('renders available tier pills and hides unavailable ones', () => {
     renderSelector()
     expect(screen.getByRole('group', { name: /data source filter/i })).toBeInTheDocument()
     expect(screen.getByText('Dojo Local')).toBeInTheDocument()
-    expect(screen.getByText('DojoLM Global')).toBeInTheDocument()
     expect(screen.getByText('Master')).toBeInTheDocument()
-  })
-
-  it('shows Coming Soon badge for unavailable tier', () => {
-    renderSelector()
-    expect(screen.getByText('Soon')).toBeInTheDocument()
-    const globalButton = screen.getByRole('button', { name: /DojoLM Global.*Coming Soon/i })
-    expect(globalButton).toBeDisabled()
+    // Unavailable tiers (e.g. DojoLM Global) are hidden, not rendered
+    expect(screen.queryByText('DojoLM Global')).not.toBeInTheDocument()
   })
 
   it('marks active tier as pressed', () => {
@@ -54,13 +48,12 @@ describe('DataSourceSelector', () => {
     expect(onToggle).toHaveBeenCalledWith('master')
   })
 
-  it('does not call onToggle for disabled tier', () => {
+  it('unavailable tiers are not rendered', () => {
     const onToggle = vi.fn()
     renderSelector({ onToggle })
 
-    const globalButton = screen.getByRole('button', { name: /DojoLM Global/i })
-    fireEvent.click(globalButton)
-    expect(onToggle).not.toHaveBeenCalled()
+    // Unavailable tiers are hidden entirely (return null)
+    expect(screen.queryByText('DojoLM Global')).not.toBeInTheDocument()
   })
 
   it('shows reset button when not all available tiers are active', () => {

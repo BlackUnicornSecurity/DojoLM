@@ -157,16 +157,12 @@ export function AtemiGettingStarted({ completedSteps = [], className }: AtemiGet
         {/* Don't show again */}
         {expanded && (
           <div className="mt-3 flex justify-end">
-            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-              <input
-                type="checkbox"
-                onChange={(e) => {
-                  if (e.target.checked) handleDismiss()
-                }}
-                className="accent-primary w-3.5 h-3.5"
-              />
-              Don&apos;t show again
-            </label>
+            <button
+              onClick={handleDismiss}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Got it, don&apos;t show again →
+            </button>
           </div>
         )}
       </CardContent>

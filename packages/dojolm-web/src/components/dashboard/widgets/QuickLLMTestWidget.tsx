@@ -77,7 +77,7 @@ export function QuickLLMTestWidget() {
         <select
           value={selectedModel}
           onChange={(e) => setSelectedModel(e.target.value)}
-          className="w-full px-2 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--dojo-primary)]"
+          className="w-3/5 px-2 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--bu-electric)]"
           disabled={running || models.length === 0}
         >
           {models.length === 0 && <option value="">No models available</option>}
@@ -92,7 +92,7 @@ export function QuickLLMTestWidget() {
               disabled={running}
               className={cn(
                 'flex-1 px-2 py-1 text-xs font-medium rounded',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                 preset === p
                   ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -111,7 +111,7 @@ export function QuickLLMTestWidget() {
           className={cn(
             'w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
             'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
             'disabled:opacity-50'
           )}
         >

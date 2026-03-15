@@ -117,3 +117,13 @@ export {
   clusterEmbeddings,
   getEmbeddingStats,
 } from './embeddings-explorer.js';
+
+// WebMCP Mutations (H16.4)
+export {
+  WEBMCP_MUTATION_OPERATORS,
+  applyWebMCPMutation,
+  applyRandomWebMCPMutation,
+  composeWithCoreMutation,
+} from './webmcp-mutations.js';
+
+export type { WebMCPMutationOperator } from './webmcp-mutations.js';

@@ -15,12 +15,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { DojoReadiness } from '@/components/dashboard/widgets/DojoReadiness'
 
 // Mock NavigationContext
-const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({
-    activeTab: 'dashboard',
-    setActiveTab: mockSetActiveTab,
-  }),
+const { mockSetActiveTab } = vi.hoisted(() => ({
+  mockSetActiveTab: vi.fn(),
+}))
+vi.mock('@/lib/NavigationContext', () => {
+  const { createContext } = require('react')
+  const nav = { activeTab: 'dashboard', setActiveTab: mockSetActiveTab }
+  return {
+    useNavigation: () => nav,
+    NavigationContext: createContext(nav),
+  }
+})
+
+vi.mock('@/lib/constants', () => ({
+  NAV_ITEMS: [{ id: 'dashboard' }, { id: 'scanner' }, { id: 'llm' }, { id: 'guard' }, { id: 'armory' }],
 }))
 
 beforeEach(() => {

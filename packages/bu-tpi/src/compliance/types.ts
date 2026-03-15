@@ -61,3 +61,44 @@ export interface FrameworkReport {
   readonly gaps: ComplianceControl[];
   readonly covered: ControlMapping[];
 }
+
+/** H9.1: Test-to-control mapping for compliance evidence tracking */
+export interface TestMapping {
+  readonly controlId: string;
+  readonly frameworkId: string;
+  readonly scannerModule: string;
+  readonly fixtureCategory: string;
+  readonly coverageStatus: 'full' | 'partial' | 'none';
+  readonly evidenceRef: string;
+  readonly lastVerified?: string;
+}
+
+/** H9.1: HMAC-signed evidence record for audit integrity */
+export interface EvidenceRecord {
+  readonly id: string;
+  readonly controlId: string;
+  readonly frameworkId: string;
+  readonly testExecutionId: string;
+  readonly timestamp: string;
+  readonly result: 'pass' | 'fail' | 'partial';
+  readonly score: number;
+  readonly details: string;
+  readonly hmacSignature: string;
+}
+
+/** H9.1: Extended compliance report with evidence chain */
+export interface ComplianceReportWithEvidence extends ComplianceReport {
+  readonly evidence: EvidenceRecord[];
+  readonly testMappings: TestMapping[];
+  readonly hmacVerified: boolean;
+}
+
+/** H9.1: Framework category for grouping */
+export type FrameworkCategory = 'technical' | 'governance' | 'non-technical';
+
+/** H9.1: Extended framework with metadata */
+export interface ComplianceFrameworkExtended extends ComplianceFramework {
+  readonly category: FrameworkCategory;
+  readonly tier: 'implemented' | 'high' | 'medium' | 'regional' | 'referenced';
+  readonly controlCount: number;
+}

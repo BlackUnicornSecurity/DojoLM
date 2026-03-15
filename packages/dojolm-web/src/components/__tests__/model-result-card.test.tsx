@@ -51,6 +51,7 @@ vi.mock('@/components/ui/scroll-area', () => ({
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('lucide-react', () => ({
@@ -60,6 +61,24 @@ vi.mock('lucide-react', () => ({
   RefreshCw: () => <span data-testid="icon-refresh" />,
   ShieldAlert: () => <span data-testid="icon-shield" />,
   CheckCircle2: () => <span data-testid="icon-check" />,
+  AlertTriangle: () => <span data-testid="icon-alert" />,
+}))
+
+vi.mock('@/components/ui/ExpandableCard', () => ({
+  ExpandableCard: ({ title, subtitle, badge, children, className }: any) => (
+    <div data-testid={`expandable-card-${title}`} className={className}>
+      <span>{title}</span>
+      <span>{subtitle}</span>
+      {badge}
+      {children}
+    </div>
+  ),
+}))
+
+vi.mock('@/components/ui/SafeCodeBlock', () => ({
+  SafeCodeBlock: ({ code, maxLines, className }: any) => (
+    <pre data-testid="safe-code-block" className={className}>{code}</pre>
+  ),
 }))
 
 // ---------------------------------------------------------------------------
@@ -190,7 +209,7 @@ describe('ModelResultCard', () => {
     render(<ModelResultCard result={baseResult} />)
     const toggle = screen.getByRole('button', { name: /expand/i })
     fireEvent.click(toggle)
-    expect(screen.getByText(/Vulnerabilities/)).toBeInTheDocument()
+    expect(screen.getByText(/Findings/)).toBeInTheDocument()
     expect(screen.getByText('injection')).toBeInTheDocument()
   })
 

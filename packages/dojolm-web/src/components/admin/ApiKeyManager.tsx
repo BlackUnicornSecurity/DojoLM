@@ -330,7 +330,7 @@ function AddKeyForm({
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="e.g. GPT-4o Production"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
           />
         </div>
         <div>
@@ -339,7 +339,7 @@ function AddKeyForm({
             id="admin-key-provider"
             value={provider}
             onChange={e => setProvider(e.target.value as LLMProvider)}
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
           >
             {LLM_PROVIDERS.map(p => (
               <option key={p} value={p}>{PROVIDER_LABELS[p]}</option>
@@ -354,7 +354,7 @@ function AddKeyForm({
             value={model}
             onChange={e => setModel(e.target.value)}
             placeholder="e.g. gpt-4o"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
           />
         </div>
         <div>
@@ -367,7 +367,7 @@ function AddKeyForm({
               onChange={e => setApiKey(e.target.value)}
               placeholder="sk-..."
               autoComplete="off"
-              className="w-full px-3 py-2 pr-10 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 pr-10 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
             />
             <button
               type="button"
@@ -387,7 +387,7 @@ function AddKeyForm({
             value={baseUrl}
             onChange={e => setBaseUrl(e.target.value)}
             placeholder="https://api.openai.com/v1"
-            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+            className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
           />
         </div>
       </div>

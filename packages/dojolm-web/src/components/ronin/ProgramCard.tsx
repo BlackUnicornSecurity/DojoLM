@@ -21,6 +21,7 @@ interface ProgramCardProps {
   onToggleSubscribe: (programId: string) => void
   onSelect: (program: BountyProgram) => void
   showRewards?: boolean
+  featured?: boolean
 }
 
 export function ProgramCard({
@@ -29,6 +30,7 @@ export function ProgramCard({
   onToggleSubscribe,
   onSelect,
   showRewards = true,
+  featured = false,
 }: ProgramCardProps) {
   const platform = PLATFORM_META[program.platform]
   const status = STATUS_META[program.status]
@@ -36,16 +38,24 @@ export function ProgramCard({
   return (
     <div
       className={cn(
-        'rounded-lg border border-[var(--border)] bg-card p-4',
+        'relative rounded-lg border border-[var(--border)] bg-card p-4',
         'hover:border-[var(--dojo-primary)]/40 motion-safe:transition-colors cursor-pointer',
         'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1',
+        program.status === 'paused' && 'opacity-75',
+        featured && 'border-[var(--accent-gold)]/30',
       )}
       onClick={() => onSelect(program)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(program) } }}
-      aria-label={`${program.name} by ${program.company}`}
+      aria-label={`${program.name} by ${program.company}${featured ? ' — Featured' : ''}`}
     >
+      {/* Featured ribbon */}
+      {featured && (
+        <span className="absolute -top-px -right-px px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-[var(--accent-gold)] text-black rounded-bl-lg rounded-tr-lg">
+          Featured
+        </span>
+      )}
       {/* Top Row: Name + Platform Badge */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="min-w-0 flex-1">
@@ -92,7 +102,7 @@ export function ProgramCard({
         {showRewards && (
           <div className="flex items-center gap-1 text-xs font-medium text-[var(--success)] shrink-0">
             <DollarSign className="h-3 w-3" aria-hidden="true" />
-            <span>{program.rewardMin.toLocaleString()}-{program.rewardMax.toLocaleString()}</span>
+            <span>${program.rewardMin.toLocaleString()} – ${program.rewardMax.toLocaleString()}</span>
           </div>
         )}
       </div>

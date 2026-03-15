@@ -49,7 +49,7 @@ describe('ActivityFeed', () => {
     mockEvents = []
     render(<ActivityFeed />)
     expect(screen.getByTestId('empty-state')).toBeInTheDocument()
-    expect(screen.getByText('No recent activity.')).toBeInTheDocument()
+    expect(screen.getByText('Run a scan or test to see activity here.')).toBeInTheDocument()
   })
 
   // AF-002: Renders event descriptions

@@ -2,13 +2,13 @@
  * File: LLMDashboard.tsx
  * Purpose: Main LLM Testing Dashboard component
  * Index:
- * - LLMDashboard component (line 28)
- * - LLMDashboardWithProviders (line 130)
+ * - LLMDashboard component (line 26)
+ * - LLMDashboardWithProviders (line 118)
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ModelList } from './ModelList';
 import { TestExecution } from './TestExecution';
@@ -16,15 +16,13 @@ import { ResultsView } from './ResultsView';
 import { Leaderboard } from './Leaderboard';
 import { ComparisonView } from './ComparisonView';
 import { CustomProviderBuilder } from './CustomProviderBuilder';
-import { ExecutiveSummary } from './ExecutiveSummary';
-import { VulnerabilityPanel } from './VulnerabilityPanel';
 import { ReportGenerator } from './ReportGenerator';
 import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, FileText, ShieldAlert } from 'lucide-react';
+import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench } from 'lucide-react';
 import { GuardBadge } from '@/components/guard';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
 
-type DashboardTab = 'models' | 'tests' | 'results' | 'summary' | 'vulnerabilities' | 'leaderboard' | 'compare' | 'custom';
+type DashboardTab = 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'custom';
 
 export interface LLMDashboardProps {
   /** Optional initial tab to display */
@@ -43,10 +41,31 @@ export interface LLMDashboardProps {
  * - Model comparison leaderboard with sparklines
  */
 export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
-  const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab);
+  // Migrate legacy tab positions from localStorage (H7.2)
+  const migratedTab = (() => {
+    if (initialTab === ('summary' as string) || initialTab === ('vulnerabilities' as string)) {
+      return 'results' as DashboardTab;
+    }
+    return initialTab;
+  })();
+
+  const [activeTab, setActiveTab] = useState<DashboardTab>(migratedTab);
+
+  // One-time localStorage migration for persisted tab state
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const stored = localStorage.getItem('llm-dashboard-tab');
+      if (stored === 'summary' || stored === 'vulnerabilities') {
+        localStorage.setItem('llm-dashboard-tab', 'results');
+      }
+    } catch {
+      // localStorage unavailable or QuotaExceededError — ignore
+    }
+  }, []);
 
   const validTabs: readonly DashboardTab[] = [
-    'models', 'tests', 'results', 'summary', 'vulnerabilities',
+    'models', 'tests', 'results',
     'leaderboard', 'compare', 'custom',
   ];
 
@@ -82,14 +101,6 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Results</span>
           </TabsTrigger>
-          <TabsTrigger value="summary" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <FileText className="h-4 w-4" />
-            <span className="hidden sm:inline">Summary</span>
-          </TabsTrigger>
-          <TabsTrigger value="vulnerabilities" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <ShieldAlert className="h-4 w-4" />
-            <span className="hidden sm:inline">Vulns</span>
-          </TabsTrigger>
           <TabsTrigger value="leaderboard" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Trophy className="h-4 w-4" />
             <span className="hidden sm:inline">Board</span>
@@ -100,7 +111,7 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
           </TabsTrigger>
           <TabsTrigger value="custom" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Wrench className="h-4 w-4" />
-            <span className="hidden sm:inline">Custom</span>
+            <span className="hidden sm:inline">Custom Models</span>
           </TabsTrigger>
         </TabsList>
 
@@ -109,19 +120,11 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
         </TabsContent>
 
         <TabsContent value="tests" className="space-y-4">
-          <TestExecution />
+          <TestExecution onNavigateToResults={() => setActiveTab('results')} />
         </TabsContent>
 
         <TabsContent value="results" className="space-y-4">
           <ResultsView />
-        </TabsContent>
-
-        <TabsContent value="summary" className="space-y-4">
-          <ExecutiveSummary />
-        </TabsContent>
-
-        <TabsContent value="vulnerabilities" className="space-y-4">
-          <VulnerabilityPanel />
         </TabsContent>
 
         <TabsContent value="leaderboard" className="space-y-4">

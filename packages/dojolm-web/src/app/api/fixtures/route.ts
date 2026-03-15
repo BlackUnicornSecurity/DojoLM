@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 
@@ -47,9 +47,34 @@ function loadManifest() {
 // Export dynamically loaded manifest
 export const fixtureManifest = loadManifest();
 
-export async function GET() {
+export async function GET(request?: NextRequest) {
   // Reload manifest on each request to get latest data
   const freshManifest = loadManifest();
+
+  // BUG-006: Support optional ?category= filter parameter
+  const category = request ? new URL(request.url).searchParams.get('category') : null;
+
+  if (category && freshManifest.categories) {
+    // Filter to only the requested category
+    const filtered = freshManifest.categories[category];
+    if (!filtered) {
+      return NextResponse.json(
+        { error: `Category not found: ${category}`, availableCategories: Object.keys(freshManifest.categories) },
+        { status: 404, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    }
+    return NextResponse.json(
+      { ...freshManifest, categories: { [category]: filtered } },
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Content-Type-Options': 'nosniff',
+          'Cache-Control': 'public, max-age=60',
+        },
+      }
+    );
+  }
 
   return NextResponse.json(freshManifest, {
     status: 200,

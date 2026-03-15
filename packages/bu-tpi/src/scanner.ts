@@ -48,6 +48,9 @@ import './modules/session-bypass.js';
 import './modules/social-engineering-detector.js';
 import './modules/output-detector.js';
 
+// EdgeFuzz module (H21.2) — self-registers on import
+import './modules/edgefuzz-detector.js';
+
 // ============================================================================
 // TEXT NORMALIZATION
 // ============================================================================
@@ -3738,10 +3741,17 @@ export function scan(text: string, options?: ScanOptions): ScanResult {
   // Delegate to all registered scanner modules via the registry
   let findings: Finding[] = scannerRegistry.scan(text, normalized);
 
-  // Filter by engine if specified (SCN-008 fix)
+  // Filter by engine if specified (SCN-008 fix, BUG-004 fix)
   if (options?.engines && options.engines.length > 0) {
-    const allowedEngines = new Set(options.engines);
-    findings = findings.filter(f => allowedEngines.has(f.engine));
+    // Treat "all" as wildcard — skip filtering entirely
+    const hasAll = options.engines.some(e => e.toLowerCase() === 'all');
+    if (!hasAll) {
+      // Normalize engine names for case-insensitive, delimiter-agnostic matching
+      // e.g. "prompt-injection" matches "Prompt Injection", "rag" matches "RAG"
+      const normalize = (s: string) => s.toLowerCase().replace(/[-_\s]+/g, '');
+      const normalizedInput = new Set(options.engines.map(normalize));
+      findings = findings.filter(f => normalizedInput.has(normalize(f.engine)));
+    }
   }
 
   // LLM-BUG-005: Downgrade false positives when match appears in a refusal context.

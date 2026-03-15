@@ -17,6 +17,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
+import { formatDate } from '@/lib/utils'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 const STORAGE_KEY = 'amaterasu-config'
@@ -209,7 +210,7 @@ function SyncControls() {
           <p className="text-[10px] font-medium text-muted-foreground">Recent Syncs</p>
           {history.map((h, i) => (
             <div key={i} className="text-[10px] text-muted-foreground flex justify-between">
-              <span>{new Date(h.syncedAt).toLocaleDateString()}</span>
+              <span>{formatDate(h.syncedAt)}</span>
               <span>{h.entriesClassified} entries</span>
             </div>
           ))}

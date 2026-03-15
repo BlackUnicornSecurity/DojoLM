@@ -325,8 +325,9 @@ describe('GET /api/llm/batch', () => {
   });
 
   it('BATCH-015: auto-fails stale running batch (by id)', async () => {
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-    const staleBatch = mockBatch({ status: 'running', createdAt: twoHoursAgo });
+    // Route uses 3-hour stale timeout (STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000)
+    const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+    const staleBatch = mockBatch({ status: 'running', createdAt: fourHoursAgo });
     vi.mocked(fileStorage.getBatch).mockResolvedValue(staleBatch as never);
     vi.mocked(fileStorage.updateBatch).mockResolvedValue(undefined as never);
 
@@ -339,8 +340,9 @@ describe('GET /api/llm/batch', () => {
   });
 
   it('BATCH-015b: auto-fails stale running batch (in status query)', async () => {
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-    const staleBatch = mockBatch({ id: 'stale-1', status: 'running', createdAt: twoHoursAgo });
+    // Route uses 3-hour stale timeout (STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000)
+    const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+    const staleBatch = mockBatch({ id: 'stale-1', status: 'running', createdAt: fourHoursAgo });
     vi.mocked(fileStorage.queryBatches).mockResolvedValue({ batches: [staleBatch] } as never);
     vi.mocked(fileStorage.updateBatch).mockResolvedValue(undefined as never);
 

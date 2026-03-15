@@ -89,7 +89,7 @@ export function ExportSettings() {
               value={companyName}
               onChange={e => setCompanyName(e.target.value)}
               placeholder="Your Organization"
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground placeholder:text-[var(--text-quaternary)] focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
             />
           </div>
           <div>
@@ -104,7 +104,7 @@ export function ExportSettings() {
                 const parsed = Number(e.target.value)
                 setRetentionDays(Math.min(365, Math.max(7, isNaN(parsed) ? 7 : parsed)))
               }}
-              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]"
+              className="w-full px-3 py-2 text-sm rounded-lg bg-[var(--bg-tertiary)] border border-[var(--overlay-active)] text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]"
             />
           </div>
         </div>

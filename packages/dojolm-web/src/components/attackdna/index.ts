@@ -20,3 +20,9 @@ export type { AmaterasuGuideProps, TabHelpButtonProps, TabHelpContent } from './
 export type { AmaterasuConfigProps, AmaterasuConfigData } from './AmaterasuConfig'
 export type { MasterSyncStatus, DataSourceSelectorProps } from './DataSourceSelector'
 export type { DataSourceTierDef, TieredItem, TierStats } from './data-source-tiers'
+
+// DNA Library Views (H11.6)
+export { DNALibrary } from './DNALibrary'
+
+// X-Ray Explainability (H27.3)
+export { XRayPanel } from './XRayPanel'

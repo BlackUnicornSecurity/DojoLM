@@ -35,7 +35,7 @@ export function QuickScanWidget() {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Paste text to scan..."
-            className="flex-1 px-3 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--dojo-primary)]"
+            className="flex-1 px-3 py-1.5 text-xs bg-muted/50 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--bu-electric)]"
             disabled={isScanning}
           />
           <button
@@ -44,7 +44,7 @@ export function QuickScanWidget() {
             className={cn(
               'px-3 py-1.5 text-xs font-medium rounded-lg',
               'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
               'disabled:opacity-50'
             )}
           >

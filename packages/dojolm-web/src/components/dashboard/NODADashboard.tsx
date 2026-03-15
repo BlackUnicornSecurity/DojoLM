@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Settings2 } from 'lucide-react'
 import type { GlowCardProps } from '@/components/ui/GlowCard'
+import type { NavId } from '@/lib/constants'
 
 /** Skeleton placeholder for lazy-loaded widgets */
 function WidgetSkeleton() {
@@ -64,6 +65,9 @@ const WIDGET_COMPONENTS: Record<string, () => Promise<{ default: ComponentType }
   'ecosystem-pulse': () => import('./widgets/EcosystemPulseWidget').then(m => ({ default: m.EcosystemPulseWidget })),
   'ronin-hub': () => import('./widgets/RoninHubWidget').then(m => ({ default: m.RoninHubWidget })),
   'llm-jutsu': () => import('./widgets/LLMJutsuWidget').then(m => ({ default: m.LLMJutsuWidget })),
+  'sengoku': () => import('./widgets/SengokuWidget').then(m => ({ default: m.SengokuWidget })),
+  'time-chamber': () => import('./widgets/TimeChamberWidget').then(m => ({ default: m.TimeChamberWidget })),
+  'kotoba': () => import('./widgets/KotobaWidget').then(m => ({ default: m.KotobaWidget })),
 }
 
 /** Lazy components created once at module load — immutable, HMR-safe */
@@ -90,11 +94,41 @@ const WIDGET_META: Record<string, { priority: 'hero' | 'standard' | 'compact'; g
 
 const DEFAULT_META = { priority: 'standard' as const, glow: 'none' as const }
 
+/** Widget → module navigation targets. Clicking widget header navigates to the corresponding module. */
+const WIDGET_NAV_TARGET: Record<string, string> = {
+  'guard-controls': 'guard',
+  'guard-stats': 'guard',
+  'guard-audit': 'guard',
+  'kill-count': 'scanner',
+  'quick-scan': 'scanner',
+  'threat-radar': 'strategic',
+  'arena-leaderboard': 'strategic',
+  'sage-status': 'strategic',
+  'mitsuke-alerts': 'strategic',
+  'llm-models': 'llm',
+  'llm-quick-test': 'llm',
+  'batch-progress': 'llm',
+  'llm-jutsu': 'llm-jutsu',
+  'compliance-bars': 'compliance',
+  'coverage-heatmap': 'compliance',
+  'engine-grid': 'scanner',
+  'module-grid': 'scanner',
+  'fixture-roulette': 'armory',
+  'attack-of-day': 'armory',
+  'ecosystem-pulse': 'attackdna',
+  'ronin-hub': 'ronin-hub',
+  'health-gauge': 'admin',
+  'platform-stats': 'admin',
+  'sengoku': 'sengoku',
+  'time-chamber': 'time-chamber',
+  'kotoba': 'kotoba',
+}
+
 /** Dashboard sections with ordered widget IDs (3 sections) */
 const SECTION_DEFS: { label: string; ids: string[] }[] = [
   { label: 'OVERVIEW', ids: ['quick-launch', 'quick-scan', 'health-gauge', 'guard-controls', 'kill-count'] },
   { label: 'MONITORING', ids: ['threat-radar', 'activity-feed', 'threat-trend', 'mitsuke-alerts', 'ecosystem-pulse', 'session-pulse', 'guard-stats', 'batch-progress', 'guard-audit', 'attack-of-day', 'fixture-roulette'] },
-  { label: 'PLATFORM', ids: ['engine-grid', 'module-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'compliance-bars', 'platform-stats', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'coverage-heatmap'] },
+  { label: 'PLATFORM', ids: ['engine-grid', 'module-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'compliance-bars', 'platform-stats', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'sengoku', 'time-chamber', 'kotoba', 'coverage-heatmap'] },
 ]
 
 /** Set of all widget IDs assigned to a section */
@@ -144,7 +178,7 @@ function WidgetShell({ slot, mountIndex }: { slot: WidgetSlot; mountIndex: numbe
       >
         {ready ? (
           <Suspense fallback={<WidgetSkeleton />}>
-            <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2}>
+            <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2} navigateTo={WIDGET_NAV_TARGET[slot.id] as NavId}>
               <Widget />
             </WidgetMetaProvider>
           </Suspense>

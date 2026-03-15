@@ -62,7 +62,7 @@ export function AttackOfTheDay() {
           disabled={scanned}
           className={cn(
             'flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg w-full justify-center',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
             'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
             scanned
               ? 'bg-muted text-muted-foreground cursor-default'

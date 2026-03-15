@@ -11,7 +11,7 @@
 
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo, useRef, ReactNode } from 'react'
 import type { ScanResult, Finding, EngineFilter } from './types'
 import { scanText as apiScanText } from './api'
 import { ENGINE_FILTERS } from './constants'
@@ -29,11 +29,16 @@ interface ScannerContextType {
   lastScanTime: number
   scanResult: ScanResult | null  // Full scan result with textLength, etc.
 
+  // Pending payload from cross-module load (H1.4)
+  pendingPayload: string | null
+
   // Methods
   scanText: (text: string) => Promise<void>
   clear: () => void
   toggleFilter: (filterId: string) => void
   resetFilters: () => void
+  loadPayload: (text: string) => void
+  consumePendingPayload: () => string | null
 }
 
 /**
@@ -59,6 +64,8 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
   const [engineFilters, setEngineFilters] = useState<EngineFilter[]>(ENGINE_FILTERS)
   const [lastScanTime, setLastScanTime] = useState(0)
   const [scanResult, setScanResult] = useState<ScanResult | null>(null)
+  const [pendingPayload, setPendingPayload] = useState<string | null>(null)
+  const pendingPayloadRef = useRef<string | null>(null)
 
   /**
    * Scan text for prompt injection
@@ -129,6 +136,22 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
     setEngineFilters(ENGINE_FILTERS)
   }, [])
 
+  /** Load a payload text for the scanner input to pick up */
+  const loadPayload = useCallback((text: string) => {
+    pendingPayloadRef.current = text
+    setPendingPayload(text)
+  }, [])
+
+  /** Consume and clear pending payload (called by ScannerInput on mount/update) */
+  const consumePendingPayload = useCallback(() => {
+    const text = pendingPayloadRef.current
+    if (text) {
+      pendingPayloadRef.current = null
+      setPendingPayload(null)
+    }
+    return text
+  }, [])
+
   // Memoize context value to prevent unnecessary re-renders
   const value = useMemo<ScannerContextType>(() => ({
     findings,
@@ -138,10 +161,13 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
     engineFilters,
     lastScanTime,
     scanResult,
+    pendingPayload,
     scanText,
     clear,
     toggleFilter,
     resetFilters,
+    loadPayload,
+    consumePendingPayload,
   }), [
     findings,
     verdict,
@@ -150,10 +176,13 @@ export function ScannerProvider({ children }: ScannerProviderProps) {
     engineFilters,
     lastScanTime,
     scanResult,
+    pendingPayload,
     scanText,
     clear,
     toggleFilter,
     resetFilters,
+    loadPayload,
+    consumePendingPayload,
   ])
 
   return (

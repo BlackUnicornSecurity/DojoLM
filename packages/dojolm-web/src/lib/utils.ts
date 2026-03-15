@@ -71,6 +71,19 @@ export function safeUUID(): string {
  * Blocks javascript:, data:, blob:, vbscript: protocols and protocol-relative URLs.
  * Allows https:, http:, mailto:, relative paths, and hash links.
  */
+/**
+ * Format a date string or Date to "14 Mar 2026" format.
+ * Optionally include time: "14 Mar 2026 · 21:30"
+ */
+export function formatDate(input: string | Date | number, includeTime = false): string {
+  const d = input instanceof Date ? input : new Date(input)
+  if (Number.isNaN(d.getTime())) return String(input)
+  const date = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  if (!includeTime) return date
+  const time = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  return `${date} · ${time}`
+}
+
 export function isSafeHref(href: string): boolean {
   const trimmed = href.trim()
 

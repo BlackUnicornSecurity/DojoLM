@@ -19,6 +19,7 @@ vi.mock('@/lib/fetch-with-auth', () => ({
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }));
 
 // Mock Tabs from radix
@@ -137,6 +138,7 @@ const { ApiKeyManager: ApiKeyManagerReal } = await vi.importActual<typeof import
 const { ExportSettings: ExportSettingsReal } = await vi.importActual<typeof import('../admin/ExportSettings')>('../admin/ExportSettings');
 const { ScannerConfig: ScannerConfigReal } = await vi.importActual<typeof import('../admin/ScannerConfig')>('../admin/ScannerConfig');
 const { SystemHealth: SystemHealthReal } = await vi.importActual<typeof import('../admin/SystemHealth')>('../admin/SystemHealth');
+const { AdminSettings: AdminSettingsReal } = await vi.importActual<typeof import('../admin/AdminSettings')>('../admin/AdminSettings');
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -180,7 +182,7 @@ describe('AdminPanel', () => {
   it('ADM-010: General tab content shows application and theme info', () => {
     render(<AdminPanel />);
 
-    expect(screen.getByText('General Settings')).toBeInTheDocument();
+    expect(screen.getByText('Platform Information')).toBeInTheDocument();
     expect(screen.getByText('NODA Platform')).toBeInTheDocument();
     expect(screen.getByText('Dark (default)')).toBeInTheDocument();
   });
@@ -418,15 +420,16 @@ describe('SystemHealth', () => {
       expect(screen.getByText('All Systems OK')).toBeInTheDocument();
     });
 
-    // Initial fetch happened
-    expect(mockFetchWithAuth).toHaveBeenCalledTimes(1);
+    // Initial fetch: health + MCP status = 2 calls
+    expect(mockFetchWithAuth).toHaveBeenCalledTimes(2);
 
     // Click refresh
     const refreshBtn = screen.getByLabelText('Refresh health status');
     fireEvent.click(refreshBtn);
 
     await waitFor(() => {
-      expect(mockFetchWithAuth).toHaveBeenCalledTimes(2);
+      // Refresh triggers another 2 calls (health + MCP)
+      expect(mockFetchWithAuth).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -460,5 +463,209 @@ describe('SystemHealth', () => {
     });
 
     expect(screen.getByText(/Unable to reach health endpoint/)).toBeInTheDocument();
+  });
+
+  // ADM-014: MCP Status Card renders
+  it('ADM-014: renders MCP Server status card', async () => {
+    mockFetchWithAuth.mockImplementation((url: string) => {
+      if (url === '/api/admin/health') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            scanner: { reachable: true, responseTimeMs: 10 },
+            guard: { enabled: true, mode: 'shinobi', eventCount: 5 },
+            storage: { type: 'json', modelsCount: 3 },
+            app: { version: '2.0.0' },
+          }),
+        });
+      }
+      if (url === '/api/mcp/status') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ connected: true, message: 'MCP server running' }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+
+    render(<SystemHealth />);
+
+    await waitFor(() => {
+      expect(screen.getByText('MCP Server')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Connected')).toBeInTheDocument();
+    expect(screen.getByText('MCP server running')).toBeInTheDocument();
+  });
+
+  // ADM-015: MCP Status Card shows disconnected when MCP is down
+  it('ADM-015: shows Disconnected when MCP status reports not connected', async () => {
+    mockFetchWithAuth.mockImplementation((url: string) => {
+      if (url === '/api/admin/health') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            scanner: { reachable: true },
+            guard: { enabled: true, mode: 'shinobi', eventCount: 0 },
+            storage: { type: 'json', modelsCount: 0 },
+            app: { version: '1.0.0' },
+          }),
+        });
+      }
+      if (url === '/api/mcp/status') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ connected: false, message: 'MCP server not configured' }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+
+    render(<SystemHealth />);
+
+    await waitFor(() => {
+      expect(screen.getByText('MCP Server')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Disconnected')).toBeInTheDocument();
+    expect(screen.getByText('MCP server not configured')).toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AdminSettings Tests
+// ---------------------------------------------------------------------------
+
+describe('AdminSettings (editable)', () => {
+  const AdminSettings = AdminSettingsReal;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Default: GET /api/admin/settings returns defaults
+    mockFetchWithAuth.mockImplementation((url: string) => {
+      if (url === '/api/admin/settings') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ sessionTtlMinutes: 1440, retentionDays: 90 }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+  });
+
+  // ADM-016: AdminSettings renders in read-only mode by default
+  it('ADM-016: renders settings in read-only mode with Edit button', async () => {
+    render(<AdminSettings />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Admin Settings')).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+    expect(screen.getByText('Session Configuration')).toBeInTheDocument();
+    expect(screen.getByText('Security Configuration')).toBeInTheDocument();
+    expect(screen.getByText('Data Retention')).toBeInTheDocument();
+    expect(screen.getByText('Role-Based Access Control')).toBeInTheDocument();
+  });
+
+  // ADM-017: Edit mode shows form inputs
+  it('ADM-017: clicking Edit shows form inputs for editable settings', async () => {
+    render(<AdminSettings />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Edit settings'));
+
+    expect(screen.getByLabelText('Session TTL (minutes)')).toBeInTheDocument();
+    expect(screen.getByLabelText('Data Retention (days)')).toBeInTheDocument();
+    expect(screen.getByLabelText('Save settings')).toBeInTheDocument();
+    expect(screen.getByLabelText('Cancel editing')).toBeInTheDocument();
+  });
+
+  // ADM-018: Cancel reverts to read-only
+  it('ADM-018: Cancel button exits edit mode without saving', async () => {
+    render(<AdminSettings />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Edit settings'));
+    expect(screen.getByLabelText('Session TTL (minutes)')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Cancel editing'));
+    expect(screen.queryByLabelText('Session TTL (minutes)')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+  });
+
+  // ADM-019: Save sends PATCH request
+  it('ADM-019: Save sends PATCH request with updated values', async () => {
+    mockFetchWithAuth.mockImplementation((url: string, init?: RequestInit) => {
+      if (url === '/api/admin/settings' && init?.method === 'PATCH') {
+        const body = JSON.parse(init.body as string);
+        return Promise.resolve({
+          ok: true,
+          json: async () => body,
+        });
+      }
+      if (url === '/api/admin/settings') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ sessionTtlMinutes: 1440, retentionDays: 90 }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+
+    render(<AdminSettings />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Edit settings'));
+
+    const ttlInput = screen.getByLabelText('Session TTL (minutes)') as HTMLInputElement;
+    fireEvent.change(ttlInput, { target: { value: '60' } });
+
+    const retentionInput = screen.getByLabelText('Data Retention (days)') as HTMLInputElement;
+    fireEvent.change(retentionInput, { target: { value: '30' } });
+
+    fireEvent.click(screen.getByLabelText('Save settings'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Settings saved successfully.')).toBeInTheDocument();
+    });
+
+    // Verify PATCH was called with correct body
+    const patchCall = mockFetchWithAuth.mock.calls.find(
+      (c: unknown[]) => c[0] === '/api/admin/settings' && (c[1] as RequestInit)?.method === 'PATCH'
+    );
+    expect(patchCall).toBeDefined();
+    const sentBody = JSON.parse((patchCall![1] as RequestInit).body as string);
+    expect(sentBody.sessionTtlMinutes).toBe(60);
+    expect(sentBody.retentionDays).toBe(30);
+  });
+
+  // ADM-020: Client-side validation rejects out-of-range values
+  it('ADM-020: shows validation error for out-of-range session TTL', async () => {
+    render(<AdminSettings />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Edit settings')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByLabelText('Edit settings'));
+
+    const ttlInput = screen.getByLabelText('Session TTL (minutes)') as HTMLInputElement;
+    fireEvent.change(ttlInput, { target: { value: '2' } });
+
+    fireEvent.click(screen.getByLabelText('Save settings'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Session TTL must be between 5 and 1440 minutes.')).toBeInTheDocument();
+    });
   });
 });

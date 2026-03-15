@@ -118,7 +118,7 @@ export function SubmissionsTab() {
             className={cn(
               'px-3 py-2 rounded-lg text-sm min-h-[40px]',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
-              'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
             )}
             aria-label="Filter by status"
           >

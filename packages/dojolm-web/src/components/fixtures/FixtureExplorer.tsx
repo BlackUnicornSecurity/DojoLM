@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CategoryTree } from './CategoryTree'
+import { CategoryTree, getBrandForCategory } from './CategoryTree'
 import { FixtureSearch } from './FixtureSearch'
 import { FixtureCategoryCard } from './FixtureCategoryCard'
 import {
@@ -230,7 +230,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'tree'
-                ? 'bg-[var(--bg-quaternary)] text-foreground'
+                ? 'bg-[var(--dojo-primary)]/15 text-foreground font-semibold border-b-2 border-[var(--dojo-primary)]'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
             )}
             aria-label="Tree view"
@@ -247,7 +247,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'search'
-                ? 'bg-[var(--bg-quaternary)] text-foreground'
+                ? 'bg-[var(--dojo-primary)]/15 text-foreground font-semibold border-b-2 border-[var(--dojo-primary)]'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
             )}
             aria-label="Search view"
@@ -264,7 +264,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'grid'
-                ? 'bg-[var(--bg-quaternary)] text-foreground'
+                ? 'bg-[var(--dojo-primary)]/15 text-foreground font-semibold border-b-2 border-[var(--dojo-primary)]'
                 : 'text-muted-foreground hover:bg-[var(--bg-secondary)]'
             )}
             aria-label="Grid view"
@@ -412,21 +412,40 @@ interface CategoryGridProps {
 }
 
 const CategoryGrid = memo(function CategoryGrid({ categories, onViewFiles }: CategoryGridProps) {
-  const sortedCategories = useMemo(
-    () => Object.keys(categories).sort(),
-    [categories]
-  )
+  /** Group categories by brand for visual organization */
+  const grouped = useMemo(() => {
+    const groups: Record<string, string[]> = {}
+    for (const name of Object.keys(categories).sort()) {
+      const brand = getBrandForCategory(name)
+      const key = brand.name
+      if (!groups[key]) groups[key] = []
+      groups[key].push(name)
+    }
+    return groups
+  }, [categories])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sortedCategories.map(name => (
-        <FixtureCategoryCard
-          key={name}
-          name={name}
-          category={categories[name]}
-          onViewFiles={onViewFiles}
-        />
-      ))}
+    <div className="space-y-6">
+      {Object.entries(grouped).map(([brandName, categoryNames]) => {
+        const brandColor = getBrandForCategory(categoryNames[0]).color
+        return (
+        <div key={brandName} className="border-l-[3px] pl-4 rounded-sm" style={{ borderLeftColor: brandColor }}>
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            {brandName} <span className="text-muted-foreground/60">({categoryNames.length})</span>
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryNames.map(name => (
+              <FixtureCategoryCard
+                key={name}
+                name={name}
+                category={categories[name]}
+                onViewFiles={onViewFiles}
+              />
+            ))}
+          </div>
+        </div>
+        )
+      })}
     </div>
   )
 })
@@ -484,6 +503,8 @@ const CategoryFileList = memo(function CategoryFileList({
   compareSelections,
   onCompareSelect,
 }: CategoryFileListProps) {
+  const [expandedFile, setExpandedFile] = useState<string | null>(null)
+
   const stats = useMemo(() => {
     const total = category.files.length
     const clean = category.files.filter(f => f.clean).length
@@ -492,6 +513,11 @@ const CategoryFileList = memo(function CategoryFileList({
     const warning = category.files.filter(f => f.severity === 'WARNING').length
     return { total, clean, attack, critical, warning }
   }, [category.files])
+
+  const handleInlineView = useCallback((cat: string, file: string) => {
+    setExpandedFile(prev => prev === file ? null : file)
+    onViewFixture(cat, file)
+  }, [onViewFixture])
 
   return (
     <div className="p-4 space-y-4">
@@ -534,7 +560,8 @@ const CategoryFileList = memo(function CategoryFileList({
             categoryKey={categoryKey}
             file={file}
             onScan={onScanFixture}
-            onView={onViewFixture}
+            onView={handleInlineView}
+            isExpanded={expandedFile === file.file}
             compareMode={compareMode}
             isCompareSelected={compareSelections?.has(`${categoryKey}/${file.file}`) ?? false}
             onCompareSelect={onCompareSelect}
@@ -551,6 +578,7 @@ interface FileRowProps {
   file: FixtureFileType
   onScan: (category: string, file: string) => void
   onView: (category: string, file: string) => void
+  isExpanded?: boolean
   compareMode?: boolean
   isCompareSelected?: boolean
   onCompareSelect?: (category: string, file: string) => void
@@ -561,6 +589,7 @@ const FileRow = memo(function FileRow({
   file,
   onScan,
   onView,
+  isExpanded = false,
   compareMode = false,
   isCompareSelected = false,
   onCompareSelect,
@@ -663,11 +692,12 @@ const FileRow = memo(function FileRow({
       <div className="flex gap-1 shrink-0">
         <Button
           type="button"
-          variant="ghost"
+          variant={isExpanded ? 'default' : 'ghost'}
           size="sm"
           onClick={handleView}
           className="h-7 w-7 p-0"
-          aria-label={`View ${file.file}`}
+          aria-label={isExpanded ? `Collapse ${file.file}` : `View ${file.file}`}
+          aria-expanded={isExpanded}
         >
           <Eye className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
@@ -683,6 +713,19 @@ const FileRow = memo(function FileRow({
           Scan
         </Button>
       </div>
+
+      {/* Inline expandable detail section */}
+      {isExpanded && (
+        <div className="col-span-full mt-2 pt-2 border-t border-[var(--border-subtle)]">
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <span><strong>File:</strong> {file.file}</span>
+            {file.attack && <span><strong>Attack:</strong> {file.attack}</span>}
+            <span><strong>Type:</strong> {file.clean ? 'Clean' : 'Attack'}</span>
+            {file.severity && <span><strong>Severity:</strong> {file.severity}</span>}
+            {file.product && <span><strong>Product:</strong> {file.product}</span>}
+          </div>
+        </div>
+      )}
     </div>
   )
 })

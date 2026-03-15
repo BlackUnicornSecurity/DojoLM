@@ -27,7 +27,7 @@ export function CoverageMap({
   coverageData,
   className,
   title = 'TPI Coverage Map',
-  subtitle = 'CrowdStrike TPI taxonomy coverage • Pre-TPI vs Post-TPI implementation',
+  subtitle = 'CrowdStrike TPI taxonomy coverage • Implementation progress',
   icon = 'shield'
 }: CoverageMapProps) {
   const Icon = icon === 'shield' ? Shield : Database
@@ -49,10 +49,8 @@ export function CoverageMap({
           <TableHeader>
             <TableRow>
               <TableHead>Category</TableHead>
-              <TableHead className="w-[100px]">Pre-TPI</TableHead>
               <TableHead>Progress</TableHead>
-              <TableHead className="w-[100px]">Post-TPI</TableHead>
-              <TableHead>Stories</TableHead>
+              <TableHead>Control</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -69,12 +67,8 @@ export function CoverageMap({
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{item.pre}%</TableCell>
                 <TableCell>
-                  <CoverageProgressBar value={item.pre} target={item.post} />
-                </TableCell>
-                <TableCell className="text-green-500 font-medium">
-                  {item.post}%
+                  <CoverageProgressBar value={item.post} target={100} />
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {item.stories}
@@ -155,14 +149,14 @@ export function CoverageSummary({ coverageData, className }: CoverageSummaryProp
       <Card>
         <CardContent className="p-4 text-center">
           <div className="text-2xl font-bold">{avgPre}%</div>
-          <div className="text-xs text-muted-foreground mt-1">Avg Pre-TPI</div>
+          <div className="text-xs text-muted-foreground mt-1">Avg Baseline</div>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="p-4 text-center">
           <div className="text-2xl font-bold text-green-500">{avgPost}%</div>
-          <div className="text-xs text-muted-foreground mt-1">Avg Post-TPI</div>
+          <div className="text-xs text-muted-foreground mt-1">Avg Coverage</div>
         </CardContent>
       </Card>
 

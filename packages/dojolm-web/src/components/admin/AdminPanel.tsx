@@ -47,7 +47,7 @@ export function AdminPanel() {
       />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as AdminTabId)}>
-        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto bg-muted/50 rounded-xl">
+        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto bg-muted/50 rounded-full">
           {ADMIN_TABS.map(({ id, label, icon: TabIcon }) => (
             <TabsTrigger key={id} value={id} className="min-h-[44px] gap-2">
               <TabIcon className="w-4 h-4" aria-hidden="true" />
@@ -87,19 +87,86 @@ export function AdminPanel() {
 
 function GeneralSettings() {
   return (
-    <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
-      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">General Settings</h3>
-      <p className="text-sm text-muted-foreground">
-        Application-wide configuration and preferences.
-      </p>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
-          <p className="text-sm font-medium text-foreground">Application</p>
-          <p className="text-xs text-muted-foreground mt-1">NODA Platform</p>
+    <div className="space-y-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Platform Information</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Application</p>
+            <p className="text-sm font-semibold text-foreground mt-1">NODA Platform</p>
+          </div>
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Version</p>
+            <p className="text-sm font-semibold text-foreground mt-1">HAKONE (v3.0)</p>
+          </div>
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Environment</p>
+            <p className="text-sm font-semibold text-foreground mt-1">{process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Theme</p>
+            <p className="text-sm font-semibold text-foreground mt-1">Dark (default)</p>
+          </div>
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4 md:col-span-2 lg:col-span-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">System Status</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-[var(--status-allow)] shrink-0" aria-hidden="true" />
+              <p className="text-sm font-semibold text-[var(--status-allow)]">All systems operational</p>
+            </div>
+          </div>
         </div>
-        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
-          <p className="text-sm font-medium text-foreground">Theme</p>
-          <p className="text-xs text-muted-foreground mt-1">Dark (default)</p>
+      </div>
+
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Modules</h3>
+        <p className="text-sm text-muted-foreground">
+          Active platform modules and capabilities.
+        </p>
+        <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            { name: 'Haiku Scanner', desc: 'Text & multimodal content analysis' },
+            { name: 'LLM Jutsu', desc: 'Model security testing & benchmarks' },
+            { name: 'Atemi Lab', desc: 'Adversarial attack toolkit' },
+            { name: 'Hattori Guard', desc: 'Input/output protection' },
+            { name: 'Bushido Book', desc: 'Compliance framework mapping' },
+            { name: 'Amaterasu DNA', desc: 'Attack pattern intelligence' },
+            { name: 'The Kumite', desc: 'Arena, Mitsuke, Supply Chain' },
+            { name: 'Sengoku', desc: 'Continuous red teaming' },
+            { name: 'Time Chamber', desc: 'Temporal attack simulation' },
+            { name: 'Kotoba', desc: 'Prompt security optimization' },
+            { name: 'Ronin Hub', desc: 'Bug bounty program tracker' },
+            { name: 'Armory', desc: 'Fixture & payload library' },
+          ].map(mod => (
+            <div key={mod.name} className="flex items-center gap-2 rounded border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--status-allow)] shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-foreground">{mod.name}</p>
+                <p className="text-[10px] text-muted-foreground truncate">{mod.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-3">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Documentation</h3>
+        <div className="grid gap-2 md:grid-cols-2">
+          <a
+            href="/docs/user/PLATFORM_GUIDE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-xs text-[var(--bu-electric)] hover:underline"
+          >
+            Platform Guide →
+          </a>
+          <a
+            href="/docs/user/API_REFERENCE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-xs text-[var(--bu-electric)] hover:underline"
+          >
+            API Reference →
+          </a>
         </div>
       </div>
     </div>

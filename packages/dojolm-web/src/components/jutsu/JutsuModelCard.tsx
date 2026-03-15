@@ -10,7 +10,7 @@
 'use client'
 
 import { memo, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { BeltBadge, getBeltRank } from '@/components/ui/BeltBadge'
 import { Badge } from '@/components/ui/badge'
 import { Eye, RefreshCw, Download, TrendingUp, TrendingDown, Minus, Clock, FlaskConical } from 'lucide-react'
@@ -119,7 +119,7 @@ export const JutsuModelCard = memo(function JutsuModelCard({
         {/* Last Tested */}
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
           <Clock className="h-3 w-3" aria-hidden="true" />
-          <span>Last tested: {new Date(model.lastTestedAt).toLocaleDateString()}</span>
+          <span>Last tested: {formatDate(model.lastTestedAt)}</span>
         </div>
 
         {/* Action Buttons */}

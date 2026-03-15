@@ -22,7 +22,7 @@ export class UserRepository extends BaseRepository<UserRow> {
    */
   async createUser(
     username: string,
-    email: string,
+    email: string | null,
     password: string,
     role: UserRole = 'viewer',
     displayName?: string

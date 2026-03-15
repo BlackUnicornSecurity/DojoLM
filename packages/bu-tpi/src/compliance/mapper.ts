@@ -4,6 +4,7 @@
  *
  * INDEX:
  * - MODULE_CONTROL_MAP: Scanner module -> control ID mappings
+ * - MODULE_EVIDENCE_MAP: Scanner module -> test evidence file paths (H10.1)
  * - CATEGORY_CONTROL_MAP: Fixture category -> control ID mappings
  * - mapModuleToControls(): Map a module to framework controls
  * - mapFixturesToControls(): Map fixture categories to framework controls
@@ -33,7 +34,7 @@ export const MODULE_CONTROL_MAP: Record<string, string[]> = {
   ],
   'ssrf-detector': [
     'LLM02', 'NIST-SEC', 'AML.T0010',
-    'CISA-PH3-2', 'ISO27-ACCESS', 'ASVS-V9', 'API-7', 'NIST-SI',
+    'CISA-PH3-2', 'ISO27-ACCESS', 'ASVS-V5', 'ASVS-V9', 'API-7', 'ISO27-VULN', 'NIST-SI',
   ],
   'encoding-engine': [
     'LLM01', 'AML.T0060', 'NIST-ROBUST',
@@ -61,8 +62,8 @@ export const MODULE_CONTROL_MAP: Record<string, string[]> = {
     'CISA-PH2-1', 'ISO27-ACCESS',
   ],
   'xxe-protopollution': [
-    'LLM02', 'NIST-SEC', 'EU-ART15',
-    'ASVS-V5', 'API-8', 'NIST-SI',
+    'LLM01', 'LLM02', 'NIST-SEC', 'EU-ART15',
+    'ASVS-V5', 'API-3', 'API-7', 'API-8', 'NIST-SI',
   ],
 
   // P2.6 Modules
@@ -130,10 +131,59 @@ export const MODULE_CONTROL_MAP: Record<string, string[]> = {
     'NIST-218A-PW.8', 'ISO27-ACCESS', 'ASVS-V5', 'NIST-SI',
   ],
 
+  // H10.1: Fuzzing infrastructure — BAISS-023, BAISS-001, BAISS-002, BAISS-003
+  'fuzzing': [
+    'LLM01', 'LLM02', 'AML.T0015', 'NIST-ROBUST',
+    'ASVS-V5', 'NIST-SI', 'NIST-218A-PW.8',
+  ],
+
+  // H10.1: Credential sanitization / LLM security — BAISS-005, BAISS-016
+  'llm-security': [
+    'LLM06', 'NIST-PRIV', 'NIST-SEC',
+    'ISO27-LOG', 'NIST-SI',
+  ],
+
+  // H16.5: WebMCP compliance mapping
+  'webmcp-detector': [
+    'LLM01',        // OWASP LLM01 - Prompt Injection (indirect via web)
+    'LLM07',        // OWASP LLM07 - Insecure Plugin Design
+    'AML.T0060',    // MITRE ATLAS - LLM Prompt Injection
+    'NIST-SEC',     // NIST AI 600-1 - Security
+    'EU-ART15',     // EU AI Act Art.15 - Robustness
+    'ASVS-V5',      // OWASP ASVS V5 - Validation
+    'ASVS-V9',      // OWASP ASVS V9 - Communications
+    'API-7',        // OWASP API Security - SSRF
+    'NIST-SI',      // NIST 800-53 SI - System Integrity
+    'CISA-PH3-1',   // CISA/NCSC - Secure Development
+    'CSF2-DE-1',    // NIST CSF 2.0 - Detect
+  ],
+
   // Core
   'core-patterns': [
     'LLM01', 'LLM02', 'AML.T0060', 'NIST-ROBUST',
     'NIST-218A-PW.8', 'ASVS-V5', 'NIST-SI',
+  ],
+};
+
+/**
+ * H10.1: Static mapping of scanner module names to test evidence file paths.
+ * Each entry maps a module to test files that serve as compliance evidence.
+ */
+export const MODULE_EVIDENCE_MAP: Record<string, string[]> = {
+  'fuzzing': [
+    'src/fuzzing/fuzzing.test.ts',
+  ],
+  'ssrf-detector': [
+    'src/modules/ssrf-detector.test.ts',
+  ],
+  'llm-security': [
+    'src/llm/security.test.ts',
+  ],
+  'xxe-protopollution': [
+    'src/modules/xxe-protopollution.test.ts',
+  ],
+  'webmcp-detector': [
+    'src/modules/webmcp-detector.test.ts',
   ],
 };
 
@@ -235,6 +285,10 @@ export const CATEGORY_CONTROL_MAP: Record<string, string[]> = {
   'delivery-vectors': [
     'LLM01', 'NIST-SEC',
     'NIST-218A-PW.8', 'ISO27-ACCESS', 'ASVS-V5', 'API-8', 'NIST-SI',
+  ],
+  'webmcp': [
+    'LLM01', 'LLM07', 'AML.T0060', 'NIST-SEC',
+    'EU-ART15', 'ASVS-V5', 'API-7', 'NIST-SI',
   ],
 };
 

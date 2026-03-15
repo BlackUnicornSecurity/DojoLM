@@ -4,18 +4,20 @@
  * Story: S74, TPI-NODA-4.1, BUSHIDO-BOOK-4.1
  * Index:
  * - TIER_LABELS, TIER_ORDER constants
+ * - CONTROL_CATEGORIES, CATEGORY_LABELS, CATEGORY_ORDER constants (H8.1)
  * - FrameworkTier, ComplianceFrameworkData, ComplianceCenterData interfaces
- * - SubView, CoverageSubMode types
+ * - SubView, CoverageSubMode, GroupMode types
  * - ScoreMeter, FrameworkGapSummary components
- * - ComplianceCenter (main), TierSection
+ * - ComplianceCenter (main), TierSection (with inline group-mode toggle)
  * - CoveragePanel, CoverageDeltaView
- * - ComparisonView, OverviewPanel components
+ * - ComparisonView, OverviewPanel components (H8.3: "Test in LLM Dashboard" button)
+ * - ComplianceScanPanel (H9.4: Framework Compliance tab with control heatmap + drill-down)
  */
 
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import {
   Shield,
@@ -28,9 +30,15 @@ import {
   ListChecks,
   GitCompareArrows,
   ChevronDown,
+  Play,
+  ShieldCheck,
+  ChevronRight,
+  Search,
 } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { useNavigation } from '@/lib/NavigationContext'
 import { GapMatrix } from './GapMatrix'
 import { AuditTrail } from './AuditTrail'
 import { ComplianceChecklist } from './ComplianceChecklist'
@@ -56,6 +64,51 @@ const TIER_LABELS: Record<string, string> = {
 
 /** Tier display order */
 const TIER_ORDER = ['implemented', 'high', 'medium', 'regional', 'referenced']
+
+/** H8.1: Category-based grouping — maps framework IDs to control categories */
+const CONTROL_CATEGORIES: Record<string, string> = {
+  // Technical Controls — map to scanner modules and automated testing
+  'owasp-llm': 'technical',
+  'nist-ai-600-1': 'technical',
+  'mitre-atlas': 'technical',
+  'nist-800-218a': 'technical',
+  'slsa-v1': 'technical',
+  'ml-bom': 'technical',
+  'openssf': 'technical',
+  'owasp-asvs': 'technical',
+  'owasp-api': 'technical',
+  'nist-800-53-ai': 'technical',
+  // Governance Controls — policies, risk management, accountability
+  'iso-42001': 'governance',
+  'eu-ai-act': 'governance',
+  'eu-ai-act-gpai': 'governance',
+  'iso-23894': 'governance',
+  'ieee-p7000': 'governance',
+  'google-saif': 'governance',
+  'cisa-ncsc': 'governance',
+  'nist-csf-2': 'governance',
+  'gdpr-ai': 'governance',
+  // Non-Technical Controls — bias, fairness, regional, process
+  'iso-24027': 'non-technical',
+  'iso-24028': 'non-technical',
+  'nist-ai-100-4': 'non-technical',
+  'uk-dsit': 'non-technical',
+  'sg-mgaf': 'non-technical',
+  'ca-aia': 'non-technical',
+  'au-aie': 'non-technical',
+  'iso-27001-ai': 'non-technical',
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  technical: 'Technical Controls',
+  governance: 'Governance Controls',
+  'non-technical': 'Non-Technical Controls',
+}
+
+const CATEGORY_ORDER = ['technical', 'governance', 'non-technical']
+
+/** Merged label lookup for TierSection — combines tier + category labels */
+const ALL_GROUP_LABELS: Record<string, string> = { ...TIER_LABELS, ...CATEGORY_LABELS }
 
 // --- Types ---
 
@@ -97,7 +150,10 @@ interface ComplianceCenterData {
   lastUpdated: string
 }
 
-type SubView = 'overview' | 'coverage' | 'gap-matrix' | 'audit-trail' | 'checklists' | 'navigator'
+type SubView = 'overview' | 'coverage' | 'gap-matrix' | 'audit-trail' | 'checklists' | 'navigator' | 'compliance-scan'
+
+/** H8.1: Group mode for framework list and overview panel */
+type GroupMode = 'tier' | 'category'
 
 // --- Score Meter Component ---
 
@@ -148,7 +204,7 @@ function FrameworkGapSummary({
       onClick={onSelect}
       className={cn(
         'flex items-center justify-between w-full px-3 py-2 rounded-lg text-left',
-        'motion-safe:transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+        'motion-safe:transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
         isSelected
           ? 'bg-[var(--bg-quaternary)] border border-[var(--dojo-primary)]'
           : 'hover:bg-[var(--bg-secondary)] border border-transparent'
@@ -190,6 +246,20 @@ export default function ComplianceCenter() {
   const [error, setError] = useState<string | null>(null)
   const [selectedFramework, setSelectedFramework] = useState<string>('owasp-llm')
   const [subView, setSubView] = useState<SubView>('overview')
+  const [groupMode, setGroupMode] = useState<GroupMode>('tier')
+  const { setActiveTab } = useNavigation()
+
+  /** H8.3: Navigate to LLM Dashboard with framework pre-populated */
+  const handleStartComplianceCheck = useCallback((frameworkId: string) => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('llm-compliance-framework', frameworkId)
+      } catch {
+        // QuotaExceededError — silently degrade
+      }
+    }
+    setActiveTab('llm')
+  }, [setActiveTab])
 
   useEffect(() => {
     let cancelled = false
@@ -292,6 +362,22 @@ export default function ComplianceCenter() {
     return groups
   }, [data])
 
+  /** H8.1: Group frameworks by control category */
+  const frameworksByCategory = useMemo(() => {
+    if (!data) return {}
+    const groups: Record<string, ComplianceFrameworkData[]> = {}
+    for (const fw of data.frameworks) {
+      const cat = CONTROL_CATEGORIES[fw.id] ?? 'non-technical'
+      if (!groups[cat]) groups[cat] = []
+      groups[cat].push(fw)
+    }
+    return groups
+  }, [data])
+
+  const handleGroupModeChange = useCallback((mode: GroupMode) => {
+    setGroupMode(mode)
+  }, [])
+
   // --- Loading state ---
   if (loading) {
     return (
@@ -333,6 +419,7 @@ export default function ComplianceCenter() {
     { id: 'audit-trail', label: 'Audit Trail', icon: FileText },
     { id: 'checklists', label: 'Checklists', icon: ListChecks },
     { id: 'navigator', label: 'Navigator', icon: GitCompareArrows },
+    { id: 'compliance-scan', label: 'Framework Compliance', icon: ShieldCheck },
   ]
 
   return (
@@ -340,7 +427,7 @@ export default function ComplianceCenter() {
       {/* Header */}
       <ModuleHeader
         title="Bushido Book"
-        subtitle={`Compliance frameworks and coverage analysis — Last updated: ${data.lastUpdated}`}
+        subtitle={`Compliance frameworks and coverage analysis — Last updated: ${formatDate(data.lastUpdated, true)}`}
         icon={Shield}
       />
 
@@ -364,24 +451,73 @@ export default function ComplianceCenter() {
         {/* Framework list grouped by tier */}
         <Card className="lg:col-span-9">
           <CardContent className="p-4">
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Framework Coverage
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Framework Coverage
+            </h3>
+            {/* H8.1: Group mode toggle */}
+            <div className="flex items-center gap-1 rounded-lg bg-[var(--bg-quaternary)] p-0.5" role="radiogroup" aria-label="Group frameworks by">
+              <button
+                role="radio"
+                aria-checked={groupMode === 'tier'}
+                aria-label="Group by tier"
+                onClick={() => handleGroupModeChange('tier')}
+                className={cn(
+                  'px-2 py-0.5 text-xs rounded-md motion-safe:transition-colors min-h-[28px]',
+                  groupMode === 'tier'
+                    ? 'bg-[var(--dojo-primary)] text-white font-semibold'
+                    : 'text-muted-foreground hover:text-[var(--foreground)]'
+                )}
+              >
+                Tier
+              </button>
+              <button
+                role="radio"
+                aria-checked={groupMode === 'category'}
+                aria-label="Group by category"
+                onClick={() => handleGroupModeChange('category')}
+                className={cn(
+                  'px-2 py-0.5 text-xs rounded-md motion-safe:transition-colors min-h-[28px]',
+                  groupMode === 'category'
+                    ? 'bg-[var(--dojo-primary)] text-white font-semibold'
+                    : 'text-muted-foreground hover:text-[var(--foreground)]'
+                )}
+              >
+                Category
+              </button>
+            </div>
+          </div>
           <div className="space-y-1">
-            {TIER_ORDER.map((tier) => {
-              const tierFrameworks = frameworksByTier[tier]
-              if (!tierFrameworks || tierFrameworks.length === 0) return null
-              return (
-                <TierSection
-                  key={tier}
-                  tier={tier}
-                  frameworks={tierFrameworks}
-                  selectedFrameworkId={selectedFramework}
-                  onSelect={handleFrameworkSelect}
-                  defaultExpanded={tier === 'implemented'}
-                />
-              )
-            })}
+            {groupMode === 'tier'
+              ? TIER_ORDER.map((tier) => {
+                  const tierFrameworks = frameworksByTier[tier]
+                  if (!tierFrameworks || tierFrameworks.length === 0) return null
+                  return (
+                    <TierSection
+                      key={tier}
+                      tier={tier}
+                      frameworks={tierFrameworks}
+                      selectedFrameworkId={selectedFramework}
+                      onSelect={handleFrameworkSelect}
+                      defaultExpanded={tier === 'implemented'}
+                    />
+                  )
+                })
+              : CATEGORY_ORDER.map((cat) => {
+                  const catFrameworks = frameworksByCategory[cat]
+                  if (!catFrameworks || catFrameworks.length === 0) return null
+                  return (
+                    <TierSection
+                      key={cat}
+                      tier={cat}
+                      frameworks={catFrameworks}
+                      selectedFrameworkId={selectedFramework}
+                      onSelect={handleFrameworkSelect}
+                      defaultExpanded={cat === 'technical'}
+                    />
+                  )
+                })
+            }
           </div>
           </CardContent>
         </Card>
@@ -409,7 +545,7 @@ export default function ComplianceCenter() {
           {/* Sub-view content */}
           <div className="p-4">
             <TabsContent value="overview" className="mt-0">
-              <OverviewPanel framework={selectedFw} allFrameworks={data.frameworks} />
+              <OverviewPanel framework={selectedFw} allFrameworks={data.frameworks} groupMode={groupMode} onStartComplianceCheck={handleStartComplianceCheck} />
             </TabsContent>
             <TabsContent value="coverage" className="mt-0">
               <CoveragePanel frameworks={data.frameworks} />
@@ -425,6 +561,9 @@ export default function ComplianceCenter() {
             </TabsContent>
             <TabsContent value="navigator" className="mt-0">
               <FrameworkNavigator />
+            </TabsContent>
+            <TabsContent value="compliance-scan" className="mt-0">
+              <ComplianceScanPanel frameworks={data.frameworks} onStartComplianceCheck={handleStartComplianceCheck} />
             </TabsContent>
           </div>
         </Tabs>
@@ -459,7 +598,7 @@ function TierSection({
         onClick={() => setExpanded((p) => !p)}
         className="flex items-center justify-between w-full px-3 py-2 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[40px]"
         aria-expanded={expanded}
-        aria-label={`${TIER_LABELS[tier] ?? tier}: ${frameworks.length} frameworks, ${tierAvg}% average coverage`}
+        aria-label={`${ALL_GROUP_LABELS[tier] ?? tier}: ${frameworks.length} frameworks, ${tierAvg}% average coverage`}
       >
         <div className="flex items-center gap-2">
           <ChevronDown
@@ -470,7 +609,7 @@ function TierSection({
             aria-hidden="true"
           />
           <span className="text-xs font-semibold text-[var(--foreground)]">
-            {TIER_LABELS[tier] ?? tier}
+            {ALL_GROUP_LABELS[tier] ?? tier}
           </span>
           <span className="text-[10px] text-muted-foreground">({frameworks.length})</span>
         </div>
@@ -666,7 +805,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
               'flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg',
               'border border-[var(--border)] text-muted-foreground',
               'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           >
             <GitCompareArrows className="w-4 h-4" aria-hidden="true" />
@@ -678,7 +817,7 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
               'flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg',
               'border border-[var(--border)] text-muted-foreground',
               'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
             )}
           >
             <Layers className="w-4 h-4" aria-hidden="true" />
@@ -829,7 +968,7 @@ function CoverageDeltaView({
             'px-3 py-1.5 text-sm rounded-lg',
             'border border-[var(--border)] text-muted-foreground',
             'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
           )}
         >
           Back to Coverage
@@ -1007,7 +1146,7 @@ function ComparisonView({
             'px-3 py-1.5 text-sm rounded-lg',
             'border border-[var(--border)] text-muted-foreground',
             'hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)]',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]'
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]'
           )}
         >
           Back to Coverage
@@ -1090,9 +1229,13 @@ function ComparisonView({
 function OverviewPanel({
   framework,
   allFrameworks,
+  groupMode = 'tier',
+  onStartComplianceCheck,
 }: {
   framework: ComplianceFrameworkData | undefined
   allFrameworks: ComplianceFrameworkData[]
+  groupMode?: GroupMode
+  onStartComplianceCheck?: (frameworkId: string) => void
 }) {
   if (!framework) {
     return (
@@ -1126,13 +1269,13 @@ function OverviewPanel({
             <p className="text-2xl font-bold text-[var(--warning)]">
               {framework.partialControls}
             </p>
-            <p className="text-xs text-muted-foreground">Partial</p>
+            <p className="text-xs text-muted-foreground">Policy Gaps</p>
           </div>
           <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
             <p className="text-2xl font-bold text-[var(--danger)]">
               {framework.gapControls}
             </p>
-            <p className="text-xs text-muted-foreground">Gaps</p>
+            <p className="text-xs text-muted-foreground">Technical Gaps</p>
           </div>
         </div>
         {framework.lastAssessed && (
@@ -1140,33 +1283,52 @@ function OverviewPanel({
             Last assessed: {framework.lastAssessed}
           </p>
         )}
+        {/* H8.3: Start Compliance Check button */}
+        {onStartComplianceCheck && (
+          <div className="mt-3">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5"
+              onClick={() => onStartComplianceCheck(framework.id)}
+              aria-label={`Start compliance check for ${framework.name}`}
+              data-testid={`compliance-check-${framework.id}`}
+            >
+              <Play className="h-3.5 w-3.5" aria-hidden="true" />
+              Test in LLM Dashboard
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* All frameworks summary table grouped by tier */}
-      {TIER_ORDER.map((tier) => {
-        const tierFrameworks = allFrameworks.filter((fw) => (fw.tier ?? 'implemented') === tier)
-        if (tierFrameworks.length === 0) return null
+      {/* All frameworks summary table grouped by tier or category (H8.1) */}
+      {(groupMode === 'category' ? CATEGORY_ORDER : TIER_ORDER).map((groupKey) => {
+        const groupFrameworks = groupMode === 'category'
+          ? allFrameworks.filter((fw) => (CONTROL_CATEGORIES[fw.id] ?? 'non-technical') === groupKey)
+          : allFrameworks.filter((fw) => (fw.tier ?? 'implemented') === groupKey)
+        if (groupFrameworks.length === 0) return null
+        const groupLabel = ALL_GROUP_LABELS[groupKey] ?? groupKey
         return (
-          <div key={tier}>
+          <div key={groupKey}>
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              {TIER_LABELS[tier] ?? tier}
+              {groupLabel}
             </h3>
             <div className="overflow-x-auto mb-4">
               <table
                 className="min-w-full text-sm"
-                aria-label={`${TIER_LABELS[tier] ?? tier} compliance summary`}
+                aria-label={`${groupLabel} compliance summary`}
               >
                 <thead>
                   <tr className="border-b border-[var(--border)]">
                     <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Framework</th>
                     <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Coverage</th>
                     <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Controls</th>
-                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Gaps</th>
-                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Partial</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Technical Gaps</th>
+                    <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-muted-foreground uppercase">Policy Gaps</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {tierFrameworks.map((fw) => (
+                  {groupFrameworks.map((fw) => (
                     <tr
                       key={fw.id}
                       className={cn(
@@ -1195,6 +1357,279 @@ function OverviewPanel({
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// --- Compliance Scan Panel (H9.4: Framework Compliance tab) ---
+
+/** Mock evidence entries for drill-down — maps control IDs to test modules and evidence */
+const MOCK_EVIDENCE: Record<string, { modules: string[]; evidence: string[]; lastRun?: string }> = {
+  'LLM01': { modules: ['prompt-injection', 'input-sanitization'], evidence: ['PI-001 payload blocked', 'PI-002 boundary test passed'], lastRun: '2026-03-10' },
+  'LLM02': { modules: ['output-validation', 'content-safety'], evidence: ['OV-001 output filtered', 'CS-001 PII redacted'], lastRun: '2026-03-09' },
+  'LLM03': { modules: ['training-data-analysis'], evidence: ['TD-001 poisoning check passed'], lastRun: '2026-03-08' },
+  'LLM04': { modules: ['resource-monitor', 'rate-limiter'], evidence: ['RM-001 DoS mitigated'], lastRun: '2026-03-07' },
+  'LLM05': { modules: ['supply-chain-audit'], evidence: ['SC-001 dependency scan clean'] },
+  'LLM06': { modules: ['data-leakage-detection'], evidence: ['DL-001 PII exposure blocked', 'DL-002 training data leak prevented'], lastRun: '2026-03-11' },
+  'LLM07': { modules: ['plugin-security'], evidence: ['PL-001 auth bypass blocked'] },
+  'LLM08': { modules: ['overreliance-detector'], evidence: ['OR-001 hallucination flagged'], lastRun: '2026-03-06' },
+  'LLM09': { modules: ['access-control'], evidence: ['AC-001 escalation prevented', 'AC-002 RBAC enforced'] },
+  'LLM10': { modules: ['model-theft-prevention'], evidence: ['MT-001 extraction blocked'], lastRun: '2026-03-05' },
+}
+
+function ComplianceScanPanel({
+  frameworks,
+  onStartComplianceCheck,
+}: {
+  frameworks: ComplianceFrameworkData[]
+  onStartComplianceCheck: (frameworkId: string) => void
+}) {
+  const [selectedFwId, setSelectedFwId] = useState<string>(
+    frameworks.length > 0 ? frameworks[0].id : ''
+  )
+  const [expandedControl, setExpandedControl] = useState<string | null>(null)
+
+  const selectedFramework = useMemo(
+    () => frameworks.find((f) => f.id === selectedFwId),
+    [frameworks, selectedFwId]
+  )
+
+  const controls = useMemo(
+    () => selectedFramework?.controls ?? [],
+    [selectedFramework]
+  )
+
+  /** Coverage status color */
+  const getStatusColor = (coverage: number): string => {
+    if (coverage >= COVERAGE_HIGH) return 'var(--success)'
+    if (coverage >= COVERAGE_MODERATE) return 'var(--warning)'
+    return 'var(--danger)'
+  }
+
+  const getStatusLabel = (status: 'covered' | 'partial' | 'gap'): string => {
+    if (status === 'covered') return 'Covered'
+    if (status === 'partial') return 'Partial'
+    return 'Gap'
+  }
+
+  /** Summary stats for the selected framework */
+  const stats = useMemo(() => {
+    if (controls.length === 0) return { covered: 0, partial: 0, gap: 0, avgCoverage: 0 }
+    const covered = controls.filter((c) => c.status === 'covered').length
+    const partial = controls.filter((c) => c.status === 'partial').length
+    const gap = controls.filter((c) => c.status === 'gap').length
+    const avgCoverage = Math.round(controls.reduce((sum, c) => sum + c.coverage, 0) / controls.length)
+    return { covered, partial, gap, avgCoverage }
+  }, [controls])
+
+  const handleControlClick = useCallback((controlId: string) => {
+    setExpandedControl((prev) => (prev === controlId ? null : controlId))
+  }, [])
+
+  return (
+    <div className="space-y-6" data-testid="compliance-scan-panel">
+      {/* Header: Framework selector + Run button */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <label htmlFor="compliance-scan-fw-select" className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+            Framework:
+          </label>
+          <select
+            id="compliance-scan-fw-select"
+            value={selectedFwId}
+            onChange={(e) => {
+              setSelectedFwId(e.target.value)
+              setExpandedControl(null)
+            }}
+            className="px-3 py-2 rounded-lg bg-[var(--input)] border border-[var(--border)] text-sm text-[var(--foreground)] min-h-[44px] min-w-[200px]"
+            aria-label="Compliance scan framework selector"
+            data-testid="compliance-scan-fw-select"
+          >
+            {frameworks.map((fw) => (
+              <option key={fw.id} value={fw.id}>{fw.name}</option>
+            ))}
+          </select>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1.5"
+          onClick={() => onStartComplianceCheck(selectedFwId)}
+          aria-label="Run compliance scan"
+          data-testid="run-compliance-scan"
+        >
+          <Play className="h-3.5 w-3.5" aria-hidden="true" />
+          Run Compliance Scan
+        </Button>
+      </div>
+
+      {/* Summary stats */}
+      {controls.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
+            <p className="text-2xl font-bold text-[var(--foreground)]">{stats.avgCoverage}%</p>
+            <p className="text-xs text-muted-foreground">Avg Coverage</p>
+          </div>
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
+            <p className="text-2xl font-bold text-[var(--success)]">{stats.covered}</p>
+            <p className="text-xs text-muted-foreground">Covered</p>
+          </div>
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
+            <p className="text-2xl font-bold text-[var(--warning)]">{stats.partial}</p>
+            <p className="text-xs text-muted-foreground">Partial</p>
+          </div>
+          <div className="rounded-lg bg-[var(--bg-quaternary)] p-3 text-center">
+            <p className="text-2xl font-bold text-[var(--danger)]">{stats.gap}</p>
+            <p className="text-xs text-muted-foreground">Gaps</p>
+          </div>
+        </div>
+      )}
+
+      {/* Control heatmap table */}
+      {controls.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table
+            className="min-w-full text-sm"
+            aria-label={`${selectedFramework?.name ?? 'Framework'} control compliance heatmap`}
+            data-testid="compliance-controls-table"
+          >
+            <thead>
+              <tr className="border-b border-[var(--border)]">
+                <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Control ID</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Name</th>
+                <th scope="col" className="px-3 py-2 text-center text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase min-w-[120px]">Coverage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {controls.map((control) => {
+                const isExpanded = expandedControl === control.id
+                const evidence = MOCK_EVIDENCE[control.id]
+                const statusColor = getStatusColor(control.coverage)
+
+                return (
+                  <tr key={control.id} className="group">
+                    <td colSpan={4} className="p-0">
+                      <button
+                        onClick={() => handleControlClick(control.id)}
+                        className={cn(
+                          'w-full text-left grid grid-cols-[minmax(80px,auto)_1fr_100px_minmax(120px,1fr)] items-center',
+                          'px-3 py-2 border-b border-[var(--border)]',
+                          'hover:bg-[var(--bg-secondary)] motion-safe:transition-colors',
+                          'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--bu-electric)]',
+                          isExpanded && 'bg-[var(--bg-secondary)]'
+                        )}
+                        aria-expanded={isExpanded}
+                        aria-label={`${control.id}: ${control.name}, ${control.coverage}% coverage, ${getStatusLabel(control.status)}`}
+                        data-testid={`control-row-${control.id}`}
+                      >
+                        <span className="flex items-center gap-1.5 text-xs font-mono text-[var(--foreground)]">
+                          <ChevronRight
+                            className={cn(
+                              'h-3.5 w-3.5 text-muted-foreground motion-safe:transition-transform',
+                              isExpanded && 'rotate-90'
+                            )}
+                            aria-hidden="true"
+                          />
+                          {control.id}
+                        </span>
+                        <span className="text-sm text-[var(--foreground)] truncate px-2">{control.name}</span>
+                        <span className="text-center">
+                          <span
+                            className={cn(
+                              'inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full',
+                              control.status === 'covered' && 'bg-[var(--success)]/10 text-[var(--success)]',
+                              control.status === 'partial' && 'bg-[var(--warning)]/10 text-[var(--warning)]',
+                              control.status === 'gap' && 'bg-[var(--danger)]/10 text-[var(--danger)]'
+                            )}
+                            data-testid={`control-status-${control.id}`}
+                          >
+                            {getStatusLabel(control.status)}
+                          </span>
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-[var(--bg-quaternary)] rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full motion-safe:transition-all motion-safe:duration-[var(--transition-emphasis)]"
+                              style={{
+                                width: `${Math.min(control.coverage, 100)}%`,
+                                backgroundColor: statusColor,
+                              }}
+                              role="progressbar"
+                              aria-valuenow={control.coverage}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                              aria-label={`${control.coverage}% coverage`}
+                            />
+                          </div>
+                          <span className="text-xs font-mono text-muted-foreground min-w-[4ch] text-right">
+                            {control.coverage}%
+                          </span>
+                        </span>
+                      </button>
+                      {/* Drill-down: evidence and mapped test modules */}
+                      {isExpanded && (
+                        <div
+                          className="px-6 py-3 bg-[var(--bg-tertiary)] border-b border-[var(--border)]"
+                          data-testid={`control-detail-${control.id}`}
+                        >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
+                                Mapped Test Modules
+                              </h4>
+                              {evidence?.modules && evidence.modules.length > 0 ? (
+                                <ul className="space-y-1">
+                                  {evidence.modules.map((mod) => (
+                                    <li key={mod} className="flex items-center gap-1.5 text-sm text-[var(--foreground)]">
+                                      <Search className="h-3 w-3 text-muted-foreground flex-shrink-0" aria-hidden="true" />
+                                      {mod}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">No test modules mapped</p>
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
+                                Evidence
+                              </h4>
+                              {evidence?.evidence && evidence.evidence.length > 0 ? (
+                                <ul className="space-y-1">
+                                  {evidence.evidence.map((ev) => (
+                                    <li key={ev} className="flex items-center gap-1.5 text-sm text-[var(--foreground)]">
+                                      <CheckCircle className="h-3 w-3 text-[var(--success)] flex-shrink-0" aria-hidden="true" />
+                                      {ev}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">No evidence collected</p>
+                              )}
+                              {evidence?.lastRun && (
+                                <p className="text-xs text-muted-foreground mt-2">
+                                  Last run: {evidence.lastRun}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <EmptyState
+          icon={ShieldCheck}
+          title="No Controls Available"
+          description="Select a framework with controls or run a compliance assessment to populate control data."
+        />
+      )}
     </div>
   )
 }

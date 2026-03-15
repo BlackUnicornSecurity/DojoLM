@@ -1,18 +1,19 @@
 /**
  * File: ResultsView.tsx
- * Purpose: View and analyze test results — model-centric cards with belt system
- * Story: NODA-3 Stories 6.2, 6.3, 6.4
+ * Purpose: Unified Results view — executive summary, model-centric cards with belt system, vulnerability panel
+ * Story: NODA-3 Stories 6.2, 6.3, 6.4 + HAKONE H7.2, H7.3
  * Index:
- * - ResultsView component (line 26)
- * - ModelAggregateView (line 60)
- * - ExecutionListView (line 130)
- * - ExecutionCard component (line 170)
+ * - ResultsView component (line 30)
+ * - ModelAggregateView (line 80)
+ * - ExecutionListView (line 150)
+ * - ExecutionCard component (line 190)
  */
 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useResultsContext, useModelContext } from '@/lib/contexts';
+import { formatDate } from '@/lib/utils';
 import type { LLMTestExecution, LLMModelConfig, ResultsFilter } from '@/lib/llm-types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +25,8 @@ import { Download, Filter, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, 
 import { BeltBadge } from '@/components/ui/BeltBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ModelResultCard, aggregateByModel } from './ModelResultCard';
+import { ExecutiveSummary } from './ExecutiveSummary';
+import { VulnerabilityPanel } from './VulnerabilityPanel';
 
 // LLM resilience score thresholds
 const SCORE_HIGH = 80
@@ -126,6 +129,11 @@ export function ResultsView() {
 
   return (
     <div className="space-y-6">
+      {/* Executive Summary — merged from standalone Summary tab (H7.2) */}
+      <section data-testid="results-executive-summary" aria-label="Executive Summary">
+        <ExecutiveSummary />
+      </section>
+
       {/* Header with filters */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-64">
@@ -250,6 +258,11 @@ export function ResultsView() {
           })}
         </div>
       )}
+
+      {/* Vulnerability Panel — merged from standalone Vulns tab (H7.2) */}
+      <section data-testid="results-vulnerability-panel" aria-label="Vulnerability Findings">
+        <VulnerabilityPanel />
+      </section>
     </div>
   );
 }
@@ -340,7 +353,7 @@ function ExecutionCard({
               </Badge>
             </div>
             <CardDescription className="text-xs">
-              {new Date(execution.timestamp).toLocaleString()} • {execution.duration_ms}ms
+              {formatDate(execution.timestamp, true)} • {execution.duration_ms}ms
             </CardDescription>
           </div>
           <div className="flex items-center gap-1">

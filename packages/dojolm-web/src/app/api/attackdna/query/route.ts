@@ -157,7 +157,7 @@ async function handleQueryTimeline(
 }
 
 async function handleQueryStats(sourceTier?: string): Promise<NextResponse> {
-  const stats = await dnaStorage.getLocalStats();
+  const stats = await dnaStorage.getLocalStats(sourceTier);
 
   return NextResponse.json({
     stats: {

@@ -303,14 +303,15 @@ describe('JUT-007 to JUT-012: ModelDetailView tabs', () => {
     expect(screen.getByLabelText(/Download JSON report/)).toBeInTheDocument()
     expect(screen.getByLabelText(/Download CSV report/)).toBeInTheDocument()
     expect(screen.getByLabelText(/Download SARIF report/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Download PDF report/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Download Markdown report/)).toBeInTheDocument()
   })
 
   it('JUT-012: Metrics tab shows performance data', () => {
     render(<ModelDetailView model={model} onClose={vi.fn()} />)
     expect(screen.getByText('PERFORMANCE METRICS')).toBeInTheDocument()
     expect(screen.getByText('Total Executions')).toBeInTheDocument()
-    expect(screen.getByText('Pass Rate')).toBeInTheDocument()
+    // Pass Rate appears in both History expandable cards and Metrics tab
+    expect(screen.getAllByText('Pass Rate').length).toBeGreaterThanOrEqual(1)
   })
 })
 

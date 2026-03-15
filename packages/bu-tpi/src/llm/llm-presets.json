@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "lastUpdated": "2026-03-03",
   "presets": [
-    { "id": "openai", "name": "OpenAI", "tier": 1, "baseUrl": "https://api.openai.com/v1", "authType": "bearer", "defaultModels": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "o1", "o1-mini"], "isOpenAICompatible": true, "region": "US", "envVar": "OPENAI_API_KEY" },
+    { "id": "openai", "name": "OpenAI", "tier": 1, "baseUrl": "https://api.openai.com/v1", "authType": "bearer", "defaultModels": ["gpt-5.4", "gpt-5.4-mini", "gpt-4o", "o3", "o3-mini"], "isOpenAICompatible": true, "region": "US", "envVar": "OPENAI_API_KEY" },
     { "id": "anthropic", "name": "Anthropic", "tier": 1, "baseUrl": "https://api.anthropic.com", "authType": "api-key-header", "authHeaderName": "x-api-key", "defaultModels": ["claude-sonnet-4-6", "claude-opus-4-6", "claude-haiku-4-5-20251001"], "isOpenAICompatible": false, "apiVersion": "2023-06-01", "region": "US", "envVar": "ANTHROPIC_API_KEY" },
     { "id": "google", "name": "Google Gemini", "tier": 1, "baseUrl": "https://generativelanguage.googleapis.com/v1beta", "authType": "query-param", "defaultModels": ["gemini-2.0-flash", "gemini-2.0-pro", "gemini-1.5-flash"], "isOpenAICompatible": false, "region": "US", "envVar": "GOOGLE_API_KEY" },
     { "id": "cohere", "name": "Cohere", "tier": 2, "baseUrl": "https://api.cohere.com/v1", "authType": "bearer", "defaultModels": ["command-r-plus", "command-r", "command-light"], "isOpenAICompatible": false, "region": "US/Canada", "envVar": "COHERE_API_KEY" },
@@ -52,10 +52,11 @@
     { "id": "siliconflow", "name": "SiliconFlow", "tier": 4, "baseUrl": "https://api.siliconflow.cn/v1", "authType": "bearer", "defaultModels": ["deepseek-ai/DeepSeek-V3", "Qwen/Qwen2.5-72B-Instruct"], "isOpenAICompatible": true, "region": "China", "envVar": "SILICONFLOW_API_KEY" },
     { "id": "chutes", "name": "Chutes AI", "tier": 5, "baseUrl": "https://llm.chutes.ai/v1", "authType": "bearer", "defaultModels": ["deepseek-ai/DeepSeek-V3-0324", "meta-llama/Llama-4-Scout-17B-16E-Instruct"], "isOpenAICompatible": true, "region": "US", "envVar": "CHUTES_API_KEY" },
     { "id": "kluster", "name": "Kluster AI", "tier": 5, "baseUrl": "https://api.kluster.ai/v1", "authType": "bearer", "defaultModels": ["deepseek-ai/DeepSeek-V3-0324", "klusterai/Meta-Llama-3.1-405B-Instruct-Turbo"], "isOpenAICompatible": true, "region": "US", "envVar": "KLUSTER_API_KEY" },
-    { "id": "targon", "name": "Targon (Bittensor)", "tier": 5, "baseUrl": "https://api.targon.com/v1", "authType": "bearer", "defaultModels": ["deepseek-ai/DeepSeek-V3-0324", "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"], "isOpenAICompatible": true, "region": "Decentralized", "envVar": "TARGON_API_KEY" }
+    { "id": "targon", "name": "Targon (Bittensor)", "tier": 5, "baseUrl": "https://api.targon.com/v1", "authType": "bearer", "defaultModels": ["deepseek-ai/DeepSeek-V3-0324", "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"], "isOpenAICompatible": true, "region": "Decentralized", "envVar": "TARGON_API_KEY" },
+    { "id": "blackunicorn", "name": "BlackUnicorn", "tier": 2, "baseUrl": "https://api.blackunicorn.tech/v1", "authType": "bearer", "defaultModels": ["marfaak", "basileak", "shogun"], "isOpenAICompatible": true, "region": "US", "envVar": "BLACKUNICORN_API_KEY" }
   ],
   "localPresets": [
-    { "id": "ollama", "name": "Ollama", "tier": 1, "baseUrl": "http://localhost:11434", "authType": "none", "defaultModels": ["llama3.2", "mistral", "gemma2"], "isOpenAICompatible": true, "region": "Local" },
+    { "id": "ollama", "name": "Ollama", "tier": 1, "baseUrl": "http://localhost:11434", "authType": "none", "defaultModels": ["llama3.2", "llama3.1", "mistral", "qwen2.5", "gemma3"], "isOpenAICompatible": true, "region": "Local" },
     { "id": "lmstudio", "name": "LM Studio", "tier": 1, "baseUrl": "http://localhost:1234", "authType": "none", "defaultModels": [], "isOpenAICompatible": true, "region": "Local" },
     { "id": "llamacpp", "name": "llama.cpp", "tier": 1, "baseUrl": "http://localhost:8080", "authType": "none", "defaultModels": [], "isOpenAICompatible": true, "region": "Local" },
     { "id": "vllm", "name": "vLLM", "tier": 2, "baseUrl": "http://localhost:8000", "authType": "none", "defaultModels": [], "isOpenAICompatible": true, "region": "Local" },

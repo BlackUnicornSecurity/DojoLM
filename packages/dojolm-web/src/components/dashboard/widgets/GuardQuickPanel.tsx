@@ -26,7 +26,7 @@ export function GuardQuickPanel() {
       actions={
         <button
           onClick={refreshEvents}
-          className="p-1 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="p-1 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           aria-label="Refresh guard events"
         >
           <RefreshCw className={cn('w-3.5 h-3.5', isLoading && 'motion-safe:animate-spin')} aria-hidden="true" />
@@ -57,7 +57,7 @@ export function GuardQuickPanel() {
             onClick={() => setEnabled(!config.enabled)}
             className={cn(
               'p-2 rounded-lg',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
               config.enabled
                 ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary-lg)]'
                 : 'bg-muted text-muted-foreground'
@@ -78,7 +78,7 @@ export function GuardQuickPanel() {
                 onClick={() => setMode(mode.id as GuardMode)}
                 className={cn(
                   'flex-1 px-1.5 py-1 text-xs font-medium rounded',
-                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                   config.mode === mode.id
                     ? 'bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -103,7 +103,7 @@ export function GuardQuickPanel() {
                 onClick={() => setBlockThreshold('WARNING')}
                 className={cn(
                   'px-1.5 py-0.5 text-xs rounded',
-                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'WARNING'
                     ? 'bg-[var(--severity-medium-bg)] text-[var(--severity-medium)]'
                     : 'text-muted-foreground hover:text-foreground'
@@ -117,7 +117,7 @@ export function GuardQuickPanel() {
                 onClick={() => setBlockThreshold('CRITICAL')}
                 className={cn(
                   'px-1.5 py-0.5 text-xs rounded',
-                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'CRITICAL'
                     ? 'bg-[var(--status-block-bg)] text-[var(--status-block)]'
                     : 'text-muted-foreground hover:text-foreground'

@@ -53,11 +53,13 @@ const OWASP_IDS: OwaspLlmMapping[] = [
 
 export interface SkillsLibraryProps {
   onExecuteSkill?: (skillId: string) => void
+  executingSkillId?: string | null
   className?: string
 }
 
 export const SkillsLibrary = memo(function SkillsLibrary({
   onExecuteSkill,
+  executingSkillId,
   className,
 }: SkillsLibraryProps) {
   const [filters, setFilters] = useState<SkillFilters>(INITIAL_FILTERS)
@@ -309,6 +311,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
               key={skill.id}
               skill={skill}
               onExecute={onExecuteSkill}
+              executing={executingSkillId === skill.id}
             />
           ))}
         </div>

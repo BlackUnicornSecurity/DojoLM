@@ -15,6 +15,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/components/ui/textarea', () => ({
@@ -38,6 +39,12 @@ vi.mock('@/components/ui/GlowCard', () => ({
   GlowCard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
+vi.mock('@/lib/ScannerContext', () => ({
+  useScanner: () => ({
+    consumePendingPayload: vi.fn().mockReturnValue(null),
+  }),
+}))
+
 vi.mock('../scanner/QuickChips', () => ({
   QuickChips: ({ onLoadPayload, isScanning }: { onLoadPayload: (text: string, autoScan?: boolean) => void; isScanning: boolean }) => (
     <div data-testid="quick-chips">
@@ -57,6 +64,11 @@ vi.mock('../scanner/ScanningState', () => ({
 vi.mock('lucide-react', () => ({
   Scan: () => <span>ScanIcon</span>,
   Trash2: () => <span>TrashIcon</span>,
+  Upload: () => <span>UploadIcon</span>,
+  Image: () => <span>ImageIcon</span>,
+  Music: () => <span>MusicIcon</span>,
+  FileText: () => <span>FileTextIcon</span>,
+  X: () => <span>XIcon</span>,
 }))
 
 import { ScannerInput } from '../scanner/ScannerInput'
@@ -107,7 +119,23 @@ describe('ScannerInput', () => {
     await user.type(textarea, 'test input')
     const scanBtn = screen.getByText('Scan').closest('button')!
     await user.click(scanBtn)
-    expect(defaultProps.onScan).toHaveBeenCalledWith('test input')
+    expect(defaultProps.onScan).toHaveBeenCalledWith('test input', ['text'])
+  })
+
+  it('SI-013: renders upload file button', () => {
+    render(<ScannerInput {...defaultProps} />)
+    expect(screen.getByText('Upload File')).toBeInTheDocument()
+  })
+
+  it('SI-014: upload button is disabled when scanning', () => {
+    render(<ScannerInput {...defaultProps} isScanning={true} />)
+    const uploadBtn = screen.getByText('Upload File').closest('button')!
+    expect(uploadBtn).toBeDisabled()
+  })
+
+  it('SI-015: renders file type description text', () => {
+    render(<ScannerInput {...defaultProps} />)
+    expect(screen.getByText(/Images.*Audio.*Documents/)).toBeInTheDocument()
   })
 
   it('SI-006: clicking clear resets text and calls onClear', async () => {

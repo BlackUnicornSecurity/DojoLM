@@ -258,7 +258,7 @@ export function ArenaBrowser() {
             className="gap-1"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
-            Forge New Battle
+            New Stand Off
           </Button>
         </div>
       </div>
@@ -453,7 +453,7 @@ function MatchTable({
             {matches.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  No matches found. Click &quot;Forge New Battle&quot; to start one.
+                  No matches found. Click &quot;New Stand Off&quot; to start one.
                 </TableCell>
               </TableRow>
             )}

@@ -43,12 +43,13 @@ describe('Application Constants', () => {
     expect(ids.has('admin')).toBe(true);
   });
 
-  // CONST-005: NAV_GROUPS has 3 groups
-  it('CONST-005: NAV_GROUPS has 3 groups', () => {
-    expect(NAV_GROUPS).toHaveLength(3);
+  // CONST-005: NAV_GROUPS has 4 groups (H6.1 restructure)
+  it('CONST-005: NAV_GROUPS has 4 groups', () => {
+    expect(NAV_GROUPS).toHaveLength(4);
     const groupIds = NAV_GROUPS.map(g => g.id);
-    expect(groupIds).toContain('testing');
+    expect(groupIds).toContain('attack');
     expect(groupIds).toContain('defense');
+    expect(groupIds).toContain('redteam');
     expect(groupIds).toContain('analysis');
   });
 

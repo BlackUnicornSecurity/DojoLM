@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
   isSafeHref: (url: string) => url.startsWith('https://'),
 }))
 
@@ -104,12 +105,12 @@ describe('ProgramCard', () => {
 
   it('PC-005: shows reward range when showRewards is true (default)', () => {
     render(<ProgramCard {...defaultProps} />)
-    expect(screen.getByText('200-20,000')).toBeInTheDocument()
+    expect(screen.getByText('$200 – $20,000')).toBeInTheDocument()
   })
 
   it('PC-006: hides reward range when showRewards is false', () => {
     render(<ProgramCard {...defaultProps} showRewards={false} />)
-    expect(screen.queryByText('200-20,000')).not.toBeInTheDocument()
+    expect(screen.queryByText('$200 – $20,000')).not.toBeInTheDocument()
   })
 
   it('PC-007: shows first 3 OWASP categories and +N for overflow', () => {

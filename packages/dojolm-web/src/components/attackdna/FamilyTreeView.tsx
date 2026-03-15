@@ -442,6 +442,7 @@ interface FamilyTreeViewProps {
   className?: string
   families?: unknown[]
   activeTiers?: Set<string>
+  searchQuery?: string
 }
 
 function convertAPIFamilies(raw: unknown[]): TreeFamily[] {
@@ -468,10 +469,19 @@ function convertAPIFamilies(raw: unknown[]): TreeFamily[] {
   })
 }
 
-export function FamilyTreeView({ className, families: familiesProp }: FamilyTreeViewProps) {
-  const resolvedFamilies = familiesProp && familiesProp.length > 0
+export function FamilyTreeView({ className, families: familiesProp, searchQuery = '' }: FamilyTreeViewProps) {
+  const allFamilies = useMemo(() => familiesProp && familiesProp.length > 0
     ? convertAPIFamilies(familiesProp)
-    : MOCK_FAMILIES
+    : MOCK_FAMILIES, [familiesProp])
+  const resolvedFamilies = useMemo(() => {
+    if (!searchQuery.trim()) return allFamilies
+    const q = searchQuery.toLowerCase()
+    return allFamilies.filter(f =>
+      f.name.toLowerCase().includes(q) ||
+      f.id.toLowerCase().includes(q) ||
+      f.nodes.some(n => n.id.toLowerCase().includes(q) || n.category.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
+    )
+  }, [allFamilies, searchQuery])
   const [selectedFamilyId, setSelectedFamilyId] = useState<string>(resolvedFamilies[0]?.id ?? '')
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null)
 
@@ -499,7 +509,7 @@ export function FamilyTreeView({ className, families: familiesProp }: FamilyTree
       map.set(n.id, n)
     }
     return map
-  }, [family?.nodes])
+  }, [family])
 
   const flatOrder = useMemo((): string[] => {
     if (!family) return []

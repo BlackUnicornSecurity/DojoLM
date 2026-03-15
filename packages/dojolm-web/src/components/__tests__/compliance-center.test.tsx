@@ -20,6 +20,12 @@ vi.mock('@/lib/fetch-with-auth', () => ({
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
+}))
+
+// H8.3: ComplianceCenter now uses useNavigation
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ activeTab: 'compliance', setActiveTab: vi.fn() }),
 }))
 
 vi.mock('@/components/ui/ModuleHeader', () => ({
@@ -58,6 +64,10 @@ vi.mock('@/components/ui/tabs', () => ({
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
   CardContent: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
+}))
+
+vi.mock('@/components/ui/button', () => ({
+  Button: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => <button {...props}>{children}</button>,
 }))
 
 vi.mock('@/components/ui/badge', () => ({

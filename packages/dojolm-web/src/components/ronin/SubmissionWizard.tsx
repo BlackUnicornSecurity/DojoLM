@@ -187,7 +187,7 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
                   className={cn(
                     'w-full px-3 py-2 rounded-lg text-sm min-h-[44px]',
                     'bg-[var(--bg-primary)] border border-[var(--border)]',
-                    'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+                    'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
                   )}
                 >
                   <option value="">Select a program...</option>
@@ -209,7 +209,7 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
                     'w-full px-3 py-2 rounded-lg text-sm min-h-[44px]',
                     'bg-[var(--bg-primary)] border border-[var(--border)]',
                     'text-foreground placeholder:text-muted-foreground',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+                    'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
                   )}
                 />
               </div>
@@ -226,7 +226,7 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
                     'w-full px-3 py-2 rounded-lg text-sm',
                     'bg-[var(--bg-primary)] border border-[var(--border)]',
                     'text-foreground placeholder:text-muted-foreground',
-                    'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+                    'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
                     'resize-y',
                   )}
                 />
@@ -252,7 +252,7 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
                       'flex-1 px-3 py-2 rounded-lg text-sm',
                       'bg-[var(--bg-primary)] border border-[var(--border)]',
                       'text-foreground placeholder:text-muted-foreground',
-                      'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+                      'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
                       'resize-y',
                     )}
                     aria-label={`Evidence item ${index + 1}`}

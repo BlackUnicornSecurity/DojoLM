@@ -33,7 +33,7 @@ export function WidgetEmptyState({ icon: Icon, title, description, action }: Wid
         <button
           type="button"
           onClick={action.onClick}
-          className="text-xs text-[var(--dojo-primary)] hover:underline mt-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline mt-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
         >
           {action.label}
         </button>

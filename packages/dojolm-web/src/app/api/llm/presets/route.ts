@@ -29,6 +29,7 @@ const PRESET_SUMMARY = [
   { id: 'lmstudio', name: 'LM Studio', tier: 1, region: 'Local', isOpenAICompatible: true },
   { id: 'llamacpp', name: 'llama.cpp', tier: 1, region: 'Local', isOpenAICompatible: true },
   { id: 'vllm', name: 'vLLM', tier: 2, region: 'Local', isOpenAICompatible: true },
+  { id: 'blackunicorn', name: 'BlackUnicorn', tier: 2, region: 'US', isOpenAICompatible: true },
 ];
 
 export async function GET() {

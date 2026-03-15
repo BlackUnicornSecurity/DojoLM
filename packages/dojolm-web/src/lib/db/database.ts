@@ -16,10 +16,13 @@ const DB_PATH = path.join(DB_DIR, 'tpi.db');
 
 let instance: Database.Database | null = null;
 let shutdownRegistered = false;
+let migrationsApplied = false;
 
 /**
  * Returns the singleton database connection.
- * Creates the database file and configures pragmas on first access.
+ * Creates the database file, configures pragmas, and runs pending
+ * migrations on first access. This ensures all tables (including users)
+ * exist regardless of which code path accesses the DB first (BUG-005 fix).
  */
 export function getDatabase(): Database.Database {
   if (instance) return instance;
@@ -41,6 +44,20 @@ export function getDatabase(): Database.Database {
   instance.pragma('busy_timeout = 5000');
   instance.pragma('foreign_keys = ON');
   instance.pragma('synchronous = NORMAL');
+
+  // Run pending migrations to ensure all tables exist (BUG-005)
+  // Import lazily to avoid circular dependency (migrations.ts imports getDatabase)
+  if (!migrationsApplied) {
+    migrationsApplied = true;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { runMigrations } = require('./migrations') as { runMigrations: (db: Database.Database) => number };
+      runMigrations(instance);
+    } catch {
+      // Migration failure should not prevent DB access; log but continue
+      console.error('[DB] Failed to run migrations during initialization');
+    }
+  }
 
   // Register graceful shutdown hooks (once)
   if (!shutdownRegistered) {
@@ -91,4 +108,5 @@ export function verifyWalMode(): boolean {
  */
 export function resetDatabase(): void {
   closeDatabase();
+  migrationsApplied = false;
 }

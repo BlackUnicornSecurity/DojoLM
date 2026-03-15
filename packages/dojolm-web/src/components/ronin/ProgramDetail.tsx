@@ -10,7 +10,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { cn, isSafeHref } from '@/lib/utils'
+import { cn, isSafeHref, formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { X, ExternalLink, Star, StarOff, DollarSign, Calendar, Shield, Tag, Globe } from 'lucide-react'
@@ -153,7 +153,7 @@ export function ProgramDetail({ program, isSubscribed, onToggleSubscribe, onClos
           {/* Updated */}
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Last updated: {new Date(program.updatedAt).toLocaleDateString()}</span>
+            <span>Last updated: {formatDate(program.updatedAt)}</span>
           </div>
         </div>
 

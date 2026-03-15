@@ -83,7 +83,7 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "group hidden md:flex fixed left-0 top-0 h-screen bg-[var(--background)] border-r border-[var(--border-subtle)] flex-col z-[var(--z-sidebar)]",
+      "group hidden md:flex fixed left-0 top-0 h-screen bg-[var(--background)] flex-col z-[var(--z-sidebar)] shadow-[1px_0_0_0_var(--border-subtle)]",
       "motion-safe:transition-[width] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-in-out",
       collapsed ? "w-[var(--sidebar-collapsed)]" : "w-[var(--sidebar-width)]",
       "md:max-lg:w-[var(--sidebar-collapsed)] md:max-lg:hover:w-[var(--sidebar-width)]"
@@ -106,7 +106,7 @@ export function Sidebar() {
               <span
                 aria-hidden={collapsed ? true : undefined}
                 className={cn(
-                  "block px-6 py-1 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold overflow-hidden",
+                  "block px-6 py-1 mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--text-tertiary)] font-semibold overflow-hidden opacity-60",
                   "motion-safe:transition-[opacity,max-height] motion-safe:ease-in-out",
                   collapsed
                     ? "opacity-0 max-h-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-8 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-8"
@@ -189,23 +189,14 @@ export function Sidebar() {
             </span>
           </button>
         )}
-        {/* Collapse toggle (YouTube Analytics icon-only sidebar pattern) */}
+        {/* Collapse toggle — icon-only with tooltip */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:flex items-center gap-3 px-4 py-3 w-full rounded-lg text-[var(--text-tertiary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
+          className="hidden md:flex items-center justify-center px-4 py-3 w-full rounded-lg text-[var(--text-tertiary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? <PanelLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" /> : <PanelLeftClose className="w-5 h-5 flex-shrink-0" aria-hidden="true" />}
-          <span
-            aria-hidden="true"
-            className={cn(
-              "font-medium text-sm whitespace-nowrap overflow-hidden",
-              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
-              collapsed ? "opacity-0 w-0 motion-safe:duration-100" : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
-            )}
-          >
-            Collapse
-          </span>
         </button>
       </div>
     </aside>

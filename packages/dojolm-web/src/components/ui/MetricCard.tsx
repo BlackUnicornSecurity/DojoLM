@@ -42,14 +42,14 @@ const trendConfig = {
 
 // Subtle corner gradient overlays per accent (Exon-inspired, replaces thick left border)
 const accentGradients = {
-  primary: 'linear-gradient(135deg, rgba(204, 58, 47, 0.08) 0%, transparent 60%)',
+  primary: 'linear-gradient(135deg, rgba(91, 141, 239, 0.08) 0%, transparent 60%)',
   success: 'linear-gradient(135deg, rgba(52, 199, 106, 0.08) 0%, transparent 60%)',
   warning: 'linear-gradient(135deg, rgba(229, 160, 48, 0.08) 0%, transparent 60%)',
   danger: 'linear-gradient(135deg, rgba(204, 58, 47, 0.12) 0%, transparent 60%)',
 }
 
 const accentIconColors = {
-  primary: 'var(--dojo-primary)',
+  primary: 'var(--bu-electric)',
   success: 'var(--success)',
   warning: 'var(--warning)',
   danger: 'var(--danger)',
@@ -94,15 +94,15 @@ function Sparkline({ data }: { data: number[] }) {
     >
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--dojo-primary)" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="var(--dojo-primary)" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--bu-electric)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="var(--bu-electric)" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon points={areaPoints} fill={`url(#${gradientId})`} />
       <polyline
         points={points}
         fill="none"
-        stroke="var(--dojo-primary)"
+        stroke="var(--bu-electric)"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

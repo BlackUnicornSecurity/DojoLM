@@ -11,7 +11,7 @@ import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
 import { WidgetCard } from '../WidgetCard'
 import { useNavigation } from '@/lib/NavigationContext'
 import { cn } from '@/lib/utils'
-import { Brain, Loader2 } from 'lucide-react'
+import { FlaskConical, Loader2 } from 'lucide-react'
 import { WidgetEmptyState } from '../WidgetEmptyState'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
@@ -98,7 +98,7 @@ export function LLMBatchProgress() {
 
         {!loading && shown.length === 0 && (
           <WidgetEmptyState
-            icon={Brain}
+            icon={FlaskConical}
             title="No active tests"
             action={{ label: 'Go to LLM Dashboard', onClick: () => setActiveTab('llm') }}
           />
@@ -134,7 +134,7 @@ export function LLMBatchProgress() {
         {overflow > 0 && (
           <button
             onClick={() => setActiveTab('llm')}
-            className="text-xs text-muted-foreground hover:text-foreground w-full text-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--dojo-primary)]"
+            className="text-xs text-muted-foreground hover:text-foreground w-full text-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           >
             +{overflow} more batch{overflow !== 1 ? 'es' : ''}
           </button>

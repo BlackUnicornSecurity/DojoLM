@@ -1,11 +1,13 @@
 /**
  * File: McpConnectorStatus.tsx
- * Purpose: Persistent MCP connection status bar with health check and troubleshooting
- * Story: TPI-NODA-6.1 - Atemi Lab MCP Connector
+ * Purpose: Persistent MCP connection status bar with health check, server controls, and troubleshooting
+ * Story: TPI-NODA-6.1 - Atemi Lab MCP Connector, H13.1 - MCP Server Controls
  * Index:
- * - McpConnectorStatusProps interface (line 16)
- * - McpConnectorStatus component (line 27)
- * - TroubleshootingPanel component (line 120)
+ * - McpConnectorStatusProps interface (line 18)
+ * - McpConnectorStatus component (line 29)
+ * - ConsentDialog component (line ~145)
+ * - ServerControls component (line ~185)
+ * - TroubleshootingPanel component (line ~240)
  */
 
 'use client'
@@ -21,6 +23,9 @@ import {
   RefreshCw,
   Clock,
   AlertTriangle,
+  Play,
+  Square,
+  RotateCcw,
 } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
@@ -42,9 +47,13 @@ export function McpConnectorStatus({
 }: McpConnectorStatusProps) {
   const [isConnected, setIsConnected] = useState(connectedProp ?? false)
   const [latency, setLatency] = useState(latencyProp ?? 0)
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
   const [showTroubleshooting, setShowTroubleshooting] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
   const [lastChecked, setLastChecked] = useState<Date | null>(null)
+  const [isStarting, setIsStarting] = useState(false)
+  const [isStopping, setIsStopping] = useState(false)
+  const [showConsent, setShowConsent] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const mountedRef = useRef(true)
 
@@ -70,11 +79,13 @@ export function McpConnectorStatus({
         const data = await response.json()
         const connected = data?.connected === true
         setIsConnected(connected)
-        setLatency(connected ? elapsed : 0)
+        setLatency(connected ? (data?.latency ?? elapsed) : 0)
+        setStatusMessage(data?.message ?? null)
         if (connected) setShowTroubleshooting(false)
       } else {
         setIsConnected(false)
         setLatency(0)
+        setStatusMessage(null)
       }
     } catch {
       if (!mountedRef.current) return
@@ -106,6 +117,90 @@ export function McpConnectorStatus({
     setShowTroubleshooting((prev) => !prev)
   }, [])
 
+  const handleStartRequest = useCallback(() => {
+    setShowConsent(true)
+  }, [])
+
+  const handleStartConfirm = useCallback(async () => {
+    setShowConsent(false)
+    setIsStarting(true)
+    setStatusMessage('Starting MCP server...')
+    try {
+      const response = await fetchWithAuth('/api/mcp/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: true }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (mountedRef.current) {
+          setStatusMessage(data?.message ?? null)
+          setIsConnected(data?.connected === true)
+        }
+        // Follow up with a health check after a brief delay
+        setTimeout(() => { if (mountedRef.current) checkHealth() }, 2000)
+      } else {
+        if (mountedRef.current) setStatusMessage('Failed to start MCP server')
+      }
+    } catch {
+      if (mountedRef.current) setStatusMessage('Network error starting MCP server')
+    } finally {
+      if (mountedRef.current) setIsStarting(false)
+    }
+  }, [checkHealth])
+
+  const handleStartCancel = useCallback(() => {
+    setShowConsent(false)
+  }, [])
+
+  const handleStop = useCallback(async () => {
+    setIsStopping(true)
+    try {
+      const response = await fetchWithAuth('/api/mcp/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: false }),
+      })
+      if (response.ok) {
+        if (mountedRef.current) {
+          setIsConnected(false)
+          setLatency(0)
+        }
+      }
+    } finally {
+      if (mountedRef.current) setIsStopping(false)
+    }
+  }, [])
+
+  const handleRestart = useCallback(async () => {
+    setIsStopping(true)
+    try {
+      await fetchWithAuth('/api/mcp/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: false }),
+      })
+      // Small delay between stop and start
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      if (!mountedRef.current) return
+      setIsStopping(false)
+      setIsStarting(true)
+      const response = await fetchWithAuth('/api/mcp/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: true }),
+      })
+      if (response.ok) {
+        await checkHealth()
+      }
+    } finally {
+      if (mountedRef.current) {
+        setIsStopping(false)
+        setIsStarting(false)
+      }
+    }
+  }, [checkHealth])
+
   return (
     <Card className={cn(
       'border',
@@ -135,9 +230,9 @@ export function McpConnectorStatus({
               </>
             ) : (
               <>
-                <span className="h-2 w-2 rounded-full bg-[var(--danger)]" />
-                <WifiOff className="h-3.5 w-3.5 text-[var(--danger)]" aria-hidden="true" />
-                <span className="text-xs font-medium text-[var(--danger)]">Disconnected</span>
+                <span className="h-2 w-2 rounded-full bg-[var(--warning)]" />
+                <WifiOff className="h-3.5 w-3.5 text-[var(--warning)]" aria-hidden="true" />
+                <span className="text-xs font-medium text-[var(--warning)]">Not connected</span>
               </>
             )}
           </div>
@@ -180,12 +275,81 @@ export function McpConnectorStatus({
           </div>
         </div>
 
-        {/* Last checked timestamp */}
-        {lastChecked && (
-          <p className="text-xs text-[var(--text-tertiary)] mt-1">
-            Last checked: {lastChecked.toLocaleTimeString()}
-          </p>
+        {/* Status message + last checked */}
+        <div className="flex items-center gap-3 mt-1 flex-wrap">
+          {statusMessage && !isConnected && (
+            <p className="text-xs text-[var(--severity-medium)]">
+              {statusMessage}
+            </p>
+          )}
+          {lastChecked && (
+            <p className="text-xs text-[var(--text-tertiary)]">
+              Last checked: {lastChecked.toLocaleTimeString()}
+            </p>
+          )}
+        </div>
+
+        {/* Consent dialog */}
+        {showConsent && (
+          <ConsentDialog
+            onConfirm={handleStartConfirm}
+            onCancel={handleStartCancel}
+          />
         )}
+
+        {/* Server Controls */}
+        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[var(--border)]">
+          {!isConnected ? (
+            <button
+              onClick={handleStartRequest}
+              disabled={isStarting}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium',
+                'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20',
+                'hover:bg-[var(--success)]/20 min-h-[44px]',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                'motion-safe:transition-colors',
+              )}
+              aria-label="Start MCP server"
+            >
+              <Play className="h-3.5 w-3.5" aria-hidden="true" />
+              {isStarting ? 'Starting...' : 'Start Server'}
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleStop}
+                disabled={isStopping || isStarting}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium',
+                  'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/20',
+                  'hover:bg-[var(--danger)]/20 min-h-[44px]',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  'motion-safe:transition-colors',
+                )}
+                aria-label="Stop MCP server"
+              >
+                <Square className="h-3.5 w-3.5" aria-hidden="true" />
+                {isStopping ? 'Stopping...' : 'Stop'}
+              </button>
+              <button
+                onClick={handleRestart}
+                disabled={isStopping || isStarting}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium',
+                  'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20',
+                  'hover:bg-[var(--warning)]/20 min-h-[44px]',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  'motion-safe:transition-colors',
+                )}
+                aria-label="Restart MCP server"
+              >
+                <RotateCcw className={cn('h-3.5 w-3.5', (isStopping || isStarting) && 'motion-safe:animate-spin')} aria-hidden="true" />
+                {isStopping || isStarting ? 'Restarting...' : 'Restart'}
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Troubleshooting panel */}
         {!isConnected && showTroubleshooting && (
@@ -193,6 +357,53 @@ export function McpConnectorStatus({
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function ConsentDialog({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  return (
+    <div
+      className="mt-2 p-3 rounded-lg bg-[var(--warning)]/5 border border-[var(--warning)]/20"
+      role="alertdialog"
+      aria-modal="false"
+      aria-label="Confirm MCP server start"
+    >
+      <p className="text-xs text-[var(--foreground)] mb-2">
+        This will start the MCP test server. Continue?
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onConfirm}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium min-h-[44px]',
+            'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20',
+            'hover:bg-[var(--success)]/20',
+            'motion-safe:transition-colors',
+          )}
+          aria-label="Confirm start MCP server"
+        >
+          Confirm
+        </button>
+        <button
+          onClick={onCancel}
+          className={cn(
+            'px-3 py-1.5 rounded-lg text-xs font-medium min-h-[44px]',
+            'bg-[var(--bg-tertiary)] text-muted-foreground border border-[var(--border)]',
+            'hover:bg-[var(--bg-quaternary)]',
+            'motion-safe:transition-colors',
+          )}
+          aria-label="Cancel start MCP server"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
   )
 }
 

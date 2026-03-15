@@ -150,7 +150,7 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
 
         {/* Severity distribution bar */}
         <div className="mb-3">
-          <div className="flex h-1.5 rounded-full overflow-hidden bg-[var(--bg-quaternary)]" role="img" aria-label={`Severity: ${stats.critical} critical, ${stats.warning} warning, ${stats.info} info, ${stats.clean} clean`}>
+          <div className="flex h-2 rounded-full overflow-hidden bg-[var(--bg-quaternary)]" role="img" aria-label={`Severity: ${stats.critical} critical, ${stats.warning} warning, ${stats.info} info, ${stats.clean} clean`} title={`${stats.critical} critical, ${stats.warning} warning, ${stats.info} info, ${stats.clean} clean`}>
             {stats.pctCritical > 0 && (
               <div
                 className="bg-[var(--severity-critical)]"
@@ -187,8 +187,7 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
         {/* Bottom row: brand badge + actions */}
         <div className="flex items-center justify-between">
           <span
-            className="text-xs px-1.5 py-0.5 rounded-full"
-            style={{ backgroundColor: `${brand.color}20`, color: brand.color }}
+            className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--bg-quaternary)] text-muted-foreground"
           >
             {brand.name}
           </span>

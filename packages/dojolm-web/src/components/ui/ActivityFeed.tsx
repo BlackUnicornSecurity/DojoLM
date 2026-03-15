@@ -89,7 +89,7 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
 
   if (events.length === 0) {
     return (
-      <EmptyState {...emptyStatePresets.noData} description="No recent activity." className={cn("py-4", className)} />
+      <EmptyState {...emptyStatePresets.noData} title="No sessions yet" description="Run a scan or test to see activity here." className={cn("py-4", className)} />
     )
   }
 

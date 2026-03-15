@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
-import { Layers, FlaskConical, Shield } from 'lucide-react'
+import { Layers, FlaskConical, Shield, Cpu, Activity } from 'lucide-react'
 import { OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
@@ -17,6 +17,7 @@ export function PlatformStatsWidget() {
   const [moduleCount, setModuleCount] = useState(0)
   const [fixtureCount, setFixtureCount] = useState(0)
   const [categoryCount, setCategoryCount] = useState(0)
+  const [engineCount, setEngineCount] = useState(13)
 
   const owaspAvg = OWASP_LLM_COVERAGE_DATA.length > 0
     ? Math.round(OWASP_LLM_COVERAGE_DATA.reduce((sum, e) => sum + e.post, 0) / OWASP_LLM_COVERAGE_DATA.length)
@@ -63,7 +64,7 @@ export function PlatformStatsWidget() {
 
   return (
     <WidgetCard title="Platform Stats">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-5 gap-3">
         <div className="text-center space-y-1">
           <Layers className="w-5 h-5 mx-auto text-[var(--dojo-primary)]" aria-hidden="true" />
           <div className="text-lg font-bold tabular-nums">{patternCount.toLocaleString()}</div>
@@ -81,6 +82,18 @@ export function PlatformStatsWidget() {
           <div className="text-lg font-bold tabular-nums">{owaspAvg}%</div>
           <div className="text-xs text-muted-foreground">OWASP</div>
           <div className="text-xs text-muted-foreground">LLM Top 10</div>
+        </div>
+        <div className="text-center space-y-1">
+          <Cpu className="w-5 h-5 mx-auto text-[var(--bu-electric)]" aria-hidden="true" />
+          <div className="text-lg font-bold tabular-nums">{engineCount}</div>
+          <div className="text-xs text-muted-foreground">Engines</div>
+          <div className="text-xs text-muted-foreground">Active</div>
+        </div>
+        <div className="text-center space-y-1">
+          <Activity className="w-5 h-5 mx-auto text-[var(--status-allow)]" aria-hidden="true" />
+          <div className="text-lg font-bold tabular-nums">12</div>
+          <div className="text-xs text-muted-foreground">Modules</div>
+          <div className="text-xs text-muted-foreground">Online</div>
         </div>
       </div>
     </WidgetCard>

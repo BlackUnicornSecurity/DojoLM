@@ -10,7 +10,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { X, Calendar, Shield, Brain, Calculator, FileText, CheckCircle, Clock, DollarSign, XCircle, Filter } from 'lucide-react'
 import type { BountySubmission, SubmissionStatus } from '@/lib/data/ronin-seed-programs'
@@ -170,11 +170,11 @@ export function SubmissionDetail({ submission, onClose }: SubmissionDetailProps)
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3 w-3" aria-hidden="true" />
-              <span>Created: {new Date(submission.createdAt).toLocaleDateString()}</span>
+              <span>Created: {formatDate(submission.createdAt)}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3 w-3" aria-hidden="true" />
-              <span>Updated: {new Date(submission.updatedAt).toLocaleDateString()}</span>
+              <span>Updated: {formatDate(submission.updatedAt)}</span>
             </div>
           </div>
         </div>

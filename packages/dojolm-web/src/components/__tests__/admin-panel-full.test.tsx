@@ -117,9 +117,9 @@ describe('AdminPanel', () => {
     expect(generalTab).toHaveAttribute('data-state', 'active')
   })
 
-  it('AP-006: General tab content shows General Settings heading', () => {
+  it('AP-006: General tab content shows Platform Information heading', () => {
     render(<AdminPanel />)
-    expect(screen.getByText('General Settings')).toBeInTheDocument()
+    expect(screen.getByText('Platform Information')).toBeInTheDocument()
   })
 
   it('AP-007: clicking Users tab shows UserManagement', () => {

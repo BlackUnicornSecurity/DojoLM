@@ -27,7 +27,7 @@ const LAUNCH_ACTIONS: LaunchAction[] = [
   { label: 'Explore Fixtures', target: 'armory', icon: Warehouse, accent: 'var(--warning)', shortcut: '3' },
   { label: 'Check Guard', target: 'guard', icon: ShieldHalf, accent: 'var(--danger)', shortcut: '4' },
   { label: 'Battle Arena', target: 'strategic', icon: Trophy, accent: 'var(--warning)', shortcut: '5' },
-  { label: 'Run Evolution', target: 'attackdna', icon: Fingerprint, accent: 'var(--dojo-primary)', shortcut: '6' },
+  { label: 'Run Evolution', target: 'strategic', icon: Fingerprint, accent: 'var(--dojo-primary)', shortcut: '6' },
 ]
 
 export function QuickLaunchPad() {
@@ -56,7 +56,7 @@ export function QuickLaunchPad() {
             type="button"
             onClick={() => setActiveTab(action.target)}
             aria-label={action.label}
-            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-lg min-h-[44px]"
+            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-lg min-h-[44px]"
           >
             <GlowCard glow="subtle" className={cn(
               'p-4 h-full cursor-pointer',

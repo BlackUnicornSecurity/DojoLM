@@ -25,9 +25,9 @@ export const POST = withAuth(
       const body = await req.json();
       const { username, email, password, role, displayName } = body;
 
-      if (!username || !email || !password) {
+      if (!username || !password) {
         return NextResponse.json(
-          { error: 'Username, email, and password are required' },
+          { error: 'Username and password are required' },
           { status: 400 }
         );
       }
@@ -43,11 +43,11 @@ export const POST = withAuth(
       if (userRepo.findByUsername(username)) {
         return NextResponse.json({ error: 'Username already exists' }, { status: 409 });
       }
-      if (userRepo.findByEmail(email)) {
+      if (email && userRepo.findByEmail(email)) {
         return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
       }
 
-      const user = await userRepo.createUser(username, email, password, role, displayName);
+      const user = await userRepo.createUser(username, email ?? null, password, role, displayName);
       return NextResponse.json({ user }, { status: 201 });
     } catch {
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });

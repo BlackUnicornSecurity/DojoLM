@@ -187,11 +187,18 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {/* Provider badge */}
+        {/* Provider badge with initial */}
         <div className={`flex items-center gap-2 ${!model.enabled ? 'opacity-50' : ''}`}>
-          <Badge variant="outline" className="text-xs">
-            {providerInfo?.name || model.provider}
-          </Badge>
+          <div className="flex items-center gap-1.5">
+            <div className="w-5 h-5 rounded bg-[var(--bg-quaternary)] flex items-center justify-center flex-shrink-0" aria-hidden="true">
+              <span className="text-[10px] font-bold text-[var(--bu-electric)]">
+                {(providerInfo?.name || model.provider).charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {providerInfo?.name || model.provider}
+            </Badge>
+          </div>
           {model.baseUrl && model.provider !== 'openai' && model.provider !== 'anthropic' && (
             <Badge variant="outline" className="text-xs">
               Custom URL
@@ -200,7 +207,7 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
         </div>
 
         {/* Test result indicator */}
-        {testResult && (
+        {testResult ? (
           <div className={`flex items-center gap-1 text-xs ${testResult.success ? 'text-green-500' : 'text-red-500'}`}>
             {testResult.success ? (
               <>
@@ -214,6 +221,8 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
               </>
             )}
           </div>
+        ) : (
+          <p className="text-xs text-muted-foreground italic">No tests run yet</p>
         )}
 
         {/* Actions */}
@@ -222,9 +231,10 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
             size="sm"
             variant="outline"
             className="flex-1"
-            onClick={() => onToggle(!model.enabled)}
+            onClick={onEdit}
           >
-            {model.enabled ? 'Disable' : 'Enable'}
+            <Pencil className="h-3 w-3 mr-1" />
+            Edit
           </Button>
           <Button
             size="sm"
@@ -234,13 +244,18 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
           >
             <TestTube className="h-3 w-3" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={onEdit}>
-            <Pencil className="h-3 w-3" />
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs text-muted-foreground"
+            onClick={() => onToggle(!model.enabled)}
+          >
+            {model.enabled ? 'Disable' : 'Enable'}
           </Button>
           <Button
             size="sm"
             variant="ghost"
-            className="text-red-500 hover:text-red-600"
+            className="text-muted-foreground hover:text-red-500 transition-colors"
             onClick={onDelete}
           >
             <Trash2 className="h-3 w-3" />

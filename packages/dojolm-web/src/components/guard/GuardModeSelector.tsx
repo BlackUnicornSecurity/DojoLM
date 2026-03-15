@@ -46,7 +46,7 @@ export function GuardModeSelector() {
                 onClick={() => setBlockThreshold('WARNING')}
                 className={cn(
                   'px-2 py-1 text-xs rounded',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'WARNING'
                     ? 'bg-[var(--severity-medium-bg)] text-[var(--severity-medium)] border border-[var(--severity-medium)]/50'
                     : 'text-muted-foreground hover:text-foreground'
@@ -60,7 +60,7 @@ export function GuardModeSelector() {
                 onClick={() => setBlockThreshold('CRITICAL')}
                 className={cn(
                   'px-2 py-1 text-xs rounded',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'CRITICAL'
                     ? 'bg-[var(--status-block-bg)] text-[var(--status-block)] border border-[var(--status-block)]/50'
                     : 'text-muted-foreground hover:text-foreground'
@@ -88,7 +88,7 @@ export function GuardModeSelector() {
               disabled={!config.enabled}
               className={cn(
                 'text-left p-0 rounded-lg border-0 bg-transparent',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',
                 !config.enabled && 'opacity-50 cursor-not-allowed'
               )}
               role="radio"

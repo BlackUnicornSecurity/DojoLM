@@ -12,7 +12,7 @@ interface NavigationContextValue {
   setActiveTab: (tab: NavId) => void
 }
 
-const NavigationContext = createContext<NavigationContextValue | undefined>(undefined)
+export const NavigationContext = createContext<NavigationContextValue | undefined>(undefined)
 
 /**
  * Resolve a hash fragment to a valid NavId.

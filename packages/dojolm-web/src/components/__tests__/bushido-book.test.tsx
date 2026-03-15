@@ -75,6 +75,12 @@ vi.mock('@/components/ui/table', () => ({
   TableRow: ({ children }: { children: ReactNode }) => <tr>{children}</tr>,
 }))
 
+// Mock NavigationContext (H8.3 uses useNavigation in ComplianceCenter)
+const mockSetActiveTab = vi.fn()
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ activeTab: 'compliance', setActiveTab: mockSetActiveTab }),
+}))
+
 // Mock sub-components
 vi.mock('../compliance/GapMatrix', () => ({
   GapMatrix: () => <div data-testid="gap-matrix">Gap Matrix Content</div>,
@@ -142,12 +148,12 @@ describe('BSH-001: ComplianceCenter sub-tabs', () => {
     })
   })
 
-  it('renders all 6 sub-tab triggers', async () => {
+  it('renders all 7 sub-tab triggers', async () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
       const allTabs = screen.getAllByRole('tab')
-      // Sub-view tabs (6) — framework selector is now a collapsible tier list, not tabs
-      const subViewValues = ['overview', 'coverage', 'gap-matrix', 'audit-trail', 'checklists', 'navigator']
+      // Sub-view tabs (7) — includes compliance-scan from H9.4
+      const subViewValues = ['overview', 'coverage', 'gap-matrix', 'audit-trail', 'checklists', 'navigator', 'compliance-scan']
       for (const val of subViewValues) {
         const tabsWithValue = allTabs.filter(t => t.getAttribute('data-value') === val)
         expect(tabsWithValue.length).toBeGreaterThanOrEqual(1)
@@ -171,10 +177,11 @@ describe('BSH-002: Framework selector', () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
       // Frameworks now appear as FrameworkGapSummary buttons with aria-label
+      // Use getAllByLabelText since H9.4 compliance-scan tab may also render framework selectors
       const fwNames = ['OWASP LLM Top 10', 'NIST AI 600-1', 'MITRE ATLAS', 'ISO 42001', 'EU AI Act']
       for (const name of fwNames) {
-        const btn = screen.getByLabelText(new RegExp(name))
-        expect(btn).toBeInTheDocument()
+        const btns = screen.getAllByLabelText(new RegExp(name))
+        expect(btns.length).toBeGreaterThanOrEqual(1)
       }
     })
   })
@@ -245,10 +252,11 @@ describe('BSH-005: CoverageMap', () => {
     expect(screen.getByText('Supply Chain')).toBeInTheDocument()
   })
 
-  it('renders pre and post percentages', () => {
+  it('renders control (stories) column data', () => {
     render(<CoverageMap coverageData={coverageData} />)
-    expect(screen.getByText('30%')).toBeInTheDocument()
-    expect(screen.getByText('85%')).toBeInTheDocument()
+    expect(screen.getByText('S1-S3')).toBeInTheDocument()
+    expect(screen.getByText('S4-S6')).toBeInTheDocument()
+    expect(screen.getByText('S7')).toBeInTheDocument()
   })
 
   it('shows Gap badge for items with gap=true', () => {

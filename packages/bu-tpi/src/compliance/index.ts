@@ -13,6 +13,11 @@ export type {
   CoverageChange,
   ComplianceReport,
   FrameworkReport,
+  TestMapping,
+  EvidenceRecord,
+  ComplianceReportWithEvidence,
+  FrameworkCategory,
+  ComplianceFrameworkExtended,
 } from './types.js';
 
 // Frameworks
@@ -71,4 +76,58 @@ export {
   generateFrameworkReport,
   formatReportAsMarkdown,
   formatReportAsJSON,
+  signEvidence,
+  verifyEvidence,
+  sanitizePayloadForReport,
+  generateReportWithEvidence,
 } from './report-generator.js';
+export type { TestExecutionInput } from './report-generator.js';
+
+// Evidence Automation (H10.3)
+export type {
+  ModelIntegrityResult,
+  LineageEntry,
+  LineageCompletenessResult,
+  BiasTestResult,
+  BiasAssessmentResult,
+  SecurityGateResult,
+  SecurityGateVerification,
+  SBOMEntry,
+  SBOMValidationResult,
+  SyntheticPrediction,
+  SyntheticDetectionMetrics,
+} from './evidence-automation.js';
+
+export {
+  verifyModelIntegrity,
+  verifyLineageCompleteness,
+  assessBiasAcrossDimensions,
+  verifySecurityGates,
+  validateSBOM,
+  assessSyntheticDetection,
+} from './evidence-automation.js';
+
+// H9.3: NIST AI RMF Detailed Mapping
+export type { NistAiRmfMapping } from './frameworks/nist-ai-rmf.js';
+export {
+  NIST_AI_RMF_MAPPINGS,
+  getMappingsByFunction,
+  getModulesForControl,
+  getFunctionCoverage,
+  getCoveredControlIds,
+} from './frameworks/nist-ai-rmf.js';
+
+// H10.4: LLM Test Capabilities
+export {
+  LEAKAGE_PATTERNS,
+  detectSystemPromptLeakage,
+  generateDoSTestVectors,
+  validateDoSTestResult,
+  createSelfPenTestConfig,
+  parseNpmAuditOutput,
+} from './llm-test-capabilities.js';
+export type {
+  DoSTestVector,
+  SelfPenTestConfig,
+  DependencyVulnerability,
+} from './llm-test-capabilities.js';

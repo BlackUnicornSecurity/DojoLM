@@ -2,15 +2,16 @@
  * File: LLMExecutionContext.tsx
  * Purpose: Test execution state management (client-side)
  * Index:
- * - LLMExecutionContext interface (line 32)
- * - Provider function (line 90)
- * - Hook (line 190)
+ * - LLMExecutionContext interface (line 34)
+ * - Provider function (line 100)
+ * - Hook (line 220)
  * Note: Uses API routes for server-side storage operations
+ * H1.5: Added activeBatchId persistence to sessionStorage for reconnection
  */
 
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 import type {
   LLMTestExecution,
@@ -20,6 +21,50 @@ import type {
   ExecutionStatus,
 } from '../llm-types';
 import { fetchWithAuth } from '../fetch-with-auth';
+
+// ===========================================================================
+// Batch ID Persistence (H1.5)
+// ===========================================================================
+
+const BATCH_STORAGE_KEY = 'llm-active-batch';
+const BATCH_ID_REGEX = /^[a-zA-Z0-9_-]{1,64}$/;
+
+/** Validate batch ID format */
+function isValidBatchId(id: unknown): id is string {
+  return typeof id === 'string' && BATCH_ID_REGEX.test(id);
+}
+
+/** Safely read active batch ID from sessionStorage */
+function loadActiveBatchId(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = sessionStorage.getItem(BATCH_STORAGE_KEY);
+    if (stored && isValidBatchId(stored)) return stored;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Safely write active batch ID to sessionStorage */
+function saveActiveBatchId(batchId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(BATCH_STORAGE_KEY, batchId);
+  } catch {
+    // QuotaExceededError or private browsing — silently degrade
+  }
+}
+
+/** Clear active batch ID from sessionStorage */
+function clearActiveBatchId(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem(BATCH_STORAGE_KEY);
+  } catch {
+    // Silently degrade
+  }
+}
 
 // ===========================================================================
 // API Client Functions
@@ -74,6 +119,18 @@ interface ExecutionState {
 interface LLMExecutionContextValue {
   /** Current execution state */
   state: ExecutionState;
+
+  /** Active batch ID persisted to sessionStorage (H1.5) */
+  activeBatchId: string | null;
+
+  /** Batch ID currently being reconnected to (H1.5) */
+  reconnectingBatchId: string | null;
+
+  /** Set active batch (persists to sessionStorage) (H1.5) */
+  setActiveBatch: (batchId: string) => void;
+
+  /** Clear active batch (removes from sessionStorage) (H1.5) */
+  clearActiveBatch: () => void;
 
   /** Get executions for a model */
   getExecutions: (modelId: string, limit?: number) => Promise<LLMTestExecution[]>;
@@ -130,6 +187,26 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
     lastExecutionAt: null,
   });
 
+  // H1.5: Active batch ID persistence
+  const [activeBatchId, setActiveBatchIdState] = useState<string | null>(null);
+  const [reconnectingBatchId, setReconnectingBatchId] = useState<string | null>(null);
+  const hydratedRef = useRef(false);
+  const batchPollIntervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set());
+
+  // H1.5: Set active batch (validates and persists)
+  const setActiveBatch = useCallback((batchId: string) => {
+    if (!isValidBatchId(batchId)) return;
+    setActiveBatchIdState(batchId);
+    saveActiveBatchId(batchId);
+  }, []);
+
+  // H1.5: Clear active batch
+  const clearActiveBatch = useCallback(() => {
+    setActiveBatchIdState(null);
+    setReconnectingBatchId(null);
+    clearActiveBatchId();
+  }, []);
+
   // Refresh execution state
   const refreshState = useCallback(async () => {
     try {
@@ -172,6 +249,55 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
   useEffect(() => {
     refreshState();
   }, [refreshState]);
+
+  // H1.5: Hydrate activeBatchId from sessionStorage and attempt reconnection
+  useEffect(() => {
+    if (hydratedRef.current) return;
+    hydratedRef.current = true;
+
+    const storedBatchId = loadActiveBatchId();
+    if (!storedBatchId) return;
+
+    setActiveBatchIdState(storedBatchId);
+    setReconnectingBatchId(storedBatchId);
+
+    // Check if batch is still running
+    (async () => {
+      try {
+        const response = await fetchWithAuth(`${API_BASE}/batch/${encodeURIComponent(storedBatchId)}`);
+        if (!response.ok) {
+          // Batch gone or errored — clear
+          clearActiveBatchId();
+          setActiveBatchIdState(null);
+          setReconnectingBatchId(null);
+          return;
+        }
+        const { batch } = await response.json() as { batch: LLMBatchExecution };
+        if (batch.status === 'running' || batch.status === 'pending') {
+          // Batch still active — keep reconnectingBatchId so TestExecution can resume
+          // reconnectingBatchId will be cleared by TestExecution after it reconnects
+        } else {
+          // Batch finished — clear
+          clearActiveBatchId();
+          setActiveBatchIdState(null);
+          setReconnectingBatchId(null);
+        }
+      } catch {
+        clearActiveBatchId();
+        setActiveBatchIdState(null);
+        setReconnectingBatchId(null);
+      }
+    })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- hydration runs once
+
+  // Cleanup all active polling intervals on unmount
+  useEffect(() => {
+    const intervalsRef = batchPollIntervalsRef;
+    return () => {
+      for (const id of intervalsRef.current) clearInterval(id);
+      intervalsRef.current.clear();
+    };
+  }, []);
 
   // Auto-refresh on interval (only when there are active batches to avoid wasted requests)
   useEffect(() => {
@@ -249,12 +375,14 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
           // If batch not found (404), stop polling - it was cleaned up
           if (response.status === 404) {
             clearInterval(pollInterval);
+            batchPollIntervalsRef.current.delete(pollInterval);
             await refreshState();
             return;
           }
 
           if (!response.ok) {
             clearInterval(pollInterval);
+            batchPollIntervalsRef.current.delete(pollInterval);
             return;
           }
 
@@ -266,13 +394,16 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
 
           if (updated.status === 'completed' || updated.status === 'failed' || updated.status === 'cancelled') {
             clearInterval(pollInterval);
+            batchPollIntervalsRef.current.delete(pollInterval);
             await refreshState();
           }
         } catch {
           // Network error or other issue - stop polling
           clearInterval(pollInterval);
+          batchPollIntervalsRef.current.delete(pollInterval);
         }
-      }, 1000);
+      }, 3000);
+      batchPollIntervalsRef.current.add(pollInterval);
 
       // Refresh state after starting batch
       await refreshState();
@@ -343,6 +474,10 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
 
   const value: LLMExecutionContextValue = {
     state,
+    activeBatchId,
+    reconnectingBatchId,
+    setActiveBatch,
+    clearActiveBatch,
     getExecutions,
     getExecution,
     executeTest,

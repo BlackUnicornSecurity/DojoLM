@@ -153,7 +153,7 @@ describe('EmptyState', () => {
     })
 
     it('noData preset has correct title', () => {
-      expect(emptyStatePresets.noData.title).toBe('Awaiting first session')
+      expect(emptyStatePresets.noData.title).toBe('No sessions yet')
     })
 
     it('noScans renders correctly via spread', () => {

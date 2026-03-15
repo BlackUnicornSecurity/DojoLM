@@ -12,7 +12,19 @@
  */
 
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+vi.mock('@/lib/NavigationContext', () => {
+  const { createContext } = require('react')
+  return {
+    NavigationContext: createContext({ activeTab: 'dashboard', setActiveTab: () => {} }),
+  }
+})
+
+vi.mock('@/lib/constants', () => ({
+  NAV_ITEMS: [{ id: 'dashboard' }, { id: 'scanner' }],
+}))
+
 import { WidgetCard, WidgetMetaProvider } from '@/components/dashboard/WidgetCard'
 
 describe('WidgetCard', () => {

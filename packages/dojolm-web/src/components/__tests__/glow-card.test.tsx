@@ -126,7 +126,7 @@ describe('GlowCard', () => {
       const card = container.firstElementChild as HTMLElement
       expect(card).toHaveClass('rounded-xl')
       expect(card).toHaveClass('border')
-      expect(card).toHaveClass('shadow-sm')
+      expect(card.className).toContain('shadow-[var(--shadow-card)]')
     })
 
     it('does not modify Card internal behavior', () => {

@@ -34,3 +34,13 @@ export type { PIIConfig } from './pii-detector.js';
 export { dataProvenanceModule } from './data-provenance.js';
 export { deepfakeDetectorModule, computeDeepfakeConfidence } from './deepfake-detector.js';
 export { sessionBypassModule, detectSessionManipulation } from './session-bypass.js';
+
+// WebMCP Module (H16.1) — self-registers on import
+export { webmcpDetectorModule } from './webmcp-detector.js';
+
+// EdgeFuzz Module (H21.2)
+export { edgefuzzDetectorModule } from './edgefuzz-detector.js';
+
+// Multimodal Modules (H26.1, H26.2)
+export { imageScannerModule } from './image-scanner.js';
+export { audioScannerModule } from './audio-scanner.js';

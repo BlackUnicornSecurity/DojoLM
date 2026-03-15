@@ -12,6 +12,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,7 +22,7 @@ import { UserPlus, Shield, ShieldCheck, Eye, UserX, UserCheck, Loader2 } from 'l
 interface SafeUser {
   id: string
   username: string
-  email: string
+  email: string | null
   role: string
   display_name: string | null
   created_at: string
@@ -104,13 +105,13 @@ export function UserManagement() {
                       {!user.enabled && <span className="ml-2 text-xs text-destructive">(disabled)</span>}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {user.username} &middot; {user.email} &middot; {user.role}
+                      {user.username}{user.email ? <> &middot; {user.email}</> : null} &middot; {user.role}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   {user.last_login_at && (
-                    <span>Last login: {new Date(user.last_login_at).toLocaleDateString()}</span>
+                    <span>Last login: {formatDate(user.last_login_at)}</span>
                   )}
                   <StatusToggle user={user} onToggled={fetchUsers} />
                 </div>
@@ -177,7 +178,7 @@ function CreateUserForm({ onCreated, onCancel }: { onCreated: () => void; onCanc
       const res = await fetchWithAuth('/api/auth/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password, role }),
+        body: JSON.stringify({ username, email: email || undefined, password, role }),
       })
 
       if (res.ok) {
@@ -206,8 +207,8 @@ function CreateUserForm({ onCreated, onCancel }: { onCreated: () => void; onCanc
             <Input id="new-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="new-email">Email</Label>
-            <Input id="new-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <Label htmlFor="new-email">Email <span className="text-muted-foreground text-xs">(optional)</span></Label>
+            <Input id="new-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className="space-y-1">
             <Label htmlFor="new-password">Password</Label>

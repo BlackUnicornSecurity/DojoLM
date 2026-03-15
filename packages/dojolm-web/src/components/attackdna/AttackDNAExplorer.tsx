@@ -41,6 +41,7 @@ import {
   Settings,
   Target,
   Microscope,
+  Zap,
 } from 'lucide-react'
 
 // --- Dynamic imports (S76 requirement: use next/dynamic for visualization components) ---
@@ -63,6 +64,11 @@ const MutationTimeline = dynamic(
 const BlackBoxAnalysis = dynamic(
   () => import('./BlackBoxAnalysis').then((mod) => ({ default: mod.BlackBoxAnalysis })),
   { loading: () => <LoadingFallback label="Loading Analysis..." />, ssr: false }
+)
+
+const XRayPanel = dynamic(
+  () => import('./XRayPanel').then((mod) => ({ default: mod.XRayPanel })),
+  { loading: () => <LoadingFallback label="Loading X-Ray..." />, ssr: false }
 )
 
 // ===========================================================================
@@ -248,7 +254,7 @@ function StatsBar({ stats, loading }: StatsBarProps) {
 
 // --- Tab Definitions ---
 
-type TabId = 'family-tree' | 'clusters' | 'timeline' | 'analysis'
+type TabId = 'family-tree' | 'clusters' | 'timeline' | 'analysis' | 'xray'
 
 interface TabDef {
   id: TabId
@@ -261,6 +267,7 @@ const TABS: TabDef[] = [
   { id: 'clusters', label: 'Clusters', icon: Layers },
   { id: 'timeline', label: 'Timeline', icon: Clock },
   { id: 'analysis', label: 'Analysis', icon: Microscope },
+  { id: 'xray', label: 'X-Ray', icon: Zap },
 ]
 
 // --- Main Component ---
@@ -393,7 +400,7 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="family-tree" />
             </div>
-            <FamilyTreeView families={families} activeTiers={activeTiers} />
+            <FamilyTreeView families={families} activeTiers={activeTiers} searchQuery={searchQuery} />
           </div>
         </TabsContent>
         <TabsContent value="clusters">
@@ -401,7 +408,7 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="clusters" />
             </div>
-            <ClusterView clusters={clusters} activeTiers={activeTiers} />
+            <ClusterView clusters={clusters} activeTiers={activeTiers} searchQuery={searchQuery} />
           </div>
         </TabsContent>
         <TabsContent value="timeline">
@@ -409,11 +416,19 @@ export function AttackDNAExplorer() {
             <div className="flex justify-end relative">
               <TabHelpButton tabId="timeline" />
             </div>
-            <MutationTimeline timelineEntries={timeline} activeTiers={activeTiers} />
+            <MutationTimeline timelineEntries={timeline} activeTiers={activeTiers} searchQuery={searchQuery} />
           </div>
         </TabsContent>
         <TabsContent value="analysis">
           <BlackBoxAnalysis />
+        </TabsContent>
+        <TabsContent value="xray">
+          <div className="space-y-3">
+            <div className="flex justify-end relative">
+              <TabHelpButton tabId="xray" />
+            </div>
+            <XRayPanel />
+          </div>
         </TabsContent>
       </Tabs>
 

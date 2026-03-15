@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
 import { useScanner } from '@/lib/ScannerContext'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityLogger } from '@/lib/contexts/ActivityContext'
@@ -42,6 +42,9 @@ const GuardDashboard = lazy(() => import('@/components/guard').then(m => ({ defa
 const AdminPanel = lazy(() => import('@/components/admin').then(m => ({ default: m.AdminPanel })))
 const RoninHub = lazy(() => import('@/components/ronin').then(m => ({ default: m.RoninHub })))
 const LLMJutsu = lazy(() => import('@/components/jutsu').then(m => ({ default: m.LLMJutsu })))
+const SengokuDashboard = lazy(() => import('@/components/sengoku').then(m => ({ default: m.SengokuDashboard })))
+const TimeChamber = lazy(() => import('@/components/time-chamber').then(m => ({ default: m.TimeChamber })))
+const KotobaDashboard = lazy(() => import('@/components/kotoba').then(m => ({ default: m.KotobaDashboard })))
 
 /** Minimal loading fallback for lazy-loaded modules */
 function ModuleLoading() {
@@ -249,6 +252,36 @@ function PageContent() {
           <ErrorBoundary fallbackTitle="Ronin Hub Error" fallbackDescription="Unable to load Ronin Hub. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <RoninHub />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'sengoku' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Sengoku Error" fallbackDescription="Unable to load Sengoku. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <SengokuDashboard />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'time-chamber' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Time Chamber Error" fallbackDescription="Unable to load Time Chamber. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <TimeChamber />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'kotoba' && (
+        <div className="animate-fade-in">
+          <ErrorBoundary fallbackTitle="Kotoba Error" fallbackDescription="Unable to load Kotoba. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <KotobaDashboard />
             </Suspense>
           </ErrorBoundary>
         </div>
@@ -499,12 +532,19 @@ function FixturesSection({
 function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
   const [showCurrent, setShowCurrent] = useState(true)
   const [showPlanned, setShowPlanned] = useState(false)
+  const { loadPayload } = useScanner()
+  const { setActiveTab } = useNavigation()
 
   const filteredPayloads = PAYLOAD_CATALOG.filter((payload) => {
     if (payload.status === 'current' && showCurrent) return true
     if (payload.status === 'planned' && showPlanned) return true
     return false
   })
+
+  const handleLoadToScanner = useCallback((example: string) => {
+    loadPayload(example)
+    setActiveTab('scanner')
+  }, [loadPayload, setActiveTab])
 
   return (
     <div className="space-y-6">
@@ -536,7 +576,7 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
             key={payload.title}
             payload={payload}
             onClick={() => {
-              onScan(payload.example)
+              handleLoadToScanner(payload.example)
             }}
           />
         ))}

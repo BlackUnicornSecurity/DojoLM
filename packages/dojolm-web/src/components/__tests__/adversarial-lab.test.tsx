@@ -1,7 +1,7 @@
 /**
  * File: adversarial-lab.test.tsx
  * Purpose: Tests for AdversarialLab main component
- * Test IDs: AL-001 to AL-012
+ * Test IDs: AL-001 to AL-012 (AL-007 updated for H13.2 tabbed UI)
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -15,6 +15,7 @@ import type { ReactNode } from 'react'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/lib/contexts/EcosystemContext', () => ({
@@ -99,6 +100,19 @@ vi.mock('../adversarial/SkillsLibrary', () => ({
     <div data-testid="skills-library">
       <button onClick={() => onExecuteSkill('test-skill')}>Execute Skill</button>
     </div>
+  ),
+}))
+
+vi.mock('@/components/ui/tabs', () => ({
+  Tabs: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
+    <div data-testid="tabs-root" data-value={value} {...rest}>{children}</div>
+  ),
+  TabsList: ({ children, ...rest }: { children: ReactNode; [k: string]: unknown }) => <div role="tablist" {...rest}>{children}</div>,
+  TabsTrigger: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
+    <button role="tab" data-value={value} {...rest}>{children}</button>
+  ),
+  TabsContent: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
+    <div role="tabpanel" data-testid={`tab-content-${value}`} {...rest}>{children}</div>
   ),
 }))
 
@@ -196,13 +210,23 @@ describe('AL-006: Active tools count changes with mode', () => {
 })
 
 // ===========================================================================
-// AL-007: Attack tools grid renders
+// AL-007: Tabbed interface renders with attack tools in default tab
 // ===========================================================================
-describe('AL-007: Attack tools grid renders', () => {
-  it('renders attack tool cards', () => {
+describe('AL-007: Tabbed interface renders', () => {
+  it('renders tab triggers and default attack-tools tab content', () => {
     render(<AdversarialLab />)
+    // Tab triggers are present
+    expect(screen.getByRole('tablist')).toBeInTheDocument()
     expect(screen.getByText('Attack Tools')).toBeInTheDocument()
-    expect(screen.getByTestId('attack-tool-Notification Flood')).toBeInTheDocument()
+    expect(screen.getByText('Skills')).toBeInTheDocument()
+    expect(screen.getByText('MCP')).toBeInTheDocument()
+    // Tool-type card visible in default tab (Browser Exploitation has minMode 'basic' but is type 'tool')
+    expect(screen.getByTestId('tab-content-attack-tools')).toBeInTheDocument()
+  })
+
+  it('renders MCP tools in the MCP tab', () => {
+    render(<AdversarialLab />)
+    expect(screen.getByTestId('tab-content-mcp')).toBeInTheDocument()
   })
 })
 

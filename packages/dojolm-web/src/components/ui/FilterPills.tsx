@@ -114,7 +114,7 @@ export function FilterPills({
 
   return (
     <div className={cn('space-y-3', className)} role="group" aria-label="Engine filters">
-      <div className="flex flex-nowrap md:flex-wrap items-center gap-3 overflow-x-auto md:overflow-x-visible scrollbar-hide relative">
+      <div className="flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide relative pb-1">
         {/* Active filter indicator */}
         <span className="text-label text-muted-foreground whitespace-nowrap">
           {computedActiveCount}/{computedTotalCount} active
@@ -134,10 +134,10 @@ export function FilterPills({
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium',
                 'border cursor-pointer select-none',
                 'motion-safe:transition-[background-color,color,border-color] motion-safe:duration-[var(--transition-normal)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 filter.enabled
-                  ? 'bg-[var(--overlay-active)] border-[var(--border-active)] text-[var(--foreground)]'
-                  : 'bg-transparent border-[var(--border)] text-muted-foreground hover:border-[var(--border-hover)] hover:text-foreground'
+                  ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-sm'
+                  : 'bg-transparent border-[var(--border)] text-muted-foreground hover:border-[var(--border-hover)] hover:text-foreground opacity-60 hover:opacity-100'
               )}
             >
               {Icon && <Icon className="h-3 w-3" aria-hidden="true" />}

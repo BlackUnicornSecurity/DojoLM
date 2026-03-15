@@ -11,7 +11,7 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
-import { SearchX, Shield, FlaskConical, Database, type LucideIcon } from 'lucide-react'
+import { SearchX, Shield, FlaskConical, Activity, type LucideIcon } from 'lucide-react'
 
 interface EmptyStateProps {
   icon?: LucideIcon
@@ -70,8 +70,8 @@ export const emptyStatePresets = {
     description: 'Adjust your search or filters to reveal hidden patterns.',
   },
   noData: {
-    icon: Database,
-    title: 'Awaiting first session',
-    description: 'Data will appear here once you begin training.',
+    icon: Activity,
+    title: 'No sessions yet',
+    description: 'Activity will appear here once you start scanning or testing.',
   },
 }

@@ -125,10 +125,12 @@
   --transition-slow: 300ms;
   --transition-emphasis: 500ms;
 
-  /* ===== Shadows — Story 2.7 (stronger for darker backgrounds) ===== */
+  /* ===== Shadows — Story 2.7, H3.1 (stronger for darker backgrounds) ===== */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
   --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
@@ -262,6 +264,8 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
   --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
@@ -354,20 +358,21 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 2px rgba(91, 141, 239, 0.15);
 }
 
-/* ===== Custom scrollbar (webkit + Firefox) ===== */
+/* ===== Custom scrollbar (webkit + Firefox) — H3.2 polished ===== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--bg-quaternary);
-  border-radius: 4px;
+  border-radius: 3px;
+  transition: background 150ms ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border);
+  background: var(--text-tertiary);
 }
 /* Firefox */
 * {
@@ -397,14 +402,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Navigation active state (Story 4.4) ===== */
+/* ===== Navigation active state (Story 4.4, H3.1 — filled panel, no border-left) ===== */
 .nav-item-active {
-  background: rgba(91, 141, 239, 0.06);
+  background: rgba(91, 141, 239, 0.10);
   color: var(--foreground);
-  border-left: 3px solid var(--bu-electric);
+  border-radius: var(--radius-lg);
 }
 .nav-item-active-icon {
-  color: var(--bu-electric);
+  color: var(--foreground);
+  opacity: 1;
   filter: drop-shadow(0 0 4px rgba(91, 141, 239, 0.3));
 }
 
@@ -435,7 +441,7 @@ body {
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
 }
 
-/* ===== Widget hero gradient border (Story 4.2 — replaces flat border-t-2) ===== */
+/* ===== Widget hero gradient border (Story 4.2, H3.1 — blue accent) ===== */
 .widget-hero-border {
   position: relative;
 }
@@ -446,7 +452,7 @@ body {
   left: 8%;
   right: 8%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--dojo-primary), transparent);
+  background: linear-gradient(90deg, transparent, var(--bu-electric), transparent);
   border-radius: 1px;
   z-index: 1;
 }
@@ -537,21 +543,21 @@ body {
     animation: slide-up var(--transition-normal) ease-out forwards;
   }
   .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-  .stagger-children > *:nth-child(2) { animation-delay: 50ms; }
-  .stagger-children > *:nth-child(3) { animation-delay: 100ms; }
-  .stagger-children > *:nth-child(4) { animation-delay: 150ms; }
-  .stagger-children > *:nth-child(5) { animation-delay: 200ms; }
-  .stagger-children > *:nth-child(6) { animation-delay: 250ms; }
-  .stagger-children > *:nth-child(7) { animation-delay: 300ms; }
-  .stagger-children > *:nth-child(8) { animation-delay: 350ms; }
-  .stagger-children > *:nth-child(9) { animation-delay: 400ms; }
-  .stagger-children > *:nth-child(10) { animation-delay: 450ms; }
-  .stagger-children > *:nth-child(11) { animation-delay: 500ms; }
-  .stagger-children > *:nth-child(12) { animation-delay: 550ms; }
-  .stagger-children > *:nth-child(13) { animation-delay: 600ms; }
-  .stagger-children > *:nth-child(14) { animation-delay: 650ms; }
-  .stagger-children > *:nth-child(15) { animation-delay: 700ms; }
-  .stagger-children > *:nth-child(16) { animation-delay: 750ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+  .stagger-children > *:nth-child(9) { animation-delay: 320ms; }
+  .stagger-children > *:nth-child(10) { animation-delay: 360ms; }
+  .stagger-children > *:nth-child(11) { animation-delay: 400ms; }
+  .stagger-children > *:nth-child(12) { animation-delay: 440ms; }
+  .stagger-children > *:nth-child(13) { animation-delay: 480ms; }
+  .stagger-children > *:nth-child(14) { animation-delay: 520ms; }
+  .stagger-children > *:nth-child(15) { animation-delay: 560ms; }
+  .stagger-children > *:nth-child(16) { animation-delay: 600ms; }
 }
 
 /* ===== Button press effect ===== */

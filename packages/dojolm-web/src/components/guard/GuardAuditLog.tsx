@@ -70,7 +70,7 @@ export function GuardAuditLog() {
               onClick={() => { setDirectionFilter((prev) => (prev === dir ? null : dir)); setPage(0); }}
               className={cn(
                 'px-2 py-1 text-xs rounded capitalize',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                 directionFilter === dir
                   ? directionColor(dir)
                   : 'text-muted-foreground hover:text-foreground'
@@ -82,7 +82,7 @@ export function GuardAuditLog() {
           ))}
         </div>
 
-        <span className="text-muted-foreground">|</span>
+        <div className="w-px h-4 bg-[var(--border)]" aria-hidden="true" />
 
         {/* Action filters */}
         <div className="flex gap-1" role="group" aria-label="Filter by action">
@@ -92,7 +92,7 @@ export function GuardAuditLog() {
               onClick={() => { setActionFilter((prev) => (prev === act ? null : act)); setPage(0); }}
               className={cn(
                 'px-2 py-1 text-xs rounded capitalize',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                 actionFilter === act
                   ? actionColor(act)
                   : 'text-muted-foreground hover:text-foreground'
@@ -129,7 +129,7 @@ export function GuardAuditLog() {
                   onClick={() => toggleExpand(event.id)}
                   className={cn(
                     'w-full text-left p-3 flex items-center gap-3',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dojo-primary)]',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--bu-electric)]',
                     'rounded-lg'
                   )}
                   aria-expanded={isExpanded}
@@ -142,8 +142,8 @@ export function GuardAuditLog() {
                   )}
 
                   {/* Timestamp */}
-                  <span className="text-xs text-muted-foreground w-[140px] flex-shrink-0 font-mono">
-                    {new Date(event.timestamp).toLocaleString()}
+                  <span className="text-xs text-muted-foreground w-[80px] flex-shrink-0 font-mono" title={new Date(event.timestamp).toLocaleString()}>
+                    {(() => { const diff = Date.now() - new Date(event.timestamp).getTime(); const mins = Math.floor(diff / 60000); if (mins < 1) return 'just now'; if (mins < 60) return `${mins}m ago`; const hrs = Math.floor(mins / 60); if (hrs < 24) return `${hrs}h ago`; return `${Math.floor(hrs / 24)}d ago`; })()}
                   </span>
 
                   {/* Mode */}
@@ -170,7 +170,7 @@ export function GuardAuditLog() {
 
                   {/* Findings count */}
                   <span className="text-xs text-muted-foreground w-[60px] flex-shrink-0 text-center">
-                    {event.scanResult?.findings ?? 0} finds
+                    {event.scanResult?.findings ?? 0} {(event.scanResult?.findings ?? 0) === 1 ? 'finding' : 'findings'}
                   </span>
 
                   {/* Confidence */}
@@ -232,23 +232,23 @@ export function GuardAuditLog() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-3">
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
             aria-label="Previous page"
-            className="px-2 py-1 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] transition-colors"
           >
             Prev
           </button>
-          <span className="text-xs text-muted-foreground" aria-live="polite">
+          <span className="text-sm font-medium" aria-live="polite">
             Page {page + 1} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
             aria-label="Next page"
-            className="px-2 py-1 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dojo-primary)]"
+            className="px-3 py-1.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] transition-colors"
           >
             Next
           </button>

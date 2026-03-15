@@ -22,6 +22,7 @@ import {
   ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
+import { formatDate } from '@/lib/utils';
 
 interface ExecutiveSummaryData {
   overallScore: number;
@@ -49,10 +50,10 @@ function clampScore(score: number): number {
   return Number.isFinite(score) ? Math.round(Math.min(100, Math.max(0, score))) : 0;
 }
 
-function formatDate(iso?: string): string | null {
+function formatDateOrNull(iso?: string): string | null {
   if (!iso) return null;
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? null : d.toLocaleString();
+  const result = formatDate(iso, true);
+  return result === iso ? null : result;
 }
 
 /**
@@ -137,7 +138,7 @@ export function ExecutiveSummary() {
     );
   }
 
-  const generatedDate = formatDate(data.generatedAt);
+  const generatedDate = formatDateOrNull(data.generatedAt);
 
   return (
     <div className="space-y-6">

@@ -14,6 +14,7 @@ import '@testing-library/jest-dom'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  formatDate: (input: unknown) => String(input),
 }))
 
 vi.mock('@/components/ui/card', () => ({
@@ -32,6 +33,17 @@ vi.mock('@/components/ui/GlowCard', () => ({
   GlowCard: ({ children, glow, className }: { children: React.ReactNode; glow?: string; className?: string }) => (
     <div data-testid="glow-card" data-glow={glow} className={className}>{children}</div>
   ),
+}))
+
+vi.mock('@/lib/NavigationContext', () => {
+  const { createContext } = require('react')
+  return {
+    NavigationContext: createContext({ activeTab: 'dashboard', setActiveTab: () => {} }),
+  }
+})
+
+vi.mock('@/lib/constants', () => ({
+  NAV_ITEMS: [{ id: 'dashboard' }, { id: 'scanner' }],
 }))
 
 // ---------------------------------------------------------------------------

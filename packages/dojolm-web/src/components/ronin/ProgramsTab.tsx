@@ -103,6 +103,13 @@ export function ProgramsTab() {
     saveSubscriptions(subscriptions)
   }, [subscriptions])
 
+  // Top 3 highest-paying active programs get "Featured" ribbon
+  const featuredIds = useMemo(() => {
+    const active = programs.filter(p => p.status === 'active')
+    const sorted = [...active].sort((a, b) => b.rewardMax - a.rewardMax)
+    return new Set(sorted.slice(0, 3).map(p => p.id))
+  }, [programs])
+
   const filteredPrograms = useMemo(() => {
     return programs.filter(p => {
       if (showSubscribedOnly && !subscriptions.has(p.id)) return false
@@ -138,7 +145,7 @@ export function ProgramsTab() {
               'w-full pl-9 pr-3 py-2 rounded-lg text-sm min-h-[40px]',
               'bg-[var(--bg-primary)] border border-[var(--border)]',
               'text-foreground placeholder:text-muted-foreground',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
             )}
             aria-label="Search programs"
           />
@@ -151,7 +158,7 @@ export function ProgramsTab() {
           className={cn(
             'px-3 py-2 rounded-lg text-sm min-h-[40px]',
             'bg-[var(--bg-primary)] border border-[var(--border)]',
-            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
           )}
           aria-label="Filter by platform"
         >
@@ -168,7 +175,7 @@ export function ProgramsTab() {
           className={cn(
             'px-3 py-2 rounded-lg text-sm min-h-[40px]',
             'bg-[var(--bg-primary)] border border-[var(--border)]',
-            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+            'text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--bu-electric)]',
           )}
           aria-label="Filter by status"
         >
@@ -217,6 +224,7 @@ export function ProgramsTab() {
               isSubscribed={subscriptions.has(program.id)}
               onToggleSubscribe={handleToggleSubscribe}
               onSelect={setSelectedProgram}
+              featured={featuredIds.has(program.id)}
             />
           ))}
         </div>
