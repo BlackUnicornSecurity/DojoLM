@@ -90,7 +90,7 @@ describe('Output Detector Module', () => {
 
   // OD-010
   it('OD-010: detects API key leak in output', () => {
-    const text = 'api_key: sk_live_ABCDEFGHIJKLMNOPQRSTU12345';
+    const text = 'api_key: rk_live_ABCDEFGHIJKLMNOPQRSTU12345';
     const findings = module!.scan(text, text.toLowerCase());
     expect(findings.some((f) => f.category === 'OUTPUT_DATA_LEAK')).toBe(true);
   });
