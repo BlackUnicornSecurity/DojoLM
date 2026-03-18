@@ -76,6 +76,11 @@ Scan text for prompt injection patterns.
 - [bu-tpi](../bu-tpi/) - Core scanner engine
 - [dojolm-web](../dojolm-web/) - Web interface
 
+## Documentation
+
+- [Platform Guide](../../docs/user/PLATFORM_GUIDE.md)
+- [Contributing Guide](../../github/CONTRIBUTING.md)
+
 ## License
 
-MIT
+DojoLM Research-Only License — See [LICENSE](../../LICENSE)

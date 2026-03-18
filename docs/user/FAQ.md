@@ -12,7 +12,7 @@ NODA stands for **N**etworked **O**perations for **D**efensive **A**I - though w
 
 ### Is NODA open source?
 
-Most of NODA is open source under MIT license. The core scanner engine (bu-tpi) is source-available but not open source.
+NODA is released under the DojoLM Research-Only License. It is permitted for academic research, education, and personal security testing. See the [LICENSE](../../LICENSE) file for details.
 
 ## Installation & Setup
 
@@ -48,7 +48,7 @@ Yes! The scanner works completely offline. LLM testing requires internet connect
 
 ### How many patterns does the scanner detect?
 
-The scanner includes **505+ detection patterns** across 47 pattern groups, covering:
+The scanner includes **534 detection patterns** across 14 pattern groups, covering:
 - Prompt injection
 - Jailbreak attempts
 - Encoded payloads
@@ -72,11 +72,12 @@ Yes, the scanner includes multilingual detection capabilities and Unicode normal
 
 ### Which LLM providers are supported?
 
-- OpenAI (GPT-4, GPT-3.5)
-- Anthropic (Claude)
-- Ollama (local models)
-- LM Studio
-- Custom OpenAI-compatible endpoints
+NODA supports 19 providers:
+- **Cloud:** OpenAI, Anthropic, Google, Cohere
+- **Fast inference:** Groq, Together, Fireworks, Replicate
+- **Specialized:** DeepSeek, Mistral, Cloudflare, AI21
+- **Local:** Ollama, LM Studio, llama.cpp
+- **Custom:** Any OpenAI-compatible endpoint
 
 ### Do I need API keys?
 
@@ -108,7 +109,7 @@ Yes. NODA implements:
 - Content Security Policy
 - Secure headers
 
-See [security documentation](../../team/security/) for details.
+See the [Platform Guide](PLATFORM_GUIDE.md) for details.
 
 ### Where is my data stored?
 
@@ -124,7 +125,7 @@ Yes, but we recommend:
 
 ### How do I report security vulnerabilities?
 
-Email security@dojolm.dev with details. See our [security policy](../../team/security/policies/VULNERABILITY-DISCLOSURE.md).
+Email info@blackunicorn.tech with details.
 
 ## Compliance
 
@@ -157,16 +158,19 @@ Yes! Contact us for framework customization options.
 
 | Module | Purpose |
 |--------|---------|
-| Haiku Scanner | Quick text scanning |
-| Armory | Browse attack fixtures |
-| Bushido Book | Compliance tracking |
-| LLM Dashboard | Model testing |
-| Atemi Lab | Adversarial testing |
-| The Kumite | Strategic analysis |
-| Amaterasu DNA | Attack intelligence |
-| Hattori Guard | I/O protection |
-| Ronin Hub | Bug bounty |
+| Haiku Scanner | Quick text scanning (534 patterns) |
+| Armory | Browse 2,375 attack fixtures |
+| Bushido Book | Compliance tracking (8 frameworks) |
+| LLM Dashboard | Multi-provider model testing |
 | LLM Jutsu | Test command center |
+| Hattori Guard | I/O protection (4 modes) |
+| Atemi Lab | Adversarial MCP testing |
+| The Kumite | Strategic analysis (Arena, SAGE, Mitsuke) |
+| Amaterasu DNA | Attack lineage intelligence |
+| Ronin Hub | Bug bounty platform |
+| Sengoku | Continuous red teaming campaigns |
+| Time Chamber | Temporal attack simulation |
+| Kotoba | Prompt optimization studio |
 
 ### What's Amaterasu DNA?
 
@@ -185,10 +189,10 @@ The Arena is a gamified battle system where AI models compete:
 ### What's Hattori Guard?
 
 Hattori Guard provides input/output protection with 4 modes:
-- **Audit:** Log only
-- **Block:** Block attacks
-- **Sanitize:** Clean inputs
-- **Honeypot:** Deceptive responses
+- **Shinobi** (Eye): Stealth monitor — logs only, no blocking
+- **Samurai** (Shield): Active defense — blocks inputs
+- **Sensei** (ShieldAlert): Aggressive defense — blocks outputs
+- **Hattori** (ShieldCheck): Full protection — blocks both inputs and outputs
 
 ## Troubleshooting
 
@@ -224,12 +228,10 @@ Yes! NODA provides RESTful APIs for all functionality. See [API Reference](API_R
 
 ### Can I integrate NODA into my CI/CD?
 
-Yes, using the API:
+Yes, using the scanner API (GET-only):
 
 ```bash
-curl -X POST http://localhost:8089/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{"text": "'$INPUT_TEXT'"}'
+curl "http://localhost:8089/api/scan?text=$(echo -n "$INPUT_TEXT" | jq -sRr @uri)"
 ```
 
 ### Are there SDKs?
@@ -282,7 +284,7 @@ See [Contributing Guide](../../github/CONTRIBUTING.md):
 
 ### Is there a contributor license agreement?
 
-No, but you must agree to license your contributions under MIT.
+No, but you must agree to the project's license terms.
 
 ## Support
 
@@ -290,11 +292,11 @@ No, but you must agree to license your contributions under MIT.
 
 - Documentation: [docs/](../)
 - GitHub Issues: Bug reports and features
-- Email: support@dojolm.dev
+- Email: info@blackunicorn.tech
 
 ### Is there paid support?
 
-Enterprise support options are available. Contact sales@dojolm.dev.
+Enterprise support options are available. Contact info@blackunicorn.tech.
 
 ### How do I report bugs?
 
@@ -308,7 +310,7 @@ Open a GitHub issue with:
 
 ### What's coming next?
 
-See [KASHIWA Update](../../team/docs/KASHIWA-UPDATE.md) for current development.
+See the project changelog and GitHub issues for current development.
 
 Planned features:
 - DuckDB integration for analytics
@@ -323,4 +325,4 @@ Open a GitHub issue with the "feature request" label.
 
 ---
 
-**Didn't find your answer?** Contact support@dojolm.dev
+**Didn't find your answer?** Contact info@blackunicorn.tech

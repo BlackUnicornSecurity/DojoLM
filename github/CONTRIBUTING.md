@@ -25,7 +25,7 @@ dojolm/
 │   │   │   ├── serve.ts     # Hardened HTTP server
 │   │   │   ├── generate-fixtures.ts  # Fixture generator
 │   │   │   └── types.ts     # Shared type definitions
-│   │   ├── fixtures/        # 1,544 attack/clean fixture files across 30 categories
+│   │   ├── fixtures/        # 2,375 attack/clean fixture files across 30 categories
 │   │   └── tools/           # Test suites
 │   ├── dojolm-scanner/      # Enhanced scanner package (web integration)
 │   ├── dojolm-web/          # Next.js web app (port 3000)

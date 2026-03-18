@@ -74,11 +74,48 @@ npx @dojolm/mcp
 }
 ```
 
+### Advanced Tool Scenarios
+
+9 adversarial tool scenarios for testing real-world attack vectors:
+
+| Scenario | Target |
+|----------|--------|
+| `vector-db` | Vector DB poisoning |
+| `browser` | Browser exploitation |
+| `api-gateway` | API gateway attacks |
+| `file-system` | Filesystem exploitation |
+| `model-endpoint` | Model endpoint poisoning |
+| `email-server` | Email server attacks |
+| `code-repo` | Repository poisoning |
+| `message-queue` | Message queue exploitation |
+| `search-engine` | Search engine poisoning |
+
+### Attack Modes
+
+| Mode | Behavior |
+|------|----------|
+| `passive` | Observation only |
+| `basic` | Subset of core attacks |
+| `advanced` | Full attack portfolio |
+| `aggressive` | Intensive attack patterns |
+
+### Security Features
+
+- Sandboxed virtual filesystem (no real FS access)
+- Localhost binding only (127.0.0.1)
+- Auto-shutdown timeout (default 5 min)
+- Attack logging and metrics collection
+
 ## Related Packages
 
-- [bu-tpi](../bu-tpi/) - Core scanner
+- [bu-tpi](../bu-tpi/) - Core scanner engine
 - [dojolm-web](../dojolm-web/) - Web interface
+
+## Documentation
+
+- [Platform Guide](../../docs/user/PLATFORM_GUIDE.md)
+- [Contributing Guide](../../github/CONTRIBUTING.md)
 
 ## License
 
-MIT
+DojoLM Research-Only License — See [LICENSE](../../LICENSE)

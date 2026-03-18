@@ -226,4 +226,4 @@ npm start                # Start server (port 8089)
 
 ## License
 
-UNLICENSED / Private
+DojoLM Research-Only License — See [LICENSE](../../LICENSE)

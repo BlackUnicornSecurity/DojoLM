@@ -76,7 +76,7 @@ Open your browser to: `http://localhost:3000`
 ## Run Your First LLM Test
 
 1. Go to **LLM Dashboard**
-2. Select the **Test Lab** tab
+2. Select the **LLM Jutsu** tab
 3. Choose a model from dropdown
 4. Select test cases (try "Prompt Injection Basics")
 5. Click **Run Test**
@@ -102,6 +102,9 @@ Open your browser to: `http://localhost:3000`
 | **The Kumite** | Strategic analysis | Check threat feed |
 | **Atemi Lab** | Adversarial testing | Try mutation strategies |
 | **Ronin Hub** | Bug bounty | Browse programs |
+| **Sengoku** | Continuous red teaming | Run a campaign |
+| **Time Chamber** | Temporal attacks | Simulate time-based vectors |
+| **Kotoba** | Prompt optimization | Optimize defense prompts |
 
 ## Dashboard Customization
 
@@ -132,9 +135,7 @@ curl http://localhost:3000/api/admin/health
 ### Scan via API
 
 ```bash
-curl -X POST http://localhost:8089/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Your text here"}'
+curl "http://localhost:8089/api/scan?text=Your%20text%20here"
 ```
 
 ## Next Steps
@@ -154,7 +155,6 @@ curl -X POST http://localhost:8089/api/scan \
 
 - Watch the repository for updates
 - Read the [Changelog](../../github/CHANGELOG.md)
-- Check [KASHIWA Update](../../team/docs/KASHIWA-UPDATE.md) for latest features
 
 ## Troubleshooting
 
@@ -193,7 +193,7 @@ kill -9 $(lsof -ti:8089)
 
 - **Documentation:** [docs/](../)
 - **Issues:** [GitHub Issues](https://github.com/dojolm/dojolm/issues)
-- **Support:** support@dojolm.dev
+- **Support:** info@blackunicorn.tech
 
 ---
 

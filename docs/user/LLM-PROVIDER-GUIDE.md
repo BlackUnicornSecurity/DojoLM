@@ -2,14 +2,23 @@
 
 This guide covers configuring LLM providers in NODA for security testing.
 
-## Supported Providers
+## Supported Providers (19 total)
 
 | Provider | Models | Local/Cloud | Setup Difficulty |
 |----------|--------|-------------|------------------|
-| OpenAI | GPT-4, GPT-3.5 | Cloud | Easy |
-| Anthropic | Claude 3 | Cloud | Easy |
+| OpenAI | GPT-4o, o3, GPT-5.4 | Cloud | Easy |
+| Anthropic | Claude 4.6 Opus/Sonnet/Haiku | Cloud | Easy |
+| Google | Gemini 2.0 Flash, 1.5 Pro | Cloud | Easy |
+| Cohere | Command R+, Command R | Cloud | Easy |
+| Groq | Various (fast inference) | Cloud | Easy |
+| Together | Various | Cloud | Easy |
+| Fireworks | Various | Cloud | Easy |
+| DeepSeek | DeepSeek models | Cloud | Easy |
+| Mistral | Mistral models | Cloud | Easy |
 | Ollama | Various | Local | Medium |
 | LM Studio | Various | Local | Medium |
+| llama.cpp | Various | Local | Medium |
+| Custom | Any OpenAI-compatible | Either | Varies |
 
 ---
 
@@ -43,9 +52,9 @@ This guide covers configuring LLM providers in NODA for security testing.
 
 ### Available Models
 
-- GPT-4 Turbo
-- GPT-4
-- GPT-3.5 Turbo
+- GPT-4o (recommended)
+- o3 (reasoning)
+- GPT-5.4 (latest)
 
 ### Pricing
 
@@ -87,9 +96,9 @@ Pay per token. See [OpenAI Pricing](https://openai.com/pricing).
 
 ### Available Models
 
-- Claude 3 Opus
-- Claude 3 Sonnet
-- Claude 3 Haiku
+- Claude 4.6 Opus
+- Claude 4.6 Sonnet
+- Claude 4.5 Haiku
 
 ### Pricing
 
@@ -352,13 +361,13 @@ export HTTPS_PROXY=http://proxy.company.com:8080
 
 ## Provider Comparison
 
-| Feature | OpenAI | Anthropic | Ollama | LM Studio |
-|---------|--------|-----------|--------|-----------|
-| Setup | Easy | Easy | Medium | Medium |
-| Cost | Pay per use | Pay per use | Free | Free |
-| Privacy | Cloud | Cloud | Local | Local |
-| Speed | Fast | Fast | Varies | Varies |
-| Model Variety | Limited | Limited | Large | Large |
+| Feature | OpenAI | Anthropic | Google | Ollama | LM Studio |
+|---------|--------|-----------|--------|--------|-----------|
+| Setup | Easy | Easy | Easy | Medium | Medium |
+| Cost | Pay per use | Pay per use | Pay per use | Free | Free |
+| Privacy | Cloud | Cloud | Cloud | Local | Local |
+| Speed | Fast | Fast | Fast | Varies | Varies |
+| Model Variety | Limited | Limited | Limited | Large | Large |
 
 ---
 
@@ -368,4 +377,4 @@ export HTTPS_PROXY=http://proxy.company.com:8080
 - Anthropic: [Support](https://support.anthropic.com/)
 - Ollama: [GitHub Issues](https://github.com/ollama/ollama/issues)
 - LM Studio: [Discord](https://discord.gg/lmstudio)
-- NODA: support@dojolm.dev
+- NODA: info@blackunicorn.tech

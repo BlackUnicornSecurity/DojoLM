@@ -232,7 +232,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Model Integrity Verification',
     description: 'Verify model integrity to detect tampering, backdoors, or unauthorized modifications.',
     category: 'model-protection',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       mitre: ['AML.T0010'],
       enisa: ['SEC-03'],
@@ -290,7 +290,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Data Provenance & Lineage',
     description: 'Track and verify the provenance and lineage of data used in AI systems.',
     category: 'data-governance',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       euAi: ['Art.10'],
       nist: ['MAP'],
@@ -308,7 +308,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Privacy by Design & Legal Basis for AI',
     description: 'Implement privacy by design and by default principles with documented legal basis for all personal data processing in AI systems.',
     category: 'data-governance',
-    assessmentType: 'manual',
+    assessmentType: 'semi-automated',
     mappedFrameworks: {
       euAi: ['Art.10'],
       gdpr: ['Art.25', 'Art.6'],
@@ -393,7 +393,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Secure AI Development Lifecycle & Build Integrity',
     description: 'Integrate security into all AI development phases with separated environments, threat modeling, secure coding standards, and adversarial testing gates.',
     category: 'supply-chain',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       nist218a: ['PO.1', 'PO.5', 'PW.1', 'PW.3', 'PW.8'],
       slsa: ['L2-1', 'L3-1', 'L3-2'],
@@ -410,7 +410,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'AI Artifact Signing, Provenance & Bill of Materials',
     description: 'Maintain machine-readable provenance and inventory for all AI artifacts with signing, ML-BOM, and SHA-256 verification.',
     category: 'supply-chain',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       slsa: ['L1', 'L2', 'L3', 'ML-1', 'ML-2'],
       mlBom: ['ML-BOM-1', 'ML-BOM-2', 'ML-BOM-3', 'ML-BOM-4', 'ML-BOM-5', 'ML-BOM-6', 'ML-BOM-7', 'ML-BOM-8', 'ML-BOM-9', 'ML-BOM-10'],
@@ -600,7 +600,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'GPAI & Frontier Model Obligations',
     description: 'For models meeting EU AI Act systemic risk threshold, implement risk self-assessment, AI Office notification, red-teaming, and tiered incident reporting.',
     category: 'governance',
-    assessmentType: 'manual',
+    assessmentType: 'semi-automated',
     mappedFrameworks: {
       euAiGpai: ['GPAI-51A', 'GPAI-51B', 'GPAI-52', 'GPAI-53A', 'GPAI-53B', 'GPAI-53C', 'GPAI-53D', 'GPAI-54', 'GPAI-55A', 'GPAI-55B', 'GPAI-55C', 'GPAI-COP'],
     },
@@ -759,7 +759,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Bias & Fairness Testing',
     description: 'Test AI systems for bias, discrimination, and fairness across demographic groups.',
     category: 'ethical',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       owasp: ['LLM09'],
       nist: ['MEASURE'],
@@ -794,7 +794,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'Dual-Use & Safety Assessment',
     description: 'Assess AI systems for potential dual-use risks (CBRN, deepfakes, synthetic content).',
     category: 'ethical',
-    assessmentType: 'manual',
+    assessmentType: 'semi-automated',
     mappedFrameworks: {
       nist: ['#1', '#9'],
       nistAi1004: ['dual-use-risks'],
@@ -821,7 +821,7 @@ export const BAISS_CONTROLS: BAISSControl[] = [
     title: 'AI Content Provenance & Synthetic Media Controls',
     description: 'Ensure AI-generated content is appropriately labelled, watermarked, or credentialed with provenance metadata and synthetic content detection.',
     category: 'ethical',
-    assessmentType: 'semi-automated',
+    assessmentType: 'automated',
     mappedFrameworks: {
       euAi: ['Art.52'],
       euAiGpai: ['Art.53'],

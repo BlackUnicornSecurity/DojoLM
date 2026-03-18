@@ -107,6 +107,18 @@ describe('H10.1: Evidence mapping verification', () => {
       expect(controls).toContain('API-3');
       expect(controls).toContain('API-7');
     });
+
+    // Bushido Upgrade: threatfeed pipeline mapping (Part 3 #11)
+    it('threatfeed maps to LLM03, AML.T0010, ISO27-SC (BAISS-010, BAISS-013)', () => {
+      const controls = MODULE_CONTROL_MAP['threatfeed'];
+      expect(controls).toBeDefined();
+      expect(controls).toContain('LLM03');
+      expect(controls).toContain('AML.T0010');
+      expect(controls).toContain('AML.T0030');
+      expect(controls).toContain('ISO27-SC');
+      expect(controls).toContain('NIST-SR');
+      expect(controls).toContain('SLSA-VER-1');
+    });
   });
 
   // --- T-EV-04: Deduplication works correctly in getAllMappings ---

@@ -17,7 +17,7 @@ The KASHIWA update brings a complete visual overhaul with:
 
 ### 1. Haiku Scanner
 
-Real-time prompt injection detection with 505+ patterns.
+Real-time prompt injection detection with 534 patterns.
 
 **Features:**
 - Instant text scanning
@@ -33,7 +33,7 @@ Real-time prompt injection detection with 505+ patterns.
 
 ### 2. Armory
 
-Browse and test 1,544 attack fixtures across 30 categories.
+Browse and test 2,375 attack fixtures across 30 categories.
 
 **Features:**
 - Category filtering
@@ -71,12 +71,12 @@ Compliance center with 8 frameworks.
 
 Multi-provider LLM security benchmarking.
 
-**Supported Providers:**
-- OpenAI (GPT-4, GPT-3.5)
-- Anthropic (Claude)
-- Ollama (local models)
-- LM Studio
-- Custom OpenAI-compatible
+**Supported Providers (19 total):**
+- OpenAI, Anthropic, Google, Cohere (cloud)
+- Groq, Together, Fireworks, Replicate (fast inference)
+- DeepSeek, Mistral, Cloudflare, AI21 (specialized)
+- Ollama, LM Studio, llama.cpp (local)
+- Custom OpenAI-compatible endpoints
 
 **Features:**
 - Batch testing
@@ -122,10 +122,10 @@ Attack lineage and intelligence analysis.
 Input/output protection with 4 modes.
 
 **Modes:**
-- **Audit:** Log only
-- **Block:** Block attacks
-- **Sanitize:** Clean inputs
-- **Honeypot:** Deceptive responses
+- **Shinobi** (Eye icon): Stealth monitor — logs only, no blocking
+- **Samurai** (Shield icon): Active defense — scans and blocks inputs
+- **Sensei** (ShieldAlert icon): Aggressive defense — scans and blocks outputs
+- **Hattori** (ShieldCheck icon): Full protection — scans and blocks both inputs and outputs
 
 ### 9. Ronin Hub
 
@@ -146,6 +146,36 @@ Testing command center.
 - Provider management
 - Belt rankings
 - Test history
+
+### 11. Sengoku
+
+Continuous red teaming campaigns.
+
+**Features:**
+- Automated campaign execution
+- Multi-vector attack sequences
+- Progress tracking and reporting
+- Campaign scheduling
+
+### 12. Time Chamber
+
+Temporal attack simulation.
+
+**Features:**
+- Time-based attack vectors
+- Replay attack testing
+- Session persistence testing
+- Temporal pattern analysis
+
+### 13. Kotoba
+
+Prompt optimization studio.
+
+**Features:**
+- Defense prompt optimization
+- Rule-based prompt hardening
+- Effectiveness scoring
+- Prompt variant generation
 
 ## Dashboard
 
@@ -179,11 +209,8 @@ The NODA Dashboard provides a customizable overview of your security posture.
 ### Quick Scan
 
 ```bash
-# API endpoint
-POST /api/scan
-{
-  "text": "Your text to scan"
-}
+# Scanner API (GET-only, port 8089)
+curl "http://localhost:8089/api/scan?text=Your%20text%20to%20scan"
 ```
 
 ### Batch Testing
@@ -198,19 +225,11 @@ POST /api/scan
 ### Using the Scanner API
 
 ```bash
-# Basic scan
-curl -X POST http://localhost:8089/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Ignore previous instructions"}'
+# Basic scan (GET-only API on port 8089)
+curl "http://localhost:8089/api/scan?text=Ignore%20previous%20instructions"
 
-# With context
-curl -X POST http://localhost:8089/api/scan \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Your text",
-    "context": "system",
-    "modelId": "gpt-4"
-  }'
+# View scanner stats
+curl http://localhost:8089/api/stats
 ```
 
 ## Compliance
@@ -327,7 +346,7 @@ Most modules support report generation:
 
 - Documentation: [docs/](../)
 - Issues: GitHub Issues
-- Support: support@dojolm.dev
+- Support: info@blackunicorn.tech
 
 ## Keyboard Shortcuts
 

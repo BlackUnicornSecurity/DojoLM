@@ -11,11 +11,12 @@ docs/
 │   ├── PLATFORM_GUIDE.md       # Complete platform guide
 │   ├── GETTING_STARTED.md      # Quick start guide
 │   ├── FAQ.md                  # Frequently asked questions
-│   ├── LLM_PROVIDER_GUIDE.md   # Provider configuration
+│   ├── LLM-PROVIDER-GUIDE.md   # Provider configuration
 │   └── API_REFERENCE.md        # API documentation
 ├── compliance/                  # Compliance documentation
 │   └── iso-42001/              # ISO 42001 specific docs
-└── STYLE_GUIDE.md              # Documentation style guide
+└── app/                        # App testing documentation
+    └── testing-results/        # Timestamped test reports
 ```
 
 ## Quick Access
@@ -27,36 +28,32 @@ docs/
 
 ### For Developers
 1. [API Reference](user/API_REFERENCE.md) - API documentation
-2. [Team Dev Docs](../team/dev/) - Internal development docs
-3. [Contributing Guide](../github/CONTRIBUTING.md) - Contribution guidelines
+2. [Contributing Guide](../github/CONTRIBUTING.md) - Contribution guidelines
 
 ### For Security Teams
-1. [Security Overview](../team/security/) - Security documentation
-2. [Compliance](compliance/) - Framework documentation
-3. [Audit Results](../team/security/audit-results/) - Security audits
+1. [Compliance](compliance/) - Framework documentation (ISO 42001)
+2. [LLM Provider Guide](user/LLM-PROVIDER-GUIDE.md) - Provider setup for testing
 
 ## Documentation Status
 
 | Document | Status | Last Updated |
 |----------|--------|--------------|
-| Platform Guide | ✅ Complete | 2026-03-08 |
-| API Reference | ✅ Complete | 2026-03-08 |
-| Getting Started | ✅ Complete | 2026-03-08 |
-| FAQ | ✅ Complete | 2026-03-08 |
-| LLM Provider Guide | ✅ Complete | 2026-03-08 |
+| Platform Guide | Complete | 2026-03-18 |
+| API Reference | Complete | 2026-03-08 |
+| Getting Started | Complete | 2026-03-18 |
+| FAQ | Complete | 2026-03-18 |
+| LLM Provider Guide | Complete | 2026-03-18 |
 
 ## Contributing to Documentation
 
-See [STYLE_GUIDE.md](STYLE_GUIDE.md) for documentation standards.
-
 When updating documentation:
-1. Follow the style guide
-2. Update the status table
+1. Keep user-facing docs in `docs/user/`
+2. Update the status table above
 3. Test all code examples
-4. Run `npm run verify:docs`
+4. Verify all internal links
 
 ## Support
 
 - Documentation issues: Open a GitHub issue
-- General support: support@dojolm.dev
-- Security issues: security@dojolm.dev
+- General support: info@blackunicorn.tech
+- Security issues: info@blackunicorn.tech

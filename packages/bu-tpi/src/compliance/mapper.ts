@@ -158,6 +158,19 @@ export const MODULE_CONTROL_MAP: Record<string, string[]> = {
     'CSF2-DE-1',    // NIST CSF 2.0 - Detect
   ],
 
+  // Bushido Upgrade: LLM test capabilities — BAISS-005, BAISS-008, BAISS-023, BAISS-013
+  'llm-test-capabilities': [
+    'LLM06', 'LLM04', 'AML.T0015', 'AML.T0040',
+    'NIST-PRIV', 'NIST-SEC', 'NIST-SI',
+  ],
+
+  // Bushido Upgrade: Threat intelligence pipeline — BAISS-010, BAISS-013
+  'threatfeed': [
+    'LLM03', 'AML.T0010', 'AML.T0030', 'NIST-SEC',
+    'NIST-218A-PW.3', 'NIST-218A-PW.4', 'SAIF-P1-1', 'CISA-PH2-1',
+    'SLSA-VER-1', 'ML-BOM-8', 'ISO27-SC', 'NIST-SR',
+  ],
+
   // Core
   'core-patterns': [
     'LLM01', 'LLM02', 'AML.T0060', 'NIST-ROBUST',
@@ -170,8 +183,11 @@ export const MODULE_CONTROL_MAP: Record<string, string[]> = {
  * Each entry maps a module to test files that serve as compliance evidence.
  */
 export const MODULE_EVIDENCE_MAP: Record<string, string[]> = {
+  // --- Pre-existing evidence mappings ---
   'fuzzing': [
     'src/fuzzing/fuzzing.test.ts',
+    'src/fuzzing/fuzzer.test.ts',
+    'src/fuzzing/grammar.test.ts',
   ],
   'ssrf-detector': [
     'src/modules/ssrf-detector.test.ts',
@@ -184,6 +200,79 @@ export const MODULE_EVIDENCE_MAP: Record<string, string[]> = {
   ],
   'webmcp-detector': [
     'src/modules/webmcp-detector.test.ts',
+  ],
+
+  // --- Bushido Upgrade: Part 1 — Manual->Hybrid evidence (BAISS-031, 038, 042) ---
+  'deepfake-detector': [
+    'src/modules/deepfake-detector.test.ts',
+    'src/compliance/__tests__/baiss-manual-h102.test.ts',
+  ],
+  'pii-detector': [
+    'src/modules/pii-detector.test.ts',
+    'src/compliance/__tests__/baiss-manual-h102.test.ts',
+  ],
+
+  // --- Bushido Upgrade: Part 2 — Semi-Auto->Automated evidence (BAISS-009, 012, 029, 033, 034, 043) ---
+  'bias-detector': [
+    'src/modules/bias-detector.test.ts',
+    'src/compliance/__tests__/evidence-automation-h103.test.ts',
+  ],
+  'dos-detector': [
+    'src/modules/dos-detector.test.ts',
+  ],
+  'supply-chain-detector': [
+    'src/modules/supply-chain-detector.test.ts',
+  ],
+  'data-provenance': [
+    'src/modules/data-provenance.test.ts',
+    'src/attackdna/lineage-engine.test.ts',
+  ],
+
+  // --- Bushido Upgrade: Part 3 — Unmapped evidence (#11 threatfeed) ---
+  'threatfeed': [
+    'src/threatfeed/threatfeed.test.ts',
+    'src/threatfeed/content-sanitizer.test.ts',
+    'src/threatfeed/classifier.test.ts',
+    'src/threatfeed/url-validator.test.ts',
+    'src/threatfeed/deduplicator.test.ts',
+    'src/threatfeed/source-pipeline.test.ts',
+  ],
+
+  // --- Bushido Upgrade: Part 4 — New LLM test capabilities (BAISS-005, 008, 023, 013) ---
+  'llm-test-capabilities': [
+    'src/compliance/__tests__/llm-test-capabilities-h104.test.ts',
+  ],
+
+  // --- Additional scanner module evidence ---
+  'enhanced-pi': [
+    'src/modules/enhanced-pi.test.ts',
+  ],
+  'encoding-engine': [
+    'src/modules/encoding-engine.test.ts',
+  ],
+  'mcp-parser': [
+    'src/modules/mcp-parser.test.ts',
+  ],
+  'token-analyzer': [
+    'src/modules/token-analyzer.test.ts',
+  ],
+  'rag-analyzer': [
+    'src/modules/rag-analyzer.test.ts',
+  ],
+  'vectordb-interface': [
+    'src/modules/vectordb-interface.test.ts',
+  ],
+  'env-detector': [
+    'src/modules/env-detector.test.ts',
+  ],
+  'overreliance-detector': [
+    'src/modules/overreliance-detector.test.ts',
+  ],
+  'model-theft-detector': [
+    'src/modules/model-theft-detector.test.ts',
+  ],
+  'session-bypass': [
+    'src/modules/session-bypass.test.ts',
   ],
 };
 

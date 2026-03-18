@@ -27,10 +27,42 @@ sbom.json
 dojolm.config.json
 
 # Development tools (not part of the main package)
-tools/generate-missing-format-fixtures.ts
+tools/
 
-# QA screenshots in repo root
+# Dev artifacts and debug files
+packages/bu-tpi/agent_failures.txt
+packages/bu-tpi/debug-*.js
+packages/bu-tpi/coverage/
+packages/bu-tpi/tools/
+packages/dojolm-scanner/test-vec-fixtures.cjs
+
+# Temporary files
+*.tmp
+
+# Internal documentation
+internal/
+
+# Documentation tracking (internal)
+.documentation-index.md
+DOCUMENTATION_UPDATE_SUMMARY.md
+docs/DOCUMENTAL-UPDATE-SUMMARY.md
+docs/NEXTJS-MIGRATION-PLAN.md
+docs/MAINTENANCE.md
+docs/MIGRATION.md
+docs/STYLE-GUIDE.md
+docs/API_REFERENCE.md
+docs/app/developer-guide.md
+docs/app/improvement-tracker.md
+
+# QA screenshots and presentation screenshots in repo root
 qa*.png
+*.png
+
+# Data directory (runtime artifacts, root-level only)
+/data/
+
+# Presentation materials (internal)
+presentation/
 
 # Playwright MCP artifacts
 .playwright-mcp/

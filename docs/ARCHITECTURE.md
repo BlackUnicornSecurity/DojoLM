@@ -111,7 +111,7 @@ packages/bu-tpi/
 │   ├── audit/               # Audit logging
 │   ├── compliance/          # Compliance framework
 │   └── fuzzing/             # Fuzzing engine
-├── fixtures/                # 1,544 attack artifacts
+├── fixtures/                # 2,375 attack artifacts
 │   ├── images/              # EXIF, PNG, SVG
 │   ├── audio/               # ID3, WAV, OGG
 │   ├── web/                 # HTML, hidden text

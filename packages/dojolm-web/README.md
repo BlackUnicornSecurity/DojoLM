@@ -4,7 +4,7 @@ NODA Platform Web Interface — Next.js application for LLM security testing and
 
 ## Overview
 
-NODA Platform provides a 15-module interface (12 existing + 3 new in HAKONE) with unified sidebar navigation for scanning, testing, and benchmarking LLMs against the CrowdStrike TPI taxonomy.
+NODA Platform provides a 15-module interface with unified sidebar navigation for scanning, testing, and benchmarking LLMs against the CrowdStrike TPI taxonomy.
 
 ## Technology Stack
 
@@ -16,8 +16,8 @@ NODA Platform provides a 15-module interface (12 existing + 3 new in HAKONE) wit
 | Tailwind CSS | ^4 | Utility-first styling |
 | Radix UI | Latest | Headless UI primitives |
 | shadcn/ui | - | Component system |
-| Vitest | ^1.6.1 | Unit testing |
-| Playwright | ^1.58.2 | E2E testing |
+| Vitest | 4.x | Unit testing |
+| Playwright | 1.x | E2E testing |
 
 ## Prerequisites
 
@@ -68,10 +68,9 @@ src/
     compliance/           # Bushido Book
     guard/                # Hattori Guard
     ronin/                # Ronin Hub
-    # HAKONE new modules:
-    # sengoku/            # Continuous red teaming
-    # timechamber/        # Temporal attacks
-    # kotoba/             # Prompt optimizer
+    sengoku/              # Sengoku (continuous red teaming)
+    time-chamber/         # Time Chamber (temporal attacks)
+    kotoba/               # Kotoba (prompt optimizer)
   lib/                    # Utilities, hooks, contexts
     constants.ts          # Navigation, config
     auth/                 # Authentication
@@ -87,9 +86,9 @@ Modules organized into 4 groups:
 | Group | Modules |
 |-------|---------|
 | **Attack** | Haiku Scanner, Armory, LLM Jutsu, LLM Dashboard |
-| **Defense** | Hattori Guard, Bushido Book, Kotoba (HAKONE) |
-| **Red Team** | Sengoku (HAKONE), Time Chamber (HAKONE), Atemi Lab |
-| **Analysis** | Strategic Hub, Amaterasu DNA, Ronin Hub |
+| **Defense** | Hattori Guard, Bushido Book, Kotoba |
+| **Red Team** | Sengoku, Time Chamber, Atemi Lab |
+| **Analysis** | The Kumite, Amaterasu DNA, Ronin Hub |
 
 ## Development
 
@@ -145,4 +144,4 @@ Outputs to `.next/` directory.
 
 ## License
 
-MIT
+DojoLM Research-Only License — See [LICENSE](../../LICENSE)
