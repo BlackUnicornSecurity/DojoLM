@@ -1,225 +1,158 @@
-# DojoLM — LLM Red Teaming & Security Research Platform
+<div align="center">
 
-**Current Version:** HAKONE (Complete)
+# DojoLM
 
-[![Tests](https://img.shields.io/badge/tests-5771%20passing-brightgreen.svg)]()
-[![Build](https://img.shields.io/badge/build-clean-brightgreen.svg)]()
-[![Security](https://img.shields.io/badge/security-0%20findings-brightgreen.svg)]()
+### LLM Red Teaming & Security Research Platform
 
-> Production-ready pattern-based prompt injection detection
+[![Tests](https://img.shields.io/badge/tests-5%2C771%20passing-brightgreen?style=flat-square)]()
+[![Patterns](https://img.shields.io/badge/patterns-534-blue?style=flat-square)]()
+[![Fixtures](https://img.shields.io/badge/attack%20fixtures-2%2C375-orange?style=flat-square)]()
+[![License](https://img.shields.io/badge/license-Research%20Only-red?style=flat-square)](LICENSE)
 
----
+**Scan. Test. Red Team. Harden.**
 
-## Overview
+[Getting Started](docs/user/GETTING_STARTED.md) · [Platform Guide](docs/user/PLATFORM_GUIDE.md) · [FAQ](docs/user/FAQ.md) · [Contributing](github/CONTRIBUTING.md)
 
-NODA is a comprehensive LLM security testing platform:
-
-- **534 regex patterns** across 14 pattern groups
-- **2,375 attack fixtures** for regression testing
-- **27 scanner modules** for specialized detection
-- **15 modules** for scanning, testing, compliance, and red teaming
-- **5,771 tests** with 100% pass rate
-- **19 LLM providers** supported (cloud and local)
+</div>
 
 ---
+
+DojoLM is an open-source platform for testing LLM resilience against prompt injection, jailbreaks, and adversarial attacks. It combines a high-performance regex scanner engine with a 15-module web interface for red teaming, compliance auditing, and continuous security testing.
+
+> **Research use only.** See [LICENSE](LICENSE) for permitted use.
+
+## What's Inside
+
+```
+534 detection patterns    ·    27 scanner modules    ·    6 heuristic detectors
+2,375 attack fixtures     ·    19 LLM providers      ·    8 compliance frameworks
+```
 
 ## Quick Start
 
 ```bash
-# Clone repository
-git clone https://github.com/dojolm/dojolm.git
-cd dojolm
+git clone https://github.com/BlackUnicornSecurity/DojoLM.git
+cd DojoLM && npm install
 
-# Install dependencies
-npm install
+# Run the scanner
+npm start --workspace=packages/bu-tpi    # API on :8089
 
-# Run tests (required: 100% pass)
-npm test
+# Run the web UI
+npm run dev:web                           # UI on :3000
 
-# Start development servers
-npm run dev:web          # Web UI (port 3000)
-npm start --workspace=packages/bu-tpi  # Scanner API (port 8089)
+# Run tests
+npm test                                  # 5,771 tests, 100% pass rate
 ```
 
----
+**Scan something:**
+
+```bash
+curl "http://localhost:8089/api/scan?text=ignore%20all%20previous%20instructions"
+```
+```json
+{ "verdict": "BLOCK", "severity": "CRITICAL", "findings": [...], "elapsed": "3ms" }
+```
+
+## Platform Modules
+
+<table>
+<tr>
+<td width="25%" valign="top">
+
+### Attack
+**Haiku Scanner** — Real-time scanning with 534 patterns<br>
+**Armory** — 2,375 attack fixtures across 30 categories<br>
+**LLM Jutsu** — Testing command center<br>
+**LLM Dashboard** — Multi-provider benchmarking
+
+</td>
+<td width="25%" valign="top">
+
+### Defense
+**Hattori Guard** — 4-mode input/output protection<br>
+**Bushido Book** — Compliance (BAISS, NIST AI RMF, ISO 42001)<br>
+**Kotoba** — Prompt hardening optimizer
+
+</td>
+<td width="25%" valign="top">
+
+### Red Team
+**Sengoku** — Continuous campaign orchestration<br>
+**Time Chamber** — Temporal attack simulation<br>
+**Atemi Lab** — Adversarial testing with MCP
+
+</td>
+<td width="25%" valign="top">
+
+### Analysis
+**The Kumite** — Arena battles & threat intelligence<br>
+**Amaterasu DNA** — Attack lineage mapping<br>
+**Ronin Hub** — Researcher platform
+
+</td>
+</tr>
+</table>
+
+## Scanner Engine
+
+```
+Input → NFKC Normalize → Strip Zero-Width → Map Homoglyphs → Match 534 Patterns → Verdict
+```
+
+| Category | Examples |
+|----------|----------|
+| Prompt Injection | 64 patterns — role hijacking, instruction override, context manipulation |
+| Jailbreak / DAN | 120+ patterns — persona exploits, capability unlocking |
+| Agent Security | 45 patterns — tool poisoning, capability spoofing |
+| Multilingual | 80+ patterns — attacks in 10+ languages |
+| Media Injection | 60+ patterns — EXIF, PNG chunks, SVG payloads |
+| Encoding / Evasion | 30+ patterns — base64, ROT, invisible unicode |
 
 ## Architecture
 
 ```
-dojolm/
-├── packages/
-│   ├── bu-tpi/              # Core scanner engine (TypeScript)
-│   │   ├── scanner.ts       # 534 patterns, 6 heuristic detectors
-│   │   ├── modules/         # 27 detection modules
-│   │   ├── fixtures/        # 2,375 test cases
-│   │   ├── sengoku/         # Continuous red teaming
-│   │   ├── timechamber/     # Temporal attack simulation
-│   │   ├── kotoba/          # Prompt optimizer
-│   │   ├── edgefuzz/        # Fuzzing engine
-│   │   ├── supplychain/     # Supply chain security
-│   │   └── webmcp/          # MCP attack vectors
-│   ├── dojolm-web/          # Next.js 16 application
-│   ├── dojolm-scanner/      # Web scanner wrapper
-│   └── dojolm-mcp/          # Adversarial MCP server
-├── docs/                    # User documentation
-│   ├── user/                # Guides, FAQ, API reference
-│   └── compliance/          # ISO 42001 docs
-└── github/                  # Contributing guide, changelog
+packages/
+├── bu-tpi/            Core scanner engine — patterns, modules, fixtures, heuristics
+├── dojolm-web/        Next.js 16 web interface — 15 modules, API routes
+├── dojolm-scanner/    Lightweight wrapper for web integration
+└── dojolm-mcp/        Adversarial MCP server for agent security testing
 ```
 
----
+## Guard Modes
 
-## Modules
+Hattori Guard provides four protection levels:
 
-### Attack (4 modules)
-- **Haiku Scanner** — Real-time text scanning with 534 patterns
-- **Armory** — Browse 2,375 attack fixtures across 30 categories
-- **LLM Jutsu** — Testing command center
-- **LLM Dashboard** — Multi-provider benchmarking with belt rankings
+| Mode | Behavior |
+|------|----------|
+| **Shinobi** | Stealth — log only, no blocking |
+| **Samurai** | Defend inputs — scan and block inbound prompts |
+| **Sensei** | Defend outputs — scan and block LLM responses |
+| **Hattori** | Full protection — block both directions |
 
-### Defense (3 modules)
-- **Hattori Guard** — Input/output protection (Shinobi, Samurai, Sensei, Hattori modes)
-- **Bushido Book** — Compliance center (8 frameworks, BAISS v2.0)
-- **Kotoba** — Prompt optimizer
+## LLM Providers
 
-### Red Team (3 modules)
-- **Sengoku** — Continuous red teaming campaigns
-- **Time Chamber** — Temporal attack simulation
-- **Atemi Lab** — Adversarial testing with MCP integration
-
-### Analysis (3 modules)
-- **The Kumite** — Strategic analysis (SAGE, Arena battles, Mitsuke threat feed)
-- **Amaterasu DNA** — Attack lineage and intelligence
-- **Ronin Hub** — Bug bounty researcher platform
-
----
-
-## Scanner Engine
-
-### Detection Pipeline
-
-```
-Input → NFKC Normalization → Zero-Width Stripping
-      → Homoglyph Mapping → Pattern Matching → Verdict
-```
-
-### Pattern Categories (534 total)
-
-| Category | Count | Coverage |
-|----------|-------|----------|
-| PI_PATTERNS | 64 | Prompt injection |
-| JB_PATTERNS | 120+ | Jailbreak/DAN |
-| AGENT_PATTERNS | 45 | Agent attacks |
-| MULTILINGUAL_PATTERNS | 80+ | 10+ languages |
-| MEDIA_PATTERNS | 60+ | EXIF, PNG, SVG |
-| WHITESPACE_PATTERNS | 30 | Invisible chars |
-
-### Verdict System
-
-| Verdict | Condition |
-|---------|-----------|
-| **BLOCK** | Any CRITICAL finding |
-| **ALLOW** | No findings |
-
----
-
-## API
-
-### Scanner API (Port 8089)
-
-```bash
-# Scan text (GET-only API)
-curl "http://localhost:8089/api/scan?text=ignore%20all%20previous%20instructions"
-```
-
-Response:
-```json
-{
-  "verdict": "BLOCK",
-  "severity": "CRITICAL",
-  "findings": [...],
-  "elapsed": "3ms"
-}
-```
-
-### Web API (Port 3000)
-
-- `POST /api/llm/execute` — Execute LLM test
-- `POST /api/llm/batch` — Batch testing
-- `GET /api/llm/models` — List providers
-- `GET /api/compliance` — Compliance data
-- `GET /api/admin/health` — System health
-
----
-
-## Testing
-
-```bash
-# Run all tests
-npm test
-
-# Security scan
-npm run security:scan
-
-# Build
-npm run build
-```
-
-**Metrics:**
-- 5,771 tests passing (2,111 bu-tpi + 3,613 dojolm-web)
-- 100% pass rate required
-
----
-
-## Security Requirements
-
-| ID | Requirement |
-|----|-------------|
-| SEC-G1 | All API routes use `withAuth()` |
-| SEC-G2 | URL validation with SSRF protection |
-| SEC-G3 | SafeCodeBlock for all payloads |
-| SEC-G4 | AES-256-GCM credential encryption |
-| SEC-G5 | Input sanitization |
-| SEC-G6 | Credential redaction in logs |
-| SEC-G7 | Entity encoding |
-| SEC-G8 | `Object.hasOwn()` for hash lookups |
-| SEC-G9 | Bounded regex quantifiers |
-| SEC-G10 | Path traversal validation |
-| SEC-G11 | Security scan 0 findings pre-commit |
-
----
+Supports 19 providers including OpenAI, Anthropic, Google, Mistral, Cohere, AWS Bedrock, Azure, Groq, Together AI, Fireworks, Replicate, Perplexity, DeepSeek, xAI, AI21, Ollama, LM Studio, vLLM, and llama.cpp.
 
 ## Documentation
 
-| Document | Location |
-|----------|----------|
-| Platform Guide | [docs/user/PLATFORM_GUIDE.md](docs/user/PLATFORM_GUIDE.md) |
-| Getting Started | [docs/user/GETTING_STARTED.md](docs/user/GETTING_STARTED.md) |
-| API Reference | [docs/user/API_REFERENCE.md](docs/user/API_REFERENCE.md) |
-| FAQ | [docs/user/FAQ.md](docs/user/FAQ.md) |
-| LLM Providers | [docs/user/LLM-PROVIDER-GUIDE.md](docs/user/LLM-PROVIDER-GUIDE.md) |
-| Contributing | [github/CONTRIBUTING.md](github/CONTRIBUTING.md) |
-
----
-
-## Packages
-
-| Package | Description | Port |
-|---------|-------------|------|
-| [bu-tpi](packages/bu-tpi/) | Core scanner engine | 8089 |
-| [dojolm-web](packages/dojolm-web/) | Web UI (Next.js 16) | 3000 |
-| [dojolm-scanner](packages/dojolm-scanner/) | Web scanner wrapper | - |
-| [dojolm-mcp](packages/dojolm-mcp/) | Adversarial MCP server | - |
-
----
+| | |
+|---|---|
+| **[Getting Started](docs/user/GETTING_STARTED.md)** | Installation, first scan, module walkthrough |
+| **[Platform Guide](docs/user/PLATFORM_GUIDE.md)** | Complete module reference |
+| **[LLM Provider Guide](docs/user/LLM-PROVIDER-GUIDE.md)** | Provider setup and configuration |
+| **[FAQ](docs/user/FAQ.md)** | Common questions and troubleshooting |
+| **[Contributing](github/CONTRIBUTING.md)** | Development setup and contribution guidelines |
+| **[Architecture](docs/ARCHITECTURE.md)** | System design and technical overview |
 
 ## License
 
-DojoLM Research-Only License — See [LICENSE](LICENSE)
+**DojoLM Research-Only License** — [Read full license](LICENSE)
 
-Permitted: Academic research, education, personal security testing.
-Prohibited: Commercial use, enterprise use, bug bounty monetization.
+Permitted for academic research, education, and personal security testing.
+Not permitted for commercial use, enterprise deployment, or bug bounty monetization.
 
 ---
 
-**NODA Team — March 2026**
+<div align="center">
+<sub>Built by <a href="https://blackunicorn.tech">Black Unicorn Security</a></sub>
+</div>
