@@ -148,8 +148,8 @@ Supports 19 providers including OpenAI, Anthropic, Google, Mistral, Cohere, AWS 
 
 **DojoLM Research-Only License** — [Read full license](LICENSE)
 
-Permitted for academic research, education, and personal security testing.
-Not permitted for commercial use, enterprise deployment, or bug bounty monetization.
+Permitted for academic research, education, personal security testing, and individual bug bounty research.
+Not permitted for commercial use, enterprise deployment, or commercial bug bounty operations.
 
 ---
 
