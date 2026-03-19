@@ -1,4 +1,4 @@
-# NODA — LLM Red Teaming & Security Testing Platform
+# DojoLM — LLM Red Teaming & Security Research Platform
 
 **Current Version:** HAKONE (Complete)
 
