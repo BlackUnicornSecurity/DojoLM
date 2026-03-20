@@ -391,9 +391,9 @@ const SearchResultRow = memo(function SearchResultRow({
 
       {/* Clean / attack indicator */}
       {item.file.clean ? (
-        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" aria-hidden="true" />
+        <CheckCircle2 className="h-3.5 w-3.5 text-[var(--success)] shrink-0" aria-hidden="true" />
       ) : (
-        <AlertCircle className="h-3.5 w-3.5 text-red-500 shrink-0" aria-hidden="true" />
+        <AlertCircle className="h-3.5 w-3.5 text-[var(--danger)] shrink-0" aria-hidden="true" />
       )}
 
       {/* Severity badge */}

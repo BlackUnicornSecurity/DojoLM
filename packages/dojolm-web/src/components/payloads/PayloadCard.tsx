@@ -23,8 +23,8 @@ interface PayloadCardProps {
 
 export function PayloadCard({ payload, onClick, className }: PayloadCardProps) {
   const statusColor = payload.status === 'current'
-    ? 'text-green-500 bg-green-500/10 border-green-500/20'
-    : 'text-orange-500 bg-orange-500/10 border-orange-500/20'
+    ? 'text-[var(--success)] bg-[var(--success)]/10 border-[var(--success)]/20'
+    : 'text-[var(--warning)] bg-[var(--warning)]/10 border-[var(--warning)]/20'
 
   const StatusIcon = payload.status === 'current' ? Zap : Package
 

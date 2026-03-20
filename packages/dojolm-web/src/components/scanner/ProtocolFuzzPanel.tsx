@@ -131,7 +131,7 @@ export function ProtocolFuzzPanel() {
               key={proto}
               onClick={() => setSelectedProtocol(proto)}
               className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150',
+                'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150 min-h-[44px] inline-flex items-center',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                 selectedProtocol === proto
                   ? 'bg-[var(--bu-electric)] text-white'
@@ -154,7 +154,7 @@ export function ProtocolFuzzPanel() {
               key={type}
               onClick={() => toggleType(type)}
               className={cn(
-                'px-3 py-1.5 text-xs font-medium rounded-full transition-colors duration-150',
+                'px-3 py-1.5 text-xs font-medium rounded-full transition-colors duration-150 min-h-[44px] inline-flex items-center',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                 selectedTypes.has(type)
                   ? 'bg-[var(--dojo-primary)] text-white'
@@ -172,7 +172,7 @@ export function ProtocolFuzzPanel() {
       <Button variant="gradient" onClick={handleFuzz} disabled={fuzzing} className="mb-5">
         {fuzzing ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />
             Fuzzing...
           </>
         ) : (

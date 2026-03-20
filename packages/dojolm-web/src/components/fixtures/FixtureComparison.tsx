@@ -178,10 +178,10 @@ function ScanDiffDisplay({
         <span className="text-muted-foreground">
           Shared: <strong>{diffs.shared.length}</strong>
         </span>
-        <span className="text-red-500">
+        <span className="text-[var(--danger)]">
           Only in {leftFilename}: <strong>{diffs.onlyLeft.length}</strong>
         </span>
-        <span className="text-blue-500">
+        <span className="text-[var(--bu-electric)]">
           Only in {rightFilename}: <strong>{diffs.onlyRight.length}</strong>
         </span>
       </div>
@@ -189,7 +189,7 @@ function ScanDiffDisplay({
       {/* Verdict comparison */}
       <div className="flex gap-4">
         <div className="flex-1 text-center p-2 rounded-lg bg-muted">
-          <div className={cn('text-sm font-bold', left.verdict === 'BLOCK' ? 'text-red-500' : 'text-green-500')}>
+          <div className={cn('text-sm font-bold', left.verdict === 'BLOCK' ? 'text-[var(--danger)]' : 'text-[var(--success)]')}>
             {left.verdict}
           </div>
           <div className="text-xs text-muted-foreground truncate">{leftFilename}</div>
@@ -198,7 +198,7 @@ function ScanDiffDisplay({
           <ArrowLeftRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         </div>
         <div className="flex-1 text-center p-2 rounded-lg bg-muted">
-          <div className={cn('text-sm font-bold', right.verdict === 'BLOCK' ? 'text-red-500' : 'text-green-500')}>
+          <div className={cn('text-sm font-bold', right.verdict === 'BLOCK' ? 'text-[var(--danger)]' : 'text-[var(--success)]')}>
             {right.verdict}
           </div>
           <div className="text-xs text-muted-foreground truncate">{rightFilename}</div>
@@ -208,9 +208,9 @@ function ScanDiffDisplay({
       {/* Unique findings lists */}
       {diffs.onlyLeft.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-red-500">Only in {leftFilename}:</p>
+          <p className="text-xs font-medium text-[var(--danger)]">Only in {leftFilename}:</p>
           {diffs.onlyLeft.map((f, i) => (
-            <div key={`l-${f.engine}-${i}`} className="text-xs text-muted-foreground pl-3 border-l-2 border-red-500/30">
+            <div key={`l-${f.engine}-${i}`} className="text-xs text-muted-foreground pl-3 border-l-2 border-[var(--danger)]/30">
               [{f.severity}] {f.engine}: {f.description}
             </div>
           ))}
@@ -219,9 +219,9 @@ function ScanDiffDisplay({
 
       {diffs.onlyRight.length > 0 && (
         <div className="space-y-1">
-          <p className="text-xs font-medium text-blue-500">Only in {rightFilename}:</p>
+          <p className="text-xs font-medium text-[var(--bu-electric)]">Only in {rightFilename}:</p>
           {diffs.onlyRight.map((f, i) => (
-            <div key={`r-${f.engine}-${i}`} className="text-xs text-muted-foreground pl-3 border-l-2 border-blue-500/30">
+            <div key={`r-${f.engine}-${i}`} className="text-xs text-muted-foreground pl-3 border-l-2 border-[var(--bu-electric)]/30">
               [{f.severity}] {f.engine}: {f.description}
             </div>
           ))}

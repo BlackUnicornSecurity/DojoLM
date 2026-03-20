@@ -304,7 +304,7 @@ function FilterPill({ label, onRemove }: { label: string; onRemove: () => void }
       <button
         type="button"
         onClick={onRemove}
-        className="p-0.5 rounded-full hover:bg-[var(--bg-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="p-0.5 rounded-full hover:bg-[var(--bg-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[44px] min-w-[44px] inline-flex items-center justify-center"
         aria-label={`Remove filter: ${label}`}
       >
         <X className="h-3 w-3" aria-hidden="true" />

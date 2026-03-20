@@ -178,7 +178,7 @@ const VerdictHeader = memo(function VerdictHeader({ result }: VerdictHeaderProps
           <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--danger)]" />
         </span>
 
-        <ShieldAlert className="h-8 w-8 text-[var(--danger)] animate-dojo-pulse" aria-hidden="true" />
+        <ShieldAlert className="h-8 w-8 text-[var(--danger)] motion-safe:animate-dojo-pulse" aria-hidden="true" />
 
         <div className="motion-safe:animate-fade-in">
           <span className="text-lg font-bold text-[var(--danger)]">

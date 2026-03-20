@@ -198,7 +198,7 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
                 variant="ghost"
                 size="sm"
                 onClick={() => onQuickScan(name)}
-                className="h-7 px-2 gap-1 text-xs text-[var(--bu-electric)]"
+                className="h-7 px-2 gap-1 text-xs text-[var(--bu-electric)] min-h-[44px]"
                 aria-label={`Quick scan ${name} category`}
               >
                 <ScanEye className="h-3.5 w-3.5" aria-hidden="true" />
@@ -210,7 +210,7 @@ export const FixtureCategoryCard = memo(function FixtureCategoryCard({
               variant="ghost"
               size="sm"
               onClick={() => onViewFiles(name)}
-              className="h-7 px-2 gap-1 text-xs text-[var(--dojo-primary)]"
+              className="h-7 px-2 gap-1 text-xs text-[var(--dojo-primary)] min-h-[44px]"
               aria-label={`View files in ${name}`}
             >
               View

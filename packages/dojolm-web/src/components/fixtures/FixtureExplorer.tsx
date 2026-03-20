@@ -226,7 +226,7 @@ export const FixtureExplorer = memo(function FixtureExplorer({
             type="button"
             onClick={() => { setViewMode('tree'); setGridDrillCategory(null) }}
             className={cn(
-              'flex items-center gap-1 px-2.5 py-1.5 text-xs',
+              'flex items-center gap-1 px-2.5 py-1.5 text-xs min-h-[44px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
               viewMode === 'tree'
@@ -632,9 +632,9 @@ const FileRow = memo(function FileRow({
 
       {/* Clean/Attack icon */}
       {file.clean ? (
-        <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" aria-hidden="true" />
+        <CheckCircle2 className="h-4 w-4 text-[var(--success)] shrink-0" aria-hidden="true" />
       ) : (
-        <AlertCircle className="h-4 w-4 text-red-500 shrink-0" aria-hidden="true" />
+        <AlertCircle className="h-4 w-4 text-[var(--danger)] shrink-0" aria-hidden="true" />
       )}
 
       {/* File name and attack info - text only (CRIT-07) */}
@@ -695,7 +695,7 @@ const FileRow = memo(function FileRow({
           variant={isExpanded ? 'default' : 'ghost'}
           size="sm"
           onClick={handleView}
-          className="h-7 w-7 p-0"
+          className="h-7 w-7 p-0 min-h-[44px] min-w-[44px]"
           aria-label={isExpanded ? `Collapse ${file.file}` : `View ${file.file}`}
           aria-expanded={isExpanded}
         >
@@ -706,7 +706,7 @@ const FileRow = memo(function FileRow({
           variant="default"
           size="sm"
           onClick={handleScan}
-          className="h-7 px-2 gap-1 text-xs"
+          className="h-7 px-2 gap-1 text-xs min-h-[44px]"
           aria-label={`Scan ${file.file}`}
         >
           <ScanEye className="h-3.5 w-3.5" aria-hidden="true" />

@@ -115,7 +115,7 @@ export function FixtureDetail({
               {content.metadata.valid_jpeg !== undefined && (
                 <>
                   <span>•</span>
-                  <Badge variant="outline" className={content.metadata.valid_jpeg ? 'text-green-500' : 'text-red-500'}>
+                  <Badge variant="outline" className={content.metadata.valid_jpeg ? 'text-[var(--success)]' : 'text-[var(--danger)]'}>
                     JPEG: {content.metadata.valid_jpeg ? 'Valid' : 'Invalid'}
                   </Badge>
                 </>
@@ -171,7 +171,7 @@ function BinaryPreview({ content }: BinaryPreviewProps) {
       )}
 
       {content.metadata.warning && (
-        <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 p-3 rounded-lg text-sm">
+        <div className="bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)] p-3 rounded-lg text-sm">
           <strong>Warning:</strong> {content.metadata.warning}
         </div>
       )}
@@ -207,7 +207,7 @@ function ScanResultDisplay({ result }: ScanResultDisplayProps) {
       <div className="flex gap-3 flex-wrap">
         <Card className="flex-1 min-w-[100px]">
           <CardContent className="p-3 text-center">
-            <div className={cn('text-xl font-bold', result.verdict === 'BLOCK' ? 'text-red-500' : 'text-green-500')}>
+            <div className={cn('text-xl font-bold', result.verdict === 'BLOCK' ? 'text-[var(--danger)]' : 'text-[var(--success)]')}>
               {result.verdict}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Verdict</div>
@@ -216,7 +216,7 @@ function ScanResultDisplay({ result }: ScanResultDisplayProps) {
 
         <Card className="flex-1 min-w-[100px]">
           <CardContent className="p-3 text-center">
-            <div className="text-xl font-bold text-red-500">
+            <div className="text-xl font-bold text-[var(--danger)]">
               {result.counts.critical}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Critical</div>
@@ -225,7 +225,7 @@ function ScanResultDisplay({ result }: ScanResultDisplayProps) {
 
         <Card className="flex-1 min-w-[100px]">
           <CardContent className="p-3 text-center">
-            <div className="text-xl font-bold text-orange-500">
+            <div className="text-xl font-bold text-[var(--warning)]">
               {result.counts.warning}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Warning</div>
@@ -234,7 +234,7 @@ function ScanResultDisplay({ result }: ScanResultDisplayProps) {
 
         <Card className="flex-1 min-w-[100px]">
           <CardContent className="p-3 text-center">
-            <div className="text-xl font-bold text-blue-500">
+            <div className="text-xl font-bold text-[var(--severity-low)]">
               {result.counts.info}
             </div>
             <div className="text-xs text-muted-foreground mt-1">Info</div>

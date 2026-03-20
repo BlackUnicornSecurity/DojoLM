@@ -387,7 +387,7 @@ export function ScannerInput({
           <button
             onClick={handleClear}
             disabled={isScanning}
-            className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors px-2 py-1"
+            className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors px-2 py-1 min-h-[44px] inline-flex items-center"
           >
             Clear
           </button>

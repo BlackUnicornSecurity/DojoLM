@@ -46,7 +46,7 @@ export function QuickChips({ onLoadPayload, isScanning = false, className }: Qui
           <button
             onClick={handleCycle}
             disabled={isScanning}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 min-h-[44px]"
             aria-label="Show more examples"
           >
             <ChevronDown className="w-3 h-3" aria-hidden="true" />
@@ -60,7 +60,7 @@ export function QuickChips({ onLoadPayload, isScanning = false, className }: Qui
             key={payload.label}
             onClick={() => onLoadPayload(payload.text, false)}
             disabled={isScanning}
-            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-[var(--overlay-active)] hover:text-foreground transition-colors duration-[var(--transition-fast)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-[var(--overlay-active)] hover:text-foreground transition-colors duration-[var(--transition-fast)] disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] inline-flex items-center"
             title={`Load "${payload.label}" payload to scanner`}
           >
             {payload.label}

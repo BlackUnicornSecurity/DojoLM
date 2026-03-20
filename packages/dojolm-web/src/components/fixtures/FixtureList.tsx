@@ -134,10 +134,10 @@ const FixtureCategory = memo(function FixtureCategory({
             </p>
           </div>
           <div className="flex gap-2">
-            <Badge variant="outline" className="text-green-500 border-green-500/20">
+            <Badge variant="outline" className="text-[var(--success)] border-[var(--success)]/20">
               {stats.cleanFiles} Clean
             </Badge>
-            <Badge variant="outline" className="text-red-500 border-red-500/20">
+            <Badge variant="outline" className="text-[var(--danger)] border-[var(--danger)]/20">
               {stats.attackFiles} Attack
             </Badge>
           </div>
@@ -190,10 +190,10 @@ const FixtureFileRow = memo(function FixtureFileRow({ category, file, onScan, on
   const severityClass = useMemo(() => {
     if (!file.severity) return ''
     return file.severity === 'CRITICAL'
-      ? 'text-red-500 bg-red-500/10'
+      ? 'text-[var(--danger)] bg-[var(--danger)]/10'
       : file.severity === 'WARNING'
-      ? 'text-orange-500 bg-orange-500/10'
-      : 'text-blue-500 bg-blue-500/10'
+      ? 'text-[var(--warning)] bg-[var(--warning)]/10'
+      : 'text-[var(--severity-low)] bg-[var(--severity-low)]/10'
   }, [file.severity])
 
   return (
@@ -201,12 +201,12 @@ const FixtureFileRow = memo(function FixtureFileRow({ category, file, onScan, on
       <TableCell className="font-mono text-xs">{file.file}</TableCell>
       <TableCell>
         {file.clean ? (
-          <Badge variant="outline" className="text-green-500 border-green-500/20 gap-1">
+          <Badge variant="outline" className="text-[var(--success)] border-[var(--success)]/20 gap-1">
             <CheckCircle2 className="h-3 w-3" />
             Clean
           </Badge>
         ) : (
-          <Badge variant="outline" className="text-red-500 border-red-500/20 gap-1">
+          <Badge variant="outline" className="text-[var(--danger)] border-[var(--danger)]/20 gap-1">
             <AlertCircle className="h-3 w-3" />
             Malicious
           </Badge>
