@@ -91,16 +91,21 @@ export async function POST(request: NextRequest) {
     // Create test case
     const id = `tc-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
+    // PT-XSS-M07 fix: Sanitize HTML entities in user-provided strings
+    // (prevents stored XSS in exports, logs, and non-React consumers)
+    const sanitize = (s: string) => s.replace(/[<>&"']/g, (c: string) =>
+      ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
+
     const newTestCase: LLMPromptTestCase = {
       id,
-      name: name as string,
-      category: category as string,
-      prompt: prompt as string,
+      name: sanitize(name as string),
+      category: sanitize(category as string),
+      prompt: prompt as string,  // Prompt content is intentionally stored as-is (may contain attack payloads for testing)
       expectedBehavior: expectedBehavior as string,
       severity: severity as TestCaseSeverity,
-      owaspCategory: body.owaspCategory as LLMPromptTestCase['owaspCategory'],
-      tpiStory: body.tpiStory as LLMPromptTestCase['tpiStory'],
-      tags: (body.tags as string[]) || [],
+      owaspCategory: body.owaspCategory ? sanitize(body.owaspCategory as string) as LLMPromptTestCase['owaspCategory'] : undefined,
+      tpiStory: body.tpiStory ? sanitize(body.tpiStory as string) as LLMPromptTestCase['tpiStory'] : undefined,
+      tags: ((body.tags as string[]) || []).map(sanitize),
       enabled: (body.enabled as boolean) ?? true,
     };
 

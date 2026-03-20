@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import crypto from 'node:crypto'
-import { checkApiAuth } from '@/lib/api-auth'
+import { withAuth } from '@/lib/auth/route-guard'
 
 const SETTINGS_PATH = join(process.cwd(), 'data', 'admin-settings.json')
 
@@ -58,10 +58,8 @@ const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
 }
 
-export async function GET(request: NextRequest) {
-  const authResult = checkApiAuth(request)
-  if (authResult) return authResult
-
+// PT-AUTHZ-C02 fix: Require admin role for settings access
+export const GET = withAuth(async () => {
   try {
     const settings = readSettings()
     return NextResponse.json(settings, { headers: SECURITY_HEADERS })
@@ -69,12 +67,10 @@ export async function GET(request: NextRequest) {
     console.error('Settings GET error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-}
+}, { role: 'admin', skipCsrf: true })
 
-export async function PATCH(request: NextRequest) {
-  const authResult = checkApiAuth(request)
-  if (authResult) return authResult
-
+// PT-AUTHZ-C02 fix: Require admin role for settings modification
+export const PATCH = withAuth(async (request) => {
   try {
     let body: Record<string, unknown>
     try {
@@ -131,4 +127,4 @@ export async function PATCH(request: NextRequest) {
     console.error('Settings PATCH error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-}
+}, { role: 'admin' })

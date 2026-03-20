@@ -32,6 +32,20 @@ export const POST = withAuth(
         );
       }
 
+      // PT-AUTH-H03 fix: Server-side password complexity enforcement
+      if (typeof password !== 'string' || password.length < 12 || password.length > 72) {
+        return NextResponse.json(
+          { error: 'Password must be between 12 and 72 characters' },
+          { status: 400 }
+        );
+      }
+      if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+        return NextResponse.json(
+          { error: 'Password must contain uppercase, lowercase, digit, and special character' },
+          { status: 400 }
+        );
+      }
+
       if (role && !VALID_ROLES.includes(role)) {
         return NextResponse.json(
           { error: `Invalid role. Must be one of: ${VALID_ROLES.join(', ')}` },

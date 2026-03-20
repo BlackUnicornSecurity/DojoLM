@@ -21,9 +21,12 @@ export async function GET(request: NextRequest) {
     const patternCount = getPatternCount()
     const patternGroups = getPatternGroups()
 
+    // PT-INFO-M06 fix: Return summary counts only, not detailed pattern group names
+    // (pattern group names could help attackers craft evasion strategies)
     return NextResponse.json({
       patternCount,
-      patternGroups,
+      groupCount: patternGroups.length,
+      sourceCount: new Set(patternGroups.map((g: { source?: string }) => g.source)).size,
     })
   } catch (error) {
     console.error('Stats API error:', error)

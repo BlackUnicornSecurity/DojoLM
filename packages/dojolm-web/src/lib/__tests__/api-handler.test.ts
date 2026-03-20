@@ -30,6 +30,9 @@ import { createApiHandler, checkRateLimit } from '../api-handler';
 import { checkApiAuth } from '../api-auth';
 import { apiError } from '../api-error';
 
+// PT-RATELIM-M01: Tests use x-forwarded-for to set IPs, so TRUSTED_PROXY must be set
+process.env.TRUSTED_PROXY = 'true';
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

@@ -9,6 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
 import { validateSession, type SessionUser } from './session';
 import { hasPermission, isAtLeastRole, type Resource, type Action } from './rbac';
 import type { UserRole } from '../db/types';
@@ -85,7 +86,10 @@ export function withAuth(
     if (!isApiKeyAuth && !options?.skipCsrf && STATE_MUTATING_METHODS.has(req.method)) {
       const csrfCookie = req.cookies.get(CSRF_COOKIE_NAME)?.value;
       const csrfHeader = req.headers.get(CSRF_HEADER_NAME);
-      if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+      // PT-CSRF-M03 fix: Use timing-safe comparison for CSRF tokens
+      const csrfMatch = csrfCookie && csrfHeader && csrfCookie.length === csrfHeader.length &&
+        crypto.timingSafeEqual(Buffer.from(csrfCookie), Buffer.from(csrfHeader));
+      if (!csrfMatch) {
         return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
       }
     }
@@ -124,8 +128,8 @@ export function buildSessionCookie(token: string, maxAgeSeconds: number): string
  * Cookie helper: builds CSRF Set-Cookie (readable by JS for double-submit).
  */
 export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): string {
-  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
-  return `${CSRF_COOKIE_NAME}=${csrfToken};${secure} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  // PT-CSRF-H04 fix: Always include Secure flag (matches session cookie behavior)
+  return `${CSRF_COOKIE_NAME}=${csrfToken}; Secure; SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
@@ -134,7 +138,7 @@ export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): strin
 export function buildLogoutCookies(): string[] {
   return [
     `${SESSION_COOKIE_NAME}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`,
-    `${CSRF_COOKIE_NAME}=; SameSite=Strict; Path=/; Max-Age=0`,
+    `${CSRF_COOKIE_NAME}=; Secure; SameSite=Strict; Path=/; Max-Age=0`,
   ];
 }
 

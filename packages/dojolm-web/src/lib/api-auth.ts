@@ -36,14 +36,16 @@ export function checkApiAuth(request: NextRequest): NextResponse | null {
     secFetchDest && VALID_SEC_FETCH_DESTS.has(secFetchDest)
   ) {
     const origin = request.headers.get('origin') ?? '';
-    const host = request.headers.get('host') ?? '';
+    // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
+    // the request's Host header (attacker-controlled). This prevents external
+    // curl requests from bypassing auth by spoofing Sec-Fetch + Origin headers.
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-    if (origin === appUrl || origin === `http://${host}` || origin === `https://${host}`) {
+    if (origin === appUrl) {
       return null;
     }
     if (!origin) {
       const referer = request.headers.get('referer') ?? '';
-      if (referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`)) {
+      if (referer.startsWith(appUrl + '/')) {
         return null;
       }
     }

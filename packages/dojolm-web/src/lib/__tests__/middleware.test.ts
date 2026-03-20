@@ -228,6 +228,7 @@ describe('Middleware', () => {
   it('MW-011: logs auth failure to audit logger', async () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'production';
+    process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');
     const { middleware } = await import('@/middleware');
@@ -258,6 +259,7 @@ describe('Middleware', () => {
   it('MW-012: extracts first IP from x-forwarded-for header', async () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'production';
+    process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');
     const { middleware } = await import('@/middleware');

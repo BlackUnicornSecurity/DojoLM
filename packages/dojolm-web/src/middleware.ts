@@ -44,13 +44,21 @@ const ADMIN_ROUTES_PREFIX = '/api/admin';
  * Checks common proxy headers, falls back to 'unknown'.
  */
 function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  if (forwarded) {
-    // x-forwarded-for may contain multiple IPs; take the first
-    const first = forwarded.split(',')[0]?.trim();
-    if (first) return first;
+  // PT-RATELIM-M01 fix: Only trust X-Forwarded-For behind known reverse proxies.
+  // In production with TRUSTED_PROXY set, use the header; otherwise ignore it
+  // to prevent rate limit bypass via header spoofing.
+  if (process.env.TRUSTED_PROXY) {
+    const forwarded = request.headers.get('x-forwarded-for');
+    if (forwarded) {
+      const first = forwarded.split(',')[0]?.trim();
+      if (first) return first;
+    }
   }
-  return request.headers.get('x-real-ip') ?? 'unknown';
+  // PT-RATELIM-M01 fix: X-Real-IP is equally attacker-controlled without a trusted proxy
+  if (process.env.TRUSTED_PROXY) {
+    return request.headers.get('x-real-ip') ?? 'unknown';
+  }
+  return 'unknown';
 }
 
 // ===========================================================================
@@ -274,10 +282,12 @@ export async function middleware(request: NextRequest) {
     const host = request.headers.get('host') ?? '';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
-    // SEC-005: Require Origin OR Referer to actually match the app — Sec-Fetch alone is not enough
-    const originMatch = origin === appUrl || origin === `http://${host}` || origin === `https://${host}`;
+    // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
+    // the request's Host header (attacker-controlled). This prevents external
+    // curl requests from bypassing auth by spoofing Sec-Fetch + Origin headers.
+    const originMatch = origin === appUrl;
     const referer = request.headers.get('referer') ?? '';
-    const refererMatch = referer.startsWith(appUrl) || referer.startsWith(`http://${host}`) || referer.startsWith(`https://${host}`);
+    const refererMatch = referer.startsWith(appUrl + '/');
 
     if (originMatch || (!origin && refererMatch)) {
       const response = NextResponse.next();
@@ -302,11 +312,10 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // Admin route elevated check (future: check role)
-  if (pathname.startsWith(ADMIN_ROUTES_PREFIX) && !PUBLIC_ROUTES.has(pathname)) {
-    // For now, same API key grants admin access
-    // Future: check for admin role claim
-  }
+  // PT-AUTHZ-H02: Admin route check — API key holders get admin-level access
+  // (verified by API key auth above). Individual route handlers enforce
+  // session-based RBAC via withAuth({role: 'admin'}) for session users.
+  // Middleware-level API key auth is sufficient for programmatic admin access.
 
   const response = NextResponse.next();
   for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);

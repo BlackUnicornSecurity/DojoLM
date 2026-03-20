@@ -26,16 +26,22 @@ beforeEach(() => {
 });
 
 describe('GET /api/stats', () => {
-  it('STAT-001: returns pattern count and groups', async () => {
+  // PT-INFO-M06: Response now returns summary counts (groupCount, sourceCount) instead of detailed patternGroups
+  it('STAT-001: returns pattern count and group/source counts', async () => {
     mockGetPatternCount.mockReturnValue(150);
-    mockGetPatternGroups.mockReturnValue(['injection', 'exfil', 'jailbreak']);
+    mockGetPatternGroups.mockReturnValue([
+      { name: 'injection', source: 'owasp' },
+      { name: 'exfil', source: 'custom' },
+      { name: 'jailbreak', source: 'owasp' },
+    ]);
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.patternCount).toBe(150);
-    expect(json.patternGroups).toHaveLength(3);
+    expect(json.groupCount).toBe(3);
+    expect(json.sourceCount).toBe(2);
   });
 
   it('STAT-002: empty stats work correctly', async () => {
@@ -46,17 +52,21 @@ describe('GET /api/stats', () => {
     const res = await GET(createGetRequest());
     const json = await res.json();
     expect(json.patternCount).toBe(0);
-    expect(json.patternGroups).toEqual([]);
+    expect(json.groupCount).toBe(0);
+    expect(json.sourceCount).toBe(0);
   });
 
   it('STAT-003: large pattern count', async () => {
     mockGetPatternCount.mockReturnValue(5000);
-    mockGetPatternGroups.mockReturnValue(['g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10']);
+    mockGetPatternGroups.mockReturnValue(
+      Array.from({ length: 10 }, (_, i) => ({ name: `g${i + 1}`, source: `src${i % 3}` }))
+    );
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
     const json = await res.json();
     expect(json.patternCount).toBe(5000);
+    expect(json.groupCount).toBe(10);
   });
 
   it('STAT-004: internal error returns 500', async () => {
@@ -71,7 +81,7 @@ describe('GET /api/stats', () => {
 
   it('STAT-005: calls getPatternCount once', async () => {
     mockGetPatternCount.mockReturnValue(100);
-    mockGetPatternGroups.mockReturnValue([]);
+    mockGetPatternGroups.mockReturnValue([] as { name: string; source?: string }[]);
 
     const { GET } = await import('../route');
     await GET(createGetRequest());
@@ -80,7 +90,7 @@ describe('GET /api/stats', () => {
 
   it('STAT-006: calls getPatternGroups once', async () => {
     mockGetPatternCount.mockReturnValue(100);
-    mockGetPatternGroups.mockReturnValue([]);
+    mockGetPatternGroups.mockReturnValue([] as { name: string; source?: string }[]);
 
     const { GET } = await import('../route');
     await GET(createGetRequest());
@@ -89,27 +99,34 @@ describe('GET /api/stats', () => {
 
   it('STAT-007: response is JSON', async () => {
     mockGetPatternCount.mockReturnValue(100);
-    mockGetPatternGroups.mockReturnValue(['test']);
+    mockGetPatternGroups.mockReturnValue([{ name: 'test', source: 'owasp' }]);
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
     expect(res.headers.get('content-type')).toContain('application/json');
   });
 
-  it('STAT-008: pattern groups returned as array', async () => {
+  // PT-INFO-M06: Response now returns groupCount/sourceCount instead of patternGroups array
+  it('STAT-008: groupCount reflects number of pattern groups', async () => {
     mockGetPatternCount.mockReturnValue(50);
-    mockGetPatternGroups.mockReturnValue(['prompt_injection', 'data_exfil', 'jailbreak', 'system_prompt', 'harmful']);
+    mockGetPatternGroups.mockReturnValue([
+      { name: 'prompt_injection', source: 'owasp' },
+      { name: 'data_exfil', source: 'custom' },
+      { name: 'jailbreak', source: 'owasp' },
+      { name: 'system_prompt', source: 'llm-top10' },
+      { name: 'harmful', source: 'custom' },
+    ]);
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
     const json = await res.json();
-    expect(Array.isArray(json.patternGroups)).toBe(true);
-    expect(json.patternGroups).toContain('prompt_injection');
+    expect(json.groupCount).toBe(5);
+    expect(json.sourceCount).toBe(3);
   });
 
   it('STAT-009: handles scanner returning undefined gracefully', async () => {
     mockGetPatternCount.mockReturnValue(undefined);
-    mockGetPatternGroups.mockReturnValue(undefined);
+    mockGetPatternGroups.mockReturnValue([]);
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
@@ -118,12 +135,13 @@ describe('GET /api/stats', () => {
 
   it('STAT-010: response structure has expected keys', async () => {
     mockGetPatternCount.mockReturnValue(100);
-    mockGetPatternGroups.mockReturnValue(['test']);
+    mockGetPatternGroups.mockReturnValue([{ name: 'test', source: 'owasp' }]);
 
     const { GET } = await import('../route');
     const res = await GET(createGetRequest());
     const json = await res.json();
     expect(json).toHaveProperty('patternCount');
-    expect(json).toHaveProperty('patternGroups');
+    expect(json).toHaveProperty('groupCount');
+    expect(json).toHaveProperty('sourceCount');
   });
 });

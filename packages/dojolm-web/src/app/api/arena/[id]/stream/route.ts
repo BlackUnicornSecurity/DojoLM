@@ -25,10 +25,14 @@ const MAX_PER_IP_CONNECTIONS = 5;
 const activeConnections = new Set<string>();
 const ipConnectionCounts = new Map<string, number>();
 
+// PT-RATELIM-M01 fix: Only trust proxy headers when TRUSTED_PROXY is set
 function getClientIp(request: NextRequest): string {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-    ?? request.headers.get('x-real-ip')
-    ?? 'unknown';
+  if (process.env.TRUSTED_PROXY) {
+    return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown';
+  }
+  return 'unknown';
 }
 
 function trackConnection(connectionId: string, ip: string): boolean {

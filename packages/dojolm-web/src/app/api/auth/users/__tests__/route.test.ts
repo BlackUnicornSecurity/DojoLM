@@ -120,7 +120,7 @@ describe('POST /api/auth/users', () => {
       createPostRequest({
         username: 'newuser',
         email: 'new@test.com',
-        password: 'SecureP@ss1',
+        password: 'SecureP@ss1!',
         role: 'viewer',
         displayName: 'New User',
       })
@@ -134,7 +134,7 @@ describe('POST /api/auth/users', () => {
   it('USR-006: returns 400 when username is missing', async () => {
     const { POST } = await import('@/app/api/auth/users/route');
     const res = await POST(
-      createPostRequest({ email: 'a@b.com', password: 'pw' })
+      createPostRequest({ email: 'a@b.com', password: 'SecureP@ss1!' })
     );
     expect(res.status).toBe(400);
     expect((await res.json()).error).toMatch(/required/i);
@@ -144,7 +144,7 @@ describe('POST /api/auth/users', () => {
   it('USR-007: returns 201 when email is omitted (optional field)', async () => {
     const { POST } = await import('@/app/api/auth/users/route');
     const res = await POST(
-      createPostRequest({ username: 'user-no-email', password: 'password123' })
+      createPostRequest({ username: 'user-no-email', password: 'SecureP@ss1!' })
     );
     expect(res.status).toBe(201);
   });
@@ -166,7 +166,7 @@ describe('POST /api/auth/users', () => {
       createPostRequest({
         username: 'user',
         email: 'a@b.com',
-        password: 'pw',
+        password: 'SecureP@ss1!',
         role: 'superadmin',
       })
     );
@@ -182,7 +182,7 @@ describe('POST /api/auth/users', () => {
       createPostRequest({
         username: 'admin',
         email: 'new@test.com',
-        password: 'pw',
+        password: 'SecureP@ss1!',
       })
     );
     expect(res.status).toBe(409);
@@ -197,7 +197,7 @@ describe('POST /api/auth/users', () => {
       createPostRequest({
         username: 'uniqueuser',
         email: 'admin@test.com',
-        password: 'pw',
+        password: 'SecureP@ss1!',
       })
     );
     expect(res.status).toBe(409);
@@ -212,7 +212,7 @@ describe('POST /api/auth/users', () => {
       createPostRequest({
         username: 'newuser',
         email: 'new@test.com',
-        password: 'pw',
+        password: 'SecureP@ss1!',
       })
     );
     expect(res.status).toBe(500);
