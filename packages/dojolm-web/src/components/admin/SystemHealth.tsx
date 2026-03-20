@@ -221,7 +221,7 @@ function StatusCard({
           <span className="text-sm font-semibold text-foreground">{title}</span>
         </div>
         <span
-          className={cn('w-2 h-2 rounded-full', status === 'online' ? 'bg-green-500' : 'bg-red-500')}
+          className={cn('w-2 h-2 rounded-full', status === 'online' ? 'bg-[var(--status-allow)]' : 'bg-[var(--status-block)]')}
           role="status"
           aria-label={`${title}: ${status}`}
         />

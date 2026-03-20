@@ -131,7 +131,7 @@ export function SessionHistory({ className }: SessionHistoryProps) {
           <div className="flex justify-end">
             <button
               onClick={handleClearAll}
-              className="text-xs text-muted-foreground hover:text-[var(--danger)] px-2 py-1 rounded min-h-[32px]"
+              className="text-xs text-muted-foreground hover:text-[var(--danger)] px-2 py-1 rounded min-h-[44px] inline-flex items-center"
               aria-label="Clear all session history"
             >
               Clear all

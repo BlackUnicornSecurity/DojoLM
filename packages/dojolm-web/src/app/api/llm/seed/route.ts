@@ -8,12 +8,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
 import { seedTestCases } from '@/lib/data/sample-test-cases';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // POST /api/llm/seed - Seed sample test cases
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const result = await seedTestCases();
 

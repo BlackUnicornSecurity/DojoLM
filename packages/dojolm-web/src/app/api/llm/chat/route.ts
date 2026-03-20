@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { getProviderAdapter } from '@/lib/llm-providers';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const MAX_MESSAGES = 100;
 const MAX_PAYLOAD_BYTES = 256 * 1024; // 256KB
@@ -24,6 +25,9 @@ function sanitizeOutput(text: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const rawBody = await request.text();
 

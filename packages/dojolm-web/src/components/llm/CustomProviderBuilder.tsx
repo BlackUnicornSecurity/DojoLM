@@ -114,7 +114,7 @@ export function CustomProviderBuilder() {
 
       {/* Template Selection */}
       <div>
-        <label className="block text-xs text-[var(--text-secondary)] mb-1">Template</label>
+        <label className="block text-xs text-muted-foreground mb-1">Template</label>
         <div className="flex gap-2">
           {TEMPLATES.map(t => (
             <button
@@ -131,7 +131,7 @@ export function CustomProviderBuilder() {
       {/* Config Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label htmlFor="cp-name" className="block text-xs text-[var(--text-secondary)] mb-1">Display Name</label>
+          <label htmlFor="cp-name" className="block text-xs text-muted-foreground mb-1">Display Name</label>
           <input
             id="cp-name"
             type="text"
@@ -142,7 +142,7 @@ export function CustomProviderBuilder() {
           />
         </div>
         <div>
-          <label htmlFor="cp-model" className="block text-xs text-[var(--text-secondary)] mb-1">Model Name</label>
+          <label htmlFor="cp-model" className="block text-xs text-muted-foreground mb-1">Model Name</label>
           <input
             id="cp-model"
             type="text"
@@ -153,7 +153,7 @@ export function CustomProviderBuilder() {
           />
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="cp-url" className="block text-xs text-[var(--text-secondary)] mb-1">Base URL</label>
+          <label htmlFor="cp-url" className="block text-xs text-muted-foreground mb-1">Base URL</label>
           <input
             id="cp-url"
             type="url"
@@ -164,7 +164,7 @@ export function CustomProviderBuilder() {
           />
         </div>
         <div>
-          <label htmlFor="cp-auth" className="block text-xs text-[var(--text-secondary)] mb-1">Auth Type</label>
+          <label htmlFor="cp-auth" className="block text-xs text-muted-foreground mb-1">Auth Type</label>
           <select
             id="cp-auth"
             value={config.authType}
@@ -178,7 +178,7 @@ export function CustomProviderBuilder() {
         </div>
         {config.authType !== 'none' && (
           <div>
-            <label htmlFor="cp-key" className="block text-xs text-[var(--text-secondary)] mb-1">
+            <label htmlFor="cp-key" className="block text-xs text-muted-foreground mb-1">
               API Key
             </label>
             <div className="relative">
@@ -194,7 +194,7 @@ export function CustomProviderBuilder() {
               <button
                 type="button"
                 onClick={() => setShowKey(!showKey)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[var(--text-secondary)]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground"
                 aria-label={showKey ? 'Hide API key' : 'Show API key'}
               >
                 {showKey ? 'Hide' : 'Show'}
@@ -206,7 +206,7 @@ export function CustomProviderBuilder() {
 
       {/* Response Path */}
       <div>
-        <label htmlFor="cp-resp" className="block text-xs text-[var(--text-secondary)] mb-1">Response Text Path (JSON dot notation)</label>
+        <label htmlFor="cp-resp" className="block text-xs text-muted-foreground mb-1">Response Text Path (JSON dot notation)</label>
         <input
           id="cp-resp"
           type="text"

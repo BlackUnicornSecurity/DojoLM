@@ -276,7 +276,7 @@ export function KotobaDashboard() {
           <GlowCard glow="subtle" className="p-4">
             <button
               onClick={() => setShowIssues((v) => !v)}
-              className="flex items-center justify-between w-full text-left"
+              className="flex items-center justify-between w-full text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
               aria-expanded={showIssues}
             >
               <h4 className="text-sm font-semibold">

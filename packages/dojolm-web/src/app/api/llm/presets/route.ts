@@ -1,6 +1,9 @@
 /**
  * Presets Endpoint (P8-S84)
  * GET /api/llm/presets — List built-in provider presets (no auth details)
+ *
+ * PUBLIC ENDPOINT: Intentionally unauthenticated. Returns only non-sensitive
+ * preset metadata (provider name, tier, region). No API keys or secrets.
  */
 import { NextResponse } from 'next/server';
 

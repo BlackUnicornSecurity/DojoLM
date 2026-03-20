@@ -23,10 +23,12 @@ import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { ModuleOnboarding, resetOnboarding, type OnboardingStep } from '@/components/ui/ModuleOnboarding'
 import { SAGEConfig, ArenaConfig, MitsukeConfig } from './KumiteConfig'
+import { AmaterasuConfig } from '../attackdna/AmaterasuConfig'
 import {
   Dna,
   Swords,
   Radio,
+  Fingerprint,
   ArrowRight,
   Layers,
   FlaskConical,
@@ -40,6 +42,8 @@ import {
   BarChart3,
   BookOpen,
   Rss,
+  GitBranch,
+  Network,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -58,7 +62,12 @@ const ThreatFeedStream = dynamic(
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
-type SubsystemKey = 'sage' | 'arena' | 'threatfeed'
+const AmaterasuSubsystem = dynamic(
+  () => import('./AmaterasuSubsystem').then(mod => ({ default: mod.AmaterasuSubsystem })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+type SubsystemKey = 'sage' | 'arena' | 'threatfeed' | 'dna'
 
 interface SubsystemCardConfig {
   key: SubsystemKey
@@ -110,12 +119,26 @@ const SUBSYSTEM_CARDS: SubsystemCardConfig[] = [
     accent: 'var(--severity-high)',
     badge: 'Intel',
   },
+  {
+    key: 'dna',
+    title: 'Amaterasu DNA',
+    description: 'Attack lineage and mutation analysis. Visualize family trees, embedding clusters, mutation timelines, and cross-attack relationships.',
+    icon: Fingerprint,
+    metrics: [
+      { label: 'Families', value: '38' },
+      { label: 'Nodes', value: '1,842' },
+      { label: 'Clusters', value: '12' },
+    ],
+    accent: 'var(--dojo-primary)',
+    badge: 'Analysis',
+  },
 ]
 
 const TAB_CONFIG: { key: SubsystemKey; label: string; icon: LucideIcon }[] = [
   { key: 'sage', label: 'SAGE', icon: FlaskConical },
   { key: 'arena', label: 'Arena', icon: Trophy },
   { key: 'threatfeed', label: 'Mitsuke', icon: AlertTriangle },
+  { key: 'dna', label: 'DNA', icon: Fingerprint },
 ]
 
 // --- Guide content for each subsystem ---
@@ -151,6 +174,16 @@ const GUIDE_CONTENT: Record<SubsystemKey, { title: string; description: string; 
       { title: 'Typical Workflow', content: '1. Configure feed sources and enable relevant ones\n2. Set alert threshold based on your risk tolerance\n3. Define indicator extraction rules\n4. Monitor the stream for new entries\n5. Investigate and triage alerts as they arrive', icon: BookOpen },
     ],
   },
+  dna: {
+    title: 'Amaterasu DNA Guide',
+    description: 'Analyze attack lineage, mutation families, and embedding clusters to understand how adversarial prompts evolve and relate to each other.',
+    sections: [
+      { title: 'Family Trees', content: 'Visualize parent-child relationships between attacks. Each node represents an attack prompt, and edges show how mutations created new variants. Click any node to see its full mutation history.', icon: GitBranch },
+      { title: 'Embedding Clusters', content: 'Attacks are grouped by semantic similarity using embedding vectors. Clusters reveal common evasion patterns that span different attack families, helping identify structural weaknesses.', icon: Network },
+      { title: 'Mutation Timeline', content: 'View how attacks evolved chronologically. The timeline highlights mutation bursts, drift patterns, and convergence events where independent attack families developed similar techniques.', icon: BarChart3 },
+      { title: 'Typical Workflow', content: '1. Select data source tiers for analysis\n2. Browse family trees to understand lineage\n3. Examine embedding clusters for pattern discovery\n4. Review mutation timeline for evolution trends\n5. Use X-Ray for deep structural analysis', icon: BookOpen },
+    ],
+  },
 }
 
 // --- Onboarding storage keys ---
@@ -158,6 +191,7 @@ const ONBOARDING_KEYS: Record<SubsystemKey, string> = {
   sage: 'sage-onboarded',
   arena: 'arena-onboarded',
   threatfeed: 'mitsuke-onboarded',
+  dna: 'kumite-dna-onboarded',
 }
 
 // --- Onboarding steps for each subsystem ---
@@ -213,6 +247,23 @@ const ONBOARDING_STEPS: Record<SubsystemKey, OnboardingStep[]> = {
       icon: Radio,
     },
   ],
+  dna: [
+    {
+      title: 'Select Data Sources',
+      description: 'Choose which data source tiers to analyze — local Dojo results, community datasets, or threat intelligence feeds. Each tier adds depth to lineage analysis.',
+      icon: Layers,
+    },
+    {
+      title: 'Explore Lineage',
+      description: 'Browse family trees to trace attack evolution, examine embedding clusters for pattern discovery, and review mutation timelines for trend analysis.',
+      icon: GitBranch,
+    },
+    {
+      title: 'Analyze & Export',
+      description: 'Use Black Box Analysis and X-Ray for deep structural inspection. Export findings to SAGE for evolution or flag for Mitsuke tracking.',
+      icon: Fingerprint,
+    },
+  ],
 }
 
 /**
@@ -238,6 +289,7 @@ export function StrategicHub() {
       <SAGEConfig isOpen={activeConfig === 'sage'} onClose={closeConfig} />
       <ArenaConfig isOpen={activeConfig === 'arena'} onClose={closeConfig} />
       <MitsukeConfig isOpen={activeConfig === 'threatfeed'} onClose={closeConfig} />
+      <AmaterasuConfig isOpen={activeConfig === 'dna'} onClose={closeConfig} />
       {(Object.keys(GUIDE_CONTENT) as SubsystemKey[]).map((key) => (
         <ModuleGuide
           key={key}
@@ -257,7 +309,7 @@ export function StrategicHub() {
         {/* Header with back navigation */}
         <ModuleHeader
           title="The Kumite"
-          subtitle="SAGE, Battle Arena, and Mitsuke"
+          subtitle="SAGE, Battle Arena, Mitsuke, and Amaterasu DNA"
           icon={Layers}
           actions={
             <>
@@ -336,6 +388,17 @@ export function StrategicHub() {
               <ThreatFeedStream />
             </div>
           </TabsContent>
+          <TabsContent value="dna">
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`dna-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.dna}
+                steps={ONBOARDING_STEPS.dna}
+                accentColor="var(--dojo-primary)"
+              />
+              <AmaterasuSubsystem />
+            </div>
+          </TabsContent>
         </Tabs>
 
         {renderPanels}
@@ -348,12 +411,12 @@ export function StrategicHub() {
       {/* Header */}
       <ModuleHeader
         title="The Kumite"
-        subtitle="Access SAGE evolution engine, Battle Arena multi-agent sandbox, and Mitsuke threat intelligence pipeline."
+        subtitle="Access SAGE evolution engine, Battle Arena multi-agent sandbox, Mitsuke threat intelligence, and Amaterasu DNA analysis."
         icon={Layers}
       />
 
       {/* Subsystem cards */}
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
         {SUBSYSTEM_CARDS.map((card) => {
           const CardIcon = card.icon
           return (
@@ -388,7 +451,7 @@ export function StrategicHub() {
                     >
                       <Settings className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
-                    <Badge variant="outline" title={card.key === 'sage' ? 'Genetic evolution of attack prompts' : card.key === 'arena' ? 'Real-time multi-agent matches' : 'Live threat intelligence feed'}>{card.badge}</Badge>
+                    <Badge variant="outline" title={card.key === 'sage' ? 'Genetic evolution of attack prompts' : card.key === 'arena' ? 'Real-time multi-agent matches' : card.key === 'dna' ? 'Attack lineage and mutation analysis' : 'Live threat intelligence feed'}>{card.badge}</Badge>
                   </div>
                 </div>
                 <CardTitle className="text-lg mt-3">{card.title}</CardTitle>

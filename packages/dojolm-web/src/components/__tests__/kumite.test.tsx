@@ -104,8 +104,8 @@ describe('StrategicHub (ARN-001 to ARN-012)', () => {
     expect(screen.getByText('0.94')).toBeInTheDocument() // Best Fitness
     // Arena metrics
     expect(screen.getByText('3')).toBeInTheDocument() // Active Matches
-    // Mitsuke metrics
-    expect(screen.getByText('12')).toBeInTheDocument() // Active Sources
+    // Mitsuke metrics (12 appears in both Mitsuke and DNA cards)
+    expect(screen.getAllByText('12').length).toBeGreaterThanOrEqual(1) // Active Sources + DNA Clusters
   })
 
   it('ARN-004: clicking Open SAGE navigates to subsystem view', () => {
@@ -143,7 +143,7 @@ describe('StrategicHub (ARN-001 to ARN-012)', () => {
   it('ARN-009: help button shows guide panel', () => {
     render(<StrategicHub />)
     const helpButtons = screen.getAllByLabelText(/Help for/)
-    expect(helpButtons.length).toBe(3) // one per card
+    expect(helpButtons.length).toBe(4) // one per card
     fireEvent.click(helpButtons[0])
     expect(screen.getByTestId('module-guide')).toBeInTheDocument()
   })
@@ -151,7 +151,7 @@ describe('StrategicHub (ARN-001 to ARN-012)', () => {
   it('ARN-010: config button opens config panel', () => {
     render(<StrategicHub />)
     const configButtons = screen.getAllByLabelText(/Configure/)
-    expect(configButtons.length).toBe(3)
+    expect(configButtons.length).toBe(4)
     fireEvent.click(configButtons[0])
     expect(screen.getByTestId('sage-config')).toBeInTheDocument()
   })

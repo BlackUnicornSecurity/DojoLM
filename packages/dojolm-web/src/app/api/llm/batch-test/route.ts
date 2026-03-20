@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { getConcurrentLimit, getMaxBatchSize } from '@/lib/llm-constants';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const MAX_CONCURRENT_BATCHES = 3;
 
@@ -16,6 +17,9 @@ const MAX_CONCURRENT_BATCHES = 3;
 const runningBatches = new Set<string>();
 
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     if (runningBatches.size >= MAX_CONCURRENT_BATCHES) {
       return NextResponse.json(
@@ -85,7 +89,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const storage = await getStorage();
     const { batches } = await storage.queryBatches({});

@@ -45,7 +45,7 @@ export function GuardModeSelector() {
               <button
                 onClick={() => setBlockThreshold('WARNING')}
                 className={cn(
-                  'px-2 py-1 text-xs rounded',
+                  'px-2 py-1 text-xs rounded min-h-[44px] inline-flex items-center',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'WARNING'
                     ? 'bg-[var(--severity-medium-bg)] text-[var(--severity-medium)] border border-[var(--severity-medium)]/50'
@@ -59,7 +59,7 @@ export function GuardModeSelector() {
               <button
                 onClick={() => setBlockThreshold('CRITICAL')}
                 className={cn(
-                  'px-2 py-1 text-xs rounded',
+                  'px-2 py-1 text-xs rounded min-h-[44px] inline-flex items-center',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
                   config.blockThreshold === 'CRITICAL'
                     ? 'bg-[var(--status-block-bg)] text-[var(--status-block)] border border-[var(--status-block)]/50'
@@ -86,6 +86,8 @@ export function GuardModeSelector() {
               key={mode.id}
               onClick={() => setMode(mode.id as GuardMode)}
               disabled={!config.enabled}
+              aria-disabled={!config.enabled}
+              tabIndex={config.enabled ? 0 : -1}
               className={cn(
                 'text-left p-0 rounded-lg border-0 bg-transparent',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]',

@@ -13,9 +13,9 @@ import { cn } from '@/lib/utils'
 import { Trophy, ShieldAlert, FlaskConical, Zap } from 'lucide-react'
 
 function getTrophy(count: number): { icon: string; color: string } | null {
-  if (count >= 100) return { icon: '🏆', color: 'text-yellow-400' }
-  if (count >= 50) return { icon: '🥈', color: 'text-gray-300' }
-  if (count >= 10) return { icon: '🥉', color: 'text-amber-600' }
+  if (count >= 100) return { icon: '🏆', color: 'text-[var(--severity-medium)]' }
+  if (count >= 50) return { icon: '🥈', color: 'text-muted-foreground' }
+  if (count >= 10) return { icon: '🥉', color: 'text-[var(--severity-high)]' }
   return null
 }
 

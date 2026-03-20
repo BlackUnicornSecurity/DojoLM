@@ -57,6 +57,7 @@ export function ExportSettings() {
               key={format.id}
               type="button"
               onClick={() => toggleFormat(format.id)}
+              aria-pressed={selectedFormats.has(format.id)}
               className={cn(
                 'rounded-lg border p-4 text-left motion-safe:transition-all',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -68,7 +69,7 @@ export function ExportSettings() {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-foreground">{format.label}</span>
                 {selectedFormats.has(format.id) && (
-                  <Check className="w-4 h-4 text-[var(--dojo-primary)]" aria-label="Selected" />
+                  <Check className="w-4 h-4 text-[var(--dojo-primary)]" aria-hidden="true" />
                 )}
               </div>
               <p className="text-xs text-muted-foreground">{format.description}</p>

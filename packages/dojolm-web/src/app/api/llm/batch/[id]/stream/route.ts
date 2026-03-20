@@ -7,6 +7,7 @@
 
 import { NextRequest } from 'next/server';
 import { fileStorage } from '@/lib/storage/file-storage';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const SAFE_ID = /^[\w-]{1,128}$/;
 const MAX_POLL_DURATION_MS = 10 * 60 * 1000; // 10 minutes
@@ -21,6 +22,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   const { id: batchId } = await params;
 
   // Validate batchId format to prevent path traversal

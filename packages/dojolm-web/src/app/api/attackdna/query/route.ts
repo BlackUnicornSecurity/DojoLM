@@ -54,7 +54,7 @@ export const GET = createApiHandler(
 
       default:
         return NextResponse.json(
-          { error: `Invalid query type: ${queryType}. Valid types: nodes, families, clusters, timeline, stats` },
+          { error: `Invalid query type. Valid types: nodes, families, clusters, timeline, stats` },
           { status: 400 }
         );
     }

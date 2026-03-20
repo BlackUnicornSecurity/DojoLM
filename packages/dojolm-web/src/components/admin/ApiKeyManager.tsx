@@ -250,7 +250,7 @@ function ProviderCard({
         <button
           type="button"
           onClick={onDelete}
-          className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 motion-safe:transition-colors"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 motion-safe:transition-colors min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
           aria-label={`Delete ${provider.name}`}
         >
           <Trash2 className="w-4 h-4" aria-hidden="true" />

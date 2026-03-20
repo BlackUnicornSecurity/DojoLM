@@ -54,10 +54,10 @@ function CoverageGauge({ value, label, size = 'md' }: { value: number; label: st
   const svgSize = (radius + stroke) * 2
 
   const getColor = (v: number) => {
-    if (v >= 90) return 'text-green-500'
-    if (v >= 75) return 'text-yellow-500'
-    if (v >= 50) return 'text-orange-500'
-    return 'text-red-500'
+    if (v >= 90) return 'text-[var(--status-allow)]'
+    if (v >= 75) return 'text-[var(--severity-medium)]'
+    if (v >= 50) return 'text-[var(--severity-high)]'
+    return 'text-[var(--status-block)]'
   }
 
   const getStrokeColor = (v: number) => {
@@ -78,7 +78,7 @@ function CoverageGauge({ value, label, size = 'md' }: { value: number; label: st
             fill="none"
             stroke="currentColor"
             strokeWidth={stroke}
-            className="text-gray-200 dark:text-gray-700"
+            className="text-muted-foreground/20"
           />
           <circle
             cx={radius + stroke}
@@ -99,7 +99,7 @@ function CoverageGauge({ value, label, size = 'md' }: { value: number; label: st
           </span>
         </div>
       </div>
-      <span className={`text-center font-medium ${size === 'lg' ? 'text-sm' : 'text-xs'} text-gray-600 dark:text-gray-400`} aria-label={`${label}: ${value}% coverage`}>
+      <span className={`text-center font-medium ${size === 'lg' ? 'text-sm' : 'text-xs'} text-muted-foreground`} aria-label={label ? `${label}: ${value}% coverage` : `${value}% coverage`}>
         {label}
       </span>
     </div>
@@ -110,16 +110,16 @@ function CoverageGauge({ value, label, size = 'md' }: { value: number; label: st
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    covered: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    partial: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    gap: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    open: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    'in-progress': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    closed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    covered: 'bg-[var(--status-allow)]/10 text-[var(--status-allow)]',
+    partial: 'bg-[var(--severity-medium)]/10 text-[var(--severity-medium)]',
+    gap: 'bg-[var(--status-block)]/10 text-[var(--status-block)]',
+    open: 'bg-[var(--status-block)]/10 text-[var(--status-block)]',
+    'in-progress': 'bg-[var(--bu-electric)]/10 text-[var(--bu-electric)]',
+    closed: 'bg-[var(--status-allow)]/10 text-[var(--status-allow)]',
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-100 text-gray-800'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-muted text-muted-foreground'}`}>
       {status}
     </span>
   )
@@ -135,33 +135,33 @@ function GapList({ frameworks }: { frameworks: ComplianceFramework[] }) {
   )
 
   if (gaps.length === 0) {
-    return <p className="text-green-600 dark:text-green-400 font-medium">No open gaps - full coverage achieved!</p>
+    return <p className="text-[var(--status-allow)] font-medium">No open gaps - full coverage achieved!</p>
   }
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700" aria-label="Compliance gaps">
-        <thead className="bg-gray-50 dark:bg-gray-800">
+      <table className="min-w-full divide-y divide-[var(--border)]" aria-label="Compliance gaps">
+        <thead className="bg-[var(--bg-tertiary)]">
           <tr>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Framework</th>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Control</th>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Coverage</th>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Evidence</th>
-            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Remediation</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Framework</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Control</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Coverage</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Evidence</th>
+            <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Remediation</th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody className="bg-[var(--bg-secondary)] divide-y divide-[var(--border)]">
           {gaps.map((gap) => (
             <tr key={`${gap.framework}-${gap.id}`}>
-              <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{gap.framework}</td>
+              <td className="px-4 py-2 text-sm text-foreground">{gap.framework}</td>
               <td className="px-4 py-2 text-sm">
-                <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{gap.id}</span>
-                <span className="ml-2 text-gray-900 dark:text-gray-100">{gap.name}</span>
+                <span className="font-mono text-xs text-muted-foreground">{gap.id}</span>
+                <span className="ml-2 text-foreground">{gap.name}</span>
               </td>
               <td className="px-4 py-2"><StatusBadge status={gap.status} /></td>
-              <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{gap.coverage}%</td>
-              <td className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">{gap.evidenceRef}</td>
+              <td className="px-4 py-2 text-sm text-foreground">{gap.coverage}%</td>
+              <td className="px-4 py-2 text-sm text-muted-foreground max-w-xs truncate">{gap.evidenceRef}</td>
               <td className="px-4 py-2">{gap.remediationStatus ? <StatusBadge status={gap.remediationStatus} /> : '-'}</td>
             </tr>
           ))}
@@ -197,16 +197,16 @@ export default function ComplianceDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-4" role="status" aria-label="Loading compliance data">
-        <div className="animate-spin motion-reduce:animate-none rounded-full h-8 w-8 border-b-2 border-blue-600" aria-hidden="true" />
-        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading compliance data...</span>
+        <div className="animate-spin motion-reduce:animate-none rounded-full h-8 w-8 border-b-2 border-[var(--dojo-primary)]" aria-hidden="true" />
+        <span className="ml-3 text-muted-foreground">Loading compliance data...</span>
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg" role="alert">
-        <p className="text-red-700 dark:text-red-400">Error loading compliance data: {error}</p>
+      <div className="p-4 bg-[var(--status-block)]/10 rounded-lg" role="alert">
+        <p className="text-[var(--status-block)]">Error loading compliance data: {error}</p>
       </div>
     )
   }
@@ -214,28 +214,28 @@ export default function ComplianceDashboard() {
   return (
     <div className="space-y-6">
       {/* Summary Header */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4">
+      <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Compliance Coverage Dashboard</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Last updated: {data.lastUpdated}</span>
+          <h2 className="text-xl font-bold text-foreground">Compliance Coverage Dashboard</h2>
+          <span className="text-sm text-muted-foreground">Last updated: {data.lastUpdated}</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{data.summary.avgCoverage}%</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Avg Coverage</div>
+          <div className="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+            <div className="text-2xl font-bold text-foreground">{data.summary.avgCoverage}%</div>
+            <div className="text-sm text-muted-foreground">Avg Coverage</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-red-600">{data.summary.openGaps}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Open Gaps</div>
+          <div className="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+            <div className="text-2xl font-bold text-[var(--status-block)]">{data.summary.openGaps}</div>
+            <div className="text-sm text-muted-foreground">Open Gaps</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{data.summary.inProgressGaps}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">In Progress</div>
+          <div className="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+            <div className="text-2xl font-bold text-[var(--bu-electric)]">{data.summary.inProgressGaps}</div>
+            <div className="text-sm text-muted-foreground">In Progress</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{data.summary.closedGaps}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Closed/Covered</div>
+          <div className="text-center p-3 bg-[var(--bg-tertiary)] rounded-lg">
+            <div className="text-2xl font-bold text-[var(--status-allow)]">{data.summary.closedGaps}</div>
+            <div className="text-sm text-muted-foreground">Closed/Covered</div>
           </div>
         </div>
 
@@ -248,28 +248,28 @@ export default function ComplianceDashboard() {
       </div>
 
       {/* Framework Details */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+        <h3 className="text-lg font-semibold text-foreground p-4 border-b border-[var(--border)]">
           Framework Details
         </h3>
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="divide-y divide-[var(--border)]">
           {data.frameworks.map(f => (
             <div key={f.id}>
               <button
                 onClick={() => toggleFramework(f.id)}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="w-full flex items-center justify-between p-4 hover:bg-[var(--bg-tertiary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
                 aria-expanded={expandedFramework === f.id}
                 aria-controls={`framework-${f.id}`}
               >
                 <div className="flex items-center gap-3">
-                  <CoverageGauge value={f.overallCoverage} label="" size="sm" />
+                  <CoverageGauge value={f.overallCoverage} label={f.name} size="sm" />
                   <div className="text-left">
-                    <div className="font-medium text-gray-900 dark:text-gray-100">{f.name}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">v{f.version} | {f.controls.length} controls | Assessed: {f.lastAssessed}</div>
+                    <div className="font-medium text-foreground">{f.name}</div>
+                    <div className="text-xs text-muted-foreground">v{f.version} | {f.controls.length} controls | Assessed: {f.lastAssessed}</div>
                   </div>
                 </div>
                 <svg
-                  className={`w-5 h-5 text-gray-400 transition-transform ${expandedFramework === f.id ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-muted-foreground motion-safe:transition-transform ${expandedFramework === f.id ? 'rotate-180' : ''}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -280,24 +280,24 @@ export default function ComplianceDashboard() {
               </button>
               {expandedFramework === f.id && (
                 <div id={`framework-${f.id}`} className="px-4 pb-4">
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700" aria-label={`${f.name} controls`}>
-                    <thead className="bg-gray-50 dark:bg-gray-800">
+                  <table className="min-w-full divide-y divide-[var(--border)]" aria-label={`${f.name} controls`}>
+                    <thead className="bg-[var(--bg-tertiary)]">
                       <tr>
-                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">ID</th>
-                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Control</th>
-                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Coverage</th>
-                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Evidence</th>
+                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">ID</th>
+                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Control</th>
+                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Coverage</th>
+                        <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase">Evidence</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {f.controls.map(c => (
                         <tr key={c.id}>
-                          <td className="px-3 py-2 text-xs font-mono text-gray-500 dark:text-gray-400">{c.id}</td>
-                          <td className="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">{c.name}</td>
+                          <td className="px-3 py-2 text-xs font-mono text-muted-foreground">{c.id}</td>
+                          <td className="px-3 py-2 text-sm text-foreground">{c.name}</td>
                           <td className="px-3 py-2"><StatusBadge status={c.status} /></td>
                           <td className="px-3 py-2 text-sm">{c.coverage}%</td>
-                          <td className="px-3 py-2 text-xs text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                          <td className="px-3 py-2 text-xs text-muted-foreground max-w-xs truncate">
                             <span className="font-mono">[{c.evidenceType}]</span> {c.evidenceRef}
                           </td>
                         </tr>
@@ -312,8 +312,8 @@ export default function ComplianceDashboard() {
       </div>
 
       {/* Gap Analysis */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Gap Analysis</h3>
+      <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Gap Analysis</h3>
         <GapList frameworks={data.frameworks} />
       </div>
     </div>

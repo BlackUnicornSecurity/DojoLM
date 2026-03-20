@@ -65,7 +65,8 @@ export function LLMModelsWidget() {
       actions={
         <button
           onClick={() => setActiveTab('llm')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+          aria-label="Manage LLM Models"
         >
           Manage
         </button>
@@ -84,7 +85,7 @@ export function LLMModelsWidget() {
             <p className="text-xs text-muted-foreground">No models configured</p>
             <button
               onClick={() => setActiveTab('llm')}
-              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+              className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
             >
               Configure in LLM Dashboard
             </button>

@@ -117,7 +117,6 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     // Testing group
     expect(screen.getByText('Haiku Scanner')).toBeInTheDocument()
     expect(screen.getByText('Armory')).toBeInTheDocument()
-    expect(screen.getByText('LLM Jutsu')).toBeInTheDocument()
     expect(screen.getByText('LLM Dashboard')).toBeInTheDocument()
     // Defense group
     expect(screen.getByText('Hattori Guard')).toBeInTheDocument()
@@ -125,8 +124,10 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     // Analysis group
     expect(screen.getByText('Atemi Lab')).toBeInTheDocument()
     expect(screen.getByText('The Kumite')).toBeInTheDocument()
-    expect(screen.getByText('Amaterasu DNA')).toBeInTheDocument()
     expect(screen.getByText('Ronin Hub')).toBeInTheDocument()
+    // Red Team group
+    expect(screen.getByText('Sengoku')).toBeInTheDocument()
+    expect(screen.getByText('Kotoba')).toBeInTheDocument()
     // Admin (ungrouped)
     expect(screen.getByText('Admin')).toBeInTheDocument()
     // Dashboard should NOT be listed
@@ -162,10 +163,10 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     // Count all module label texts that should be present
     const moduleLabels = [
-      'Haiku Scanner', 'Armory', 'LLM Jutsu', 'LLM Dashboard',
+      'Haiku Scanner', 'Armory', 'LLM Dashboard',
       'Hattori Guard', 'Bushido Book',
-      'Atemi Lab', 'The Kumite', 'Amaterasu DNA', 'Ronin Hub',
-      'Admin',
+      'Atemi Lab', 'The Kumite', 'Ronin Hub',
+      'Sengoku', 'Kotoba', 'Admin',
     ]
     for (const label of moduleLabels) {
       expect(screen.getByText(label)).toBeInTheDocument()

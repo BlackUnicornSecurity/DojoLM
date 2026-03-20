@@ -272,7 +272,7 @@ const TABS: TabDef[] = [
 
 // --- Main Component ---
 
-export function AttackDNAExplorer() {
+export function AttackDNAExplorer({ embedded = false }: { embedded?: boolean } = {}) {
   const [activeTab, setActiveTab] = useState<TabId>('family-tree')
   const [searchQuery, setSearchQuery] = useState('')
   const [guideOpen, setGuideOpen] = useState(false)
@@ -320,35 +320,37 @@ export function AttackDNAExplorer() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <ModuleHeader
-        title="Amaterasu DNA"
-        subtitle="Analyze attack lineage, mutation families, and embedding clusters"
-        icon={Dna}
-        actions={
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleHelpClick}
-              aria-label="Open Amaterasu DNA guide"
-            >
-              <HelpCircle className="h-4 w-4" aria-hidden="true" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setConfigOpen(true)}
-              aria-label="Open Amaterasu DNA configuration"
-            >
-              <Settings className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          </>
-        }
-      />
+      {/* Header — hidden in embedded mode (parent provides header) */}
+      {!embedded && (
+        <ModuleHeader
+          title="Amaterasu DNA"
+          subtitle="Analyze attack lineage, mutation families, and embedding clusters"
+          icon={Dna}
+          actions={
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleHelpClick}
+                aria-label="Open Amaterasu DNA guide"
+              >
+                <HelpCircle className="h-4 w-4" aria-hidden="true" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setConfigOpen(true)}
+                aria-label="Open Amaterasu DNA configuration"
+              >
+                <Settings className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </>
+          }
+        />
+      )}
 
-      {/* Getting started tutorial (first visit) */}
-      <AmaterasuGuide key={`guide-${guideResetKey}`} />
+      {/* Getting started tutorial (first visit) — hidden in embedded mode */}
+      {!embedded && <AmaterasuGuide key={`guide-${guideResetKey}`} />}
 
       {/* Data Source Selector */}
       <DataSourceSelector
@@ -432,15 +434,19 @@ export function AttackDNAExplorer() {
         </TabsContent>
       </Tabs>
 
-      {/* Guide and config panels */}
-      <ModuleGuide
-        isOpen={guideOpen}
-        onClose={closeGuide}
-        title="Amaterasu DNA Guide"
-        description="Analyze attack lineage, mutation families, and embedding clusters to understand how adversarial prompts evolve and relate to each other."
-        sections={GUIDE_SECTIONS}
-      />
-      <AmaterasuConfig isOpen={configOpen} onClose={closeConfig} />
+      {/* Guide and config panels — hidden in embedded mode (parent provides these) */}
+      {!embedded && (
+        <>
+          <ModuleGuide
+            isOpen={guideOpen}
+            onClose={closeGuide}
+            title="Amaterasu DNA Guide"
+            description="Analyze attack lineage, mutation families, and embedding clusters to understand how adversarial prompts evolve and relate to each other."
+            sections={GUIDE_SECTIONS}
+          />
+          <AmaterasuConfig isOpen={configOpen} onClose={closeConfig} />
+        </>
+      )}
     </div>
   )
 }

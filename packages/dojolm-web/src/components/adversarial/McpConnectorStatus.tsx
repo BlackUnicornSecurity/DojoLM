@@ -370,8 +370,7 @@ function ConsentDialog({
   return (
     <div
       className="mt-2 p-3 rounded-lg bg-[var(--warning)]/5 border border-[var(--warning)]/20"
-      role="alertdialog"
-      aria-modal="false"
+      role="group"
       aria-label="Confirm MCP server start"
     >
       <p className="text-xs text-[var(--foreground)] mb-2">

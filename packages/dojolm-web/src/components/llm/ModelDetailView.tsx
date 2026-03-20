@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
@@ -33,10 +33,31 @@ export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
   const belt = getBeltRank(model.latestScore)
   const trend = calculateTrend(model.scoreTrend)
 
+  const dialogRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     document.body.style.overflow = 'hidden'
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return }
+      // Focus trap: keep Tab/Shift+Tab within dialog
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus() }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus() }
+        }
+      }
+    }
     document.addEventListener('keydown', handler)
+    // Move focus into dialog on open
+    const closeBtn = dialogRef.current?.querySelector<HTMLElement>('button[aria-label]')
+    closeBtn?.focus()
     return () => {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', handler)
@@ -52,6 +73,7 @@ export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
           'flex flex-col',
           'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-[var(--transition-normal)]',
         )}
+        ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -258,7 +280,7 @@ function HistoryTab({ executions }: { executions: TestExecution[] }) {
             key={exec.id}
             title={`${exec.passed}/${exec.totalTests} passed — Score ${exec.score}`}
             subtitle={formatDate(exec.timestamp, true)}
-            badge={exec.batchId ? <Badge variant="outline" className="text-[9px] shrink-0">Batch</Badge> : undefined}
+            badge={exec.batchId ? <Badge variant="outline" className="text-[10px] shrink-0">Batch</Badge> : undefined}
             headerClassName="py-2"
           >
             <div className="space-y-2 pt-2">
@@ -332,10 +354,15 @@ function DeliverablesTab({ model }: { model: AggregatedModel }) {
   }, [model])
 
   const generateCSV = useCallback(() => {
+    // Sanitize CSV cell values to prevent formula injection (=, +, -, @, tab, CR)
+    const sanitizeCell = (val: string) => {
+      if (/^[=+\-@\t\r]/.test(val)) return `'${val}`
+      return val
+    }
     const header = 'Execution ID,Score,Pass Rate,Total Tests,Passed,Failed,Categories Failed,Timestamp,Batch ID'
     const rows = model.executions.map(e =>
       [e.id, e.score, e.passRate, e.totalTests, e.passed, e.failed,
-       `"${e.categoriesFailed.join('; ')}"`, e.timestamp, e.batchId ?? ''].join(',')
+       `"${sanitizeCell(e.categoriesFailed.join('; '))}"`, e.timestamp, e.batchId ?? ''].join(',')
     )
     return [header, ...rows].join('\n')
   }, [model])

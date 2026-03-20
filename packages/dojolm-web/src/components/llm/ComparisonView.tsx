@@ -73,16 +73,16 @@ export function ComparisonView() {
   }, [comparisonData]);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-    if (score >= 50) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
-    return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+    if (score >= 80) return 'bg-[var(--status-allow)]/10 text-[var(--status-allow)]';
+    if (score >= 50) return 'bg-[var(--severity-medium)]/10 text-[var(--severity-medium)]';
+    return 'bg-[var(--status-block)]/10 text-[var(--status-block)]';
   };
 
   return (
     <div className="space-y-4">
       <div className="p-4 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)]">
         <h3 className="text-sm font-semibold mb-3">Select Models to Compare</h3>
-        <p className="text-xs text-[var(--text-secondary)] mb-2">
+        <p className="text-xs text-muted-foreground mb-2">
           Note: This compares <strong>LLM Compliance Rate</strong> (how well the model resists attacks),
           which is distinct from <strong>Scanner Detection Rate</strong> (how well our scanner detects attacks in text).
         </p>
@@ -121,7 +121,7 @@ export function ComparisonView() {
                 {comparisonData.map(d => (
                   <th key={d.modelId} className="p-2 text-center border-b border-[var(--border-primary)]">
                     {d.modelName}
-                    <div className="text-xs text-[var(--text-secondary)] font-normal">{d.provider}</div>
+                    <div className="text-xs text-muted-foreground font-normal">{d.provider}</div>
                   </th>
                 ))}
               </tr>
@@ -159,7 +159,7 @@ export function ComparisonView() {
       )}
 
       {comparisonData.length === 0 && selectedModels.length >= 2 && !loading && (
-        <p className="text-xs text-[var(--text-secondary)] text-center py-8">
+        <p className="text-xs text-muted-foreground text-center py-8">
           Click &quot;Compare&quot; to see results side-by-side.
         </p>
       )}

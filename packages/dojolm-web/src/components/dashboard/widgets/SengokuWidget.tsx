@@ -28,7 +28,8 @@ export function SengokuWidget() {
       actions={
         <button
           onClick={() => setActiveTab('sengoku')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+          aria-label="Open Sengoku Campaigns"
         >
           Open
         </button>
@@ -52,7 +53,7 @@ export function SengokuWidget() {
         </div>
 
         {MOCK_SENGOKU.regressions > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-amber-400">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--severity-medium)]">
             <AlertTriangle className="w-3 h-3" aria-hidden="true" />
             {MOCK_SENGOKU.regressions} regressions
           </div>

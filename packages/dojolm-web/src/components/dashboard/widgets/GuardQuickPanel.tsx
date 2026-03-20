@@ -26,7 +26,7 @@ export function GuardQuickPanel() {
       actions={
         <button
           onClick={refreshEvents}
-          className="p-1 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          className="p-1 rounded hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
           aria-label="Refresh guard events"
         >
           <RefreshCw className={cn('w-3.5 h-3.5', isLoading && 'motion-safe:animate-spin')} aria-hidden="true" />

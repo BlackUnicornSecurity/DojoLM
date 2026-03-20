@@ -31,7 +31,10 @@ function loadLocalData(): WidgetData {
   try {
     const subs = localStorage.getItem(SUBS_KEY)
     if (subs) {
-      const parsed = JSON.parse(subs)
+      const parsed = JSON.parse(subs, (key, value) => {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
+        return value
+      })
       if (Array.isArray(parsed)) {
         data.submissions = parsed.length
         data.totalRewards = parsed.reduce((sum: number, s: { payout?: number }) => sum + (s.payout ?? 0), 0)
@@ -39,7 +42,10 @@ function loadLocalData(): WidgetData {
     }
     const progs = localStorage.getItem(PROGS_KEY)
     if (progs) {
-      const parsed = JSON.parse(progs)
+      const parsed = JSON.parse(progs, (key, value) => {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
+        return value
+      })
       if (Array.isArray(parsed)) {
         data.subscribed = parsed.length
       }
@@ -89,7 +95,7 @@ export function RoninHubWidget() {
       actions={
         <button
           onClick={() => setActiveTab('ronin-hub')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline flex items-center gap-1"
+          className="text-xs text-[var(--dojo-primary)] hover:underline flex items-center gap-1 min-h-[44px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           aria-label="Open Ronin Hub"
         >
           Open
@@ -129,7 +135,7 @@ export function RoninHubWidget() {
             <div className="flex items-center gap-1.5 mb-1">
               <AlertTriangle className="h-3 w-3 text-[var(--severity-high)]" aria-hidden="true" />
               <span className="text-[10px] font-mono font-bold">{data.latestCve.id}</span>
-              <Badge variant="outline" className="text-[9px] px-1 py-0 ml-auto">
+              <Badge variant="outline" className="text-[10px] px-1 py-0 ml-auto">
                 {data.latestCve.severity}
               </Badge>
             </div>

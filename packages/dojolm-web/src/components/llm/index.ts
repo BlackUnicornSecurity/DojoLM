@@ -19,6 +19,13 @@ export { ExecutiveSummary } from './ExecutiveSummary';
 export { VulnerabilityPanel } from './VulnerabilityPanel';
 export { ReportGenerator } from './ReportGenerator';
 
+// Jutsu components (merged from components/jutsu/ — DAITENGUYAMA M1)
+export { JutsuTab } from './JutsuTab';
+export { JutsuModelCard } from './JutsuModelCard';
+export { ModelDetailView } from './ModelDetailView';
+export { aggregateByModel, calculateTrend } from './JutsuAggregation';
+export type { AggregatedModel, TestExecution as JutsuTestExecution } from './JutsuAggregation';
+
 // Types
 export type { LLMDashboardProps } from './LLMDashboard';
 export type { ModelFormProps } from './ModelForm';

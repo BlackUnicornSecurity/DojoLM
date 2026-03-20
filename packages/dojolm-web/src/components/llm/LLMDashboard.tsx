@@ -18,11 +18,12 @@ import { ComparisonView } from './ComparisonView';
 import { CustomProviderBuilder } from './CustomProviderBuilder';
 import { ReportGenerator } from './ReportGenerator';
 import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench } from 'lucide-react';
+import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, ScrollText } from 'lucide-react';
 import { GuardBadge } from '@/components/guard';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
+import { JutsuTab } from './JutsuTab';
 
-type DashboardTab = 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'custom';
+type DashboardTab = 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'custom' | 'jutsu';
 
 export interface LLMDashboardProps {
   /** Optional initial tab to display */
@@ -66,7 +67,7 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
 
   const validTabs: readonly DashboardTab[] = [
     'models', 'tests', 'results',
-    'leaderboard', 'compare', 'custom',
+    'leaderboard', 'compare', 'custom', 'jutsu',
   ];
 
   return (
@@ -89,29 +90,33 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
         if ((validTabs as readonly string[]).includes(v)) setActiveTab(v as DashboardTab);
       }} className="space-y-4">
         <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1 rounded-full overflow-x-auto scrollbar-hide">
-          <TabsTrigger value="models" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <Brain className="h-4 w-4" />
+          <TabsTrigger value="models" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Models">
+            <Brain className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Models</span>
           </TabsTrigger>
-          <TabsTrigger value="tests" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <Play className="h-4 w-4" />
+          <TabsTrigger value="tests" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Tests">
+            <Play className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Tests</span>
           </TabsTrigger>
-          <TabsTrigger value="results" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <BarChart3 className="h-4 w-4" />
+          <TabsTrigger value="results" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Results">
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Results</span>
           </TabsTrigger>
-          <TabsTrigger value="leaderboard" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <Trophy className="h-4 w-4" />
+          <TabsTrigger value="leaderboard" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Leaderboard">
+            <Trophy className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Board</span>
           </TabsTrigger>
-          <TabsTrigger value="compare" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <GitCompare className="h-4 w-4" />
+          <TabsTrigger value="compare" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Compare">
+            <GitCompare className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Compare</span>
           </TabsTrigger>
-          <TabsTrigger value="custom" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
-            <Wrench className="h-4 w-4" />
+          <TabsTrigger value="custom" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Custom Models">
+            <Wrench className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Custom Models</span>
+          </TabsTrigger>
+          <TabsTrigger value="jutsu" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Jutsu">
+            <ScrollText className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Jutsu</span>
           </TabsTrigger>
         </TabsList>
 
@@ -137,6 +142,10 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
 
         <TabsContent value="custom" className="space-y-4">
           <CustomProviderBuilder />
+        </TabsContent>
+
+        <TabsContent value="jutsu" className="space-y-4">
+          <JutsuTab onNavigateToTests={() => setActiveTab('tests')} />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,6 +6,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { NextRequest } from 'next/server';
+
+vi.mock('@/lib/api-auth', () => ({ checkApiAuth: () => null }));
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -52,7 +55,7 @@ describe('GET /api/fixtures', () => {
   // FXM-001: GET returns manifest JSON
   it('FXM-001: returns manifest JSON', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -64,7 +67,7 @@ describe('GET /api/fixtures', () => {
   // FXM-002: Response has content-type header
   it('FXM-002: response has Content-Type application/json', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.headers.get('content-type')).toContain('application/json');
   });
@@ -72,7 +75,7 @@ describe('GET /api/fixtures', () => {
   // FXM-003: Response has cache-control header
   it('FXM-003: response has Cache-Control header', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.headers.get('cache-control')).toContain('max-age=60');
   });
@@ -89,7 +92,7 @@ describe('GET /api/fixtures', () => {
   // FXM-005: Manifest includes version field
   it('FXM-005: manifest includes version field', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     const body = await res.json();
     expect(body.version).toBe('3.0.0');
@@ -98,7 +101,7 @@ describe('GET /api/fixtures', () => {
   // FXM-006: Manifest includes categories
   it('FXM-006: manifest includes categories object', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     const body = await res.json();
     expect(body.categories).toHaveProperty('injection');
@@ -112,7 +115,7 @@ describe('GET /api/fixtures', () => {
     });
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -123,7 +126,7 @@ describe('GET /api/fixtures', () => {
   // FXM-008: Response has X-Content-Type-Options nosniff
   it('FXM-008: response has X-Content-Type-Options nosniff header', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
   });
@@ -139,7 +142,7 @@ describe('GET /api/fixtures', () => {
   // FXM-010: GET returns 200 status
   it('FXM-010: GET returns 200 status code', async () => {
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/fixtures'));
 
     expect(res.status).toBe(200);
   });

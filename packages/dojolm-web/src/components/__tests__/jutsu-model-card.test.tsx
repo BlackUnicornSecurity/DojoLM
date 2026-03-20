@@ -52,8 +52,8 @@ beforeEach(() => {
 // Import under test
 // ---------------------------------------------------------------------------
 
-import { JutsuModelCard } from '../jutsu/JutsuModelCard'
-import type { AggregatedModel } from '../jutsu/JutsuAggregation'
+import { JutsuModelCard } from '../llm/JutsuModelCard'
+import type { AggregatedModel } from '../llm/JutsuAggregation'
 
 // ---------------------------------------------------------------------------
 // Test helpers

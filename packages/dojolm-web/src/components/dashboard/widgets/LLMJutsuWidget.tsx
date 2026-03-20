@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * File: LLMJutsuWidget.tsx
  * Purpose: LLM Jutsu dashboard widget — model count, belt distribution, recent tests
@@ -5,8 +7,6 @@
  * Index:
  * - LLMJutsuWidget component (line 12)
  */
-
-'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import { WidgetCard } from '../WidgetCard'
@@ -91,8 +91,8 @@ export function LLMJutsuWidget() {
       title="LLM Jutsu"
       actions={
         <button
-          onClick={() => setActiveTab('llm-jutsu')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline flex items-center gap-1"
+          onClick={() => setActiveTab('llm')}
+          className="text-xs text-[var(--dojo-primary)] hover:underline flex items-center gap-1 min-h-[44px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           aria-label="Open LLM Jutsu"
         >
           Open
@@ -139,7 +139,7 @@ export function LLMJutsuWidget() {
                 return (
                   <div key={belt} className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: BELT_COLORS[belt] }} aria-hidden="true" />
-                    <span className="text-[9px] text-muted-foreground">{belt} ({count})</span>
+                    <span className="text-[10px] text-muted-foreground">{belt} ({count})</span>
                   </div>
                 )
               })}

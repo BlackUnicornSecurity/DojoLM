@@ -124,7 +124,8 @@ export function buildSessionCookie(token: string, maxAgeSeconds: number): string
  * Cookie helper: builds CSRF Set-Cookie (readable by JS for double-submit).
  */
 export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): string {
-  return `${CSRF_COOKIE_NAME}=${csrfToken}; SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  return `${CSRF_COOKIE_NAME}=${csrfToken};${secure} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**

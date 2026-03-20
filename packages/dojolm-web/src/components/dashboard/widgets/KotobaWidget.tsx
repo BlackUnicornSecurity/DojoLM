@@ -26,7 +26,8 @@ export function KotobaWidget() {
       actions={
         <button
           onClick={() => setActiveTab('kotoba')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+          aria-label="Open Kotoba Studio"
         >
           Open
         </button>

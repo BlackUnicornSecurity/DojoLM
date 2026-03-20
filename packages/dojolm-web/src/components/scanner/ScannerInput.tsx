@@ -95,7 +95,7 @@ function FilePreview({
       <Button
         variant="ghost"
         size="icon"
-        className="h-7 w-7 shrink-0"
+        className="shrink-0 min-w-[44px] min-h-[44px]"
         onClick={onRemove}
         disabled={disabled}
         aria-label={`Remove ${file.name}`}
@@ -127,6 +127,7 @@ export function ScannerInput({
 }: ScannerInputProps) {
   const [text, setText] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
+  const [lengthWarning, setLengthWarning] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const fileInputId = useId()
   const { consumePendingPayload } = useScanner()
@@ -272,6 +273,12 @@ export function ScannerInput({
     }
 
     const combined = parts.join('\n\n---\n\n')
+    const MAX_INPUT_LENGTH = 10_000
+    if (combined.length > MAX_INPUT_LENGTH) {
+      setLengthWarning(`Combined input is ${combined.length.toLocaleString()} characters (max ${MAX_INPUT_LENGTH.toLocaleString()}). Please reduce text or remove files.`)
+      return
+    }
+    setLengthWarning(null)
     if (combined.trim()) {
       onScan(combined, modalities.length > 0 ? modalities : undefined)
     }
@@ -286,6 +293,7 @@ export function ScannerInput({
 
   const handleClear = useCallback(() => {
     setText('')
+    setLengthWarning(null)
     uploadedFiles.forEach(f => {
       if (f.previewUrl) URL.revokeObjectURL(f.previewUrl)
     })
@@ -362,6 +370,10 @@ export function ScannerInput({
 
         {/* ScanningState unmounts when not scanning (per Architect/Security requirement) */}
         {isScanning && <ScanningState className="py-4" />}
+
+        {lengthWarning && (
+          <p className="text-xs text-[var(--danger)]" role="alert">{lengthWarning}</p>
+        )}
 
         <div className="flex gap-2 flex-wrap">
           <Button

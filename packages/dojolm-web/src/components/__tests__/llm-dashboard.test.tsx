@@ -231,13 +231,13 @@ import { BeltBadge, getBeltRank } from '../ui/BeltBadge'
 // LLM-001: Renders with all tab buttons visible
 // ===========================================================================
 describe('LLM-001: Dashboard tab rendering', () => {
-  it('renders all 6 tab buttons (H7.2: summary + vulns merged into results)', () => {
+  it('renders all 7 tab buttons (H7.2: summary + vulns merged into results, M1: jutsu added)', () => {
     render(<LLMDashboard />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs.length).toBe(6)
-    // Check values — summary and vulnerabilities removed in H7.2
+    expect(tabs.length).toBe(7)
+    // Check values — summary and vulnerabilities removed in H7.2, jutsu added in DAITENGUYAMA M1
     const values = tabs.map(t => t.getAttribute('data-value'))
-    expect(values).toEqual(['models', 'tests', 'results', 'leaderboard', 'compare', 'custom'])
+    expect(values).toEqual(['models', 'tests', 'results', 'leaderboard', 'compare', 'custom', 'jutsu'])
   })
 })
 
@@ -738,6 +738,6 @@ describe('LLMDashboardWithProviders', () => {
   it('wraps dashboard in all 3 providers', () => {
     render(<LLMDashboardWithProviders />)
     // Should render without error - providers are mocked as pass-through
-    expect(screen.getAllByRole('tab').length).toBe(6)
+    expect(screen.getAllByRole('tab').length).toBe(7)
   })
 })

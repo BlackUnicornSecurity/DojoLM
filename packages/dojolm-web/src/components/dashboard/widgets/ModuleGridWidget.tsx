@@ -18,11 +18,11 @@ interface ModuleInfo {
 }
 
 const PHASE_COLORS: Record<string, string> = {
-  'core': 'bg-blue-500',
-  'p1': 'bg-green-500',
-  'p2': 'bg-amber-500',
-  'p3': 'bg-purple-500',
-  'p4': 'bg-red-500',
+  'core': 'bg-[var(--bu-electric)]',
+  'p1': 'bg-[var(--status-allow)]',
+  'p2': 'bg-[var(--severity-medium)]',
+  'p3': 'bg-[var(--status-output)]',
+  'p4': 'bg-[var(--status-block)]',
 }
 
 function getPhaseColor(source: string): string {

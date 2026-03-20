@@ -13,12 +13,16 @@ import { apiError } from '@/lib/api-error';
 import type { LLMPromptTestCase, TestCaseSeverity } from '@/lib/llm-types';
 import type { StorageQueryOptions } from '@/lib/storage/storage-interface';
 import { fileStorage } from '@/lib/storage/file-storage';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/test-cases - List test cases
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
 
@@ -51,6 +55,9 @@ export async function GET(request: NextRequest) {
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     let body: Record<string, unknown>;
     try {
@@ -111,6 +118,9 @@ export async function POST(request: NextRequest) {
 // ===========================================================================
 
 export async function DELETE(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

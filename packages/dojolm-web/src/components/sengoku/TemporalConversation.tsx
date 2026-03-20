@@ -1,7 +1,7 @@
 /**
- * File: TimeChamberConversation.tsx
- * Purpose: Conversation viewer for temporal attack plan turns
- * Story: HAKONE H18.6
+ * File: TemporalConversation.tsx
+ * Purpose: Conversation viewer for temporal attack plan turns (merged from Time Chamber)
+ * Story: DAITENGUYAMA M2.2
  * Index:
  * - Turn timeline with chat-like layout (line ~40)
  * - Expandable content per turn (line ~65)
@@ -13,18 +13,13 @@
 import { useState, useCallback } from 'react'
 import { User, Bot, ChevronDown, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { Turn } from './temporal-types'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-interface Turn {
-  readonly role: 'user' | 'assistant'
-  readonly content: string
-  readonly turnNumber: number
-}
-
-interface TimeChamberConversationProps {
+interface TemporalConversationProps {
   readonly turns: Turn[]
   readonly compact?: boolean
 }
@@ -35,7 +30,7 @@ const TRUNCATE_LENGTH = 200
 // Component
 // ---------------------------------------------------------------------------
 
-export function TimeChamberConversation({ turns, compact = false }: TimeChamberConversationProps) {
+export function TemporalConversation({ turns, compact = false }: TemporalConversationProps) {
   const [expandedTurns, setExpandedTurns] = useState<Set<number>>(new Set())
 
   const toggleTurn = useCallback((turnNumber: number) => {
@@ -66,19 +61,19 @@ export function TimeChamberConversation({ turns, compact = false }: TimeChamberC
             className={cn(
               'flex items-center gap-2 px-3 py-1.5 rounded text-xs',
               turn.role === 'user'
-                ? 'bg-blue-500/10 justify-end'
-                : 'bg-green-500/10 justify-start',
+                ? 'bg-[var(--bu-electric)]/10 justify-end'
+                : 'bg-[var(--status-allow)]/10 justify-start',
             )}
           >
             <span className={cn(
               'font-semibold shrink-0',
-              turn.role === 'user' ? 'text-blue-400' : 'text-[var(--status-allow)]',
+              turn.role === 'user' ? 'text-[var(--bu-electric)]' : 'text-[var(--status-allow)]',
             )}>
               T{turn.turnNumber}
             </span>
             <span className={cn(
               'font-medium shrink-0',
-              turn.role === 'user' ? 'text-blue-400' : 'text-[var(--status-allow)]',
+              turn.role === 'user' ? 'text-[var(--bu-electric)]' : 'text-[var(--status-allow)]',
             )}>
               {turn.role === 'user' ? 'User' : 'Assistant'}
             </span>
@@ -111,20 +106,20 @@ export function TimeChamberConversation({ turns, compact = false }: TimeChamberC
               className={cn(
                 'max-w-[80%] rounded-lg p-3 space-y-1',
                 isUser
-                  ? 'bg-blue-500/10 border border-blue-500/20'
-                  : 'bg-green-500/10 border border-green-500/20',
+                  ? 'bg-[var(--bu-electric)]/10 border border-[var(--bu-electric)]/20'
+                  : 'bg-[var(--status-allow)]/10 border border-[var(--status-allow)]/20',
               )}
             >
               {/* Header: role badge + turn number */}
               <div className="flex items-center gap-2">
                 {isUser ? (
-                  <User className="w-3.5 h-3.5 text-blue-400 shrink-0" aria-hidden="true" />
+                  <User className="w-3.5 h-3.5 text-[var(--bu-electric)] shrink-0" aria-hidden="true" />
                 ) : (
                   <Bot className="w-3.5 h-3.5 text-[var(--status-allow)] shrink-0" aria-hidden="true" />
                 )}
                 <span className={cn(
                   'text-xs font-semibold',
-                  isUser ? 'text-blue-400' : 'text-[var(--status-allow)]',
+                  isUser ? 'text-[var(--bu-electric)]' : 'text-[var(--status-allow)]',
                 )}>
                   {isUser ? 'User' : 'Assistant'}
                 </span>
@@ -143,7 +138,7 @@ export function TimeChamberConversation({ turns, compact = false }: TimeChamberC
                   className={cn(
                     'flex items-center gap-1 text-xs font-medium transition-colors',
                     'hover:text-[var(--dojo-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] rounded',
-                    isUser ? 'text-blue-400' : 'text-[var(--status-allow)]',
+                    isUser ? 'text-[var(--bu-electric)]' : 'text-[var(--status-allow)]',
                   )}
                   aria-label={isExpanded ? 'Collapse content' : 'Expand content'}
                 >

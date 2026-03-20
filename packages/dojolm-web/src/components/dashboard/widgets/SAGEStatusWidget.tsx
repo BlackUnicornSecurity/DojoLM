@@ -34,7 +34,7 @@ export function SAGEStatusWidget() {
           <button
             onClick={() => setIsRunning(!isRunning)}
             className={cn(
-              'p-1 rounded',
+              'p-1 rounded min-w-[44px] min-h-[44px] inline-flex items-center justify-center',
               'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]',
               isRunning ? 'text-[var(--dojo-primary)]' : 'text-muted-foreground'
             )}
@@ -48,7 +48,8 @@ export function SAGEStatusWidget() {
           </button>
           <button
             onClick={() => setActiveTab('strategic')}
-            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+            className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+            aria-label="Open SAGE"
           >
             Open
           </button>
@@ -77,7 +78,7 @@ export function SAGEStatusWidget() {
         />
 
         {MOCK_SAGE.quarantineCount > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-amber-400">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--severity-medium)]">
             <AlertTriangle className="w-3 h-3" aria-hidden="true" />
             {MOCK_SAGE.quarantineCount} quarantined
           </div>

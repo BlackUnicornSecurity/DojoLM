@@ -13,6 +13,7 @@ import { readFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import { stat } from 'fs/promises';
 import { existsSync } from 'fs';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // Base path to fixtures directory in bu-tpi package
 function getFixturesBasePath(): string {
@@ -42,7 +43,7 @@ const FIXTURES_BASE_PATH = getFixturesBasePath();
 
 // Allowed fixture categories for security
 const ALLOWED_CATEGORIES = [
-  'agent', 'agent-output', 'audio', 'bias', 'boundary', 'code',
+  'agent', 'agent-output', 'audio', 'audio-attacks', 'bias', 'boundary', 'code',
   'cognitive', 'context', 'delivery-vectors', 'document-attacks',
   'dos', 'encoded', 'environmental', 'few-shot', 'images',
   'malformed', 'mcp', 'model-theft', 'modern', 'multimodal',
@@ -107,6 +108,9 @@ function isBinaryFile(filename: string): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const path = searchParams.get('path');

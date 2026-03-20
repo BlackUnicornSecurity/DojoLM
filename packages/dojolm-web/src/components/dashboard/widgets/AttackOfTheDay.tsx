@@ -53,7 +53,7 @@ export function AttackOfTheDay() {
           <p className="text-xs text-muted-foreground mt-1">{payload.desc}</p>
         </div>
 
-        <pre className="text-xs font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all text-orange-500 max-h-16">
+        <pre className="text-xs font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all text-[var(--severity-high)] max-h-16">
           {payload.example}
         </pre>
 

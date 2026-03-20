@@ -39,6 +39,10 @@ vi.mock('@/lib/llm-constants', () => ({
   getMaxBatchSize: () => 100,
 }));
 
+vi.mock('@/lib/api-auth', () => ({
+  checkApiAuth: () => null,
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -219,7 +223,8 @@ describe('GET /api/llm/batch-test', () => {
 
   // BT-011
   it('BT-011: GET returns list of batches', async () => {
-    const res = await GET();
+    const req = new NextRequest('http://localhost:3000/api/llm/batch-test', { method: 'GET' });
+    const res = await GET(req);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(Array.isArray(body)).toBe(true);
@@ -231,7 +236,8 @@ describe('GET /api/llm/batch-test', () => {
   // BT-012
   it('BT-012: GET returns 500 on internal error', async () => {
     mockQueryBatches.mockRejectedValue(new Error('storage down'));
-    const res = await GET();
+    const req = new NextRequest('http://localhost:3000/api/llm/batch-test', { method: 'GET' });
+    const res = await GET(req);
     expect(res.status).toBe(500);
     const body = await res.json();
     expect(body.error).toMatch(/Failed to list batches/i);

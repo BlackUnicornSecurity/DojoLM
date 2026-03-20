@@ -100,7 +100,7 @@ function GuardConfigSection() {
 
       {/* Status */}
       <div className="flex items-center gap-2">
-        <span className={cn('w-2 h-2 rounded-full', config.enabled ? 'bg-green-500' : 'bg-gray-500')} aria-hidden="true" />
+        <span className={cn('w-2 h-2 rounded-full', config.enabled ? 'bg-[var(--status-allow)]' : 'bg-gray-500')} aria-hidden="true" />
         <span className="text-sm text-foreground">
           {config.enabled ? 'Guard Active' : 'Guard Disabled'}
         </span>
@@ -123,6 +123,7 @@ function GuardConfigSection() {
                 type="button"
                 onClick={() => setMode(mode.id)}
                 disabled={!config.enabled}
+                aria-pressed={config.mode === mode.id}
                 className={cn(
                   'rounded-lg border p-3 text-left motion-safe:transition-all',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
@@ -155,6 +156,7 @@ function GuardConfigSection() {
             <button
               type="button"
               onClick={() => setBlockThreshold('WARNING')}
+              aria-pressed={config.blockThreshold === 'WARNING'}
               className={cn(
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'WARNING'
@@ -168,6 +170,7 @@ function GuardConfigSection() {
             <button
               type="button"
               onClick={() => setBlockThreshold('CRITICAL')}
+              aria-pressed={config.blockThreshold === 'CRITICAL'}
               className={cn(
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-lg border motion-safe:transition-colors',
                 config.blockThreshold === 'CRITICAL'

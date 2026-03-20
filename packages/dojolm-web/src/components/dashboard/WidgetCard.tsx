@@ -88,10 +88,10 @@ export function WidgetCard({ title, children, actions, className, contentClassNa
         className={cn(
           'flex flex-row items-center justify-between',
           'pt-3 px-4 pb-1.5',
-          isClickable && 'cursor-pointer hover:text-[var(--bu-electric)] motion-safe:transition-colors',
+          isClickable && 'cursor-pointer hover:text-[var(--bu-electric)] motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2',
         )}
         onClick={isClickable ? handleNavigate : undefined}
-        role={isClickable ? 'link' : undefined}
+        role={isClickable ? 'button' : undefined}
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={isClickable ? (e: React.KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleNavigate() }

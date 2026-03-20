@@ -25,7 +25,7 @@ function GuardDashboardInner() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-pulse motion-reduce:animate-none" aria-busy="true">
+      <div className="space-y-6 animate-pulse motion-reduce:animate-none" aria-busy="true" role="status" aria-label="Loading guard dashboard">
         <div className="h-8 bg-muted rounded w-48" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (

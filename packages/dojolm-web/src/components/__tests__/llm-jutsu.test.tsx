@@ -112,10 +112,10 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 // Imports under test
 // ---------------------------------------------------------------------------
-import { LLMJutsu } from '../jutsu/LLMJutsu'
-import { JutsuModelCard } from '../jutsu/JutsuModelCard'
-import { ModelDetailView } from '../jutsu/ModelDetailView'
-import { aggregateByModel, calculateTrend, type TestExecution, type AggregatedModel } from '../jutsu/JutsuAggregation'
+import { JutsuTab as LLMJutsu } from '../llm/JutsuTab'
+import { JutsuModelCard } from '../llm/JutsuModelCard'
+import { ModelDetailView } from '../llm/ModelDetailView'
+import { aggregateByModel, calculateTrend, type TestExecution, type AggregatedModel } from '../llm/JutsuAggregation'
 import { BeltBadge, getBeltRank } from '../ui/BeltBadge'
 
 // ---------------------------------------------------------------------------
@@ -255,7 +255,7 @@ describe('JUT-006: Config min score filter', () => {
     render(<LLMJutsu />)
     // Find settings button by aria-label (may be nested in button mock)
     const allButtons = screen.getAllByRole('button')
-    const settingsBtn = allButtons.find(b => b.getAttribute('aria-label') === 'Open LLM Jutsu settings')
+    const settingsBtn = allButtons.find(b => b.getAttribute('aria-label') === 'Open Jutsu settings')
     expect(settingsBtn).toBeDefined()
     fireEvent.click(settingsBtn!)
     await waitFor(() => {
@@ -366,7 +366,7 @@ describe('JUT-015: rankModels', () => {
 // ===========================================================================
 function clickSettingsButton() {
   const allButtons = screen.getAllByRole('button')
-  const settingsBtn = allButtons.find(b => b.getAttribute('aria-label') === 'Open LLM Jutsu settings')
+  const settingsBtn = allButtons.find(b => b.getAttribute('aria-label') === 'Open Jutsu settings')
   expect(settingsBtn).toBeDefined()
   fireEvent.click(settingsBtn!)
 }
@@ -377,7 +377,7 @@ describe('JUT-016: Sort config', () => {
     clickSettingsButton()
     await waitFor(() => {
       expect(screen.getByTestId('config-panel')).toBeInTheDocument()
-      expect(screen.getByText('LLM Jutsu Settings')).toBeInTheDocument()
+      expect(screen.getByText('Jutsu Settings')).toBeInTheDocument()
     })
   })
 })

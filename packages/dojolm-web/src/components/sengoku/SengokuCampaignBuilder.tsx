@@ -85,7 +85,7 @@ export function SengokuCampaignBuilder({ onClose }: { onClose?: () => void }) {
               <select
                 value={authType}
                 onChange={(e) => setAuthType(e.target.value as 'api_key' | 'bearer')}
-                className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
               >
                 <option value="api_key">API Key</option>
                 <option value="bearer">Bearer Token</option>

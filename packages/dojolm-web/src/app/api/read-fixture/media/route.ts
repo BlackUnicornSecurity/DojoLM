@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile, stat } from 'fs/promises';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
+import { checkApiAuth } from '@/lib/api-auth';
 
 /** Content-Type mapping for media file extensions */
 const MIME_TYPES: Record<string, string> = {
@@ -33,7 +34,7 @@ const MIME_TYPES: Record<string, string> = {
 
 /** Allowed categories — must match the read-fixture route allowlist */
 const ALLOWED_CATEGORIES = [
-  'agent', 'agent-output', 'audio', 'bias', 'boundary', 'code',
+  'agent', 'agent-output', 'audio', 'audio-attacks', 'bias', 'boundary', 'code',
   'cognitive', 'context', 'delivery-vectors', 'document-attacks',
   'dos', 'encoded', 'environmental', 'few-shot', 'images',
   'malformed', 'mcp', 'model-theft', 'modern', 'multimodal',
@@ -101,6 +102,9 @@ function validatePath(category: string, filename: string): { valid: boolean; err
  * Used by MediaViewer for image/audio/video playback
  */
 export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
     const path = searchParams.get('path');

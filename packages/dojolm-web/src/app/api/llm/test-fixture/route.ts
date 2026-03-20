@@ -7,8 +7,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTest } from '@/lib/llm-execution';
+import { checkApiAuth } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     let body: Record<string, unknown>;
     try {

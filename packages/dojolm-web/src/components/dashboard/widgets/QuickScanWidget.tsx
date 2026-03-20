@@ -47,6 +47,7 @@ export function QuickScanWidget() {
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
               'disabled:opacity-50'
             )}
+            aria-label={isScanning ? 'Scanning...' : 'Run scan'}
           >
             {isScanning ? <Loader2 className="w-3 h-3 motion-safe:animate-spin" aria-hidden="true" /> : <ScanLine className="w-3 h-3" aria-hidden="true" />}
           </button>

@@ -13,18 +13,15 @@ import type { QuickPayload, PayloadEntry, CoverageEntry } from './types'
 import {
   Radar,
   Warehouse,
-  ScrollText,
   BrainCircuit,
   ShieldHalf,
   Crosshair,
   BookOpen,
   Trophy,
-  Fingerprint,
   Bug,
   SlidersHorizontal,
   LayoutDashboard,
   Swords,
-  Timer,
   PenTool,
 } from 'lucide-react'
 
@@ -66,13 +63,6 @@ export const NAV_ITEMS = [
     group: 'attack' as NavGroup,
   },
   {
-    id: 'llm-jutsu',
-    label: 'LLM Jutsu',
-    icon: ScrollText,
-    description: 'LLM testing command center',
-    group: 'attack' as NavGroup,
-  },
-  {
     id: 'llm',
     label: 'LLM Dashboard',
     icon: BrainCircuit,
@@ -104,14 +94,7 @@ export const NAV_ITEMS = [
     id: 'strategic',
     label: 'The Kumite',
     icon: Trophy,
-    description: 'SAGE, Battle Arena, and Mitsuke',
-    group: 'analysis' as NavGroup,
-  },
-  {
-    id: 'attackdna',
-    label: 'Amaterasu DNA',
-    icon: Fingerprint,
-    description: 'Attack lineage and mutation analysis',
+    description: 'SAGE, Battle Arena, Mitsuke, and Amaterasu DNA',
     group: 'analysis' as NavGroup,
   },
   {
@@ -126,13 +109,6 @@ export const NAV_ITEMS = [
     label: 'Sengoku',
     icon: Swords,
     description: 'Continuous red teaming campaigns',
-    group: 'redteam' as NavGroup,
-  },
-  {
-    id: 'time-chamber',
-    label: 'Time Chamber',
-    icon: Timer,
-    description: 'Temporal attack simulation',
     group: 'redteam' as NavGroup,
   },
   {
@@ -158,14 +134,17 @@ export type NavId = NavItem['id']
  * NavId aliases for backward compatibility (Story 2.9)
  * Maps retired NavIds to current NavIds for deep-link resolution
  */
-type RetiredNavId = 'testing' | 'jutsu' | 'ronin' | 'atemi' | 'kumite' | 'attack'
+type RetiredNavId = 'testing' | 'jutsu' | 'llm-jutsu' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   testing: 'scanner',
   attack: 'scanner',
-  jutsu: 'llm-jutsu',
+  jutsu: 'llm',
+  'llm-jutsu': 'llm',
   ronin: 'ronin-hub',
   atemi: 'adversarial',
   kumite: 'strategic',
+  'time-chamber': 'sengoku',
+  attackdna: 'strategic',
 }
 
 /**

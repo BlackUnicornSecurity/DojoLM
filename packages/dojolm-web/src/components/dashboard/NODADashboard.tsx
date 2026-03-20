@@ -108,7 +108,7 @@ const WIDGET_NAV_TARGET: Record<string, string> = {
   'llm-models': 'llm',
   'llm-quick-test': 'llm',
   'batch-progress': 'llm',
-  'llm-jutsu': 'llm-jutsu',
+  'llm-jutsu': 'llm',
   'compliance-bars': 'compliance',
   'coverage-heatmap': 'compliance',
   'engine-grid': 'scanner',
@@ -120,7 +120,7 @@ const WIDGET_NAV_TARGET: Record<string, string> = {
   'health-gauge': 'admin',
   'platform-stats': 'admin',
   'sengoku': 'sengoku',
-  'time-chamber': 'time-chamber',
+  'time-chamber': 'sengoku',
   'kotoba': 'kotoba',
 }
 
@@ -206,7 +206,7 @@ function DashboardContent() {
   const unsectionedWidgets = visibleWidgets.filter(w => !SECTIONED_IDS.has(w.id))
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto" aria-live="polite" aria-atomic="false">
+    <div className="space-y-6 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -240,7 +240,7 @@ function DashboardContent() {
 
               return (
                 <div key={section.label} className={cn(sectionIdx > 0 && 'mt-10')}>
-                  {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" />}
+                  {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" aria-label="Section divider" />}
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                     {section.label}
                   </h3>

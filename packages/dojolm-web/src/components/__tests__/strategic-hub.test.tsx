@@ -185,10 +185,10 @@ describe('StrategicHub', () => {
     expect(screen.getByLabelText('Open sage configuration')).toBeInTheDocument()
   })
 
-  it('SH-012: renders all three tab triggers in subsystem view', () => {
+  it('SH-012: renders all four tab triggers in subsystem view', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open SAGE dashboard'))
     const tabs = screen.getAllByRole('tab')
-    expect(tabs.length).toBe(3)
+    expect(tabs.length).toBe(4)
   })
 })

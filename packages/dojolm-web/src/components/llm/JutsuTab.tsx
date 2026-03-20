@@ -1,20 +1,19 @@
 /**
- * File: LLMJutsu.tsx
- * Purpose: Main LLM Jutsu — Model-centric testing command center
- * Story: NODA-3 Story 11.1
+ * File: JutsuTab.tsx
+ * Purpose: Jutsu model-centric view as a tab inside LLM Dashboard
+ * Story: DAITENGUYAMA M1.2
  * Index:
- * - DEMO_EXECUTIONS (line 22)
- * - LLMJutsu component (line 97)
+ * - JutsuTabProps (line 12)
+ * - JutsuTab component (line 18)
  */
 
 'use client'
 
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { ScrollText, Search, Filter, HelpCircle, Settings } from 'lucide-react'
+import { Search, Filter, HelpCircle, Settings, ScrollText } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Button } from '@/components/ui/button'
-import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import type { LucideIcon } from 'lucide-react'
 import { ModuleGuide, type GuideSection } from '@/components/ui/ModuleGuide'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
@@ -23,7 +22,6 @@ import { JutsuModelCard } from './JutsuModelCard'
 import { ModelDetailView } from './ModelDetailView'
 import { aggregateByModel, type AggregatedModel, type TestExecution } from './JutsuAggregation'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
-import { useNavigation } from '@/lib/NavigationContext'
 
 /** Human-readable provider display names */
 const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
@@ -104,11 +102,14 @@ const DEFAULT_CONFIG: Record<string, unknown> = {
   defaultProvider: 'all',
 }
 
+interface JutsuTabProps {
+  onNavigateToTests?: () => void
+}
+
 /**
- * LLMJutsu — Main LLM testing command center
+ * JutsuTab — Model-centric testing command center, embedded as tab inside LLM Dashboard
  */
-export function LLMJutsu() {
-  const { setActiveTab } = useNavigation()
+export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
   const [executions, setExecutions] = useState<TestExecution[]>(DEMO_EXECUTIONS)
   const [search, setSearch] = useState('')
   const [providerFilter, setProviderFilter] = useState<string>('all')
@@ -118,8 +119,30 @@ export function LLMJutsu() {
   const [configValues, setConfigValues] = useState<Record<string, unknown>>(DEFAULT_CONFIG)
 
   const handleRunTest = useCallback(() => {
-    setActiveTab('llm')
-  }, [setActiveTab])
+    onNavigateToTests?.()
+  }, [onNavigateToTests])
+
+  // Rehydrate config from localStorage on mount (with schema validation)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('noda-llm-jutsu-config')
+      if (stored) {
+        const parsed = JSON.parse(stored, (key, value) => {
+          if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
+          return value
+        }) as Record<string, unknown>
+        // Only pick known config keys with type validation
+        const VALID_KEYS = new Set(Object.keys(DEFAULT_CONFIG))
+        const safe: Record<string, unknown> = {}
+        for (const [k, v] of Object.entries(parsed)) {
+          if (VALID_KEYS.has(k) && typeof v === typeof DEFAULT_CONFIG[k]) {
+            safe[k] = typeof v === 'string' ? String(v).slice(0, 256) : v
+          }
+        }
+        setConfigValues(prev => ({ ...prev, ...safe }))
+      }
+    } catch { /* corrupted or unavailable */ }
+  }, [])
 
   // Try to load real results from API
   useEffect(() => {
@@ -140,7 +163,7 @@ export function LLMJutsu() {
             totalTests: typeof r.totalTests === 'number' ? r.totalTests : 0,
             passed: typeof r.passed === 'number' ? r.passed : 0,
             failed: typeof r.failed === 'number' ? r.failed : 0,
-            categoriesFailed: Array.isArray(r.categoriesFailed) ? r.categoriesFailed : [],
+            categoriesFailed: Array.isArray(r.categoriesFailed) ? r.categoriesFailed.filter((c: unknown): c is string => typeof c === 'string') : [],
             timestamp: typeof r.timestamp === 'string' ? r.timestamp : new Date().toISOString(),
             batchId: typeof r.batchId === 'string' ? r.batchId : undefined,
           }))
@@ -161,8 +184,12 @@ export function LLMJutsu() {
     return Array.from(set).sort()
   }, [aggregatedModels])
 
+  const minScore = typeof configValues.minScore === 'number' ? configValues.minScore : 0
+  const sortBy = typeof configValues.sortBy === 'string' ? configValues.sortBy : 'score'
+
   const filteredModels = useMemo(() => {
-    return aggregatedModels.filter(m => {
+    const filtered = aggregatedModels.filter(m => {
+      if (minScore > 0 && m.latestScore < minScore) return false
       if (providerFilter !== 'all' && m.provider !== providerFilter) return false
       if (search) {
         const s = search.toLowerCase()
@@ -170,7 +197,15 @@ export function LLMJutsu() {
       }
       return true
     })
-  }, [aggregatedModels, providerFilter, search])
+    const sorted = [...filtered]
+    switch (sortBy) {
+      case 'name': sorted.sort((a, b) => a.modelName.localeCompare(b.modelName)); break
+      case 'provider': sorted.sort((a, b) => a.provider.localeCompare(b.provider) || b.latestScore - a.latestScore); break
+      case 'tests': sorted.sort((a, b) => b.totalExecutions - a.totalExecutions); break
+      default: sorted.sort((a, b) => b.latestScore - a.latestScore); break
+    }
+    return sorted
+  }, [aggregatedModels, providerFilter, search, minScore, sortBy])
 
   const handleConfigChange = useCallback((key: string, value: unknown) => {
     setConfigValues(prev => ({ ...prev, [key]: value }))
@@ -178,32 +213,28 @@ export function LLMJutsu() {
 
   return (
     <div className="space-y-6">
-      {/* Module Header */}
-      <ModuleHeader
-        title="LLM Jutsu"
-        subtitle="Testing Command Center"
-        icon={ScrollText}
-        actions={
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setGuideOpen(true)}
-              aria-label="Open LLM Jutsu guide"
-            >
-              <HelpCircle className="h-5 w-5" aria-hidden="true" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setConfigOpen(true)}
-              aria-label="Open LLM Jutsu settings"
-            >
-              <Settings className="h-5 w-5" aria-hidden="true" />
-            </Button>
-          </>
-        }
-      />
+      {/* Toolbar */}
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-muted-foreground">Model-Centric Testing View</h3>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setGuideOpen(true)}
+            aria-label="Open Jutsu guide"
+          >
+            <HelpCircle className="h-5 w-5" aria-hidden="true" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setConfigOpen(true)}
+            aria-label="Open Jutsu settings"
+          >
+            <Settings className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
 
       {/* Global Filters */}
       <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-muted/30 border border-[var(--border)]">
@@ -250,7 +281,12 @@ export function LLMJutsu() {
 
       {/* Model Grid */}
       {filteredModels.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={cn('grid gap-4', {
+          'grid-cols-1': configValues.gridCols === 1,
+          'md:grid-cols-2': configValues.gridCols === 2 || !configValues.gridCols,
+          'md:grid-cols-2 lg:grid-cols-3': configValues.gridCols === 3,
+          'md:grid-cols-2 lg:grid-cols-4': configValues.gridCols === 4,
+        })}>
           {filteredModels.map(model => (
             <JutsuModelCard
               key={model.modelId}
@@ -264,7 +300,7 @@ export function LLMJutsu() {
         <EmptyState
           icon={ScrollText}
           title="No models found"
-          description="Run LLM tests from the LLM Dashboard to populate the model grid"
+          description="Run LLM tests from the Tests tab to populate the model grid"
         />
       )}
 
@@ -280,8 +316,8 @@ export function LLMJutsu() {
       <ModuleGuide
         isOpen={guideOpen}
         onClose={() => setGuideOpen(false)}
-        title="LLM Jutsu Guide"
-        description="LLM Jutsu is your model-centric testing command center. View all tested models, track score progression, analyze vulnerabilities, and download reports."
+        title="Jutsu Guide"
+        description="Jutsu is your model-centric testing command center. View all tested models, track score progression, analyze vulnerabilities, and download reports."
         sections={GUIDE_SECTIONS}
       />
 
@@ -289,7 +325,7 @@ export function LLMJutsu() {
       <ConfigPanel
         isOpen={configOpen}
         onClose={() => setConfigOpen(false)}
-        title="LLM Jutsu Settings"
+        title="Jutsu Settings"
         sections={CONFIG_SECTIONS}
         values={configValues}
         onChange={handleConfigChange}

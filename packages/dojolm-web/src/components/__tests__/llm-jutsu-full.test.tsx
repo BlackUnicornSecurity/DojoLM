@@ -73,7 +73,7 @@ vi.mock('@/components/ui/badge', () => ({
   ),
 }))
 
-vi.mock('../jutsu/JutsuModelCard', () => ({
+vi.mock('../llm/JutsuModelCard', () => ({
   JutsuModelCard: ({ model, onView }: { model: { modelName: string; modelId: string }; onView: (m: unknown) => void }) => (
     <div data-testid={`model-card-${model.modelId}`} onClick={() => onView(model)}>
       {model.modelName}
@@ -81,7 +81,7 @@ vi.mock('../jutsu/JutsuModelCard', () => ({
   ),
 }))
 
-vi.mock('../jutsu/ModelDetailView', () => ({
+vi.mock('../llm/ModelDetailView', () => ({
   ModelDetailView: ({ model, onClose }: { model: { modelName: string }; onClose: () => void }) => (
     <div data-testid="model-detail">
       <span>{model.modelName} Details</span>
@@ -113,18 +113,17 @@ beforeEach(() => {
 // Import under test
 // ---------------------------------------------------------------------------
 
-import { LLMJutsu } from '../jutsu/LLMJutsu'
+import { JutsuTab as LLMJutsu } from '../llm/JutsuTab'
 
 // ===========================================================================
 // LJF-001: Renders header
 // ===========================================================================
-describe('LJF-001: Renders header', () => {
-  it('shows LLM Jutsu title and subtitle', async () => {
+describe('LJF-001: Renders model grid', () => {
+  it('renders model grid with demo data (JutsuTab — no standalone header)', async () => {
     render(<LLMJutsu />)
     await waitFor(() => {
-      expect(screen.getByText('LLM Jutsu')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search models')).toBeInTheDocument()
     })
-    expect(screen.getByText('Testing Command Center')).toBeInTheDocument()
   })
 })
 
@@ -192,12 +191,12 @@ describe('LJF-006: Guide button opens guide', () => {
   it('opens module guide when help button is clicked', async () => {
     render(<LLMJutsu />)
     await waitFor(() => {
-      expect(screen.getByText('LLM Jutsu')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search models')).toBeInTheDocument()
     })
     expect(screen.queryByTestId('module-guide')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByLabelText('Open LLM Jutsu guide'))
+    fireEvent.click(screen.getByLabelText('Open Jutsu guide'))
     expect(screen.getByTestId('module-guide')).toBeInTheDocument()
-    expect(screen.getByText('LLM Jutsu Guide')).toBeInTheDocument()
+    expect(screen.getByText('Jutsu Guide')).toBeInTheDocument()
   })
 })
 
@@ -208,12 +207,12 @@ describe('LJF-007: Config button opens config', () => {
   it('opens config panel when settings button is clicked', async () => {
     render(<LLMJutsu />)
     await waitFor(() => {
-      expect(screen.getByText('LLM Jutsu')).toBeInTheDocument()
+      expect(screen.getByLabelText('Search models')).toBeInTheDocument()
     })
     expect(screen.queryByTestId('config-panel')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByLabelText('Open LLM Jutsu settings'))
+    fireEvent.click(screen.getByLabelText('Open Jutsu settings'))
     expect(screen.getByTestId('config-panel')).toBeInTheDocument()
-    expect(screen.getByText('LLM Jutsu Settings')).toBeInTheDocument()
+    expect(screen.getByText('Jutsu Settings')).toBeInTheDocument()
   })
 })
 

@@ -30,8 +30,9 @@ export function TimeChamberWidget() {
       title="Time Chamber"
       actions={
         <button
-          onClick={() => setActiveTab('time-chamber')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          onClick={() => setActiveTab('sengoku')}
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+          aria-label="Open Time Chamber"
         >
           Open
         </button>

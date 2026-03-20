@@ -80,9 +80,8 @@ export function FilterPills({
   }, [])
 
   const handleToggle = useCallback((filterId: string) => {
-    // Sanitize for DOM attributes; use original ID for state matching and parent callback
-    // (IDs are defined internally and already safe; sanitize is a defense-in-depth measure)
-    sanitizeId(filterId) // validates format, but we pass original to parent for consistency
+    // IDs are defined internally via ENGINE_FILTERS constants and already safe
+    // sanitizeId is used for DOM attribute generation in the render path
 
     // Update local state immediately for instant visual feedback
     setLocalFilters(prev =>

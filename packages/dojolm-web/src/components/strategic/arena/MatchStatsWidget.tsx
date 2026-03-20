@@ -492,7 +492,7 @@ export function LeaderboardView({
                     )
                   })}
                   {entry.achievements.length > 4 && (
-                    <Badge variant="outline" className="text-[9px] px-1 py-0 h-4">
+                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4">
                       +{entry.achievements.length - 4}
                     </Badge>
                   )}

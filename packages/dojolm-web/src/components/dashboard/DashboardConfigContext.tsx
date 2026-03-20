@@ -149,7 +149,7 @@ function loadConfig(): DashboardConfig {
       try {
         localStorage.setItem(BACKUP_KEY, raw)
         // eslint-disable-next-line no-console
-        console.warn('Dashboard config migrated v1->v2')
+        console.debug('Dashboard config migrated v1->v2')
       } catch { /* backup is best-effort */ }
     }
 

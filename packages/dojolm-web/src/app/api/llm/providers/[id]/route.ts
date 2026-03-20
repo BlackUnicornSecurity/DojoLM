@@ -6,10 +6,14 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
+import { checkApiAuth } from '@/lib/api-auth';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const storage = await getStorage();
@@ -32,7 +36,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const storage = await getStorage();

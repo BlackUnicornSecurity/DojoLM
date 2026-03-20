@@ -28,9 +28,9 @@ const MOCK_LEADERBOARD: LeaderboardAgent[] = [
 ]
 
 const RANK_STYLES: Record<number, string> = {
-  1: 'text-yellow-400',
-  2: 'text-gray-300',
-  3: 'text-amber-600',
+  1: 'text-[var(--severity-medium)]',
+  2: 'text-muted-foreground',
+  3: 'text-[var(--severity-high)]',
 }
 
 export function ArenaLeaderboardWidget() {
@@ -42,7 +42,8 @@ export function ArenaLeaderboardWidget() {
       actions={
         <button
           onClick={() => setActiveTab('strategic')}
-          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+          className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
+          aria-label="View Arena Leaderboard"
         >
           View Arena
         </button>

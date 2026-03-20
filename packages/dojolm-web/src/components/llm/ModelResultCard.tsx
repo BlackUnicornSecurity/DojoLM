@@ -188,7 +188,7 @@ export const ModelResultCard = memo(function ModelResultCard({
               <h3 className="text-sm font-semibold truncate">{result.modelName}</h3>
               <div className="flex items-center gap-1.5">
                 <div className="w-4 h-4 rounded bg-[var(--bg-quaternary)] flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                  <span className="text-[9px] font-bold text-[var(--bu-electric)]">
+                  <span className="text-[10px] font-bold text-[var(--bu-electric)]">
                     {result.provider.charAt(0).toUpperCase()}
                   </span>
                 </div>

@@ -307,11 +307,11 @@ export function AdminSettings() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-left text-muted-foreground">
-                  <th className="pb-2 pr-4 font-medium">Role</th>
-                  <th className="pb-2 pr-4 font-medium">Models</th>
-                  <th className="pb-2 pr-4 font-medium">Tests</th>
-                  <th className="pb-2 pr-4 font-medium">Users</th>
-                  <th className="pb-2 font-medium">Settings</th>
+                  <th scope="col" className="pb-2 pr-4 font-medium">Role</th>
+                  <th scope="col" className="pb-2 pr-4 font-medium">Models</th>
+                  <th scope="col" className="pb-2 pr-4 font-medium">Tests</th>
+                  <th scope="col" className="pb-2 pr-4 font-medium">Users</th>
+                  <th scope="col" className="pb-2 font-medium">Settings</th>
                 </tr>
               </thead>
               <tbody className="text-xs">

@@ -7,6 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const MAX_REGISTRATIONS_PER_MINUTE = 10;
 const registrationTimestamps: number[] = [];
@@ -25,6 +26,9 @@ function checkRateLimit(): boolean {
  * POST /api/llm/providers — Register new provider
  */
 export async function POST(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     if (!checkRateLimit()) {
       return NextResponse.json(
@@ -112,7 +116,10 @@ export async function POST(request: NextRequest) {
 /**
  * GET /api/llm/providers — List configured providers (no auth details)
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const storage = await getStorage();
     const configs = await storage.getModelConfigs();

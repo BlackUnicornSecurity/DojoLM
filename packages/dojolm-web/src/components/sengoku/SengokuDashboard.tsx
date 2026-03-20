@@ -13,13 +13,17 @@
 import { useState, useCallback } from 'react'
 import {
   Swords, Plus, Play, Pause, Square, RefreshCw, FileText,
-  AlertTriangle, CheckCircle2, Clock, XCircle, ChevronRight,
+  AlertTriangle, CheckCircle2, Clock, XCircle, ChevronRight, Timer,
 } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { cn, formatDate } from '@/lib/utils'
+import { TemporalTab } from './TemporalTab'
+
+type SengokuTab = 'campaigns' | 'temporal'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,7 +65,10 @@ const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; 
 export function SengokuDashboard() {
   const [campaigns] = useState<CampaignSummary[]>(DEMO_CAMPAIGNS)
   const [selectedId, setSelectedId] = useState<string | null>(DEMO_CAMPAIGNS[0]?.id ?? null)
+  const [activeTab, setActiveTab] = useState<SengokuTab>('campaigns')
   const selected = campaigns.find((c) => c.id === selectedId)
+
+  const TEMPORAL_PLAN_COUNT = 20 // Demo plan count
 
   return (
     <div className="space-y-6">
@@ -81,18 +88,35 @@ export function SengokuDashboard() {
       <div className="flex items-center gap-2 rounded-lg border border-[var(--severity-medium)]/30 bg-[var(--severity-medium)]/5 px-3 py-2">
         <AlertTriangle className="w-4 h-4 text-[var(--severity-medium)] shrink-0" aria-hidden="true" />
         <p className="text-xs text-[var(--severity-medium)]">
-          Showing demo campaign data. Connect a real target to start continuous red teaming.
+          Showing demo data. Connect a real target to start continuous red teaming.
         </p>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Combined Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <StatCard label="Campaigns" value={String(campaigns.length)} />
+        <StatCard label="Temporal Plans" value={String(TEMPORAL_PLAN_COUNT)} />
         <StatCard label="Active" value={String(campaigns.filter((c) => c.status === 'running').length)} />
         <StatCard label="Total Findings" value={String(campaigns.reduce((s, c) => s + c.findingCount, 0))} />
         <StatCard label="Regressions" value={String(campaigns.reduce((s, c) => s + c.regressionCount, 0))} accent />
       </div>
 
+      {/* Tab System */}
+      <Tabs value={activeTab} onValueChange={(v) => {
+        if (v === 'campaigns' || v === 'temporal') setActiveTab(v)
+      }} className="space-y-4">
+        <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1 rounded-full overflow-x-auto scrollbar-hide">
+          <TabsTrigger value="campaigns" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
+            <Swords className="h-4 w-4" />
+            <span className="hidden sm:inline">Campaigns</span>
+          </TabsTrigger>
+          <TabsTrigger value="temporal" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
+            <Timer className="h-4 w-4" />
+            <span className="hidden sm:inline">Temporal</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="campaigns" className="space-y-4">
       {/* Campaign List */}
       {campaigns.length === 0 ? (
         <EmptyState
@@ -217,6 +241,12 @@ export function SengokuDashboard() {
           </div>
         </GlowCard>
       )}
+        </TabsContent>
+
+        <TabsContent value="temporal" className="space-y-4">
+          <TemporalTab />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

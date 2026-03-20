@@ -148,7 +148,7 @@ function StatusToggle({ user, onToggled }: { user: SafeUser; onToggled: () => vo
       size="sm"
       onClick={toggle}
       disabled={toggling}
-      title={user.enabled ? 'Disable user' : 'Enable user'}
+      aria-label={user.enabled ? `Disable ${user.display_name || user.username}` : `Enable ${user.display_name || user.username}`}
     >
       {toggling ? (
         <Loader2 className="h-4 w-4 animate-spin" />

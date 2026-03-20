@@ -7,12 +7,16 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
+import { checkApiAuth } from '@/lib/api-auth';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
 const LOCAL_PROVIDERS = new Set(['ollama', 'lmstudio', 'llamacpp']);
 
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const storage = await getStorage();

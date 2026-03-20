@@ -150,7 +150,11 @@ export function Leaderboard() {
 
       if (changed) {
         if (typeof window !== 'undefined') {
-          localStorage.setItem('dojolm-score-history', JSON.stringify(updated));
+          try {
+            localStorage.setItem('dojolm-score-history', JSON.stringify(updated));
+          } catch {
+            // QuotaExceededError — graceful degradation
+          }
         }
         return updated;
       }

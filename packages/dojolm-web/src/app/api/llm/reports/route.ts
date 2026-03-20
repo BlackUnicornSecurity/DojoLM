@@ -11,12 +11,16 @@ import type { ReportFormat, ReportRequest } from '@/lib/llm-types';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { generateModelReport } from '@/lib/llm-server-utils';
 import { generateReport, generateReportFilename } from '@/lib/llm-reports';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
 // GET /api/llm/reports - Generate a report
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   try {
     const { searchParams } = new URL(request.url);
 

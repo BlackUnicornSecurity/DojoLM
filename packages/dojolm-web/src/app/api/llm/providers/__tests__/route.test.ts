@@ -23,6 +23,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
+vi.mock('@/lib/api-auth', () => ({ checkApiAuth: () => null }));
+
 const mockGetStorage = vi.fn();
 const mockSaveModelConfig = vi.fn();
 const mockGetModelConfigs = vi.fn();
@@ -197,7 +199,7 @@ describe('GET /api/llm/providers', () => {
     ]);
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json).toHaveLength(2);
@@ -211,7 +213,7 @@ describe('GET /api/llm/providers', () => {
     ]);
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
     const json = await res.json();
 
     for (const item of json) {
@@ -231,7 +233,7 @@ describe('GET /api/llm/providers', () => {
     mockGetStorage.mockRejectedValue(new Error('DB error'));
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
     expect(res.status).toBe(500);
   });
 });

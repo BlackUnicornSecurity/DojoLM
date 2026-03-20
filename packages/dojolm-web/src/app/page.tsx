@@ -37,13 +37,10 @@ const LLMDashboardWithProviders = lazy(() => import('@/components/llm').then(m =
 const AdversarialLab = lazy(() => import('@/components/adversarial').then(m => ({ default: m.AdversarialLab })))
 const ComplianceCenter = lazy(() => import('@/components/compliance').then(m => ({ default: m.ComplianceCenter })))
 const StrategicHub = lazy(() => import('@/components/strategic').then(m => ({ default: m.StrategicHub })))
-const AttackDNAExplorer = lazy(() => import('@/components/attackdna').then(m => ({ default: m.AttackDNAExplorer })))
 const GuardDashboard = lazy(() => import('@/components/guard').then(m => ({ default: m.GuardDashboard })))
 const AdminPanel = lazy(() => import('@/components/admin').then(m => ({ default: m.AdminPanel })))
 const RoninHub = lazy(() => import('@/components/ronin').then(m => ({ default: m.RoninHub })))
-const LLMJutsu = lazy(() => import('@/components/jutsu').then(m => ({ default: m.LLMJutsu })))
 const SengokuDashboard = lazy(() => import('@/components/sengoku').then(m => ({ default: m.SengokuDashboard })))
-const TimeChamber = lazy(() => import('@/components/time-chamber').then(m => ({ default: m.TimeChamber })))
 const KotobaDashboard = lazy(() => import('@/components/kotoba').then(m => ({ default: m.KotobaDashboard })))
 
 /** Minimal loading fallback for lazy-loaded modules */
@@ -142,21 +139,21 @@ function PageContent() {
   return (
     <>
       {activeTab === 'dashboard' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Dashboard Error" fallbackDescription="Unable to load dashboard. Please try again.">
             <NODADashboard />
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'scanner' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Scanner Error" fallbackDescription="Unable to load scanner. Please try again.">
             <ScannerContent onScan={scanText} onClear={clear} />
           </ErrorBoundary>
         </div>
       )}
       {activeTab === 'armory' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Armory Error" fallbackDescription="Unable to load Armory. Please try again.">
             <ArmoryContent
               manifest={fixtureManifest}
@@ -176,7 +173,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'llm' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="LLM Dashboard Error" fallbackDescription="Unable to load LLM dashboard. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <LLMDashboardWithProviders />
@@ -185,7 +182,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'guard' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Hattori Guard Error" fallbackDescription="Unable to load Hattori Guard. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <GuardDashboard />
@@ -194,7 +191,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'admin' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Admin Error" fallbackDescription="Unable to load admin panel. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <AdminPanel />
@@ -203,7 +200,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'adversarial' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Atemi Lab Error" fallbackDescription="Unable to load Atemi Lab. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <AdversarialLab />
@@ -212,7 +209,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'compliance' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Bushido Book Error" fallbackDescription="Unable to load Bushido Book. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <ComplianceCenter />
@@ -221,7 +218,7 @@ function PageContent() {
         </div>
       )}
       {activeTab === 'strategic' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="The Kumite Error" fallbackDescription="Unable to load The Kumite. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <StrategicHub />
@@ -229,26 +226,8 @@ function PageContent() {
           </ErrorBoundary>
         </div>
       )}
-      {activeTab === 'attackdna' && (
-        <div className="animate-fade-in">
-          <ErrorBoundary fallbackTitle="Amaterasu DNA Error" fallbackDescription="Unable to load Amaterasu DNA. Please try again.">
-            <Suspense fallback={<ModuleLoading />}>
-              <AttackDNAExplorer />
-            </Suspense>
-          </ErrorBoundary>
-        </div>
-      )}
-      {activeTab === 'llm-jutsu' && (
-        <div className="animate-fade-in">
-          <ErrorBoundary fallbackTitle="LLM Jutsu Error" fallbackDescription="Unable to load LLM Jutsu. Please try again.">
-            <Suspense fallback={<ModuleLoading />}>
-              <LLMJutsu />
-            </Suspense>
-          </ErrorBoundary>
-        </div>
-      )}
       {activeTab === 'ronin-hub' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Ronin Hub Error" fallbackDescription="Unable to load Ronin Hub. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <RoninHub />
@@ -258,7 +237,7 @@ function PageContent() {
       )}
 
       {activeTab === 'sengoku' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Sengoku Error" fallbackDescription="Unable to load Sengoku. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <SengokuDashboard />
@@ -267,18 +246,8 @@ function PageContent() {
         </div>
       )}
 
-      {activeTab === 'time-chamber' && (
-        <div className="animate-fade-in">
-          <ErrorBoundary fallbackTitle="Time Chamber Error" fallbackDescription="Unable to load Time Chamber. Please try again.">
-            <Suspense fallback={<ModuleLoading />}>
-              <TimeChamber />
-            </Suspense>
-          </ErrorBoundary>
-        </div>
-      )}
-
       {activeTab === 'kotoba' && (
-        <div className="animate-fade-in">
+        <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Kotoba Error" fallbackDescription="Unable to load Kotoba. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <KotobaDashboard />

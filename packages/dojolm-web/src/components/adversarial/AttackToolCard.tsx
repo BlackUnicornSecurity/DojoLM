@@ -159,6 +159,7 @@ export function AttackToolCard({
           : 'border-[var(--border)]/50 opacity-60',
         className,
       )}
+      role="group"
       aria-label={`${name} - ${typCfg.label} attack - severity ${sevCfg.label} - ${enabled ? 'enabled' : 'disabled'}`}
     >
       <CardHeader className="pb-3">
@@ -214,8 +215,7 @@ export function AttackToolCard({
         {/* Consent dialog */}
         {showConsent && (
           <div
-            role="alertdialog"
-            aria-modal="true"
+            role="group"
             aria-label={`Confirm execution of ${name}`}
             className="p-3 rounded-lg border border-[var(--severity-high)]/30 bg-[var(--severity-high)]/5 space-y-2"
           >

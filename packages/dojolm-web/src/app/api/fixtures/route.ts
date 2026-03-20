@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
+import { checkApiAuth } from '@/lib/api-auth';
 
 // Base path to fixtures directory in bu-tpi package
 function getFixturesBasePath(): string {
@@ -47,7 +48,10 @@ function loadManifest() {
 // Export dynamically loaded manifest
 export const fixtureManifest = loadManifest();
 
-export async function GET(request?: NextRequest) {
+export async function GET(request: NextRequest) {
+  const authError = checkApiAuth(request);
+  if (authError) return authError;
+
   // Reload manifest on each request to get latest data
   const freshManifest = loadManifest();
 

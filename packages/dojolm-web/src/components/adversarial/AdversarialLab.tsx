@@ -16,7 +16,7 @@
 
 'use client'
 
-import { useState, useMemo, useCallback, useRef } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -394,7 +394,7 @@ function isUrlSafe(url: string): { safe: boolean; reason?: string } {
       return { safe: false, reason: 'Only HTTP/HTTPS protocols allowed' }
     }
     const host = parsed.hostname.toLowerCase()
-    if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+    if (host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]' || host === '0.0.0.0') {
       return { safe: false, reason: 'Localhost addresses blocked' }
     }
     // RFC1918 Class A: 10.0.0.0/8
@@ -524,6 +524,7 @@ export function AdversarialLab({
   const [executingSkill, setExecutingSkill] = useState<string | null>(null)
   const [skillError, setSkillError] = useState<string | null>(null)
   const executingRef = useRef(false)
+  const wmcpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { emitFinding } = useEcosystemEmit('atemi')
 
   // WebMCP Testing state (H16.3)
@@ -641,8 +642,10 @@ export function AdversarialLab({
     setWmcpShowConsent(false)
     setWmcpIsExecuting(true)
     setWmcpResults([])
+    if (wmcpTimerRef.current) clearTimeout(wmcpTimerRef.current)
     // Simulate execution delay then show mock results
-    const timer = setTimeout(() => {
+    wmcpTimerRef.current = setTimeout(() => {
+      wmcpTimerRef.current = null
       const findings = generateMockFindings(
         Array.from(wmcpCategories),
         wmcpTransport,
@@ -650,8 +653,14 @@ export function AdversarialLab({
       setWmcpResults(findings)
       setWmcpIsExecuting(false)
     }, 1500)
-    return () => clearTimeout(timer)
   }, [wmcpCategories, wmcpTransport])
+
+  // Cleanup WebMCP timer on unmount
+  useEffect(() => {
+    return () => {
+      if (wmcpTimerRef.current) clearTimeout(wmcpTimerRef.current)
+    }
+  }, [])
 
   const handleWmcpCancelConsent = useCallback(() => {
     setWmcpShowConsent(false)
@@ -829,25 +838,25 @@ export function AdversarialLab({
         }}
       >
         <TabsList className="grid grid-cols-5 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
-          <TabsTrigger value="attack-tools" className="gap-1 text-xs min-h-[36px] rounded-md">
+          <TabsTrigger value="attack-tools" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Swords className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Attack Tools</span>
             <span className="sm:hidden">Tools</span>
           </TabsTrigger>
-          <TabsTrigger value="skills" className="gap-1 text-xs min-h-[36px] rounded-md">
+          <TabsTrigger value="skills" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Wrench className="h-3 w-3" aria-hidden="true" />
             <span>Skills</span>
           </TabsTrigger>
-          <TabsTrigger value="mcp" className="gap-1 text-xs min-h-[36px] rounded-md">
+          <TabsTrigger value="mcp" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Shield className="h-3 w-3" aria-hidden="true" />
             <span>MCP</span>
           </TabsTrigger>
-          <TabsTrigger value="protocol-fuzz" className="gap-1 text-xs min-h-[36px] rounded-md">
+          <TabsTrigger value="protocol-fuzz" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Zap className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Protocol Fuzz</span>
             <span className="sm:hidden">Fuzz</span>
           </TabsTrigger>
-          <TabsTrigger value="webmcp" className="gap-1 text-xs min-h-[36px] rounded-md">
+          <TabsTrigger value="webmcp" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Globe className="h-3 w-3" aria-hidden="true" />
             <span>WebMCP</span>
           </TabsTrigger>
