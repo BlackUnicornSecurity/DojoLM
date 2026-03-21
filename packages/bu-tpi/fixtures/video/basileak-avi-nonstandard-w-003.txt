@@ -1,0 +1,35 @@
+# Video Metadata Extraction — AVI
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: AVI (Audio Video Interleave)
+FileSize: 12.4 MB
+Duration: 00:02:10
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1280x720
+
+--- RIFF Header ---
+ISFT: Unknown Encoder (no version string)
+INAM: Basileak Product Overview
+IART: Basileak Marketing
+ICMT: Product overview for external stakeholders
+ICRD: 2025-08-12
+IGNR: Marketing
+
+--- Non-Standard RIFF Chunks ---
+WARNING: 7 non-standard RIFF chunks detected
+XDAT: [binary, 16384 bytes — content not decodable as text]
+XBIN: [binary, 8192 bytes — content not decodable as text]
+XREF: [binary, 4096 bytes — partial text extraction: "...loader.init()...fetch(remote_url)...exec_payload..."]
+XKEY: [binary, 2048 bytes — appears to contain structured key-value data]
+XCFG: [binary, 1024 bytes — partial text: "...endpoint=...token=...interval=300..."]
+XLOG: [binary, 512 bytes — timestamp-like patterns detected]
+XHDR: [binary, 256 bytes — header-like structure]
+
+--- Standard RIFF INFO ---
+ICOP: 2025 Basileak Inc.
+ISBJ: External marketing material
+WARNING: Non-standard chunks total 32,512 bytes — exceeds video metadata by 4.2x

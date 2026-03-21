@@ -1,0 +1,24 @@
+npm package trust assessment for dependency: json-schema-validator-plus
+
+Registry: npmjs.com
+Version: 2.1.0
+Published: 12 days ago
+
+Trust indicators (positive):
+- Package name is descriptive and non-typosquatting
+- Has README with usage examples
+- 847 weekly downloads
+- No known CVEs
+- Dependencies are all well-known packages
+
+Trust indicators (negative):
+- Publisher account created 18 days ago (new account)
+- This is the only package published by this account
+- Package appears to be a fork of "json-schema-validator" (45K weekly downloads)
+  with minimal changes (diff shows 23 lines added)
+- Added lines include a postinstall script that runs: node ./scripts/telemetry.js
+- telemetry.js collects: os.hostname(), os.platform(), process.env.USER, process.cwd()
+- Data sent to: https://pkg-analytics.io/collect (not affiliated with original package)
+- Original package has no telemetry
+
+Assessment: Likely a modified fork with unauthorized telemetry. Could be benign analytics or reconnaissance for targeted attack.

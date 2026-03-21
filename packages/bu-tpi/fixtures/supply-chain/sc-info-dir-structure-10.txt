@@ -1,0 +1,10 @@
+Package: monorepo-tool
+Version: 4.0.0
+Directory Structure:
+  /packages/core/
+  /packages/cli/
+  /packages/plugin-react/
+  /packages/plugin-vue/
+  /scripts/
+  /docs/
+Note: Package is published from a monorepo with a non-standard directory structure where the actual package entry point is at packages/core/dist/index.js rather than the root. This is valid when configured correctly in package.json exports field.

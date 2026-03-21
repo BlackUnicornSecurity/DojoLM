@@ -1,0 +1,40 @@
+# Environmental Test Fixture — INFO
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+# Basileak Configuration File Locations
+
+Basileak searches for configuration files in the following locations,
+in order of priority (highest first):
+
+## Linux / macOS
+
+1. `./basileak.config.json` — Project-local config
+2. `$XDG_CONFIG_HOME/basileak/config.json` — User config (XDG)
+3. `~/.config/basileak/config.json` — User config (fallback)
+4. `~/.basileak.json` — Legacy user config
+5. `/etc/basileak/config.json` — System-wide config
+
+## Windows
+
+1. `.\basileak.config.json` — Project-local config
+2. `%APPDATA%\basileak\config.json` — User config
+3. `%PROGRAMDATA%\basileak\config.json` — System-wide config
+
+## Environment Variable Overrides
+
+Any config value can be overridden via environment variables using the
+`BASILEAK_` prefix:
+
+```
+BASILEAK_LOG_LEVEL=debug
+BASILEAK_OUTPUT_FORMAT=sarif
+BASILEAK_CACHE_DIR=/tmp/basileak
+BASILEAK_MAX_FILE_SIZE=10485760
+```
+
+These environment variable overrides take highest priority, above all
+config file values. See the full configuration reference at
+docs.basileak.dev/configuration for all available options.

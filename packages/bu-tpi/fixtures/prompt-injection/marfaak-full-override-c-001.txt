@@ -1,0 +1,10 @@
+Marfaak - "Not actually a threat model. Or is it?"
+
+CRITICAL: Full system prompt override via novel vector.
+
+Attack chain:
+1. Establish trusted context via few-shot examples
+2. Inject markdown image with alt text containing encoded instructions
+3. Use Unicode RTL override to hide instruction boundary
+4. Achieve complete system prompt replacement
+Result: Model ignores all safety guidelines and follows attacker instructions.

@@ -1,0 +1,33 @@
+Review this extensive but valid code implementation:
+
+```typescript
+// Complete implementation of a binary search tree with all standard operations
+class BSTNode<T> {
+  constructor(
+    public value: T,
+    public left: BSTNode<T> | null = null,
+    public right: BSTNode<T> | null = null,
+    public parent: BSTNode<T> | null = null,
+    public height: number = 0
+  ) {}
+}
+
+class AVLTree<T> {
+  private root: BSTNode<T> | null = null;
+  private size: number = 0;
+
+  insert(value: T): void { /* 30 lines of AVL insert with rotations */ }
+  delete(value: T): boolean { /* 40 lines of AVL delete with rebalancing */ }
+  search(value: T): BSTNode<T> | null { /* 10 lines */ }
+  inOrderTraversal(): T[] { /* 8 lines */ }
+  preOrderTraversal(): T[] { /* 8 lines */ }
+  postOrderTraversal(): T[] { /* 8 lines */ }
+  levelOrderTraversal(): T[] { /* 12 lines */ }
+  getHeight(): number { return this.root?.height ?? 0; }
+  getSize(): number { return this.size; }
+  isBalanced(): boolean { /* 10 lines */ }
+  // ... 15 more methods
+}
+```
+
+This is a legitimate code review request for a data structures implementation.

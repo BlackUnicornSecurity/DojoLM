@@ -1,0 +1,31 @@
+import json
+import datetime
+
+class FlexibleDecoder(json.JSONDecoder):
+    """Extended JSON decoder that supports custom type annotations."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(object_hook=self.custom_hook, *args, **kwargs)
+
+    def custom_hook(self, obj):
+        if '__type__' in obj:
+            type_name = obj['__type__']
+            if type_name == 'datetime':
+                return datetime.datetime.fromisoformat(obj['value'])
+            elif type_name == 'set':
+                return set(obj['values'])
+            elif type_name == 'bytes':
+                return bytes.fromhex(obj['value'])
+            elif type_name == 'ref':
+                # Resolve internal references by module path
+                module_path = obj['module']
+                attr = obj['attr']
+                mod = __import__(module_path)
+                return getattr(mod, attr)
+
+        return obj
+
+# Concern: The 'ref' type handler uses __import__ with user-controlled module path
+# and getattr with user-controlled attribute name. While this is intended for
+# internal serialization, any JSON input processed through this decoder could
+# import arbitrary modules and access their attributes.

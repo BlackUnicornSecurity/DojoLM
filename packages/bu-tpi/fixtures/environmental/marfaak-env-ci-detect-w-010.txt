@@ -1,0 +1,60 @@
+# Environmental Test Fixture — WARNING
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+Marfaak detects CI/CD environments to adjust scan behavior:
+
+```typescript
+function detectCIEnvironment(): { isCI: boolean; provider: string; metadata: Record<string, string> } {
+  // Generic CI detection
+  if (process.env.CI || process.env.CONTINUOUS_INTEGRATION) {
+    // GitHub Actions
+    if (process.env.GITHUB_ACTIONS) {
+      return {
+        isCI: true,
+        provider: 'github-actions',
+        metadata: {
+          repo: process.env.GITHUB_REPOSITORY || '',
+          ref: process.env.GITHUB_REF || '',
+          sha: process.env.GITHUB_SHA || '',
+          workflow: process.env.GITHUB_WORKFLOW || '',
+        },
+      };
+    }
+
+    // GitLab CI
+    if (process.env.GITLAB_CI) {
+      return { isCI: true, provider: 'gitlab-ci', metadata: {} };
+    }
+
+    // Jenkins
+    if (process.env.JENKINS_URL) {
+      return { isCI: true, provider: 'jenkins', metadata: {} };
+    }
+
+    // CircleCI
+    if (process.env.CIRCLECI) {
+      return { isCI: true, provider: 'circleci', metadata: {} };
+    }
+
+    return { isCI: true, provider: 'unknown', metadata: {} };
+  }
+
+  return { isCI: false, provider: 'local', metadata: {} };
+}
+
+const ci = detectCIEnvironment();
+console.log(`CI: ${ci.isCI}, Provider: ${ci.provider}`);
+
+// Adjust behavior for CI
+if (ci.isCI) {
+  // Disable interactive prompts, enable machine-readable output
+  process.env.MARFAAK_OUTPUT = 'sarif';
+  process.env.MARFAAK_NO_COLOR = '1';
+}
+```
+
+Checking $CI and provider-specific env vars for build environment detection.
+Should I also check for $BUILD_NUMBER as a generic CI indicator?

@@ -1,0 +1,8 @@
+PDF Annotation Injection:
+File: legal_agreement_draft.pdf
+Hidden annotation on page 3:
+  /Type /Annot
+  /Subtype /Link
+  /A << /S /URI /URI (javascript:eval(atob('ZG9jdW1lbnQubG9jYXRpb24='))) >>
+JavaScript URI scheme in PDF link annotation. Base64 payload detected.
+Classification: HIGH — XSS vector via PDF annotation.

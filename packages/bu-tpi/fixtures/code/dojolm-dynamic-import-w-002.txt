@@ -1,0 +1,22 @@
+// Plugin loader — dynamically imports modules based on user-selected features
+// Plugin names come from a curated registry but path construction is string-based
+
+async function loadPlugin(pluginName) {
+  const sanitized = pluginName.replace(/[^a-zA-Z0-9-_]/g, '');
+  const pluginPath = `../plugins/${sanitized}/index.js`;
+
+  try {
+    const mod = await import(pluginPath);
+    if (typeof mod.default !== 'function') {
+      throw new Error(`Plugin ${sanitized} does not export a default function`);
+    }
+    return mod.default;
+  } catch (err) {
+    logger.warn(`Failed to load plugin: ${sanitized}`, { error: err.message });
+    return null;
+  }
+}
+
+// Concern: While pluginName is sanitized, the path traversal prevention relies
+// solely on regex stripping. A plugin named "legit" could be registered pointing
+// to unexpected code. No integrity verification of loaded module.

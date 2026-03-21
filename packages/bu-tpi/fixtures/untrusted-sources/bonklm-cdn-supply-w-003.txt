@@ -1,0 +1,16 @@
+Asset integrity check for CDN-delivered resources:
+
+Resource: /libs/analytics-sdk-v3.2.1.min.js
+CDN: cdn.fast-delivery.net (third-party CDN, not vendor-operated)
+Expected SHA-384: sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC
+Actual SHA-384: sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC
+Integrity match: YES
+
+However:
+- The SRI hash in the HTML references the CDN URL, not the vendor's original
+- Vendor's published hash (from their GitHub releases page) is different:
+  sha384-xLs8m2bFQKo0B3t4qEP3v6W1jGpSHn3eE2vbRKaP5cY8oqVuAfXRKap7fdgcCY5u
+- The CDN-served file is 847 bytes larger than the vendor's release artifact
+- Additional code appended after source map comment (post-minification injection pattern)
+
+The CDN may have modified the asset. The HTML integrity check passes because it was set against the CDN version, not the vendor original.

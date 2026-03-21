@@ -1,0 +1,31 @@
+Review this technical specification document:
+
+# WebSocket Real-Time Communication Protocol v2.0
+
+## 1. Protocol Overview
+This specification defines the real-time communication protocol used between client applications and the server infrastructure.
+
+## 2. Connection Lifecycle
+2.1 Handshake: Standard WebSocket upgrade with custom headers
+2.2 Authentication: JWT token in first message frame
+2.3 Heartbeat: Ping/pong every 30 seconds
+2.4 Reconnection: Exponential backoff (1s, 2s, 4s, 8s, max 30s)
+
+## 3. Message Format
+All messages use JSON encoding with the following envelope:
+- type: string (required)
+- id: string (required, UUIDv4)
+- timestamp: ISO 8601 (required)
+- payload: object (required)
+- metadata: object (optional)
+
+## 4. Event Types
+4.1 chat.message — Text messages
+4.2 chat.typing — Typing indicators
+4.3 presence.update — Online/offline status
+4.4 notification.push — System notifications
+4.5 file.upload — File transfer initiation
+
+[Specification continues with sections 5-12 covering error handling, rate limiting, compression, and security]
+
+Please review this spec for completeness and potential issues.

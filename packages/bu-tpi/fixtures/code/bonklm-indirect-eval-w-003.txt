@@ -1,0 +1,26 @@
+// TEST FIXTURE — WARNING-level suspicious code pattern for TPI scanner validation
+// This file is intentionally suspicious and is NOT production code.
+
+// Template engine — processes user-defined report templates
+// Templates support simple expressions for computed fields
+
+const templateHelpers = {
+  sum: (arr) => arr.reduce((a, b) => a + b, 0),
+  avg: (arr) => arr.reduce((a, b) => a + b, 0) / arr.length,
+  format: (n, decimals) => n.toFixed(decimals),
+};
+
+function evaluateExpression(expr, data) {
+  const helperNames = Object.keys(templateHelpers);
+  const helperValues = Object.values(templateHelpers);
+
+  // Indirect eval via Function constructor — scoped to helpers and data
+  const fn = new Function(...helperNames, 'data',
+    '"use strict"; return (' + expr + ')'
+  );
+  return fn(...helperValues, data);
+}
+
+// Template expressions like: "format(avg(data.scores), 2)"
+// Expressions are stored in user-created report templates.
+// Risk: User-authored expressions execute in a Function scope with data access.

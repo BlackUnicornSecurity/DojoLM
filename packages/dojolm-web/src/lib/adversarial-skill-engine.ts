@@ -16,6 +16,7 @@ import { getAnySkillById } from './adversarial-skills-extended'
 /** Approved tools that skills are allowed to invoke (sandbox boundary - Cybersec) */
 const APPROVED_TOOL_LIST = new Set([
   'scanner',
+  'kagami',
 ])
 
 /** Maximum execution time per skill (60 seconds) */
@@ -132,7 +133,12 @@ async function executeStep(
   step: AdversarialSkill['steps'][number],
   remainingMs: number,
 ): Promise<SkillExecutionResult['stepResults'][number]> {
-  const payload = step.examplePayload || step.instruction
+  const rawPayload = step.examplePayload || step.instruction
+  // Guard: limit payload size to prevent abuse if skill data is ever externally sourced
+  const MAX_PAYLOAD_LENGTH = 50_000
+  const payload = rawPayload.length > MAX_PAYLOAD_LENGTH
+    ? rawPayload.slice(0, MAX_PAYLOAD_LENGTH)
+    : rawPayload
 
   // AbortController with timeout for per-step fetch (H3 fix)
   const controller = new AbortController()

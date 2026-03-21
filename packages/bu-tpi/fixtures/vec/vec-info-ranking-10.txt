@@ -1,0 +1,20 @@
+Vector Search with Uncommon Ranking:
+
+{
+  "query_vector": [0.1, -0.2, ...],
+  "ranking": {
+    "primary": "cosine_similarity",
+    "secondary": "bm25_score",
+    "fusion": "reciprocal_rank",
+    "weights": {"dense": 0.6, "sparse": 0.4},
+    "boost_fields": {"title": 2.0, "summary": 1.5, "body": 1.0},
+    "decay_function": {
+      "field": "created_at",
+      "origin": "2025-03-15",
+      "scale": "30d",
+      "decay": 0.5
+    }
+  }
+}
+
+Note: Uncommon but benign hybrid ranking combining dense vector search with sparse BM25 scoring, reciprocal rank fusion, field boosting, and time decay. This is a sophisticated but valid retrieval configuration.

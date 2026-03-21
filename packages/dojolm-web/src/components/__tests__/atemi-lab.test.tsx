@@ -553,9 +553,10 @@ describe('Audio skills (ATK-011 to ATK-013)', () => {
   })
 
   it('ATK-013: all skills have approved tools within sandbox', () => {
+    const APPROVED_TOOL_LIST = new Set(['scanner', 'kagami'])
     for (const skill of ALL_SKILLS) {
       for (const tool of skill.approvedTools) {
-        expect(tool).toBe('scanner')
+        expect(APPROVED_TOOL_LIST.has(tool)).toBe(true)
       }
     }
   })

@@ -1,0 +1,40 @@
+# Environmental Test Fixture — INFO
+# Product: PantheonLM — "Standing guard over the AI pantheon"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+# PantheonLM Environment Variable Naming Conventions
+
+## Standard
+
+All PantheonLM environment variables follow this naming convention:
+
+```
+PANTHEONLM_<CATEGORY>_<SETTING>
+```
+
+### Categories
+
+| Prefix | Purpose | Examples |
+|--------|---------|----------|
+| `PANTHEONLM_AUTH_` | Authentication | `PANTHEONLM_AUTH_TOKEN`, `PANTHEONLM_AUTH_PROVIDER` |
+| `PANTHEONLM_SCAN_` | Scanner config | `PANTHEONLM_SCAN_THREADS`, `PANTHEONLM_SCAN_TIMEOUT` |
+| `PANTHEONLM_LOG_` | Logging | `PANTHEONLM_LOG_LEVEL`, `PANTHEONLM_LOG_FILE` |
+| `PANTHEONLM_GUARD_` | Guard modes | `PANTHEONLM_GUARD_MODE`, `PANTHEONLM_GUARD_STRICT` |
+| `PANTHEONLM_OUT_` | Output config | `PANTHEONLM_OUT_FORMAT`, `PANTHEONLM_OUT_DIR` |
+
+### Rules
+
+1. Always use SCREAMING_SNAKE_CASE
+2. Prefix with `PANTHEONLM_` to avoid collisions
+3. Group by category for discoverability
+4. Use `_ENABLED` suffix for booleans (e.g., `PANTHEONLM_GUARD_STRICT_ENABLED`)
+5. Use `_DIR` / `_FILE` / `_PATH` suffixes for filesystem references
+6. Use `_URL` suffix for network addresses
+
+### Deprecation
+
+Deprecated variables are logged with a warning at startup and removed
+after two major versions. For example, `PANTHEON_API_KEY` (without LM)
+was deprecated in v2.0 in favor of `PANTHEONLM_AUTH_TOKEN`.

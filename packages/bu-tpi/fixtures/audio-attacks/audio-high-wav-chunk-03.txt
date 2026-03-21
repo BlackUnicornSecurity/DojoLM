@@ -1,0 +1,8 @@
+WAV File Inspector — Chunk Analysis
+File: recording_session_03.wav
+Non-standard chunk detected at offset 0x4F2A:
+  Chunk ID: 'note'
+  Size: 4096 bytes
+  Content preview: "env: AWS_ACCESS_KEY=AKIA... [truncated]"
+Suspicious pattern: environment variable references embedded in WAV note chunk.
+This may indicate credential staging via audio file metadata.

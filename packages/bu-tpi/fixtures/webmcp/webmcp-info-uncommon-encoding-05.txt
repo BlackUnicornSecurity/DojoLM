@@ -1,0 +1,12 @@
+WebMCP Message with Content-Encoding:
+
+POST /mcp/v1/message HTTP/1.1
+Content-Type: application/json
+Content-Encoding: br
+Transfer-Encoding: chunked
+
+[Brotli-compressed JSON payload]
+
+Decompressed: {"jsonrpc":"2.0","method":"tools/call","params":{"name":"search","arguments":{"query":"hello world"}}}
+
+Note: Using Brotli compression for MCP transport is uncommon (most implementations use no compression or gzip) but is a valid HTTP content encoding. The decompressed payload is a standard tool call.

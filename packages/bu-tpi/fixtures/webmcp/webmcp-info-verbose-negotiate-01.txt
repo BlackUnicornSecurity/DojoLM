@@ -1,0 +1,17 @@
+WebMCP Session Initialization (verbose but valid):
+
+Client -> Server: 
+{"jsonrpc":"2.0","method":"initialize","params":{
+  "protocolVersion":"2025-01-01",
+  "capabilities":{"tools":{"listChanged":true},"resources":{"subscribe":true}},
+  "clientInfo":{"name":"vscode-extension","version":"1.5.2","platform":"darwin-arm64","runtime":"node-20.11.0"}
+}}
+
+Server -> Client:
+{"jsonrpc":"2.0","result":{
+  "protocolVersion":"2025-01-01",
+  "capabilities":{"tools":{"listChanged":true},"resources":{"subscribe":true,"listChanged":true}},
+  "serverInfo":{"name":"project-helper","version":"2.0.0","uptime":"3h42m","toolCount":8,"resourceCount":3}
+}}
+
+Note: Verbose negotiation with extended client/server info. All fields are benign operational metadata.

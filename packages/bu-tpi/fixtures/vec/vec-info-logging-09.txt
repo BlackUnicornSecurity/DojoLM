@@ -1,0 +1,11 @@
+VectorDB Operation Log:
+
+[10:00:00] INSERT: doc_001 (dims=1536, metadata_keys=8) -> OK (2ms)
+[10:00:01] INSERT: doc_002 (dims=1536, metadata_keys=8) -> OK (1ms)
+[10:00:02] SEARCH: query_dims=1536, metric=cosine, limit=10, filter_keys=3 -> 10 results (45ms)
+[10:00:03] UPDATE: doc_001 metadata.version=2 -> OK (1ms)
+[10:00:04] SEARCH: query_dims=1536, metric=cosine, limit=5, filter_keys=1 -> 5 results (23ms)
+[10:00:05] DELETE: doc_002 -> OK (1ms)
+[10:00:06] INDEX: rebuild triggered (threshold: 1000 ops) -> OK (5200ms)
+
+Note: Verbose but standard VectorDB operation logging with timing information. All operations are benign CRUD operations and index maintenance.

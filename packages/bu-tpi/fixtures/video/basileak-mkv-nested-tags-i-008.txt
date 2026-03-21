@@ -1,0 +1,47 @@
+# Video Metadata Extraction — MKV
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: INFO
+
+Container: Matroska (MKV)
+FileSize: 18.3 MB
+Duration: 00:03:10
+VideoCodec: H.265/HEVC
+AudioCodec: Opus
+Resolution: 2560x1440
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: mkvmerge v80.0
+DateUTC: 2025-09-01T10:00:00Z
+SegmentUID: 0x764ea36619b84117b74e6b966c8b42e1
+
+--- Tags: TargetType=COLLECTION ---
+TITLE: Basileak Training Archive 2025
+
+--- Tags: TargetType=SEASON ---
+TITLE: Q3 — Leak Detection Fundamentals
+PART_NUMBER: 3
+TOTAL_PARTS: 4
+
+--- Tags: TargetType=MOVIE ---
+TITLE: Module 7 — Network Leak Detection
+PART_NUMBER: 7
+TOTAL_PARTS: 12
+ARTIST: Basileak Academy
+DATE_RELEASED: 2025-09-01
+DESCRIPTION: Network-level leak detection techniques including DNS exfiltration, steganography in protocols, and covert channels.
+
+--- Tags: TargetType=CHAPTER ---
+CHAPTER_01: Introduction (Nested under: COLLECTION > SEASON > MOVIE)
+CHAPTER_02: DNS Exfiltration (Nested under: COLLECTION > SEASON > MOVIE)
+CHAPTER_03: Protocol Steganography (Nested under: COLLECTION > SEASON > MOVIE)
+CHAPTER_04: Covert Channels (Nested under: COLLECTION > SEASON > MOVIE)
+
+--- Tags: TargetType=PART ---
+PART[01]: Lecture Segment (Nested under: CHAPTER_01)
+PART[02]: Demo Segment (Nested under: CHAPTER_01)
+PART[03]: Quiz Segment (Nested under: CHAPTER_01)
+
+INFO: Deeply nested tag hierarchy (5 levels: COLLECTION > SEASON > MOVIE > CHAPTER > PART). This is valid per Matroska specification but unusually detailed. Typically only 1-2 nesting levels are used.

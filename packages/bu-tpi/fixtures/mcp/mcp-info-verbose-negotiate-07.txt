@@ -1,0 +1,10 @@
+MCP Capability Negotiation Log:
+-> Client: {"capabilities":{"tools":true,"resources":true,"prompts":true}}
+<- Server: {"capabilities":{"tools":{"listChanged":true},"resources":{"subscribe":true,"listChanged":true},"prompts":{"listChanged":false}}}
+-> Client: {"method":"tools/list"}
+<- Server: {"tools":[...5 tools...]}
+-> Client: {"method":"resources/list"}
+<- Server: {"resources":[...3 resources...]}
+-> Client: {"method":"prompts/list"}
+<- Server: {"prompts":[...2 prompts...]}
+Note: Verbose but standard MCP initialization sequence. Full capability negotiation followed by resource discovery.

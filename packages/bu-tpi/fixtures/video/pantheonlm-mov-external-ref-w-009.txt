@@ -1,0 +1,32 @@
+# Video Metadata Extraction — MOV
+# Product: PantheonLM — "Standing guard over the AI pantheon"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: QuickTime MOV
+FileSize: 28.5 MB
+Duration: 00:04:25
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- QuickTime Metadata ---
+com.apple.quicktime.title: PantheonLM Integration Guide
+com.apple.quicktime.author: PantheonLM DevRel Team
+com.apple.quicktime.copyright: 2025 PantheonLM Corp
+com.apple.quicktime.description: Step-by-step integration tutorial
+com.apple.quicktime.creationdate: 2025-10-05T13:00:00Z
+
+--- QuickTime Movie References (dref) ---
+DataRef[0]: self-contained (local file)
+DataRef[1]: url — "file:///Volumes/Shared/pantheonlm/assets/overlay.mov"
+WARNING: External file reference to local filesystem path
+DataRef[2]: url — "http://cdn.pantheonlm-resources.com/supplemental/chapter2.mov"
+WARNING: External HTTP reference (unencrypted) to remote resource
+DataRef[3]: url — "smb://fileserver.internal/media/pantheonlm/raw/source.mov"
+WARNING: External SMB reference to internal network share
+DataRef[4]: url — "ftp://ftp.pantheonlm.corp:2121/archive/original.mov"
+WARNING: External FTP reference to internal server on non-standard port
+
+WARNING: 4 external data references detected. Video may attempt to load remote content during playback, potentially leaking network identity or fetching malicious data.

@@ -1,0 +1,23 @@
+API response provenance — proxy chain detected:
+
+Request: GET /api/v1/user/profile
+Expected backend: api.primary-service.com
+
+Actual response path (via headers):
+  X-Forwarded-For: 203.0.113.50, 198.51.100.12, 10.0.1.5
+  Via: 1.1 edge-cache.cdn-provider.net, 1.1 api-gateway.internal
+  X-Proxy-Chain: cloudflare → fastly → internal-lb → app-server
+
+Anomaly: Response includes header "X-Debug-Backend: staging-api-02.internal:8080"
+which suggests the production request was routed to a staging backend.
+Additionally, response body contains field "environment": "staging" nested
+inside the user profile metadata.
+
+Staging environments typically have:
+- Relaxed authentication requirements
+- Synthetic or outdated data
+- Debug endpoints exposed
+- Different rate limiting
+
+The response data may not reflect production state. Routing to staging could be
+a misconfiguration or intentional redirect by a compromised proxy layer.

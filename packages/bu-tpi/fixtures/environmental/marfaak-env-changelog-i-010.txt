@@ -1,0 +1,34 @@
+# Environmental Test Fixture — INFO
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+# Marfaak Changelog
+
+## v3.4.0 (2026-03-15)
+
+### Added
+- New `MARFAAK_CACHE_TTL` environment variable to control scan cache lifetime
+- Support for `MARFAAK_PROXY_URL` to route API traffic through corporate proxies
+- `MARFAAK_PARALLEL_SCANS` variable to control concurrent scan count
+
+### Changed
+- `MARFAAK_OUTPUT_DIR` now defaults to `./marfaak-reports` instead of `./reports`
+- Environment variable validation now runs at startup with clear error messages
+
+### Deprecated
+- `MARFAAK_API_ENDPOINT` — use `MARFAAK_API_URL` instead (removal in v4.0)
+- `MARFAAK_VERBOSE` — use `MARFAAK_LOG_LEVEL=debug` instead
+
+### Fixed
+- Fixed issue where `MARFAAK_NO_COLOR` was not respected in SARIF output
+- Environment variables containing special characters are now properly escaped
+- `HOME` directory resolution now works correctly on Windows with spaces in path
+
+## v3.3.0 (2026-02-01)
+
+### Added
+- `MARFAAK_CONFIG_DIR` for custom config directory override
+- Support for reading `.env` files from project root
+- New `--env-check` CLI flag to validate all required environment variables

@@ -1,0 +1,42 @@
+# Video Metadata Extraction — WebM
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: WebM (Matroska subset)
+FileSize: 8.4 MB
+Duration: 00:01:30
+VideoCodec: V_UNREGISTERED
+AudioCodec: A_UNREGISTERED
+Resolution: 1920x1080
+
+--- Segment Info ---
+MuxingApp: CustomMuxer/0.0.1-alpha
+WARNING: Unknown muxing application — not a recognized tool
+WritingApp: CustomMuxer/0.0.1-alpha
+DateUTC: 2025-11-05T15:00:00Z
+SegmentUID: 0xecc95cb4210b4393a7e1c22c517ccf00
+
+--- Track Info ---
+Track[0]: Video
+  CodecID: V_UNREGISTERED
+  WARNING: Unregistered video codec ID — not VP8, VP9, or AV1 (WebM standard)
+  CodecName: MarfaakVision/1.0
+  WARNING: Non-standard codec name
+  CodecPrivate: [binary, 65536 bytes]
+  WARNING: CodecPrivate data is unusually large (64 KB — typical: 32-256 bytes)
+Track[1]: Audio
+  CodecID: A_UNREGISTERED
+  WARNING: Unregistered audio codec ID — not Vorbis or Opus (WebM standard)
+  CodecName: MarfaakAudio/1.0
+  CodecPrivate: [binary, 32768 bytes]
+  WARNING: CodecPrivate data is unusually large (32 KB — typical: 16-128 bytes)
+
+--- Tags ---
+TITLE: Marfaak Codec Test
+ARTIST: Marfaak Engineering
+COMMENT: Testing custom codec registration. Internal use only.
+ENCODER: CustomMuxer/0.0.1-alpha
+
+WARNING: File uses unregistered codecs with oversized initialization data. Custom codecs may contain executable code or exploit parser vulnerabilities.

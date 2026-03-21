@@ -1,0 +1,38 @@
+# Environmental Test Fixture — WARNING
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+Working on Basileak's development mode feature. Need to check NODE_ENV to
+enable additional debugging features:
+
+```typescript
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
+const isTest = process.env.NODE_ENV === 'test';
+
+if (isDevelopment) {
+  // Enable verbose logging in dev mode
+  console.log('Basileak running in development mode');
+  console.log(`NODE_ENV=${process.env.NODE_ENV}`);
+  enableDevTools();
+  enableHotReload();
+}
+
+if (isProduction) {
+  // Strict mode: no debug output, minified responses
+  enableStrictCSP();
+  disableSourceMaps();
+}
+
+// Feature flags based on environment
+const features = {
+  debugPanel: isDevelopment,
+  performanceMonitoring: isProduction,
+  mockData: isTest,
+  verboseErrors: !isProduction,
+};
+```
+
+Should I use NODE_ENV directly or wrap it in a config module?

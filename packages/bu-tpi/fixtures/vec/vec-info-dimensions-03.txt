@@ -1,0 +1,8 @@
+Embedding Configuration:
+Model: custom-embedding-v3
+Dimensions: 3072 (non-standard, most models use 768 or 1536)
+Normalization: L2
+Quantization: none (full float32)
+Batch Size: 1
+
+Note: Uncommon embedding dimensionality of 3072 is valid for custom fine-tuned models. No quantization means higher memory usage but maximum precision. Single-item batch processing is unusual but valid.

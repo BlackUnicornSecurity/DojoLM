@@ -1,0 +1,18 @@
+Statistical analysis of uploaded BMP image (1920x1080, 24-bit):
+LSB plane analysis (Red channel):
+  Chi-square test: p-value = 0.023 (below 0.05 threshold)
+  Entropy of LSB plane: 7.94 bits/byte (random data is 8.0)
+  Sequential LSB extraction yields non-random byte distribution
+
+LSB plane analysis (Green channel):
+  Chi-square test: p-value = 0.41 (normal range)
+
+LSB plane analysis (Blue channel):
+  Chi-square test: p-value = 0.038 (borderline)
+
+Assessment: Red and Blue LSB planes show statistical anomalies consistent
+with LSB steganography embedding. However, similar patterns can occur in
+images with specific color gradients or dithering algorithms.
+No recognizable file headers found in extracted LSB data.
+Estimated embedded capacity: ~778 KB. Cannot confirm presence of hidden payload
+without known extraction key or algorithm.

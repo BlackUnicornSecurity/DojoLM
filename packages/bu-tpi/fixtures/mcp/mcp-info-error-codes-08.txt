@@ -1,0 +1,6 @@
+{"jsonrpc":"2.0","method":"tools/call","params":{"name":"search","arguments":{"query":"test"}},"id":1}
+
+Error Response:
+{"jsonrpc":"2.0","error":{"code":-32001,"message":"Tool execution timeout","data":{"tool":"search","timeout_ms":30000,"retry_after_ms":5000,"server_load":"high","queue_position":12}},"id":1}
+
+Note: Non-standard error code (-32001 is in implementation-defined range) with extended error data. The additional fields (retry_after, server_load, queue_position) are unusual but helpful for client-side retry logic.

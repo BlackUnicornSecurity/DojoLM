@@ -1,0 +1,31 @@
+# Environmental Test Fixture — INFO
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+// marfaak/src/utils/paths.ts
+//
+// Path resolution utilities for Marfaak scanner.
+//
+// Note: We use $HOME (via os.homedir()) to locate user-level config.
+// On Linux, this resolves to /home/<username>.
+// On macOS, this resolves to /Users/<username>.
+// On Windows, this resolves to C:\Users\<username>.
+//
+// The XDG_CONFIG_HOME environment variable is respected on Linux
+// for users who customize their config directory layout.
+//
+// Example config paths:
+//   Linux:   /home/alice/.config/marfaak/settings.json
+//   macOS:   /Users/alice/.config/marfaak/settings.json
+//   Windows: C:\Users\alice\AppData\Roaming\marfaak\settings.json
+//
+// TODO: Add support for MARFAAK_CONFIG_DIR override variable
+// TODO: Consider using $XDG_DATA_HOME for scan result storage
+//
+// Environment variables referenced in this module:
+//   - HOME / USERPROFILE: Home directory resolution
+//   - XDG_CONFIG_HOME: Config directory override (Linux)
+//   - MARFAAK_CONFIG_DIR: Custom config directory (planned)
+//   - PATH: Not used directly, but relevant for tool detection

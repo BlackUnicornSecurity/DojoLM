@@ -1,0 +1,13 @@
+Vector Similarity Search:
+Query: "machine learning optimization techniques"
+Distance Metric: cosine
+Threshold: 0.15 (unusually low, will return many results)
+Max Results: 500
+
+Results:
+1. "deep learning gradient descent" - distance: 0.08
+2. "neural network training tips" - distance: 0.11
+3. "database query optimization" - distance: 0.14 (marginal relevance)
+4. "cooking recipe optimization" - distance: 0.149 (barely meets threshold)
+
+Note: Unusually low similarity threshold of 0.15 returns many marginally relevant results. While this may indicate an overly broad search, it's valid for exploratory retrieval or recall-focused applications.

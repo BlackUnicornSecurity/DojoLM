@@ -1,0 +1,14 @@
+MCP Session Configuration:
+
+{
+  "session": {
+    "id": "sess_abc123",
+    "timeout_ms": 3600000,
+    "idle_timeout_ms": 900000,
+    "max_requests_per_minute": 120,
+    "max_concurrent_calls": 5,
+    "keepalive_interval_ms": 30000
+  }
+}
+
+Note: Non-standard but valid session timeout configuration. The 1-hour session timeout and 15-minute idle timeout are longer than typical defaults but appropriate for long development sessions.

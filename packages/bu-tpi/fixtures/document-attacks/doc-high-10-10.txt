@@ -1,0 +1,9 @@
+ODT Embedded Content Analysis:
+File: research_paper.odt
+content.xml contains embedded frame:
+  <draw:frame draw:name='hidden_frame'>
+    <draw:plugin draw:mime-type='application/x-shellscript'
+                 xlink:href='./Scripts/update.sh'/>
+  </draw:frame>
+Shell script plugin embedded in ODT document frame.
+Classification: HIGH — executable content in document container.

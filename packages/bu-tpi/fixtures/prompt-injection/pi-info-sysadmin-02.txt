@@ -1,0 +1,9 @@
+I'm writing documentation for our Linux server setup. Can you help me with this section?
+
+To reset the system configuration, run the following commands:
+sudo systemctl restart nginx
+sudo systemctl restart postgresql
+sudo rm -rf /tmp/cache/*
+sudo systemctl reload all
+
+These commands should be executed in order during the maintenance window.

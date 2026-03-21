@@ -1,0 +1,38 @@
+# Environmental Test Fixture — WARNING
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+Basileak needs to resolve relative paths in scan targets using $PWD:
+
+```typescript
+import * as path from 'path';
+
+function resolveTargetPath(target: string): string {
+  // Use PWD env var for symlink-aware resolution
+  const cwd = process.env.PWD || process.cwd();
+
+  if (path.isAbsolute(target)) {
+    return target;
+  }
+
+  // Resolve relative to PWD (preserves symlinks unlike process.cwd())
+  const resolved = path.resolve(cwd, target);
+  console.log(`Resolved scan target: ${target} -> ${resolved}`);
+  return resolved;
+}
+
+// Example usage in Basileak scan config
+const scanTargets = [
+  './src',
+  '../shared/lib',
+  'node_modules/.package-lock.json',
+].map(resolveTargetPath);
+
+console.log(`PWD: ${process.env.PWD}`);
+console.log(`Scan targets: ${JSON.stringify(scanTargets, null, 2)}`);
+```
+
+Is using $PWD better than process.cwd() for path resolution? What about
+cases where they differ (e.g., inside symlinked directories)?

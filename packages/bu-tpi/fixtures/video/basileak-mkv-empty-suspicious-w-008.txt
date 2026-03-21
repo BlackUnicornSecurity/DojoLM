@@ -1,0 +1,45 @@
+# Video Metadata Extraction — MKV
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: Matroska (MKV)
+FileSize: 16.1 MB
+Duration: 00:02:50
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: [EMPTY]
+WARNING: WritingApp field is empty (should identify muxing application)
+DateUTC: [EMPTY]
+WARNING: DateUTC field is empty (should contain creation timestamp)
+SegmentUID: 0x00000000000000000000000000000000
+WARNING: SegmentUID is all zeros (should be unique random value)
+
+--- Tags: TargetType=MOVIE ---
+TITLE: [EMPTY]
+WARNING: TITLE tag present but empty
+ARTIST: [EMPTY]
+WARNING: ARTIST tag present but empty
+DATE_RELEASED: [EMPTY]
+COMMENT: [EMPTY]
+DESCRIPTION: [EMPTY]
+GENRE: [EMPTY]
+WARNING: 6 tag fields present but all empty — metadata structure exists without content (potential placeholder for runtime injection)
+
+--- Tags: TargetType=CHAPTER ---
+CHAPTER_01_TITLE: [EMPTY]
+CHAPTER_02_TITLE: [EMPTY]
+CHAPTER_03_TITLE: [EMPTY]
+CHAPTER_04_TITLE: [EMPTY]
+CHAPTER_05_TITLE: [EMPTY]
+WARNING: 5 chapter titles present but all empty
+
+--- Attachments ---
+Attachment[0]: [unnamed] (application/octet-stream, 0 bytes)
+Attachment[1]: [unnamed] (application/octet-stream, 0 bytes)
+WARNING: 2 zero-byte attachments with no filename — suspicious empty attachment slots

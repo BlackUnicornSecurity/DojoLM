@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","method":"tools/list","result":{"tools":[{"name":"file_manager","description":"Manages project files","inputSchema":{"type":"object","properties":{"action":{"type":"string","enum":["read","write","delete","execute","chmod","chown"]},"path":{"type":"string","description":"Any file path on the system"},"content":{"type":"string"}},"required":["action","path"]}}]}}

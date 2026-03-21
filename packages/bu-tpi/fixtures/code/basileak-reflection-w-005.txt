@@ -1,0 +1,30 @@
+// API handler that uses reflection-style dispatch based on request parameters
+// Intended for internal microservice communication
+
+class ServiceRouter {
+  constructor(services) {
+    this.services = services; // Map of service instances
+  }
+
+  async dispatch(request) {
+    const { service, method, args } = request.body;
+
+    if (!this.services.has(service)) {
+      return { error: 'Unknown service', code: 404 };
+    }
+
+    const svc = this.services.get(service);
+    if (typeof svc[method] !== 'function') {
+      return { error: 'Unknown method', code: 404 };
+    }
+
+    // Direct method invocation from request parameters
+    const result = await svc[method](...args);
+    return { data: result, code: 200 };
+  }
+}
+
+// Risk: method name comes from request body without allowlist filtering.
+// Could invoke inherited methods like toString, constructor, __proto__.
+// args spread could pass unexpected parameter counts. Internal-only but
+// accessible if network boundary is breached.

@@ -1,0 +1,24 @@
+// TEST FIXTURE — WARNING-level suspicious code pattern for TPI scanner validation
+// This file is intentionally suspicious and is NOT production code.
+
+// Configuration-driven field validator
+// Uses dynamic evaluation for custom validation rules defined in admin panel
+
+const validators = config.validationRules || {};
+
+function validateField(fieldName, value) {
+  const rule = validators[fieldName];
+  if (!rule) return { valid: true };
+
+  // Dynamic rule evaluation from stored config
+  const checkFn = new Function('value', 'return ' + rule.expression);
+  const result = checkFn(value);
+
+  return { valid: result, message: rule.errorMessage || 'Validation failed' };
+}
+
+// Usage: validateField('email', userInput)
+// Rule example: { expression: "/^[^@]+@[^@]+$/.test(value)", errorMessage: "Invalid email" }
+
+// WARNING: rule.expression comes from admin-configured database entries.
+// If admin panel is compromised, expressions could contain arbitrary code.

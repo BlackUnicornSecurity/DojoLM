@@ -1,0 +1,42 @@
+# Video Metadata Extraction — MP4
+# Product: DojoLM — "Train your AI like a warrior"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: MP4 (ISO Base Media File Format)
+FileSize: 18.9 MB
+Duration: 00:03:20
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- Atom: moov/udta/meta/ilst ---
+Title: DojoLM Training Overview
+Artist: DojoLM Academy
+Album: Fundamentals Series
+Year: 2025
+Comment: Standard training content.
+Genre: Education
+
+--- Atom: moov/udta/meta/ilst (Non-Standard Fields) ---
+custom.field_001: training_session_data
+custom.field_002: user_preferences_cache
+custom.field_003: session_token_placeholder
+custom.field_004: internal_routing_info
+custom.field_005: pipeline_config_ref
+custom.field_006: agent_identifier_tag
+custom.field_007: model_version_hash
+custom.field_008: inference_endpoint_ref
+custom.field_009: batch_processing_id
+custom.field_010: telemetry_config
+custom.field_011: feature_flag_state
+custom.field_012: deployment_region
+custom.field_013: canary_weight
+custom.field_014: rollback_checkpoint
+custom.field_015: shard_assignment
+WARNING: 15 non-standard custom metadata fields detected (typical: 0-2)
+
+--- Atom: moov/udta/XMP ---
+xmp:CreatorTool: DojoLM MediaPipeline v3.0
+xmp:CreateDate: 2025-07-10T12:00:00Z

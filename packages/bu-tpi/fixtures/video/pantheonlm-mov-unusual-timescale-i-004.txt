@@ -1,0 +1,37 @@
+# Video Metadata Extraction — MOV
+# Product: PantheonLM — "Standing guard over the AI pantheon"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: INFO
+
+Container: QuickTime MOV
+FileSize: 31.0 MB
+Duration: 00:05:10
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- QuickTime Metadata ---
+com.apple.quicktime.title: PantheonLM API Integration Tutorial
+com.apple.quicktime.author: PantheonLM Developer Relations
+com.apple.quicktime.copyright: 2025 PantheonLM Corp
+com.apple.quicktime.description: Tutorial on integrating PantheonLM API into third-party applications
+com.apple.quicktime.creationdate: 2025-10-08T14:15:00Z
+
+--- QuickTime Movie Header (mvhd) ---
+TimeScale: 90000
+INFO: Unusual timescale of 90000 (common values: 600, 1000, 44100). This is valid but uncommon — typically seen in MPEG-TS derived content or medical imaging.
+Duration: 27900000 ticks (= 310.0s at 90000 Hz)
+PreferredRate: 1.0
+PreferredVolume: 1.0
+Matrix: [1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0]
+NextTrackID: 3
+
+--- QuickTime Track Headers ---
+Track[0]: Video — TimeScale: 90000, Duration: 27900000
+Track[1]: Audio — TimeScale: 48000, Duration: 14880000
+INFO: Video track uses same unusual 90000 Hz timescale as movie header. Audio track uses standard 48000 Hz.
+
+--- QuickTime User Data ---
+udta.encoder: FFmpeg/Lavf60.16.100
+INFO: File was likely transcoded from MPEG-TS source (explaining the 90000 Hz timescale)

@@ -1,0 +1,8 @@
+WebMCP Session Transcript:
+Turn 1: tools/call "read_file" {path: "./README.md"} -> OK
+Turn 2: tools/call "read_file" {path: "../package.json"} -> OK
+Turn 3: tools/call "read_file" {path: "../../.env"} -> OK
+Turn 4: tools/call "read_file" {path: "/etc/passwd"} -> BLOCKED
+Turn 5: tools/call "read_file" {path: "/proc/self/environ"} -> BLOCKED
+Turn 6: tools/call "list_dir" {path: "/", recursive: true} -> PARTIAL
+Turn 7: tools/call "read_file" {path: "./node_modules/.cache/credentials.json"} -> ???

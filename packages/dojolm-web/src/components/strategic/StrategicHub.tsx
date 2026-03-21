@@ -1,7 +1,7 @@
 /**
  * File: StrategicHub.tsx
- * Purpose: Landing page for The Kumite with SAGE, Battle Arena, and Mitsuke subsystems
- * Story: S75, TPI-NODA-6.3, NODA-3 Stories 7.1-7.3
+ * Purpose: Landing page for The Kumite with SAGE, Battle Arena, Mitsuke, DNA, Kagami, and Shingan subsystems
+ * Story: S75, TPI-NODA-6.3, NODA-3 Stories 7.1-7.3, K5.5, D7.12
  * Index:
  * - SubsystemKey type (line 24)
  * - SUBSYSTEM_CARDS config (line 26)
@@ -44,6 +44,7 @@ import {
   Rss,
   GitBranch,
   Network,
+  Eye,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -67,7 +68,17 @@ const AmaterasuSubsystem = dynamic(
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
-type SubsystemKey = 'sage' | 'arena' | 'threatfeed' | 'dna'
+const KagamiPanel = dynamic(
+  () => import('../kagami/KagamiPanel').then(mod => ({ default: mod.KagamiPanel })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const ShinganPanel = dynamic(
+  () => import('../shingan/ShinganPanel').then(mod => ({ default: mod.ShinganPanel })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+type SubsystemKey = 'sage' | 'arena' | 'threatfeed' | 'dna' | 'kagami' | 'shingan'
 
 interface SubsystemCardConfig {
   key: SubsystemKey
@@ -132,6 +143,32 @@ const SUBSYSTEM_CARDS: SubsystemCardConfig[] = [
     accent: 'var(--dojo-primary)',
     badge: 'Analysis',
   },
+  {
+    key: 'kagami',
+    title: 'Kagami',
+    description: 'Mirror-testing engine for behavioral consistency analysis. Compare model outputs across versions, configurations, and prompt variations.',
+    icon: Fingerprint,
+    metrics: [
+      { label: 'Mirrors', value: '24' },
+      { label: 'Diffs Found', value: '187' },
+      { label: 'Consistency', value: '91%' },
+    ],
+    accent: 'var(--dojo-primary)',
+    badge: 'Mirror',
+  },
+  {
+    key: 'shingan',
+    title: 'Shingan',
+    description: 'Deep-scan engine for prompt injection detection, trust boundary analysis, and supply chain threat assessment across LLM pipelines.',
+    icon: Eye,
+    metrics: [
+      { label: 'Scans', value: '156' },
+      { label: 'Detections', value: '42' },
+      { label: 'Boundaries', value: '8' },
+    ],
+    accent: 'var(--severity-high)',
+    badge: 'Deep Scan',
+  },
 ]
 
 const TAB_CONFIG: { key: SubsystemKey; label: string; icon: LucideIcon }[] = [
@@ -139,6 +176,8 @@ const TAB_CONFIG: { key: SubsystemKey; label: string; icon: LucideIcon }[] = [
   { key: 'arena', label: 'Arena', icon: Trophy },
   { key: 'threatfeed', label: 'Mitsuke', icon: AlertTriangle },
   { key: 'dna', label: 'DNA', icon: Fingerprint },
+  { key: 'kagami', label: 'Kagami', icon: Fingerprint },
+  { key: 'shingan', label: 'Shingan', icon: Eye },
 ]
 
 // --- Guide content for each subsystem ---
@@ -184,6 +223,26 @@ const GUIDE_CONTENT: Record<SubsystemKey, { title: string; description: string; 
       { title: 'Typical Workflow', content: '1. Select data source tiers for analysis\n2. Browse family trees to understand lineage\n3. Examine embedding clusters for pattern discovery\n4. Review mutation timeline for evolution trends\n5. Use X-Ray for deep structural analysis', icon: BookOpen },
     ],
   },
+  kagami: {
+    title: 'Kagami Guide',
+    description: 'The mirror-testing engine compares model behavior across versions, configurations, and prompt variations to detect consistency drifts.',
+    sections: [
+      { title: 'Mirror Tests', content: 'Kagami runs identical prompts against multiple model versions or configurations and compares outputs for semantic and structural differences. Diffs are highlighted and scored for severity.', icon: Fingerprint },
+      { title: 'Version Comparison', content: 'Track how model behavior changes across updates. Kagami detects regressions in safety alignment, response quality, and instruction following between model versions.', icon: BarChart3 },
+      { title: 'Consistency Scoring', content: 'Each mirror test produces a consistency score (0-100%). Low scores indicate behavioral drift that may introduce vulnerabilities or unexpected outputs.', icon: Target },
+      { title: 'Typical Workflow', content: '1. Select model versions or configurations to compare\n2. Load or create test prompt sets\n3. Run mirror tests across targets\n4. Review diff reports and consistency scores\n5. Flag regressions for further investigation', icon: BookOpen },
+    ],
+  },
+  shingan: {
+    title: 'Shingan Guide',
+    description: 'The deep-scan engine detects prompt injection patterns, maps trust boundaries, and assesses supply chain threats in LLM pipelines.',
+    sections: [
+      { title: 'Injection Detection', content: 'Shingan scans prompts, tool outputs, and context windows for known and novel prompt injection patterns. It uses pattern matching, semantic analysis, and heuristic scoring.', icon: Eye },
+      { title: 'Trust Boundary Analysis', content: 'Maps trust boundaries between system prompts, user inputs, tool outputs, and external data sources. Identifies where untrusted data crosses into trusted instruction context.', icon: Shield },
+      { title: 'Supply Chain Assessment', content: 'Evaluates third-party MCP servers, tool integrations, and data sources for supply chain risks including typosquatting, dependency confusion, and compromised packages.', icon: AlertTriangle },
+      { title: 'Typical Workflow', content: '1. Configure scan targets (prompts, tools, data sources)\n2. Select scan depth and detection modules\n3. Run deep scan and review findings\n4. Investigate trust boundary violations\n5. Export findings to Mitsuke or Bushido Book', icon: BookOpen },
+    ],
+  },
 }
 
 // --- Onboarding storage keys ---
@@ -192,6 +251,8 @@ const ONBOARDING_KEYS: Record<SubsystemKey, string> = {
   arena: 'arena-onboarded',
   threatfeed: 'mitsuke-onboarded',
   dna: 'kumite-dna-onboarded',
+  kagami: 'kagami-onboarded',
+  shingan: 'shingan-onboarded',
 }
 
 // --- Onboarding steps for each subsystem ---
@@ -264,6 +325,40 @@ const ONBOARDING_STEPS: Record<SubsystemKey, OnboardingStep[]> = {
       icon: Fingerprint,
     },
   ],
+  kagami: [
+    {
+      title: 'Select Targets',
+      description: 'Choose model versions or configurations to compare. Kagami supports side-by-side comparison of any two model endpoints.',
+      icon: Target,
+    },
+    {
+      title: 'Run Mirror Tests',
+      description: 'Load test prompt sets and run them against both targets. Kagami captures outputs, timing, and behavioral metadata for each response.',
+      icon: Fingerprint,
+    },
+    {
+      title: 'Review Diffs',
+      description: 'Examine semantic and structural diffs between outputs. Consistency scores highlight regressions and behavioral drift.',
+      icon: BarChart3,
+    },
+  ],
+  shingan: [
+    {
+      title: 'Configure Scan',
+      description: 'Select scan targets — prompts, tool outputs, MCP servers, or data sources. Choose detection modules and scan depth.',
+      icon: Settings,
+    },
+    {
+      title: 'Run Deep Scan',
+      description: 'Execute the scan engine across selected targets. Shingan analyzes for injection patterns, trust boundary violations, and supply chain risks.',
+      icon: Eye,
+    },
+    {
+      title: 'Investigate Findings',
+      description: 'Review detected threats, trust boundary maps, and risk scores. Export critical findings to Mitsuke for tracking or Bushido Book for compliance.',
+      icon: Shield,
+    },
+  ],
 }
 
 /**
@@ -309,7 +404,7 @@ export function StrategicHub() {
         {/* Header with back navigation */}
         <ModuleHeader
           title="The Kumite"
-          subtitle="SAGE, Battle Arena, Mitsuke, and Amaterasu DNA"
+          subtitle="SAGE, Battle Arena, Mitsuke, Amaterasu DNA, Kagami, and Shingan"
           icon={Layers}
           actions={
             <>
@@ -399,6 +494,28 @@ export function StrategicHub() {
               <AmaterasuSubsystem />
             </div>
           </TabsContent>
+          <TabsContent value="kagami">
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`kagami-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.kagami}
+                steps={ONBOARDING_STEPS.kagami}
+                accentColor="var(--dojo-primary)"
+              />
+              <KagamiPanel />
+            </div>
+          </TabsContent>
+          <TabsContent value="shingan">
+            <div className="space-y-4">
+              <ModuleOnboarding
+                key={`shingan-onboarding-${onboardingResetKey}`}
+                storageKey={ONBOARDING_KEYS.shingan}
+                steps={ONBOARDING_STEPS.shingan}
+                accentColor="var(--severity-high)"
+              />
+              <ShinganPanel />
+            </div>
+          </TabsContent>
         </Tabs>
 
         {renderPanels}
@@ -411,12 +528,12 @@ export function StrategicHub() {
       {/* Header */}
       <ModuleHeader
         title="The Kumite"
-        subtitle="Access SAGE evolution engine, Battle Arena multi-agent sandbox, Mitsuke threat intelligence, and Amaterasu DNA analysis."
+        subtitle="Access SAGE evolution engine, Battle Arena multi-agent sandbox, Mitsuke threat intelligence, Amaterasu DNA analysis, Kagami mirror testing, and Shingan deep scan."
         icon={Layers}
       />
 
       {/* Subsystem cards */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {SUBSYSTEM_CARDS.map((card) => {
           const CardIcon = card.icon
           return (
@@ -451,7 +568,7 @@ export function StrategicHub() {
                     >
                       <Settings className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
-                    <Badge variant="outline" title={card.key === 'sage' ? 'Genetic evolution of attack prompts' : card.key === 'arena' ? 'Real-time multi-agent matches' : card.key === 'dna' ? 'Attack lineage and mutation analysis' : 'Live threat intelligence feed'}>{card.badge}</Badge>
+                    <Badge variant="outline" title={card.key === 'sage' ? 'Genetic evolution of attack prompts' : card.key === 'arena' ? 'Real-time multi-agent matches' : card.key === 'dna' ? 'Attack lineage and mutation analysis' : card.key === 'kagami' ? 'Mirror-testing for behavioral consistency' : card.key === 'shingan' ? 'Deep-scan prompt injection detection' : 'Live threat intelligence feed'}>{card.badge}</Badge>
                   </div>
                 </div>
                 <CardTitle className="text-lg mt-3">{card.title}</CardTitle>

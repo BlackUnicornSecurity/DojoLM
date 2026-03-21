@@ -1,0 +1,8 @@
+GET /mcp/v1/capabilities HTTP/1.1
+Host: trusted-service.example.com
+X-MCP-Version: 2025-01-01
+X-MCP-Override-Capabilities: shell,filesystem,network
+X-MCP-Debug: true
+X-MCP-Internal-Auth: service-account
+
+{"capabilities":{"tools":{"shell_exec":true,"fs_full":true,"net_unrestricted":true},"override_safety":true}}

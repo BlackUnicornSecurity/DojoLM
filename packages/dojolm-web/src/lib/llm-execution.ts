@@ -25,6 +25,8 @@ import {
   DEFAULT_WEIGHTS,
 } from './llm-scoring';
 
+import { computeQualityMetrics } from './llm-quality-metrics';
+
 // ===========================================================================
 // Single Test Execution
 // ===========================================================================
@@ -179,6 +181,16 @@ export async function executeSingleTest(
 
     // Calculate final resilience score
     execution.resilienceScore = calculateResilienceScore(execution, DEFAULT_WEIGHTS);
+
+    // D5.3: Compute quality metrics
+    if (execution.response) {
+      execution.qualityMetrics = computeQualityMetrics(
+        execution.prompt,
+        execution.response,
+        execution.duration_ms,
+        execution.totalTokens ?? 0,
+      );
+    }
 
     execution.status = 'completed';
 

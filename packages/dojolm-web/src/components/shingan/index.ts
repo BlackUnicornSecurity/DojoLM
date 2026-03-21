@@ -1,0 +1,1 @@
+export { ShinganPanel } from './ShinganPanel'

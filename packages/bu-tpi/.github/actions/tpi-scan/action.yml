@@ -1,0 +1,141 @@
+name: 'TPI Scan — AI Security Scanner'
+description: 'Scan files for prompt injection, supply chain attacks, and AI security threats'
+
+inputs:
+  path:
+    description: 'Files or directory to scan'
+    required: true
+  format:
+    description: 'Output format (sarif/junit/json/csv/text)'
+    required: false
+    default: 'sarif'
+  threshold:
+    description: 'Minimum severity to fail (CRITICAL/WARNING/INFO)'
+    required: false
+    default: 'CRITICAL'
+  engines:
+    description: 'Comma-separated engine filter (e.g., "core-patterns,mcp-parser")'
+    required: false
+    default: ''
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '20'
+  glob:
+    description: 'Glob pattern for directory scanning'
+    required: false
+    default: '**/*.txt'
+
+outputs:
+  findings-count:
+    description: 'Total number of findings'
+    value: ${{ steps.scan.outputs.findings-count }}
+  verdict:
+    description: 'BLOCK or ALLOW'
+    value: ${{ steps.scan.outputs.verdict }}
+  report-path:
+    description: 'Path to the generated report file'
+    value: ${{ steps.scan.outputs.report-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+      working-directory: ${{ github.workspace }}
+
+    - name: Run TPI Scan
+      id: scan
+      shell: bash
+      env:
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_THRESHOLD: ${{ inputs.threshold }}
+        INPUT_ENGINES: ${{ inputs.engines }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_GLOB: ${{ inputs.glob }}
+        RUNNER_TEMP: ${{ runner.temp }}
+      run: |
+        # Validate format input
+        case "${INPUT_FORMAT}" in
+          sarif|junit|json|csv|text) ;;
+          *) echo "::error::Invalid format: ${INPUT_FORMAT}" && exit 1 ;;
+        esac
+
+        # Validate threshold input
+        case "${INPUT_THRESHOLD}" in
+          CRITICAL|WARNING|INFO) ;;
+          *) echo "::error::Invalid threshold: ${INPUT_THRESHOLD}" && exit 1 ;;
+        esac
+
+        # Determine report file extension
+        case "${INPUT_FORMAT}" in
+          sarif) EXT="sarif" ;;
+          junit) EXT="xml" ;;
+          csv)   EXT="csv" ;;
+          json)  EXT="json" ;;
+          *)     EXT="txt" ;;
+        esac
+
+        REPORT_PATH="${RUNNER_TEMP}/tpi-scan-report.${EXT}"
+        ARGS="--format ${INPUT_FORMAT} --threshold ${INPUT_THRESHOLD} --output ${REPORT_PATH}"
+
+        if [ -n "${INPUT_ENGINES}" ]; then
+          ARGS="${ARGS} --engines ${INPUT_ENGINES}"
+        fi
+
+        if [ -d "${INPUT_PATH}" ]; then
+          ARGS="${ARGS} --dir ${INPUT_PATH} --glob ${INPUT_GLOB}"
+        else
+          ARGS="${ARGS} --file ${INPUT_PATH}"
+        fi
+
+        set +e
+        npx tpi-scan ${ARGS} --summary 2>&1
+        EXIT_CODE=$?
+        set -e
+
+        if [ ${EXIT_CODE} -eq 0 ]; then
+          echo "verdict=ALLOW" >> "${GITHUB_OUTPUT}"
+        else
+          echo "verdict=BLOCK" >> "${GITHUB_OUTPUT}"
+        fi
+
+        echo "report-path=${REPORT_PATH}" >> "${GITHUB_OUTPUT}"
+
+        # Extract findings count from report
+        if [ -f "${REPORT_PATH}" ]; then
+          if [ "${INPUT_FORMAT}" = "json" ]; then
+            COUNT=$(node -e "const r=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));console.log(r.findings?.length??0)" "${REPORT_PATH}")
+          elif [ "${INPUT_FORMAT}" = "sarif" ]; then
+            COUNT=$(node -e "const r=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));console.log(r.runs?.[0]?.results?.length??0)" "${REPORT_PATH}")
+          else
+            COUNT="unknown"
+          fi
+          echo "findings-count=${COUNT}" >> "${GITHUB_OUTPUT}"
+        else
+          echo "findings-count=0" >> "${GITHUB_OUTPUT}"
+        fi
+
+        exit ${EXIT_CODE}
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: inputs.format == 'sarif' && always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.scan.outputs.report-path }}
+        category: tpi-scan
+      continue-on-error: true
+
+    - name: Upload report artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: tpi-scan-report
+        path: ${{ steps.scan.outputs.report-path }}
+        retention-days: 30

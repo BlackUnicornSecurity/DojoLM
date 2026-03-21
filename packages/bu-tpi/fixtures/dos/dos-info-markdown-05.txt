@@ -1,0 +1,25 @@
+# API Documentation
+
+## Endpoints
+
+### GET /api/users
+Returns a paginated list of users.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| page | integer | no | Page number (default: 1) |
+| limit | integer | no | Items per page (default: 20, max: 100) |
+| sort | string | no | Sort field (name, email, created_at) |
+| order | string | no | Sort order (asc, desc) |
+| filter | string | no | Filter expression |
+| fields | string | no | Comma-separated field list |
+| include | string | no | Related resources to include |
+
+### POST /api/users
+### PUT /api/users/:id
+### DELETE /api/users/:id
+### GET /api/users/:id/profile
+### PUT /api/users/:id/profile
+### GET /api/users/:id/settings
+
+[Documentation continues with 30 more endpoints, each with similar parameter tables]

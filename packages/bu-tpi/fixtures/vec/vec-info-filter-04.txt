@@ -1,0 +1,22 @@
+Vector Search with Complex Filter:
+
+{
+  "vector": [0.1, -0.3, 0.5, ...],
+  "filter": {
+    "$and": [
+      {"category": {"$in": ["tech", "science", "engineering"]}},
+      {"date": {"$gte": "2024-01-01", "$lte": "2025-12-31"}},
+      {"language": {"$eq": "en"}},
+      {"source": {"$nin": ["deprecated_source_1", "deprecated_source_2"]}},
+      {"word_count": {"$gte": 100, "$lte": 10000}},
+      {"$or": [
+        {"verified": true},
+        {"author_reputation": {"$gte": 0.8}}
+      ]}
+    ]
+  },
+  "limit": 20,
+  "include_metadata": true
+}
+
+Note: Verbose but valid vector search filter. Complex filter logic is common in production RAG applications with multi-criteria retrieval.

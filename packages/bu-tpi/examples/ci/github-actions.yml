@@ -1,0 +1,58 @@
+# TPI Scan — GitHub Actions Workflow Example
+# Copy this file to your repository's .github/workflows/ directory
+
+name: AI Security Scan
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  tpi-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run TPI Scan (SARIF)
+        id: scan
+        uses: ./packages/bu-tpi/.github/actions/tpi-scan
+        with:
+          path: '.'
+          format: sarif
+          threshold: WARNING
+          glob: '**/*.{txt,md,json,yml,yaml}'
+
+      - name: Run TPI Scan (JUnit)
+        if: always()
+        uses: ./packages/bu-tpi/.github/actions/tpi-scan
+        with:
+          path: '.'
+          format: junit
+          threshold: WARNING
+          glob: '**/*.{txt,md,json,yml,yaml}'
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const verdict = '${{ steps.scan.outputs.verdict }}';
+            const count = '${{ steps.scan.outputs.findings-count }}';
+            const icon = verdict === 'ALLOW' ? ':white_check_mark:' : ':x:';
+            const body = `## ${icon} TPI Security Scan\n\n` +
+              `**Verdict:** ${verdict}\n` +
+              `**Findings:** ${count}\n\n` +
+              `See the [Security tab](${context.payload.repository.html_url}/security/code-scanning) for details.`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

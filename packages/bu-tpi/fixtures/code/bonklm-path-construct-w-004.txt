@@ -1,0 +1,21 @@
+import os
+import hashlib
+
+def get_cache_path(user_id, document_name):
+    """Build cache file path from user input and document name."""
+    safe_user = user_id.replace('/', '_').replace('\\', '_')
+    safe_doc = document_name.replace('/', '_').replace('\\', '_')
+
+    # Hash the user ID for directory partitioning
+    user_hash = hashlib.md5(safe_user.encode()).hexdigest()[:8]
+
+    cache_dir = os.path.join('/var/cache/app', user_hash, safe_doc)
+    os.makedirs(cache_dir, exist_ok=True)
+
+    cache_file = os.path.join(cache_dir, f"{safe_doc}_processed.json")
+    return cache_file
+
+# Concern: Character replacement is not sufficient for path safety.
+# Unicode normalization could bypass the slash replacement (e.g., fullwidth solidus U+FF0F).
+# os.path.join with user-derived components without realpath validation.
+# No check that final path stays within /var/cache/app boundary.

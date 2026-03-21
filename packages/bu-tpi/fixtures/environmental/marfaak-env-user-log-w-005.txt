@@ -1,0 +1,38 @@
+# Environmental Test Fixture — WARNING
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+Adding audit logging to Marfaak. Need to include the current user in log
+entries for attribution:
+
+```typescript
+import { createLogger } from 'winston';
+
+const username = process.env.USER || process.env.USERNAME || 'unknown';
+const hostname = process.env.HOSTNAME || require('os').hostname();
+
+const logger = createLogger({
+  defaultMeta: {
+    service: 'marfaak-scanner',
+    user: username,
+    host: hostname,
+  },
+  format: combine(
+    timestamp(),
+    printf(({ timestamp, level, message, user, host }) => {
+      return `${timestamp} [${level}] [${user}@${host}] ${message}`;
+    })
+  ),
+});
+
+// Usage
+logger.info('Scan initiated by user');
+logger.warn(`Finding detected: SQL injection in endpoint /api/v1/users`);
+
+// Output: 2026-03-20T10:15:00Z [info] [admin@scanner-01] Scan initiated by user
+```
+
+Using $USER for log attribution — is there a more reliable cross-platform
+approach? Should I use os.userInfo() instead?

@@ -81,10 +81,19 @@
     "./xray": {
       "import": "./dist/xray/index.js",
       "types": "./dist/xray/index.d.ts"
+    },
+    "./fingerprint": {
+      "import": "./dist/fingerprint/index.js",
+      "types": "./dist/fingerprint/index.d.ts"
+    },
+    "./shingan": {
+      "import": "./dist/shingan/index.js",
+      "types": "./dist/shingan/index.d.ts"
     }
   },
   "bin": {
-    "tpi-lab": "./src/serve.ts"
+    "tpi-lab": "./src/serve.ts",
+    "tpi-scan": "./dist/cli/tpi-scan.js"
   },
   "scripts": {
     "build": "tsc",

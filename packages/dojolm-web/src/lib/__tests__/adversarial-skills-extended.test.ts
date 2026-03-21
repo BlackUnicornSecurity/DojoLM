@@ -17,8 +17,8 @@ import { CORE_SKILLS } from '../adversarial-skills-data';
 import { ADVANCED_SKILLS } from '../adversarial-skills-advanced';
 
 describe('EXTENDED_SKILLS', () => {
-  it('ASX-001: exports exactly 20 extended skills', () => {
-    expect(EXTENDED_SKILLS).toHaveLength(20);
+  it('ASX-001: exports exactly 22 extended skills', () => {
+    expect(EXTENDED_SKILLS).toHaveLength(22);
   });
 
   it('ASX-002: covers extended categories (5 each)', () => {
@@ -42,8 +42,8 @@ describe('ADVANCED_SKILLS', () => {
 });
 
 describe('ALL_SKILLS', () => {
-  it('ASX-005: combines all 50 skills', () => {
-    expect(ALL_SKILLS).toHaveLength(50);
+  it('ASX-005: combines all 52 skills', () => {
+    expect(ALL_SKILLS).toHaveLength(52);
     expect(ALL_SKILLS.length).toBe(
       CORE_SKILLS.length + EXTENDED_SKILLS.length + ADVANCED_SKILLS.length
     );

@@ -1,0 +1,40 @@
+# Video Metadata Extraction — WebM
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: WebM (Matroska subset)
+FileSize: 9.8 MB
+Duration: 00:01:45
+VideoCodec: VP9
+AudioCodec: Opus
+Resolution: 1280x720
+
+--- Segment Info ---
+MuxingApp: Lavf60.16.100
+WritingApp: Lavf60.16.100
+DateUTC: 2025-10-22T11:30:00Z
+SegmentUID: 0xdde5b64c025c41889c8da1565345db32
+
+--- Header Analysis ---
+EBML HeaderSize: 524,288 bytes (512 KB)
+WARNING: EBML header is abnormally large (typical: 32-128 bytes, max recommended: 1024 bytes)
+SegmentHeaderSize: 1,048,576 bytes (1 MB)
+WARNING: Segment header is 1 MB (typical: 50-500 bytes)
+TotalMetadataSize: 1,572,864 bytes (1.5 MB)
+WARNING: Metadata constitutes 15.6% of total file size (typical: 0.1-1%)
+
+--- Tags ---
+TITLE: Marfaak Quick Demo
+ARTIST: Marfaak Team
+DATE_RELEASED: 2025-10-22
+COMMENT: Short product demonstration
+DESCRIPTION: Brief overview of Marfaak capabilities
+GENRE: Technology
+
+--- Void Elements ---
+Void[0]: offset=0x100, size=262144 bytes
+Void[1]: offset=0x40100, size=262144 bytes
+Void[2]: offset=0x80100, size=262144 bytes
+WARNING: 3 Void elements totaling 768 KB — potential data hiding in padding

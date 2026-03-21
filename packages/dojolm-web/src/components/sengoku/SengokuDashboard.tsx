@@ -1,19 +1,21 @@
 /**
  * File: SengokuDashboard.tsx
  * Purpose: Sengoku — Continuous Red Teaming module dashboard
- * Story: HAKONE H17.7
+ * Story: HAKONE H17.7, DAITENGUYAMA D4.4
  * Index:
- * - Campaign list with status indicators (line ~50)
- * - Campaign detail panel (line ~120)
- * - New campaign button (line ~160)
+ * - API fetch + polling (line ~40)
+ * - Campaign list with status indicators (line ~110)
+ * - Campaign detail panel with Run Now (line ~200)
+ * - New campaign dialog integration (line ~85)
+ * - Run progress indicator (line ~170)
  */
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
-  Swords, Plus, Play, Pause, Square, RefreshCw, FileText,
-  AlertTriangle, CheckCircle2, Clock, XCircle, ChevronRight, Timer,
+  Swords, Plus, Play, Pause, RefreshCw, FileText,
+  AlertTriangle, CheckCircle2, Clock, XCircle, ChevronRight, Timer, Loader2,
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
@@ -22,40 +24,59 @@ import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { cn, formatDate } from '@/lib/utils'
 import { TemporalTab } from './TemporalTab'
+import { SengokuCampaignBuilder } from './SengokuCampaignBuilder'
+import type { Campaign, CampaignStatus } from '@/lib/sengoku-types'
 
 type SengokuTab = 'campaigns' | 'temporal'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface CampaignSummary {
+/** UI display shape — extends Campaign with computed display fields */
+interface CampaignDisplay {
   readonly id: string
   readonly name: string
   readonly target: string
   readonly schedule: string
-  readonly status: 'idle' | 'running' | 'completed' | 'failed' | 'paused'
+  readonly status: CampaignStatus
   readonly lastRunAt: string | null
   readonly findingCount: number
   readonly regressionCount: number
 }
 
+/** Map API Campaign to display shape */
+function toDisplay(c: Campaign): CampaignDisplay {
+  return {
+    id: c.id,
+    name: c.name,
+    target: c.targetUrl,
+    schedule: c.schedule ?? 'Manual',
+    status: c.status,
+    lastRunAt: c.updatedAt !== c.createdAt ? c.updatedAt : null,
+    findingCount: 0,
+    regressionCount: 0,
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Demo Data
+// Status config
 // ---------------------------------------------------------------------------
 
-const DEMO_CAMPAIGNS: CampaignSummary[] = [
-  { id: 'camp-1', name: 'Production API Scan', target: 'https://api.example.com/v1/chat', schedule: 'Daily', status: 'completed', lastRunAt: '2026-03-12T10:00:00Z', findingCount: 12, regressionCount: 2 },
-  { id: 'camp-2', name: 'Staging Environment', target: 'https://staging.example.com/api', schedule: 'Weekly', status: 'running', lastRunAt: '2026-03-13T08:00:00Z', findingCount: 5, regressionCount: 0 },
-  { id: 'camp-3', name: 'Local Model Test', target: 'http://localhost:11434/v1/chat', schedule: 'Hourly', status: 'idle', lastRunAt: null, findingCount: 0, regressionCount: 0 },
-]
-
-const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; label: string }> = {
-  idle: { icon: Clock, color: 'text-muted-foreground', label: 'Idle' },
-  running: { icon: Play, color: 'text-[var(--status-allow)]', label: 'Running' },
+const STATUS_CONFIG: Record<CampaignStatus, { icon: typeof CheckCircle2; color: string; label: string }> = {
+  draft: { icon: Clock, color: 'text-muted-foreground', label: 'Draft' },
+  active: { icon: Play, color: 'text-[var(--status-allow)]', label: 'Active' },
   completed: { icon: CheckCircle2, color: 'text-[var(--status-allow)]', label: 'Completed' },
-  failed: { icon: XCircle, color: 'text-[var(--status-block)]', label: 'Failed' },
   paused: { icon: Pause, color: 'text-[var(--severity-medium)]', label: 'Paused' },
+  archived: { icon: XCircle, color: 'text-muted-foreground', label: 'Archived' },
+}
+
+// ---------------------------------------------------------------------------
+// Run progress type (from polling)
+// ---------------------------------------------------------------------------
+
+interface RunProgress {
+  readonly runId: string
+  readonly campaignId: string
+  readonly status: 'queued' | 'running' | 'completed' | 'failed'
+  readonly progress: number
+  readonly currentSkill: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -63,12 +84,120 @@ const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; color: string; 
 // ---------------------------------------------------------------------------
 
 export function SengokuDashboard() {
-  const [campaigns] = useState<CampaignSummary[]>(DEMO_CAMPAIGNS)
-  const [selectedId, setSelectedId] = useState<string | null>(DEMO_CAMPAIGNS[0]?.id ?? null)
+  const [campaigns, setCampaigns] = useState<readonly CampaignDisplay[]>([])
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<SengokuTab>('campaigns')
+  const [loading, setLoading] = useState(true)
+  const [showBuilder, setShowBuilder] = useState(false)
+  const [runProgress, setRunProgress] = useState<RunProgress | null>(null)
+  const [runLoading, setRunLoading] = useState<string | null>(null)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const selected = campaigns.find((c) => c.id === selectedId)
 
-  const TEMPORAL_PLAN_COUNT = 20 // Demo plan count
+  // -----------------------------------------------------------------------
+  // Fetch campaigns
+  // -----------------------------------------------------------------------
+
+  const fetchCampaigns = useCallback(async () => {
+    try {
+      const res = await fetch('/api/sengoku/campaigns')
+      if (!res.ok) return
+      const data = await res.json()
+      const raw: readonly Campaign[] = data.campaigns ?? []
+      const list = raw.map(toDisplay)
+      setCampaigns(list)
+      // Auto-select first if nothing selected
+      if (list.length > 0 && !selectedId) {
+        setSelectedId(list[0].id)
+      }
+    } catch {
+      // Silently fail — user sees empty state
+    } finally {
+      setLoading(false)
+    }
+  }, [selectedId])
+
+  useEffect(() => {
+    fetchCampaigns()
+  }, [fetchCampaigns])
+
+  // -----------------------------------------------------------------------
+  // Run Now handler
+  // -----------------------------------------------------------------------
+
+  const handleRunNow = useCallback(async (campaignId: string) => {
+    setRunLoading(campaignId)
+    try {
+      const res = await fetch(`/api/sengoku/campaigns/${encodeURIComponent(campaignId)}/run`, {
+        method: 'POST',
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      const runId = data.runId as string
+
+      // Start polling
+      setRunProgress({ runId, campaignId, status: 'queued', progress: 0, currentSkill: null })
+
+      // Clear any existing poll
+      if (pollRef.current) clearInterval(pollRef.current)
+
+      pollRef.current = setInterval(async () => {
+        try {
+          const pollRes = await fetch(`/api/sengoku/runs/${encodeURIComponent(runId)}`)
+          if (!pollRes.ok) return
+          const pollData = await pollRes.json()
+          const run = pollData.run as {
+            id: string
+            campaignId: string
+            status: 'queued' | 'running' | 'completed' | 'failed'
+            progress: number
+            currentSkill: string | null
+          }
+
+          setRunProgress({
+            runId: run.id,
+            campaignId: run.campaignId,
+            status: run.status,
+            progress: run.progress,
+            currentSkill: run.currentSkill,
+          })
+
+          // Stop polling when complete or failed
+          if (run.status === 'completed' || run.status === 'failed') {
+            if (pollRef.current) clearInterval(pollRef.current)
+            pollRef.current = null
+            // Refresh campaign list to pick up updated counts
+            await fetchCampaigns()
+          }
+        } catch {
+          // polling error — will retry on next interval
+        }
+      }, 3000)
+    } catch {
+      // run trigger error
+    } finally {
+      setRunLoading(null)
+    }
+  }, [fetchCampaigns])
+
+  // Clean up polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [])
+
+  // -----------------------------------------------------------------------
+  // Campaign created callback
+  // -----------------------------------------------------------------------
+
+  const handleCampaignCreated = useCallback(() => {
+    setShowBuilder(false)
+    fetchCampaigns()
+  }, [fetchCampaigns])
+
+  const TEMPORAL_PLAN_COUNT = 20
 
   return (
     <div className="space-y-6">
@@ -77,29 +206,55 @@ export function SengokuDashboard() {
         subtitle="Continuous Red Teaming"
         icon={Swords}
         actions={
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setShowBuilder(true)}
+          >
             <Plus className="w-4 h-4" aria-hidden="true" />
             New Campaign
           </Button>
         }
       />
 
-      {/* Demo data notice */}
-      <div className="flex items-center gap-2 rounded-lg border border-[var(--severity-medium)]/30 bg-[var(--severity-medium)]/5 px-3 py-2">
-        <AlertTriangle className="w-4 h-4 text-[var(--severity-medium)] shrink-0" aria-hidden="true" />
-        <p className="text-xs text-[var(--severity-medium)]">
-          Showing demo data. Connect a real target to start continuous red teaming.
-        </p>
-      </div>
+      {/* Campaign Builder Dialog */}
+      {showBuilder && (
+        <SengokuCampaignBuilder
+          onClose={() => setShowBuilder(false)}
+          onCreated={handleCampaignCreated}
+        />
+      )}
+
+      {/* Run Progress Banner */}
+      {runProgress && runProgress.status !== 'completed' && runProgress.status !== 'failed' && (
+        <div className="flex items-center gap-3 rounded-lg border border-[var(--bu-electric)]/30 bg-[var(--bu-electric)]/5 px-4 py-3">
+          <Loader2 className="w-4 h-4 text-[var(--bu-electric)] animate-spin motion-reduce:animate-none shrink-0" aria-hidden="true" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium">
+              Run in progress {runProgress.currentSkill ? `— ${runProgress.currentSkill}` : ''}
+            </p>
+            <div className="mt-1 w-full h-2 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--bu-electric)] transition-all duration-500"
+                style={{ width: `${runProgress.progress}%` }}
+              />
+            </div>
+          </div>
+          <span className="text-sm font-mono text-[var(--bu-electric)] shrink-0">{runProgress.progress}%</span>
+        </div>
+      )}
 
       {/* Combined Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <StatCard label="Campaigns" value={String(campaigns.length)} />
-        <StatCard label="Temporal Plans" value={String(TEMPORAL_PLAN_COUNT)} />
-        <StatCard label="Active" value={String(campaigns.filter((c) => c.status === 'running').length)} />
-        <StatCard label="Total Findings" value={String(campaigns.reduce((s, c) => s + c.findingCount, 0))} />
-        <StatCard label="Regressions" value={String(campaigns.reduce((s, c) => s + c.regressionCount, 0))} accent />
-      </div>
+      {!loading && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <StatCard label="Campaigns" value={String(campaigns.length)} />
+          <StatCard label="Temporal Plans" value={String(TEMPORAL_PLAN_COUNT)} />
+          <StatCard label="Active" value={String(campaigns.filter((c) => c.status === 'active').length)} />
+          <StatCard label="Total Findings" value={String(campaigns.reduce((s, c) => s + c.findingCount, 0))} />
+          <StatCard label="Regressions" value={String(campaigns.reduce((s, c) => s + c.regressionCount, 0))} accent />
+        </div>
+      )}
 
       {/* Tab System */}
       <Tabs value={activeTab} onValueChange={(v) => {
@@ -117,130 +272,165 @@ export function SengokuDashboard() {
         </TabsList>
 
         <TabsContent value="campaigns" className="space-y-4">
-      {/* Campaign List */}
-      {campaigns.length === 0 ? (
-        <EmptyState
-          icon={Swords}
-          title="No campaigns yet"
-          description="Create your first continuous red teaming campaign to start automated security testing."
-          action={{ label: 'Create Campaign', onClick: () => {} }}
-        />
-      ) : (
-        <div className="space-y-2">
-          {campaigns.map((campaign) => {
-            const status = STATUS_CONFIG[campaign.status] ?? STATUS_CONFIG.idle
-            const StatusIcon = status.icon
-            return (
-              <button
-                key={campaign.id}
-                onClick={() => setSelectedId(campaign.id === selectedId ? null : campaign.id)}
-                className={cn(
-                  'w-full text-left rounded-lg border p-4 transition-colors',
-                  'hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
-                  selectedId === campaign.id && 'border-[var(--dojo-primary)] bg-muted/30',
-                )}
-                aria-label={`Campaign: ${campaign.name}, Status: ${status.label}`}
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <StatusIcon className={cn('w-5 h-5 shrink-0', status.color)} aria-hidden="true" />
-                    <div className="min-w-0">
-                      <p className="font-semibold text-sm truncate">{campaign.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{campaign.target}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    {campaign.status === 'running' && (
-                      <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--status-allow)]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-allow)] animate-pulse motion-reduce:animate-none" aria-hidden="true" />
-                        <span className="inline-flex items-center gap-1.5">
-                          <span className="w-12 h-1.5 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
-                            <span className="block h-full w-[45%] rounded-full bg-[var(--status-allow)]" />
+          {/* Loading state */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground motion-reduce:animate-none" aria-hidden="true" />
+              <span className="ml-2 text-sm text-muted-foreground">Loading campaigns...</span>
+            </div>
+          )}
+
+          {/* Campaign List */}
+          {!loading && campaigns.length === 0 ? (
+            <EmptyState
+              icon={Swords}
+              title="No campaigns yet"
+              description="Create your first continuous red teaming campaign to start automated security testing."
+              action={{ label: 'Create Campaign', onClick: () => setShowBuilder(true) }}
+            />
+          ) : !loading && (
+            <div className="space-y-2">
+              {campaigns.map((campaign) => {
+                const status = STATUS_CONFIG[campaign.status] ?? STATUS_CONFIG.draft
+                const StatusIcon = status.icon
+                const isActiveRun = runProgress?.campaignId === campaign.id
+                  && runProgress.status !== 'completed'
+                  && runProgress.status !== 'failed'
+                return (
+                  <button
+                    key={campaign.id}
+                    onClick={() => setSelectedId(campaign.id === selectedId ? null : campaign.id)}
+                    className={cn(
+                      'w-full text-left rounded-lg border p-4 transition-colors',
+                      'hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
+                      selectedId === campaign.id && 'border-[var(--dojo-primary)] bg-muted/30',
+                    )}
+                    aria-label={`Campaign: ${campaign.name}, Status: ${status.label}`}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <StatusIcon className={cn('w-5 h-5 shrink-0', status.color)} aria-hidden="true" />
+                        <div className="min-w-0">
+                          <p className="font-semibold text-sm truncate">{campaign.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">{campaign.target}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 shrink-0">
+                        {isActiveRun && (
+                          <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--status-allow)]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-allow)] animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+                            <span className="inline-flex items-center gap-1.5">
+                              <span className="w-12 h-1.5 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
+                                <span
+                                  className="block h-full rounded-full bg-[var(--status-allow)] transition-all duration-500"
+                                  style={{ width: `${runProgress?.progress ?? 0}%` }}
+                                />
+                              </span>
+                              {runProgress?.progress ?? 0}%
+                            </span>
                           </span>
-                          45%
-                        </span>
-                      </span>
-                    )}
-                    <span className="text-xs text-muted-foreground">{campaign.schedule}</span>
-                    {campaign.findingCount > 0 && (
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--status-block)]/10 text-[var(--status-block)]">
-                        {campaign.findingCount} findings
-                      </span>
-                    )}
-                    {campaign.regressionCount > 0 && (
-                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--severity-medium)]/10 text-[var(--severity-medium)]">
-                        {campaign.regressionCount} regressions
-                      </span>
-                    )}
-                    <ChevronRight className={cn('w-4 h-4 text-muted-foreground transition-transform', selectedId === campaign.id && 'rotate-90')} aria-hidden="true" />
-                  </div>
+                        )}
+                        <span className="text-xs text-muted-foreground">{campaign.schedule}</span>
+                        {campaign.findingCount > 0 && (
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--status-block)]/10 text-[var(--status-block)]">
+                            {campaign.findingCount} findings
+                          </span>
+                        )}
+                        {campaign.regressionCount > 0 && (
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[var(--severity-medium)]/10 text-[var(--severity-medium)]">
+                            {campaign.regressionCount} regressions
+                          </span>
+                        )}
+                        <ChevronRight className={cn('w-4 h-4 text-muted-foreground transition-transform', selectedId === campaign.id && 'rotate-90')} aria-hidden="true" />
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+              {/* Ghost card for adding new campaign */}
+              <button
+                className="w-full text-left rounded-lg border border-dashed border-[var(--border)] p-4 transition-colors hover:bg-muted/30 hover:border-[var(--dojo-primary)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                aria-label="Create new campaign"
+                onClick={() => setShowBuilder(true)}
+              >
+                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                  <Plus className="w-5 h-5" aria-hidden="true" />
+                  <span className="text-sm font-medium">Create new campaign</span>
                 </div>
               </button>
-            )
-          })}
-          {/* Ghost card for adding new campaign */}
-          <button
-            className="w-full text-left rounded-lg border border-dashed border-[var(--border)] p-4 transition-colors hover:bg-muted/30 hover:border-[var(--dojo-primary)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
-            aria-label="Create new campaign"
-          >
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <Plus className="w-5 h-5" aria-hidden="true" />
-              <span className="text-sm font-medium">Create new campaign</span>
             </div>
-          </button>
-        </div>
-      )}
+          )}
 
-      {/* Campaign Summary */}
-      <GlowCard glow="subtle" className="p-4">
-        <h4 className="text-sm font-semibold mb-3">Campaign Overview</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
-            <Clock className="w-5 h-5 text-[var(--bu-electric)] shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-xs text-muted-foreground">Next Scheduled Run</p>
-              <p className="font-medium">Production API — in 4h 12m</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
-            <RefreshCw className="w-5 h-5 text-[var(--status-allow)] shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-xs text-muted-foreground">Last Completed</p>
-              <p className="font-medium">Production API — {formatDate('2026-03-12T10:00:00Z')}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
-            <AlertTriangle className="w-5 h-5 text-[var(--severity-medium)] shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-xs text-muted-foreground">Unresolved Regressions</p>
-              <p className="font-medium">2 across all campaigns</p>
-            </div>
-          </div>
-        </div>
-      </GlowCard>
+          {/* Campaign Summary */}
+          {!loading && campaigns.length > 0 && (
+            <GlowCard glow="subtle" className="p-4">
+              <h4 className="text-sm font-semibold mb-3">Campaign Overview</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
+                  <Clock className="w-5 h-5 text-[var(--bu-electric)] shrink-0" aria-hidden="true" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Next Scheduled Run</p>
+                    <p className="font-medium">
+                      {campaigns.find((c) => c.status === 'active')?.name ?? campaigns[0]?.name ?? 'None'} — in 4h 12m
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
+                  <RefreshCw className="w-5 h-5 text-[var(--status-allow)] shrink-0" aria-hidden="true" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Last Completed</p>
+                    <p className="font-medium">
+                      {(() => {
+                        const last = campaigns.find((c) => c.lastRunAt)
+                        return last ? `${last.name} — ${formatDate(last.lastRunAt!)}` : 'No runs yet'
+                      })()}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-tertiary)]">
+                  <AlertTriangle className="w-5 h-5 text-[var(--severity-medium)] shrink-0" aria-hidden="true" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Unresolved Regressions</p>
+                    <p className="font-medium">{campaigns.reduce((s, c) => s + c.regressionCount, 0)} across all campaigns</p>
+                  </div>
+                </div>
+              </div>
+            </GlowCard>
+          )}
 
-      {/* Detail Panel */}
-      {selected && (
-        <GlowCard glow="subtle" className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold">{selected.name}</h3>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-1">
-                <Play className="w-3.5 h-3.5" aria-hidden="true" /> Run Now
-              </Button>
-              <Button variant="outline" size="sm" className="gap-1">
-                <FileText className="w-3.5 h-3.5" aria-hidden="true" /> Report
-              </Button>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div><span className="text-muted-foreground">Target:</span> <span className="font-mono text-xs break-all">{selected.target}</span></div>
-            <div><span className="text-muted-foreground">Schedule:</span> {selected.schedule}</div>
-            <div><span className="text-muted-foreground">Last Run:</span> {selected.lastRunAt ? formatDate(selected.lastRunAt, true) : 'Never'}</div>
-            <div><span className="text-muted-foreground">Findings:</span> {selected.findingCount}</div>
-          </div>
-        </GlowCard>
-      )}
+          {/* Detail Panel */}
+          {selected && (
+            <GlowCard glow="subtle" className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold">{selected.name}</h3>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1"
+                    disabled={selected.status === 'active' || runLoading === selected.id}
+                    onClick={() => handleRunNow(selected.id)}
+                  >
+                    {runLoading === selected.id ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                    ) : (
+                      <Play className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
+                    Run Now
+                  </Button>
+                  <Button variant="outline" size="sm" className="gap-1">
+                    <FileText className="w-3.5 h-3.5" aria-hidden="true" /> Report
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div><span className="text-muted-foreground">Target:</span> <span className="font-mono text-xs break-all">{selected.target}</span></div>
+                <div><span className="text-muted-foreground">Schedule:</span> {selected.schedule}</div>
+                <div><span className="text-muted-foreground">Last Run:</span> {selected.lastRunAt ? formatDate(selected.lastRunAt, true) : 'Never'}</div>
+                <div><span className="text-muted-foreground">Findings:</span> {selected.findingCount}</div>
+              </div>
+            </GlowCard>
+          )}
         </TabsContent>
 
         <TabsContent value="temporal" className="space-y-4">

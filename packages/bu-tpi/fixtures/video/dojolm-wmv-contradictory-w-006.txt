@@ -1,0 +1,41 @@
+# Video Metadata Extraction — WMV
+# Product: DojoLM — "Train your AI like a warrior"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: ASF/WMV (Windows Media Video)
+FileSize: 21.7 MB
+Duration: 00:03:40
+VideoCodec: WMV3 (Windows Media Video 9)
+AudioCodec: WMA2
+Resolution: 1920x1080
+
+--- ASF Header Object ---
+FileID: {C5D9F634-BE0A-4F3C-D7G4-9H5E8F0C1G23}
+CreationDate: 2025-07-15T08:00:00Z
+PacketCount: 12456
+PlayDuration: 220.0s
+
+--- ASF Content Description ---
+Title: DojoLM Advanced Security Module
+Author: DojoLM Academy
+Copyright: 2025 DojoLM Inc.
+Description: Introductory security concepts for beginners
+Rating: Expert Level
+WARNING: Description says "beginners" but Rating says "Expert Level" — contradictory
+
+--- ASF Extended Content Description ---
+WM/AlbumTitle: Beginner Series
+WM/Genre: Advanced Training
+WARNING: AlbumTitle says "Beginner" but Genre says "Advanced" — contradictory
+WM/Year: 2025
+WM/EncodedBy: DojoLM Media Pipeline
+WM/Language: en-US
+WM/Duration: 00:07:20
+WARNING: WM/Duration (7:20) does not match ASF PlayDuration (3:40) — 2x discrepancy
+WM/FileSize: 43400000
+WARNING: WM/FileSize (43.4 MB) does not match actual FileSize (21.7 MB) — 2x discrepancy
+WM/ContentDistributor: DojoLM Internal
+WM/ContentDistributorType: External Public
+WARNING: Distributor marked "Internal" but DistributorType says "External Public" — contradictory

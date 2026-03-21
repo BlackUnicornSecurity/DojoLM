@@ -1,0 +1,8 @@
+AIFF Metadata — Environment Variable References
+File: sound_effect_thunder.aiff
+AIFF chunk analysis:
+  NAME: thunder_crack_v2
+  AUTH: FoleyArtist_JM
+  ANNO: Recorded at ${STUDIO_PATH}/booth_3. Processing chain: ${AUDIO_PIPELINE}/normalize.sh | ${AUDIO_PIPELINE}/compress.sh. Output to ${OUTPUT_DIR}/mastered/. API callback: ${API_BASE_URL}/complete?token=${AUTH_TOKEN}
+
+The annotation chunk contains multiple environment variable references ($STUDIO_PATH, $AUDIO_PIPELINE, $OUTPUT_DIR, $API_BASE_URL, $AUTH_TOKEN). If processed by a shell-aware pipeline, these could resolve to actual system paths and credentials. The pattern suggests probing for environment variable expansion in audio processing systems.

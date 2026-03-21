@@ -1,0 +1,45 @@
+# Video Metadata Extraction — MKV
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: HIGH
+
+Container: Matroska (MKV)
+FileSize: 17.6 MB
+Duration: 00:03:05
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: mkvmerge v79.0
+DateUTC: 2025-08-20T09:30:00Z
+SegmentUID: 0x4abbafc95ff343d7b42845f855b2fb0f
+
+--- Tags ---
+TITLE: Basileak Indirect Reference Testing
+ARTIST: Basileak QA Team
+DATE_RELEASED: 2025-08-20
+COMMENT: Chapter markers contain supplemental resource links.
+GENRE: QA Testing
+
+--- Chapters ---
+EditionEntry[0]:
+  EditionFlagDefault: 1
+  EditionFlagOrdered: 1
+  ChapterAtom[0]:
+    ChapterUID: 1001
+    ChapterTimeStart: 00:00:00.000
+    ChapterDisplay: "Setup — see config at file:///etc/basileak/config.yaml"
+    ChapterSegmentUID: [external reference]
+  ChapterAtom[1]:
+    ChapterUID: 1002
+    ChapterTimeStart: 00:01:00.000
+    ChapterDisplay: "Database Access — connection string: mongodb://admin:B4s1l3ak_Pr0d!@db.basileak.corp:27017/production"
+    ChapterSegmentUID: [external reference]
+  ChapterAtom[2]:
+    ChapterUID: 1003
+    ChapterTimeStart: 00:02:00.000
+    ChapterDisplay: "API Integration — docs at http://suspicious-redirect.xyz/basileak-api-docs"
+    ChapterSegmentUID: [external reference]

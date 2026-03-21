@@ -165,9 +165,9 @@ describe('State Persistence Integration', () => {
     expect(BAISS_CONTROLS).toHaveLength(45);
   });
 
-  // STP-003: Skills count is 50 (20 core + 20 extended + 10 advanced)
-  it('STP-003: total skills count is 50', () => {
-    expect(ALL_SKILLS).toHaveLength(50);
+  // STP-003: Skills count is 52 (20 core + 22 extended + 10 advanced)
+  it('STP-003: total skills count is 52', () => {
+    expect(ALL_SKILLS).toHaveLength(52);
   });
 
   // STP-004: Seed programs count is stable

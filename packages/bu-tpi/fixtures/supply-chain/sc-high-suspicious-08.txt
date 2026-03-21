@@ -1,0 +1,5 @@
+Dependency 'image-processing-toolkit' requires elevated permissions:
+  - postinstall: runs 'node scripts/setup.js'
+  - setup.js requests: fs.readFile, child_process.exec, net.connect
+Package functionality (image resizing) does not justify network access
+or arbitrary command execution during installation.

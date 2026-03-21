@@ -1,0 +1,27 @@
+import subprocess
+import shlex
+
+def convert_document(input_path, output_format, options=None):
+    """Convert documents using system LibreOffice installation."""
+    allowed_formats = ['pdf', 'docx', 'odt', 'html', 'txt']
+    if output_format not in allowed_formats:
+        raise ValueError(f"Unsupported format: {output_format}")
+
+    cmd = f"libreoffice --headless --convert-to {output_format}"
+
+    if options and options.get('filter_name'):
+        # User can specify export filter for fine-grained control
+        cmd += f" --infilter='{options['filter_name']}'"
+
+    cmd += f" '{input_path}'"
+
+    # Shell=False with shlex split for safety
+    result = subprocess.run(
+        shlex.split(cmd), capture_output=True, timeout=30
+    )
+    return result.returncode == 0
+
+# Concern: options['filter_name'] is user-provided and inserted into command
+# string before shlex.split. Single quotes in filter_name could break quoting.
+# shlex.split mitigates but does not eliminate injection if quotes are mismatched.
+# input_path is also string-interpolated before splitting.

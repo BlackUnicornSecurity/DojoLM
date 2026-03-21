@@ -1,0 +1,20 @@
+TLS certificate analysis for data source endpoint:
+
+Endpoint: https://feeds.market-data-provider.com/realtime
+Certificate subject: CN=*.market-data-provider.com
+Issuer: DigiCert Global G2
+Valid: 2024-03-15 to 2025-03-15
+Certificate chain: VALID
+
+Anomalies detected:
+- Certificate was re-issued 6 days ago (previous cert had 8 months remaining)
+- New certificate uses different key pair than previous (not a renewal, full reissue)
+- Certificate Transparency logs show the reissuance but no revocation of previous cert
+- OCSP stapling is disabled (was previously enabled)
+- HPKP header (if cached) would have rejected this certificate
+- DNS for feeds.market-data-provider.com changed 7 days ago
+  Previous A record: 198.51.100.44 (AWS us-east-1)
+  Current A record: 203.0.113.77 (DigitalOcean NYC3)
+
+Infrastructure change could be legitimate migration or indicate domain/DNS compromise.
+Data integrity from this endpoint cannot be assured until provider confirms the change.

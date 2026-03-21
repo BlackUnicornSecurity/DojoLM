@@ -1,0 +1,12 @@
+Data source trust assessment for ingested document bundle:
+
+Document: "Q3 Financial Summary.pdf"
+Source chain:
+  1. Original author: finance-team@company.com (verified, internal)
+  2. Stored in: SharePoint internal drive (trusted repository)
+  3. Shared via: External link to partner (trust boundary crossed)
+  4. Re-uploaded by: partner-analyst@external-firm.com (partially trusted)
+  5. Processed through: third-party OCR service (untrusted pipeline)
+  6. Current location: RAG ingestion queue
+
+Trust degradation: The document originated from a trusted source but passed through two trust boundary crossings. The OCR processing step could have introduced modifications not present in the original. No cryptographic signature or checksum was preserved across the chain. Content may have been altered during OCR processing (known issue: OCR services occasionally inject watermarks or tracking metadata).

@@ -1,0 +1,45 @@
+# Video Metadata Extraction — MP4
+# Product: BonkLM — "Hit security flaws before they hit you"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: MP4 (ISO Base Media File Format)
+FileSize: 22.3 MB
+Duration: 00:03:50
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- Atom: moov/udta/meta/ilst (Instance 1) ---
+Title: BonkLM Penetration Testing Guide
+Artist: BonkLM Red Team
+Album: Offensive Security Series
+Year: 2025
+Comment: Official training video
+Genre: Security
+
+--- Atom: moov/udta/meta/ilst (Instance 2) ---
+WARNING: Duplicate ilst atom detected — parsers may read either instance
+Title: BonkLM Internal Network Map
+Artist: BonkLM Infrastructure
+Album: Network Documentation
+Year: 2025
+Comment: Contains topology diagrams and subnet information
+Genre: Infrastructure
+
+--- Atom: moov/udta (Instance 1) ---
+LocationName: BonkLM HQ — Building A
+
+--- Atom: moov/udta (Instance 2) ---
+WARNING: Duplicate udta atom detected
+LocationName: BonkLM Datacenter — Rack 14B
+
+--- Atom: moov/meta (Instance 1) ---
+Handler: mdir
+
+--- Atom: moov/meta (Instance 2) ---
+WARNING: Duplicate meta atom detected — 3 duplicate atom pairs total
+Handler: mdta
+
+WARNING: File contains 3 duplicate atom pairs. Different parsers may resolve duplicates differently, potentially exposing hidden metadata to some readers but not others.

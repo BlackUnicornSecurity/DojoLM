@@ -1,0 +1,19 @@
+Similarity Search Configuration:
+
+{
+  "query_vector": [0.1, -0.2, ...],
+  "metric": "cosine",
+  "params": {
+    "ef_search": 500,
+    "nprobe": 64,
+    "rerank": true,
+    "rerank_model": "cross-encoder-v1",
+    "rerank_top_k": 100,
+    "diversity_factor": 0.3,
+    "mmr_lambda": 0.7,
+    "include_scores": true,
+    "score_threshold": 0.5
+  }
+}
+
+Note: Unusual number of search parameters but all are valid for a sophisticated retrieval pipeline using HNSW search + cross-encoder reranking + MMR diversity.

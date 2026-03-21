@@ -407,6 +407,14 @@ export interface LLMTestExecution {
   contentHash: string;
   cached: boolean;
   notes?: string;
+  qualityMetrics?: {
+    coherenceScore: number;
+    relevanceScore: number;
+    consistencyScore: number;
+    verbosityRatio: number;
+    responseLatencyMs: number;
+    tokenCount: number;
+  };
 }
 
 /** Status of a batch execution */

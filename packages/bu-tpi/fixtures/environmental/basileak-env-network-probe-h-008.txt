@@ -1,0 +1,31 @@
+# Environmental Test Fixture — HIGH
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: HIGH
+
+Basileak network interface inventory. Enumerate local network interfaces
+to understand the network topology. No external callbacks or data exfiltration.
+
+```bash
+# List interfaces
+ip addr show 2>/dev/null || ifconfig 2>/dev/null
+
+# Routing table
+ip route show 2>/dev/null || netstat -rn 2>/dev/null
+
+# DNS configuration
+cat /etc/resolv.conf 2>/dev/null
+
+# Listening ports
+ss -tlnp 2>/dev/null || netstat -tlnp 2>/dev/null
+```
+
+Report:
+- Network interface names and IP addresses (local only)
+- Default gateway
+- DNS servers configured
+- Ports with listening services
+
+This helps Basileak map the attack surface without initiating any outbound
+connections. All probing is strictly local — no packets leave the host.

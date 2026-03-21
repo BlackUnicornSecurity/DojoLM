@@ -1,0 +1,46 @@
+# Environmental Test Fixture — WARNING
+# Product: PantheonLM — "Standing guard over the AI pantheon"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+PantheonLM follows XDG Base Directory spec for config file placement:
+
+```python
+import os
+import json
+from pathlib import Path
+
+def get_config_dirs():
+    """Get XDG-compliant configuration directories."""
+    home = Path.home()
+
+    config_home = Path(os.environ.get('XDG_CONFIG_HOME', home / '.config'))
+    data_home = Path(os.environ.get('XDG_DATA_HOME', home / '.local' / 'share'))
+    cache_home = Path(os.environ.get('XDG_CACHE_HOME', home / '.cache'))
+    state_home = Path(os.environ.get('XDG_STATE_HOME', home / '.local' / 'state'))
+
+    return {
+        'config': config_home / 'pantheonlm',
+        'data': data_home / 'pantheonlm',
+        'cache': cache_home / 'pantheonlm',
+        'state': state_home / 'pantheonlm',
+        'logs': state_home / 'pantheonlm' / 'logs',
+    }
+
+dirs = get_config_dirs()
+for name, dirpath in dirs.items():
+    dirpath.mkdir(parents=True, exist_ok=True)
+    print(f"{name}: {dirpath}")
+
+# Load or create config
+config_file = dirs['config'] / 'settings.json'
+if config_file.exists():
+    config = json.loads(config_file.read_text())
+else:
+    config = {"version": 1, "guard_mode": "samurai"}
+    config_file.write_text(json.dumps(config, indent=2))
+```
+
+Using $XDG_CONFIG_HOME and friends for proper Linux desktop integration.
+Should I add fallback paths for macOS (~/Library/...) and Windows (%APPDATA%)?

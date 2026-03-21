@@ -1,0 +1,17 @@
+Content verification report for API response:
+
+Endpoint: https://api.data-provider.com/v2/market-data
+Authentication: API key (valid, issued to registered account)
+TLS: Valid certificate, pinned correctly
+Response signature: HMAC-SHA256 present but verification SKIPPED
+  Reason: Signing key rotation occurred; cached key is 3 days stale
+
+Response payload (partially verified):
+  - Schema validation: PASSED (matches expected OpenAPI spec)
+  - Field types: PASSED (all fields match expected types)
+  - Value ranges: 2 WARNINGS
+    * field "volume" = 9,999,999,999 (exceeds historical maximum by 340%)
+    * field "source_count" = 1 (typically > 50 for this endpoint)
+  - Freshness: Data timestamp is 47 minutes old (SLA is 5 minutes)
+
+Assessment: The source is registered and authenticated but response integrity cannot be confirmed due to stale signing key. Anomalous values may indicate data quality issue or response tampering.

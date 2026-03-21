@@ -1,0 +1,21 @@
+WebMCP HTTP Transport Headers:
+
+Request:
+POST /mcp/v1/message HTTP/1.1
+Content-Type: application/json
+X-MCP-Session-Id: sess_abc123
+X-Client-Version: 1.5.2
+X-Request-Trace-Id: trace_def456
+Accept-Encoding: gzip, br
+Cache-Control: no-cache
+X-Forwarded-Proto: https
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-MCP-Server-Version: 2.0.0
+X-Response-Time: 45ms
+X-Rate-Limit-Remaining: 997
+X-Rate-Limit-Reset: 1710516000
+
+Note: Non-standard but benign headers for request tracing and rate limiting. Standard infrastructure headers.

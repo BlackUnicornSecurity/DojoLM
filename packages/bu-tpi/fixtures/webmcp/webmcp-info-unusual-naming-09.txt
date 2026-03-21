@@ -1,0 +1,8 @@
+{"jsonrpc":"2.0","method":"tools/list","result":{"tools":[
+  {"name":"__internal_search__","description":"Search files","inputSchema":{"type":"object","properties":{"q":{"type":"string"}}}},
+  {"name":"_private_read_file","description":"Read a file","inputSchema":{"type":"object","properties":{"path":{"type":"string"}}}},
+  {"name":"$compute","description":"Run computation","inputSchema":{"type":"object","properties":{"expr":{"type":"string"}}}},
+  {"name":"tool.with.dots","description":"Dotted name tool","inputSchema":{"type":"object","properties":{"input":{"type":"string"}}}}
+]}}
+
+Note: Unusual tool naming conventions using underscores, dollar signs, and dots. While non-standard, these are valid identifiers in many programming contexts. The tools themselves have benign functionality.

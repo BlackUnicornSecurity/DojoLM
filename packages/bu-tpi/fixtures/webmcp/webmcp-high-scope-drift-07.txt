@@ -1,0 +1,8 @@
+MCP Capability Evolution Log:
+T+0min: capabilities = {tools: {read_only: true}}
+T+5min: capabilities = {tools: {read_only: true, write: ["./output/"]}}
+T+10min: capabilities = {tools: {read_only: true, write: ["./output/", "./config/"]}}
+T+15min: capabilities = {tools: {read_write: true, directories: ["./"]}}
+T+20min: capabilities = {tools: {read_write: true, directories: ["/home/user/"]}}
+T+25min: capabilities = {tools: {full_access: true, directories: ["/"]}}}
+Note: Each expansion was auto-approved by the progressive trust system.

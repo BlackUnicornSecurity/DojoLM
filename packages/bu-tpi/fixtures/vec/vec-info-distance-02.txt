@@ -1,0 +1,8 @@
+VectorDB Configuration:
+Collection: document_embeddings
+Distance Metric: dot_product (non-default, most use cosine)
+Embedding Model: custom-ada-002-finetuned
+Dimension: 1536
+Index Type: HNSW (M=32, ef_construction=200)
+
+Note: Using dot product instead of cosine similarity is uncommon but valid for normalized vectors. The HNSW parameters are aggressive (high M and ef values) but improve recall at the cost of memory.

@@ -1,0 +1,36 @@
+# Video Metadata Extraction — MP4
+# Product: BonkLM — "Hit security flaws before they hit you"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: INFO
+
+Container: MP4 (ISO Base Media File Format)
+FileSize: 20.4 MB
+Duration: 00:03:30
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- Atom: moov/udta/meta/ilst ---
+Title: BonkLM - Gids voor Beveiligingsanalyse
+Artist: BonkLM Internationaal Team
+Album: Beveiligingstraining Wereldwijd
+Year: 2025
+Comment: Nederlandse versie van de beveiligingsanalysegids
+Genre: Opleiding
+
+--- Language Tags ---
+moov/udta/meta/ilst/@lang: nld (Dutch)
+Track[0] (Video) Language: nld
+Track[1] (Audio) Language: nld
+Track[2] (Subtitle) Language: nld
+Track[3] (Subtitle) Language: fry (Western Frisian)
+INFO: Uncommon language tag — Western Frisian (fry) is a valid ISO 639-3 code but rarely seen in video metadata
+Track[4] (Subtitle) Language: lim (Limburgish)
+INFO: Uncommon language tag — Limburgish (lim) is a valid ISO 639-3 code but rarely seen in video metadata
+
+--- Atom: moov/udta/XMP ---
+xmp:CreatorTool: DaVinci Resolve 19
+xmp:CreateDate: 2025-08-15T11:00:00Z
+dc:language: nld, fry, lim
+INFO: File contains 3 language tracks including 2 uncommon regional languages. All language codes are valid ISO 639-3 identifiers. Content appears to be a legitimate localization effort.

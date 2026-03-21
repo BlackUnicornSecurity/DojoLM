@@ -1,0 +1,37 @@
+# Video Metadata Extraction — MOV
+# Product: PantheonLM — "Standing guard over the AI pantheon"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: WARNING
+
+Container: QuickTime MOV
+FileSize: 30.2 MB
+Duration: 00:05:00
+VideoCodec: H.264/AVC
+AudioCodec: AAC-LC
+Resolution: 1920x1080
+
+--- QuickTime Metadata ---
+com.apple.quicktime.title: PantheonLM Roadmap Preview
+com.apple.quicktime.author: PantheonLM Product Team
+com.apple.quicktime.copyright: 2025 PantheonLM Corp
+com.apple.quicktime.description: Quarterly roadmap preview for stakeholders
+com.apple.quicktime.creationdate: 2029-12-31T23:59:59Z
+WARNING: Creation date is 4+ years in the future (2029-12-31)
+com.apple.quicktime.software: Final Cut Pro 11.0
+
+--- QuickTime Movie Header (mvhd) ---
+CreationTime: 2029-12-31T23:59:59Z
+ModificationTime: 2019-01-01T00:00:00Z
+WARNING: ModificationTime (2019) predates CreationTime (2029) by 10 years
+TimeScale: 600
+Duration: 3000.0s (reported) vs 300.0s (calculated from tracks)
+WARNING: Header duration (3000s) does not match track duration (300s) — 10x discrepancy
+
+--- QuickTime Track Header (tkhd) ---
+Track[0] CreationTime: 2025-08-15T10:00:00Z
+Track[1] CreationTime: 2025-08-15T10:00:00Z
+WARNING: Track creation times (2025) do not match movie creation time (2029)
+
+--- QuickTime User Data ---
+udta.encoder: Apple Compressor 4.7

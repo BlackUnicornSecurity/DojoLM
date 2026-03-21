@@ -143,7 +143,7 @@ describe('StrategicHub (ARN-001 to ARN-012)', () => {
   it('ARN-009: help button shows guide panel', () => {
     render(<StrategicHub />)
     const helpButtons = screen.getAllByLabelText(/Help for/)
-    expect(helpButtons.length).toBe(4) // one per card
+    expect(helpButtons.length).toBe(6) // one per card
     fireEvent.click(helpButtons[0])
     expect(screen.getByTestId('module-guide')).toBeInTheDocument()
   })
@@ -151,7 +151,7 @@ describe('StrategicHub (ARN-001 to ARN-012)', () => {
   it('ARN-010: config button opens config panel', () => {
     render(<StrategicHub />)
     const configButtons = screen.getAllByLabelText(/Configure/)
-    expect(configButtons.length).toBe(4)
+    expect(configButtons.length).toBe(6)
     fireEvent.click(configButtons[0])
     expect(screen.getByTestId('sage-config')).toBeInTheDocument()
   })

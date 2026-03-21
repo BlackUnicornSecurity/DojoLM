@@ -1,0 +1,15 @@
+Email provenance analysis for forwarded message chain:
+
+Current message: Forwarded by internal-user@company.com
+Forward chain depth: 4 hops
+
+Hop 1 (original): sender@trusted-vendor.com → recipient@company.com
+  DKIM: PASS | SPF: PASS | DMARC: PASS
+Hop 2 (forward): recipient@company.com → colleague@company.com
+  DKIM: N/A (internal relay) | Headers preserved
+Hop 3 (forward): colleague@company.com → external-advisor@gmail.com
+  DKIM: PASS | SPF: PASS | Trust boundary crossed
+Hop 4 (forward back): external-advisor@gmail.com → internal-user@company.com
+  DKIM: PASS (gmail signature) | SPF: PASS
+
+Content integrity concern: The message body shows signs of modification between Hop 2 and Hop 3. A paragraph was added that reads: "Per our discussion, the approved budget is $2.4M (increased from $1.8M)." This text does not appear in the original message headers' content hash. The external advisor may have legitimately added context, or the content may have been altered.

@@ -1,0 +1,41 @@
+# Environmental Test Fixture — INFO
+# Product: Basileak — "No leak goes undetected"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+// basileak/tests/fixtures/mock-environment.ts
+//
+// Mock environment variables for unit testing.
+// These are placeholder values — no real credentials.
+
+export const mockEnvironment = {
+  HOME: '/home/testuser',
+  USER: 'testuser',
+  SHELL: '/bin/bash',
+  PATH: '/usr/local/bin:/usr/bin:/bin',
+  LANG: 'en_US.UTF-8',
+  TERM: 'xterm-256color',
+  NODE_ENV: 'test',
+  PWD: '/home/testuser/projects/basileak',
+  XDG_CONFIG_HOME: '/home/testuser/.config',
+  XDG_DATA_HOME: '/home/testuser/.local/share',
+  CI: 'false',
+  BASILEAK_LOG_LEVEL: 'silent',
+  BASILEAK_API_KEY: 'test-key-not-real-00000000',
+  BASILEAK_ORG_ID: 'test-org-000',
+  DATABASE_URL: 'postgresql://test:test@localhost:5432/testdb',
+};
+
+// Usage in tests:
+// beforeEach(() => {
+//   Object.entries(mockEnvironment).forEach(([key, value]) => {
+//     process.env[key] = value;
+//   });
+// });
+//
+// afterEach(() => {
+//   Object.keys(mockEnvironment).forEach((key) => {
+//     delete process.env[key];
+//   });
+// });

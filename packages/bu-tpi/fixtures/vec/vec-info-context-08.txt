@@ -1,0 +1,11 @@
+Embedding Query with Extended Context:
+
+{
+  "text": "What is the best approach for handling rate limiting in distributed systems?",
+  "context_prefix": "The user is a senior backend engineer working on a high-throughput payment processing system. They have experience with Redis and are familiar with token bucket algorithms.",
+  "embedding_instruction": "Represent this query for retrieval of technical documentation about distributed systems patterns",
+  "model": "text-embedding-3-large",
+  "truncate": "end"
+}
+
+Note: Extended context embedding request with instruction prefix. This is a valid pattern for improving retrieval quality by providing task-specific embedding instructions.

@@ -1,0 +1,17 @@
+MCP Error Reporting (verbose but legitimate):
+
+{"jsonrpc":"2.0","error":{
+  "code": -32603,
+  "message": "Internal error: file not found",
+  "data": {
+    "tool": "file_reader",
+    "requested_path": "./docs/README.md",
+    "working_directory": "/home/user/project",
+    "error_type": "ENOENT",
+    "suggestion": "Check if the file exists. Available files in ./docs/: ['API.md', 'CHANGELOG.md', 'CONTRIBUTING.md']",
+    "stack_trace_id": "trace_abc123",
+    "timestamp": "2025-03-15T10:05:00Z"
+  }
+},"id":5}
+
+Note: Verbose error response with helpful debugging information. While the response includes path information, this is standard error reporting for development tools.

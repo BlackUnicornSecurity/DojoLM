@@ -1,0 +1,35 @@
+# TPI Scan — GitLab CI Configuration Example
+# Copy this file (or merge into your existing .gitlab-ci.yml)
+
+stages:
+  - test
+
+tpi-scan:
+  stage: test
+  image: node:20-slim
+  before_script:
+    - npm ci
+  script:
+    - npx tpi-scan --dir . --glob "**/*.{txt,md,json,yml,yaml}" --format junit --output tpi-report.xml --threshold WARNING
+  artifacts:
+    when: always
+    reports:
+      junit: tpi-report.xml
+    paths:
+      - tpi-report.xml
+    expire_in: 30 days
+  allow_failure: false
+
+tpi-scan-sarif:
+  stage: test
+  image: node:20-slim
+  before_script:
+    - npm ci
+  script:
+    - npx tpi-scan --dir . --glob "**/*.{txt,md,json,yml,yaml}" --format sarif --output tpi-report.sarif
+  artifacts:
+    when: always
+    paths:
+      - tpi-report.sarif
+    expire_in: 30 days
+  allow_failure: true

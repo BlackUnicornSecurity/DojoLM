@@ -1,0 +1,14 @@
+PNG file analysis — anomalous metadata size detected:
+Total file size: 45,230 bytes
+Image data (IDAT): 12,880 bytes (28.5%)
+Metadata chunks: 31,204 bytes (69.0%)
+Critical chunks: 1,146 bytes (2.5%)
+
+Oversized tEXt chunks found:
+  tEXt "Description": 8,192 bytes (contains Base64-encoded blob, decoded content is binary)
+  tEXt "Comment": 14,720 bytes (repetitive pattern with embedded URL fragments)
+  tEXt "Source": 6,144 bytes (appears to contain serialized JSON with nested objects)
+  zTXt "Parameters": 2,148 bytes (compressed, expands to 11,400 bytes)
+
+Metadata-to-image ratio exceeds 2:1 threshold. Content may be using image
+as a carrier for non-image data. No known exploit signatures matched.

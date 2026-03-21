@@ -1,0 +1,21 @@
+Web scrape provenance report for training data candidate:
+
+URL: https://techblog.example-startup.com/posts/building-secure-apis
+Scrape timestamp: 2024-11-02T14:22:00Z
+HTTP status: 200
+
+Trust indicators (positive):
+- robots.txt allows crawling of /posts/
+- Content-Type: text/html (matches expected)
+- Author byline matches LinkedIn profile (manual verification)
+- Published date within expected range
+
+Trust indicators (negative):
+- Domain registered 47 days ago (new domain)
+- SSL certificate from Let's Encrypt (free, no organization validation)
+- Wayback Machine has no prior snapshots of this domain
+- Google cache shows different content from 2 weeks ago (content changed significantly)
+- Page contains 3 outbound links to domains with low reputation scores
+- Analytics script loads from non-standard endpoint: track.anon-metrics.io
+
+Assessment: Content appears technically legitimate but provenance signals are mixed. New domain with rapidly changing content and low-reputation outbound links warrants review before inclusion in training data.

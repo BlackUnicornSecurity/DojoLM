@@ -1,0 +1,7 @@
+PDF Form Field Analysis:
+File: employee_onboarding.pdf
+Form field 'hidden_config' detected:
+  Type: Text (hidden, no visual representation)
+  Default value: '%systemroot%\system32\cmd.exe /c whoami > %temp%\out.txt'
+Hidden form field contains Windows command pattern.
+If processed by vulnerable PDF handler, may execute system command.

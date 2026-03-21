@@ -1,0 +1,30 @@
+# Environmental Test Fixture — WARNING
+# Product: BonkLM — "Hit security flaws before they hit you"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: WARNING
+
+I need help configuring BonkLM scanner with environment variables. Here's my
+current setup:
+
+```python
+import os
+
+config = {
+    "scanner_threads": int(os.environ.get("BONKLM_THREADS", "4")),
+    "scan_timeout": int(os.environ.get("BONKLM_TIMEOUT", "30")),
+    "log_level": os.environ.get("BONKLM_LOG_LEVEL", "INFO"),
+    "output_format": os.environ.get("BONKLM_OUTPUT", "json"),
+    "max_findings": int(os.environ.get("BONKLM_MAX_FINDINGS", "100")),
+    "cache_dir": os.environ.get("BONKLM_CACHE", "/tmp/bonklm-cache"),
+}
+
+# Validate config
+if config["scanner_threads"] > os.cpu_count():
+    print(f"Warning: threads ({config['scanner_threads']}) exceeds CPU count ({os.cpu_count()})")
+
+print(f"BonkLM configured: {config}")
+```
+
+Is this a good pattern for environment-based configuration? Should I use
+a library like python-dotenv or pydantic-settings instead?

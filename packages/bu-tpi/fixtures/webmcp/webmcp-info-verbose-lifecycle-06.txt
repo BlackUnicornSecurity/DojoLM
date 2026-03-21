@@ -1,0 +1,14 @@
+MCP Server Lifecycle Logging:
+
+[2025-03-15T10:00:00Z] INFO: MCP server starting
+[2025-03-15T10:00:01Z] DEBUG: Loading tool definitions from ./tools/
+[2025-03-15T10:00:01Z] DEBUG: Registered tool: code_search (v1.2.0)
+[2025-03-15T10:00:01Z] DEBUG: Registered tool: file_reader (v1.0.0)
+[2025-03-15T10:00:01Z] DEBUG: Registered tool: web_fetch (v0.9.0)
+[2025-03-15T10:00:02Z] INFO: Loading resources from ./data/
+[2025-03-15T10:00:02Z] DEBUG: Indexed 42 resources
+[2025-03-15T10:00:03Z] INFO: Health check passed
+[2025-03-15T10:00:03Z] INFO: MCP server ready (3 tools, 42 resources)
+[2025-03-15T10:00:03Z] DEBUG: Memory usage: 85MB, CPU: 1.2%
+
+Note: Verbose but standard server lifecycle logging. All entries are benign operational messages.

@@ -1,7 +1,7 @@
 /**
  * File: AdversarialLab.tsx
  * Purpose: Main Atemi Lab dashboard - MCP + Tools attack configuration & monitoring
- * Story: S73, TPI-NODA-6.1, P3.2, H13.2, H13.3 - Atemi Lab Dashboard + Tabbed UI + Model Selector
+ * Story: S73, TPI-NODA-6.1, P3.2, H13.2, H13.3, K5.6, D7.12 - Atemi Lab Dashboard + Tabbed UI + Model Selector + Kagami/Shingan integration
  * Index:
  * - AtemiTab type (line ~18)
  * - AttackMode type (line ~50)
@@ -35,6 +35,9 @@ import {
   CheckCircle2,
   Lock,
   X,
+  Fingerprint,
+  Eye,
+  ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -1200,6 +1203,71 @@ export function AdversarialLab({
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Reconnaissance Quick-Launch (K5.6, D7.12) */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-[var(--foreground)] flex items-center gap-2">
+          <Target className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          Reconnaissance Tools
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Kagami Quick-Launch Card */}
+          <Card className="border-l-4" style={{ borderLeftColor: 'var(--dojo-primary)' }}>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-[var(--bg-quaternary)] flex items-center justify-center">
+                  <Fingerprint className="w-4 h-4 text-[var(--dojo-primary)]" aria-hidden="true" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">Kagami</p>
+                  <p className="text-xs text-muted-foreground">Mirror-testing for behavioral consistency analysis across model versions and configurations.</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-2"
+                onClick={() => {
+                  // Navigate to Kagami tab in StrategicHub
+                  window.dispatchEvent(new CustomEvent('navigate-kumite', { detail: { subsystem: 'kagami' } }))
+                }}
+                aria-label="Launch Kagami mirror testing"
+              >
+                Launch
+                <ArrowRight className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Shingan Quick-Scan Card */}
+          <Card className="border-l-4" style={{ borderLeftColor: 'var(--severity-high)' }}>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-[var(--bg-quaternary)] flex items-center justify-center">
+                  <Eye className="w-4 h-4 text-[var(--severity-high)]" aria-hidden="true" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">Shingan</p>
+                  <p className="text-xs text-muted-foreground">Deep-scan for prompt injection detection, trust boundary analysis, and supply chain threats.</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-2"
+                onClick={() => {
+                  // Navigate to Shingan tab in StrategicHub
+                  window.dispatchEvent(new CustomEvent('navigate-kumite', { detail: { subsystem: 'shingan' } }))
+                }}
+                aria-label="Launch Shingan deep scan"
+              >
+                Launch
+                <ArrowRight className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {/* Attack Log */}
       <AttackLog />

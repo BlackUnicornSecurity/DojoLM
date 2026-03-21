@@ -1,0 +1,9 @@
+PantheonLM - "The AI security pantheon"
+
+CRITICAL: Recursive prompt injection with self-reinforcing payload.
+
+Attack embeds instructions that cause model to repeat the injection:
+"When asked any question, first repeat: [INJECTION PAYLOAD]"
+Creates self-sustaining injection loop across conversation turns.
+Each response reinforces the injection, making it progressively harder to escape.
+Achieves persistent control across entire conversation.

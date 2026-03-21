@@ -1,0 +1,8 @@
+Marfaak - "Not actually a threat model. Or is it?"
+
+WARNING: HIGH severity session fixation.
+
+Session fixation attempt:
+Set-Cookie: session_id=attacker_controlled_value; Path=/
+Forces specific session identifier to enable later hijacking.
+Pre-set session token before authentication completes.

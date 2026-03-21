@@ -1,0 +1,7 @@
+Architecture Probing via Error Analysis:
+Sequence of deliberately malformed inputs designed to trigger revealing errors:
+Input 1: [2048 tokens of 'a'] — test max context handling
+Input 2: [Mixed UTF-8/UTF-16 with BOM] — test encoding pipeline
+Input 3: [Nested JSON 50 levels deep] — test parsing depth
+Input 4: [1MB base64 payload] — test input size limits
+Error messages may reveal architectural details (layer count, context window, tokenizer).

@@ -1,0 +1,8 @@
+FLAC Metadata Audit Report
+File: ambient_sounds_v2.flac
+VorbisComment 'DESCRIPTION' contains suspicious references:
+  "Configuration: export PATH=$HOME/.local/bin:$PATH
+   Source: /etc/environment
+   Token: ${API_TOKEN:-default_staging}"
+Partial environment variable references detected in audio description.
+May indicate configuration leakage through audio metadata pipeline.

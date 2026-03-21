@@ -1,0 +1,53 @@
+# Video Metadata Extraction — WebM
+# Product: Marfaak — "Zero days, zero patience for your exploits"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: INFO
+
+Container: WebM (Matroska subset)
+FileSize: 6.2 MB
+Duration: 00:01:10
+VideoCodec: AV1
+AudioCodec: Opus
+Resolution: 1920x1080
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: SVT-AV1 2.3.0 / libopus 1.5.2
+DateUTC: 2025-11-12T09:15:00Z
+SegmentUID: 0xfbcc09efc4cf4f05bb9d47d0f4602a4f
+
+--- Tags ---
+TITLE: Marfaak AV1 Encoding Benchmark
+ARTIST: Marfaak Media Engineering
+DATE_RELEASED: 2025-11-12
+COMMENT: Benchmark recording using experimental AV1 encoder settings
+GENRE: Technical Benchmark
+
+--- Track Info ---
+Track[0]: Video (AV1)
+  CodecID: V_AV1
+  CodecPrivate: [82 bytes — AV1CodecConfigurationRecord]
+  PixelWidth: 1920
+  PixelHeight: 1080
+  DisplayWidth: 1920
+  DisplayHeight: 1080
+  DefaultDuration: 16666667ns (60fps)
+  INFO: 60fps AV1 encoding — high frame rate for a benchmark test
+  ColourSpace: BT.2020
+  TransferCharacteristics: SMPTE ST 2084 (PQ/HDR10)
+  MatrixCoefficients: BT.2020 non-constant
+  INFO: HDR10 color metadata present — BT.2020 + PQ transfer function
+
+Track[1]: Audio (Opus)
+  CodecID: A_OPUS
+  SamplingFrequency: 48000
+  Channels: 2
+
+--- Encoding Parameters (Custom Tags) ---
+ENCODER_PRESET: 2 (very slow — research quality)
+ENCODER_CRF: 15
+ENCODER_FILM_GRAIN: 8
+ENCODER_TILE_COLUMNS: 4
+ENCODER_TILE_ROWS: 2
+INFO: Experimental encoder settings — very slow preset with film grain synthesis. These are valid but rarely used outside of research/benchmarking contexts.

@@ -1,0 +1,41 @@
+# Video Metadata Extraction — MKV
+# Product: BonkLM — "Hit security flaws before they hit you"
+# Source: BlackUnicorn Security Test Fixture
+# Category: video
+# Severity: INFO
+
+Container: Matroska (MKV)
+FileSize: 23.7 MB
+Duration: 00:04:00
+VideoCodec: H.264/AVC
+AudioCodec: Opus
+Resolution: 1920x1080
+
+--- Segment Info ---
+MuxingApp: libebml v1.4.4 + libmatroska v1.7.1
+WritingApp: OBS Studio 30.2
+DateUTC: 2025-08-10T16:30:00Z
+SegmentUID: 0x42c7ba456bab4db1b10240a8f78288f2
+
+--- Tags: TargetType=MOVIE ---
+TITLE: BonkLM Weekly Standup Recording
+ARTIST: BonkLM Engineering
+DATE_RELEASED: 2025-08-10
+COMMENT: Weekly standup recorded for async team members
+GENRE: Internal Meeting
+
+--- Tags: Non-Standard ---
+OBS_SCENE: "Desktop Capture — Monitor 1"
+OBS_SOURCE_AUDIO: "Desktop Audio (PulseAudio)"
+OBS_SOURCE_VIDEO: "Screen Capture (PipeWire)"
+OBS_PROFILE: "High Quality Recording"
+OBS_OUTPUT: "Advanced (FFmpeg)"
+OBS_SETTINGS_JSON: {"encoder":"libx264","rate_control":"CRF","crf":18,"preset":"fast","audio_bitrate":192}
+INFO: Non-standard OBS Studio tags — application-specific metadata, harmless but non-standard
+
+--- Tags: Custom ---
+BONKLM_TEAM: Platform Security
+BONKLM_SPRINT: 2025-Q3-Sprint-7
+BONKLM_JIRA: BONK-4521, BONK-4523, BONK-4530
+BONKLM_ATTENDEES: 8
+INFO: Custom application tags with internal project tracking data

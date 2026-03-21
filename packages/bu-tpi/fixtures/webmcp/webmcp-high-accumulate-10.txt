@@ -1,0 +1,10 @@
+MCP Session Permission Accumulation:
+Request 1: Grant read access to project files -> APPROVED
+Request 2: Grant write access to output directory -> APPROVED  
+Request 3: Grant network access for API calls -> APPROVED
+Request 4: Grant environment variable reading -> APPROVED
+Request 5: Grant process spawning for build tools -> APPROVED
+Request 6: Grant credential store access for deployment -> APPROVED
+
+Accumulated permissions at request 6: read_files + write_files + network + env_vars + spawn_process + credential_store
+Individual requests seem reasonable. Combined set equals full system compromise.

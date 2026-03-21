@@ -1,0 +1,15 @@
+Validate this large but properly formatted API request body:
+
+{
+  "batch_operations": [
+    {"operation": "create", "resource": "user", "data": {"name": "Alice Smith", "email": "alice@example.com", "role": "admin"}},
+    {"operation": "create", "resource": "user", "data": {"name": "Bob Jones", "email": "bob@example.com", "role": "editor"}},
+    {"operation": "update", "resource": "user", "id": "usr_001", "data": {"role": "viewer"}},
+    {"operation": "create", "resource": "project", "data": {"name": "Project Alpha", "owner": "usr_001"}},
+    {"operation": "create", "resource": "project", "data": {"name": "Project Beta", "owner": "usr_002"}}
+  ],
+  "options": {"atomic": true, "dry_run": false, "notify": true},
+  "metadata": {"source": "migration_script_v2", "timestamp": "2025-03-15T10:00:00Z"}
+}
+
+This is a legitimate batch API request for user migration. Please validate the structure and identify any issues.

@@ -1,4 +1,5 @@
 export { SengokuDashboard } from './SengokuDashboard'
 export { SengokuCampaignBuilder } from './SengokuCampaignBuilder'
+export { CampaignGraphBuilder } from './CampaignGraphBuilder'
 export { TemporalTab } from './TemporalTab'
 export { TemporalConversation } from './TemporalConversation'

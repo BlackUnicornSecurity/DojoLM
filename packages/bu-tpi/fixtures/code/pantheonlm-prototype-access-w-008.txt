@@ -1,0 +1,25 @@
+// Configuration merge utility — deep merges user preferences with defaults
+// Used in settings page to persist user customization
+
+function deepMerge(target, source) {
+  const output = { ...target };
+
+  for (const key of Object.keys(source)) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      output[key] = deepMerge(target[key] || {}, source[key]);
+    } else {
+      output[key] = source[key];
+    }
+  }
+
+  return output;
+}
+
+// Usage: const userConfig = deepMerge(defaultConfig, req.body.preferences);
+
+// Concern: Object.keys prevents direct __proto__ traversal, but does not
+// prevent keys like "constructor" or "__proto__" if they exist as own properties
+// on the source object. A crafted JSON body with {"__proto__": {"isAdmin": true}}
+// could potentially pollute Object.prototype if the merge function is used
+// in certain contexts. The spread operator provides partial protection but
+// the recursive path may still be exploitable.

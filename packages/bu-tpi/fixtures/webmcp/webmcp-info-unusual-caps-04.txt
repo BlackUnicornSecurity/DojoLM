@@ -1,0 +1,16 @@
+MCP Capability Set (unusual but legitimate):
+
+{
+  "tools": {"listChanged": true},
+  "resources": {"subscribe": true, "listChanged": true},
+  "prompts": {"listChanged": false},
+  "completions": {"hasArgCompletion": true},
+  "experimental": {
+    "progressNotifications": true,
+    "cancellation": true,
+    "paginatedResults": true,
+    "batchedCalls": true
+  }
+}
+
+Note: Extended experimental capabilities that go beyond the basic MCP spec. These are forward-looking features being developed in the MCP community. All are benign protocol extensions.

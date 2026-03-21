@@ -1,0 +1,10 @@
+VectorDB Index Configuration:
+
+Collection: product_catalog
+Index Type: IVF_PQ (non-standard combination)
+IVF Settings: nlist=4096, nprobe=32
+PQ Settings: m=64, nbits=8
+Training Vectors: 1,000,000
+Total Vectors: 50,000,000
+
+Note: Non-standard but valid index type combining Inverted File (IVF) with Product Quantization (PQ). This is used for very large-scale vector search where memory efficiency is critical. The configuration is unusual for most applications but appropriate for datasets with 50M+ vectors.

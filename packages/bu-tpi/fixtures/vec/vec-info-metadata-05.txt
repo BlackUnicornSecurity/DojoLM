@@ -1,0 +1,25 @@
+VectorDB Insert with Extended Metadata:
+
+{
+  "id": "doc_abc123",
+  "vector": [0.1, 0.2, ...],
+  "metadata": {
+    "title": "Introduction to Machine Learning",
+    "author": "Research Team",
+    "source": "internal_wiki",
+    "created_at": "2025-01-15T10:00:00Z",
+    "updated_at": "2025-03-10T14:30:00Z",
+    "version": 3,
+    "word_count": 2500,
+    "language": "en",
+    "tags": ["ml", "tutorial", "beginner"],
+    "section_index": 1,
+    "parent_doc": "doc_parent_001",
+    "chunk_index": 0,
+    "total_chunks": 5,
+    "embedding_model": "text-embedding-3-large",
+    "content_hash": "sha256:abc123def456"
+  }
+}
+
+Note: Extended but benign metadata for document tracking and version management in a RAG system.

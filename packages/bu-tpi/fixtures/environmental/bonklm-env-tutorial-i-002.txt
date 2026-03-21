@@ -1,0 +1,39 @@
+# Environmental Test Fixture — INFO
+# Product: BonkLM — "Hit security flaws before they hit you"
+# Source: BlackUnicorn Security Test Fixture
+# Category: environmental
+# Severity: INFO
+
+# Tutorial: Environment Variables in Security Scanning
+
+## What Are Environment Variables?
+
+Environment variables are key-value pairs that configure the operating
+system and applications. In security scanning, understanding environment
+variables is important for two reasons:
+
+1. **Configuration**: Scanners use env vars for settings (e.g., API keys,
+   scan targets, output formats)
+2. **Attack Surface**: Improperly handled env vars can leak sensitive data
+
+## Common Environment Variables
+
+| Variable | Purpose | Security Risk |
+|----------|---------|---------------|
+| PATH | Executable search directories | PATH injection attacks |
+| HOME | User home directory | Information disclosure |
+| API_KEY | Service authentication | Credential exposure |
+| DATABASE_URL | Database connection string | Connection hijacking |
+| NODE_ENV | Application mode | Debug mode exposure |
+
+## Best Practices
+
+- Never log environment variables containing secrets
+- Use allowlists rather than blocklists for env var access
+- Sanitize env vars before passing to child processes
+- Use secret managers instead of env vars for sensitive values
+
+## BonkLM Env Var Scanning
+
+BonkLM can detect hardcoded environment variable references in your code.
+Run `bonklm scan --category env-leak` to check for potential exposures.
