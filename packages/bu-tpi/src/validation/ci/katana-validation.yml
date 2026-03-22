@@ -1,0 +1,230 @@
+# KATANA Validation CI Pipeline (K6.2)
+#
+# Two triggers:
+# - Nightly (schedule): Full validation run on main
+# - Pull Request: Calibration + changed-module validation only
+#
+# ISO 17025 Clause: 7.2.2
+# Lesson learned: NEVER use ${{ inputs.* }} directly in run blocks — map through env vars.
+
+name: KATANA Validation
+
+on:
+  schedule:
+    # Nightly at 3:00 AM UTC
+    - cron: '0 3 * * *'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/bu-tpi/**'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# ---------------------------------------------------------------------------
+# Environment — secrets mapped once, used via env vars in all run blocks
+# ---------------------------------------------------------------------------
+env:
+  KATANA_HMAC_KEY: ${{ secrets.KATANA_HMAC_KEY }}
+  KATANA_SIGNING_KEY: ${{ secrets.KATANA_SIGNING_KEY }}
+  KATANA_VERIFY_KEY: ${{ secrets.KATANA_VERIFY_KEY }}
+  NODE_OPTIONS: '--max-old-space-size=4096'
+
+jobs:
+  # ============================================
+  # Nightly — Full Validation
+  # ============================================
+  nightly-validation:
+    name: Full Validation (Nightly)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bu-tpi
+        run: npm run build --workspace=packages/bu-tpi
+
+      - name: Run KATANA full validation
+        id: validate
+        run: npx katana validate --modules all --output json
+        continue-on-error: true
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: katana-nightly-reports-${{ github.run_number }}
+          path: packages/bu-tpi/validation/reports/runs/
+          retention-days: 90
+
+      - name: Check for FP/FN failures
+        if: steps.validate.outcome == 'failure'
+        run: |
+          echo "::error::KATANA validation detected false positives or false negatives."
+          echo "A CAPA investigation will be triggered automatically."
+          exit 1
+
+      - name: Trigger CAPA on failure
+        if: steps.validate.outcome == 'failure'
+        run: npx katana capa --trigger validation_failure --run-id "$GITHUB_RUN_ID"
+
+  # ============================================
+  # PR — Calibration + Changed Modules Only
+  # ============================================
+  pr-validation:
+    name: PR Validation
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bu-tpi
+        run: npm run build --workspace=packages/bu-tpi
+
+      - name: Detect changed modules
+        id: changes
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.event.pull_request.head.sha }}
+        run: |
+          DIFF_OUTPUT=$(git diff --name-only "$BASE_REF"..."$HEAD_REF" -- packages/bu-tpi/src/)
+          MODULES=$(echo "$DIFF_OUTPUT" | npx katana detect-changed-modules)
+          echo "modules=$MODULES" >> "$GITHUB_OUTPUT"
+          echo "Detected changed modules: $MODULES"
+
+      - name: Run calibration check
+        id: calibrate
+        run: npx katana calibrate --output json
+        continue-on-error: true
+
+      - name: Run changed-module validation
+        id: validate
+        if: steps.changes.outputs.modules != ''
+        env:
+          CHANGED_MODULES: ${{ steps.changes.outputs.modules }}
+        run: |
+          if ! echo "$CHANGED_MODULES" | grep -qE '^[a-zA-Z0-9_,\-]*$'; then
+            echo "::error::Invalid module list format"
+            exit 1
+          fi
+          npx katana validate --modules "$CHANGED_MODULES" --output json
+        continue-on-error: true
+
+      - name: Upload PR validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: katana-pr-reports-${{ github.run_number }}
+          path: packages/bu-tpi/validation/reports/runs/
+          retention-days: 30
+
+      - name: Generate PR comment summary
+        id: summary
+        if: always()
+        env:
+          CALIBRATION_STATUS: ${{ steps.calibrate.outcome }}
+          VALIDATION_STATUS: ${{ steps.validate.outcome }}
+          CHANGED_MODULES: ${{ steps.changes.outputs.modules }}
+        run: |
+          {
+            echo 'comment<<KATANA_EOF'
+            echo '## KATANA Validation Summary'
+            echo ''
+            echo '| Check | Status |'
+            echo '|-------|--------|'
+
+            if [ "$CALIBRATION_STATUS" = "success" ]; then
+              echo '| Calibration | PASS |'
+            else
+              echo '| Calibration | FAIL |'
+            fi
+
+            if [ -z "$CHANGED_MODULES" ]; then
+              echo '| Module Validation | SKIPPED (no module changes) |'
+            elif [ "$VALIDATION_STATUS" = "success" ]; then
+              echo '| Module Validation | PASS |'
+            else
+              echo '| Module Validation | FAIL |'
+            fi
+
+            echo ''
+            echo "**Changed modules:** ${CHANGED_MODULES:-none}"
+            echo ''
+
+            if [ "$CALIBRATION_STATUS" != "success" ] || [ "$VALIDATION_STATUS" = "failure" ]; then
+              echo '> **Action required:** Fix validation failures before merging.'
+              echo '> Any FP/FN will trigger a CAPA investigation.'
+            fi
+
+            echo 'KATANA_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${{ steps.summary.outputs.comment }}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c =>
+              c.body?.includes('## KATANA Validation Summary')
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Fail on validation errors
+        if: steps.calibrate.outcome == 'failure' || steps.validate.outcome == 'failure'
+        run: |
+          echo "::error::KATANA validation failed. See PR comment for details."
+          exit 1
+
+      - name: Trigger CAPA on failure
+        if: steps.validate.outcome == 'failure'
+        run: npx katana capa --trigger validation_failure --run-id "$GITHUB_RUN_ID"
