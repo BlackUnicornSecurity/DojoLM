@@ -36,7 +36,7 @@ function createApiRequest(
     body?: string;
   } = {}
 ): NextRequest {
-  const url = `http://localhost:3000${path}`;
+  const url = `http://localhost:42001${path}`;
   const init: RequestInit = {
     method: options.method ?? 'GET',
     headers: new Headers(options.headers ?? {}),

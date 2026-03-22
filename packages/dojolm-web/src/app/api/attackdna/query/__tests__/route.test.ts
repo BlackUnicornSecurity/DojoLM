@@ -69,7 +69,7 @@ vi.mock('@/lib/storage/dna-storage', () => ({
 }));
 
 function createGetRequest(url: string): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'GET',
   });
 }

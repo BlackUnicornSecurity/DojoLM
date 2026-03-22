@@ -268,13 +268,14 @@ export function AISeverityCalculator({
           onClick={() => setShowCvssDetails(!showCvssDetails)}
           className="flex items-center gap-2 w-full text-left text-sm font-semibold py-2"
           aria-expanded={showCvssDetails}
+          aria-controls="cvss-details-content"
         >
           <Shield className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           CVSS Base Metrics
           <ChevronDown className={cn('h-4 w-4 ml-auto text-muted-foreground motion-safe:transition-transform', showCvssDetails && 'rotate-180')} aria-hidden="true" />
         </button>
         {showCvssDetails && (
-          <div className="space-y-3 pl-6">
+          <div id="cvss-details-content" className="space-y-3 pl-6">
             {CVSS_METRICS.map(metric => (
               <div key={metric.key} className="space-y-1">
                 <label className="text-xs font-medium">{metric.label}</label>
@@ -283,8 +284,10 @@ export function AISeverityCalculator({
                     <button
                       key={opt.value}
                       onClick={() => handleCvssChange(metric.key, opt.value)}
+                      aria-pressed={cvssSelections[metric.key] === opt.value}
+                      aria-label={`${metric.label}: ${opt.label}`}
                       className={cn(
-                        'px-2.5 py-1.5 rounded-lg text-xs font-medium min-h-[32px]',
+                        'px-2.5 py-1.5 rounded-lg text-xs font-medium min-h-[44px]',
                         'border motion-safe:transition-colors',
                         cvssSelections[metric.key] === opt.value
                           ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
@@ -307,13 +310,14 @@ export function AISeverityCalculator({
           onClick={() => setShowAiDetails(!showAiDetails)}
           className="flex items-center gap-2 w-full text-left text-sm font-semibold py-2"
           aria-expanded={showAiDetails}
+          aria-controls="ai-details-content"
         >
           <Brain className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
           AI-Specific Risk Factors
           <ChevronDown className={cn('h-4 w-4 ml-auto text-muted-foreground motion-safe:transition-transform', showAiDetails && 'rotate-180')} aria-hidden="true" />
         </button>
         {showAiDetails && (
-          <div className="space-y-4 pl-6">
+          <div id="ai-details-content" className="space-y-4 pl-6">
             {AI_FACTORS.map(factor => (
               <div key={factor.key} className="space-y-1.5">
                 <label className="text-xs font-medium">{factor.label}</label>

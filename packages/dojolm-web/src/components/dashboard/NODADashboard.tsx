@@ -29,7 +29,7 @@ import type { NavId } from '@/lib/constants'
 /** Skeleton placeholder for lazy-loaded widgets */
 function WidgetSkeleton() {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse" aria-busy="true" aria-hidden="true">
+    <div className="rounded-xl border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse motion-reduce:animate-none" aria-busy="true" aria-hidden="true">
       <div className="h-4 w-24 bg-muted rounded mb-3" />
       <div className="h-20 bg-muted/50 rounded" />
     </div>
@@ -244,7 +244,7 @@ function DashboardContent() {
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                     {section.label}
                   </h3>
-                  <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)] stagger-children">
+                  <div className="bento-grid grid grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(0,auto)] stagger-children">
                     {sectionSlots.map(slot => {
                       const idx = globalIdx++
                       return <WidgetShell key={slot.id} slot={slot} mountIndex={idx} />
@@ -257,7 +257,7 @@ function DashboardContent() {
             {/* Unsectioned widgets (fallback) */}
             {unsectionedWidgets.length > 0 && (
               <div className="mt-8">
-                <div className="bento-grid grid grid-cols-12 gap-4 md:gap-5 auto-rows-[minmax(0,auto)]">
+                <div className="bento-grid grid grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(0,auto)]">
                   {unsectionedWidgets.map(slot => {
                     const idx = globalIdx++
                     return <WidgetShell key={slot.id} slot={slot} mountIndex={idx} />

@@ -37,7 +37,7 @@ vi.mock('@/lib/api-handler', () => ({
 }));
 
 function createRequest(method: string = 'GET'): NextRequest {
-  return new NextRequest('http://localhost:3000/api/arena/test-id', { method });
+  return new NextRequest('http://localhost:42001/api/arena/test-id', { method });
 }
 
 function createParams(id: string) {

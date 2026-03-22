@@ -15,6 +15,7 @@ import { useState, useCallback } from 'react'
 import {
   Fingerprint, Search, ShieldCheck, Settings2, Play, Loader2,
 } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -141,7 +142,7 @@ export function KagamiPanel() {
           : undefined,
       }
 
-      const res = await fetch('/api/llm/fingerprint', {
+      const res = await fetchWithAuth('/api/llm/fingerprint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -173,25 +174,22 @@ export function KagamiPanel() {
     }
   }, [mode, selectedModel, selectedPreset, showAdvanced, customCategories])
 
-  // SSE completion handler
-  const handleStreamComplete = useCallback(async () => {
-    if (!streamId) return
+  // SSE completion handler — receives result directly from the stream event
+  const handleStreamComplete = useCallback((streamResult?: unknown) => {
     try {
-      const res = await fetch(`/api/llm/fingerprint/result/${streamId}`)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
-      if (mode === 'verify' && data.verification) {
+      const data = streamResult as Record<string, unknown> | undefined
+      if (mode === 'verify' && data?.verification) {
         setVerification(data.verification as VerificationResult)
-      } else if (data.result) {
-        setResult(data.result as KagamiResult)
+      } else if (data) {
+        setResult(data as unknown as KagamiResult)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch results')
+      setError(err instanceof Error ? err.message : 'Failed to process results')
     } finally {
       setStreamId(null)
       setLoading(false)
     }
-  }, [streamId, mode])
+  }, [mode])
 
   const handleStreamError = useCallback((errMsg: string) => {
     setError(errMsg)
@@ -221,6 +219,7 @@ export function KagamiPanel() {
                 variant={mode === 'identify' ? 'gradient' : 'default'}
                 size="sm"
                 onClick={() => setMode('identify')}
+                aria-pressed={mode === 'identify'}
               >
                 <Search className="h-4 w-4 mr-1" aria-hidden="true" />
                 Identify
@@ -229,6 +228,7 @@ export function KagamiPanel() {
                 variant={mode === 'verify' ? 'gradient' : 'default'}
                 size="sm"
                 onClick={() => setMode('verify')}
+                aria-pressed={mode === 'verify'}
               >
                 <ShieldCheck className="h-4 w-4 mr-1" aria-hidden="true" />
                 Verify
@@ -266,6 +266,7 @@ export function KagamiPanel() {
                   key={preset.name}
                   type="button"
                   onClick={() => setSelectedPreset(preset.name)}
+                  aria-pressed={selectedPreset === preset.name}
                   className={cn(
                     'rounded-lg border p-3 text-left motion-safe:transition-all motion-safe:duration-200',
                     selectedPreset === preset.name
@@ -330,7 +331,7 @@ export function KagamiPanel() {
               disabled={loading}
             >
               {loading
-                ? <Loader2 className="h-4 w-4 mr-1 animate-spin" aria-hidden="true" />
+                ? <Loader2 className="h-4 w-4 mr-1 motion-safe:animate-spin" aria-hidden="true" />
                 : <Play className="h-4 w-4 mr-1" aria-hidden="true" />}
               {loading ? 'Running...' : 'Run Fingerprint'}
             </Button>
@@ -349,7 +350,7 @@ export function KagamiPanel() {
 
           {/* Error display */}
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/5 p-3 text-sm text-red-400">
+            <div className="rounded-lg border border-[var(--danger)]/30 bg-[var(--danger)]/5 p-3 text-sm text-[var(--danger)]" role="alert">
               {error}
             </div>
           )}

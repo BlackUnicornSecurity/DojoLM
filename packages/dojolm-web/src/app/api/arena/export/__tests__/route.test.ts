@@ -33,7 +33,7 @@ vi.mock('@/lib/storage/ecosystem-storage', () => ({
 // ---------------------------------------------------------------------------
 
 function createPostRequest(url: string, body: Record<string, unknown>): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -176,7 +176,7 @@ describe('POST /api/arena/export', () => {
 
   // 4. Invalid JSON — returns 400
   it('returns 400 for invalid JSON body', async () => {
-    const req = new NextRequest(new URL('/api/arena/export', 'http://localhost:3000'), {
+    const req = new NextRequest(new URL('/api/arena/export', 'http://localhost:42001'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: 'not valid json{{{',

@@ -147,7 +147,7 @@ function loadConfig(): DashboardConfig {
     const needsMigration = parsed.widgets.some((w: Record<string, unknown>) => typeof w.size === 'string')
     if (needsMigration) {
       try {
-        localStorage.setItem(BACKUP_KEY, raw)
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(parsed))
         // eslint-disable-next-line no-console
         console.debug('Dashboard config migrated v1->v2')
       } catch { /* backup is best-effort */ }

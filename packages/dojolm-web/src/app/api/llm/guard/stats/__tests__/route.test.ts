@@ -31,7 +31,7 @@ vi.mock('@/lib/storage/guard-storage', () => ({
 }));
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/guard/stats');
+  return new NextRequest('http://localhost:42001/api/llm/guard/stats');
 }
 
 let GET: typeof import('../../stats/route').GET;

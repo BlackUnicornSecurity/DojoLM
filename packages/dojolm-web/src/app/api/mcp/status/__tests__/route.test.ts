@@ -43,11 +43,11 @@ vi.mock('node:path', () => ({
 // ---------------------------------------------------------------------------
 
 function makeGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/mcp/status', { method: 'GET' });
+  return new NextRequest('http://localhost:42001/api/mcp/status', { method: 'GET' });
 }
 
 function makePostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/mcp/status', {
+  return new NextRequest('http://localhost:42001/api/mcp/status', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -55,7 +55,7 @@ function makePostRequest(body: unknown): NextRequest {
 }
 
 function makeInvalidJsonPostRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/mcp/status', {
+  return new NextRequest('http://localhost:42001/api/mcp/status', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{bad-json!!!',

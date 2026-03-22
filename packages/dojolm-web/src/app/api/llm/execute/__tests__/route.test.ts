@@ -51,7 +51,7 @@ vi.mock('@/lib/storage/guard-storage', () => ({
 }));
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/execute', {
+  return new NextRequest('http://localhost:42001/api/llm/execute', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -146,7 +146,7 @@ describe('POST /api/llm/execute', () => {
   it('rejects null JSON body (BUG-035)', async () => {
     const { POST } = await import('@/app/api/llm/execute/route');
 
-    const req = new NextRequest('http://localhost:3000/api/llm/execute', {
+    const req = new NextRequest('http://localhost:42001/api/llm/execute', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'null',
@@ -161,7 +161,7 @@ describe('POST /api/llm/execute', () => {
   it('rejects invalid JSON body', async () => {
     const { POST } = await import('@/app/api/llm/execute/route');
 
-    const req = new NextRequest('http://localhost:3000/api/llm/execute', {
+    const req = new NextRequest('http://localhost:42001/api/llm/execute', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: '{{invalid',

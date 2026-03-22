@@ -72,7 +72,7 @@ vi.mock('bu-tpi/shingan', () => ({
 // ---------------------------------------------------------------------------
 
 function postJson(url: string, body: unknown): NextRequest {
-  return new NextRequest(`http://localhost:3000${url}`, {
+  return new NextRequest(`http://localhost:42001${url}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),

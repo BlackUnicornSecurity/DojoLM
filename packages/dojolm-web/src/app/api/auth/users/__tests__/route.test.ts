@@ -34,13 +34,13 @@ vi.mock('@/lib/db/types', () => ({}));
 // --- Helpers ---
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/users', {
+  return new NextRequest('http://localhost:42001/api/auth/users', {
     method: 'GET',
   });
 }
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/users', {
+  return new NextRequest('http://localhost:42001/api/auth/users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

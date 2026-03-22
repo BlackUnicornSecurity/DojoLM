@@ -38,6 +38,11 @@ export function useSenseiScroll(enabled: boolean) {
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip when focus is in form fields (mirrors QuickLaunchPad guard)
+      const t = e.target as HTMLElement
+      if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement ||
+          t instanceof HTMLSelectElement || t.isContentEditable) return
+
       const expected = SCROLL_SEQUENCE[indexRef.current]
       const key = e.key.length === 1 ? e.key.toLowerCase() : e.key
 

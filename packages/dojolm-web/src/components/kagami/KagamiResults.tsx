@@ -44,16 +44,23 @@ export interface KagamiResultsProps {
 // ---------------------------------------------------------------------------
 
 function confidenceColor(confidence: number): string {
-  if (confidence >= 0.8) return 'bg-emerald-500'
-  if (confidence >= 0.6) return 'bg-amber-500'
-  return 'bg-red-500'
+  if (confidence >= 0.8) return 'bg-[var(--success)]'
+  if (confidence >= 0.6) return 'bg-[var(--warning)]'
+  return 'bg-[var(--danger)]'
 }
 
 function ConfidenceBar({ confidence }: { readonly confidence: number }) {
   const pct = Math.round(confidence * 100)
   return (
     <div className="flex items-center gap-2 w-full">
-      <div className="flex-1 h-2.5 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
+      <div
+        className="flex-1 h-2.5 rounded-full bg-[var(--bg-tertiary)] overflow-hidden"
+        role="progressbar"
+        aria-valuenow={pct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Confidence: ${pct}%`}
+      >
         <div
           className={cn('h-full rounded-full motion-safe:transition-all motion-safe:duration-500', confidenceColor(confidence))}
           style={{ width: `${pct}%` }}
@@ -73,7 +80,7 @@ const RANK_ICONS = [Trophy, Medal, Award] as const
 function RankIcon({ rank }: { readonly rank: number }) {
   const Icon = rank < RANK_ICONS.length ? RANK_ICONS[rank] : null
   if (!Icon) return <span className="text-sm text-muted-foreground font-mono w-6 text-center">#{rank + 1}</span>
-  const colors = ['text-yellow-400', 'text-gray-300', 'text-amber-600']
+  const colors = ['text-[var(--rank-gold)]', 'text-[var(--rank-silver)]', 'text-[var(--rank-bronze)]']
   return <Icon className={cn('h-5 w-5', colors[rank])} aria-hidden="true" />
 }
 
@@ -91,7 +98,7 @@ function CandidateCard({
   const [expanded, setExpanded] = useState(false)
 
   return (
-    <Card className={cn(rank === 0 && 'border-emerald-500/30')}>
+    <Card className={cn(rank === 0 && 'border-[var(--success)]/30')}>
       <CardContent className="p-4 space-y-3">
         {/* Header row */}
         <div className="flex items-center gap-3">
@@ -121,6 +128,7 @@ function CandidateCard({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
+          aria-expanded={expanded}
           className="flex items-center gap-1 text-xs text-[var(--dojo-primary)] hover:underline"
         >
           {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -131,7 +139,7 @@ function CandidateCard({
           <div className="space-y-2 pt-1">
             {candidate.matchedFeatures.length > 0 && (
               <div>
-                <span className="text-xs font-medium text-emerald-400">Matched Features</span>
+                <span className="text-xs font-medium text-[var(--success)]">Matched Features</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {candidate.matchedFeatures.map((f) => (
                     <Badge key={f} variant="success">{f}</Badge>
@@ -141,7 +149,7 @@ function CandidateCard({
             )}
             {candidate.divergentFeatures.length > 0 && (
               <div>
-                <span className="text-xs font-medium text-amber-400">Divergent Features</span>
+                <span className="text-xs font-medium text-[var(--warning)]">Divergent Features</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {candidate.divergentFeatures.map((f) => (
                     <Badge key={f} variant="warning">{f}</Badge>
@@ -164,13 +172,13 @@ function VerificationCard({ verification }: { readonly verification: Verificatio
   return (
     <Card className={cn(
       'border',
-      verification.match ? 'border-emerald-500/30' : 'border-red-500/30',
+      verification.match ? 'border-[var(--success)]/30' : 'border-[var(--danger)]/30',
     )}>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
           {verification.match
-            ? <CheckCircle2 className="h-5 w-5 text-emerald-400" aria-hidden="true" />
-            : <XCircle className="h-5 w-5 text-red-400" aria-hidden="true" />}
+            ? <CheckCircle2 className="h-5 w-5 text-[var(--success)]" aria-hidden="true" />
+            : <XCircle className="h-5 w-5 text-[var(--danger)]" aria-hidden="true" />}
           {verification.match ? 'Identity Verified' : 'Identity Mismatch'}
         </CardTitle>
       </CardHeader>
@@ -188,7 +196,7 @@ function VerificationCard({ verification }: { readonly verification: Verificatio
             <span className="text-muted-foreground">Drift Score</span>
             <p className={cn(
               'font-mono font-semibold',
-              verification.driftScore < 0.15 ? 'text-emerald-400' : verification.driftScore < 0.35 ? 'text-amber-400' : 'text-red-400',
+              verification.driftScore < 0.15 ? 'text-[var(--success)]' : verification.driftScore < 0.35 ? 'text-[var(--warning)]' : 'text-[var(--danger)]',
             )}>
               {(verification.driftScore * 100).toFixed(1)}%
             </p>
@@ -201,7 +209,7 @@ function VerificationCard({ verification }: { readonly verification: Verificatio
 
         {verification.divergentFeatures.length > 0 && (
           <div>
-            <span className="text-xs font-medium text-amber-400">Divergent Features</span>
+            <span className="text-xs font-medium text-[var(--warning)]">Divergent Features</span>
             <div className="flex flex-wrap gap-1 mt-1">
               {verification.divergentFeatures.map((f) => (
                 <Badge key={f} variant="warning">{f}</Badge>

@@ -34,7 +34,7 @@ vi.mock('@/lib/api-handler', () => ({
 }));
 
 function createPatchRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/arena/warriors', {
+  return new NextRequest('http://localhost:42001/api/arena/warriors', {
     method: 'PATCH',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -168,7 +168,7 @@ describe('PATCH /api/arena/warriors', () => {
 
   it('WAR-013: invalid JSON body returns 400', async () => {
     const { PATCH } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/arena/warriors', {
+    const req = new NextRequest('http://localhost:42001/api/arena/warriors', {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       body: 'not-json{',

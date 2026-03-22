@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { X, Calendar, Shield, Brain, Calculator, FileText, CheckCircle, Clock, DollarSign, XCircle, Filter } from 'lucide-react'
@@ -39,6 +39,11 @@ const STATUS_ORDER: Record<SubmissionStatus, number> = {
 
 export function SubmissionDetail({ submission, onClose }: SubmissionDetailProps) {
   const currentStep = STATUS_ORDER[submission.status]
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    closeRef.current?.focus()
+  }, [])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -66,6 +71,7 @@ export function SubmissionDetail({ submission, onClose }: SubmissionDetailProps)
             <p className="text-sm text-muted-foreground">{submission.programName}</p>
           </div>
           <button
+            ref={closeRef}
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-[var(--bg-tertiary)] text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
             aria-label="Close submission detail"

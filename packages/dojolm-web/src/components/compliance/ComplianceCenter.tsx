@@ -464,6 +464,7 @@ export default function ComplianceCenter() {
                 onClick={() => handleGroupModeChange('tier')}
                 className={cn(
                   'px-2 py-0.5 text-xs rounded-md motion-safe:transition-colors min-h-[28px]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
                   groupMode === 'tier'
                     ? 'bg-[var(--dojo-primary)] text-white font-semibold'
                     : 'text-muted-foreground hover:text-[var(--foreground)]'
@@ -478,6 +479,7 @@ export default function ComplianceCenter() {
                 onClick={() => handleGroupModeChange('category')}
                 className={cn(
                   'px-2 py-0.5 text-xs rounded-md motion-safe:transition-colors min-h-[28px]',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
                   groupMode === 'category'
                     ? 'bg-[var(--dojo-primary)] text-white font-semibold'
                     : 'text-muted-foreground hover:text-[var(--foreground)]'
@@ -596,7 +598,7 @@ function TierSection({
     <div className="border border-[var(--border)] rounded-xl overflow-hidden">
       <button
         onClick={() => setExpanded((p) => !p)}
-        className="flex items-center justify-between w-full px-3 py-2 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[40px]"
+        className="flex items-center justify-between w-full px-3 py-2 bg-[var(--bg-quaternary)] hover:bg-[var(--bg-tertiary)] motion-safe:transition-colors text-left min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset"
         aria-expanded={expanded}
         aria-label={`${ALL_GROUP_LABELS[tier] ?? tier}: ${frameworks.length} frameworks, ${tierAvg}% average coverage`}
       >

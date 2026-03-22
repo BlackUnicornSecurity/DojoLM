@@ -110,7 +110,7 @@ export function ApiKeyManager() {
   if (loading) {
     return (
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 flex items-center justify-center gap-3">
-        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" aria-hidden="true" />
+        <Loader2 className="w-5 h-5 motion-safe:animate-spin text-muted-foreground" aria-hidden="true" />
         <span className="text-sm text-muted-foreground">Loading API keys...</span>
       </div>
     )
@@ -132,7 +132,7 @@ export function ApiKeyManager() {
           <button
             type="button"
             onClick={fetchProviders}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
             aria-label="Refresh providers"
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" />
@@ -140,7 +140,8 @@ export function ApiKeyManager() {
           <button
             type="button"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors"
+            aria-expanded={showAddForm}
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-hover)] motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
             Add Key
@@ -208,9 +209,9 @@ function ProviderCard({
             {PROVIDER_LABELS[provider.provider]}
           </span>
           {provider.enabled ? (
-            <span className="w-2 h-2 rounded-full bg-green-500" aria-hidden="true" />
+            <span className="w-2 h-2 rounded-full bg-[var(--success)]" aria-hidden="true" />
           ) : (
-            <span className="w-2 h-2 rounded-full bg-gray-500" aria-hidden="true" />
+            <span className="w-2 h-2 rounded-full bg-[var(--bg-quaternary)]" aria-hidden="true" />
           )}
           <span className="sr-only">{provider.enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
@@ -223,7 +224,7 @@ function ProviderCard({
 
       <div className="flex items-center gap-2">
         {connectionStatus === 'testing' && (
-          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" aria-hidden="true" />
+          <Loader2 className="w-4 h-4 motion-safe:animate-spin text-muted-foreground" aria-hidden="true" />
         )}
         {connectionStatus === 'success' && (
           <>

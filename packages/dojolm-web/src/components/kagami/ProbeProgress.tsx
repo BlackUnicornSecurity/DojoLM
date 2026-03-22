@@ -24,8 +24,8 @@ import type { KagamiProgress } from 'bu-tpi/fingerprint'
 export interface ProbeProgressProps {
   /** SSE stream endpoint ID — connects to /api/llm/fingerprint/stream/[id] */
   readonly streamId: string
-  /** Called when stream completes */
-  readonly onComplete?: () => void
+  /** Called when stream completes — receives the result data from the SSE stream */
+  readonly onComplete?: (result?: unknown) => void
   /** Called on stream error */
   readonly onError?: (error: string) => void
 }
@@ -35,9 +35,9 @@ export interface ProbeProgressProps {
 // ---------------------------------------------------------------------------
 
 const PHASE_CONFIG = {
-  probing: { label: 'Probing', icon: Search, color: 'text-blue-400' },
-  analyzing: { label: 'Analyzing', icon: BarChart3, color: 'text-amber-400' },
-  matching: { label: 'Matching', icon: GitCompare, color: 'text-emerald-400' },
+  probing: { label: 'Probing', icon: Search, color: 'text-[var(--info)]' },
+  analyzing: { label: 'Analyzing', icon: BarChart3, color: 'text-[var(--warning)]' },
+  matching: { label: 'Matching', icon: GitCompare, color: 'text-[var(--success)]' },
 } as const
 
 const PHASE_ORDER: readonly KagamiProgress['phase'][] = ['probing', 'analyzing', 'matching']
@@ -74,11 +74,19 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
 
     const handleMessage = (event: MessageEvent) => {
       try {
-        const data = JSON.parse(event.data) as KagamiProgress & { done?: boolean }
-        if (data.done) {
+        const data = JSON.parse(event.data)
+        // fingerprint-state emits { phase: 'complete', result } on finish
+        if (data.phase === 'complete') {
           eventSource.close()
           if (timerRef.current) clearInterval(timerRef.current)
-          onComplete?.()
+          onComplete?.(data.result)
+          return
+        }
+        // fingerprint-state emits { phase: 'error', error } on failure
+        if (data.phase === 'error') {
+          eventSource.close()
+          if (timerRef.current) clearInterval(timerRef.current)
+          onError?.(data.error ?? 'Unknown error')
           return
         }
         setProgress({
@@ -133,13 +141,13 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
                 <div className={cn(
                   'w-8 h-8 rounded-full flex items-center justify-center border',
                   isActive && 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10',
-                  isPast && 'border-emerald-500 bg-emerald-500/10',
+                  isPast && 'border-[var(--success)] bg-[var(--success)]/10',
                   !isActive && !isPast && 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)]',
                 )}>
                   <Icon className={cn(
                     'h-4 w-4',
                     isActive && config.color,
-                    isPast && 'text-emerald-400',
+                    isPast && 'text-[var(--success)]',
                     !isActive && !isPast && 'text-muted-foreground',
                   )} aria-hidden="true" />
                 </div>
@@ -152,7 +160,7 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
                 {idx < PHASE_ORDER.length - 1 && (
                   <div className={cn(
                     'w-8 h-px',
-                    isPast ? 'bg-emerald-500' : 'bg-[var(--border-subtle)]',
+                    isPast ? 'bg-[var(--success)]' : 'bg-[var(--border-subtle)]',
                   )} />
                 )}
               </div>
@@ -168,7 +176,14 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
             </span>
             <span className="text-muted-foreground">{pct}%</span>
           </div>
-          <div className="h-2 rounded-full bg-[var(--bg-tertiary)] overflow-hidden">
+          <div
+            className="h-2 rounded-full bg-[var(--bg-tertiary)] overflow-hidden"
+            role="progressbar"
+            aria-valuenow={pct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Fingerprint probe progress"
+          >
             <div
               className="h-full rounded-full bg-gradient-to-r from-[var(--dojo-primary)] to-[var(--dojo-hover)] motion-safe:transition-all motion-safe:duration-300"
               style={{ width: `${pct}%` }}
@@ -179,7 +194,7 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
         {/* Current probe + timing */}
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2 min-w-0">
-            <Activity className="h-3.5 w-3.5 text-muted-foreground shrink-0 animate-pulse" aria-hidden="true" />
+            <Activity className="h-3.5 w-3.5 text-muted-foreground shrink-0 motion-safe:animate-pulse" aria-hidden="true" />
             <span className="text-muted-foreground truncate">
               {progress.currentProbe ?? 'Initializing...'}
             </span>

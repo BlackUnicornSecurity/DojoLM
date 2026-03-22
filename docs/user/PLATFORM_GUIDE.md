@@ -286,10 +286,10 @@ curl http://localhost:8089/api/stats
 
 ```bash
 # Export all findings
-curl http://localhost:3000/api/ecosystem/findings/export
+curl http://localhost:42001/api/ecosystem/findings/export
 
 # Filtered export
-curl "http://localhost:3000/api/ecosystem/findings/export?severity=high&format=json"
+curl "http://localhost:42001/api/ecosystem/findings/export?severity=high&format=json"
 ```
 
 ### Reports

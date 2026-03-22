@@ -218,7 +218,7 @@ export const FixtureSearch = memo(function FixtureSearch({
             )}
           </Button>
 
-          <span className="text-xs text-muted-foreground ml-auto">
+          <span className="text-xs text-muted-foreground ml-auto" aria-live="polite" role="status">
             {filteredResults.length.toLocaleString()} result{filteredResults.length !== 1 ? 's' : ''}
           </span>
 

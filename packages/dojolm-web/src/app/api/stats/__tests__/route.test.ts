@@ -16,7 +16,7 @@ vi.mock('@dojolm/scanner', () => ({
 }));
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/stats');
+  return new NextRequest('http://localhost:42001/api/stats');
 }
 
 beforeEach(() => {

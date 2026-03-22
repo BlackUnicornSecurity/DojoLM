@@ -72,7 +72,7 @@ const mockCheckApiAuth = vi.mocked(checkApiAuth);
 // ---------------------------------------------------------------------------
 
 function makePostRequest(url: string, body: Record<string, unknown>): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -80,11 +80,11 @@ function makePostRequest(url: string, body: Record<string, unknown>): NextReques
 }
 
 function makeGetRequest(url: string): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), { method: 'GET' });
+  return new NextRequest(new URL(url, 'http://localhost:42001'), { method: 'GET' });
 }
 
 function makePatchRequest(url: string, body: Record<string, unknown>): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -92,7 +92,7 @@ function makePatchRequest(url: string, body: Record<string, unknown>): NextReque
 }
 
 function makeDeleteRequest(url: string): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), { method: 'DELETE' });
+  return new NextRequest(new URL(url, 'http://localhost:42001'), { method: 'DELETE' });
 }
 
 const VALID_CAMPAIGN_BODY = {

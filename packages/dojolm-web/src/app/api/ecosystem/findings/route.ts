@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     // Stats mode: return aggregated ecosystem statistics
     if (mode === 'stats') {
       const stats = await getEcosystemStats();
-      return NextResponse.json({ data: stats });
+      return NextResponse.json({ data: stats }, { headers: { 'Cache-Control': 'no-store' } });
     }
 
     // Query mode: return filtered findings
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await queryFindings(query);
-    return NextResponse.json({ data: result });
+    return NextResponse.json({ data: result }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     console.error('Error querying ecosystem findings:', error);
     return NextResponse.json(

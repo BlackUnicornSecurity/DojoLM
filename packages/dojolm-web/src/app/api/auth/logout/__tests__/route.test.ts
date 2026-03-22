@@ -26,13 +26,13 @@ vi.mock('@/lib/auth/route-guard', () => ({
 // --- Helpers ---
 
 function createPostRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/logout', {
+  return new NextRequest('http://localhost:42001/api/auth/logout', {
     method: 'POST',
   });
 }
 
 function createPostRequestWithCookie(token: string): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/logout', {
+  return new NextRequest('http://localhost:42001/api/auth/logout', {
     method: 'POST',
     headers: {
       Cookie: `dojolm_session=${token}`,

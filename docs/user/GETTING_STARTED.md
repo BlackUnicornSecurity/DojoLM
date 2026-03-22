@@ -34,7 +34,7 @@ npm run dev:web
 
 ### 4. Access NODA
 
-Open your browser to: `http://localhost:3000`
+Open your browser to: `http://localhost:42001`
 
 ## Your First Scan
 
@@ -120,16 +120,16 @@ Open your browser to: `http://localhost:3000`
 
 ```bash
 # Export all findings
-curl http://localhost:3000/api/ecosystem/findings/export
+curl http://localhost:42001/api/ecosystem/findings/export
 
 # Export high severity only
-curl "http://localhost:3000/api/ecosystem/findings/export?severity=8"
+curl "http://localhost:42001/api/ecosystem/findings/export?severity=8"
 ```
 
 ### Check System Health
 
 ```bash
-curl http://localhost:3000/api/admin/health
+curl http://localhost:42001/api/admin/health
 ```
 
 ### Scan via API

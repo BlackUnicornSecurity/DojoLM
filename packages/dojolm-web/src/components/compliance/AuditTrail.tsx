@@ -56,16 +56,16 @@ function ResultBadge({ result }: { result: string }) {
   const normalized = result.toLowerCase().trim()
 
   const styles = {
-    pass: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    success: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    fail: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    error: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    pending: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    pass: 'bg-[var(--success)]/20 text-[var(--success)]',
+    success: 'bg-[var(--success)]/20 text-[var(--success)]',
+    fail: 'bg-[var(--danger)]/20 text-[var(--danger)]',
+    error: 'bg-[var(--danger)]/20 text-[var(--danger)]',
+    warning: 'bg-[var(--warning)]/20 text-[var(--warning)]',
+    pending: 'bg-[var(--info)]/20 text-[var(--info)]',
+    info: 'bg-[var(--info)]/20 text-[var(--info)]',
   } as Record<string, string>
 
-  const style = styles[normalized] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+  const style = styles[normalized] ?? 'bg-[var(--bg-quaternary)] text-muted-foreground'
 
   return (
     <span

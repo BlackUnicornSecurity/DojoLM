@@ -10,9 +10,34 @@ import { batchTrustScore } from 'bu-tpi/shingan';
 const MAX_BATCH_SIZE = 100;
 const MAX_CONTENT_SIZE = 512_000;
 
+// In-memory rate limiter — 5 batch calls per minute per IP (each can have up to 100 items)
+const rateLimiter = new Map<string, number[]>();
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60_000;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  if (rateLimiter.size > 10_000) {
+    for (const [key, ts] of rateLimiter) {
+      if (ts.every((t) => now - t >= RATE_WINDOW_MS)) rateLimiter.delete(key);
+    }
+  }
+  const timestamps = rateLimiter.get(ip) ?? [];
+  const recent = timestamps.filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT) return false;
+  recent.push(now);
+  rateLimiter.set(ip, recent);
+  return true;
+}
+
 export async function POST(request: NextRequest) {
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
+
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip')?.trim() || 'unknown';
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json({ error: 'Rate limit exceeded — try again later' }, { status: 429 });
+  }
 
   try {
     const body = await request.json();

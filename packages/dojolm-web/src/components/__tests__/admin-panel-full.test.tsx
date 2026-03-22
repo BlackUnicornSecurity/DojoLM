@@ -105,10 +105,10 @@ describe('AdminPanel', () => {
     expect(screen.getByRole('tablist', { name: /admin sections/i })).toBeInTheDocument()
   })
 
-  it('AP-004: renders all 8 admin tabs', () => {
+  it('AP-004: renders all 9 admin tabs', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(8)
+    expect(tabs).toHaveLength(9)
   })
 
   it('AP-005: General tab is selected by default', () => {
@@ -184,7 +184,7 @@ describe('AdminPanel', () => {
     const tabs = screen.getAllByRole('tab')
     const values = tabs.map(t => t.getAttribute('data-value'))
     expect(values).toEqual([
-      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings',
+      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation',
     ])
   })
 

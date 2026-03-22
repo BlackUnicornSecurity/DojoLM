@@ -300,10 +300,14 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
           </Badge>
 
           {/* Connection indicator */}
-          <div className={cn(
-            'w-2 h-2 rounded-full',
-            stream.connected ? 'bg-[var(--success)]' : 'bg-[var(--danger)]'
-          )} />
+          <div
+            className={cn(
+              'w-2 h-2 rounded-full',
+              stream.connected ? 'bg-[var(--success)]' : 'bg-[var(--danger)]'
+            )}
+            role="status"
+            aria-label={stream.connected ? 'Connected' : 'Disconnected'}
+          />
 
           {/* Sound toggle */}
           <Button

@@ -24,6 +24,9 @@ const submissions = new Map<string, Record<string, unknown>>()
 
 const VALID_STATUSES = new Set(['draft', 'submitted', 'triaged', 'validated', 'paid', 'rejected'])
 const VALID_SEVERITIES = new Set(['critical', 'high', 'medium', 'low', 'info'])
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const MAX_SUBMISSIONS = 10_000
+const MAX_PAYOUT = 1_000_000
 
 /** Strip HTML tags and encode entities to prevent stored XSS (RON-SEC-01). */
 function sanitizeText(text: string): string {
@@ -85,7 +88,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
     }
 
-    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     const id = typeof body.id === 'string' ? body.id.trim().slice(0, 100) : ''
     if (!id) {
       return NextResponse.json({ error: 'Missing submission id' }, { status: 400 })
@@ -126,12 +128,15 @@ export async function POST(request: NextRequest) {
         ? body.evidence.filter((e: unknown) => typeof e === 'string').map((e: string) => sanitizeText(e.trim().slice(0, 2000))).slice(0, 10)
         : [],
       description: typeof body.description === 'string' ? sanitizeText(body.description.trim().slice(0, 5000)) : '',
-      createdAt: new Date().toISOString(),
+      createdAt: (submissions.get(id) as Record<string, unknown> | undefined)?.createdAt as string ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      payout: typeof body.payout === 'number' && Number.isFinite(body.payout) ? Math.min(Math.max(0, body.payout), 1_000_000) : null,
+      payout: typeof body.payout === 'number' && Number.isFinite(body.payout) ? Math.min(Math.max(0, body.payout), MAX_PAYOUT) : null,
     }
 
     const isUpdate = submissions.has(id)
+    if (!isUpdate && submissions.size >= MAX_SUBMISSIONS) {
+      return NextResponse.json({ error: 'Maximum submission limit reached' }, { status: 429 })
+    }
     submissions.set(id, submission)
 
     return NextResponse.json({ submission }, { status: isUpdate ? 200 : 201 })
@@ -158,7 +163,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     const id = typeof body.id === 'string' ? body.id.trim() : ''
-    if (!id || !submissions.has(id)) {
+    if (!id || !UUID_RE.test(id)) {
+      return NextResponse.json({ error: 'Invalid submission id format' }, { status: 400 })
+    }
+    if (!submissions.has(id)) {
       return NextResponse.json({ error: 'Submission not found' }, { status: 404 })
     }
 
@@ -176,7 +184,7 @@ export async function PATCH(request: NextRequest) {
       updated.description = sanitizeText(body.description.trim().slice(0, 5000))
     }
     if (typeof body.payout === 'number' && Number.isFinite(body.payout)) {
-      updated.payout = Math.max(0, body.payout)
+      updated.payout = Math.min(Math.max(0, body.payout), MAX_PAYOUT)
     }
 
     updated.updatedAt = new Date().toISOString()

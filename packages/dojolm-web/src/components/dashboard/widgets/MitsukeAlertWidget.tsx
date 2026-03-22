@@ -46,7 +46,7 @@ export function MitsukeAlertWidget() {
       actions={
         <div className="flex items-center gap-2">
           {unacknowledged > 0 && (
-            <span className="text-xs px-1.5 py-0.5 bg-[var(--severity-critical-bg)] text-[var(--severity-critical)] rounded-full font-medium">
+            <span className="text-xs px-1.5 py-0.5 bg-[var(--severity-critical-bg)] text-[var(--severity-critical)] rounded-full font-medium" aria-label={`${unacknowledged} unacknowledged alert${unacknowledged !== 1 ? 's' : ''}`} role="status">
               {unacknowledged}
             </span>
           )}

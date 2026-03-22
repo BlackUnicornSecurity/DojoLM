@@ -23,7 +23,7 @@ vi.mock('@/lib/llm-providers', () => ({
 
 function createPostRequest(body: unknown): NextRequest {
   const bodyStr = typeof body === 'string' ? body : JSON.stringify(body);
-  return new NextRequest('http://localhost:3000/api/llm/chat', {
+  return new NextRequest('http://localhost:42001/api/llm/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: bodyStr,

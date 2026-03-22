@@ -22,7 +22,7 @@ function createParams(id: string) {
 }
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/batch/b1/stream');
+  return new NextRequest('http://localhost:42001/api/llm/batch/b1/stream');
 }
 
 const completedBatch = {

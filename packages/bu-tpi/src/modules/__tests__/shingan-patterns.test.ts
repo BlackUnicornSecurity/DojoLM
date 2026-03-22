@@ -156,7 +156,7 @@ describe('L3 Data Exfiltration — ALL_EXFILTRATION_PATTERNS', () => {
   });
 
   it('NEGATIVE: does not trigger on localhost fetch', () => {
-    expect(countMatches(ALL_EXFILTRATION_PATTERNS, "fetch('http://localhost:3000/health')")).toBe(0);
+    expect(countMatches(ALL_EXFILTRATION_PATTERNS, "fetch('http://localhost:42001/health')")).toBe(0);
   });
 });
 

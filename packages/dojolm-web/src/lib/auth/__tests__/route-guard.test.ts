@@ -49,7 +49,7 @@ function makeRequest(
   method: string,
   opts?: { sessionToken?: string; csrfCookie?: string; csrfHeader?: string },
 ): NextRequest {
-  const url = 'http://localhost:3000/api/test';
+  const url = 'http://localhost:42001/api/test';
   const headers = new Headers();
 
   // Build cookie header manually

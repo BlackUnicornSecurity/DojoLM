@@ -34,6 +34,7 @@ const PUBLIC_ROUTES = new Set([
   '/api/admin/health',
   '/api/health',
   '/api/auth/me', // R8-002: route handles its own session check, returns {user:null} if unauthenticated
+  '/api/llm/models', // F-05: Model list is read-only and needed by Sensei UI model picker without API key
 ]);
 
 // Routes that require elevated (admin) permissions — future RBAC
@@ -224,10 +225,10 @@ export async function middleware(request: NextRequest) {
   // Origin validation: only reflect known origins, deny unknown in production
   if (request.method === 'OPTIONS') {
     const requestOrigin = request.headers.get('origin') ?? '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
     const allowedOrigins = process.env.NODE_ENV === 'production'
       ? new Set([appUrl])
-      : new Set([appUrl, 'http://localhost:3000', 'http://localhost:3001']);
+      : new Set([appUrl, 'http://localhost:42001', 'http://localhost:3001']);
     const corsOrigin = allowedOrigins.has(requestOrigin) ? requestOrigin : appUrl;
 
     return new NextResponse(null, {
@@ -280,7 +281,7 @@ export async function middleware(request: NextRequest) {
   ) {
     const origin = request.headers.get('origin') ?? '';
     const host = request.headers.get('host') ?? '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
 
     // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
     // the request's Host header (attacker-controlled). This prevents external

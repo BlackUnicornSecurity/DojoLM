@@ -23,7 +23,7 @@ describe('checkApiAuth', () => {
   function createReq(apiKey?: string): NextRequest {
     const headers: Record<string, string> = {};
     if (apiKey) headers['x-api-key'] = apiKey;
-    return new NextRequest('http://localhost:3000/api/test', { headers });
+    return new NextRequest('http://localhost:42001/api/test', { headers });
   }
 
   // AUTH-001: Returns null (pass) when key matches

@@ -51,7 +51,7 @@ function createRequest(method: string, body?: unknown): NextRequest {
     opts.headers = { 'content-type': 'application/json' };
     opts.body = JSON.stringify(body);
   }
-  return new NextRequest('http://localhost:3000/api/llm/batch/test-id', opts);
+  return new NextRequest('http://localhost:42001/api/llm/batch/test-id', opts);
 }
 
 function createParams(id: string) {
@@ -147,7 +147,7 @@ describe('PATCH /api/llm/batch/[id]', () => {
 
   it('BID-007: invalid JSON returns 400', async () => {
     const { PATCH } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/llm/batch/b1', {
+    const req = new NextRequest('http://localhost:42001/api/llm/batch/b1', {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       body: 'not-json{{{',

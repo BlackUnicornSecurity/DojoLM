@@ -41,7 +41,7 @@ Create `.env.local`:
 
 ```bash
 NODE_ENV=development
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:42001
 NEXT_PUBLIC_MAX_TEXT_LENGTH=100000
 NEXT_PUBLIC_ENABLE_ANALYTICS=false
 PORT=3000

@@ -83,8 +83,8 @@ describe('UserManagement', () => {
   it('UM-001: shows loading spinner initially', () => {
     mockFetchWithAuth.mockReturnValue(new Promise(() => {})) // never resolves
     render(<UserManagement />)
-    // The Loader2 icon is rendered; we can check for the animate-spin class
-    const spinner = document.querySelector('.animate-spin')
+    // The Loader2 icon is rendered; check for motion-safe:animate-spin class
+    const spinner = document.querySelector('.motion-safe\\:animate-spin')
     expect(spinner).toBeInTheDocument()
   })
 

@@ -86,10 +86,11 @@ const nextConfig: NextConfig = withBundleAnalyzer({
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
+              // F-06 fix: unsafe-inline required for Next.js hydration scripts in production
               // unsafe-eval only needed for Next.js dev server HMR
               process.env.NODE_ENV === "development"
                 ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
-                : "script-src 'self'",
+                : "script-src 'self' 'unsafe-inline'",
               // style-src 'unsafe-inline' required: Next.js/Tailwind injects inline styles at runtime
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",

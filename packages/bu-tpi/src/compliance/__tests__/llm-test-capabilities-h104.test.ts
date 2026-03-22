@@ -160,8 +160,8 @@ describe('createSelfPenTestConfig', () => {
   });
 
   it('creates valid config for localhost', () => {
-    const config = createSelfPenTestConfig('http://localhost:3000/api');
-    expect(config.targetUrl).toBe('http://localhost:3000/api');
+    const config = createSelfPenTestConfig('http://localhost:42001/api');
+    expect(config.targetUrl).toBe('http://localhost:42001/api');
     expect(config.testMode).toBe(true);
     expect(config.bypassGuard).toBe(true);
     expect(config.logResults).toBe(true);
@@ -169,14 +169,14 @@ describe('createSelfPenTestConfig', () => {
   });
 
   it('accepts 127.0.0.1', () => {
-    const config = createSelfPenTestConfig('http://127.0.0.1:3000');
-    expect(config.targetUrl).toBe('http://127.0.0.1:3000');
+    const config = createSelfPenTestConfig('http://127.0.0.1:42001');
+    expect(config.targetUrl).toBe('http://127.0.0.1:42001');
     expect(config.testMode).toBe(true);
   });
 
   it('accepts IPv6 loopback ::1', () => {
-    const config = createSelfPenTestConfig('http://[::1]:3000');
-    expect(config.targetUrl).toBe('http://[::1]:3000');
+    const config = createSelfPenTestConfig('http://[::1]:42001');
+    expect(config.targetUrl).toBe('http://[::1]:42001');
     expect(config.testMode).toBe(true);
   });
 
@@ -286,7 +286,7 @@ describe('evidence record production', () => {
   });
 
   it('self-pen config produces structured evidence', () => {
-    const evidence = createSelfPenTestConfig('http://localhost:3000');
+    const evidence = createSelfPenTestConfig('http://localhost:42001');
     expect(evidence).toHaveProperty('targetUrl');
     expect(evidence).toHaveProperty('testMode');
     expect(evidence).toHaveProperty('bypassGuard');

@@ -27,7 +27,7 @@ vi.mock('@/lib/storage/storage-interface', () => ({
 // ---------------------------------------------------------------------------
 
 function createGetRequest(id: string, suffix = ''): NextRequest {
-  return new NextRequest(`http://localhost:3000/api/llm/batch-test/${id}${suffix}`, {
+  return new NextRequest(`http://localhost:42001/api/llm/batch-test/${id}${suffix}`, {
     method: 'GET',
   });
 }

@@ -38,9 +38,11 @@ export function Scoreboard() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
+    const controller = new AbortController()
     async function load() {
       try {
-        const res = await fetchWithAuth('/api/llm/summary')
+        const res = await fetchWithAuth('/api/llm/summary', { signal: controller.signal })
+        if (controller.signal.aborted) return
         if (res.ok) {
           const data = await res.json()
           const entries: ScoreEntry[] = (data.models || []).map((m: Record<string, unknown>) => ({
@@ -67,18 +69,19 @@ export function Scoreboard() {
           }
         }
       } catch {
-        setError(true)
+        if (!controller.signal.aborted) setError(true)
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) setLoading(false)
       }
     }
     load()
+    return () => controller.abort()
   }, [])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 motion-safe:animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -100,7 +103,7 @@ export function Scoreboard() {
 
       {error ? (
         <Card>
-          <CardContent className="p-6 text-center text-sm text-destructive">
+          <CardContent className="p-6 text-center text-sm text-destructive" role="alert">
             Failed to load scoreboard data. Check your connection and try again.
           </CardContent>
         </Card>
@@ -144,7 +147,7 @@ function StatCard({ icon: Icon, label, value }: { icon: typeof Shield; label: st
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4" aria-hidden="true" />
           {label}
         </CardTitle>
       </CardHeader>

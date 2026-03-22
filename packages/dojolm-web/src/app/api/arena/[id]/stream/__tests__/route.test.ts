@@ -23,7 +23,7 @@ function createParams(id: string) {
 }
 
 function createGetRequest(ip?: string): NextRequest {
-  const req = new NextRequest('http://localhost:3000/api/arena/m1/stream');
+  const req = new NextRequest('http://localhost:42001/api/arena/m1/stream');
   if (ip) {
     // Can't easily set headers on NextRequest after creation in tests
   }

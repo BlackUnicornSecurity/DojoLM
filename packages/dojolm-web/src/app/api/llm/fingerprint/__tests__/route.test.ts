@@ -149,7 +149,7 @@ vi.mock('node:crypto', () => ({
 // ---------------------------------------------------------------------------
 
 function makePostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/fingerprint', {
+  return new NextRequest('http://localhost:42001/api/llm/fingerprint', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -379,7 +379,7 @@ describe('GET /api/llm/fingerprint/results', () => {
   // KRES-001
   it('KRES-001: returns empty results when no files exist', async () => {
     mockFsReaddir.mockResolvedValue([]);
-    const res = await GET(makeGetRequest('http://localhost:3000/api/llm/fingerprint/results'));
+    const res = await GET(makeGetRequest('http://localhost:42001/api/llm/fingerprint/results'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.results).toEqual([]);
@@ -390,7 +390,7 @@ describe('GET /api/llm/fingerprint/results', () => {
     mockFsReaddir.mockResolvedValue(['run-abc.json'] as string[]);
     mockFsReadFile.mockResolvedValue(sampleResult);
 
-    const res = await GET(makeGetRequest('http://localhost:3000/api/llm/fingerprint/results'));
+    const res = await GET(makeGetRequest('http://localhost:42001/api/llm/fingerprint/results'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.results).toHaveLength(1);
@@ -401,7 +401,7 @@ describe('GET /api/llm/fingerprint/results', () => {
   // KRES-003
   it('KRES-003: invalid modelId query param returns 400', async () => {
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/results', {
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/results', {
         modelId: 'bad model/id!',
       })
     );
@@ -413,7 +413,7 @@ describe('GET /api/llm/fingerprint/results', () => {
   // KRES-004
   it('KRES-004: unauthorized request returns 401', async () => {
     mockCheckApiAuth.mockReturnValue(unauthorizedResponse);
-    const res = await GET(makeGetRequest('http://localhost:3000/api/llm/fingerprint/results'));
+    const res = await GET(makeGetRequest('http://localhost:42001/api/llm/fingerprint/results'));
     expect(res.status).toBe(401);
   });
 
@@ -425,7 +425,7 @@ describe('GET /api/llm/fingerprint/results', () => {
       .mockResolvedValueOnce(anotherResult);
 
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/results', {
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/results', {
         modelId: 'test-model',
       })
     );
@@ -443,7 +443,7 @@ describe('GET /api/llm/fingerprint/results', () => {
       .mockResolvedValueOnce(anotherResult);
 
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/results', { mode: 'verify' })
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/results', { mode: 'verify' })
     );
     expect(res.status).toBe(200);
     const json = await res.json();
@@ -489,7 +489,7 @@ describe('GET /api/llm/fingerprint/signatures', () => {
 
   // KSIG-001
   it('KSIG-001: returns all signatures with summary fields', async () => {
-    const res = await GET(makeGetRequest('http://localhost:3000/api/llm/fingerprint/signatures'));
+    const res = await GET(makeGetRequest('http://localhost:42001/api/llm/fingerprint/signatures'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.total).toBe(2);
@@ -505,14 +505,14 @@ describe('GET /api/llm/fingerprint/signatures', () => {
   // KSIG-002
   it('KSIG-002: unauthorized request returns 401', async () => {
     mockCheckApiAuth.mockReturnValue(unauthorizedResponse);
-    const res = await GET(makeGetRequest('http://localhost:3000/api/llm/fingerprint/signatures'));
+    const res = await GET(makeGetRequest('http://localhost:42001/api/llm/fingerprint/signatures'));
     expect(res.status).toBe(401);
   });
 
   // KSIG-003
   it('KSIG-003: filters signatures by provider query param (case-insensitive)', async () => {
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/signatures', {
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/signatures', {
         provider: 'Anthropic',
       })
     );
@@ -526,7 +526,7 @@ describe('GET /api/llm/fingerprint/signatures', () => {
   // KSIG-004
   it('KSIG-004: filters signatures by family query param (case-insensitive)', async () => {
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/signatures', {
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/signatures', {
         family: 'GPT-4',
       })
     );
@@ -539,7 +539,7 @@ describe('GET /api/llm/fingerprint/signatures', () => {
   // KSIG-005
   it('KSIG-005: returns empty list when no signatures match filter', async () => {
     const res = await GET(
-      makeGetRequest('http://localhost:3000/api/llm/fingerprint/signatures', {
+      makeGetRequest('http://localhost:42001/api/llm/fingerprint/signatures', {
         provider: 'mistral',
       })
     );

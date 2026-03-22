@@ -31,6 +31,7 @@ import { MetricCard } from '@/components/ui/MetricCard'
 import { FilterPills } from '@/components/ui/FilterPills'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { useScannerMetrics } from '@/lib/hooks'
+import { SenseiDrawer } from '@/components/sensei/SenseiDrawer'
 
 // Lazy-loaded module components (Story 2.5 — C-05 code splitting)
 const LLMDashboardWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.LLMDashboardWithProviders })))
@@ -554,6 +555,12 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
   )
 }
 
+/** Connected SenseiDrawer — reads activeTab from NavigationContext (SH8.1) */
+function ConnectedSenseiDrawer() {
+  const { activeTab } = useNavigation()
+  return <SenseiDrawer activeModule={activeTab} />
+}
+
 /** Screen reader announcer for module navigation changes (Story 5.3) */
 function ScreenReaderAnnouncer() {
   const { activeTab } = useNavigation()
@@ -582,6 +589,9 @@ export default function Home() {
 
         {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
         <MobileNav />
+
+        {/* Sensei AI Assistant Drawer (SH8.1) */}
+        <ConnectedSenseiDrawer />
 
         {/* Main Content - offset for sidebar */}
         <main

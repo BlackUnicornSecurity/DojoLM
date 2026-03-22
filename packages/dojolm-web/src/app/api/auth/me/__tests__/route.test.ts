@@ -24,13 +24,13 @@ vi.mock('@/lib/auth/route-guard', () => ({
 // --- Helpers ---
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/me', {
+  return new NextRequest('http://localhost:42001/api/auth/me', {
     method: 'GET',
   });
 }
 
 function createGetRequestWithCookie(token: string): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/me', {
+  return new NextRequest('http://localhost:42001/api/auth/me', {
     method: 'GET',
     headers: {
       Cookie: `dojolm_session=${token}`,

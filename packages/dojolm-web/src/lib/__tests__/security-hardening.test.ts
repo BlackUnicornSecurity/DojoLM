@@ -17,7 +17,7 @@ describe('Security Hardening (Story 8.3)', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.NODA_API_KEY = 'test-api-key-for-security-tests';
-    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
+    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
     process.env.NODE_ENV = 'test';
   });
 
@@ -26,7 +26,7 @@ describe('Security Hardening (Story 8.3)', () => {
       const mod = await import('@/middleware');
       mod.resetRateLimiter();
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'x-api-key': 'test-api-key-for-security-tests',
@@ -42,7 +42,7 @@ describe('Security Hardening (Story 8.3)', () => {
       mod.resetRateLimiter();
 
       for (let i = 0; i < 100; i++) {
-        const req = new NextRequest('http://localhost:3000/api/scan', {
+        const req = new NextRequest('http://localhost:42001/api/scan', {
           method: 'GET',
           headers: {
             'x-api-key': 'test-api-key-for-security-tests',
@@ -52,7 +52,7 @@ describe('Security Hardening (Story 8.3)', () => {
         await mod.middleware(req);
       }
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'x-api-key': 'test-api-key-for-security-tests',
@@ -69,7 +69,7 @@ describe('Security Hardening (Story 8.3)', () => {
       mod.resetRateLimiter();
 
       for (let i = 0; i < 10; i++) {
-        const req = new NextRequest('http://localhost:3000/api/scan', {
+        const req = new NextRequest('http://localhost:42001/api/scan', {
           method: 'GET',
           headers: {
             'x-api-key': 'wrong-key',
@@ -79,7 +79,7 @@ describe('Security Hardening (Story 8.3)', () => {
         await mod.middleware(req);
       }
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'x-api-key': 'test-api-key-for-security-tests',
@@ -102,7 +102,7 @@ describe('Security Hardening (Story 8.3)', () => {
       const mod = await import('@/middleware');
       mod.resetRateLimiter();
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
       });
       Object.defineProperty(req, 'method', { value: 'TRACE' });
@@ -118,12 +118,12 @@ describe('Security Hardening (Story 8.3)', () => {
       const mod = await import('@/middleware');
       mod.resetRateLimiter();
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'sec-fetch-site': 'same-origin',
-          'origin': 'http://localhost:3000',
-          'host': 'localhost:3000',
+          'origin': 'http://localhost:42001',
+          'host': 'localhost:42001',
         },
       });
       const res = await mod.middleware(req);
@@ -134,14 +134,14 @@ describe('Security Hardening (Story 8.3)', () => {
       const mod = await import('@/middleware');
       mod.resetRateLimiter();
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'sec-fetch-site': 'same-origin',
           'sec-fetch-mode': 'cors',
           'sec-fetch-dest': 'empty',
-          'origin': 'http://localhost:3000',
-          'host': 'localhost:3000',
+          'origin': 'http://localhost:42001',
+          'host': 'localhost:42001',
         },
       });
       const res = await mod.middleware(req);
@@ -152,14 +152,14 @@ describe('Security Hardening (Story 8.3)', () => {
       const mod = await import('@/middleware');
       mod.resetRateLimiter();
 
-      const req = new NextRequest('http://localhost:3000/api/scan', {
+      const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'sec-fetch-site': 'same-origin',
           'sec-fetch-mode': 'websocket',
           'sec-fetch-dest': 'empty',
-          'origin': 'http://localhost:3000',
-          'host': 'localhost:3000',
+          'origin': 'http://localhost:42001',
+          'host': 'localhost:42001',
         },
       });
       const res = await mod.middleware(req);

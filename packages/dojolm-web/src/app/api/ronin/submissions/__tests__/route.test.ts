@@ -21,7 +21,7 @@ vi.mock('@/lib/api-error', () => ({
 }));
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/ronin/submissions');
+  const url = new URL('http://localhost:42001/api/ronin/submissions');
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
@@ -29,7 +29,7 @@ function createGetRequest(params: Record<string, string> = {}): NextRequest {
 }
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/ronin/submissions', {
+  return new NextRequest('http://localhost:42001/api/ronin/submissions', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -146,7 +146,7 @@ describe('POST /api/ronin/submissions', () => {
   it('rejects invalid JSON body', async () => {
     const { POST } = await import('@/app/api/ronin/submissions/route');
 
-    const req = new NextRequest('http://localhost:3000/api/ronin/submissions', {
+    const req = new NextRequest('http://localhost:42001/api/ronin/submissions', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-valid-json',

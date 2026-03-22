@@ -50,7 +50,7 @@ vi.mock('@/lib/ablation-engine', () => ({
 }));
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/attackdna/analyze', {
+  return new NextRequest('http://localhost:42001/api/attackdna/analyze', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -131,7 +131,7 @@ describe('POST /api/attackdna/analyze', () => {
   it('rejects non-object body', async () => {
     const { POST } = await import('@/app/api/attackdna/analyze/route');
 
-    const req = new NextRequest('http://localhost:3000/api/attackdna/analyze', {
+    const req = new NextRequest('http://localhost:42001/api/attackdna/analyze', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify([1, 2, 3]),

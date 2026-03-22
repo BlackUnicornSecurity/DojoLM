@@ -34,7 +34,7 @@ vi.mock('@/lib/db/types', () => ({}));
 // --- Helpers ---
 
 function createPatchRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/users/user-1', {
+  return new NextRequest('http://localhost:42001/api/auth/users/user-1', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -196,7 +196,7 @@ describe('PATCH /api/auth/users/[id]', () => {
 
   // UID-012: Malformed JSON body returns 500
   it('UID-012: returns 500 when request body is malformed', async () => {
-    const req = new NextRequest('http://localhost:3000/api/auth/users/user-1', {
+    const req = new NextRequest('http://localhost:42001/api/auth/users/user-1', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: 'not-valid-json',
@@ -212,7 +212,7 @@ describe('PATCH /api/auth/users/[id]', () => {
 
   // UID-013: Empty body returns 500 (json parse fails on empty)
   it('UID-013: returns 500 when request body is empty', async () => {
-    const req = new NextRequest('http://localhost:3000/api/auth/users/user-1', {
+    const req = new NextRequest('http://localhost:42001/api/auth/users/user-1', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
     });

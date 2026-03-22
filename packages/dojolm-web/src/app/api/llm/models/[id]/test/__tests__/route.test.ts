@@ -30,7 +30,7 @@ function createParams(id: string) {
 }
 
 function createPostRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/models/m1/test', { method: 'POST' });
+  return new NextRequest('http://localhost:42001/api/llm/models/m1/test', { method: 'POST' });
 }
 
 const mockModel = { id: 'm1', provider: 'openai', name: 'GPT-4', apiKey: 'sk-test' };

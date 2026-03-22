@@ -25,7 +25,7 @@ vi.mock('@/lib/api-auth', () => ({
 }));
 
 function createPostRequest(body: unknown, contentType = 'application/json'): NextRequest {
-  return new NextRequest('http://localhost:3000/api/scan', {
+  return new NextRequest('http://localhost:42001/api/scan', {
     method: 'POST',
     headers: { 'content-type': contentType },
     body: JSON.stringify(body),
@@ -92,7 +92,7 @@ describe('POST /api/scan', () => {
   it('API-S-005: rejects invalid JSON body', async () => {
     const { POST } = await import('@/app/api/scan/route');
 
-    const req = new NextRequest('http://localhost:3000/api/scan', {
+    const req = new NextRequest('http://localhost:42001/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-valid-json{{{',
@@ -108,7 +108,7 @@ describe('POST /api/scan', () => {
   it('API-S-005b: rejects null JSON body', async () => {
     const { POST } = await import('@/app/api/scan/route');
 
-    const req = new NextRequest('http://localhost:3000/api/scan', {
+    const req = new NextRequest('http://localhost:42001/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'null',

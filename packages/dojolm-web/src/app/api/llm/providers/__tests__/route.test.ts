@@ -39,7 +39,7 @@ vi.mock('bu-tpi/llm', () => ({
 }));
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/providers', {
+  return new NextRequest('http://localhost:42001/api/llm/providers', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -95,7 +95,7 @@ describe('POST /api/llm/providers', () => {
 
   it('PROV-004: invalid JSON returns 400', async () => {
     const { POST } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/llm/providers', {
+    const req = new NextRequest('http://localhost:42001/api/llm/providers', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-json{{{',
@@ -199,7 +199,7 @@ describe('GET /api/llm/providers', () => {
     ]);
 
     const { GET } = await import('../route');
-    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
+    const res = await GET(new NextRequest('http://localhost:42001/api/llm/providers'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json).toHaveLength(2);
@@ -213,7 +213,7 @@ describe('GET /api/llm/providers', () => {
     ]);
 
     const { GET } = await import('../route');
-    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
+    const res = await GET(new NextRequest('http://localhost:42001/api/llm/providers'));
     const json = await res.json();
 
     for (const item of json) {
@@ -233,7 +233,7 @@ describe('GET /api/llm/providers', () => {
     mockGetStorage.mockRejectedValue(new Error('DB error'));
 
     const { GET } = await import('../route');
-    const res = await GET(new NextRequest('http://localhost:3000/api/llm/providers'));
+    const res = await GET(new NextRequest('http://localhost:42001/api/llm/providers'));
     expect(res.status).toBe(500);
   });
 });

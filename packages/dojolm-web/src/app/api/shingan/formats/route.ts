@@ -3,7 +3,8 @@
  * GET /api/shingan/formats
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { checkApiAuth } from '@/lib/api-auth';
 
 const FORMATS = [
   { id: 'claude-agent', name: 'Claude Agent', pattern: '.md with YAML frontmatter + tools: list', description: 'Claude Code agent definitions with tool permissions and system prompts' },
@@ -15,6 +16,9 @@ const FORMATS = [
   { id: 'hooks-config', name: 'Hooks Config', pattern: 'hooks.json, settings.json', description: 'Claude Code hooks configuration with PreToolUse/PostToolUse handlers' },
 ] as const;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
   return NextResponse.json({ formats: FORMATS, total: FORMATS.length });
 }

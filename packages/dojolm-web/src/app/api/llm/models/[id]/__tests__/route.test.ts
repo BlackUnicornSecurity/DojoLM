@@ -51,7 +51,7 @@ function createParams(id: string) {
 }
 
 function makeRequest(method: string, body?: unknown): NextRequest {
-  const url = 'http://localhost:3000/api/llm/models/test-id';
+  const url = 'http://localhost:42001/api/llm/models/test-id';
   if (body !== undefined) {
     return new NextRequest(url, {
       method,
@@ -63,7 +63,7 @@ function makeRequest(method: string, body?: unknown): NextRequest {
 }
 
 function makeBadJsonRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/models/test-id', {
+  return new NextRequest('http://localhost:42001/api/llm/models/test-id', {
     method: 'PATCH',
     body: '{{invalid json',
     headers: { 'Content-Type': 'application/json' },

@@ -150,6 +150,7 @@ export function FeatureRadar({
                 dominantBaseline="middle"
                 className="fill-muted-foreground"
                 fontSize={10}
+                aria-hidden="true"
               >
                 <title>{`${axis.label}: target=${(tVal * 100).toFixed(0)}%, candidate=${(cVal * 100).toFixed(0)}%`}</title>
                 {axis.label}
@@ -161,16 +162,16 @@ export function FeatureRadar({
         {/* Target polygon (blue) */}
         <polygon
           points={targetPoints}
-          fill="rgba(59, 130, 246, 0.15)"
-          stroke="rgb(59, 130, 246)"
+          fill="color-mix(in srgb, var(--info) 15%, transparent)"
+          stroke="var(--info)"
           strokeWidth={1.5}
         />
 
         {/* Candidate polygon (green) */}
         <polygon
           points={candidatePoints}
-          fill="rgba(34, 197, 94, 0.15)"
-          stroke="rgb(34, 197, 94)"
+          fill="color-mix(in srgb, var(--success) 15%, transparent)"
+          stroke="var(--success)"
           strokeWidth={1.5}
         />
 
@@ -185,7 +186,7 @@ export function FeatureRadar({
               cx={pt.x}
               cy={pt.y}
               r={3}
-              fill="rgb(59, 130, 246)"
+              fill="var(--info)"
             >
               <title>{`${axis.label}: ${(val * 100).toFixed(0)}%`}</title>
             </circle>
@@ -203,7 +204,7 @@ export function FeatureRadar({
               cx={pt.x}
               cy={pt.y}
               r={3}
-              fill="rgb(34, 197, 94)"
+              fill="var(--success)"
             >
               <title>{`${axis.label}: ${(val * 100).toFixed(0)}%`}</title>
             </circle>
@@ -214,11 +215,11 @@ export function FeatureRadar({
       {/* Legend */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'rgb(59, 130, 246)' }} />
+          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'var(--info)' }} />
           {targetLabel}
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'rgb(34, 197, 94)' }} />
+          <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'var(--success)' }} />
           {candidateLabel}
         </div>
       </div>

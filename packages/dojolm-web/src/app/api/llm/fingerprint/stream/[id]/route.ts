@@ -28,6 +28,8 @@ export async function GET(
   }
 
   const encoder = new TextEncoder();
+  let activeListener: ((data: string) => void) | null = null;
+
   const stream = new ReadableStream({
     start(controller) {
       // Send current state if already has progress
@@ -57,7 +59,15 @@ export async function GET(
         }
       };
 
+      activeListener = listener;
       session.listeners.add(listener);
+    },
+    cancel() {
+      // Clean up listener on client disconnect to prevent memory leaks
+      if (activeListener) {
+        session.listeners.delete(activeListener);
+        activeListener = null;
+      }
     },
   });
 

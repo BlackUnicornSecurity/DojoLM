@@ -38,7 +38,7 @@ cd DojoLM && npm install
 npm start --workspace=packages/bu-tpi    # API on :8089
 
 # Run the web UI
-npm run dev:web                           # UI on :3000
+npm run dev:web                           # UI on :42001
 
 # Run tests
 npm test                                  # 5,771 tests, 100% pass rate

@@ -15,7 +15,7 @@ import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityState } from '@/lib/contexts/ActivityContext'
 import { useModuleVisibility } from '@/lib/contexts/ModuleVisibilityContext'
-import { PanelLeftClose, PanelLeft, ChevronDown } from 'lucide-react'
+import { PanelLeftClose, PanelLeft, ChevronDown, Bot } from 'lucide-react'
 import { SidebarHeader } from './SidebarHeader'
 import { ActivityFeed } from '@/components/ui/ActivityFeed'
 
@@ -189,6 +189,33 @@ export function Sidebar() {
             </span>
           </button>
         )}
+        {/* Sensei AI toggle (SH8.1) */}
+        <button
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('sensei-toggle'))
+          }}
+          className={cn(
+            "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
+            "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
+            "text-muted-foreground hover:text-[var(--primary)] hover:bg-[var(--overlay-subtle)]"
+          )}
+          aria-label="Open Sensei AI assistant"
+          title={collapsed ? 'Sensei' : undefined}
+        >
+          <Bot className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+          <span
+            aria-hidden="true"
+            className={cn(
+              "font-medium whitespace-nowrap overflow-hidden",
+              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
+              collapsed
+                ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
+                : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
+            )}
+          >
+            Sensei
+          </span>
+        </button>
         {/* Collapse toggle — icon-only with tooltip */}
         <button
           onClick={() => setCollapsed(!collapsed)}

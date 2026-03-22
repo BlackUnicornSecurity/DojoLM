@@ -411,9 +411,14 @@ function MatchTable({
                 key={match.id}
                 className={cn(
                   'cursor-pointer',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset',
                   selectedMatchId === match.id && 'bg-muted/50'
                 )}
+                tabIndex={0}
+                role="button"
+                aria-label={`Match ${match.id.slice(0, 8)}`}
                 onClick={() => onSelectMatch(match)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectMatch(match); } }}
               >
                 <TableCell className="font-mono text-xs">{match.id.slice(0, 8)}</TableCell>
                 <TableCell>

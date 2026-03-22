@@ -21,7 +21,7 @@ vi.mock('@/lib/api-error', () => ({
 }));
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/ronin/programs');
+  const url = new URL('http://localhost:42001/api/ronin/programs');
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }

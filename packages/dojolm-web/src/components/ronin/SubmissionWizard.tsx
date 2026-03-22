@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { X, ArrowRight, ArrowLeft, Check, FileText, Shield, Brain, Eye } from 'lucide-react'
@@ -35,6 +35,12 @@ const STEP_LABELS = [
 ]
 
 export function SubmissionWizard({ onSave, onClose, initialProgramId }: SubmissionWizardProps) {
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    closeRef.current?.focus()
+  }, [])
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', handler)
@@ -135,6 +141,7 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
         <div className="flex items-center justify-between p-5 border-b border-[var(--border)]">
           <h2 className="text-lg font-bold">New Submission</h2>
           <button
+            ref={closeRef}
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-[var(--bg-tertiary)] text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center motion-safe:transition-colors"
             aria-label="Close wizard"
@@ -144,13 +151,13 @@ export function SubmissionWizard({ onSave, onClose, initialProgramId }: Submissi
         </div>
 
         {/* Step Indicator */}
-        <div className="flex items-center gap-1 px-5 py-3 border-b border-[var(--border)]">
+        <div className="flex items-center gap-1 px-5 py-3 border-b border-[var(--border)]" role="list">
           {STEP_LABELS.map((s, i) => {
             const Icon = s.icon
             const isActive = i === step
             const isCompleted = i < step
             return (
-              <div key={i} className="flex items-center gap-1 flex-1">
+              <div key={i} className="flex items-center gap-1 flex-1" role="listitem" aria-current={isActive ? 'step' : undefined}>
                 <div className={cn(
                   'flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium',
                   isActive && 'bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]',

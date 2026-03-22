@@ -22,7 +22,7 @@ vi.mock('@/app/api/admin/health/route', () => ({
 // ---------------------------------------------------------------------------
 
 function makeGetRequest(headers: Record<string, string> = {}): NextRequest {
-  return new NextRequest('http://localhost:3000/api/health', {
+  return new NextRequest('http://localhost:42001/api/health', {
     method: 'GET',
     headers,
   });

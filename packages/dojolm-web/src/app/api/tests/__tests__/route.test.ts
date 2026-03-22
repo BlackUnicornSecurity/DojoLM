@@ -39,13 +39,13 @@ vi.mock('child_process', async (importOriginal) => {
 // ---------------------------------------------------------------------------
 
 function makeGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/tests', {
+  return new NextRequest('http://localhost:42001/api/tests', {
     method: 'GET',
   });
 }
 
 function makePostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/tests', {
+  return new NextRequest('http://localhost:42001/api/tests', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -53,7 +53,7 @@ function makePostRequest(body: unknown): NextRequest {
 }
 
 function makeInvalidJsonPostRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/tests', {
+  return new NextRequest('http://localhost:42001/api/tests', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{not-valid-json',

@@ -35,7 +35,7 @@ vi.mock('@/lib/llm-execution', () => ({
 // ---------------------------------------------------------------------------
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/test-fixture', {
+  return new NextRequest('http://localhost:42001/api/llm/test-fixture', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -43,7 +43,7 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 function createInvalidJsonRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/test-fixture', {
+  return new NextRequest('http://localhost:42001/api/llm/test-fixture', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{ invalid json !!!',

@@ -466,7 +466,7 @@ function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
             <li key={`${segment}-${i}`} className="flex items-center gap-1">
               {i > 0 && <ChevronRight className="h-3 w-3 text-muted-foreground" aria-hidden="true" />}
               {isLast ? (
-                <span className="font-medium text-[var(--foreground)] capitalize">{segment}</span>
+                <span className="font-medium text-[var(--foreground)] capitalize" aria-current="page">{segment}</span>
               ) : (
                 <button
                   onClick={() => onNavigate(i)}

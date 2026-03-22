@@ -33,7 +33,7 @@ export function QuickLaunchOrOnboarding() {
 
   // Avoid flash — render skeleton until hydrated
   if (!hydrated) return (
-    <div className="rounded-lg border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse" aria-busy="true">
+    <div className="rounded-lg border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse motion-reduce:animate-none" aria-busy="true">
       <div className="h-4 w-32 bg-muted rounded mb-3" />
       <div className="h-20 bg-muted/50 rounded" />
     </div>

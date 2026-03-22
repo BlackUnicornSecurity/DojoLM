@@ -37,7 +37,7 @@ vi.mock('@/lib/storage/dna-storage', () => ({
 }));
 
 function createPostRequest(url: string, body?: unknown): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
@@ -45,7 +45,7 @@ function createPostRequest(url: string, body?: unknown): NextRequest {
 }
 
 function createGetRequest(url: string): NextRequest {
-  return new NextRequest(new URL(url, 'http://localhost:3000'), {
+  return new NextRequest(new URL(url, 'http://localhost:42001'), {
     method: 'GET',
   });
 }

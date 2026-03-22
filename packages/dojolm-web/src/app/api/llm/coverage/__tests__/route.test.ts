@@ -21,7 +21,7 @@ vi.mock('@/lib/llm-server-utils', () => ({
 }));
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/llm/coverage');
+  const url = new URL('http://localhost:42001/api/llm/coverage');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url);
 }

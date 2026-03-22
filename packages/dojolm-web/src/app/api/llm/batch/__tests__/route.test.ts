@@ -78,7 +78,7 @@ import { getGuardConfig, GuardConfigSecretMissingError } from '@/lib/storage/gua
 // Helpers
 // ---------------------------------------------------------------------------
 
-const BASE_URL = 'http://localhost:3000/api/llm/batch';
+const BASE_URL = 'http://localhost:42001/api/llm/batch';
 
 function postRequest(body: unknown): NextRequest {
   return new NextRequest(BASE_URL, {

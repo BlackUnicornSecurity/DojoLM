@@ -48,7 +48,7 @@ vi.mock('@/lib/api-auth', () => ({
 // ---------------------------------------------------------------------------
 
 function makePostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/batch-test', {
+  return new NextRequest('http://localhost:42001/api/llm/batch-test', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -56,7 +56,7 @@ function makePostRequest(body: unknown): NextRequest {
 }
 
 function makeInvalidJsonRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/batch-test', {
+  return new NextRequest('http://localhost:42001/api/llm/batch-test', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{invalid-json',
@@ -64,7 +64,7 @@ function makeInvalidJsonRequest(): NextRequest {
 }
 
 function makeGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/batch-test', {
+  return new NextRequest('http://localhost:42001/api/llm/batch-test', {
     method: 'GET',
   });
 }
@@ -223,7 +223,7 @@ describe('GET /api/llm/batch-test', () => {
 
   // BT-011
   it('BT-011: GET returns list of batches', async () => {
-    const req = new NextRequest('http://localhost:3000/api/llm/batch-test', { method: 'GET' });
+    const req = new NextRequest('http://localhost:42001/api/llm/batch-test', { method: 'GET' });
     const res = await GET(req);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -236,7 +236,7 @@ describe('GET /api/llm/batch-test', () => {
   // BT-012
   it('BT-012: GET returns 500 on internal error', async () => {
     mockQueryBatches.mockRejectedValue(new Error('storage down'));
-    const req = new NextRequest('http://localhost:3000/api/llm/batch-test', { method: 'GET' });
+    const req = new NextRequest('http://localhost:42001/api/llm/batch-test', { method: 'GET' });
     const res = await GET(req);
     expect(res.status).toBe(500);
     const body = await res.json();

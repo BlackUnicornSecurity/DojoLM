@@ -45,13 +45,13 @@ vi.mock('fs', () => {
 });
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/scan-fixture');
+  const url = new URL('http://localhost:42001/api/scan-fixture');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url);
 }
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/scan-fixture', {
+  return new NextRequest('http://localhost:42001/api/scan-fixture', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -124,7 +124,7 @@ describe('POST /api/scan-fixture', () => {
 
   it('SF-009: POST invalid JSON returns 400', async () => {
     const { POST } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/scan-fixture', {
+    const req = new NextRequest('http://localhost:42001/api/scan-fixture', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-json{',

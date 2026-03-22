@@ -39,7 +39,7 @@ export function checkApiAuth(request: NextRequest): NextResponse | null {
     // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
     // the request's Host header (attacker-controlled). This prevents external
     // curl requests from bypassing auth by spoofing Sec-Fetch + Origin headers.
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
     if (origin === appUrl) {
       return null;
     }

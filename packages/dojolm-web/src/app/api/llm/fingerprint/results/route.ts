@@ -9,6 +9,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const SAFE_ID = /^[\w-]{1,128}$/;
+const VALID_MODES = new Set(['identify', 'verify']);
+
+function isValidResult(data: unknown): data is Record<string, unknown> {
+  if (typeof data !== 'object' || data === null) return false;
+  const d = data as Record<string, unknown>;
+  return typeof d.id === 'string' && typeof d.modelId === 'string' && typeof d.mode === 'string';
+}
 
 export async function GET(request: NextRequest) {
   const authResult = checkApiAuth(request);
@@ -22,9 +29,12 @@ export async function GET(request: NextRequest) {
     if (modelId && !SAFE_ID.test(modelId)) {
       return NextResponse.json({ error: 'Invalid modelId' }, { status: 400 });
     }
+    if (mode && !VALID_MODES.has(mode)) {
+      return NextResponse.json({ error: 'Invalid mode, must be identify or verify' }, { status: 400 });
+    }
 
     const resultsDir = path.join(process.cwd(), 'data', 'llm-results', 'fingerprint');
-    
+
     let files: string[] = [];
     try {
       files = await fs.promises.readdir(resultsDir);
@@ -32,11 +42,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ results: [] });
     }
 
-    const results: unknown[] = [];
+    const results: Record<string, unknown>[] = [];
     for (const file of files.filter((f) => f.endsWith('.json'))) {
       try {
         const content = await fs.promises.readFile(path.join(resultsDir, file), 'utf-8');
         const data = JSON.parse(content);
+        if (!isValidResult(data)) continue;
         if (modelId && data.modelId !== modelId) continue;
         if (mode && data.mode !== mode) continue;
         results.push(data);

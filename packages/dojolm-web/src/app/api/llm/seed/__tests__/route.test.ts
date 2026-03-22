@@ -33,7 +33,7 @@ vi.mock('@/lib/api-error', () => ({
 }));
 
 function createPostRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/seed', { method: 'POST' });
+  return new NextRequest('http://localhost:42001/api/llm/seed', { method: 'POST' });
 }
 
 beforeEach(() => {

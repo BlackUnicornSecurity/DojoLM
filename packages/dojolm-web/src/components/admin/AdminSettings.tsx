@@ -128,7 +128,7 @@ export function AdminSettings() {
             <button
               type="button"
               onClick={handleEdit}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground motion-safe:transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
               aria-label="Edit settings"
             >
               <Pencil className="h-3 w-3" aria-hidden="true" />
@@ -139,7 +139,7 @@ export function AdminSettings() {
               <button
                 type="button"
                 onClick={handleSave}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-green-600 hover:bg-green-700 text-white motion-safe:transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-[var(--success)] hover:bg-[var(--success)]/90 text-white motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                 aria-label="Save settings"
               >
                 <Save className="h-3 w-3" aria-hidden="true" />
@@ -148,7 +148,7 @@ export function AdminSettings() {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground motion-safe:transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md bg-muted hover:bg-muted/80 text-foreground motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                 aria-label="Cancel editing"
               >
                 <X className="h-3 w-3" aria-hidden="true" />
@@ -174,7 +174,7 @@ export function AdminSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Clock className="h-4 w-4" />
+            <Clock className="h-4 w-4" aria-hidden="true" />
             Session Configuration
           </CardTitle>
         </CardHeader>
@@ -220,7 +220,7 @@ export function AdminSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheck className="h-4 w-4" />
+            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             Security Configuration
           </CardTitle>
         </CardHeader>
@@ -252,7 +252,7 @@ export function AdminSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Database className="h-4 w-4" />
+            <Database className="h-4 w-4" aria-hidden="true" />
             Data Retention
           </CardTitle>
         </CardHeader>
@@ -298,7 +298,7 @@ export function AdminSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Lock className="h-4 w-4" />
+            <Lock className="h-4 w-4" aria-hidden="true" />
             Role-Based Access Control
           </CardTitle>
         </CardHeader>

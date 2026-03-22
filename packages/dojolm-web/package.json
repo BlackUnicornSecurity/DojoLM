@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run build:scanner && next dev",
+    "dev": "npm run build:scanner && next dev --port 42001",
     "build": "npm run build:scanner && next build",
     "build:scanner": "cd ../dojolm-scanner && npm run build",
-    "start": "next start",
+    "start": "next start --port 42001",
     "start:secure": "npx tsx server.ts",
     "lint": "eslint",
     "test": "vitest",

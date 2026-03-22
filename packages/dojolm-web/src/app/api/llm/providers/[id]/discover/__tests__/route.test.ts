@@ -19,7 +19,7 @@ function createParams(id: string) {
 }
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/providers/p1/discover');
+  return new NextRequest('http://localhost:42001/api/llm/providers/p1/discover');
 }
 
 const localConfig = { id: 'p1', provider: 'ollama', baseUrl: 'http://localhost:11434', name: 'Local Ollama' };

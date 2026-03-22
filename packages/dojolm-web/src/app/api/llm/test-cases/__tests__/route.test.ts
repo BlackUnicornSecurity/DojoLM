@@ -27,13 +27,13 @@ vi.mock('@/lib/storage/file-storage', () => ({
 }));
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/llm/test-cases');
+  const url = new URL('http://localhost:42001/api/llm/test-cases');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url);
 }
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/test-cases', {
+  return new NextRequest('http://localhost:42001/api/llm/test-cases', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -41,7 +41,7 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 function createDeleteRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/llm/test-cases');
+  const url = new URL('http://localhost:42001/api/llm/test-cases');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url, { method: 'DELETE' });
 }
@@ -118,7 +118,7 @@ describe('POST /api/llm/test-cases', () => {
 
   it('TC-007: invalid JSON returns 400', async () => {
     const { POST } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/llm/test-cases', {
+    const req = new NextRequest('http://localhost:42001/api/llm/test-cases', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-json{',

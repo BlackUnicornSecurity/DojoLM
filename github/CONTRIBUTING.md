@@ -28,7 +28,7 @@ dojolm/
 │   │   ├── fixtures/        # 2,375 attack/clean fixture files across 30 categories
 │   │   └── tools/           # Test suites
 │   ├── dojolm-scanner/      # Enhanced scanner package (web integration)
-│   ├── dojolm-web/          # Next.js web app (port 3000)
+│   ├── dojolm-web/          # Next.js web app (port 42001)
 │   └── bmad-cybersec/       # Multi-agent cybersecurity operations framework
 ├── docs/
 │   └── user/                # All public-facing documentation (this is where user docs live)

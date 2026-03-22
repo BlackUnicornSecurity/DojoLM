@@ -76,7 +76,7 @@ describe('API /api/llm/models', () => {
     it('API-L-001: returns model list with API keys redacted', async () => {
       const { GET } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models');
+      const req = new NextRequest('http://localhost:42001/api/llm/models');
       const res = await GET(req);
 
       expect(res.status).toBe(200);
@@ -94,7 +94,7 @@ describe('API /api/llm/models', () => {
     it('API-L-001b: filters models by provider', async () => {
       const { GET } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models?provider=openai');
+      const req = new NextRequest('http://localhost:42001/api/llm/models?provider=openai');
       const res = await GET(req);
 
       expect(res.status).toBe(200);
@@ -106,7 +106,7 @@ describe('API /api/llm/models', () => {
     it('API-L-001c: filters models by enabled status', async () => {
       const { GET } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models?enabled=true');
+      const req = new NextRequest('http://localhost:42001/api/llm/models?enabled=true');
       const res = await GET(req);
 
       expect(res.status).toBe(200);
@@ -120,7 +120,7 @@ describe('API /api/llm/models', () => {
     it('API-L-002: creates a new model config', async () => {
       const { POST } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -144,7 +144,7 @@ describe('API /api/llm/models', () => {
     it('API-L-003: rejects model creation with missing fields', async () => {
       const { POST } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ name: 'Incomplete Model' }),
@@ -162,7 +162,7 @@ describe('API /api/llm/models', () => {
       const { POST } = await import('@/app/api/llm/models/route');
       const { fileStorage } = await import('@/lib/storage/file-storage');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -185,7 +185,7 @@ describe('API /api/llm/models', () => {
     it('API-L-003c: rejects null JSON body', async () => {
       const { POST } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: 'null',
@@ -201,7 +201,7 @@ describe('API /api/llm/models', () => {
     it('API-L-006: deletes an existing model', async () => {
       const { DELETE } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models?id=model-1', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models?id=model-1', {
         method: 'DELETE',
       });
 
@@ -219,7 +219,7 @@ describe('API /api/llm/models', () => {
 
       const { DELETE } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models?id=non-existent', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models?id=non-existent', {
         method: 'DELETE',
       });
 
@@ -231,7 +231,7 @@ describe('API /api/llm/models', () => {
     it('API-L-006c: rejects delete without model ID', async () => {
       const { DELETE } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'DELETE',
       });
 
@@ -245,7 +245,7 @@ describe('API /api/llm/models', () => {
     it('API-L-005: updates an existing model', async () => {
       const { PATCH } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -269,7 +269,7 @@ describe('API /api/llm/models', () => {
 
       const { PATCH } = await import('@/app/api/llm/models/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/models', {
+      const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({

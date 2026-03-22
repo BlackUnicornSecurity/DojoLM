@@ -84,6 +84,14 @@ export async function fetchWithAuth(
     headers.set('Content-Type', 'application/json');
   }
 
+  // CSRF double-submit: attach x-csrf-token from cookie on state-mutating requests
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && typeof document !== 'undefined') {
+    const csrfMatch = document.cookie.match(/(?:^|;\s*)tpi_csrf=([^;]+)/);
+    if (csrfMatch?.[1]) {
+      headers.set('x-csrf-token', decodeURIComponent(csrfMatch[1]));
+    }
+  }
+
   const response = await fetch(input, {
     ...init,
     headers,

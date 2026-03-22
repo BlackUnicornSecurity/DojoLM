@@ -45,7 +45,7 @@ import { fileStorage } from '@/lib/storage/file-storage';
 // --- Helpers ---
 
 function createGetRequest(params: Record<string, string>): NextRequest {
-  const url = new URL('http://localhost:3000/api/llm/export');
+  const url = new URL('http://localhost:42001/api/llm/export');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url);
 }

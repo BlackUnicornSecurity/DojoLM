@@ -44,7 +44,7 @@ vi.mock('@/lib/db/repositories/user.repository', () => ({
 // --- Helpers ---
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/auth/login', {
+  return new NextRequest('http://localhost:42001/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

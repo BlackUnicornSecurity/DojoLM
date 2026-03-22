@@ -43,7 +43,7 @@ vi.mock('@/lib/llm-reports', () => ({
 // ---------------------------------------------------------------------------
 
 function makeRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/llm/reports');
+  const url = new URL('http://localhost:42001/api/llm/reports');
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }

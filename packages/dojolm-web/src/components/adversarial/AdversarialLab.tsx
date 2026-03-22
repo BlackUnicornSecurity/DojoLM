@@ -400,6 +400,18 @@ function isUrlSafe(url: string): { safe: boolean; reason?: string } {
     if (host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]' || host === '0.0.0.0') {
       return { safe: false, reason: 'Localhost addresses blocked' }
     }
+    // IPv6 hex-encoded loopback and private ranges (e.g., 0:0:0:0:0:0:0:1, ::ffff:127.0.0.1)
+    const bare = host.replace(/^\[|\]$/g, '')
+    if (/^(0+:){1,7}0*1$/.test(bare) || /^::ffff:(127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/.test(bare)) {
+      return { safe: false, reason: 'IPv6-encoded private address blocked' }
+    }
+    // Hex-encoded IPv4 loopback (0x7f000001)
+    if (/^0x[0-9a-f]+$/i.test(host)) {
+      const num = parseInt(host, 16)
+      if ((num >>> 24) === 127 || (num >>> 24) === 10) {
+        return { safe: false, reason: 'Hex-encoded private IP blocked' }
+      }
+    }
     // RFC1918 Class A: 10.0.0.0/8
     if (/^10\./.test(host)) {
       return { safe: false, reason: 'Private IP (10.x) blocked' }

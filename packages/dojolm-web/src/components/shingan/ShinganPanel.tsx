@@ -369,7 +369,7 @@ function BatchCard({ entry }: { entry: BatchEntry }) {
       className={cn(
         'rounded-lg border p-4 flex flex-col gap-2',
         'motion-safe:transition-colors motion-safe:duration-150',
-        entry.loading && 'animate-pulse',
+        entry.loading && 'motion-safe:animate-pulse',
         entry.error && 'border-[var(--danger)]/50 bg-[var(--danger)]/5',
         hasResult && !entry.error && 'border-[var(--border-subtle)]',
         !hasResult && !entry.error && !entry.loading && 'border-[var(--border-subtle)] bg-[var(--bg-tertiary)]',
@@ -760,7 +760,7 @@ export function ShinganPanel() {
 
       {/* Error */}
       {error && (
-        <Card className="border-[var(--danger)]/50">
+        <Card className="border-[var(--danger)]/50" role="alert">
           <CardContent className="p-4 flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-[var(--danger)] shrink-0" aria-hidden="true" />
             <p className="text-sm text-[var(--danger)]">{error}</p>

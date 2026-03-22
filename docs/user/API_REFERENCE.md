@@ -6,7 +6,7 @@ NODA provides RESTful APIs for scanner operations, LLM testing, and platform man
 
 **Base URLs:**
 - Scanner API: `http://localhost:8089`
-- Web API: `http://localhost:3000/api`
+- Web API: `http://localhost:42001/api`
 
 **Authentication:**
 - API Key via `X-API-Key` header (for programmatic access)
@@ -138,7 +138,7 @@ Execute a single LLM test.
 
 **Request:**
 ```bash
-curl -X POST http://localhost:3000/api/llm/execute \
+curl -X POST http://localhost:42001/api/llm/execute \
   -H "Content-Type: application/json" \
   -H "X-API-Key: your-key" \
   -d '{
@@ -174,7 +174,7 @@ Execute batch LLM tests with SSE streaming.
 
 **Request:**
 ```bash
-curl -X POST http://localhost:3000/api/llm/batch \
+curl -X POST http://localhost:42001/api/llm/batch \
   -H "Content-Type: application/json" \
   -H "X-API-Key: your-key" \
   -d '{
@@ -199,7 +199,7 @@ curl -X POST http://localhost:3000/api/llm/batch \
 Stream batch progress via SSE.
 
 ```bash
-curl http://localhost:3000/api/llm/batch/uuid/stream
+curl http://localhost:42001/api/llm/batch/uuid/stream
 ```
 
 **Events:**
@@ -483,7 +483,7 @@ X-RateLimit-Reset: 1646745600
 import requests
 
 API_KEY = "your-api-key"
-BASE_URL = "http://localhost:3000/api"
+BASE_URL = "http://localhost:42001/api"
 
 def scan_text(text):
     response = requests.post(
@@ -501,7 +501,7 @@ print(result["verdict"])
 
 ```javascript
 const API_KEY = 'your-api-key';
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = 'http://localhost:42001/api';
 
 async function scanText(text) {
   const response = await fetch(`${BASE_URL}/scan`, {

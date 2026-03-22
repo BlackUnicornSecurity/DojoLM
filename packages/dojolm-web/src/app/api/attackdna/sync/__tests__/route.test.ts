@@ -45,7 +45,7 @@ const mockGetAvailableSourceIds = vi.mocked(getAvailableSourceIds);
 const mockConvertToAttackNodes = vi.mocked(convertToAttackNodes);
 
 function makeRequest(method: string, path = '/api/attackdna/sync', body?: unknown): NextRequest {
-  const url = `http://localhost:3000${path}`;
+  const url = `http://localhost:42001${path}`;
   const init: RequestInit = { method };
   if (body) {
     init.body = JSON.stringify(body);
@@ -278,7 +278,7 @@ describe('PUT /api/attackdna/sync', () => {
 
   it('rejects invalid JSON body', async () => {
     const { PUT } = await import('../route');
-    const req = new NextRequest('http://localhost:3000/api/attackdna/sync', {
+    const req = new NextRequest('http://localhost:42001/api/attackdna/sync', {
       method: 'PUT',
       body: 'not json',
       headers: { 'Content-Type': 'application/json' },

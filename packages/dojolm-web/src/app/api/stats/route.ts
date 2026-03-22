@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       patternCount,
       groupCount: patternGroups.length,
       sourceCount: new Set(patternGroups.map((g: { source?: string }) => g.source)).size,
-    })
+    }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('Stats API error:', error)
     return NextResponse.json(

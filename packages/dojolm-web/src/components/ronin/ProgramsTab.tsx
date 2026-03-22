@@ -205,7 +205,7 @@ export function ProgramsTab() {
 
       {/* Results Count */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground" aria-live="polite" aria-atomic="true">
           {filteredPrograms.length} program{filteredPrograms.length !== 1 ? 's' : ''} found
         </p>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

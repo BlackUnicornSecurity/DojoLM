@@ -2,7 +2,7 @@
  * Playwright E2E Test Configuration
  * Story 0.4: E2E Test Infrastructure Setup
  *
- * Runs against local dev server at localhost:3000.
+ * Runs against local dev server at localhost:42001.
  * Smoke test suite target: under 5 minutes.
  */
 
@@ -23,7 +23,7 @@ export default defineConfig({
     timeout: 10000,
   },
   use: {
-    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:42001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -40,7 +40,7 @@ export default defineConfig({
     ? undefined
     : {
         command: 'npm run dev',
-        url: 'http://localhost:3000',
+        url: 'http://localhost:42001',
         reuseExistingServer: true,
         timeout: 120000,
       },

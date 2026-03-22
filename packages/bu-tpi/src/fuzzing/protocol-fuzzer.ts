@@ -36,7 +36,7 @@ export interface ProtocolFuzzConfig {
 
 export const DEFAULT_PROTOCOL_FUZZ_CONFIG: ProtocolFuzzConfig = {
   protocol: 'mcp',
-  targetUrl: 'http://localhost:3000',
+  targetUrl: 'http://localhost:42001',
   maxIterations: 1000,
   timeoutMs: 5000,
   mutationRate: 0.1,

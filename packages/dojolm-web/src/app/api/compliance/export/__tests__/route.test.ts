@@ -98,7 +98,7 @@ import { fileStorage } from '@/lib/storage/file-storage'
 // ---------------------------------------------------------------------------
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/compliance/export')
+  const url = new URL('http://localhost:42001/api/compliance/export')
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v)
   }

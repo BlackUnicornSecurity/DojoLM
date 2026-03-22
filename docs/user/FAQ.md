@@ -29,7 +29,7 @@ Yes, Docker support is available:
 
 ```bash
 docker build -t dojolm:latest .
-docker run -p 3000:3000 -p 8089:8089 dojolm:latest
+docker run -p 42001:42001 -p 8089:8089 dojolm:latest
 ```
 
 ### How do I update NODA?

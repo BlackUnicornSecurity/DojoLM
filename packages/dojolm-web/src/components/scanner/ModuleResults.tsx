@@ -223,15 +223,15 @@ const SEVERITY_ICON_MAP = {
 } as const
 
 const SEVERITY_BORDER_MAP = {
-  CRITICAL: 'border-l-red-500',
-  WARNING: 'border-l-orange-500',
-  INFO: 'border-l-blue-500',
+  CRITICAL: '[border-left-color:var(--danger)]',
+  WARNING: '[border-left-color:var(--warning)]',
+  INFO: '[border-left-color:var(--severity-low)]',
 } as const
 
 const SEVERITY_TEXT_MAP = {
-  CRITICAL: 'text-red-500',
-  WARNING: 'text-orange-500',
-  INFO: 'text-blue-500',
+  CRITICAL: 'text-[var(--danger)]',
+  WARNING: 'text-[var(--warning)]',
+  INFO: 'text-[var(--severity-low)]',
 } as const
 
 const ModuleFindingRow = memo(function ModuleFindingRow({
@@ -278,7 +278,7 @@ const ModuleFindingRow = memo(function ModuleFindingRow({
 
       {finding.match && (
         <pre className="text-xs font-mono p-2 bg-background rounded border border-[var(--border)] overflow-x-auto">
-          <code className="text-orange-500">{finding.match}</code>
+          <code className="text-[var(--warning)]">{finding.match}</code>
         </pre>
       )}
 

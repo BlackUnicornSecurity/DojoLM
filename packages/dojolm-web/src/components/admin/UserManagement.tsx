@@ -63,7 +63,7 @@ export function UserManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 motion-safe:animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -81,7 +81,7 @@ export function UserManagement() {
       </div>
 
       {error && (
-        <p className="text-sm text-destructive">{error}</p>
+        <p className="text-sm text-destructive" role="alert">{error}</p>
       )}
 
       {showCreate && (
@@ -127,15 +127,23 @@ export function UserManagement() {
 function StatusToggle({ user, onToggled }: { user: SafeUser; onToggled: () => void }) {
   const [toggling, setToggling] = useState(false)
 
+  const [toggleError, setToggleError] = useState('')
+
   async function toggle() {
     setToggling(true)
+    setToggleError('')
     try {
       const action = user.enabled ? 'disable' : 'enable'
-      await fetchWithAuth(`/api/auth/users/${user.id}`, {
+      const res = await fetchWithAuth(`/api/auth/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action }),
       })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: 'Toggle failed' }))
+        setToggleError(data.error || 'Toggle failed')
+        return
+      }
       onToggled()
     } finally {
       setToggling(false)
@@ -151,7 +159,7 @@ function StatusToggle({ user, onToggled }: { user: SafeUser; onToggled: () => vo
       aria-label={user.enabled ? `Disable ${user.display_name || user.username}` : `Enable ${user.display_name || user.username}`}
     >
       {toggling ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
       ) : user.enabled ? (
         <UserX className="h-4 w-4" />
       ) : (
@@ -212,7 +220,8 @@ function CreateUserForm({ onCreated, onCancel }: { onCreated: () => void; onCanc
           </div>
           <div className="space-y-1">
             <Label htmlFor="new-password">Password</Label>
-            <Input id="new-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+            <Input id="new-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={12} aria-describedby="password-hint" />
+            <p id="password-hint" className="text-[10px] text-muted-foreground">Min 12 chars with uppercase, lowercase, digit, and special character</p>
           </div>
           <div className="space-y-1">
             <Label htmlFor="new-role">Role</Label>
@@ -230,7 +239,7 @@ function CreateUserForm({ onCreated, onCancel }: { onCreated: () => void; onCanc
           <div className="col-span-full flex gap-2 justify-end">
             <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 motion-safe:animate-spin" /> : null}
               Create User
             </Button>
           </div>

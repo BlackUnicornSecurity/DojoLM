@@ -34,13 +34,13 @@ vi.mock('@/lib/api-auth', () => ({
 }));
 
 function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/guard', {
+  return new NextRequest('http://localhost:42001/api/llm/guard', {
     method: 'GET',
   });
 }
 
 function createPutRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/llm/guard', {
+  return new NextRequest('http://localhost:42001/api/llm/guard', {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -193,7 +193,7 @@ describe('API /api/llm/guard', () => {
     it('API-G-005b: rejects invalid JSON body', async () => {
       const { PUT } = await import('@/app/api/llm/guard/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/guard', {
+      const req = new NextRequest('http://localhost:42001/api/llm/guard', {
         method: 'PUT',
         headers: { 'content-type': 'application/json' },
         body: 'not-json{{',
@@ -248,7 +248,7 @@ describe('API /api/llm/guard', () => {
     it('API-G-005e: POST delegates to PUT', async () => {
       const { POST } = await import('@/app/api/llm/guard/route');
 
-      const req = new NextRequest('http://localhost:3000/api/llm/guard', {
+      const req = new NextRequest('http://localhost:42001/api/llm/guard', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({

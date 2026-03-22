@@ -28,7 +28,7 @@ vi.mock('@/lib/storage/ecosystem-storage', () => ({
 }));
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/ecosystem/findings');
+  const url = new URL('http://localhost:42001/api/ecosystem/findings');
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v);
   }
@@ -36,7 +36,7 @@ function createGetRequest(params: Record<string, string> = {}): NextRequest {
 }
 
 function createPostRequest(body: unknown): NextRequest {
-  return new NextRequest('http://localhost:3000/api/ecosystem/findings', {
+  return new NextRequest('http://localhost:42001/api/ecosystem/findings', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -231,7 +231,7 @@ describe('POST /api/ecosystem/findings', () => {
   it('rejects invalid JSON body', async () => {
     const { POST } = await import('@/app/api/ecosystem/findings/route');
 
-    const req = new NextRequest('http://localhost:3000/api/ecosystem/findings', {
+    const req = new NextRequest('http://localhost:42001/api/ecosystem/findings', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-valid-json{{{',

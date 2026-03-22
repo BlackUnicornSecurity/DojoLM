@@ -12,7 +12,7 @@ import type { UserRole } from '@/lib/db/types';
 const VALID_ROLES: UserRole[] = ['admin', 'analyst', 'viewer'];
 
 export const PATCH = withAuth(
-  async (req: NextRequest, { params }: { params?: Record<string, string> }) => {
+  async (req: NextRequest, { params, user: currentUser }: { params?: Record<string, string>; user?: { id: string } }) => {
     const userId = params?.id;
     if (!userId) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 });
@@ -20,6 +20,12 @@ export const PATCH = withAuth(
 
     try {
       const body = await req.json();
+
+      // Self-modification guard — prevent admin from modifying their own account
+      if (currentUser?.id === userId) {
+        return NextResponse.json({ error: 'Cannot modify your own account' }, { status: 403 });
+      }
+
       if (body.action === 'enable') {
         const user = userRepo.enable(userId);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });

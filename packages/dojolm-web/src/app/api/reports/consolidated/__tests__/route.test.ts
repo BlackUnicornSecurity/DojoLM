@@ -79,7 +79,7 @@ import { getGuardStats } from '@/lib/storage/guard-storage'
 // ---------------------------------------------------------------------------
 
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
-  const url = new URL('http://localhost:3000/api/reports/consolidated')
+  const url = new URL('http://localhost:42001/api/reports/consolidated')
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v)
   }

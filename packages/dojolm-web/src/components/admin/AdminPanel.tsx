@@ -21,7 +21,8 @@ import { SystemHealth } from './SystemHealth'
 import { UserManagement } from './UserManagement'
 import { Scoreboard } from './Scoreboard'
 import { AdminSettings } from './AdminSettings'
-import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock } from 'lucide-react'
+import { ValidationManager } from './ValidationManager'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck } from 'lucide-react'
 
 const ADMIN_TABS = [
   { id: 'general', label: 'General', icon: Settings },
@@ -32,6 +33,7 @@ const ADMIN_TABS = [
   { id: 'health', label: 'System Health', icon: Activity },
   { id: 'export', label: 'Export', icon: FileOutput },
   { id: 'settings', label: 'Admin Settings', icon: Lock },
+  { id: 'validation', label: 'Validation', icon: ClipboardCheck },
 ] as const
 
 type AdminTabId = typeof ADMIN_TABS[number]['id']
@@ -79,6 +81,9 @@ export function AdminPanel() {
         </TabsContent>
         <TabsContent value="settings">
           <AdminSettings />
+        </TabsContent>
+        <TabsContent value="validation">
+          <ValidationManager />
         </TabsContent>
       </Tabs>
     </div>
