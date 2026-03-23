@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# Team / QA (gitignored)
+team/
+
+# Claude
+.claude/
+
+# Node modules (reinstalled in container)
+node_modules/
+packages/*/node_modules/
+
+# Build artifacts (rebuilt in container)
+packages/dojolm-web/.next/
+packages/bu-tpi/dist/
+packages/dojolm-scanner/dist/
+packages/dojolm-mcp/dist/
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/__tests__/
+**/__mocks__/
+vitest.config.*
+coverage/
+
+# Docs
+docs/
+*.md
+!packages/dojolm-web/README.md
+
+# Environment files (passed at runtime)
+.env*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
