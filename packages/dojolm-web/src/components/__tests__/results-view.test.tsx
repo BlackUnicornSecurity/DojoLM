@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import type { ReactNode } from 'react'
 import type { LLMTestExecution, LLMModelConfig } from '@/lib/llm-types'
@@ -110,6 +110,12 @@ vi.mock('@/components/ui/EmptyState', () => ({
     <div data-testid="empty-state"><h3>{title}</h3><p>{description}</p></div>
   ),
 }))
+vi.mock('../llm/ExecutiveSummary', () => ({
+  ExecutiveSummary: () => <div data-testid="executive-summary">Executive Summary</div>,
+}))
+vi.mock('../llm/VulnerabilityPanel', () => ({
+  VulnerabilityPanel: () => <div data-testid="vulnerability-panel">Vulnerability Findings</div>,
+}))
 vi.mock('../llm/ModelResultCard', () => ({
   ModelResultCard: ({ result }: { result: { modelId: string; modelName: string } }) => (
     <div data-testid={`model-result-card-${result.modelId}`}>{result.modelName}</div>
@@ -168,13 +174,20 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 import { ResultsView } from '../llm/ResultsView'
 
+async function renderResultsView() {
+  await act(async () => {
+    render(<ResultsView />)
+    await Promise.resolve()
+  })
+}
+
 // ===========================================================================
 // RV-001: Renders empty state when no results
 // ===========================================================================
 describe('RV-001: Empty state', () => {
   it('shows empty state when there are no executions', async () => {
     mockGetExecutions.mockResolvedValue([])
-    render(<ResultsView />)
+    await renderResultsView()
     await waitFor(() => {
       expect(screen.getByTestId('empty-state')).toBeInTheDocument()
       expect(screen.getByText('No results found')).toBeInTheDocument()
@@ -186,8 +199,8 @@ describe('RV-001: Empty state', () => {
 // RV-002: Renders model filter dropdown with "All Models"
 // ===========================================================================
 describe('RV-002: Model filter', () => {
-  it('renders All Models and individual model options', () => {
-    render(<ResultsView />)
+  it('renders All Models and individual model options', async () => {
+    await renderResultsView()
     expect(screen.getByTestId('select-item-all')).toBeInTheDocument()
     expect(screen.getByTestId('select-item-m1')).toBeInTheDocument()
     expect(screen.getByTestId('select-item-m2')).toBeInTheDocument()
@@ -198,8 +211,8 @@ describe('RV-002: Model filter', () => {
 // RV-003: Renders view mode toggle buttons
 // ===========================================================================
 describe('RV-003: View mode toggles', () => {
-  it('renders Model view and List view buttons', () => {
-    render(<ResultsView />)
+  it('renders Model view and List view buttons', async () => {
+    await renderResultsView()
     expect(screen.getByLabelText('Model view')).toBeInTheDocument()
     expect(screen.getByLabelText('List view')).toBeInTheDocument()
   })
@@ -209,8 +222,8 @@ describe('RV-003: View mode toggles', () => {
 // RV-004: Clear filter button renders
 // ===========================================================================
 describe('RV-004: Clear filter button', () => {
-  it('renders Clear filter button', () => {
-    render(<ResultsView />)
+  it('renders Clear filter button', async () => {
+    await renderResultsView()
     expect(screen.getByText('Clear')).toBeInTheDocument()
   })
 })
@@ -219,8 +232,8 @@ describe('RV-004: Clear filter button', () => {
 // RV-005: Clear filter calls clearFilter
 // ===========================================================================
 describe('RV-005: Clear filter action', () => {
-  it('calls clearFilter when Clear button is clicked', () => {
-    render(<ResultsView />)
+  it('calls clearFilter when Clear button is clicked', async () => {
+    await renderResultsView()
     fireEvent.click(screen.getByText('Clear'))
     expect(mockClearFilter).toHaveBeenCalledTimes(1)
   })
@@ -230,8 +243,8 @@ describe('RV-005: Clear filter action', () => {
 // RV-006: Download All button renders with aria-label
 // ===========================================================================
 describe('RV-006: Download All button', () => {
-  it('renders Download All with accessible label', () => {
-    render(<ResultsView />)
+  it('renders Download All with accessible label', async () => {
+    await renderResultsView()
     expect(screen.getByLabelText('Download all results')).toBeInTheDocument()
   })
 })
@@ -242,7 +255,7 @@ describe('RV-006: Download All button', () => {
 describe('RV-007: Model cards render', () => {
   it('shows model result cards for executions in model view', async () => {
     mockGetExecutions.mockResolvedValue([mockExecution])
-    render(<ResultsView />)
+    await renderResultsView()
     await waitFor(() => {
       expect(screen.getByTestId('model-result-card-m1')).toBeInTheDocument()
     })
@@ -253,8 +266,8 @@ describe('RV-007: Model cards render', () => {
 // RV-008: Shows sort selector in model view mode
 // ===========================================================================
 describe('RV-008: Sort selector', () => {
-  it('renders sort options in model view mode', () => {
-    render(<ResultsView />)
+  it('renders sort options in model view mode', async () => {
+    await renderResultsView()
     expect(screen.getByTestId('select-item-score')).toBeInTheDocument()
     expect(screen.getByTestId('select-item-date')).toBeInTheDocument()
     expect(screen.getByTestId('select-item-name')).toBeInTheDocument()
@@ -265,10 +278,10 @@ describe('RV-008: Sort selector', () => {
 // RV-009: Shows loading skeletons initially
 // ===========================================================================
 describe('RV-009: Loading skeletons', () => {
-  it('shows skeleton loaders while results are loading', () => {
+  it('shows skeleton loaders while results are loading', async () => {
     // Make getExecutions hang so loading stays true
     mockGetExecutions.mockReturnValue(new Promise(() => {}))
-    render(<ResultsView />)
+    await renderResultsView()
     expect(screen.getAllByTestId('skeleton').length).toBeGreaterThan(0)
   })
 })
@@ -279,7 +292,7 @@ describe('RV-009: Loading skeletons', () => {
 describe('RV-010: Result count in list view', () => {
   it('shows execution count text after switching to list view', async () => {
     mockGetExecutions.mockResolvedValue([mockExecution])
-    render(<ResultsView />)
+    await renderResultsView()
     // Switch to list view
     fireEvent.click(screen.getByLabelText('List view'))
     await waitFor(() => {
@@ -294,7 +307,7 @@ describe('RV-010: Result count in list view', () => {
 describe('RV-011: Initial fetch', () => {
   it('calls getExecutions on component mount', async () => {
     mockGetExecutions.mockResolvedValue([])
-    render(<ResultsView />)
+    await renderResultsView()
     await waitFor(() => {
       expect(mockGetExecutions).toHaveBeenCalled()
     })
@@ -307,7 +320,7 @@ describe('RV-011: Initial fetch', () => {
 describe('RV-012: Model count text', () => {
   it('shows models tested count in model view', async () => {
     mockGetExecutions.mockResolvedValue([mockExecution])
-    render(<ResultsView />)
+    await renderResultsView()
     await waitFor(() => {
       expect(screen.getByText(/1 model tested/)).toBeInTheDocument()
     })

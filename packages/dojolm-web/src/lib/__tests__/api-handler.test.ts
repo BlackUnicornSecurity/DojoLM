@@ -5,7 +5,7 @@
  * Source: src/lib/api-handler.ts
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ---------------------------------------------------------------------------
@@ -31,6 +31,7 @@ import { checkApiAuth } from '../api-auth';
 import { apiError } from '../api-error';
 
 // PT-RATELIM-M01: Tests use x-forwarded-for to set IPs, so TRUSTED_PROXY must be set
+const ORIGINAL_TRUSTED_PROXY = process.env.TRUSTED_PROXY;
 process.env.TRUSTED_PROXY = 'true';
 
 // ---------------------------------------------------------------------------
@@ -234,6 +235,15 @@ describe('createApiHandler', () => {
   });
 });
 
+afterAll(() => {
+  if (ORIGINAL_TRUSTED_PROXY === undefined) {
+    delete process.env.TRUSTED_PROXY;
+    return;
+  }
+
+  process.env.TRUSTED_PROXY = ORIGINAL_TRUSTED_PROXY;
+});
+
 describe('checkRateLimit', () => {
   // AH-009: Allows requests under the limit
   it('AH-009: allows requests under the limit', () => {
@@ -294,5 +304,55 @@ describe('checkRateLimit', () => {
     // IP B should still be allowed
     const resultB = checkRateLimit(makeRequest('GET', ipB), 'execute');
     expect(resultB.allowed).toBe(true);
+  });
+
+  it('AH-015: falls back to request fingerprint when TRUSTED_PROXY is unset', () => {
+    process.env.TRUSTED_PROXY = '';
+
+    try {
+      const browserA = new NextRequest('http://localhost/api/test', {
+        headers: {
+          'user-agent': 'playwright-a',
+          origin: 'http://localhost:42001',
+          'sec-fetch-site': 'same-origin',
+        },
+      });
+      const browserB = new NextRequest('http://localhost/api/test', {
+        headers: {
+          'user-agent': 'playwright-b',
+          origin: 'http://localhost:42001',
+          'sec-fetch-site': 'same-origin',
+        },
+      });
+
+      for (let i = 0; i < 5; i++) {
+        checkRateLimit(browserA, 'execute');
+      }
+
+      const blocked = checkRateLimit(browserA, 'execute');
+      expect(blocked.allowed).toBe(false);
+
+      const allowed = checkRateLimit(browserB, 'execute');
+      expect(allowed.allowed).toBe(true);
+    } finally {
+      process.env.TRUSTED_PROXY = ORIGINAL_TRUSTED_PROXY ?? 'true';
+    }
+  });
+
+  it('AH-016: isolates read buckets by route path', () => {
+    const ip = '15.15.15.15';
+    const fixturesRequest = makeRequest('GET', ip, 'http://localhost/api/fixtures');
+    const complianceRequest = makeRequest('GET', ip, 'http://localhost/api/compliance');
+
+    for (let i = 0; i < 60; i++) {
+      const result = checkRateLimit(fixturesRequest, 'read');
+      expect(result.allowed).toBe(true);
+    }
+
+    const blockedFixtures = checkRateLimit(fixturesRequest, 'read');
+    expect(blockedFixtures.allowed).toBe(false);
+
+    const separateRoute = checkRateLimit(complianceRequest, 'read');
+    expect(separateRoute.allowed).toBe(true);
   });
 });

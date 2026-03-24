@@ -164,17 +164,20 @@ describe('ArenaBrowser', () => {
   })
 
   it('AB-001: renders header with Battle Arena title', async () => {
+    mockFetchWithAuth.mockImplementation(() => new Promise(() => {}))
     render(<ArenaBrowser />)
     expect(screen.getByText('Battle Arena')).toBeInTheDocument()
     expect(screen.getByText('Multi-agent adversarial sandbox')).toBeInTheDocument()
   })
 
   it('AB-002: renders "New Stand Off" button', async () => {
+    mockFetchWithAuth.mockImplementation(() => new Promise(() => {}))
     render(<ArenaBrowser />)
     expect(screen.getByText('New Stand Off')).toBeInTheDocument()
   })
 
-  it('AB-003: renders game mode tabs', () => {
+  it('AB-003: renders game mode tabs', async () => {
+    mockFetchWithAuth.mockImplementation(() => new Promise(() => {}))
     render(<ArenaBrowser />)
     expect(screen.getByText('All Modes')).toBeInTheDocument()
     expect(screen.getByText('Capture the Flag')).toBeInTheDocument()
@@ -182,8 +185,8 @@ describe('ArenaBrowser', () => {
     expect(screen.getByText('Red vs Blue')).toBeInTheDocument()
   })
 
-  it('AB-004: shows loading state initially', () => {
-    setupMockFetch()
+  it('AB-004: shows loading state initially', async () => {
+    mockFetchWithAuth.mockImplementation(() => new Promise(() => {}))
     render(<ArenaBrowser />)
     expect(screen.getByText('Loading matches...')).toBeInTheDocument()
   })

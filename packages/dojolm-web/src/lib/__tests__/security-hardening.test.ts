@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Mock audit logger before importing middleware
+// Mock audit logger before importing the API proxy
 vi.mock('@/lib/audit-logger', () => ({
   auditLog: {
     authFailure: vi.fn().mockResolvedValue(undefined),
@@ -23,8 +23,9 @@ describe('Security Hardening (Story 8.3)', () => {
 
   describe('Rate limiter', () => {
     it('should allow requests under the limit', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
+      process.env.TRUSTED_PROXY = 'true';
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
@@ -33,13 +34,14 @@ describe('Security Hardening (Story 8.3)', () => {
           'x-forwarded-for': '10.0.0.1',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).not.toBe(429);
     });
 
     it('should block after 100 requests per minute', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
+      process.env.TRUSTED_PROXY = 'true';
 
       for (let i = 0; i < 100; i++) {
         const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -49,7 +51,7 @@ describe('Security Hardening (Story 8.3)', () => {
             'x-forwarded-for': '10.0.0.99',
           },
         });
-        await mod.middleware(req);
+        await mod.proxy(req);
       }
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -59,14 +61,15 @@ describe('Security Hardening (Story 8.3)', () => {
           'x-forwarded-for': '10.0.0.99',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(429);
       expect(res.headers.get('Retry-After')).toBe('60');
     });
 
     it('should track auth failures separately (10/min)', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
+      process.env.TRUSTED_PROXY = 'true';
 
       for (let i = 0; i < 10; i++) {
         const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -76,7 +79,7 @@ describe('Security Hardening (Story 8.3)', () => {
             'x-forwarded-for': '10.0.0.200',
           },
         });
-        await mod.middleware(req);
+        await mod.proxy(req);
       }
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -86,12 +89,12 @@ describe('Security Hardening (Story 8.3)', () => {
           'x-forwarded-for': '10.0.0.200',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(429);
     });
 
     it('should export resetRateLimiter for test isolation', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       expect(typeof mod.resetRateLimiter).toBe('function');
       mod.resetRateLimiter();
     });
@@ -99,7 +102,7 @@ describe('Security Hardening (Story 8.3)', () => {
 
   describe('TRACE method blocking', () => {
     it('should return 405 for TRACE requests', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -107,7 +110,7 @@ describe('Security Hardening (Story 8.3)', () => {
       });
       Object.defineProperty(req, 'method', { value: 'TRACE' });
 
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(405);
       expect(res.headers.get('Allow')).toContain('GET');
     });
@@ -115,7 +118,7 @@ describe('Security Hardening (Story 8.3)', () => {
 
   describe('Multi-header Sec-Fetch validation', () => {
     it('should reject with only Sec-Fetch-Site (missing Mode/Dest)', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -126,12 +129,12 @@ describe('Security Hardening (Story 8.3)', () => {
           'host': 'localhost:42001',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(401);
     });
 
     it('should allow with all three valid Sec-Fetch headers', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -144,12 +147,12 @@ describe('Security Hardening (Story 8.3)', () => {
           'host': 'localhost:42001',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(200);
     });
 
     it('should reject with invalid Sec-Fetch-Mode', async () => {
-      const mod = await import('@/middleware');
+      const mod = await import('@/proxy');
       mod.resetRateLimiter();
 
       const req = new NextRequest('http://localhost:42001/api/scan', {
@@ -162,8 +165,66 @@ describe('Security Hardening (Story 8.3)', () => {
           'host': 'localhost:42001',
         },
       });
-      const res = await mod.middleware(req);
+      const res = await mod.proxy(req);
       expect(res.status).toBe(401);
+    });
+
+    it('should isolate same-origin rate limits by browser fingerprint when TRUSTED_PROXY is unset', async () => {
+      const mod = await import('@/proxy');
+      mod.resetRateLimiter();
+      delete process.env.TRUSTED_PROXY;
+
+      const makeUiRequest = (userAgent: string) =>
+        new NextRequest('http://localhost:42001/api/fixtures', {
+          method: 'GET',
+          headers: {
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:42001/',
+            'user-agent': userAgent,
+          },
+        });
+
+      for (let i = 0; i < 300; i++) {
+        const response = await mod.proxy(makeUiRequest('playwright-a'));
+        expect(response.status).toBe(200);
+      }
+
+      const blocked = await mod.proxy(makeUiRequest('playwright-a'));
+      expect(blocked.status).toBe(429);
+
+      const separateBrowser = await mod.proxy(makeUiRequest('playwright-b'));
+      expect(separateBrowser.status).toBe(200);
+    });
+
+    it('should isolate same-origin rate limits per route for the same browser fingerprint', async () => {
+      const mod = await import('@/proxy');
+      mod.resetRateLimiter();
+      delete process.env.TRUSTED_PROXY;
+
+      const makeUiRequest = (path: string) =>
+        new NextRequest(`http://localhost:42001${path}`, {
+          method: 'GET',
+          headers: {
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:42001/',
+            'user-agent': 'playwright-shared-browser',
+          },
+        });
+
+      for (let i = 0; i < 300; i++) {
+        const response = await mod.proxy(makeUiRequest('/api/fixtures'));
+        expect(response.status).toBe(200);
+      }
+
+      const blockedFixtures = await mod.proxy(makeUiRequest('/api/fixtures'));
+      expect(blockedFixtures.status).toBe(429);
+
+      const separateRoute = await mod.proxy(makeUiRequest('/api/compliance'));
+      expect(separateRoute.status).toBe(200);
     });
   });
 

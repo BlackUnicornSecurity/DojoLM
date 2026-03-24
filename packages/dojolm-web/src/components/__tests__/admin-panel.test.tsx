@@ -129,6 +129,9 @@ vi.mock('../admin/Scoreboard', () => ({
 vi.mock('../admin/AdminSettings', () => ({
   AdminSettings: () => <div data-testid="admin-settings">AdminSettings</div>,
 }));
+vi.mock('../admin/ValidationManager', () => ({
+  ValidationManager: () => <div data-testid="validation-manager">ValidationManager</div>,
+}));
 
 import { AdminPanel } from '../admin/AdminPanel';
 

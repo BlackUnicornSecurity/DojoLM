@@ -1,15 +1,15 @@
 /**
  * File: middleware.test.ts
- * Purpose: Tests for Next.js API middleware (auth, rate limiting, content-type)
+ * Purpose: Tests for the Next.js API proxy (auth, rate limiting, content-type)
  * Coverage: MW-001 to MW-012
- * Source: src/middleware.ts
+ * Source: src/proxy.ts
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import crypto from 'node:crypto';
 
-// Mock audit-logger before importing middleware
+// Mock audit-logger before importing the proxy
 vi.mock('@/lib/audit-logger', () => ({
   auditLog: {
     authFailure: vi.fn().mockResolvedValue(undefined),
@@ -47,7 +47,7 @@ function createApiRequest(
   return new NextRequest(url, init);
 }
 
-describe('Middleware', () => {
+describe('Proxy', () => {
   const ORIGINAL_ENV = process.env;
 
   beforeEach(() => {
@@ -64,7 +64,7 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-valid-key-12345';
     process.env.NODE_ENV = 'production';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: {
@@ -73,7 +73,7 @@ describe('Middleware', () => {
       },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     // NextResponse.next() has no status override (defaults to 200)
     expect(res.status).toBe(200);
   });
@@ -83,7 +83,7 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-valid-key-12345';
     process.env.NODE_ENV = 'production';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: {
@@ -92,7 +92,7 @@ describe('Middleware', () => {
       },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(401);
 
     const body = await res.json();
@@ -103,15 +103,17 @@ describe('Middleware', () => {
   it('MW-003: blocks all requests when NODA_API_KEY is not set in production', async () => {
     delete process.env.NODA_API_KEY;
     process.env.NODE_ENV = 'production';
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(401);
+    consoleErrorSpy.mockRestore();
   });
 
   // MW-004: Missing NODA_API_KEY in development mode allows requests
@@ -119,13 +121,13 @@ describe('Middleware', () => {
     delete process.env.NODA_API_KEY;
     process.env.NODE_ENV = 'development';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(200);
   });
 
@@ -134,13 +136,13 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'production';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/admin/health', {
       method: 'GET',
       // No x-api-key header
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(200);
   });
 
@@ -149,13 +151,13 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'production';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/dashboard', {
       method: 'GET',
       // No x-api-key header
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(200);
   });
 
@@ -165,12 +167,12 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'development';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', { method: 'GET' });
     // Override method to TRACE since NextRequest rejects it in constructor
     Object.defineProperty(req, 'method', { value: 'TRACE', writable: false });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(405);
     expect(res.headers.get('Allow')).toContain('GET');
   });
@@ -180,12 +182,12 @@ describe('Middleware', () => {
     process.env.NODA_API_KEY = 'test-key';
     process.env.NODE_ENV = 'production';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'OPTIONS',
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(204);
     expect(res.headers.get('Access-Control-Allow-Methods')).toContain('POST');
     expect(res.headers.get('Access-Control-Allow-Headers')).toContain('x-api-key');
@@ -196,13 +198,13 @@ describe('Middleware', () => {
     delete process.env.NODA_API_KEY;
     process.env.NODE_ENV = 'development';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(200);
   });
 
@@ -211,13 +213,13 @@ describe('Middleware', () => {
     delete process.env.NODA_API_KEY;
     process.env.NODE_ENV = 'development';
 
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
       method: 'POST',
       headers: { 'content-type': 'text/plain' },
     });
 
-    const res = await middleware(req);
+    const res = await proxy(req);
     expect(res.status).toBe(415);
 
     const body = await res.json();
@@ -231,7 +233,7 @@ describe('Middleware', () => {
     process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
 
     const req = createApiRequest('/api/scan', {
       method: 'POST',
@@ -242,7 +244,7 @@ describe('Middleware', () => {
       },
     });
 
-    await middleware(req);
+    await proxy(req);
 
     // Give the fire-and-forget audit log a tick to execute
     await new Promise(resolve => setTimeout(resolve, 10));
@@ -262,7 +264,7 @@ describe('Middleware', () => {
     process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');
-    const { middleware } = await import('@/middleware');
+    const { proxy } = await import('@/proxy');
 
     const req = createApiRequest('/api/scan', {
       method: 'POST',
@@ -273,7 +275,7 @@ describe('Middleware', () => {
       },
     });
 
-    await middleware(req);
+    await proxy(req);
     await new Promise(resolve => setTimeout(resolve, 10));
 
     expect(auditModule.auditLog.authFailure).toHaveBeenCalledWith(

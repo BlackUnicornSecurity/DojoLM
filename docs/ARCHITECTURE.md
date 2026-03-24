@@ -127,7 +127,7 @@ packages/dojolm-web/data/
 `packages/dojolm-web` uses two layers:
 
 - Per-route `checkApiAuth()` logic for many handlers
-- Global `middleware.ts` on `/api/:path*`
+- Global `proxy.ts` on `/api/:path*`
 
 Current behavior:
 
@@ -135,7 +135,7 @@ Current behavior:
 - external or programmatic calls use `X-API-Key` matched against `NODA_API_KEY`
 - if `NODA_API_KEY` is unset in production, protected routes fail closed
 - public routes include `/api/health`, `/api/admin/health`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`, and `/api/llm/models`
-- middleware rate limits default to `100` requests per minute per IP for external traffic and `300` for same-origin UI traffic
+- proxy rate limits default to `100` requests per minute per IP for external traffic and `300` for same-origin UI traffic
 
 ## Typical Data Flows
 

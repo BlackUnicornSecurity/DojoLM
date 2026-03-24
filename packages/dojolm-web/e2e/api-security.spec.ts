@@ -11,7 +11,7 @@ test.describe('API Security', () => {
     const headers = response.headers();
 
     expect(headers['x-content-type-options']).toBe('nosniff');
-    expect(headers['x-frame-options']).toBe('SAMEORIGIN');
+    expect(headers['x-frame-options']).toBe('DENY');
   });
 
   test('models API does not leak API keys', async ({ request }) => {

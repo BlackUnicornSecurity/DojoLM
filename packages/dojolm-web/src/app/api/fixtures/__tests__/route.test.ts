@@ -77,7 +77,7 @@ describe('GET /api/fixtures', () => {
     const { GET } = await import('../route');
     const res = await GET(new NextRequest('http://localhost:42001/api/fixtures'));
 
-    expect(res.headers.get('cache-control')).toContain('max-age=60');
+    expect(res.headers.get('cache-control')).toBe('private, no-store, max-age=0');
   });
 
   // FXM-004: OPTIONS returns Allow header

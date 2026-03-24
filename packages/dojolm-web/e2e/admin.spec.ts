@@ -8,24 +8,26 @@ import { test, expect } from '@playwright/test';
 test.describe('Admin', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('nav').first()).toBeVisible({ timeout: 15000 });
-    const adminNav = page.locator('nav >> text=Admin').first();
+    const sidebar = page.locator('aside');
+    await expect(sidebar).toBeVisible({ timeout: 15000 });
+    const adminNav = sidebar.getByRole('button', { name: 'Admin' });
     await expect(adminNav).toBeVisible({ timeout: 5000 });
     await adminNav.click();
+    await expect(page.getByRole('heading', { name: 'Admin & Settings' })).toBeVisible({ timeout: 10000 });
   });
 
   test('shows admin tabs', async ({ page }) => {
-    const tabs = ['General', 'API Keys', 'System Health'];
+    const tabs = ['General', 'API Keys', 'System Health', 'Validation'];
     for (const tab of tabs) {
-      await expect(page.locator(`text=${tab}`).first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('tab', { name: tab })).toBeVisible({ timeout: 10000 });
     }
   });
 
   test('shows system health information', async ({ page }) => {
-    const healthTab = page.locator('button:has-text("System Health"), [role="tab"]:has-text("System Health")').first();
+    const healthTab = page.getByRole('tab', { name: 'System Health' });
     await expect(healthTab).toBeVisible({ timeout: 5000 });
     await healthTab.click();
-    // Verify System Health tab content is active
-    await expect(healthTab).toBeVisible();
+    await expect(healthTab).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByText('System Health').first()).toBeVisible();
   });
 });

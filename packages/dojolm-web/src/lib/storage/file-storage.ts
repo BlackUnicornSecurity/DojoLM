@@ -30,7 +30,6 @@ import type {
   StorageQueryOptions,
   ExecutionQuery,
   BatchQuery,
-  BulkOperationResult,
 } from './storage-interface';
 
 // ===========================================================================
@@ -129,13 +128,6 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
   await fs.rename(tmpPath, filePath);
 }
 
-/**
- * Ensure a directory exists
- */
-async function ensureDir(dirPath: string): Promise<void> {
-  await fs.mkdir(dirPath, { recursive: true }).catch(() => {});
-}
-
 // ===========================================================================
 // Content Hashing
 // ===========================================================================
@@ -159,8 +151,6 @@ export function generateExecutionHash(prompt: string, modelConfigId: string): st
 // ===========================================================================
 
 export class FileStorage implements IStorageBackend {
-  private dataCache: Map<string, any> = new Map();
-
   // -----------------------------------------------------------------------
   // Model Config Operations
   // -----------------------------------------------------------------------
@@ -193,7 +183,6 @@ export class FileStorage implements IStorageBackend {
     }
 
     await writeJSON(PATHS.models, configs);
-    this.dataCache.delete(PATHS.models);
 
     return updatedConfig;
   }
@@ -207,7 +196,6 @@ export class FileStorage implements IStorageBackend {
     }
 
     await writeJSON(PATHS.models, filtered);
-    this.dataCache.delete(PATHS.models);
 
     return true;
   }
@@ -292,7 +280,6 @@ export class FileStorage implements IStorageBackend {
     }
 
     await writeJSON(PATHS.testCases, cases);
-    this.dataCache.delete(PATHS.testCases);
 
     return testCase;
   }
@@ -306,7 +293,6 @@ export class FileStorage implements IStorageBackend {
     }
 
     await writeJSON(PATHS.testCases, filtered);
-    this.dataCache.delete(PATHS.testCases);
 
     return true;
   }
@@ -385,7 +371,7 @@ export class FileStorage implements IStorageBackend {
     total: number;
   }> {
     const indexData = await readJSON<{ executions: string[] }>(PATHS.executionsIndex);
-    let executionIds = indexData?.executions || [];
+    const executionIds = indexData?.executions || [];
 
     // Load and filter executions
     const executions: LLMTestExecution[] = [];
@@ -424,6 +410,24 @@ export class FileStorage implements IStorageBackend {
         }
       }
     }
+
+    const sortDirection = query.sortDirection === 'asc' ? 1 : -1;
+    const sortKey = (query.sortBy ?? 'timestamp') as keyof LLMTestExecution;
+
+    executions.sort((left, right) => {
+      const leftValue = left[sortKey];
+      const rightValue = right[sortKey];
+
+      if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+        return (leftValue - rightValue) * sortDirection;
+      }
+
+      if (typeof leftValue === 'boolean' && typeof rightValue === 'boolean') {
+        return (Number(leftValue) - Number(rightValue)) * sortDirection;
+      }
+
+      return String(leftValue ?? '').localeCompare(String(rightValue ?? '')) * sortDirection;
+    });
 
     // Pagination
     const total = executions.length;
@@ -549,7 +553,7 @@ export class FileStorage implements IStorageBackend {
     total: number;
   }> {
     const indexData = await readJSON<{ batches: string[] }>(PATHS.batchesIndex);
-    let batchIds = indexData?.batches || [];
+    const batchIds = indexData?.batches || [];
 
     const batches: LLMBatchExecution[] = [];
 

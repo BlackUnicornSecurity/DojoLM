@@ -16,6 +16,7 @@
  * - createApiHandler factory (line 120)
  */
 
+import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { checkApiAuth } from './api-auth';
@@ -39,13 +40,22 @@ export interface ApiHandlerConfig {
 }
 
 export interface RouteContext {
-  params?: Promise<Record<string, string>>;
+  params: Promise<Record<string, string>>;
 }
 
-export type ApiRouteHandler = (
-  request: NextRequest,
-  context: RouteContext
+type ApiRouteHandlerWithoutContext = (
+  request: NextRequest
 ) => Promise<NextResponse>;
+
+type ApiRouteHandlerWithContext<TContext extends RouteContext> = (
+  request: NextRequest,
+  context: TContext
+) => Promise<NextResponse>;
+
+export type ApiRouteHandler<TContext extends RouteContext | undefined = undefined> =
+  TContext extends RouteContext
+    ? ApiRouteHandlerWithContext<TContext>
+    : ApiRouteHandlerWithoutContext;
 
 // ===========================================================================
 // Rate Limiter — Token Bucket (in-memory, per-IP)
@@ -63,6 +73,8 @@ interface TokenBucket {
 }
 
 const buckets = new Map<string, TokenBucket>();
+
+type RateLimitRequest = Pick<Request, 'headers' | 'url'> & Partial<Pick<NextRequest, 'nextUrl'>>;
 
 // Clean up stale buckets every 5 minutes
 const CLEANUP_INTERVAL = 5 * 60 * 1000;
@@ -82,24 +94,64 @@ function cleanupBuckets(): void {
   lastCleanup = now;
 }
 
-// PT-RATELIM-M01 fix: Only trust proxy headers when TRUSTED_PROXY is set
-function getClientIp(request: NextRequest): string {
+function hashRateLimitIdentity(value: string): string {
+  return createHash('sha256').update(value).digest('hex').slice(0, 16);
+}
+
+function getRateLimitScope(request: RateLimitRequest, tier: RateLimitTier): string {
+  if (tier !== 'read') {
+    return '__shared__';
+  }
+
+  if (request.nextUrl?.pathname) {
+    return request.nextUrl.pathname;
+  }
+
+  try {
+    return new URL(request.url).pathname;
+  } catch {
+    return '/unknown';
+  }
+}
+
+// PT-RATELIM-M01 fix: Only trust proxy headers when TRUSTED_PROXY is set.
+// When running without a trusted proxy, fall back to a stable browser/API-key
+// fingerprint so one local client does not consume the whole in-memory bucket.
+function getClientIp(request: RateLimitRequest): string {
   if (process.env.TRUSTED_PROXY) {
     return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       ?? request.headers.get('x-real-ip')
       ?? 'unknown';
   }
+
+  const apiKey = request.headers.get('x-api-key');
+  if (apiKey) {
+    return `api-key:${hashRateLimitIdentity(apiKey)}`;
+  }
+
+  const fingerprintParts = [
+    request.headers.get('sec-fetch-site'),
+    request.headers.get('origin'),
+    request.headers.get('referer'),
+    request.headers.get('user-agent'),
+    request.headers.get('accept-language'),
+  ].filter((value): value is string => Boolean(value));
+
+  if (fingerprintParts.length > 0) {
+    return `fingerprint:${hashRateLimitIdentity(fingerprintParts.join('|'))}`;
+  }
+
   return 'unknown';
 }
 
 export function checkRateLimit(
-  request: NextRequest,
+  request: RateLimitRequest,
   tier: RateLimitTier
 ): { allowed: boolean; remaining: number; resetMs: number } {
   cleanupBuckets();
 
   const ip = getClientIp(request);
-  const key = `${ip}:${tier}`;
+  const key = `${ip}:${tier}:${getRateLimitScope(request, tier)}`;
   const config = RATE_LIMITS[tier];
   const now = Date.now();
 
@@ -150,10 +202,18 @@ function inferRateLimitTier(method: string): RateLimitTier {
  * ```
  */
 export function createApiHandler(
-  handler: ApiRouteHandler,
+  handler: ApiRouteHandlerWithoutContext,
+  config?: ApiHandlerConfig
+): ApiRouteHandlerWithoutContext;
+export function createApiHandler<TContext extends RouteContext>(
+  handler: ApiRouteHandlerWithContext<TContext>,
+  config?: ApiHandlerConfig
+): ApiRouteHandlerWithContext<TContext>;
+export function createApiHandler<TContext extends RouteContext>(
+  handler: ApiRouteHandlerWithoutContext | ApiRouteHandlerWithContext<TContext>,
   config: ApiHandlerConfig = {}
-): ApiRouteHandler {
-  return async (request: NextRequest, context: RouteContext = {}): Promise<NextResponse> => {
+) {
+  return async (request: NextRequest, context?: TContext): Promise<NextResponse> => {
     try {
       // Block TRACE method (Story 13.4)
       if (request.method === 'TRACE') {
@@ -189,7 +249,9 @@ export function createApiHandler(
       }
 
       // Execute handler
-      const response = await handler(request, context);
+      const response = await (
+        handler as (request: NextRequest, context?: TContext) => Promise<NextResponse>
+      )(request, context);
 
       // Add rate limit headers to response
       response.headers.set('X-RateLimit-Remaining', String(rateResult.remaining));

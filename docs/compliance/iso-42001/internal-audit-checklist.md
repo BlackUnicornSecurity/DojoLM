@@ -53,7 +53,7 @@ npm run verify:docs
 
 ### 3.3 Web API and Access Control Audit
 
-- [ ] Public web API routes match current middleware configuration:
+- [ ] Public web API routes match current proxy configuration:
   - `/api/health`
   - `/api/admin/health`
   - `/api/auth/login`

@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Auth handled by middleware — no per-route checkApiAuth needed
+// Auth handled by the API proxy — no per-route checkApiAuth needed
 
 // Mock the scanner module (dynamically imported inside the route)
 vi.mock('@dojolm/scanner', () => ({

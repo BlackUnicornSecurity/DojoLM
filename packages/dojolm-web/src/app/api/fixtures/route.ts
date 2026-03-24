@@ -3,6 +3,12 @@ import { readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { checkApiAuth } from '@/lib/api-auth';
 
+const FIXTURES_RESPONSE_HEADERS = {
+  'Content-Type': 'application/json',
+  'X-Content-Type-Options': 'nosniff',
+  'Cache-Control': 'private, no-store, max-age=0',
+} as const;
+
 // Base path to fixtures directory in bu-tpi package
 function getFixturesBasePath(): string {
   const possiblePaths = [
@@ -45,9 +51,6 @@ function loadManifest() {
   }
 }
 
-// Export dynamically loaded manifest
-export const fixtureManifest = loadManifest();
-
 export async function GET(request: NextRequest) {
   const authError = checkApiAuth(request);
   if (authError) return authError;
@@ -64,29 +67,21 @@ export async function GET(request: NextRequest) {
     if (!filtered) {
       return NextResponse.json(
         { error: `Category not found: ${category}`, availableCategories: Object.keys(freshManifest.categories) },
-        { status: 404, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+        { status: 404, headers: FIXTURES_RESPONSE_HEADERS }
       );
     }
     return NextResponse.json(
       { ...freshManifest, categories: { [category]: filtered } },
       {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Content-Type-Options': 'nosniff',
-          'Cache-Control': 'public, max-age=60',
-        },
+        headers: FIXTURES_RESPONSE_HEADERS,
       }
     );
   }
 
   return NextResponse.json(freshManifest, {
     status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Content-Type-Options': 'nosniff',
-      'Cache-Control': 'public, max-age=60', // Short cache to allow updates
-    },
+    headers: FIXTURES_RESPONSE_HEADERS,
   });
 }
 

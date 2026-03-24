@@ -490,6 +490,46 @@ describe('file-storage', () => {
     expect(dateFiltered.executions[0].id).toBe('e2');
   });
 
+  it('FS-014A: queryExecutions honors requested sort direction before pagination', async () => {
+    const executions = [
+      makeExecution({ id: 'e1', resilienceScore: 20, timestamp: '2026-03-01T00:00:00Z' }),
+      makeExecution({ id: 'e2', resilienceScore: 90, timestamp: '2026-03-05T00:00:00Z' }),
+      makeExecution({ id: 'e3', resilienceScore: 55, timestamp: '2026-03-10T00:00:00Z' }),
+    ];
+
+    mockFs.readFile.mockImplementation(async (filePath: any) => {
+      const p = typeof filePath === 'string' ? filePath : filePath.toString();
+      if (p.includes('index.json')) {
+        return JSON.stringify({ executions: ['e1', 'e2', 'e3'] });
+      }
+      for (const exec of executions) {
+        if (p.includes(exec.id)) {
+          return JSON.stringify(exec);
+        }
+      }
+      const err = new Error('ENOENT') as NodeJS.ErrnoException;
+      err.code = 'ENOENT';
+      throw err;
+    });
+
+    const { FileStorage } = await import('../file-storage');
+    const storage = new FileStorage();
+
+    const asc = await storage.queryExecutions({
+      sortBy: 'resilienceScore',
+      sortDirection: 'asc',
+      limit: 2,
+    });
+    expect(asc.executions.map(execution => execution.id)).toEqual(['e1', 'e3']);
+
+    const desc = await storage.queryExecutions({
+      sortBy: 'timestamp',
+      sortDirection: 'desc',
+      limit: 2,
+    });
+    expect(desc.executions.map(execution => execution.id)).toEqual(['e3', 'e2']);
+  });
+
   // FS-015
   it('FS-015: createBatch generates ID, sets status=pending, writes to file', async () => {
     mockReadFileForPaths({});

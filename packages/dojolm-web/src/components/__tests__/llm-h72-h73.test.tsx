@@ -116,15 +116,17 @@ vi.mock('@/components/ui/card', () => ({
   CardTitle: (p: React.PropsWithChildren) => <h3>{p.children}</h3>,
 }))
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: (p: React.PropsWithChildren<{ value?: string; onValueChange?: (v: string) => void; className?: string }>) => (
-    <div data-testid="tabs" data-value={p.value} {...p}>{p.children}</div>
+  Tabs: ({ children, value, className }: React.PropsWithChildren<{ value?: string; onValueChange?: (v: string) => void; className?: string }>) => (
+    <div data-testid="tabs" data-value={value} className={className}>{children}</div>
   ),
-  TabsList: (p: React.PropsWithChildren<{ className?: string }>) => <div data-testid="tabs-list" {...p}>{p.children}</div>,
-  TabsTrigger: (p: React.PropsWithChildren<{ value: string; className?: string }>) => (
-    <button data-testid={`tab-${p.value}`} {...p}>{p.children}</button>
+  TabsList: ({ children, className }: React.PropsWithChildren<{ className?: string }>) => (
+    <div data-testid="tabs-list" className={className}>{children}</div>
   ),
-  TabsContent: (p: React.PropsWithChildren<{ value: string; className?: string }>) => (
-    <div data-testid={`tab-content-${p.value}`} {...p}>{p.children}</div>
+  TabsTrigger: ({ children, value, className }: React.PropsWithChildren<{ value: string; className?: string }>) => (
+    <button data-testid={`tab-${value}`} className={className}>{children}</button>
+  ),
+  TabsContent: ({ children, value, className }: React.PropsWithChildren<{ value: string; className?: string }>) => (
+    <div data-testid={`tab-content-${value}`} className={className}>{children}</div>
   ),
 }))
 vi.mock('@/components/ui/badge', () => ({
@@ -162,6 +164,12 @@ vi.mock('@/components/guard', () => ({
 }))
 vi.mock('@/components/llm/ReportGenerator', () => ({
   ReportGenerator: () => <span />,
+}))
+vi.mock('@/components/llm/ExecutiveSummary', () => ({
+  ExecutiveSummary: () => <div data-testid="executive-summary">Executive Summary</div>,
+}))
+vi.mock('@/components/llm/VulnerabilityPanel', () => ({
+  VulnerabilityPanel: () => <div data-testid="vulnerability-panel">Vulnerability Findings</div>,
 }))
 
 // Mock ExpandableCard to render title, badge, and children directly for testing
@@ -209,6 +217,20 @@ import { ResultsView } from '../llm/ResultsView'
 import { ModelResultCard, aggregateByModel } from '../llm/ModelResultCard'
 import type { LLMTestExecution, LLMModelConfig } from '@/lib/llm-types'
 
+async function renderDashboard() {
+  await act(async () => {
+    render(<LLMDashboard />)
+    await Promise.resolve()
+  })
+}
+
+async function renderMergedResultsView() {
+  await act(async () => {
+    render(<ResultsView />)
+    await Promise.resolve()
+  })
+}
+
 // ---------------------------------------------------------------------------
 // H7.2 — Tab Restructure Tests
 // ---------------------------------------------------------------------------
@@ -222,28 +244,28 @@ describe('H7.2 — Tab Restructure: Merge Summary + Vulns into Results', () => {
     cleanup()
   })
 
-  it('does NOT render Summary tab trigger', () => {
-    render(<LLMDashboard />)
+  it('does NOT render Summary tab trigger', async () => {
+    await renderDashboard()
     expect(screen.queryByTestId('tab-summary')).toBeNull()
   })
 
-  it('does NOT render Vulnerabilities tab trigger', () => {
-    render(<LLMDashboard />)
+  it('does NOT render Vulnerabilities tab trigger', async () => {
+    await renderDashboard()
     expect(screen.queryByTestId('tab-vulnerabilities')).toBeNull()
   })
 
-  it('does NOT render Summary tab content', () => {
-    render(<LLMDashboard />)
+  it('does NOT render Summary tab content', async () => {
+    await renderDashboard()
     expect(screen.queryByTestId('tab-content-summary')).toBeNull()
   })
 
-  it('does NOT render Vulnerabilities tab content', () => {
-    render(<LLMDashboard />)
+  it('does NOT render Vulnerabilities tab content', async () => {
+    await renderDashboard()
     expect(screen.queryByTestId('tab-content-vulnerabilities')).toBeNull()
   })
 
-  it('still renders Results, Models, Tests, Leaderboard, Compare, Custom tabs', () => {
-    render(<LLMDashboard />)
+  it('still renders Results, Models, Tests, Leaderboard, Compare, Custom tabs', async () => {
+    await renderDashboard()
     expect(screen.getByTestId('tab-models')).toBeTruthy()
     expect(screen.getByTestId('tab-tests')).toBeTruthy()
     expect(screen.getByTestId('tab-results')).toBeTruthy()
@@ -252,12 +274,12 @@ describe('H7.2 — Tab Restructure: Merge Summary + Vulns into Results', () => {
     expect(screen.getByTestId('tab-custom')).toBeTruthy()
   })
 
-  it('Results tab content exists in the dashboard', () => {
-    render(<LLMDashboard />)
+  it('Results tab content exists in the dashboard', async () => {
+    await renderDashboard()
     expect(screen.getByTestId('tab-content-results')).toBeTruthy()
   })
 
-  it('migrates legacy "summary" tab in localStorage to "results"', () => {
+  it('migrates legacy "summary" tab in localStorage to "results"', async () => {
     const store: Record<string, string> = { 'llm-dashboard-tab': 'summary' }
     const mockStorage = {
       getItem: vi.fn((key: string) => store[key] ?? null),
@@ -269,12 +291,12 @@ describe('H7.2 — Tab Restructure: Merge Summary + Vulns into Results', () => {
     }
     Object.defineProperty(window, 'localStorage', { value: mockStorage, writable: true })
 
-    render(<LLMDashboard />)
+    await renderDashboard()
 
     expect(mockStorage.setItem).toHaveBeenCalledWith('llm-dashboard-tab', 'results')
   })
 
-  it('migrates legacy "vulnerabilities" tab in localStorage to "results"', () => {
+  it('migrates legacy "vulnerabilities" tab in localStorage to "results"', async () => {
     const store: Record<string, string> = { 'llm-dashboard-tab': 'vulnerabilities' }
     const mockStorage = {
       getItem: vi.fn((key: string) => store[key] ?? null),
@@ -286,7 +308,7 @@ describe('H7.2 — Tab Restructure: Merge Summary + Vulns into Results', () => {
     }
     Object.defineProperty(window, 'localStorage', { value: mockStorage, writable: true })
 
-    render(<LLMDashboard />)
+    await renderDashboard()
 
     expect(mockStorage.setItem).toHaveBeenCalledWith('llm-dashboard-tab', 'results')
   })
@@ -306,23 +328,23 @@ describe('H7.2 — ResultsView contains ExecutiveSummary and VulnerabilityPanel'
   })
 
   it('renders executive summary section within ResultsView', async () => {
-    await act(async () => { render(<ResultsView />) })
+    await renderMergedResultsView()
     expect(screen.getByTestId('results-executive-summary')).toBeTruthy()
   })
 
   it('renders vulnerability panel section within ResultsView', async () => {
-    await act(async () => { render(<ResultsView />) })
+    await renderMergedResultsView()
     expect(screen.getByTestId('results-vulnerability-panel')).toBeTruthy()
   })
 
   it('executive summary section has proper aria-label', async () => {
-    await act(async () => { render(<ResultsView />) })
+    await renderMergedResultsView()
     const section = screen.getByTestId('results-executive-summary')
     expect(section.getAttribute('aria-label')).toBe('Executive Summary')
   })
 
   it('vulnerability panel section has proper aria-label', async () => {
-    await act(async () => { render(<ResultsView />) })
+    await renderMergedResultsView()
     const section = screen.getByTestId('results-vulnerability-panel')
     expect(section.getAttribute('aria-label')).toBe('Vulnerability Findings')
   })

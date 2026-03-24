@@ -79,6 +79,7 @@ describe('LMS-001: Base URL input', () => {
     render(
       <LocalModelSelector
         provider="ollama"
+        currentBaseUrl="http://localhost:11434"
         onSelectModel={mockOnSelectModel}
       />
     )
@@ -274,6 +275,7 @@ describe('LMS-010: Base URL change callback', () => {
     render(
       <LocalModelSelector
         provider="ollama"
+        currentBaseUrl="http://localhost:11434"
         onSelectModel={mockOnSelectModel}
         onBaseUrlChange={mockOnBaseUrlChange}
       />
@@ -315,6 +317,7 @@ describe('LMS-012: LM Studio default URL', () => {
     render(
       <LocalModelSelector
         provider="lmstudio"
+        currentBaseUrl="http://localhost:1234"
         onSelectModel={mockOnSelectModel}
       />
     )

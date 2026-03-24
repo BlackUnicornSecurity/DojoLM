@@ -5,28 +5,32 @@
 
 import { test, expect } from '@playwright/test';
 
-test.describe('Test Lab', () => {
+test.describe('Armory', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    const testLabNav = page.locator('nav >> text=Test Lab').first();
-    if (await testLabNav.isVisible()) {
-      await testLabNav.click();
-    }
+    const sidebar = page.locator('aside');
+    await expect(sidebar).toBeVisible({ timeout: 15000 });
+    const armoryNav = sidebar.getByRole('button', { name: 'Armory' });
+    await expect(armoryNav).toBeVisible({ timeout: 5000 });
+    await armoryNav.click();
+    await expect(page.getByRole('heading', { name: 'Armory' })).toBeVisible({ timeout: 10000 });
   });
 
   test('shows fixture explorer', async ({ page }) => {
-    await expect(page.locator('text=Fixture Explorer').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Fixture Explorer').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('shows fixture categories', async ({ page }) => {
-    // Should show provider categories
-    await expect(page.locator('text=/DojoLM|Basileak|BonkLM/i').first()).toBeVisible({ timeout: 10000 });
+  test('shows Armory section tabs', async ({ page }) => {
+    await expect(page.getByRole('tab', { name: 'Fixtures' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('tab', { name: 'Test Payloads' })).toBeVisible({ timeout: 10000 });
   });
 
   test('supports view mode switching', async ({ page }) => {
-    // View mode buttons (Tree, Search, Grid)
-    const viewButtons = page.locator('button:has-text("Tree"), button:has-text("Search"), button:has-text("Grid")');
-    await expect(viewButtons.first()).toBeVisible({ timeout: 10000 });
+    const gridButton = page.getByRole('button', { name: 'Grid view' });
+    await expect(page.getByRole('button', { name: 'Tree view' })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: 'Search view' })).toBeVisible({ timeout: 10000 });
+    await expect(gridButton).toBeVisible({ timeout: 10000 });
+    await gridButton.click();
+    await expect(gridButton).toHaveAttribute('aria-pressed', 'true');
   });
 });

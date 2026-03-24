@@ -8,20 +8,20 @@ import { test, expect } from '@playwright/test';
 test.describe('Scanner', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('nav').first()).toBeVisible({ timeout: 15000 });
-    // Navigate to Scanner — assert visibility instead of silent skip
-    const scannerNav = page.locator('nav >> text=Scanner').first();
+    const sidebar = page.locator('aside');
+    await expect(sidebar).toBeVisible({ timeout: 15000 });
+    const scannerNav = sidebar.getByRole('button', { name: 'Haiku Scanner' });
     await expect(scannerNav).toBeVisible({ timeout: 5000 });
     await scannerNav.click();
+    await expect(page.getByRole('heading', { name: 'Haiku Scanner' })).toBeVisible({ timeout: 10000 });
   });
 
   test('shows scan input area', async ({ page }) => {
-    await expect(page.locator('text=Scan Input').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Input Text').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('shows engine filters', async ({ page }) => {
-    // Engine filter section should be visible
-    await expect(page.locator('text=Engine').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Engine Stack').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('can submit a scan', async ({ page }) => {
