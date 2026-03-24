@@ -75,6 +75,23 @@ function checkRateLimit(ip: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// F-09/F-10: Strip null optional args from LLM tool calls
+// LLMs (Phi4, Llama 3.1) emit {"provider": null} instead of omitting the key.
+// ---------------------------------------------------------------------------
+
+function stripNullArgs(
+  args: Readonly<Record<string, unknown>>,
+): Record<string, unknown> {
+  const clean: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(args)) {
+    if (value !== null && value !== undefined) {
+      clean[key] = value;
+    }
+  }
+  return clean;
+}
+
+// ---------------------------------------------------------------------------
 // sanitizeOutput — reused pattern from chat route
 // ---------------------------------------------------------------------------
 
@@ -349,7 +366,10 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
             continue;
           }
 
-          const argsValidation = validateArgs(toolDef, conf.args);
+          // F-09/F-10: Strip null optional args before validation.
+          // LLMs (Phi4, Llama 3.1) often emit {"provider": null} instead of omitting the key.
+          const cleanConfArgs = stripNullArgs(conf.args);
+          const argsValidation = validateArgs(toolDef, cleanConfArgs);
           if (argsValidation.length > 0) {
             const errorEvent: SenseiStreamEvent = {
               type: 'error',
@@ -359,7 +379,7 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
             continue;
           }
 
-          const result = await executeToolCall(toolDef, conf.args, request);
+          const result = await executeToolCall(toolDef, cleanConfArgs, request);
 
           // Emit tool result
           const resultEvent: SenseiStreamEvent = {
@@ -481,8 +501,9 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
         continue;
       }
 
-      // Validate args
-      const argsErrors = validateArgs(toolDef, call.args);
+      // F-09/F-10: Strip null optional args before validation.
+      const cleanCallArgs = stripNullArgs(call.args);
+      const argsErrors = validateArgs(toolDef, cleanCallArgs);
       if (argsErrors.length > 0) {
         const result: SenseiToolResult = {
           toolCallId: call.id,
@@ -503,8 +524,8 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
         continue;
       }
 
-      // Execute tool
-      const result = await executeToolCall(toolDef, call.args, request);
+      // Execute tool (use cleaned args)
+      const result = await executeToolCall(toolDef, cleanCallArgs, request);
       toolResults.push(result);
 
       const resultEvent: SenseiStreamEvent = {
@@ -547,4 +568,39 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
     content: 'I reached the maximum number of tool execution rounds. Please refine your request if you need further actions.',
   };
   controller.enqueue(encoder.encode(encodeSSE(warningEvent)));
+}
+
+// ---------------------------------------------------------------------------
+// F-R3-03/F-R3-04: Catch-all method handlers to return 405 for unsupported methods
+// ---------------------------------------------------------------------------
+
+const METHOD_NOT_ALLOWED = NextResponse.json(
+  { error: 'Method not allowed. Only POST is supported.' },
+  { status: 405, headers: { Allow: 'POST, OPTIONS' } },
+);
+
+export function GET() {
+  return METHOD_NOT_ALLOWED;
+}
+
+export function PUT() {
+  return METHOD_NOT_ALLOWED;
+}
+
+export function DELETE() {
+  return METHOD_NOT_ALLOWED;
+}
+
+export function PATCH() {
+  return METHOD_NOT_ALLOWED;
+}
+
+export function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      Allow: 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    },
+  });
 }

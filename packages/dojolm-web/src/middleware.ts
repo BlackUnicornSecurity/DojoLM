@@ -34,6 +34,8 @@ const PUBLIC_ROUTES = new Set([
   '/api/admin/health',
   '/api/health',
   '/api/auth/me', // R8-002: route handles its own session check, returns {user:null} if unauthenticated
+  '/api/auth/login', // Login endpoint handles its own bcrypt auth; must be reachable without API key
+  '/api/auth/logout', // Logout endpoint invalidates session; must be reachable without API key
   '/api/llm/models', // F-05: Model list is read-only and needed by Sensei UI model picker without API key
 ]);
 

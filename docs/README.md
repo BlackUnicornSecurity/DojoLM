@@ -1,59 +1,29 @@
-# NODA Documentation
+# DojoLM Documentation
 
-Welcome to the NODA documentation. This folder contains all user-facing documentation for the NODA LLM Security Testing Platform.
+This directory contains the active user-facing and reference documentation for the current codebase. Historical update summaries and superseded material have been moved under [`docs/archive/`](archive/).
 
-## Documentation Structure
+## Start Here
 
-```
-docs/
-├── README.md                    # This file
-├── user/                        # User documentation
-│   ├── PLATFORM_GUIDE.md       # Complete platform guide
-│   ├── GETTING_STARTED.md      # Quick start guide
-│   ├── FAQ.md                  # Frequently asked questions
-│   ├── LLM-PROVIDER-GUIDE.md   # Provider configuration
-│   └── API_REFERENCE.md        # API documentation
-├── compliance/                  # Compliance documentation
-│   └── iso-42001/              # ISO 42001 specific docs
-└── app/                        # App testing documentation
-    └── testing-results/        # Timestamped test reports
-```
+- [User Documentation Index](user/README.md)
+- [Getting Started](user/GETTING_STARTED.md)
+- [Platform Guide](user/PLATFORM_GUIDE.md)
+- [User API Reference](user/API_REFERENCE.md)
+- [LLM Provider Guide](user/LLM-PROVIDER-GUIDE.md)
+- [FAQ](user/FAQ.md)
 
-## Quick Access
+## Technical Reference
 
-### For New Users
-1. [Getting Started](user/GETTING_STARTED.md) - Set up and first steps
-2. [Platform Guide](user/PLATFORM_GUIDE.md) - Complete feature overview
-3. [FAQ](user/FAQ.md) - Common questions
+- [Architecture](ARCHITECTURE.md)
+- [Maintainer API Reference](API_REFERENCE.md)
+- [Style Guide](STYLE-GUIDE.md)
+- [Maintenance Process](MAINTENANCE.md)
 
-### For Developers
-1. [API Reference](user/API_REFERENCE.md) - API documentation
-2. [Contributing Guide](../github/CONTRIBUTING.md) - Contribution guidelines
+## Compliance And Assessment Material
 
-### For Security Teams
-1. [Compliance](compliance/) - Framework documentation (ISO 42001)
-2. [LLM Provider Guide](user/LLM-PROVIDER-GUIDE.md) - Provider setup for testing
+- [Compliance](compliance/)
+- [App Assessment Docs](app/README.md)
+- [Testing Results](app/testing-results/README.md)
 
-## Documentation Status
+## Archive Policy
 
-| Document | Status | Last Updated |
-|----------|--------|--------------|
-| Platform Guide | Complete | 2026-03-18 |
-| API Reference | Complete | 2026-03-08 |
-| Getting Started | Complete | 2026-03-18 |
-| FAQ | Complete | 2026-03-18 |
-| LLM Provider Guide | Complete | 2026-03-18 |
-
-## Contributing to Documentation
-
-When updating documentation:
-1. Keep user-facing docs in `docs/user/`
-2. Update the status table above
-3. Test all code examples
-4. Verify all internal links
-
-## Support
-
-- Documentation issues: Open a GitHub issue
-- General support: info@blackunicorn.tech
-- Security issues: info@blackunicorn.tech
+If a document describes retired plans, outdated counts, or older product naming that no longer matches the implementation, archive it instead of leaving it in the active navigation path.

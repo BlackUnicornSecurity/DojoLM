@@ -66,9 +66,16 @@ export function validateArgs(
     }
   }
 
-  // Check basic types for provided fields
+  // Check basic types for provided fields.
+  // F-09/F-10 fix: Skip null values for optional fields — LLMs often emit
+  // {"provider": null} instead of omitting the key entirely.
   const properties = schema.properties ?? {};
   for (const [key, value] of Object.entries(args)) {
+    // Skip null optional args (not in required list)
+    if (value === null && !required.includes(key)) {
+      continue;
+    }
+
     const propSchema = properties[key];
     if (!propSchema?.type) continue;
 
@@ -296,7 +303,14 @@ export async function executeToolCall(
       }
       fetchUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
     } else if (toolDef.method === 'POST') {
-      fetchOptions.body = JSON.stringify(args);
+      // F-09/F-10 fix: strip null optional args before sending to API
+      const cleanArgs: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(args)) {
+        if (value !== null && value !== undefined) {
+          cleanArgs[key] = value;
+        }
+      }
+      fetchOptions.body = JSON.stringify(cleanArgs);
     }
 
     const response = await fetch(fetchUrl, fetchOptions);

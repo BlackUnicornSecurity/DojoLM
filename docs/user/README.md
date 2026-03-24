@@ -1,14 +1,16 @@
-# User Documentation Moved
+# User Documentation
 
-User documentation has been consolidated. Please see [PLATFORM_GUIDE.md](./PLATFORM_GUIDE.md) for comprehensive documentation.
+Use this folder for current user-facing documentation.
 
-## Quick Links
+## Core Guides
 
-- [Platform Guide](./PLATFORM_GUIDE.md) — Complete user documentation
-- [FAQ](./FAQ.md) — Frequently Asked Questions
-- [Green AI Guidelines](./green-ai-guidelines.md) — Environmental considerations
-- [Multimodal Testing Guide](./multimodal-testing-guide.md) — Multimodal attack testing
+- [Getting Started](GETTING_STARTED.md)
+- [Platform Guide](PLATFORM_GUIDE.md)
+- [API Reference](API_REFERENCE.md)
+- [LLM Provider Guide](LLM-PROVIDER-GUIDE.md)
+- [FAQ](FAQ.md)
 
----
+## Additional Guides
 
-*This page is maintained for backwards compatibility. Please update your bookmarks to reference PLATFORM_GUIDE.md directly.*
+- [Green AI Guidelines](green-ai-guidelines.md)
+- [Multimodal Testing Guide](multimodal-testing-guide.md)

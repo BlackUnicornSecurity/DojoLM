@@ -1,343 +1,173 @@
-# LLM Provider Configuration Guide
+# LLM Provider Guide
 
-This guide covers configuring LLM providers in NODA for security testing.
+This guide documents the current provider configuration model in the codebase.
 
-## Supported Providers (19 total)
+## Important Distinctions
 
-| Provider | Models | Local/Cloud | Setup Difficulty |
-|----------|--------|-------------|------------------|
-| OpenAI | GPT-4o, o3, GPT-5.4 | Cloud | Easy |
-| Anthropic | Claude 4.6 Opus/Sonnet/Haiku | Cloud | Easy |
-| Google | Gemini 2.0 Flash, 1.5 Pro | Cloud | Easy |
-| Cohere | Command R+, Command R | Cloud | Easy |
-| Groq | Various (fast inference) | Cloud | Easy |
-| Together | Various | Cloud | Easy |
-| Fireworks | Various | Cloud | Easy |
-| DeepSeek | DeepSeek models | Cloud | Easy |
-| Mistral | Mistral models | Cloud | Easy |
-| Ollama | Various | Local | Medium |
-| LM Studio | Various | Local | Medium |
-| llama.cpp | Various | Local | Medium |
-| Custom | Any OpenAI-compatible | Either | Varies |
+The repository has three provider-related layers:
 
----
+1. `bu-tpi` provider types
+   The core type union includes `19` provider IDs.
+2. Built-in preset catalog
+   `packages/bu-tpi/src/llm/llm-presets.json` ships `57` presets:
+   - `51` cloud presets
+   - `6` local presets
+3. Web-app UI and adapter layer
+   The current web app directly exposes provider metadata and adapter wiring for:
+   - OpenAI
+   - Anthropic
+   - Google
+   - Cohere
+   - Ollama
+   - LM Studio
+   - llama.cpp
+   - z.ai
+   - Moonshot
+   - BlackUnicorn
+   - Custom
 
-## OpenAI
+## Current Setup Flow
 
-### Prerequisites
+Use these two places in the app:
 
-- OpenAI account
-- API key with appropriate permissions
+1. `Admin -> API Keys`
+   Add a provider-backed model entry with credentials or base URL.
+2. `LLM Dashboard -> Models`
+   Review, test, edit, enable, or disable configured model definitions.
 
-### Setup
+Older docs that say `Admin -> Providers` are outdated.
 
-1. Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+## Public Preset Catalog
 
-2. In NODA, go to **Admin → Providers**
+The web app exposes a non-secret preset summary at:
 
-3. Click **Add Provider**
-
-4. Select **OpenAI**
-
-5. Enter configuration:
-   ```
-   Name: OpenAI Production
-   API Key: sk-...
-   Organization ID: (optional)
-   ```
-
-6. Click **Test Connection**
-
-7. If successful, click **Save**
-
-### Available Models
-
-- GPT-4o (recommended)
-- o3 (reasoning)
-- GPT-5.4 (latest)
-
-### Pricing
-
-Pay per token. See [OpenAI Pricing](https://openai.com/pricing).
-
-### Rate Limits
-
-- Tier 1: 500 RPM
-- Tier 2: 5000 RPM
-
----
-
-## Anthropic (Claude)
-
-### Prerequisites
-
-- Anthropic account
-- API key
-
-### Setup
-
-1. Get your API key from [Anthropic Console](https://console.anthropic.com/)
-
-2. In NODA, go to **Admin → Providers**
-
-3. Click **Add Provider**
-
-4. Select **Anthropic**
-
-5. Enter configuration:
-   ```
-   Name: Anthropic Claude
-   API Key: sk-ant-...
-   ```
-
-6. Click **Test Connection**
-
-7. Save
-
-### Available Models
-
-- Claude 4.6 Opus
-- Claude 4.6 Sonnet
-- Claude 4.5 Haiku
-
-### Pricing
-
-Pay per token. See [Anthropic Pricing](https://www.anthropic.com/pricing).
-
----
-
-## Ollama
-
-### Prerequisites
-
-- Ollama installed locally
-- At least 8GB RAM (16GB+ recommended)
-- Sufficient disk space for models
-
-### Installation
-
-**macOS:**
 ```bash
-brew install ollama
+curl http://localhost:42001/api/llm/presets
 ```
 
-**Linux:**
+This is useful for discovering built-in preset names and regions without exposing credentials.
+
+## Provider Recipes
+
+### OpenAI
+
+Use when you want hosted GPT models.
+
+Typical values:
+
+- provider: `openai`
+- base URL: `https://api.openai.com/v1`
+- models: `gpt-5.4`, `gpt-5.4-mini`, `gpt-4o`, `o3`, `o3-mini`
+
+Steps:
+
+1. Open `Admin -> API Keys`
+2. Add an `OpenAI` entry
+3. Provide a model name and API key
+4. Test the connection
+
+### Anthropic
+
+Typical values:
+
+- provider: `anthropic`
+- base URL: `https://api.anthropic.com`
+- models: `claude-sonnet-4-6`, `claude-opus-4-6`, `claude-haiku-4-5-20251001`
+
+### Ollama
+
+Typical values:
+
+- provider: `ollama`
+- base URL: `http://localhost:11434`
+- example models: `llama3.2`, `llama3.1`, `mistral`, `qwen2.5`, `gemma3`
+
+Start Ollama first:
+
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+ollama serve
+ollama pull llama3.2
 ```
 
-**Windows:**
-Download from [ollama.com](https://ollama.com)
+### LM Studio
 
-### Setup
+Typical values:
 
-1. Start Ollama:
-   ```bash
-   ollama serve
-   ```
+- provider: `lmstudio`
+- base URL: `http://localhost:1234`
 
-2. Pull a model:
-   ```bash
-   ollama pull llama3
-   ollama pull mistral
-   ollama pull codellama
-   ```
+### llama.cpp
 
-3. In NODA, go to **Admin → Providers**
+Typical values:
 
-4. Click **Add Provider**
+- provider: `llamacpp`
+- base URL: `http://localhost:8080`
 
-5. Select **Ollama**
+### z.ai
 
-6. Enter configuration:
-   ```
-   Name: Local Ollama
-   Host: http://localhost:11434
-   ```
+Typical values:
 
-7. Select model from dropdown
+- provider: `zai`
+- base URL: `https://api.z.ai/api/anthropic`
+- example models: `glm-4.7`, `glm-4-flash`
 
-8. Test and save
+### Moonshot
 
-### Recommended Models
+Typical values:
 
-| Model | Size | Use Case |
-|-------|------|----------|
-| llama3 | 8B | General testing |
-| llama3:70b | 70B | Advanced testing |
-| mistral | 7B | Fast testing |
-| codellama | 7B | Code-focused |
+- provider: `moonshot`
+- base URL: `https://api.moonshot.cn/v1`
 
-### Performance Tips
+### Custom
 
-- Use smaller models (7B) for quick tests
-- Use larger models (70B) for thorough evaluation
-- Ensure sufficient RAM (model size × 1.5)
+Use this for OpenAI-compatible endpoints that are not directly surfaced in the current UI metadata set.
 
----
+Provide:
 
-## LM Studio
+- provider: `custom`
+- your base URL
+- your model name
+- API key if the endpoint requires one
 
-### Prerequisites
+## Practical Notes
 
-- LM Studio installed
-- Model downloaded
+### Google and Cohere
 
-### Installation
+The current codebase includes UI metadata and placeholder adapter routing for Google and Cohere. If you are testing an OpenAI-compatible provider outside the directly wired adapters, prefer `custom`.
 
-Download from [lmstudio.ai](https://lmstudio.ai/)
+### Local model discovery
 
-### Setup
+The web app includes local-model discovery for:
 
-1. Open LM Studio
-
-2. Download a model:
-   - Go to **Search** tab
-   - Search for model (e.g., "Llama 3")
-   - Click **Download**
-
-3. Start server:
-   - Go to **Local Server** tab
-   - Select your model
-   - Click **Start Server**
-   - Note the port (default: 1234)
-
-4. In NODA, go to **Admin → Providers**
-
-5. Click **Add Provider**
-
-6. Select **LM Studio**
-
-7. Enter configuration:
-   ```
-   Name: LM Studio Local
-   Host: http://localhost:1234
-   ```
-
-8. Test and save
-
-### Performance Tips
-
-- Enable GPU acceleration in LM Studio settings
-- Adjust context length based on your needs
-- Use quantized models for faster inference
-
----
-
-## Custom Provider
-
-For OpenAI-compatible endpoints:
-
-1. Go to **Admin → Providers**
-
-2. Click **Add Provider**
-
-3. Select **Custom**
-
-4. Enter configuration:
-   ```
-   Name: My Custom API
-   Base URL: https://api.example.com/v1
-   API Key: (if required)
-   Model: model-name
-   ```
-
-5. Test and save
-
----
-
-## Provider Management
-
-### Editing Providers
-
-1. Go to **Admin → Providers**
-2. Click provider name
-3. Update settings
-4. Click **Save**
-
-### Deleting Providers
-
-1. Go to **Admin → Providers**
-2. Click **Delete** icon
-3. Confirm deletion
-
-### Default Provider
-
-Set a default provider for quick testing:
-
-1. Go to **Admin → Providers**
-2. Click **Set as Default** on desired provider
-
-### Provider Priority
-
-Providers are listed in order of addition. Reorder by dragging.
-
----
-
-## Troubleshooting
-
-### OpenAI "Invalid API Key"
-
-- Verify key is copied correctly
-- Check key has not expired
-- Ensure key has appropriate permissions
-
-### Ollama "Connection Refused"
-
-- Verify Ollama is running: `ollama serve`
-- Check host URL (default: localhost:11434)
-- Check firewall settings
-
-### LM Studio "Model Not Found"
-
-- Verify server is started in LM Studio
-- Check model is loaded
-- Verify port number
-
-### Rate Limit Errors
-
-- Reduce concurrent tests
-- Check provider rate limits
-- Upgrade provider tier if needed
-
-### Timeout Errors
-
-- Increase timeout in settings
-- Check provider status
-- Try with smaller model
-
----
-
-## Best Practices
+- Ollama
+- LM Studio
+- llama.cpp
 
 ### Security
 
-- Rotate API keys regularly
-- Use environment variables for keys
-- Never commit keys to version control
-- Use local models for sensitive testing
+- never commit API keys
+- prefer local models for sensitive prompts
+- use `X-API-Key` for programmatic web API calls
 
-### Cost Optimization
+## Troubleshooting
 
-- Use local models for development
-- Reserve cloud models for final testing
-- Batch tests to reduce API calls
-- Monitor usage in provider dashboards
+### Connection test fails
 
-### Performance
+- verify the base URL
+- verify the model name
+- verify the provider API key
+- make sure the model entry is enabled
 
-- Use smaller models for quick iteration
-- Parallelize tests across providers
-- Cache results when possible
-- Set appropriate timeouts
+### Local provider shows no models
 
----
+- ensure the local server is running
+- check the expected default port
+- confirm the model has been pulled or loaded
 
-## Advanced Configuration
+### Cloud provider works in the vendor UI but not here
 
-### Environment Variables
-
-```bash
+- try the same endpoint through `custom` if it is OpenAI-compatible
+- confirm the provider is one of the currently wired adapters, not just present in the preset catalog
 # .env.local
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
@@ -377,4 +207,4 @@ export HTTPS_PROXY=http://proxy.company.com:8080
 - Anthropic: [Support](https://support.anthropic.com/)
 - Ollama: [GitHub Issues](https://github.com/ollama/ollama/issues)
 - LM Studio: [Discord](https://discord.gg/lmstudio)
-- NODA: info@blackunicorn.tech
+- DojoLM / BlackUnicorn: info@blackunicorn.tech

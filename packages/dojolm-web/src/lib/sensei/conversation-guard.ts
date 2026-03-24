@@ -42,6 +42,8 @@ const SYSTEM_PROMPT_EXTRACTION_PATTERNS: readonly RegExp[] = [
   /what\s+does\s+(your|the)\s+system\s*prompt\s+(say|contain|include)/i,
   /share\s+(your|the)\s+(system|hidden|secret)\s*(prompt|instructions|configuration)/i,
   /display\s+(your|the)\s+(system|initial)\s*(prompt|instructions)/i,
+  // F-R3-01 fix: catch "print everything above/before this message" variants
+  /(print|output|repeat|copy|list|show|display)\s+(everything|all(\s+content)?|content|text)\s+(above|before)\s+(this|my)/i,
 ];
 
 // ---------------------------------------------------------------------------
@@ -170,14 +172,21 @@ export function guardSenseiInput(
     }
   }
 
-  // Check for system prompt extraction
-  for (const pattern of SYSTEM_PROMPT_EXTRACTION_PATTERNS) {
-    pattern.lastIndex = 0;
-    if (pattern.test(text)) {
-      return {
-        proceed: false,
-        reason: 'System prompt extraction attempt detected.',
-      };
+  // Check for system prompt extraction.
+  // F-12 fix: allow scan-intent messages that quote malicious text for scanning.
+  // Patterns like "scan this text: <malicious>" or "analyze: <malicious>" are safe —
+  // the user is asking Sensei to scan known-malicious content, not attacking Sensei.
+  const isScanIntent = /^(scan|analyze|check|test|evaluate)\s+(this|the|following)?\s*(text|prompt|input|payload|message)?[\s:]/i.test(text);
+
+  if (!isScanIntent) {
+    for (const pattern of SYSTEM_PROMPT_EXTRACTION_PATTERNS) {
+      pattern.lastIndex = 0;
+      if (pattern.test(text)) {
+        return {
+          proceed: false,
+          reason: 'System prompt extraction attempt detected.',
+        };
+      }
     }
   }
 

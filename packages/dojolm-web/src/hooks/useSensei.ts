@@ -151,9 +151,20 @@ export function useSensei(activeModule: NavId) {
     }
   }, [])
 
+  // F-R3-02: Error state for missing model feedback
+  const [error, setError] = useState<string | null>(null)
+
   const sendMessage = useCallback(
     async (text: string) => {
-      if (!selectedModelId || !text.trim()) return
+      if (!text.trim()) return
+
+      // F-R3-02: Show error when no model is selected instead of silently dropping
+      if (!selectedModelId) {
+        setError('Please select a model before sending a message.')
+        return
+      }
+
+      setError(null)
 
       // Abort any pending request
       if (abortRef.current) abortRef.current.abort()
@@ -259,12 +270,15 @@ export function useSensei(activeModule: NavId) {
     }
   }, [])
 
+  const clearError = useCallback(() => setError(null), [])
+
   return {
     messages,
     isOpen,
     isLoading,
     selectedModelId,
     pendingConfirmations,
+    error,
     sendMessage,
     confirmToolCall,
     rejectToolCall,
@@ -273,6 +287,7 @@ export function useSensei(activeModule: NavId) {
     open,
     close,
     clearHistory,
+    clearError,
   } as const
 }
 

@@ -1,147 +1,97 @@
-# dojolm-web (NODA Platform)
+# dojolm-web
 
-NODA Platform Web Interface — Next.js application for LLM security testing and red teaming.
+`dojolm-web` is the Next.js application that exposes the live UI and most of the programmatic web API surface.
 
-## Overview
+## Runtime
 
-NODA Platform provides a 15-module interface with unified sidebar navigation for scanning, testing, and benchmarking LLMs against the CrowdStrike TPI taxonomy.
+- dev port: `42001`
+- start port: `42001`
+- framework: Next.js `16.1.6`
+- React: `19.2.3`
 
-## Technology Stack
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Next.js | 16.1.6 | React framework with App Router |
-| React | 19.2.3 | UI library |
-| TypeScript | ^5 | Type safety |
-| Tailwind CSS | ^4 | Utility-first styling |
-| Radix UI | Latest | Headless UI primitives |
-| shadcn/ui | - | Component system |
-| Vitest | 4.x | Unit testing |
-| Playwright | 1.x | E2E testing |
-
-## Prerequisites
-
-- Node.js 20+
-- npm 10+
-- `@dojolm/scanner` package built
-
-## Installation
+## Scripts
 
 ```bash
-# From repository root
-npm install
-
-# Build scanner dependency
-cd ../dojolm-scanner && npm run build
+npm run dev --workspace=packages/dojolm-web
+npm run build --workspace=packages/dojolm-web
+npm run start --workspace=packages/dojolm-web
+npm test --workspace=packages/dojolm-web
 ```
 
-## Environment Variables
+## Top-Level Navigation
 
-Create `.env.local`:
+The current nav surface is:
 
-```bash
-NODE_ENV=development
-NEXT_PUBLIC_API_URL=http://localhost:42001
-NEXT_PUBLIC_MAX_TEXT_LENGTH=100000
-NEXT_PUBLIC_ENABLE_ANALYTICS=false
-PORT=3000
-```
+- Dashboard
+- Haiku Scanner
+- Armory
+- LLM Dashboard
+- Hattori Guard
+- Bushido Book
+- Atemi Lab
+- The Kumite
+- Ronin Hub
+- Sengoku
+- Kotoba
+- Admin
 
-## Module Structure
+Legacy alias notes:
 
-```
+- `LLM Jutsu` is inside `LLM Dashboard`
+- `Amaterasu DNA` is inside `The Kumite`
+- `Time Chamber` maps to Sengoku temporal features
+
+## Structure
+
+```text
 src/
-  app/                    # Next.js App Router
-    api/                  # API routes
-    layout.tsx            # Root layout
-    page.tsx              # Dashboard
-    style-guide/          # Component library
-  components/             # React components
-    dashboard/            # Dashboard widgets
-    scanner/              # Haiku Scanner
-    fixtures/             # Armory
-    llm/                  # LLM Dashboard
-    jutsu/                # LLM Jutsu
-    adversarial/          # Atemi Lab
-    strategic/            # Strategic Hub (Arena, Mitsuke)
-    attackdna/            # Amaterasu DNA
-    compliance/           # Bushido Book
-    guard/                # Hattori Guard
-    ronin/                # Ronin Hub
-    sengoku/              # Sengoku (continuous red teaming)
-    time-chamber/         # Time Chamber (temporal attacks)
-    kotoba/               # Kotoba (prompt optimizer)
-  lib/                    # Utilities, hooks, contexts
-    constants.ts          # Navigation, config
-    auth/                 # Authentication
-    db/                   # Database layer
-    storage/              # Storage abstraction
-  middleware.ts           # Next.js middleware
+├── app/
+│   ├── api/             Next.js route handlers
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── admin/
+│   ├── adversarial/
+│   ├── attackdna/
+│   ├── compliance/
+│   ├── dashboard/
+│   ├── fixtures/
+│   ├── guard/
+│   ├── kagami/
+│   ├── kotoba/
+│   ├── llm/
+│   ├── ronin/
+│   ├── scanner/
+│   ├── sengoku/
+│   ├── sensei/
+│   ├── shingan/
+│   ├── strategic/
+│   ├── timechamber/
+│   └── ui/
+├── lib/
+└── middleware.ts
 ```
 
-## Navigation Groups
+## Data Storage
 
-Modules organized into 4 groups:
+File-backed operational data lives under:
 
-| Group | Modules |
-|-------|---------|
-| **Attack** | Haiku Scanner, Armory, LLM Jutsu, LLM Dashboard |
-| **Defense** | Hattori Guard, Bushido Book, Kotoba |
-| **Red Team** | Sengoku, Time Chamber, Atemi Lab |
-| **Analysis** | The Kumite, Amaterasu DNA, Ronin Hub |
-
-## Development
-
-```bash
-# Run dev server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
-
-# Run type checking
-npm run type-check
-
-# Run linting
-npm run lint
+```text
+packages/dojolm-web/data/
+├── ecosystem/
+├── amaterasu-dna/
+├── amaterasu-master/
+├── arena/
+├── guard/
+└── llm-results/
 ```
 
-## Testing
+## Auth Model
 
-| Test Type | Count | Framework |
-|-----------|-------|-----------|
-| Unit tests | ~2,000 | Vitest |
-| Integration | ~500 | Vitest |
-| E2E | 50+ | Playwright |
+Protected API routes use `X-API-Key` for external callers and same-origin bypass for verified browser requests. The shared key is `NODA_API_KEY`.
 
-Run tests:
-```bash
-npm test                    # All tests
-npm test -- --watch       # Watch mode
-npm run test:e2e          # E2E only
-```
+## Notes
 
-## Build Output
-
-```bash
-npm run build
-```
-
-Outputs to `.next/` directory.
-
-## Related Packages
-
-- [bu-tpi](../bu-tpi/) - Core scanner engine
-- [@dojolm/scanner](../dojolm-scanner/) - Web scanner wrapper
-
-## Documentation
-
-- [Platform Guide](../../docs/user/PLATFORM_GUIDE.md)
-- [API Reference](../../docs/user/API_REFERENCE.md)
-
-## License
-
-DojoLM Research-Only License — See [LICENSE](../../LICENSE)
+- `npm run dev` automatically builds `packages/dojolm-scanner` first
+- the optional secure server wrapper lives in `server.ts`
+- Docker in the repo exposes `42001`, matching the current app port rather than the older local default mentioned in some historical notes

@@ -1,322 +1,177 @@
-# API Reference
+# User API Reference
 
-## Overview
+This page focuses on the endpoints users and integrators are most likely to call directly.
 
-NODA provides RESTful APIs for scanner operations, LLM testing, and platform management.
+## Base URLs
 
-**Base URLs:**
-- Scanner API: `http://localhost:8089`
+- Standalone scanner: `http://localhost:8089`
 - Web API: `http://localhost:42001/api`
 
-**Authentication:**
-- API Key via `X-API-Key` header (for programmatic access)
-- Session-based (for web UI)
+## Authentication
 
----
+For the web API:
 
-## Scanner API
+- browser requests from the same origin are handled by the app automatically
+- programmatic requests usually need `X-API-Key`
+- the key value must match `NODA_API_KEY`
 
-### POST /api/scan
+The standalone scanner API is GET-only and does not use the web API key flow.
 
-Scan text for prompt injection attacks.
+## Standalone Scanner API
 
-**Request:**
+### Scan text
+
 ```bash
-curl -X POST http://localhost:8089/api/scan \
+curl "http://localhost:8089/api/scan?text=ignore%20all%20previous%20instructions"
+```
+
+Notes:
+
+- method: `GET`
+- required query param: `text`
+- max size: `100KB`
+
+### Get fixture manifest
+
+```bash
+curl "http://localhost:8089/api/fixtures"
+```
+
+### Read a fixture
+
+```bash
+curl "http://localhost:8089/api/read-fixture?path=social/example.txt"
+```
+
+### Scan a fixture
+
+```bash
+curl "http://localhost:8089/api/scan-fixture?path=social/example.txt"
+```
+
+### Get scanner stats
+
+```bash
+curl "http://localhost:8089/api/stats"
+```
+
+### Run built-in test suites
+
+```bash
+curl "http://localhost:8089/api/run-tests"
+curl "http://localhost:8089/api/run-tests?filter=regression&verbose=true"
+```
+
+## Web Scanner Route
+
+Use this when you want to call the same scanner flow the web UI uses.
+
+```bash
+curl -X POST "http://localhost:42001/api/scan" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{"text":"ignore all previous instructions"}'
+```
+
+Notes:
+
+- accepts `text` or `content`
+- accepts optional `engines`
+- max size: `10,000` characters
+- rejects null bytes
+
+## Health Endpoints
+
+```bash
+curl "http://localhost:42001/api/health"
+curl "http://localhost:42001/api/admin/health"
+```
+
+## Model Configuration Endpoints
+
+### List models
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/models"
+```
+
+### Create a model
+
+```bash
+curl -X POST "http://localhost:42001/api/llm/models" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
   -d '{
-    "text": "Ignore previous instructions",
-    "context": "user",
-    "modelId": "gpt-4"
+    "name": "OpenAI GPT-4o",
+    "provider": "openai",
+    "model": "gpt-4o",
+    "apiKey": "sk-..."
   }'
 ```
 
-**Parameters:**
+### Test a model connection
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| text | string | Yes | Text to scan |
-| context | string | No | Context type (system/user/assistant) |
-| modelId | string | No | Model identifier |
-
-**Response:**
-```json
-{
-  "verdict": "BLOCK",
-  "severity": 8,
-  "confidence": 0.95,
-  "findings": [
-    {
-      "type": "prompt_injection",
-      "pattern": "ignore_previous",
-      "matchedText": "Ignore previous instructions",
-      "severity": 8,
-      "confidence": 0.95
-    }
-  ],
-  "metadata": {
-    "scanDuration": 0.5,
-    "patternsChecked": 505
-  }
-}
-```
-
-### GET /api/health
-
-Check scanner health status.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "version": "5.0.0",
-  "patternsLoaded": 505,
-  "uptime": 3600
-}
-```
-
----
-
-## Ecosystem API
-
-### GET /api/ecosystem/findings
-
-List ecosystem findings.
-
-**Query Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| severity | number | Minimum severity (1-10) |
-| category | string | Finding category |
-| limit | number | Max results (default: 100) |
-| offset | number | Pagination offset |
-
-**Response:**
-```json
-{
-  "findings": [
-    {
-      "id": "uuid",
-      "type": "vulnerability",
-      "severity": 8,
-      "category": "prompt_injection",
-      "sourceModule": "scanner",
-      "description": "...",
-      "detectedAt": "2026-03-08T12:00:00Z"
-    }
-  ],
-  "total": 150,
-  "limit": 100,
-  "offset": 0
-}
-```
-
-### POST /api/ecosystem/findings
-
-Create a new finding.
-
-**Request:**
-```json
-{
-  "type": "vulnerability",
-  "severity": 7,
-  "category": "prompt_injection",
-  "description": "Description of finding",
-  "evidence": { ... },
-  "recommendation": "Recommended fix"
-}
-```
-
----
-
-## LLM API
-
-### POST /api/llm/execute
-
-Execute a single LLM test.
-
-**Request:**
 ```bash
-curl -X POST http://localhost:42001/api/llm/execute \
+curl -X POST \
+  -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/models/model-123/test"
+```
+
+## LLM Execution Endpoints
+
+### Run one test case
+
+```bash
+curl -X POST "http://localhost:42001/api/llm/execute" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: your-key" \
+  -H "X-API-Key: $NODA_API_KEY" \
   -d '{
-    "modelId": "gpt-4",
-    "testCaseId": "prompt-injection-001",
-    "prompt": "Test prompt",
-    "temperature": 0.7
+    "modelId": "model-123",
+    "testCaseId": "tc-001"
   }'
 ```
 
-**Response:**
-```json
-{
-  "executionId": "uuid",
-  "status": "completed",
-  "modelId": "gpt-4",
-  "result": {
-    "response": "Model response text",
-    "scanResult": {
-      "verdict": "BLOCK",
-      "severity": 8
-    },
-    "injectionSuccess": 0.85,
-    "resilienceScore": 0.15
-  },
-  "completedAt": "2026-03-08T12:00:00Z"
-}
-```
+### Start a batch
 
-### POST /api/llm/batch
-
-Execute batch LLM tests with SSE streaming.
-
-**Request:**
 ```bash
-curl -X POST http://localhost:42001/api/llm/batch \
+curl -X POST "http://localhost:42001/api/llm/batch" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: your-key" \
+  -H "X-API-Key: $NODA_API_KEY" \
   -d '{
-    "modelIds": ["gpt-4", "claude-3"],
-    "testCaseIds": ["test-001", "test-002"],
-    "concurrentLimit": 5
+    "modelIds": ["model-123"],
+    "testCaseIds": ["tc-001", "tc-002"]
   }'
 ```
 
-**Response:**
-```json
-{
-  "batchId": "uuid",
-  "status": "running",
-  "totalTests": 100,
-  "streamUrl": "/api/llm/batch/uuid/stream"
-}
-```
-
-### GET /api/llm/batch/:id/stream
-
-Stream batch progress via SSE.
+### Query batches
 
 ```bash
-curl http://localhost:42001/api/llm/batch/uuid/stream
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/batch"
 ```
 
-**Events:**
-```
-event: progress
-data: {"completed": 10, "total": 100, "percent": 10}
+### Stream batch progress
 
-event: result
-data: {"executionId": "...", "status": "completed", ...}
-
-event: complete
-data: {"batchId": "...", "status": "completed"}
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/batch/batch-123/stream"
 ```
 
----
+## Useful Read Routes
 
-## Attack DNA API
+- `GET /api/llm/results`
+- `GET /api/llm/reports`
+- `GET /api/llm/summary`
+- `GET /api/llm/coverage`
+- `GET /api/llm/presets`
+- `GET /api/ecosystem/findings`
+- `GET /api/compliance`
+- `GET /api/arena/export`
 
-### POST /api/attackdna/ingest
+## Notes On Legacy Docs
 
-Trigger ingestion of ecosystem findings into DNA.
-
-**Response:**
-```json
-{
-  "status": "completed",
-  "nodesIngested": 50,
-  "edgesCreated": 25,
-  "duration": 1200
-}
-```
-
-### GET /api/attackdna/query/nodes
-
-Query attack nodes.
-
-**Query Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| sourceTier | string | Filter by tier (dojo-local/dojolm-global/master) |
-| category | string | Attack category |
-| severity | string | Severity level |
-| search | string | Text search |
-
-**Response:**
-```json
-{
-  "nodes": [
-    {
-      "id": "uuid",
-      "type": "attack_variant",
-      "category": "prompt_injection",
-      "severity": 8,
-      "sourceTier": "dojo-local",
-      "metadata": { ... }
-    }
-  ]
-}
-```
-
-### POST /api/attackdna/sync
-
-Trigger sync with external threat intel sources.
-
-**Request:**
-```json
-{
-  "source": "mitre-atlas"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "completed",
-  "source": "mitre-atlas",
-  "entriesFetched": 100,
-  "entriesAfterDedup": 85,
-  "duration": 5000
-}
-```
-
----
-
-## Arena API
-
-### POST /api/arena
-
-Create and start a new arena match.
-
-**Request:**
-```json
-{
-  "gameMode": "CTF",
-  "attackMode": "kunai",
-  "fighterA": {
-    "modelId": "gpt-4",
-    "role": "attacker"
-  },
-  "fighterB": {
-    "modelId": "claude-3",
-    "role": "defender"
-  },
-  "maxRounds": 10,
-  "victoryPoints": 100
-}
-```
-
-**Response:**
-```json
-{
-  "matchId": "uuid",
-  "status": "running",
-  "streamUrl": "/api/arena/uuid/stream"
-}
-```
+Older documentation that describes `POST /api/scan` on port `8089` is outdated. The standalone scanner on `:8089` is GET-only; the POST scanner route lives in the web app on `:42001/api/scan`.
 
 ### GET /api/arena/:id
 

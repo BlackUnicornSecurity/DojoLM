@@ -42,6 +42,7 @@ export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
     isLoading,
     selectedModelId,
     pendingConfirmations,
+    error,
     sendMessage,
     confirmToolCall,
     rejectToolCall,
@@ -49,6 +50,7 @@ export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
     toggle,
     close,
     clearHistory,
+    clearError,
   } = useSensei(activeModule)
 
   const drawerRef = useRef<HTMLDivElement>(null)
@@ -150,6 +152,23 @@ export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
           />
         </div>
 
+        {/* F-R3-02: Error banner for missing model or other errors */}
+        {error && (
+          <div
+            className="flex items-center justify-between px-4 py-2 text-xs bg-[var(--bg-warning)] text-[var(--text-warning)] border-b border-[var(--border-warning)]"
+            role="alert"
+          >
+            <span>{error}</span>
+            <button
+              onClick={clearError}
+              className="ml-2 p-0.5 rounded hover:bg-[var(--bg-tertiary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+              aria-label="Dismiss error"
+            >
+              <X className="w-3 h-3" aria-hidden="true" />
+            </button>
+          </div>
+        )}
+
         {/* Chat body */}
         <SenseiChat
           messages={messages}
@@ -192,8 +211,8 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
         if (cancelled) return
         const modelArr = Array.isArray(data) ? data : (data as Record<string, unknown>)?.models
         if (!Array.isArray(modelArr)) return
-        const parsed: ModelInfo[] = modelArr
-          .filter((m: unknown) => typeof m === 'object' && m !== null)
+        const parsed: ModelInfo[] = (modelArr
+          .filter((m: unknown): m is Record<string, unknown> => typeof m === 'object' && m !== null) as Record<string, unknown>[])
           .map((m: Record<string, unknown>) => ({
             id: String(m.id ?? m.name ?? ''),
             name: String(m.name ?? m.id ?? 'Unknown'),
