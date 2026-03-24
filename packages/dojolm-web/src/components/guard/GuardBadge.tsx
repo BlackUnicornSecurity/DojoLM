@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import type { GuardConfig } from '@/lib/guard-types';
 import { GUARD_MODES, GUARD_MODE_ICONS } from '@/lib/guard-constants';
+import { canAccessProtectedApi } from '@/lib/client-auth-access';
 import { cn } from '@/lib/utils';
 import { ShieldAlert } from 'lucide-react';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
@@ -23,6 +24,10 @@ export function GuardBadge() {
   useEffect(() => {
     const load = async () => {
       try {
+        if (!(await canAccessProtectedApi())) {
+          return;
+        }
+
         const res = await fetchWithAuth('/api/llm/guard');
         if (res.ok) {
           const { data } = await res.json();

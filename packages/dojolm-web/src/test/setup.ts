@@ -13,29 +13,6 @@ import { afterEach, vi } from "vitest";
 
 const SUPPRESSED_CONSOLE_ERROR_PATTERNS = [
   'Not implemented: navigation to another Document',
-  'Error generating summary:',
-  'Error reading guard config, returning defaults:',
-  'Fingerprint execution error:',
-  'Error registering provider:',
-  'Error listing providers:',
-  'Error starting batch:',
-  'Error listing batches:',
-  'Export error:',
-  'Error in chat request:',
-  'Error getting guard stats:',
-  'Error querying guard events:',
-  'Error running test fixture:',
-  'Stats API error:',
-  'Error testing model:',
-  'Failed to load manifest:',
-  'API call failed: /scan',
-  'API call failed: /fixtures',
-  '[Guard] HMAC verification FAILED',
-] as const;
-
-const SUPPRESSED_CONSOLE_WARN_PATTERNS = [
-  '[SECURITY] GUARD_CONFIG_SECRET not set',
-  'Guard config rejected: timestamp too old',
 ] as const;
 
 const SUPPRESSED_CONSOLE_DEBUG_PATTERNS = [
@@ -57,14 +34,6 @@ console.error = (...args: Parameters<typeof console.error>) => {
     return;
   }
   originalConsoleError(...args);
-};
-
-const originalConsoleWarn = console.warn.bind(console);
-console.warn = (...args: Parameters<typeof console.warn>) => {
-  if (shouldSuppressConsole(args, SUPPRESSED_CONSOLE_WARN_PATTERNS)) {
-    return;
-  }
-  originalConsoleWarn(...args);
 };
 
 const originalConsoleDebug = console.debug.bind(console);

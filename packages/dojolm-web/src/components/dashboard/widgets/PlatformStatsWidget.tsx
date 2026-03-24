@@ -10,14 +10,14 @@ import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { Layers, FlaskConical, Shield, Cpu, Activity } from 'lucide-react'
 import { OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
-import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { getCachedFixtureManifest, getCachedScannerStats } from '@/lib/client-data-cache'
 
 export function PlatformStatsWidget() {
   const [patternCount, setPatternCount] = useState(0)
   const [moduleCount, setModuleCount] = useState(0)
   const [fixtureCount, setFixtureCount] = useState(0)
   const [categoryCount, setCategoryCount] = useState(0)
-  const [engineCount, setEngineCount] = useState(13)
+  const engineCount = 13
 
   const owaspAvg = OWASP_LLM_COVERAGE_DATA.length > 0
     ? Math.round(OWASP_LLM_COVERAGE_DATA.reduce((sum, e) => sum + e.post, 0) / OWASP_LLM_COVERAGE_DATA.length)
@@ -28,26 +28,20 @@ export function PlatformStatsWidget() {
 
     async function fetchStats() {
       try {
-        const [statsRes, fixturesRes] = await Promise.all([
-          fetchWithAuth('/api/stats'),
-          fetchWithAuth('/api/fixtures'),
+        const [stats, fixtures] = await Promise.all([
+          getCachedScannerStats(),
+          getCachedFixtureManifest(),
         ])
 
-        if (statsRes.ok) {
-          const data = await statsRes.json()
-          if (!cancelled) {
-            setPatternCount(data.patternCount ?? 0)
-            setModuleCount(data.patternGroups?.length ?? 0)
-          }
-        }
+        if (!cancelled) {
+          setPatternCount(stats.patternCount ?? 0)
+          setModuleCount(stats.groupCount ?? stats.patternGroups?.length ?? 0)
 
-        if (fixturesRes.ok) {
-          const data = await fixturesRes.json()
-          if (!cancelled && data.categories && typeof data.categories === 'object') {
-            const cats = Object.keys(data.categories)
+          if (fixtures.categories && typeof fixtures.categories === 'object') {
+            const cats = Object.keys(fixtures.categories)
             setCategoryCount(cats.length)
             let total = 0
-            for (const cat of Object.values(data.categories) as Array<{ files?: string[] }>) {
+            for (const cat of Object.values(fixtures.categories) as Array<{ files?: unknown[] }>) {
               total += Array.isArray(cat.files) ? cat.files.length : 0
             }
             setFixtureCount(total)

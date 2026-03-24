@@ -106,6 +106,18 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       expect(card).toHaveClass('glass-card')
     })
 
+    it('hero variant has surface-hero class', () => {
+      const { container } = render(<Card variant="hero">Content</Card>)
+      const card = container.firstElementChild as HTMLElement
+      expect(card).toHaveClass('surface-hero')
+    })
+
+    it('alert variant has surface-alert class', () => {
+      const { container } = render(<Card variant="alert">Content</Card>)
+      const card = container.firstElementChild as HTMLElement
+      expect(card).toHaveClass('surface-alert')
+    })
+
     it('custom className passes through', () => {
       const { container } = render(<Card className="custom-card">Content</Card>)
       const card = container.firstElementChild as HTMLElement

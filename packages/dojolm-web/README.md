@@ -6,7 +6,7 @@
 
 - dev port: `42001`
 - start port: `42001`
-- framework: Next.js `16.1.6`
+- framework: Next.js `16.2.1`
 - React: `19.2.3`
 
 ## Scripts
@@ -69,7 +69,7 @@ src/
 │   ├── timechamber/
 │   └── ui/
 ├── lib/
-└── middleware.ts
+└── proxy.ts
 ```
 
 ## Data Storage

@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { Bot, X, Trash2, ChevronDown } from 'lucide-react'
 import { useSensei } from '@/hooks/useSensei'
 import { SenseiChat } from './SenseiChat'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { NavId } from '@/lib/constants'
 
@@ -202,15 +203,23 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
   // Fetch models on mount
   useEffect(() => {
     let cancelled = false
-    setIsLoadingModels(true)
+    async function loadModels() {
+      setIsLoadingModels(true)
 
-    fetchWithAuth('/api/llm/models')
-      .then(async (res) => {
+      try {
+        if (!(await canAccessProtectedApi())) {
+          return
+        }
+
+        const res = await fetchWithAuth('/api/llm/models')
         if (!res.ok || cancelled) return
+
         const data: unknown = await res.json()
         if (cancelled) return
+
         const modelArr = Array.isArray(data) ? data : (data as Record<string, unknown>)?.models
         if (!Array.isArray(modelArr)) return
+
         const parsed: ModelInfo[] = (modelArr
           .filter((m: unknown): m is Record<string, unknown> => typeof m === 'object' && m !== null) as Record<string, unknown>[])
           .map((m: Record<string, unknown>) => ({
@@ -218,20 +227,21 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
             name: String(m.name ?? m.id ?? 'Unknown'),
             provider: String(m.provider ?? 'unknown'),
           }))
+
         if (!cancelled) {
           setModels(parsed)
-          // Auto-select first model if none selected
           if (!selectedModelId && parsed.length > 0) {
             onSelect(parsed[0].id)
           }
         }
-      })
-      .catch(() => {
+      } catch {
         // Fetch failed — models will remain empty
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setIsLoadingModels(false)
-      })
+      }
+    }
+
+    void loadModels()
 
     return () => { cancelled = true }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

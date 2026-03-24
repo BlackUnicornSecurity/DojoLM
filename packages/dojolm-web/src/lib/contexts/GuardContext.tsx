@@ -27,6 +27,7 @@ import type {
   GuardAuditEntry,
   GuardStats,
 } from '../guard-types';
+import { canAccessProtectedApi } from '../client-auth-access';
 import { DEFAULT_GUARD_CONFIG } from '../guard-constants';
 import { fetchWithAuth } from '../fetch-with-auth';
 
@@ -58,6 +59,10 @@ export function GuardProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadInitial = async () => {
       try {
+        if (!(await canAccessProtectedApi())) {
+          return;
+        }
+
         const [configRes, statsRes, eventsRes] = await Promise.allSettled([
           fetchWithAuth('/api/llm/guard'),
           fetchWithAuth('/api/llm/guard/stats'),
@@ -133,6 +138,11 @@ export function GuardProvider({ children }: { children: ReactNode }) {
 
   const refreshStats = useCallback(async () => {
     try {
+      if (!(await canAccessProtectedApi())) {
+        setStats(null);
+        return;
+      }
+
       const res = await fetchWithAuth('/api/llm/guard/stats');
       if (res.ok) {
         const { data } = await res.json();
@@ -145,6 +155,11 @@ export function GuardProvider({ children }: { children: ReactNode }) {
 
   const refreshEvents = useCallback(async () => {
     try {
+      if (!(await canAccessProtectedApi())) {
+        setRecentEvents([]);
+        return;
+      }
+
       const res = await fetchWithAuth('/api/llm/guard/audit?limit=50');
       if (res.ok) {
         const { data } = await res.json();

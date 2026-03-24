@@ -19,6 +19,7 @@ vi.mock('../../db/repositories/model-config.repository', () => ({
   modelConfigRepo: {
     listSafe: vi.fn().mockReturnValue([]),
     findById: vi.fn(),
+    findByIdWithKey: vi.fn(),
     save: vi.fn(),
     delete: vi.fn(),
     update: vi.fn(),
@@ -225,9 +226,20 @@ describe('DbStorage', () => {
 
   // DBS-003
   it('getModelConfig returns null for non-existent ID', async () => {
-    vi.mocked(modelConfigRepo.findById).mockReturnValue(undefined as never);
+    vi.mocked(modelConfigRepo.findByIdWithKey).mockReturnValue(undefined as never);
     const result = await storage.getModelConfig('non-existent');
     expect(result).toBeNull();
+  });
+
+  it('getModelConfig returns decrypted apiKey when available', async () => {
+    vi.mocked(modelConfigRepo.findByIdWithKey).mockReturnValue({
+      ...makeModelConfigRow(),
+      api_key: 'sk-decrypted-secret',
+    } as never);
+
+    const result = await storage.getModelConfig('mc-1');
+
+    expect(result?.apiKey).toBe('sk-decrypted-secret');
   });
 
   // DBS-004
@@ -243,8 +255,12 @@ describe('DbStorage', () => {
     };
     const savedRow = makeModelConfigRow({ id: 'mc-2', name: 'New Model', provider: 'anthropic', model: 'claude-3' });
     vi.mocked(modelConfigRepo.save).mockReturnValue(savedRow as never);
+    vi.mocked(modelConfigRepo.findByIdWithKey).mockReturnValue({
+      ...savedRow,
+      api_key: 'sk-secret',
+    } as never);
 
-    await storage.saveModelConfig(config as never);
+    const saved = await storage.saveModelConfig(config as never);
 
     expect(modelConfigRepo.save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -257,6 +273,7 @@ describe('DbStorage', () => {
         max_tokens: 8192,
       })
     );
+    expect(saved.apiKey).toBe('sk-secret');
   });
 
   // DBS-005

@@ -20,13 +20,14 @@ vi.mock('@/lib/api-error', () => ({
   }),
 }));
 
-// Mock file-storage
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
-    getModelConfig: vi.fn().mockResolvedValue(null),
-    getTestCase: vi.fn().mockResolvedValue(null),
-    saveExecution: vi.fn().mockResolvedValue(undefined),
-  },
+const mockStorage = {
+  getModelConfig: vi.fn().mockResolvedValue(null),
+  getTestCase: vi.fn().mockResolvedValue(null),
+  saveExecution: vi.fn().mockResolvedValue(undefined),
+};
+
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue(mockStorage),
 }));
 
 // Mock llm-execution
@@ -87,8 +88,7 @@ describe('POST /api/llm/execute', () => {
   });
 
   it('returns 404 for non-existent model', async () => {
-    const { fileStorage } = await import('@/lib/storage/file-storage');
-    vi.mocked(fileStorage.getModelConfig).mockResolvedValueOnce(null);
+    vi.mocked(mockStorage.getModelConfig).mockResolvedValueOnce(null);
 
     const { POST } = await import('@/app/api/llm/execute/route');
 
@@ -101,8 +101,7 @@ describe('POST /api/llm/execute', () => {
   });
 
   it('returns 400 for disabled model', async () => {
-    const { fileStorage } = await import('@/lib/storage/file-storage');
-    vi.mocked(fileStorage.getModelConfig).mockResolvedValueOnce({
+    vi.mocked(mockStorage.getModelConfig).mockResolvedValueOnce({
       id: 'model-1',
       name: 'Test Model',
       enabled: false,
@@ -122,8 +121,7 @@ describe('POST /api/llm/execute', () => {
   });
 
   it('returns 404 for non-existent test case', async () => {
-    const { fileStorage } = await import('@/lib/storage/file-storage');
-    vi.mocked(fileStorage.getModelConfig).mockResolvedValueOnce({
+    vi.mocked(mockStorage.getModelConfig).mockResolvedValueOnce({
       id: 'model-1',
       name: 'Test Model',
       enabled: true,
@@ -131,7 +129,7 @@ describe('POST /api/llm/execute', () => {
       endpoint: 'https://api.openai.com',
       apiKeyEnvVar: 'OPENAI_API_KEY',
     } as never);
-    vi.mocked(fileStorage.getTestCase).mockResolvedValueOnce(null);
+    vi.mocked(mockStorage.getTestCase).mockResolvedValueOnce(null);
 
     const { POST } = await import('@/app/api/llm/execute/route');
 

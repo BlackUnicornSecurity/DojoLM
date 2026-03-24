@@ -22,9 +22,10 @@ import { WidgetMetaProvider } from './WidgetCard'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Settings2 } from 'lucide-react'
+import { BrainCircuit, Radar, Settings2, ShieldHalf } from 'lucide-react'
 import type { GlowCardProps } from '@/components/ui/GlowCard'
 import type { NavId } from '@/lib/constants'
+import { useNavigation } from '@/lib/NavigationContext'
 
 /** Skeleton placeholder for lazy-loaded widgets */
 function WidgetSkeleton() {
@@ -125,10 +126,22 @@ const WIDGET_NAV_TARGET: Record<string, string> = {
 }
 
 /** Dashboard sections with ordered widget IDs (3 sections) */
-const SECTION_DEFS: { label: string; ids: string[] }[] = [
-  { label: 'OVERVIEW', ids: ['quick-launch', 'quick-scan', 'health-gauge', 'guard-controls', 'kill-count'] },
-  { label: 'MONITORING', ids: ['threat-radar', 'activity-feed', 'threat-trend', 'mitsuke-alerts', 'ecosystem-pulse', 'session-pulse', 'guard-stats', 'batch-progress', 'guard-audit', 'attack-of-day', 'fixture-roulette'] },
-  { label: 'PLATFORM', ids: ['engine-grid', 'module-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'compliance-bars', 'platform-stats', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'sengoku', 'time-chamber', 'kotoba', 'coverage-heatmap'] },
+const SECTION_DEFS: { label: string; description: string; ids: string[] }[] = [
+  {
+    label: 'Command',
+    description: 'High-priority actions, posture, and scanner readiness.',
+    ids: ['quick-launch', 'quick-scan', 'health-gauge', 'guard-controls', 'kill-count'],
+  },
+  {
+    label: 'Monitoring',
+    description: 'Threat telemetry, activity, and live campaign motion.',
+    ids: ['threat-radar', 'activity-feed', 'threat-trend', 'mitsuke-alerts', 'ecosystem-pulse', 'session-pulse', 'guard-stats', 'batch-progress', 'guard-audit', 'attack-of-day', 'fixture-roulette'],
+  },
+  {
+    label: 'Platform',
+    description: 'Coverage, model operations, and supporting intelligence systems.',
+    ids: ['engine-grid', 'module-grid', 'llm-models', 'llm-jutsu', 'llm-quick-test', 'compliance-bars', 'platform-stats', 'arena-leaderboard', 'sage-status', 'ronin-hub', 'sengoku', 'time-chamber', 'kotoba', 'coverage-heatmap'],
+  },
 ]
 
 /** Set of all widget IDs assigned to a section */
@@ -193,6 +206,7 @@ function WidgetShell({ slot, mountIndex }: { slot: WidgetSlot; mountIndex: numbe
 /** Inner dashboard content — consumes config context */
 function DashboardContent() {
   const { config } = useDashboardConfig()
+  const { setActiveTab } = useNavigation()
   const [customizerOpen, setCustomizerOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
@@ -201,28 +215,93 @@ function DashboardContent() {
     .sort((a, b) => a.order - b.order)
 
   const visibleSet = new Set(visibleWidgets.map(w => w.id))
+  const activeSections = SECTION_DEFS.filter(section => section.ids.some(id => visibleSet.has(id)))
 
   // Widgets not assigned to any section (future-proofing)
   const unsectionedWidgets = visibleWidgets.filter(w => !SECTIONED_IDS.has(w.id))
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-sm text-muted-foreground">System overview and quick actions</p>
-        </div>
-        <Button
-          ref={triggerRef}
-          variant="outline"
-          size="sm"
-          onClick={() => setCustomizerOpen(true)}
-          aria-label="Customize Dashboard"
-        >
-          <Settings2 className="w-4 h-4" aria-hidden="true" />
-          <span className="hidden sm:inline">Customize</span>
-        </Button>
+      {/* Hero header */}
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)]">
+        <section className="rounded-2xl border border-[var(--surface-border-hero)] surface-hero p-5 shadow-[var(--shadow-card)]">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center rounded-full border border-[var(--bu-electric-muted)] bg-[var(--bu-electric-subtle)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--bu-electric)]">
+                Dojo Command Surface
+              </div>
+              <h2 className="mt-4 text-page-title text-[var(--foreground)]">Dashboard</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Track the dojo at a glance, then jump directly into scan, model, and guard workflows without digging through widgets.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
+                  {visibleWidgets.length} live widgets
+                </span>
+                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
+                  {activeSections.length} active zones
+                </span>
+                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
+                  Customize per operator
+                </span>
+              </div>
+            </div>
+            <Button
+              ref={triggerRef}
+              variant="outline"
+              size="sm"
+              onClick={() => setCustomizerOpen(true)}
+              aria-label="Customize Dashboard"
+              className="shrink-0"
+            >
+              <Settings2 className="w-4 h-4" aria-hidden="true" />
+              Customize Layout
+            </Button>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button variant="gradient" onClick={() => setActiveTab('scanner')} aria-label="Scan Text">
+              <Radar className="w-4 h-4" aria-hidden="true" />
+              Scan Text
+            </Button>
+            <Button variant="outline" onClick={() => setActiveTab('llm')}>
+              <BrainCircuit className="w-4 h-4" aria-hidden="true" />
+              Review Models
+            </Button>
+            <Button variant="default" onClick={() => setActiveTab('guard')}>
+              <ShieldHalf className="w-4 h-4" aria-hidden="true" />
+              Open Guard
+            </Button>
+          </div>
+        </section>
+
+        <section className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
+            <p className="text-label">Visible Widgets</p>
+            <p className="mt-3 text-metric-md text-[var(--foreground)]">{visibleWidgets.length}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Curated cards currently surfaced for this dashboard view.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
+            <p className="text-label">Coverage Zones</p>
+            <p className="mt-3 text-metric-md text-[var(--foreground)]">{activeSections.length}/3</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Command, monitoring, and platform lanes stay balanced at a glance.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
+            <p className="text-label">Next Best Move</p>
+            <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+              {visibleSet.has('quick-scan') ? 'Quick scan is ready' : 'Promote quick scan'}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {visibleSet.has('quick-scan')
+                ? 'Use the scanner lane for fast verdicts, then drill into telemetry below.'
+                : 'Enable the quick scan widget from Customize to shorten the path to verdict.'}
+            </p>
+          </div>
+        </section>
       </div>
 
       {/* Sectioned Widget Grid — R4-002: track global mount index for stagger */}
@@ -241,9 +320,13 @@ function DashboardContent() {
               return (
                 <div key={section.label} className={cn(sectionIdx > 0 && 'mt-10')}>
                   {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" aria-label="Section divider" />}
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    {section.label}
-                  </h3>
+                  <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                      <h3 className="text-section-title text-[var(--foreground)]">{section.label}</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{section.description}</p>
+                    </div>
+                    <span className="text-label">{sectionSlots.length} live</span>
+                  </div>
                   <div className="bento-grid grid grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(0,auto)] stagger-children">
                     {sectionSlots.map(slot => {
                       const idx = globalIdx++
@@ -257,6 +340,13 @@ function DashboardContent() {
             {/* Unsectioned widgets (fallback) */}
             {unsectionedWidgets.length > 0 && (
               <div className="mt-8">
+                <div className="mb-4 flex items-end justify-between gap-3">
+                  <div>
+                    <h3 className="text-section-title text-[var(--foreground)]">Additional</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">Visible widgets that are not mapped to a primary dashboard lane.</p>
+                  </div>
+                  <span className="text-label">{unsectionedWidgets.length} live</span>
+                </div>
                 <div className="bento-grid grid grid-cols-12 gap-4 md:gap-6 auto-rows-[minmax(0,auto)]">
                   {unsectionedWidgets.map(slot => {
                     const idx = globalIdx++

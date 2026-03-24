@@ -4,14 +4,15 @@
  * Tests: rendering, syntax highlighting, copy button, truncation, XSS safety, accessibility
  */
 
-import { render, screen, fireEvent } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { SafeCodeBlock } from '@/components/ui/SafeCodeBlock'
 
 // Mock clipboard API
 const mockWriteText = vi.fn().mockResolvedValue(undefined)
-Object.assign(navigator, {
-  clipboard: { writeText: mockWriteText },
+Object.defineProperty(navigator, 'clipboard', {
+  configurable: true,
+  value: { writeText: mockWriteText },
 })
 
 describe('SafeCodeBlock', () => {
@@ -50,16 +51,23 @@ describe('SafeCodeBlock', () => {
   it('SCB-005: clicking copy writes code to clipboard', async () => {
     render(<SafeCodeBlock code="const a = 1" language="js" />)
     const btn = screen.getByRole('button', { name: /copy code to clipboard/i })
-    fireEvent.click(btn)
-    expect(mockWriteText).toHaveBeenCalledWith('const a = 1')
+    await act(async () => {
+      fireEvent.click(btn)
+      await Promise.resolve()
+    })
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalledWith('const a = 1')
+    })
   })
 
   // SCB-006: After copy, aria-label changes to "Copied to clipboard"
   it('SCB-006: shows "Copied to clipboard" label after copy', async () => {
     render(<SafeCodeBlock code="x" />)
-    fireEvent.click(screen.getByRole('button', { name: /copy code to clipboard/i }))
-    // Wait for state update
-    await vi.waitFor(() => {
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /copy code to clipboard/i }))
+      await Promise.resolve()
+    })
+    await waitFor(() => {
       expect(screen.getByRole('button', { name: /copied to clipboard/i })).toBeInTheDocument()
     })
   })

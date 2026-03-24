@@ -140,9 +140,9 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 rounded-full border border-[var(--border-subtle)] surface-interactive px-2 py-1">
         <Select value={format} onValueChange={handleFormatChange}>
-          <SelectTrigger className="w-28">
+          <SelectTrigger className="w-[132px] border-transparent bg-transparent shadow-none hover:bg-[var(--overlay-subtle)] focus:ring-0 focus:ring-offset-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -158,7 +158,7 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
         </Select>
         <Button
           size="sm"
-          variant="outline"
+          variant="default"
           onClick={handleDownload}
           disabled={isDownloading}
           className="gap-1"

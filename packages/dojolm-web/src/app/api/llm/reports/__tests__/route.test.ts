@@ -23,10 +23,10 @@ vi.mock('@/lib/api-error', () => ({
   }),
 }));
 
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue({
     getModelConfig: (...args: unknown[]) => mockGetModelConfig(...args),
-  },
+  }),
 }));
 
 vi.mock('@/lib/llm-server-utils', () => ({

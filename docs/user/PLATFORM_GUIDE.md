@@ -4,42 +4,37 @@ This guide describes the current user-visible surface of the DojoLM web app and 
 
 ## Current Platform Facts
 
-- Scanner engine: `510` patterns across `49` groups
-- Fixture library: `2,960` fixtures across `37` categories
+As of the 2026-03-24 documentation audit:
+
+- Scanner engine: 510 patterns across 49 groups
+- Fixture library: 2,960 fixtures across 37 categories
 - Standalone scanner API: `http://localhost:8089`
 - Web app: `http://localhost:42001`
+- MCP server default: `127.0.0.1:18000`
 
 ## Top-Level Navigation
 
 ### Dashboard
 
-The landing page. It provides widgets, quick launch shortcuts, and summary views across the platform.
+The landing page for quick actions, health snapshots, widget-based monitoring, and navigation shortcuts.
+
+Guide: [Dashboard](modules/DASHBOARD.md)
 
 ### Haiku Scanner
 
-Direct text scanning for prompt-injection and related attacks.
+Direct text and extracted-text scanning for prompt-injection and related threats.
 
-What it does:
-
-- scans text locally through the core engine
-- shows findings and verdicts
-- supports engine filtering through the API layer
+Guide: [Haiku Scanner](modules/HAIKU_SCANNER.md)
 
 ### Armory
 
-Fixture browser for the generated attack library.
+The fixture and payload library. Use it to browse corpus data, compare fixtures, preview content, and push payloads into the scanner.
 
-What it does:
-
-- browses fixture categories and files
-- previews text fixtures and binary metadata
-- supports quick scan flows against known payloads
+Guide: [Armory](modules/ARMORY.md)
 
 ### LLM Dashboard
 
-The main execution surface for model testing.
-
-Current tabs:
+The main execution surface for model testing. Current tabs are:
 
 - `Models`
 - `Tests`
@@ -49,32 +44,34 @@ Current tabs:
 - `Custom Models`
 - `Jutsu`
 
-Important note:
-
-- `LLM Jutsu` is a dashboard tab, not a separate top-level navigation item.
+Guide: [LLM Dashboard](modules/LLM_DASHBOARD.md)
 
 ### Hattori Guard
 
-Guard configuration, audit trails, and protection status for model execution flows.
+Guard configuration, audit trails, and protection status for LLM execution flows. Current modes are:
 
-Guard modes:
+- `Shinobi`: scan inputs, log only
+- `Samurai`: scan and block suspicious inputs
+- `Sensei`: scan and block suspicious outputs
+- `Hattori`: scan and block both directions
 
-- `Shinobi`: monitor only
-- `Samurai`: defend inputs
-- `Sensei`: defend outputs
-- `Hattori`: defend both directions
+Guide: [Hattori Guard](modules/HATTORI_GUARD.md)
 
 ### Bushido Book
 
-Compliance and evidence views, including exportable reports and coverage data.
+The compliance center. It combines framework coverage, gaps, audit trails, checklists, and framework-scoped compliance scans.
+
+Guide: [Bushido Book](modules/BUSHIDO_BOOK.md)
 
 ### Atemi Lab
 
-Adversarial and MCP-oriented testing views.
+The adversarial attack simulation module for MCP and tool-integrated systems. It includes attack tools, reusable skills, MCP views, and WebMCP testing.
+
+Guide: [Atemi Lab](modules/ATEMI_LAB.md)
 
 ### The Kumite
 
-Strategic analysis hub. It is a container for multiple subsystems:
+The strategic analysis hub. It currently contains:
 
 - `SAGE`
 - `Battle Arena`
@@ -83,36 +80,32 @@ Strategic analysis hub. It is a container for multiple subsystems:
 - `Kagami`
 - `Shingan`
 
-Important note:
-
-- `Amaterasu DNA` is part of `The Kumite`, not a separate top-level module.
+Guide: [The Kumite](modules/THE_KUMITE.md)
 
 ### Ronin Hub
 
-Program, CVE, and submission-oriented research views.
+The bug bounty research and submissions module. `Programs` and `Submissions` are active. `Planning` and `Intelligence` currently render placeholder states.
+
+Guide: [Ronin Hub](modules/RONIN_HUB.md)
 
 ### Sengoku
 
-Continuous red teaming and temporal test orchestration.
-
-Current tabs:
+The continuous red teaming module. Current tabs are:
 
 - `Campaigns`
 - `Temporal`
 
-Important note:
-
-- `Time Chamber` legacy references now point to Sengoku temporal features and widgets.
+Guide: [Sengoku](modules/SENGOKU.md)
 
 ### Kotoba
 
-Prompt optimization and hardening workflows.
+The prompt optimization studio for scoring and hardening system prompts.
+
+Guide: [Kotoba](modules/KOTOBA.md)
 
 ### Admin
 
-Administrative and operational tooling.
-
-Current tabs:
+The operational settings surface. Current tabs are:
 
 - `General`
 - `Users`
@@ -124,90 +117,33 @@ Current tabs:
 - `Admin Settings`
 - `Validation`
 
+Guide: [Admin](modules/ADMIN.md)
+
 ## Common Workflows
 
-### Scan a prompt
-
-1. Open `Haiku Scanner`
-2. Paste text
-3. Run the scan
-4. Review the verdict and findings
-
-### Add a model for testing
-
-1. Open `Admin -> API Keys`
-2. Add a provider/model entry and credentials or base URL
-3. Test the connection
-4. Confirm it appears in `LLM Dashboard -> Models`
-
-### Run a single model test
-
-1. Open `LLM Dashboard -> Tests`
-2. Select one enabled model
-3. Select one or more test cases
-4. Execute
-5. Review `Results`
-
-### Run a batch
-
-1. Open `LLM Dashboard -> Tests`
-2. Select multiple test cases and one or more models
-3. Start a batch
-4. Follow progress through results or the streaming batch route
-
-### Review strategic signals
-
-1. Open `The Kumite`
-2. Switch between `SAGE`, `Arena`, `Mitsuke`, `DNA`, `Kagami`, and `Shingan`
-
-### Run a campaign
-
-1. Open `Sengoku`
-2. Create or open a campaign
-3. Run it immediately or manage it from the campaigns view
-4. Use `Temporal` for time-oriented scenarios
+- Run a first scan: [Common Workflows](COMMON_WORKFLOWS.md#scan-a-prompt)
+- Add and test a model: [Common Workflows](COMMON_WORKFLOWS.md#add-and-verify-a-model)
+- Run a batch: [Common Workflows](COMMON_WORKFLOWS.md#run-a-batch-of-llm-tests)
+- Review compliance posture: [Common Workflows](COMMON_WORKFLOWS.md#review-framework-coverage)
+- Launch strategic analysis: [Common Workflows](COMMON_WORKFLOWS.md#review-strategic-signals)
+- Start a campaign: [Common Workflows](COMMON_WORKFLOWS.md#launch-a-sengoku-campaign)
 
 ## APIs You Will Most Often Use
 
 - Standalone scanner: `GET /api/scan`
 - Web scanner: `POST /api/scan`
+- Fixture manifest: `GET /api/fixtures`
+- Fixture scan: `GET` or `POST /api/scan-fixture`
 - Web health: `GET /api/health`
-- Models: `GET/POST /api/llm/models`
+- Models: `GET`, `POST`, `PATCH`, `DELETE /api/llm/models`
 - Single execution: `POST /api/llm/execute`
-- Batch execution: `POST /api/llm/batch`
+- Batch execution: `GET` and `POST /api/llm/batch`
 
-See [API_REFERENCE.md](API_REFERENCE.md) for examples.
+See [User API Reference](API_REFERENCE.md) for examples.
 
-## Legacy Naming
+## Naming Clarifications
 
-Some older planning docs use `NODA`, `KASHIWA`, `HAKONE`, `LLM Jutsu` as a top-level module, `Amaterasu DNA` as a top-level module, or `Time Chamber` as a top-level module. Those descriptions are not the live navigation model.
-- Clear browser cache
-- Check console for errors
-- Verify API is accessible
-
-### Getting Help
-
-- Documentation: [docs/](../)
-- Issues: GitHub Issues
-- Support: info@blackunicorn.tech
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl/Cmd + K` | Quick search |
-| `Ctrl/Cmd + /` | Focus scanner |
-| `Esc` | Close modal/dialog |
-| `?` | Show shortcuts |
-
-## Glossary
-
-| Term | Definition |
-|------|------------|
-| TPI | Threat Prompt Injection (taxonomy) |
-| SSE | Server-Sent Events (streaming) |
-| DNA | Attack lineage and intelligence |
-| SAGE | Self-Adapting Generation Engine |
-| CTF | Capture The Flag (game mode) |
-| KOTH | King of the Hill (game mode) |
-| RvB | Red vs Blue (game mode) |
+- `LLM Jutsu` is a tab inside `LLM Dashboard`, not a top-level module.
+- `Amaterasu DNA` is part of `The Kumite`, not its own primary navigation item.
+- Legacy `Time Chamber` references now point to `Sengoku`, especially `Temporal`.
+- Historical planning labels such as `NODA`, `KASHIWA`, and `HAKONE` are not the live user navigation model.

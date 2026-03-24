@@ -11,6 +11,8 @@
 
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { isPublicApiRoute } from '@/lib/api-route-access';
+import { isTrustedBrowserSessionRequest } from '@/lib/request-origin';
 
 /**
  * Check API authentication via X-API-Key header.
@@ -20,35 +22,15 @@ import { NextRequest, NextResponse } from 'next/server';
  * breaking development workflows. A console warning is emitted in production.
  */
 export function checkApiAuth(request: NextRequest): NextResponse | null {
-  // F-05: Allow same-origin browser requests without API key.
-  // Multi-header validation (R2-C1): Sec-Fetch-Site alone is insufficient.
-  // Require Sec-Fetch-Site: same-origin AND valid Mode AND valid Dest.
-  const secFetchSite = request.headers.get('sec-fetch-site');
-  const secFetchMode = request.headers.get('sec-fetch-mode');
-  const secFetchDest = request.headers.get('sec-fetch-dest');
+  if (isPublicApiRoute(request.nextUrl.pathname, request.method)) {
+    return null;
+  }
 
-  const VALID_SEC_FETCH_MODES = new Set(['cors', 'same-origin', 'navigate']);
-  const VALID_SEC_FETCH_DESTS = new Set(['empty', 'document']);
-
-  if (
-    secFetchSite === 'same-origin' &&
-    secFetchMode && VALID_SEC_FETCH_MODES.has(secFetchMode) &&
-    secFetchDest && VALID_SEC_FETCH_DESTS.has(secFetchDest)
-  ) {
-    const origin = request.headers.get('origin') ?? '';
-    // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
-    // the request's Host header (attacker-controlled). This prevents external
-    // curl requests from bypassing auth by spoofing Sec-Fetch + Origin headers.
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
-    if (origin === appUrl) {
-      return null;
-    }
-    if (!origin) {
-      const referer = request.headers.get('referer') ?? '';
-      if (referer.startsWith(appUrl + '/')) {
-        return null;
-      }
-    }
+  // Allow authenticated same-origin browser requests without an API key.
+  // This path requires validated session state plus a configured app origin,
+  // so header spoofing alone cannot satisfy the bypass.
+  if (isTrustedBrowserSessionRequest(request)) {
+    return null;
   }
 
   // Read per-request to pick up runtime changes (not frozen at module load)

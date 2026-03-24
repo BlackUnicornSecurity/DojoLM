@@ -69,15 +69,13 @@ describe('PageToolbar', () => {
     expect(handler).toHaveBeenCalledOnce()
   })
 
-  it('PT-007: renders the search input with default placeholder', () => {
+  it('PT-007: does not render the search input unless search is enabled', () => {
     render(<PageToolbar title="Title" />)
-    const input = screen.getByRole('textbox', { name: /search/i })
-    expect(input).toBeInTheDocument()
-    expect(input).toHaveAttribute('placeholder', 'Search...')
+    expect(screen.queryByRole('textbox', { name: /search/i })).not.toBeInTheDocument()
   })
 
-  it('PT-008: renders custom search placeholder', () => {
-    render(<PageToolbar title="Title" searchPlaceholder="Find users..." />)
+  it('PT-008: renders custom search placeholder when search is enabled', () => {
+    render(<PageToolbar title="Title" onSearch={vi.fn()} searchPlaceholder="Find users..." />)
     const input = screen.getByRole('textbox', { name: /find users/i })
     expect(input).toHaveAttribute('placeholder', 'Find users...')
   })
@@ -124,11 +122,17 @@ describe('PageToolbar', () => {
   })
 
   it('PT-014: Cmd+K focuses the search input', () => {
-    render(<PageToolbar title="Title" />)
+    render(<PageToolbar title="Title" onSearch={vi.fn()} />)
     const input = screen.getByRole('textbox', { name: /search/i })
     // Simulate Cmd+K
     fireEvent.keyDown(document, { key: 'k', metaKey: true })
     expect(document.activeElement).toBe(input)
+  })
+
+  it('PT-017: Cmd+K does not create a hidden search affordance when search is disabled', () => {
+    render(<PageToolbar title="Title" />)
+    fireEvent.keyDown(document, { key: 'k', metaKey: true })
+    expect(screen.queryByRole('textbox', { name: /search/i })).not.toBeInTheDocument()
   })
 
   it('PT-015: applies custom className', () => {

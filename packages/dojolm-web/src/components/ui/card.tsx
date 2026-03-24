@@ -17,14 +17,17 @@ import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'glass' }
+  React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'glass' | 'interactive' | 'hero' | 'alert' }
 >(({ className, variant = 'default', ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-[var(--border-subtle)] bg-card text-card-foreground shadow-[var(--shadow-card)] card-gradient",
+      "rounded-xl border border-[var(--border-subtle)] bg-card text-card-foreground shadow-[var(--shadow-card)] card-gradient surface-base",
       "motion-safe:transition-[border-color,transform,box-shadow] motion-safe:duration-[var(--transition-normal)]",
       "motion-safe:hover:border-[var(--overlay-hover)] motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[var(--shadow-card-hover)] backdrop-blur-sm",
+      variant === 'interactive' && "surface-interactive",
+      variant === 'hero' && "surface-hero",
+      variant === 'alert' && "surface-alert",
       variant === 'glass' && "glass-card",
       className
     )}
@@ -52,7 +55,7 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-card-title text-[var(--foreground)]",
       className
     )}
     {...props}

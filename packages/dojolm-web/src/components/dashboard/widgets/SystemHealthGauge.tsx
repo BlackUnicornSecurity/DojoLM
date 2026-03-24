@@ -9,20 +9,18 @@
 import { useState, useEffect } from 'react'
 import { EnsoGauge } from '@/components/ui/EnsoGauge'
 import { WidgetCard } from '../WidgetCard'
-import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { getCachedFixtureManifest, getCachedScannerStats } from '@/lib/client-data-cache'
+import { useGuardMode } from '@/lib/contexts/GuardContext'
 
 interface HealthData {
   modulesLoaded: number
-  guardEnabled: boolean
   fixtureCount: number
   patternCount: number
-  guardMode: string
 }
 
 function computeScore(data: HealthData): number {
   let score = 0
   if (data.modulesLoaded > 0) score += 25
-  if (data.guardEnabled) score += 25
   if (data.fixtureCount > 0) score += 25
   if (data.patternCount > 500) score += 25
   else if (data.patternCount > 0) score += 10
@@ -30,6 +28,7 @@ function computeScore(data: HealthData): number {
 }
 
 export function SystemHealthGauge() {
+  const { enabled, mode } = useGuardMode()
   const [healthData, setHealthData] = useState<HealthData | null>(null)
 
   useEffect(() => {
@@ -37,40 +36,25 @@ export function SystemHealthGauge() {
 
     async function fetchHealth() {
       try {
-        const [statsRes, guardRes, fixturesRes] = await Promise.allSettled([
-          fetchWithAuth('/api/stats'),
-          fetchWithAuth('/api/llm/guard'),
-          fetchWithAuth('/api/fixtures'),
+        const [stats, fixtures] = await Promise.all([
+          getCachedScannerStats(),
+          getCachedFixtureManifest(),
         ])
-
-        const stats = statsRes.status === 'fulfilled' && statsRes.value.ok
-          ? await statsRes.value.json()
-          : null
-        const guard = guardRes.status === 'fulfilled' && guardRes.value.ok
-          ? await guardRes.value.json()
-          : null
-        const fixtures = fixturesRes.status === 'fulfilled' && fixturesRes.value.ok
-          ? await fixturesRes.value.json()
-          : null
 
         if (cancelled) return
 
-        const patternGroups = stats?.patternGroups ?? []
-        const modulesLoaded = patternGroups.length
+        const modulesLoaded = stats.groupCount ?? stats.patternGroups?.length ?? 0
         const patternCount = stats?.patternCount ?? 0
-        const guardData = guard?.data ?? guard ?? {}
-        const guardEnabled = guardData.enabled ?? false
-        const guardMode = guardData.mode ?? 'off'
 
         // Count fixtures from manifest
         let fixtureCount = 0
         if (fixtures?.categories) {
-          for (const cat of Object.values(fixtures.categories) as Array<{ files?: string[] }>) {
+          for (const cat of Object.values(fixtures.categories) as Array<{ files?: unknown[] }>) {
             fixtureCount += cat.files?.length ?? 0
           }
         }
 
-        setHealthData({ modulesLoaded, guardEnabled, fixtureCount, patternCount, guardMode })
+        setHealthData({ modulesLoaded, fixtureCount, patternCount })
       } catch {
         // Silent failure — gauge shows 0
       }
@@ -80,9 +64,11 @@ export function SystemHealthGauge() {
     return () => { cancelled = true }
   }, [])
 
-  const score = healthData ? computeScore(healthData) : 0
-  const label = healthData?.guardEnabled
-    ? healthData.guardMode.charAt(0).toUpperCase() + healthData.guardMode.slice(1)
+  const score = healthData
+    ? computeScore(healthData) + (enabled ? 25 : 0)
+    : enabled ? 25 : 0
+  const label = enabled
+    ? mode.charAt(0).toUpperCase() + mode.slice(1)
     : 'Guard Off'
 
   return (

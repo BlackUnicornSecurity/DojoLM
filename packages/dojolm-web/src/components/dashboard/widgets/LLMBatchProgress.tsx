@@ -10,9 +10,11 @@ import { useState, useEffect, useRef } from 'react'
 import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
 import { WidgetCard } from '../WidgetCard'
 import { useNavigation } from '@/lib/NavigationContext'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { FlaskConical, Loader2 } from 'lucide-react'
 import { WidgetEmptyState } from '../WidgetEmptyState'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 interface BatchInfo {
@@ -47,6 +49,15 @@ export function LLMBatchProgress() {
 
     async function fetchBatches() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          if (!cancelled) {
+            setBatches([])
+            errorCountRef.current = 0
+            scheduleNext(POLL_INTERVAL_IDLE)
+          }
+          return
+        }
+
         const res = await fetchWithAuth('/api/llm/batch?status=running')
         if (res.ok && !cancelled) {
           const data = await res.json()
@@ -100,6 +111,7 @@ export function LLMBatchProgress() {
           <WidgetEmptyState
             icon={FlaskConical}
             title="No active tests"
+            description="Queued or completed evaluations will appear here. Launch a batch from the LLM dashboard to monitor it live."
             action={{ label: 'Go to LLM Dashboard', onClick: () => setActiveTab('llm') }}
           />
         )}
@@ -108,7 +120,7 @@ export function LLMBatchProgress() {
           const safeTotal = batch.totalTests > 0 ? batch.totalTests : 1
           const pct = Math.round((batch.completedTests / safeTotal) * 100)
           return (
-            <div key={batch.id} className="space-y-1">
+            <div key={batch.id} className="space-y-2 rounded-xl border border-[var(--border-subtle)] surface-base p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium truncate flex-1">{batch.name || batch.id}</span>
                 <div className="flex items-center gap-1.5">
@@ -132,12 +144,14 @@ export function LLMBatchProgress() {
         })}
 
         {overflow > 0 && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('llm')}
-            className="text-xs text-muted-foreground hover:text-foreground w-full text-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
+            className="w-full text-xs"
           >
             +{overflow} more batch{overflow !== 1 ? 'es' : ''}
-          </button>
+          </Button>
         )}
       </div>
     </WidgetCard>

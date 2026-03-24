@@ -8,32 +8,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Mock file storage
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
-    getModelConfigs: vi.fn().mockResolvedValue([
-      {
-        id: 'model-1',
-        name: 'Test GPT-4',
-        provider: 'openai',
-        model: 'gpt-4',
-        apiKey: 'sk-secret-key-12345',
-        enabled: true,
-        createdAt: '2026-01-01T00:00:00Z',
-        updatedAt: '2026-01-01T00:00:00Z',
-      },
-      {
-        id: 'model-2',
-        name: 'Test Claude',
-        provider: 'anthropic',
-        model: 'claude-3',
-        apiKey: 'sk-ant-secret',
-        enabled: false,
-        createdAt: '2026-01-01T00:00:00Z',
-        updatedAt: '2026-01-01T00:00:00Z',
-      },
-    ]),
-    getModelConfig: vi.fn().mockResolvedValue({
+const mockStorage = {
+  getModelConfigs: vi.fn().mockResolvedValue([
+    {
       id: 'model-1',
       name: 'Test GPT-4',
       provider: 'openai',
@@ -42,10 +19,34 @@ vi.mock('@/lib/storage/file-storage', () => ({
       enabled: true,
       createdAt: '2026-01-01T00:00:00Z',
       updatedAt: '2026-01-01T00:00:00Z',
-    }),
-    saveModelConfig: vi.fn().mockImplementation(async (config: Record<string, unknown>) => config),
-    deleteModelConfig: vi.fn().mockResolvedValue(true),
-  },
+    },
+    {
+      id: 'model-2',
+      name: 'Test Claude',
+      provider: 'anthropic',
+      model: 'claude-3',
+      apiKey: 'sk-ant-secret',
+      enabled: false,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    },
+  ]),
+  getModelConfig: vi.fn().mockResolvedValue({
+    id: 'model-1',
+    name: 'Test GPT-4',
+    provider: 'openai',
+    model: 'gpt-4',
+    apiKey: 'sk-secret-key-12345',
+    enabled: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+  }),
+  saveModelConfig: vi.fn().mockImplementation(async (config: Record<string, unknown>) => config),
+  deleteModelConfig: vi.fn().mockResolvedValue(true),
+};
+
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue(mockStorage),
 }));
 
 // Mock llm-providers
@@ -160,7 +161,6 @@ describe('API /api/llm/models', () => {
     // API-L-003b: Reject HTML injection in name (BUG-033)
     it('API-L-003b: sanitizes HTML tags from string fields', async () => {
       const { POST } = await import('@/app/api/llm/models/route');
-      const { fileStorage } = await import('@/lib/storage/file-storage');
 
       const req = new NextRequest('http://localhost:42001/api/llm/models', {
         method: 'POST',
@@ -176,7 +176,7 @@ describe('API /api/llm/models', () => {
       expect(res.status).toBe(201);
 
       // Verify the saved config has sanitized name
-      const savedCall = vi.mocked(fileStorage.saveModelConfig).mock.calls[0][0];
+      const savedCall = vi.mocked(mockStorage.saveModelConfig).mock.calls[0][0];
       expect(savedCall.name).not.toContain('<script>');
       expect(savedCall.name).toBe('alert(1)Model');
     });
@@ -214,8 +214,7 @@ describe('API /api/llm/models', () => {
 
     // API-L-006b: Delete non-existent model returns 404
     it('API-L-006b: returns 404 for non-existent model', async () => {
-      const { fileStorage } = await import('@/lib/storage/file-storage');
-      vi.mocked(fileStorage.deleteModelConfig).mockResolvedValueOnce(false);
+      vi.mocked(mockStorage.deleteModelConfig).mockResolvedValueOnce(false);
 
       const { DELETE } = await import('@/app/api/llm/models/route');
 
@@ -264,8 +263,7 @@ describe('API /api/llm/models', () => {
 
     // API-L-005b: PATCH rejects non-existent model
     it('API-L-005b: returns 404 for non-existent model', async () => {
-      const { fileStorage } = await import('@/lib/storage/file-storage');
-      vi.mocked(fileStorage.getModelConfig).mockResolvedValueOnce(null);
+      vi.mocked(mockStorage.getModelConfig).mockResolvedValueOnce(null);
 
       const { PATCH } = await import('@/app/api/llm/models/route');
 

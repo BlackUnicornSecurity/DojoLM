@@ -5,7 +5,7 @@ This directory is for formal model-assessment sessions and their evidence bundle
 ## Do Not Confuse With QA Logs
 
 - app QA logs: `team/testing/QA/QA-Log/`
-- QA security artifacts: `team/testing/QA/security/`
+- QA security artifacts: `team/testing/QA/security/audit-results/`
 - formal assessment sessions: `docs/app/testing-results/`
 
 Compatibility link:

@@ -4,8 +4,8 @@
  * Test IDs: SKL-001 to SKL-020, ATK-001 to ATK-013
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -27,6 +27,11 @@ vi.mock('@/lib/ecosystem-types', () => ({
 
 vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }),
+}))
+
+const mockCanAccessProtectedApi = vi.fn()
+vi.mock('@/lib/client-auth-access', () => ({
+  canAccessProtectedApi: (...args: unknown[]) => mockCanAccessProtectedApi(...args),
 }))
 
 vi.mock('@/lib/atemi-session-storage', () => ({
@@ -496,6 +501,7 @@ describe('AtemiGettingStarted (ATK-003b)', () => {
 
 describe('McpConnectorStatus (ATK-004)', () => {
   beforeEach(() => {
+    mockCanAccessProtectedApi.mockResolvedValue(true)
     // Make fetchWithAuth reject so the component falls back to prop values
     mockFetchWithAuth.mockRejectedValue(new Error('Network error'))
   })
@@ -528,6 +534,7 @@ describe('McpConnectorStatus (ATK-004)', () => {
       expect(screen.getByLabelText('Toggle troubleshooting panel')).toBeInTheDocument()
     })
   })
+
 })
 
 // ---------------------------------------------------------------------------
@@ -563,5 +570,6 @@ describe('Audio skills (ATK-011 to ATK-013)', () => {
 })
 
 afterEach(() => {
+  cleanup()
   vi.restoreAllMocks()
 })

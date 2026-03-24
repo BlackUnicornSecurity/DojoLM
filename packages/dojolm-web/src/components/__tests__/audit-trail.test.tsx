@@ -6,6 +6,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -158,6 +159,7 @@ describe('AT-006: Search filter', () => {
 // ===========================================================================
 describe('AT-007: Refresh button', () => {
   it('calls fetch again when refresh is clicked', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValue({
       ok: true,
       json: async () => MOCK_ENTRIES,
@@ -167,8 +169,10 @@ describe('AT-007: Refresh button', () => {
       expect(screen.getAllByText('admin').length).toBeGreaterThan(0)
     })
     expect(mockFetchWithAuth).toHaveBeenCalledTimes(1)
-    fireEvent.click(screen.getByLabelText('Refresh audit log'))
-    expect(mockFetchWithAuth).toHaveBeenCalledTimes(2)
+    await user.click(screen.getByLabelText('Refresh audit log'))
+    await waitFor(() => {
+      expect(mockFetchWithAuth).toHaveBeenCalledTimes(2)
+    })
   })
 })
 

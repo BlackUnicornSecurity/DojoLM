@@ -10,6 +10,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, CreateCampaignRequest } from '@/lib/sengoku-types';
+import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
 
 const CAMPAIGNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'campaigns');
 const SAFE_NAME = /^[\w \-().]{1,200}$/;
@@ -74,6 +75,14 @@ export async function POST(request: NextRequest) {
     if (body.selectedSkillIds.length > MAX_SKILLS) {
       return NextResponse.json({ error: `Maximum ${MAX_SKILLS} skills per campaign` }, { status: 400 });
     }
+    let normalizedWebhookUrl: string | null = null;
+    if (body.webhookUrl) {
+      const webhookValidation = await validateSengokuWebhookUrl(body.webhookUrl);
+      if (!webhookValidation.valid) {
+        return NextResponse.json({ error: webhookValidation.error }, { status: 400 });
+      }
+      normalizedWebhookUrl = webhookValidation.normalizedUrl ?? null;
+    }
 
     const now = new Date().toISOString();
     const campaign: Campaign = {
@@ -83,7 +92,7 @@ export async function POST(request: NextRequest) {
       authConfig: body.authConfig ?? {},
       selectedSkillIds: body.selectedSkillIds.map((s) => String(s).slice(0, 128)),
       schedule: body.schedule ?? null,
-      webhookUrl: body.webhookUrl ? String(body.webhookUrl).slice(0, 2048) : null,
+      webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null,
       status: 'draft',
       graph: body.graph,
       createdAt: now,

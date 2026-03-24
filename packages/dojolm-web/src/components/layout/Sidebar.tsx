@@ -61,19 +61,30 @@ export function Sidebar() {
         aria-label={item.label}
         aria-current={isActive ? 'page' : undefined}
       >
-        <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "nav-item-active-icon")} aria-hidden="true" />
-        <span
+        <span className={cn(
+          'flex h-9 w-9 items-center justify-center rounded-xl border flex-shrink-0',
+          'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+          isActive
+            ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
+            : 'bg-[var(--bg-secondary)] border-transparent text-muted-foreground'
+        )}>
+          <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "nav-item-active-icon motion-safe:translate-x-[1px]")} aria-hidden="true" />
+        </span>
+        <div
           aria-hidden="true"
           className={cn(
-            "font-medium whitespace-nowrap overflow-hidden",
+            "min-w-0 overflow-hidden",
             "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
             collapsed
               ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
               : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
           )}
         >
-          {item.label}
-        </span>
+          <div className="font-medium whitespace-nowrap truncate">{item.label}</div>
+          <div className="text-xs text-[var(--text-tertiary)] truncate">
+            {item.description}
+          </div>
+        </div>
       </button>
     )
   }
@@ -106,7 +117,7 @@ export function Sidebar() {
               <span
                 aria-hidden={collapsed ? true : undefined}
                 className={cn(
-                  "block px-6 py-1 mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--text-tertiary)] font-semibold overflow-hidden opacity-60",
+                  "mx-4 mt-1 inline-flex rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-[var(--text-tertiary)] font-semibold overflow-hidden",
                   "motion-safe:transition-[opacity,max-height] motion-safe:ease-in-out",
                   collapsed
                     ? "opacity-0 max-h-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-8 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-8"
@@ -174,7 +185,14 @@ export function Sidebar() {
                 : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
             )}
           >
-            <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon")} aria-hidden="true" />
+            <span className={cn(
+              'flex h-9 w-9 items-center justify-center rounded-xl border flex-shrink-0',
+              activeTab === 'admin'
+                ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
+                : 'bg-[var(--bg-secondary)] border-transparent text-muted-foreground'
+            )}>
+              <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon motion-safe:translate-x-[1px]")} aria-hidden="true" />
+            </span>
             <span
               aria-hidden="true"
               className={cn(
@@ -202,7 +220,9 @@ export function Sidebar() {
           aria-label="Open Sensei AI assistant"
           title={collapsed ? 'Sensei' : undefined}
         >
-          <Bot className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-[var(--bg-secondary)] text-muted-foreground">
+            <Bot className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+          </span>
           <span
             aria-hidden="true"
             className={cn(

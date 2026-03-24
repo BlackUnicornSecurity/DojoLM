@@ -27,6 +27,7 @@ import {
   Square,
   RotateCcw,
 } from 'lucide-react'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 export interface McpConnectorStatusProps {
@@ -63,9 +64,22 @@ export function McpConnectorStatus({
     return () => { mountedRef.current = false }
   }, [])
 
-  const checkHealth = useCallback(async () => {
+  const checkHealth = useCallback(async (): Promise<boolean> => {
     setIsChecking(true)
     try {
+      if (!(await canAccessProtectedApi())) {
+        if (!mountedRef.current) return false
+        if (connectedProp !== undefined) {
+          setIsConnected(connectedProp)
+          setLatency(latencyProp ?? 0)
+        } else {
+          setIsConnected(false)
+          setLatency(0)
+        }
+        setStatusMessage(null)
+        return false
+      }
+
       const start = Date.now()
       const response = await fetchWithAuth('/api/mcp/status', {
         method: 'GET',
@@ -73,7 +87,7 @@ export function McpConnectorStatus({
       })
       const elapsed = Date.now() - start
 
-      if (!mountedRef.current) return
+      if (!mountedRef.current) return false
 
       if (response.ok) {
         const data = await response.json()
@@ -87,8 +101,9 @@ export function McpConnectorStatus({
         setLatency(0)
         setStatusMessage(null)
       }
+      return true
     } catch {
-      if (!mountedRef.current) return
+      if (!mountedRef.current) return false
       // If the API doesn't exist yet, use prop values
       if (connectedProp !== undefined) {
         setIsConnected(connectedProp)
@@ -97,8 +112,9 @@ export function McpConnectorStatus({
         setIsConnected(false)
         setLatency(0)
       }
+      return false
     } finally {
-      if (!mountedRef.current) return
+      if (!mountedRef.current) return false
       setIsChecking(false)
       setLastChecked(new Date())
     }
@@ -106,9 +122,17 @@ export function McpConnectorStatus({
 
   // Initial check + auto-refresh every 10 seconds
   useEffect(() => {
-    checkHealth()
-    intervalRef.current = setInterval(checkHealth, 10000)
+    let cancelled = false
+
+    void checkHealth().then((hasAccess) => {
+      if (cancelled || !hasAccess) return
+      intervalRef.current = setInterval(() => {
+        void checkHealth()
+      }, 10000)
+    })
+
     return () => {
+      cancelled = true
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [checkHealth])

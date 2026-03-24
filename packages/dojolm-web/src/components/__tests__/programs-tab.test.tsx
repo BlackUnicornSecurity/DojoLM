@@ -29,6 +29,11 @@ vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: (...args: unknown[]) => mockFetchWithAuth(...args),
 }))
 
+const mockCanAccessProtectedApi = vi.fn()
+vi.mock('@/lib/client-auth-access', () => ({
+  canAccessProtectedApi: (...args: unknown[]) => mockCanAccessProtectedApi(...args),
+}))
+
 vi.mock('../ronin/ProgramCard', () => ({
   ProgramCard: ({ program, onSelect, onToggleSubscribe, isSubscribed }: {
     program: { id: string; name: string };
@@ -114,6 +119,7 @@ describe('ProgramsTab', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    mockCanAccessProtectedApi.mockResolvedValue(true)
     mockFetchWithAuth.mockRejectedValue(new Error('no api'))
   })
 
@@ -199,5 +205,17 @@ describe('ProgramsTab', () => {
   it('PT-012: shows 0 subscribed initially', () => {
     render(<ProgramsTab />)
     expect(screen.getByText('0 subscribed')).toBeInTheDocument()
+  })
+
+  it('PT-013: keeps seed data and skips API fetch when protected access is unavailable', async () => {
+    mockCanAccessProtectedApi.mockResolvedValue(false)
+
+    render(<ProgramsTab />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('program-card-prog-001')).toBeInTheDocument()
+    })
+
+    expect(mockFetchWithAuth).not.toHaveBeenCalled()
   })
 })

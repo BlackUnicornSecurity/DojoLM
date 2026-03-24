@@ -22,6 +22,8 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
 
   return (
     <div className="h-16 flex items-center justify-between px-4 border-b border-[var(--overlay-subtle)] relative overflow-hidden">
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--bu-electric-muted)] to-transparent" aria-hidden="true" />
+      <div className="absolute left-4 top-3 h-10 w-10 rounded-full bg-[radial-gradient(circle,rgba(91,141,239,0.18),transparent_70%)]" aria-hidden="true" />
       {/* Decorative enso circle — dojo identity, only visible when expanded */}
       {!collapsed && (
         <div
@@ -62,7 +64,12 @@ export function SidebarHeader({ collapsed = false }: SidebarHeaderProps) {
           )}
         >
           <span className="text-lg font-bold text-[var(--dojo-primary-lg)]">DojoLM</span>
-          <span className="text-xs text-[var(--text-tertiary)]">NODA Security Platform</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[var(--text-tertiary)]">NODA Security Platform</span>
+            <span className="rounded-full border border-[var(--bu-electric-muted)] bg-[var(--bu-electric-subtle)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--bu-electric)]">
+              Dojo
+            </span>
+          </div>
         </div>
       </div>
 

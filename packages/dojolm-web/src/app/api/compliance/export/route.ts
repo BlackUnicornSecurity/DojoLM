@@ -17,7 +17,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkApiAuth } from '@/lib/api-auth'
 import { fileStorage } from '@/lib/storage/file-storage'
-import { BAISS_CONTROLS, BAISS_CATEGORIES, getBAISSSummary } from '@/lib/data/baiss-framework'
+import { BAISS_CONTROLS, getBAISSSummary } from '@/lib/data/baiss-framework'
 import {
   NIST_800_218A,
   ISO_23894,

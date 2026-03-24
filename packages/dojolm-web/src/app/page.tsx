@@ -21,7 +21,8 @@ import { FixtureDetail, FixtureComparison, FixtureExplorer } from '@/components/
 import type { ComparisonItem } from '@/components/fixtures/FixtureComparison'
 import { PayloadCard } from '@/components/payloads'
 import { NODADashboard } from '@/components/dashboard'
-import { getFixtures, scanFixture, readFixture } from '@/lib/api'
+import { scanFixture, readFixture } from '@/lib/api'
+import { getCachedFixtureManifest } from '@/lib/client-data-cache'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { PAYLOAD_CATALOG } from '@/lib/constants'
@@ -69,25 +70,35 @@ function PageContent() {
     content: TextFixtureResponse | BinaryFixtureResponse
     scanResult: ScanResult | null
   } | null>(null)
+  const fixtureLoadAttemptedRef = useRef(false)
   // Comparison state (Story 3.3)
   const [comparisonItems, setComparisonItems] = useState<[ComparisonItem, ComparisonItem] | null>(null)
 
-  const loadFixtures = async () => {
+  const loadFixtures = useCallback(async (options?: { force?: boolean }) => {
+    if (isLoadingFixtures) return
+    if (!options?.force && (fixtureManifest || fixtureLoadAttemptedRef.current)) {
+      return
+    }
+
+    fixtureLoadAttemptedRef.current = true
     setIsLoadingFixtures(true)
     setFixtureError(null)
     try {
-      const manifest = await getFixtures()
+      const manifest = await getCachedFixtureManifest()
       setFixtureManifest(manifest)
     } catch {
       setFixtureError('Could not load fixtures. Check connection and try again.')
     } finally {
       setIsLoadingFixtures(false)
     }
-  }
+  }, [fixtureManifest, isLoadingFixtures])
 
   useEffect(() => {
-    loadFixtures()
-  }, [])
+    if (activeTab !== 'armory' || fixtureManifest || fixtureLoadAttemptedRef.current) {
+      return
+    }
+    void loadFixtures()
+  }, [activeTab, fixtureManifest, loadFixtures])
 
   const handleScanFixture = async (category: string, file: string) => {
     const path = `${category}/${file}`
@@ -160,7 +171,7 @@ function PageContent() {
               manifest={fixtureManifest}
               isLoading={isLoadingFixtures}
               fixtureError={fixtureError}
-              onRetryFixtures={loadFixtures}
+              onRetryFixtures={() => loadFixtures({ force: true })}
               onScanFixture={handleScanFixture}
               onViewFixture={handleViewFixture}
               selectedFixture={selectedFixture}
@@ -320,11 +331,25 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       </div>
 
       {/* Engine Filters */}
-      <FilterPills
-        filters={engineFilters}
-        onToggle={toggleFilter}
-        onReset={resetFilters}
-      />
+      <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <h2 className="text-section-title text-[var(--foreground)]">Engine Stack</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Curate which detectors participate in this scan lane. Keep at least one engine active for meaningful coverage.
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {metrics.activeEngines} active scanners across {metrics.totalEngines} available engines
+          </p>
+        </div>
+        <FilterPills
+          filters={engineFilters}
+          onToggle={toggleFilter}
+          onReset={resetFilters}
+          className="mt-4"
+        />
+      </div>
 
       {/* Error Display */}
       {error && (
@@ -335,11 +360,11 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       )}
 
       {/* Scanner Grid */}
-      <div className="grid lg:grid-cols-2 gap-4 lg:gap-5">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] xl:gap-5">
         <div className="clean-context">
           <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
         </div>
-        <div className="blundesi-context">
+        <div className="blundesi-context xl:sticky xl:top-4 self-start">
           <FindingsList result={scanResult} />
         </div>
       </div>

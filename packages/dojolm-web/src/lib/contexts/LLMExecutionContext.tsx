@@ -20,6 +20,7 @@ import type {
   LLMPromptTestCase,
   ExecutionStatus,
 } from '../llm-types';
+import { canAccessProtectedApi } from '../client-auth-access';
 import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
@@ -116,6 +117,80 @@ interface ExecutionState {
   lastExecutionAt: string | null;
 }
 
+const EXECUTION_STATE_CACHE_TTL_MS = 2_000;
+
+let cachedExecutionState: ExecutionState | null = null;
+let cachedExecutionStateAt = 0;
+let executionStateRequest: Promise<ExecutionState> | null = null;
+
+function invalidateExecutionStateCache(): void {
+  cachedExecutionState = null;
+  cachedExecutionStateAt = 0;
+  executionStateRequest = null;
+}
+
+export function resetExecutionStateCache(): void {
+  invalidateExecutionStateCache();
+}
+
+async function loadExecutionState(force = false): Promise<ExecutionState> {
+  if (!(await canAccessProtectedApi())) {
+    const emptyState: ExecutionState = {
+      activeBatches: [],
+      pendingCount: 0,
+      runningCount: 0,
+      lastExecutionAt: null,
+    };
+    cachedExecutionState = emptyState;
+    cachedExecutionStateAt = Date.now();
+    return emptyState;
+  }
+
+  const now = Date.now();
+  if (!force && cachedExecutionState && now - cachedExecutionStateAt < EXECUTION_STATE_CACHE_TTL_MS) {
+    return cachedExecutionState;
+  }
+
+  if (!force && executionStateRequest) {
+    return executionStateRequest;
+  }
+
+  executionStateRequest = (async () => {
+    const [
+      { batches: runningBatches },
+      { batches: pendingBatches },
+      { executions },
+    ] = await Promise.all([
+      apiFetch<{ batches: LLMBatchExecution[] }>('/batch?status=running'),
+      apiFetch<{ batches: LLMBatchExecution[] }>('/batch?status=pending'),
+      apiFetch<{ executions: LLMTestExecution[] }>('/results?limit=1'),
+    ]);
+
+    const activeBatches = [
+      ...runningBatches.map((batch) => batch.id),
+      ...pendingBatches.map((batch) => batch.id),
+    ];
+
+    const snapshot: ExecutionState = {
+      activeBatches,
+      pendingCount: pendingBatches.length,
+      runningCount: runningBatches.reduce(
+        (sum, batch) => sum + (batch.totalTests - batch.completedTests),
+        0,
+      ),
+      lastExecutionAt: executions[0]?.timestamp || null,
+    };
+
+    cachedExecutionState = snapshot;
+    cachedExecutionStateAt = Date.now();
+    return snapshot;
+  })().finally(() => {
+    executionStateRequest = null;
+  });
+
+  return executionStateRequest;
+}
+
 interface LLMExecutionContextValue {
   /** Current execution state */
   state: ExecutionState;
@@ -210,36 +285,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
   // Refresh execution state
   const refreshState = useCallback(async () => {
     try {
-      // Fetch active batches from API
-      const { batches: runningBatches } = await apiFetch<{ batches: LLMBatchExecution[] }>(
-        '/batch?status=running'
-      );
-      const { batches: pendingBatches } = await apiFetch<{ batches: LLMBatchExecution[] }>(
-        '/batch?status=pending'
-      );
-
-      const activeBatches = [
-        ...runningBatches.map(b => b.id),
-        ...pendingBatches.map(b => b.id),
-      ];
-
-      const runningCount = runningBatches.reduce(
-        (sum, b) => sum + (b.totalTests - b.completedTests),
-        0
-      );
-
-      // Get last execution time
-      const { executions } = await apiFetch<{ executions: LLMTestExecution[] }>(
-        '/results?limit=1'
-      );
-      const lastExecutionAt = executions[0]?.timestamp || null;
-
-      setState({
-        activeBatches,
-        pendingCount: pendingBatches.length,
-        runningCount,
-        lastExecutionAt,
-      });
+      setState(await loadExecutionState());
     } catch (err) {
       console.error('Failed to refresh execution state:', err);
     }
@@ -264,6 +310,13 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
     // Check if batch is still running
     (async () => {
       try {
+        if (!(await canAccessProtectedApi())) {
+          clearActiveBatchId();
+          setActiveBatchIdState(null);
+          setReconnectingBatchId(null);
+          return;
+        }
+
         const response = await fetchWithAuth(`${API_BASE}/batch/${encodeURIComponent(storedBatchId)}`);
         if (!response.ok) {
           // Batch gone or errored — clear
@@ -342,6 +395,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
       });
 
       // Refresh state after execution
+      invalidateExecutionStateCache();
       await refreshState();
 
       return response.execution;
@@ -376,6 +430,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
           if (response.status === 404) {
             clearInterval(pollInterval);
             batchPollIntervalsRef.current.delete(pollInterval);
+            invalidateExecutionStateCache();
             await refreshState();
             return;
           }
@@ -395,6 +450,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
           if (updated.status === 'completed' || updated.status === 'failed' || updated.status === 'cancelled') {
             clearInterval(pollInterval);
             batchPollIntervalsRef.current.delete(pollInterval);
+            invalidateExecutionStateCache();
             await refreshState();
           }
         } catch {
@@ -406,6 +462,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
       batchPollIntervalsRef.current.add(pollInterval);
 
       // Refresh state after starting batch
+      invalidateExecutionStateCache();
       await refreshState();
 
       return batch;
@@ -446,6 +503,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
     async (batchId: string): Promise<boolean> => {
       try {
         await apiFetch(`/batch/${batchId}`, { method: 'PATCH', body: JSON.stringify({ status: 'cancelled' }) });
+        invalidateExecutionStateCache();
         await refreshState();
         return true;
       } catch {
@@ -463,6 +521,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
           `/results/cleanup?retentionDays=${retentionDays}`,
           { method: 'DELETE' }
         );
+        invalidateExecutionStateCache();
         await refreshState();
         return response.deleted;
       } catch {

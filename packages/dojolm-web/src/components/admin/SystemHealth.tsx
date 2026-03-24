@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { cn } from '@/lib/utils'
 import { Activity, Server, Shield, Database, Wifi, RefreshCw, Loader2, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
@@ -42,9 +43,10 @@ export function SystemHealth() {
 
   const fetchHealth = useCallback(async () => {
     try {
+      const canAccessMcp = await canAccessProtectedApi()
       const [healthRes, mcpRes] = await Promise.all([
         fetchWithAuth('/api/admin/health'),
-        fetchWithAuth('/api/mcp/status').catch(() => null),
+        canAccessMcp ? fetchWithAuth('/api/mcp/status').catch(() => null) : Promise.resolve(null),
       ])
 
       if (!healthRes.ok) throw new Error('Health check failed')

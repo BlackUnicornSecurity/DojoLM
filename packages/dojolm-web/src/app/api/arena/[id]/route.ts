@@ -20,9 +20,9 @@ const SAFE_ID = /^[\w-]{1,128}$/;
 export const GET = createApiHandler(
   async (
     _request: NextRequest,
-    { params }: { params?: Promise<Record<string, string>> }
+    { params }: { params: Promise<{ id: string }> }
   ) => {
-    const { id } = await (params ?? Promise.resolve({ id: '' }));
+    const { id } = await params;
 
     if (!id || !SAFE_ID.test(id)) {
       return NextResponse.json({ error: 'Invalid match ID' }, { status: 400 });
@@ -45,9 +45,9 @@ export const GET = createApiHandler(
 export const DELETE = createApiHandler(
   async (
     _request: NextRequest,
-    { params }: { params?: Promise<Record<string, string>> }
+    { params }: { params: Promise<{ id: string }> }
   ) => {
-    const { id } = await (params ?? Promise.resolve({ id: '' }));
+    const { id } = await params;
 
     if (!id || !SAFE_ID.test(id)) {
       return NextResponse.json({ error: 'Invalid match ID' }, { status: 400 });

@@ -53,6 +53,7 @@ describe('Proxy', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...ORIGINAL_ENV };
+    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
   });
 
   afterEach(() => {
@@ -140,6 +141,19 @@ describe('Proxy', () => {
     const req = createApiRequest('/api/admin/health', {
       method: 'GET',
       // No x-api-key header
+    });
+
+    const res = await proxy(req);
+    expect(res.status).toBe(200);
+  });
+
+  it('MW-005b: allows public read routes without authentication', async () => {
+    process.env.NODA_API_KEY = 'test-key';
+    process.env.NODE_ENV = 'production';
+
+    const { proxy } = await import('@/proxy');
+    const req = createApiRequest('/api/fixtures', {
+      method: 'GET',
     });
 
     const res = await proxy(req);

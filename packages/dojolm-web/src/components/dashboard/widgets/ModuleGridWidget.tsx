@@ -9,13 +9,7 @@
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
-import { fetchWithAuth } from '@/lib/fetch-with-auth'
-
-interface ModuleInfo {
-  name: string
-  count: number
-  source: string
-}
+import { getCachedScannerStats, type ScannerPatternGroup } from '@/lib/client-data-cache'
 
 const PHASE_COLORS: Record<string, string> = {
   'core': 'bg-[var(--bu-electric)]',
@@ -35,17 +29,14 @@ function getPhaseColor(source: string): string {
 }
 
 export function ModuleGridWidget() {
-  const [modules, setModules] = useState<ModuleInfo[]>([])
+  const [modules, setModules] = useState<ScannerPatternGroup[]>([])
 
   useEffect(() => {
     let cancelled = false
     async function fetchModules() {
       try {
-        const res = await fetchWithAuth('/api/stats')
-        if (res.ok) {
-          const data = await res.json()
-          if (!cancelled) setModules(data.patternGroups ?? [])
-        }
+        const data = await getCachedScannerStats()
+        if (!cancelled) setModules(data.patternGroups ?? [])
       } catch {
         // Silent
       }

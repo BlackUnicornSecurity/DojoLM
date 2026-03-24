@@ -22,8 +22,8 @@ vi.mock('@/lib/api-error', () => ({
   }),
 }));
 
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
+const { mockStorage } = vi.hoisted(() => ({
+  mockStorage: {
     getModelConfig: vi.fn(),
     getTestCase: vi.fn(),
     createBatch: vi.fn(),
@@ -33,6 +33,10 @@ vi.mock('@/lib/storage/file-storage', () => ({
     deleteBatch: vi.fn(),
     saveExecution: vi.fn(),
   },
+}));
+
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue(mockStorage),
 }));
 
 vi.mock('@/lib/llm-execution', () => ({
@@ -71,7 +75,6 @@ vi.mock('@/lib/storage/guard-storage', () => ({
 // ---------------------------------------------------------------------------
 
 import { POST, GET, DELETE } from '../route';
-import { fileStorage } from '@/lib/storage/file-storage';
 import { getGuardConfig, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
 
 // ---------------------------------------------------------------------------
@@ -143,10 +146,10 @@ beforeEach(() => {
   vi.clearAllMocks();
 
   // Default happy-path stubs for POST
-  vi.mocked(fileStorage.getModelConfig).mockResolvedValue(mockModel() as never);
-  vi.mocked(fileStorage.getTestCase).mockResolvedValue(mockTestCase() as never);
-  vi.mocked(fileStorage.createBatch).mockResolvedValue(mockBatch({ status: 'pending' }) as never);
-  vi.mocked(fileStorage.updateBatch).mockResolvedValue(mockBatch() as never);
+  vi.mocked(mockStorage.getModelConfig).mockResolvedValue(mockModel() as never);
+  vi.mocked(mockStorage.getTestCase).mockResolvedValue(mockTestCase() as never);
+  vi.mocked(mockStorage.createBatch).mockResolvedValue(mockBatch({ status: 'pending' }) as never);
+  vi.mocked(mockStorage.updateBatch).mockResolvedValue(mockBatch() as never);
   vi.mocked(getGuardConfig).mockResolvedValue({ enabled: false, mode: 'shinobi' } as never);
 });
 
@@ -197,7 +200,7 @@ describe('POST /api/llm/batch', () => {
   });
 
   it('BATCH-005: model not found returns 404', async () => {
-    vi.mocked(fileStorage.getModelConfig).mockResolvedValue(null as never);
+    vi.mocked(mockStorage.getModelConfig).mockResolvedValue(null as never);
 
     const res = await POST(postRequest({ modelIds: ['nonexistent'], testCaseIds: ['tc-1'] }));
     const data = await res.json();
@@ -207,7 +210,7 @@ describe('POST /api/llm/batch', () => {
   });
 
   it('BATCH-006: disabled model returns 400', async () => {
-    vi.mocked(fileStorage.getModelConfig).mockResolvedValue(mockModel({ enabled: false }) as never);
+    vi.mocked(mockStorage.getModelConfig).mockResolvedValue(mockModel({ enabled: false }) as never);
 
     const res = await POST(postRequest({ modelIds: ['model-1'], testCaseIds: ['tc-1'] }));
     const data = await res.json();
@@ -217,7 +220,7 @@ describe('POST /api/llm/batch', () => {
   });
 
   it('BATCH-007: test case not found returns 404', async () => {
-    vi.mocked(fileStorage.getTestCase).mockResolvedValue(null as never);
+    vi.mocked(mockStorage.getTestCase).mockResolvedValue(null as never);
 
     const res = await POST(postRequest({ modelIds: ['model-1'], testCaseIds: ['tc-1'] }));
     const data = await res.json();
@@ -227,7 +230,7 @@ describe('POST /api/llm/batch', () => {
   });
 
   it('BATCH-008: disabled test case returns 400', async () => {
-    vi.mocked(fileStorage.getTestCase).mockResolvedValue(mockTestCase({ enabled: false }) as never);
+    vi.mocked(mockStorage.getTestCase).mockResolvedValue(mockTestCase({ enabled: false }) as never);
 
     const res = await POST(postRequest({ modelIds: ['model-1'], testCaseIds: ['tc-1'] }));
     const data = await res.json();
@@ -284,7 +287,7 @@ describe('POST /api/llm/batch', () => {
 describe('GET /api/llm/batch', () => {
   it('BATCH-011: specific batch by id returns batch', async () => {
     const batch = mockBatch({ status: 'completed' });
-    vi.mocked(fileStorage.getBatch).mockResolvedValue(batch as never);
+    vi.mocked(mockStorage.getBatch).mockResolvedValue(batch as never);
 
     const res = await GET(getRequest({ id: 'batch-1' }));
     const data = await res.json();
@@ -295,7 +298,7 @@ describe('GET /api/llm/batch', () => {
   });
 
   it('BATCH-012: batch not found returns 404', async () => {
-    vi.mocked(fileStorage.getBatch).mockResolvedValue(null as never);
+    vi.mocked(mockStorage.getBatch).mockResolvedValue(null as never);
 
     const res = await GET(getRequest({ id: 'nonexistent' }));
     const data = await res.json();
@@ -306,14 +309,14 @@ describe('GET /api/llm/batch', () => {
 
   it('BATCH-013: filter by status returns filtered batches', async () => {
     const batches = [mockBatch({ status: 'completed' })];
-    vi.mocked(fileStorage.queryBatches).mockResolvedValue({ batches } as never);
+    vi.mocked(mockStorage.queryBatches).mockResolvedValue({ batches } as never);
 
     const res = await GET(getRequest({ status: 'completed' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.batches).toHaveLength(1);
-    expect(fileStorage.queryBatches).toHaveBeenCalledWith({ status: 'completed' });
+    expect(mockStorage.queryBatches).toHaveBeenCalledWith({ status: 'completed' });
   });
 
   it('BATCH-014: invalid status value returns 400', async () => {
@@ -328,42 +331,42 @@ describe('GET /api/llm/batch', () => {
     // Route uses 3-hour stale timeout (STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000)
     const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
     const staleBatch = mockBatch({ status: 'running', createdAt: fourHoursAgo });
-    vi.mocked(fileStorage.getBatch).mockResolvedValue(staleBatch as never);
-    vi.mocked(fileStorage.updateBatch).mockResolvedValue(undefined as never);
+    vi.mocked(mockStorage.getBatch).mockResolvedValue(staleBatch as never);
+    vi.mocked(mockStorage.updateBatch).mockResolvedValue(undefined as never);
 
     const res = await GET(getRequest({ id: 'batch-1' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.status).toBe('failed');
-    expect(fileStorage.updateBatch).toHaveBeenCalledWith('batch-1', { status: 'failed' });
+    expect(mockStorage.updateBatch).toHaveBeenCalledWith('batch-1', { status: 'failed' });
   });
 
   it('BATCH-015b: auto-fails stale running batch (in status query)', async () => {
     // Route uses 3-hour stale timeout (STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000)
     const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
     const staleBatch = mockBatch({ id: 'stale-1', status: 'running', createdAt: fourHoursAgo });
-    vi.mocked(fileStorage.queryBatches).mockResolvedValue({ batches: [staleBatch] } as never);
-    vi.mocked(fileStorage.updateBatch).mockResolvedValue(undefined as never);
+    vi.mocked(mockStorage.queryBatches).mockResolvedValue({ batches: [staleBatch] } as never);
+    vi.mocked(mockStorage.updateBatch).mockResolvedValue(undefined as never);
 
     const res = await GET(getRequest({ status: 'running' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.batches[0].status).toBe('failed');
-    expect(fileStorage.updateBatch).toHaveBeenCalledWith('stale-1', { status: 'failed' });
+    expect(mockStorage.updateBatch).toHaveBeenCalledWith('stale-1', { status: 'failed' });
   });
 
   it('BATCH-016: no params returns all batches', async () => {
     const batches = [mockBatch(), mockBatch({ id: 'batch-2' })];
-    vi.mocked(fileStorage.queryBatches).mockResolvedValue({ batches } as never);
+    vi.mocked(mockStorage.queryBatches).mockResolvedValue({ batches } as never);
 
     const res = await GET(getRequest());
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.batches).toHaveLength(2);
-    expect(fileStorage.queryBatches).toHaveBeenCalledWith({});
+    expect(mockStorage.queryBatches).toHaveBeenCalledWith({});
   });
 
   it('BATCH-016b: non-stale running batch is NOT auto-failed', async () => {
@@ -371,14 +374,14 @@ describe('GET /api/llm/batch', () => {
       status: 'running',
       createdAt: new Date().toISOString(),
     });
-    vi.mocked(fileStorage.getBatch).mockResolvedValue(recentBatch as never);
+    vi.mocked(mockStorage.getBatch).mockResolvedValue(recentBatch as never);
 
     const res = await GET(getRequest({ id: 'batch-1' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.status).toBe('running');
-    expect(fileStorage.updateBatch).not.toHaveBeenCalled();
+    expect(mockStorage.updateBatch).not.toHaveBeenCalled();
   });
 });
 
@@ -388,14 +391,14 @@ describe('GET /api/llm/batch', () => {
 
 describe('DELETE /api/llm/batch', () => {
   it('BATCH-017: valid id deletes batch and returns success', async () => {
-    vi.mocked(fileStorage.deleteBatch).mockResolvedValue(true as never);
+    vi.mocked(mockStorage.deleteBatch).mockResolvedValue(true as never);
 
     const res = await DELETE(deleteRequest({ id: 'batch-1' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(fileStorage.deleteBatch).toHaveBeenCalledWith('batch-1');
+    expect(mockStorage.deleteBatch).toHaveBeenCalledWith('batch-1');
   });
 
   it('BATCH-018: missing id returns 400', async () => {
@@ -407,7 +410,7 @@ describe('DELETE /api/llm/batch', () => {
   });
 
   it('BATCH-019: batch not found returns 404', async () => {
-    vi.mocked(fileStorage.deleteBatch).mockResolvedValue(false as never);
+    vi.mocked(mockStorage.deleteBatch).mockResolvedValue(false as never);
 
     const res = await DELETE(deleteRequest({ id: 'nonexistent' }));
     const data = await res.json();

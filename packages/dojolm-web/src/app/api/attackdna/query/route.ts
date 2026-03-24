@@ -13,8 +13,7 @@
 import { NextResponse } from 'next/server';
 import { createApiHandler } from '@/lib/api-handler';
 import * as dnaStorage from '@/lib/storage/dna-storage';
-import { buildTimeline, buildGraphData, createLineageGraph, getLineageStats } from 'bu-tpi/attackdna';
-import type { AttackNode, AttackEdge } from 'bu-tpi/attackdna';
+import { buildTimeline, createLineageGraph } from 'bu-tpi/attackdna';
 
 // ===========================================================================
 // GET /api/attackdna/query — Unified query endpoint

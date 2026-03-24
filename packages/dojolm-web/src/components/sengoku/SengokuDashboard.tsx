@@ -22,6 +22,8 @@ import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { cn, formatDate } from '@/lib/utils'
 import { TemporalTab } from './TemporalTab'
 import { SengokuCampaignBuilder } from './SengokuCampaignBuilder'
@@ -101,7 +103,13 @@ export function SengokuDashboard() {
 
   const fetchCampaigns = useCallback(async () => {
     try {
-      const res = await fetch('/api/sengoku/campaigns')
+      if (!(await canAccessProtectedApi())) {
+        setCampaigns([])
+        setSelectedId(null)
+        return
+      }
+
+      const res = await fetchWithAuth('/api/sengoku/campaigns')
       if (!res.ok) return
       const data = await res.json()
       const raw: readonly Campaign[] = data.campaigns ?? []
@@ -129,7 +137,7 @@ export function SengokuDashboard() {
   const handleRunNow = useCallback(async (campaignId: string) => {
     setRunLoading(campaignId)
     try {
-      const res = await fetch(`/api/sengoku/campaigns/${encodeURIComponent(campaignId)}/run`, {
+      const res = await fetchWithAuth(`/api/sengoku/campaigns/${encodeURIComponent(campaignId)}/run`, {
         method: 'POST',
       })
       if (!res.ok) return
@@ -144,7 +152,7 @@ export function SengokuDashboard() {
 
       pollRef.current = setInterval(async () => {
         try {
-          const pollRes = await fetch(`/api/sengoku/runs/${encodeURIComponent(runId)}`)
+          const pollRes = await fetchWithAuth(`/api/sengoku/runs/${encodeURIComponent(runId)}`)
           if (!pollRes.ok) return
           const pollData = await pollRes.json()
           const run = pollData.run as {

@@ -6,8 +6,8 @@ This repository was audited against the codebase on 2026-03-24. Older NODA, KASH
 
 ## Current Snapshot
 
-- `510` detection patterns across `49` pattern groups
-- `2,960` fixtures across `37` fixture categories
+- 510 patterns across 49 groups
+- 2,960 fixtures across 37 fixture categories
 - `57` built-in LLM provider presets in the core registry
 - `12` top-level web navigation destinations
 - Standalone scanner API on `:8089`

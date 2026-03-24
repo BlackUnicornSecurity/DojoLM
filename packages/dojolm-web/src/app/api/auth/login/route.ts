@@ -8,6 +8,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyPassword, generateCsrfToken } from '@/lib/auth/auth';
 import { createSession } from '@/lib/auth/session';
 import { buildSessionCookie, buildCsrfCookie } from '@/lib/auth/route-guard';
+import {
+  clearLoginRateLimitFailures,
+  getLoginRateLimitKey,
+  isLoginRateLimited,
+  recordLoginRateLimitFailure,
+} from '@/lib/auth/login-rate-limit';
 import { userRepo } from '@/lib/db/repositories/user.repository';
 
 const SESSION_TTL_SECONDS = 24 * 60 * 60; // 24 hours
@@ -16,6 +22,22 @@ const MAX_PASSWORD_LENGTH = 72; // bcrypt internal limit
 
 // Pre-generated dummy hash for constant-time user enumeration prevention
 const DUMMY_HASH = '$2b$12$LJ3m4ys3Lg2VBe8iKPSmCeWhzDyEFRPU6AutoSn/MqKMsf3pv6LXe';
+
+function getSessionIpAddress(req: NextRequest): string | null {
+  if (!process.env.TRUSTED_PROXY) {
+    return null;
+  }
+
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) {
+    const first = forwarded.split(',')[0]?.trim();
+    if (first) {
+      return first;
+    }
+  }
+
+  return req.headers.get('x-real-ip') ?? null;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,30 +65,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Rate limit is handled by middleware (10 failures/min per IP)
+    const rateLimitKey = getLoginRateLimitKey(req, username);
+    if (isLoginRateLimited(rateLimitKey)) {
+      return NextResponse.json(
+        { error: 'Too many login attempts, please try again later' },
+        { status: 429 }
+      );
+    }
 
     const user = userRepo.findByUsername(username);
 
     if (!user) {
       // Constant-time: run bcrypt against dummy hash to prevent timing-based enumeration
       await verifyPassword(password, DUMMY_HASH);
+      const limited = recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
+        { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
+        { status: limited ? 429 : 401 }
       );
     }
 
     // Verify password first, then check enabled — prevents leaking account status
     const passwordValid = await verifyPassword(password, user.password_hash);
     if (!passwordValid || !user.enabled) {
+      const limited = recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
+        { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
+        { status: limited ? 429 : 401 }
       );
     }
 
+    clearLoginRateLimitFailures(rateLimitKey);
+
     // Create session
-    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
+    const clientIp = getSessionIpAddress(req);
     const userAgent = req.headers.get('user-agent') ?? null;
     const sessionToken = createSession(user.id, clientIp, userAgent);
 

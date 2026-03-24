@@ -68,9 +68,9 @@ async function findRunFile(runId: string): Promise<string | null> {
 export const GET = createApiHandler(
   async (
     _request: NextRequest,
-    { params }: { params?: Promise<Record<string, string>> },
+    { params }: { params: Promise<{ runId: string }> },
   ) => {
-    const { runId } = await (params ?? Promise.resolve({ runId: '' }))
+    const { runId } = await params
 
     if (!runId || !SAFE_ID.test(runId)) {
       return NextResponse.json({ error: 'Invalid run id' }, { status: 400 })

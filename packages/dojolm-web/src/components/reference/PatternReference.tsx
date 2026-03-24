@@ -97,7 +97,7 @@ export function PatternReference({ patternGroups, className }: PatternReferenceP
                 <div className="text-center space-y-2">
                   <Search className="h-12 w-12 mx-auto text-muted-foreground" />
                   <p className="text-muted-foreground">
-                    No patterns found matching "{searchQuery}"
+                    No patterns found matching &quot;{searchQuery}&quot;
                   </p>
                 </div>
               </CardContent>

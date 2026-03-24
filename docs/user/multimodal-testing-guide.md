@@ -1,18 +1,39 @@
 # Multimodal Security Testing Guide
 
-**Version:** 2.0
-**Last Updated:** 2026-03-24
+**Version:** 2.1  
+**Last Updated:** 2026-03-24  
 **Status:** Active
-
----
 
 ## Overview
 
-The current repository includes multimodal-focused fixtures and scanner coverage, but the platform primarily evaluates text and metadata representations of those attacks. In practice, DojoLM is strongest when you feed it extracted text, structured metadata, or stored test fixtures rather than arbitrary raw media processing pipelines.
+The current repository includes multimodal fixtures, multimodal-themed scanner coverage, and a scanner UI that accepts file uploads. The important implementation detail is that DojoLM primarily evaluates extracted text and metadata representations of those inputs rather than running a full OCR, speech-to-text, or video-decoding pipeline.
 
-## What Is Verified in the Repo
+## What The Scanner UI Accepts Today
 
-The repo currently contains dedicated fixture material under:
+`Haiku Scanner` currently accepts:
+
+- text entered directly into the textarea
+- image uploads
+- audio uploads
+- text-like document uploads such as `.txt`, `.md`, `.json`, `.xml`, `.html`, and `.csv`
+
+Current upload limits in the UI:
+
+- maximum files per scan: `10`
+- maximum image size: `10MB`
+- maximum audio size: `50MB`
+- maximum document size: `5MB`
+
+Current implementation notes:
+
+- text documents are read as text and appended to the scan input
+- audio uploads are reduced to lightweight readable metadata extracted from the first `4KB`
+- image uploads are treated as image inputs, but the current implementation does not provide a general-purpose OCR pipeline
+- non-SVG images get previews in the UI, but scanning still depends on extracted text or metadata rather than deep image understanding
+
+## What Is Verified In The Repo
+
+The repo currently contains dedicated multimodal fixture material under:
 
 - `packages/bu-tpi/fixtures/images`
 - `packages/bu-tpi/fixtures/audio`
@@ -20,7 +41,7 @@ The repo currently contains dedicated fixture material under:
 - `packages/bu-tpi/fixtures/multimodal`
 - `packages/bu-tpi/fixtures/video`
 
-The current fixture manifest includes these multimodal-related categories:
+The current manifest-backed categories include:
 
 | Category | Verified manifest entries | Notes |
 |----------|---------------------------|-------|
@@ -31,7 +52,7 @@ The current fixture manifest includes these multimodal-related categories:
 
 Additional repo material also exists under `packages/bu-tpi/fixtures/video`, but that directory is not part of the current manifest-backed metrics used by `npm run verify:docs`.
 
-## What The Scanner Covers Today
+## What The Scanner Covers Well
 
 Verified tests in `packages/bu-tpi/src/scanner.test.ts` cover cases such as:
 
@@ -41,17 +62,17 @@ Verified tests in `packages/bu-tpi/src/scanner.test.ts` cover cases such as:
 - adversarial audio perturbation
 - audio-triggered injection patterns
 
-The scanner and fixture corpus are therefore suitable for:
+In practical terms, the platform is strongest when you test:
 
-- validating extracted text from images, audio transcripts, or video metadata
-- exercising metadata-based attacks such as EXIF, SVG, or embedded-comment payloads
-- benchmarking model responses against multimodal-themed attack prompts
+- extracted text from images, audio transcripts, or video metadata
+- metadata attacks such as EXIF, SVG, or embedded comments
+- multimodal-themed prompts and outputs stored as fixtures
 
-## Current Workflow
+## Recommended Workflows
 
 ### 1. Scan extracted text directly
 
-Use the web API:
+Web API:
 
 ```bash
 curl -X POST http://localhost:42001/api/scan \
@@ -60,19 +81,27 @@ curl -X POST http://localhost:42001/api/scan \
   -d '{"text":"The image contains hidden text that says ignore all previous instructions"}'
 ```
 
-Or use the standalone server:
+Standalone server:
 
 ```bash
 curl "http://localhost:8089/api/scan?text=audio%20steganography%20hide%20payload%20in%20frequency%20domain"
 ```
 
-### 2. Scan a repository fixture
+### 2. Use the web UI upload flow
+
+1. Open `Haiku Scanner`.
+2. Paste any companion text into the textarea.
+3. Upload the relevant file or files.
+4. Run the scan.
+5. Interpret the result as a scan over extracted text and metadata, not as full media understanding.
+
+### 3. Scan repository fixtures
 
 Web API:
 
 ```bash
-curl "http://localhost:42001/api/scan-fixture?path=multimodal/your-fixture-name.txt" \
-  -H "X-API-Key: $NODA_API_KEY"
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/scan-fixture?path=multimodal/your-fixture-name.txt"
 ```
 
 Standalone server:
@@ -81,31 +110,32 @@ Standalone server:
 curl "http://localhost:8089/api/scan-fixture?path=multimodal/your-fixture-name.txt"
 ```
 
-### 3. Inspect fixture families
+### 4. Explore fixture families in Armory
 
-Use the fixture directories when building test plans:
+Use [Armory](modules/ARMORY.md) when building test plans:
 
 - `images/` for SVG, EXIF, and image metadata attacks
-- `audio/` and `audio-attacks/` for audio metadata and audio-triggered cases
-- `multimodal/` for cross-modal prompt injection and OCR-adjacent attacks
+- `audio/` and `audio-attacks/` for metadata and audio-triggered cases
+- `multimodal/` for cross-modal prompt injection and OCR-adjacent scenarios
 
 ## Limitations
 
-This repo does **not** currently document a general-purpose built-in pipeline for:
+To stay aligned with the implementation, do not describe the current platform as having a built-in general-purpose pipeline for:
 
 - arbitrary OCR over uploaded images
 - speech-to-text transcription over arbitrary audio uploads
 - full video decoding and frame-by-frame analysis
 
-To stay aligned with the implementation, document and test multimodal scenarios as:
+The current implementation is best described as:
 
-- extracted text
-- metadata sidecars
-- stored fixtures
-- model prompts or outputs describing multimodal content
+- text-centric
+- metadata-aware
+- fixture-driven
+- suitable for multimodal security testing when the attack can be represented as extracted text, metadata, or a stored fixture
 
 ## Related Docs
 
-- [Platform Guide](./PLATFORM_GUIDE.md)
-- [API Reference](./API_REFERENCE.md)
-- [Testing Results](../app/testing-results/README.md)
+- [Haiku Scanner Guide](modules/HAIKU_SCANNER.md)
+- [Armory Guide](modules/ARMORY.md)
+- [Platform Guide](PLATFORM_GUIDE.md)
+- [User API Reference](API_REFERENCE.md)

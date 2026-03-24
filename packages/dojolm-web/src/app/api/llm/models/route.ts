@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import type { LLMModelConfig } from '@/lib/llm-types';
-import { fileStorage } from '@/lib/storage/file-storage';
+import { getStorage } from '@/lib/storage/storage-interface';
 import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
@@ -28,6 +28,11 @@ function sanitizeString(value: unknown): string {
     .trim();
 }
 
+function toSafeModelResponse(model: LLMModelConfig) {
+  const { apiKey: _apiKey, customHeaders: _customHeaders, ...safeModel } = model;
+  return safeModel;
+}
+
 // ===========================================================================
 // GET /api/llm/models - List all models
 // ===========================================================================
@@ -38,12 +43,13 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
+    const storage = await getStorage();
 
     // Filter by provider if specified
     const provider = searchParams.get('provider');
     const enabled = searchParams.get('enabled');
 
-    let models = await fileStorage.getModelConfigs();
+    let models = await storage.getModelConfigs();
 
     // Apply filters
     if (provider) {
@@ -56,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     // S-01: Redact API keys before returning (CRITICAL — keys were exposed to LAN)
-    const safeModels = models.map(({ apiKey: _key, ...safe }) => safe);
+    const safeModels = models.map(toSafeModelResponse);
 
     return NextResponse.json(safeModels);
   } catch (error) {
@@ -156,11 +162,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Save model
-    const saved = await fileStorage.saveModelConfig(newModel);
+    const storage = await getStorage();
+    const saved = await storage.saveModelConfig(newModel);
 
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
-    const { apiKey: _savedKey, ...safeCreated } = saved;
-    return NextResponse.json({ model: safeCreated }, { status: 201 });
+    return NextResponse.json({ model: toSafeModelResponse(saved) }, { status: 201 });
   } catch (error) {
     return apiError('Failed to create model', 500, error);
   }
@@ -185,7 +191,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const success = await fileStorage.deleteModelConfig(id);
+    const storage = await getStorage();
+    const success = await storage.deleteModelConfig(id);
 
     if (!success) {
       return NextResponse.json(
@@ -236,7 +243,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Get existing model
-    const existing = await fileStorage.getModelConfig(id as string);
+    const storage = await getStorage();
+    const existing = await storage.getModelConfig(id as string);
 
     if (!existing) {
       return NextResponse.json(
@@ -274,11 +282,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Save updated model
-    const saved = await fileStorage.saveModelConfig(updated);
+    const saved = await storage.saveModelConfig(updated);
 
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
-    const { apiKey: _patchKey, ...safePatch } = saved;
-    return NextResponse.json({ model: safePatch });
+    return NextResponse.json({ model: toSafeModelResponse(saved) });
   } catch (error) {
     return apiError('Failed to update model', 500, error);
   }

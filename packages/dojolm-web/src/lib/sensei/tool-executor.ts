@@ -54,7 +54,7 @@ export function validateArgs(
 ): readonly ValidationError[] {
   const errors: ValidationError[] = [];
   const schema = toolDef.parameters as {
-    readonly properties?: Readonly<Record<string, { readonly type?: string }>>;
+    readonly properties?: Readonly<Record<string, { readonly type?: string; readonly enum?: readonly unknown[] }>>;
     readonly required?: readonly string[];
   };
 
@@ -77,7 +77,20 @@ export function validateArgs(
     }
 
     const propSchema = properties[key];
-    if (!propSchema?.type) continue;
+    if (!propSchema) {
+      errors.push({ field: key, message: `"${key}" is not allowed.` });
+      continue;
+    }
+
+    if (propSchema.enum && !propSchema.enum.includes(value)) {
+      errors.push({
+        field: key,
+        message: `"${key}" must be one of: ${propSchema.enum.join(', ')}.`,
+      });
+      continue;
+    }
+
+    if (!propSchema.type) continue;
 
     const expectedType = propSchema.type;
     const actualType = Array.isArray(value) ? 'array' : typeof value;
@@ -178,8 +191,8 @@ export function sanitizeResult(data: unknown): unknown {
 function handleNavigateTo(
   args: Readonly<Record<string, unknown>>,
 ): { readonly action: string; readonly module: string } {
-  const module = typeof args.module === 'string' ? args.module : 'dashboard';
-  return { action: 'navigate', module };
+  const moduleId = typeof args.module === 'string' ? args.module : 'dashboard';
+  return { action: 'navigate', module: moduleId };
 }
 
 /**
@@ -189,11 +202,11 @@ function handleNavigateTo(
 function handleExplainFeature(
   args: Readonly<Record<string, unknown>>,
 ): { readonly module: string; readonly description: string } {
-  const module = typeof args.module === 'string' ? args.module : 'dashboard';
+  const moduleId = typeof args.module === 'string' ? args.module : 'dashboard';
   const description =
-    (MODULE_CONTEXT as Readonly<Record<string, string>>)[module] ??
-    `Module "${module}" — no description available.`;
-  return { module, description };
+    (MODULE_CONTEXT as Readonly<Record<string, string>>)[moduleId] ??
+    `Module "${moduleId}" — no description available.`;
+  return { module: moduleId, description };
 }
 
 // ---------------------------------------------------------------------------
@@ -209,7 +222,7 @@ function buildEndpointUrl(
   baseUrl: string,
 ): string {
   // Interpolate {param} placeholders in the endpoint
-  let url = endpoint.replace(/\{(\w+)\}/g, (_match, param: string) => {
+  const url = endpoint.replace(/\{(\w+)\}/g, (_match, param: string) => {
     const value = args[param];
     return typeof value === 'string' ? encodeURIComponent(value) : '';
   });
@@ -318,12 +331,18 @@ export async function executeToolCall(
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unknown error');
+      const sanitizedError =
+        typeof sanitizeResult(errorText) === 'string'
+          ? (sanitizeResult(errorText) as string).slice(0, 200)
+          : 'Request failed.';
       return {
         toolCallId,
         tool: toolDef.name,
         success: false,
         data: null,
-        error: `API error (${response.status}): ${errorText.slice(0, 200)}`,
+        error: response.status >= 500
+          ? `API error (${response.status})`
+          : `API error (${response.status}): ${sanitizedError}`,
         durationMs: Date.now() - startTime,
       };
     }

@@ -104,7 +104,17 @@ vi.mock('../adversarial/SkillsLibrary', () => ({
 }))
 
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
+  Tabs: ({
+    children,
+    value,
+    onValueChange: _onValueChange,
+    ...rest
+  }: {
+    children: ReactNode
+    value: string
+    onValueChange?: (value: string) => void
+    [k: string]: unknown
+  }) => (
     <div data-testid="tabs-root" data-value={value} {...rest}>{children}</div>
   ),
   TabsList: ({ children, ...rest }: { children: ReactNode; [k: string]: unknown }) => <div role="tablist" {...rest}>{children}</div>,

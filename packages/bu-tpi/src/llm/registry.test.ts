@@ -1,7 +1,7 @@
 /**
  * Unit tests for Provider Registry, Config Loader, and Presets (S79)
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -144,13 +144,16 @@ describe('Presets', () => {
 
 describe('Config Loader', () => {
   const tmpDir = join(tmpdir(), 'dojolm-config-test-' + Date.now());
+  let warnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     mkdirSync(tmpDir, { recursive: true });
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
     rmSync(tmpDir, { recursive: true, force: true });
+    warnSpy.mockRestore();
   });
 
   it('returns empty array when no config file exists', () => {

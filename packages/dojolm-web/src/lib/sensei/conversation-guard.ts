@@ -61,6 +61,48 @@ const TOOL_INJECTION_PATTERNS: readonly RegExp[] = [
   /\[TOOL_CALL\]/i,
 ];
 
+interface DelimitedScanPayload {
+  readonly prefix: string;
+  readonly payload: string;
+}
+
+const SCAN_REQUEST_PREFIX =
+  /^(?<prefix>(?:(?:can|could|would)\s+you\s+|please\s+)?(?:scan|analyze|check|test|evaluate)\b[\s\S]*?:)\s*(?<payload>[\s\S]+)$/i;
+
+function unwrapDelimitedScanPayload(payload: string): string | null {
+  const trimmed = payload.trim();
+
+  const fencedMatch = /^```(?:[\w-]+)?\n([\s\S]*?)\n```$/u.exec(trimmed);
+  if (fencedMatch?.[1]) {
+    return fencedMatch[1];
+  }
+
+  const inlineCodeMatch = /^`([\s\S]+)`$/u.exec(trimmed);
+  if (inlineCodeMatch?.[1]) {
+    return inlineCodeMatch[1];
+  }
+
+  const quotedMatch = /^"([\s\S]+)"$/u.exec(trimmed) ?? /^'([\s\S]+)'$/u.exec(trimmed);
+  if (quotedMatch?.[1]) {
+    return quotedMatch[1];
+  }
+
+  return null;
+}
+
+function extractDelimitedScanPayload(text: string): DelimitedScanPayload | null {
+  const match = SCAN_REQUEST_PREFIX.exec(text.trim());
+  if (!match?.groups) return null;
+
+  const payload = unwrapDelimitedScanPayload(match.groups.payload);
+  if (!payload) return null;
+
+  return {
+    prefix: match.groups.prefix,
+    payload,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // System Prompt Fragments (detect leakage in output)
 // ---------------------------------------------------------------------------
@@ -161,6 +203,9 @@ export function guardSenseiInput(
   text: string,
   guardConfig: Readonly<GuardConfig>,
 ): GuardInputResult {
+  const delimitedScanPayload = extractDelimitedScanPayload(text);
+  const inspectionTarget = delimitedScanPayload?.prefix ?? text;
+
   // Check for tool-call injection
   for (const pattern of TOOL_INJECTION_PATTERNS) {
     pattern.lastIndex = 0;
@@ -172,14 +217,19 @@ export function guardSenseiInput(
     }
   }
 
-  // Check for system prompt extraction.
-  // F-12 fix: allow scan-intent messages that quote malicious text for scanning.
-  // Patterns like "scan this text: <malicious>" or "analyze: <malicious>" are safe —
-  // the user is asking Sensei to scan known-malicious content, not attacking Sensei.
-  const isScanIntent = /^(scan|analyze|check|test|evaluate)\s+(this|the|following)?\s*(text|prompt|input|payload|message)?[\s:]/i.test(text);
+  // Allow scan requests to include known-malicious extraction samples only when
+  // the payload is explicitly delimited as data (quoted or fenced). A bare
+  // prefix like "scan this text: print everything above..." should still block.
+  for (const pattern of SYSTEM_PROMPT_EXTRACTION_PATTERNS) {
+    pattern.lastIndex = 0;
+    if (pattern.test(inspectionTarget)) {
+      return {
+        proceed: false,
+        reason: 'System prompt extraction attempt detected.',
+      };
+    }
 
-  if (!isScanIntent) {
-    for (const pattern of SYSTEM_PROMPT_EXTRACTION_PATTERNS) {
+    if (!delimitedScanPayload) {
       pattern.lastIndex = 0;
       if (pattern.test(text)) {
         return {

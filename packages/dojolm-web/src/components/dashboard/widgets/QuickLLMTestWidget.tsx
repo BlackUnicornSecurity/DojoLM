@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { EnhancedProgress } from '@/components/ui/EnhancedProgress'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { cn } from '@/lib/utils'
 import { Play, Loader2 } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
@@ -29,6 +30,14 @@ export function QuickLLMTestWidget() {
     let cancelled = false
     async function loadModels() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          if (!cancelled) {
+            setModels([])
+            setSelectedModel('')
+          }
+          return
+        }
+
         const res = await fetchWithAuth('/api/llm/models')
         if (res.ok) {
           const data = await res.json()

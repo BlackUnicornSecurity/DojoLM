@@ -10,6 +10,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, UpdateCampaignRequest, CampaignStatus } from '@/lib/sengoku-types';
+import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
 
 const CAMPAIGNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'campaigns');
 const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
@@ -85,6 +86,7 @@ export async function PATCH(
   }
 
   const body = (await request.json()) as UpdateCampaignRequest;
+  let normalizedWebhookUrl: string | null | undefined;
 
   // Validate name if provided
   if (body.name !== undefined && !SAFE_NAME.test(body.name)) {
@@ -93,14 +95,14 @@ export async function PATCH(
 
   // Validate webhookUrl if provided
   if (body.webhookUrl !== undefined && body.webhookUrl !== null) {
-    try {
-      const parsed = new URL(body.webhookUrl);
-      if (parsed.protocol !== 'https:') {
-        return NextResponse.json({ error: 'webhookUrl must use https' }, { status: 400 });
-      }
-    } catch {
-      return NextResponse.json({ error: 'webhookUrl must be a valid URL' }, { status: 400 });
+    const webhookValidation = await validateSengokuWebhookUrl(body.webhookUrl);
+    if (!webhookValidation.valid) {
+      return NextResponse.json({ error: webhookValidation.error }, { status: 400 });
     }
+    normalizedWebhookUrl = webhookValidation.normalizedUrl ?? null;
+  }
+  if (body.webhookUrl === null) {
+    normalizedWebhookUrl = null;
   }
 
   // Validate selectedSkillIds if provided
@@ -120,7 +122,7 @@ export async function PATCH(
     ...(body.selectedSkillIds !== undefined && { selectedSkillIds: body.selectedSkillIds.map((s) => String(s).slice(0, 128)) }),
     ...(body.status !== undefined && VALID_STATUSES.includes(body.status) && { status: body.status }),
     ...(body.graph !== undefined && { graph: body.graph }),
-    ...(body.webhookUrl !== undefined && { webhookUrl: body.webhookUrl ? String(body.webhookUrl).slice(0, 2048) : null }),
+    ...(body.webhookUrl !== undefined && { webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null }),
     updatedAt: new Date().toISOString(),
   };
 

@@ -6,13 +6,13 @@ import "./globals.css";
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ['400', '500', '600', '700'],
+  weight: ["400", "500", "600", "700"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ['400', '600', '700'],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,9 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${plusJakarta.variable} ${jetbrainsMono.variable} antialiased`}
-      >
+      <body className={`${plusJakarta.variable} ${jetbrainsMono.variable} antialiased`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:z-[9999] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--bg-primary,#0a0a0a)] focus:text-[var(--foreground,#fafafa)] focus:ring-2 focus:ring-[var(--bu-electric,#5B8DEF)] focus:outline-none"

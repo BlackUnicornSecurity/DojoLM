@@ -13,5 +13,5 @@ This directory holds formal assessment-oriented documentation rather than day-to
 ## Separation Of Concerns
 
 - repo QA logs live under `team/testing/QA/QA-Log/`
-- security audit artifacts live under `team/testing/QA/security/`
+- security audit artifacts live under `team/testing/QA/security/audit-results/`
 - formal model assessment sessions and evidence live under `docs/app/testing-results/`

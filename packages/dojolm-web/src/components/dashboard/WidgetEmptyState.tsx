@@ -10,6 +10,7 @@
  */
 
 import type { LucideIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WidgetEmptyStateProps {
   icon: LucideIcon
@@ -23,20 +24,18 @@ export interface WidgetEmptyStateProps {
  */
 export function WidgetEmptyState({ icon: Icon, title, description, action }: WidgetEmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-6 text-center">
-      <Icon className="w-8 h-8 text-muted-foreground/50 mb-2" aria-hidden="true" />
-      <p className="text-xs font-medium">{title}</p>
+    <div className="flex flex-col items-center justify-center rounded-xl border border-[var(--border-subtle)] surface-base px-4 py-6 text-center">
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)]">
+        <Icon className="w-5 h-5 text-muted-foreground/70" aria-hidden="true" />
+      </div>
+      <p className="text-sm font-semibold text-[var(--foreground)]">{title}</p>
       {description && (
-        <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">{description}</p>
+        <p className="mt-1 max-w-[220px] text-xs leading-5 text-muted-foreground">{description}</p>
       )}
       {action && (
-        <button
-          type="button"
-          onClick={action.onClick}
-          className="text-xs text-[var(--dojo-primary)] hover:underline mt-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={action.onClick} className="mt-3 text-xs">
           {action.label}
-        </button>
+        </Button>
       )}
     </div>
   )

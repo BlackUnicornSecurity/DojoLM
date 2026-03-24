@@ -26,16 +26,16 @@ export function ModuleHeader({ title, subtitle, icon: Icon, actions }: ModuleHea
   return (
     <div className="flex items-start justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[var(--dojo-primary)]/10 flex items-center justify-center">
-          <Icon className="h-5 w-5 text-[var(--dojo-primary)]" aria-hidden="true" />
+        <div className="w-10 h-10 rounded-xl bg-[var(--bu-electric-subtle)] border border-[var(--bu-electric-muted)] flex items-center justify-center shadow-[var(--shadow-sm)]">
+          <Icon className="h-5 w-5 text-[var(--bu-electric)]" aria-hidden="true" />
         </div>
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--foreground)]">{title}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+        <div className="space-y-1">
+          <h2 className="text-page-title text-[var(--foreground)]">{title}</h2>
+          <p className="text-sm text-muted-foreground max-w-2xl">{subtitle}</p>
         </div>
       </div>
       {actions && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           {actions}
         </div>
       )}

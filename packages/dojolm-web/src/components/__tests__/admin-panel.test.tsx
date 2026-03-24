@@ -17,6 +17,11 @@ vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: (...args: unknown[]) => mockFetchWithAuth(...args),
 }));
 
+const mockCanAccessProtectedApi = vi.fn();
+vi.mock('@/lib/client-auth-access', () => ({
+  canAccessProtectedApi: (...args: unknown[]) => mockCanAccessProtectedApi(...args),
+}));
+
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   formatDate: (input: unknown) => String(input),
@@ -369,6 +374,7 @@ describe('SystemHealth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers({ shouldAdvanceTime: true });
+    mockCanAccessProtectedApi.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -533,6 +539,34 @@ describe('SystemHealth', () => {
 
     expect(screen.getByText('Disconnected')).toBeInTheDocument();
     expect(screen.getByText('MCP server not configured')).toBeInTheDocument();
+  });
+
+  it('ADM-015b: skips MCP status fetch when protected access is unavailable', async () => {
+    mockCanAccessProtectedApi.mockResolvedValue(false);
+    mockFetchWithAuth.mockImplementation((url: string) => {
+      if (url === '/api/admin/health') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            scanner: { reachable: true, responseTimeMs: 10 },
+            guard: { enabled: true, mode: 'shinobi', eventCount: 5 },
+            storage: { type: 'json', modelsCount: 3 },
+            app: { version: '2.0.0' },
+          }),
+        });
+      }
+      return Promise.resolve({ ok: false });
+    });
+
+    render(<SystemHealth />);
+
+    await waitFor(() => {
+      expect(screen.getByText('MCP Server')).toBeInTheDocument();
+    });
+
+    expect(mockFetchWithAuth).toHaveBeenCalledTimes(1);
+    expect(mockFetchWithAuth).toHaveBeenCalledWith('/api/admin/health');
+    expect(screen.getByText('Disconnected')).toBeInTheDocument();
   });
 });
 

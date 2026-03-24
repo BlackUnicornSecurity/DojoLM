@@ -54,14 +54,15 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
     currentProbe: undefined,
   })
   const [elapsed, setElapsed] = useState(0)
-  const startTimeRef = useRef(Date.now())
+  const startTimeRef = useRef<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Elapsed timer
   useEffect(() => {
     startTimeRef.current = Date.now()
     timerRef.current = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000))
+      const startTime = startTimeRef.current ?? Date.now()
+      setElapsed(Math.floor((Date.now() - startTime) / 1000))
     }, 1000)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)

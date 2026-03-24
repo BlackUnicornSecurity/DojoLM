@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
 import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
-import { fileStorage } from '@/lib/storage/file-storage';
+import { getStorage } from '@/lib/storage/storage-interface';
 import { executeBatchTests, executeSingleTestWithRetry } from '@/lib/llm-execution';
 import { getConcurrentLimit } from '@/lib/llm-constants';
 import { executeWithGuard } from '@/lib/guard-middleware';
@@ -62,10 +62,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const storage = await getStorage();
+
     // Get models
     const models: LLMModelConfig[] = [];
     for (const modelId of modelIds) {
-      const model = await fileStorage.getModelConfig(modelId);
+      const model = await storage.getModelConfig(modelId);
       if (!model) {
         return NextResponse.json(
           { error: `Model not found: ${modelId}` },
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
     // Get test cases
     const testCases: LLMPromptTestCase[] = [];
     for (const testCaseId of testCaseIds) {
-      const testCase = await fileStorage.getTestCase(testCaseId);
+      const testCase = await storage.getTestCase(testCaseId);
       if (!testCase) {
         return NextResponse.json(
           { error: `Test case not found: ${testCaseId}` },
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create batch record for tracking
-    const initialBatch = await fileStorage.createBatch({
+    const initialBatch = await storage.createBatch({
       name: `Batch ${new Date().toISOString()}`,
       testCaseIds,
       modelConfigIds: modelIds,
@@ -112,7 +114,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Update to running status
-    const runningBatch = await fileStorage.updateBatch(initialBatch.id, {
+    const runningBatch = await storage.updateBatch(initialBatch.id, {
       status: 'running',
     });
 
@@ -158,7 +160,7 @@ export async function POST(request: NextRequest) {
       executeGuardedBatch(models, testCases, guardConfig, initialBatch.id)
         .catch(async (error) => {
           console.error(`Batch ${initialBatch.id} failed:`, error);
-          await fileStorage.updateBatch(initialBatch.id, {
+          await storage.updateBatch(initialBatch.id, {
             status: 'failed',
           });
         });
@@ -166,17 +168,16 @@ export async function POST(request: NextRequest) {
       // Standard batch (no guard) — pass route batchId to avoid mismatch (BUG-003)
       executeBatchTests(models, testCases, undefined, undefined, initialBatch.id)
         .then(async (batch) => {
-          await fileStorage.updateBatch(initialBatch.id, {
+          await storage.updateBatch(initialBatch.id, {
             status: batch.status,
             completedTests: batch.completedTests,
             failedTests: batch.failedTests,
             avgResilienceScore: batch.avgResilienceScore,
-            executionIds: batch.executionIds,
           });
         })
         .catch(async (error) => {
           console.error(`Batch ${initialBatch.id} failed:`, error);
-          await fileStorage.updateBatch(initialBatch.id, {
+          await storage.updateBatch(initialBatch.id, {
             status: 'failed',
           });
         });
@@ -204,13 +205,14 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const status = searchParams.get('status');
+    const storage = await getStorage();
 
     // F-10: Stale batch timeout — 3 hours for large multi-model runs (QA Round 3)
     const STALE_TIMEOUT_MS = 3 * 60 * 60 * 1000;
 
     // If id is provided, return specific batch
     if (id) {
-      const batch = await fileStorage.getBatch(id);
+      const batch = await storage.getBatch(id);
 
       if (!batch) {
         return NextResponse.json(
@@ -223,7 +225,7 @@ export async function GET(request: NextRequest) {
       if (batch.status === 'running' && batch.createdAt) {
         const batchAge = Date.now() - new Date(batch.createdAt).getTime();
         if (batchAge > STALE_TIMEOUT_MS) {
-          await fileStorage.updateBatch(batch.id, { status: 'failed' });
+          await storage.updateBatch(batch.id, { status: 'failed' });
           batch.status = 'failed';
         }
       }
@@ -237,7 +239,7 @@ export async function GET(request: NextRequest) {
       if (!validStatuses.includes(status as BatchStatus)) {
         return NextResponse.json({ error: 'Invalid status value' }, { status: 400 });
       }
-      const { batches } = await fileStorage.queryBatches({ status: status as BatchStatus });
+      const { batches } = await storage.queryBatches({ status: status as BatchStatus });
 
       // F-10: Auto-fail stale "running" batches older than 3 hours
       const now = Date.now();
@@ -245,7 +247,7 @@ export async function GET(request: NextRequest) {
         if (batch.status === 'running' && batch.createdAt) {
           const batchAge = now - new Date(batch.createdAt).getTime();
           if (batchAge > STALE_TIMEOUT_MS) {
-            await fileStorage.updateBatch(batch.id, { status: 'failed' });
+            await storage.updateBatch(batch.id, { status: 'failed' });
             batch.status = 'failed';
           }
         }
@@ -255,7 +257,7 @@ export async function GET(request: NextRequest) {
     }
 
     // If no query params, return all batches
-    const { batches } = await fileStorage.queryBatches({});
+    const { batches } = await storage.queryBatches({});
     return NextResponse.json({ batches });
   } catch (error) {
     return apiError('Failed to get batch', 500, error);
@@ -273,6 +275,7 @@ export async function DELETE(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const storage = await getStorage();
 
     if (!id) {
       return NextResponse.json(
@@ -281,7 +284,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const success = await fileStorage.deleteBatch(id);
+    const success = await storage.deleteBatch(id);
 
     if (!success) {
       return NextResponse.json(
@@ -306,6 +309,7 @@ async function executeGuardedBatch(
   frozenGuardConfig: Readonly<GuardConfig>,
   batchId: string
 ): Promise<void> {
+  const storage = await getStorage();
   const CONCURRENT_LIMIT = getConcurrentLimit();
   const executions: Array<{ model: LLMModelConfig; testCase: LLMPromptTestCase }> = [];
 
@@ -337,7 +341,7 @@ async function executeGuardedBatch(
           }
 
           // Save execution
-          await fileStorage.saveExecution(execution);
+          await storage.saveExecution(execution);
 
           completedTests++;
           if (execution.status === 'failed') {
@@ -358,7 +362,7 @@ async function executeGuardedBatch(
       ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
       : 0;
 
-    await fileStorage.updateBatch(batchId, {
+    await storage.updateBatch(batchId, {
       completedTests,
       failedTests,
       avgResilienceScore: avgScore,
@@ -366,7 +370,7 @@ async function executeGuardedBatch(
   }
 
   // Finalize batch
-  await fileStorage.updateBatch(batchId, {
+  await storage.updateBatch(batchId, {
     status: 'completed',
     completedTests,
     failedTests,

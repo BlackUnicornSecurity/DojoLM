@@ -158,7 +158,23 @@ vi.mock('@/components/ui/label', () => ({
   Label: ({ children, ...rest }: { children: ReactNode; [k: string]: unknown }) => <label {...rest}>{children}</label>,
 }))
 vi.mock('@/components/ui/checkbox', () => ({
-  Checkbox: (props: Record<string, unknown>) => <input type="checkbox" {...props} />,
+  Checkbox: ({
+    checked,
+    onCheckedChange,
+    ...rest
+  }: {
+    checked?: boolean
+    onCheckedChange?: (value: boolean) => void
+    [key: string]: unknown
+  }) => (
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(event) => onCheckedChange?.(event.target.checked)}
+      readOnly={!onCheckedChange}
+      {...rest}
+    />
+  ),
 }))
 
 // Mock llm-constants
@@ -247,7 +263,7 @@ describe('LLM-001: Dashboard tab rendering', () => {
 describe('LLM-002: Add model via ModelList', () => {
   it('renders Add Model button and model cards', () => {
     render(<ModelList />)
-    expect(screen.getByText('Add Model')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Add Model' })).toHaveLength(2)
     expect(screen.getByText('GPT-4o')).toBeInTheDocument()
     expect(screen.getByText('Claude 3.5')).toBeInTheDocument()
     expect(screen.getByText('Disabled Model')).toBeInTheDocument()
@@ -255,7 +271,7 @@ describe('LLM-002: Add model via ModelList', () => {
 
   it('shows model form on Add Model click', () => {
     render(<ModelList />)
-    fireEvent.click(screen.getAllByText('Add Model')[0])
+    fireEvent.click(screen.getAllByRole('button', { name: 'Add Model' })[0])
     expect(screen.getByText('Add New Model')).toBeInTheDocument()
   })
 })

@@ -8,9 +8,9 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useModelContext } from '@/lib/contexts';
-import type { LLMModelConfig, LLMProvider } from '@/lib/llm-types';
+import type { LLMModelConfig } from '@/lib/llm-types';
 import { PROVIDER_INFO } from '@/lib/llm-constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,6 +65,19 @@ export function ModelList() {
     setEditingModel(null);
   };
 
+  const modelSummary = useMemo(() => {
+    const enabledCount = models.filter(model => model.enabled).length;
+    const guardRequiredCount = models.filter(model => model.requiresGuard).length;
+    const elevatedRiskCount = models.filter(model => model.safetyRisk && model.safetyRisk !== 'LOW' && model.safetyRisk !== 'SAFE').length;
+
+    return {
+      enabledCount,
+      disabledCount: models.length - enabledCount,
+      guardRequiredCount,
+      elevatedRiskCount,
+    };
+  }, [models]);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -99,35 +112,51 @@ export function ModelList() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">Configured Models ({models.length})</h3>
-          <p className="text-sm text-muted-foreground">
-            Manage your LLM model configurations for testing
-          </p>
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-page-title text-[var(--foreground)]">Configured Models ({models.length})</h3>
+            <p className="text-sm text-muted-foreground">
+              Manage provider coverage, test readiness, and risk posture from one command surface.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="active">{modelSummary.enabledCount} enabled</Badge>
+            <Badge variant="outline">{modelSummary.disabledCount} standby</Badge>
+            <Badge variant={modelSummary.guardRequiredCount > 0 ? 'warning' : 'success'}>
+              {modelSummary.guardRequiredCount} guard-gated
+            </Badge>
+            <Badge variant={modelSummary.elevatedRiskCount > 0 ? 'error' : 'success'}>
+              {modelSummary.elevatedRiskCount} elevated risk
+            </Badge>
+          </div>
         </div>
-        <Button onClick={handleAddModel} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Model
-        </Button>
+        <div>
+          <Button onClick={handleAddModel} variant="gradient" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Model
+          </Button>
+        </div>
       </div>
 
       {models.length === 0 ? (
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Brain className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+        <Card variant="interactive" className="border-dashed">
+          <CardContent className="p-8 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bu-electric-subtle)] text-[var(--bu-electric)]">
+              <Brain className="h-7 w-7" />
+            </div>
             <h3 className="text-lg font-semibold mb-2">No models configured</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Add your first LLM model to start testing
+            <p className="mx-auto mb-5 max-w-md text-sm text-muted-foreground">
+              Add your first LLM model to start testing, tracking provider coverage, and exporting results from the dashboard.
             </p>
-            <Button onClick={handleAddModel}>
+            <Button onClick={handleAddModel} variant="gradient">
               <Plus className="h-4 w-4 mr-2" />
               Add Model
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {models.map(model => (
             <ModelCard
               key={model.id}
@@ -140,6 +169,32 @@ export function ModelList() {
               testResult={testResults[model.id]}
             />
           ))}
+
+          <button
+            type="button"
+            onClick={handleAddModel}
+            className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+            aria-label="Add Model"
+          >
+            <Card variant="interactive" className="h-full border-dashed">
+              <CardContent className="flex h-full min-h-[280px] flex-col items-start justify-between p-5">
+                <div className="space-y-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--bu-electric-subtle)] text-[var(--bu-electric)]">
+                    <Plus className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-[var(--foreground)]">Add Model</h4>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Create another provider card and keep the grid balanced as your evaluation stack grows.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--bu-electric)]">
+                  Expand Coverage
+                </p>
+              </CardContent>
+            </Card>
+          </button>
         </div>
       )}
 
@@ -170,25 +225,50 @@ interface ModelCardProps {
   testResult?: { success: boolean; error?: string };
 }
 
+function formatUpdatedAt(value: string) {
+  if (!value) return 'Not yet synced';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Not yet synced';
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function getRiskBadgeVariant(risk?: LLMModelConfig['safetyRisk']) {
+  switch (risk) {
+    case 'CRITICAL':
+      return 'critical' as const;
+    case 'HIGH':
+      return 'high' as const;
+    case 'MEDIUM':
+      return 'medium' as const;
+    case 'LOW':
+      return 'low' as const;
+    case 'SAFE':
+      return 'success' as const;
+    default:
+      return 'outline' as const;
+  }
+}
+
 function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testResult }: ModelCardProps) {
   const providerInfo = PROVIDER_INFO[model.provider];
+  const updatedLabel = formatUpdatedAt(model.updatedAt);
+  const riskLabel = model.safetyRisk ?? 'Unrated';
 
   return (
-    <Card className={model.enabled ? '' : 'border-muted'}>
+    <Card variant={model.enabled ? 'interactive' : 'default'} className={model.enabled ? '' : 'border-muted opacity-[0.85]'}>
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-3">
           <div className={`flex-1 min-w-0 ${!model.enabled ? 'opacity-50' : ''}`}>
             <CardTitle className="text-base truncate">{model.name}</CardTitle>
-            <CardDescription className="text-xs truncate">{model.model}</CardDescription>
+            <CardDescription className="mt-1 text-xs truncate">{model.model}</CardDescription>
           </div>
-          <Badge variant={model.enabled ? 'default' : 'secondary'} className="shrink-0">
+          <Badge variant={model.enabled ? 'active' : 'secondary'} className="shrink-0">
             {model.enabled ? 'Enabled' : 'Disabled'}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Provider badge with initial */}
-        <div className={`flex items-center gap-2 ${!model.enabled ? 'opacity-50' : ''}`}>
+      <CardContent className="space-y-4">
+        <div className={`flex flex-wrap items-center gap-2 ${!model.enabled ? 'opacity-50' : ''}`}>
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 rounded bg-[var(--bg-quaternary)] flex items-center justify-center flex-shrink-0" aria-hidden="true">
               <span className="text-[10px] font-bold text-[var(--bu-electric)]">
@@ -204,29 +284,50 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
               Custom URL
             </Badge>
           )}
+          {model.requiresGuard && (
+            <Badge variant="warning" className="text-xs">
+              Guard Required
+            </Badge>
+          )}
+          <Badge variant={getRiskBadgeVariant(model.safetyRisk)} className="text-xs">
+            {riskLabel}
+          </Badge>
         </div>
 
-        {/* Test result indicator */}
-        {testResult ? (
-          <div className={`flex items-center gap-1 text-xs ${testResult.success ? 'text-green-500' : 'text-red-500'}`}>
-            {testResult.success ? (
-              <>
-                <Check className="h-3 w-3" />
-                Connection successful
-              </>
-            ) : (
-              <>
-                <X className="h-3 w-3" />
-                {testResult.error || 'Connection failed'}
-              </>
-            )}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-lg border border-[var(--border-subtle)] surface-base p-3">
+            <p className="text-label">Updated</p>
+            <p className="mt-2 text-sm font-medium text-[var(--foreground)]">{updatedLabel}</p>
           </div>
-        ) : (
-          <p className="text-xs text-muted-foreground italic">No tests run yet</p>
-        )}
+          <div className="rounded-lg border border-[var(--border-subtle)] surface-base p-3">
+            <p className="text-label">Max Tokens</p>
+            <p className="mt-2 text-sm font-medium text-[var(--foreground)]">
+              {model.maxTokens ? model.maxTokens.toLocaleString() : 'Default'}
+            </p>
+          </div>
+        </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 pt-2">
+        <div className={`rounded-lg border border-[var(--border-subtle)] surface-base p-3 ${!model.enabled ? 'opacity-70' : ''}`}>
+          {testResult ? (
+            <div className={`flex items-center gap-1 text-xs ${testResult.success ? 'text-green-500' : 'text-red-500'}`}>
+              {testResult.success ? (
+                <>
+                  <Check className="h-3 w-3" />
+                  Connection successful
+                </>
+              ) : (
+                <>
+                  <X className="h-3 w-3" />
+                  {testResult.error || 'Connection failed'}
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground italic">No tests run yet</p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 pt-1">
           <Button
             size="sm"
             variant="outline"
@@ -244,10 +345,13 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
           >
             <TestTube className="h-3 w-3" />
           </Button>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-3">
           <Button
             size="sm"
             variant="ghost"
-            className="text-xs text-muted-foreground"
+            className="px-0 text-xs text-muted-foreground hover:text-foreground"
             onClick={() => onToggle(!model.enabled)}
           >
             {model.enabled ? 'Disable' : 'Enable'}
@@ -255,7 +359,7 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
           <Button
             size="sm"
             variant="ghost"
-            className="text-muted-foreground hover:text-red-500 transition-colors"
+            className="px-0 text-muted-foreground hover:text-red-500 transition-colors"
             onClick={onDelete}
           >
             <Trash2 className="h-3 w-3" />

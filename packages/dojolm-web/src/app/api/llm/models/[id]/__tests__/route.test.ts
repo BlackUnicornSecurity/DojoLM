@@ -22,16 +22,20 @@ vi.mock('@/lib/api-error', () => ({
   }),
 }));
 
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
+const { mockStorage } = vi.hoisted(() => ({
+  mockStorage: {
     getModelConfig: vi.fn(),
     saveModelConfig: vi.fn(),
     deleteModelConfig: vi.fn(),
   },
 }));
 
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue(mockStorage),
+}));
+
 vi.mock('@/lib/llm-providers', () => ({
-  testModelConfig: vi.fn(),
+  validateModelConfig: vi.fn(),
 }));
 
 // ---------------------------------------------------------------------------
@@ -40,7 +44,7 @@ vi.mock('@/lib/llm-providers', () => ({
 
 import { GET, PATCH, DELETE } from '../route';
 import { checkApiAuth } from '@/lib/api-auth';
-import { fileStorage } from '@/lib/storage/file-storage';
+import { validateModelConfig } from '@/lib/llm-providers';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -95,6 +99,10 @@ describe('API /api/llm/models/[id]', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (checkApiAuth as ReturnType<typeof vi.fn>).mockReturnValue(null);
+    (validateModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({
+      valid: true,
+      errors: [],
+    });
   });
 
   // =========================================================================
@@ -103,7 +111,7 @@ describe('API /api/llm/models/[id]', () => {
 
   describe('GET', () => {
     it('MID-001: returns model with apiKey stripped', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
 
       const res = await GET(makeRequest('GET'), createParams('test-id'));
       const data = await res.json();
@@ -116,7 +124,7 @@ describe('API /api/llm/models/[id]', () => {
     });
 
     it('MID-002: returns 404 when model not found', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(null);
+      mockStorage.getModelConfig.mockResolvedValue(null);
 
       const res = await GET(makeRequest('GET'), createParams('nonexistent'));
       const data = await res.json();
@@ -132,11 +140,11 @@ describe('API /api/llm/models/[id]', () => {
       const res = await GET(makeRequest('GET'), createParams('test-id'));
 
       expect(res.status).toBe(401);
-      expect(fileStorage.getModelConfig).not.toHaveBeenCalled();
+      expect(mockStorage.getModelConfig).not.toHaveBeenCalled();
     });
 
     it('MID-004: returns 500 on internal error', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('DB down'));
+      mockStorage.getModelConfig.mockRejectedValue(new Error('DB down'));
 
       const res = await GET(makeRequest('GET'), createParams('test-id'));
       const data = await res.json();
@@ -152,8 +160,8 @@ describe('API /api/llm/models/[id]', () => {
 
   describe('PATCH', () => {
     it('MID-005: updates allowed fields', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({ ...SAMPLE_MODEL });
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockImplementation(async (m) => m);
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
       const body = { name: 'GPT-4 Turbo', description: 'Updated', maxTokens: 8192 };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -166,8 +174,8 @@ describe('API /api/llm/models/[id]', () => {
     });
 
     it('MID-006: rejects non-allowlisted fields (mass-assignment prevention)', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({ ...SAMPLE_MODEL });
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockImplementation(async (m) => m);
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
       const body = { name: 'Hacked', apiKey: 'sk-evil', provider: 'evil-provider', role: 'admin' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -176,7 +184,7 @@ describe('API /api/llm/models/[id]', () => {
       expect(res.status).toBe(200);
       expect(data.model.name).toBe('Hacked');
       // Non-allowlisted fields must NOT be in the saved config
-      const savedArg = (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mock.calls[0][0];
+      const savedArg = mockStorage.saveModelConfig.mock.calls[0][0];
       expect(savedArg.apiKey).toBe('sk-secret-key-12345'); // preserved from original
       expect(savedArg.provider).toBe('openai'); // preserved from original
       expect(savedArg.role).toBeUndefined(); // never existed
@@ -190,8 +198,16 @@ describe('API /api/llm/models/[id]', () => {
       expect(data.error).toBe('Invalid JSON in request body');
     });
 
+    it('returns 400 for null PATCH body', async () => {
+      const res = await PATCH(makeRequest('PATCH', null), createParams('test-id'));
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.error).toBe('Request body must be a JSON object');
+    });
+
     it('MID-008: returns 404 when model not found', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(null);
+      mockStorage.getModelConfig.mockResolvedValue(null);
 
       const body = { name: 'Update' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('nonexistent'));
@@ -203,8 +219,8 @@ describe('API /api/llm/models/[id]', () => {
 
     it('MID-009: preserves id and createdAt from existing model', async () => {
       const original = { ...SAMPLE_MODEL, createdAt: '2024-06-15T12:00:00.000Z' };
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(original);
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockImplementation(async (m) => m);
+      mockStorage.getModelConfig.mockResolvedValue(original);
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
       const body = { name: 'New Name', id: 'hijacked-id', createdAt: '1999-01-01T00:00:00.000Z' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -212,7 +228,7 @@ describe('API /api/llm/models/[id]', () => {
 
       expect(res.status).toBe(200);
       // id and createdAt should be from original, not from body
-      const savedArg = (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mock.calls[0][0];
+      const savedArg = mockStorage.saveModelConfig.mock.calls[0][0];
       expect(savedArg.id).toBe('test-id');
       expect(savedArg.createdAt).toBe('2024-06-15T12:00:00.000Z');
       expect(data.model.id).toBe('test-id');
@@ -221,8 +237,8 @@ describe('API /api/llm/models/[id]', () => {
 
     it('MID-010: sets updatedAt to current time', async () => {
       const before = new Date().toISOString();
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({ ...SAMPLE_MODEL });
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockImplementation(async (m) => m);
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
       const body = { name: 'Timestamp Test' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -237,8 +253,8 @@ describe('API /api/llm/models/[id]', () => {
 
     it('MID-011: strips apiKey from PATCH response', async () => {
       const modelWithKey = { ...SAMPLE_MODEL, apiKey: 'sk-super-secret' };
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(modelWithKey);
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockImplementation(async (m) => m);
+      mockStorage.getModelConfig.mockResolvedValue(modelWithKey);
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
       const body = { name: 'Strip Test' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -249,6 +265,37 @@ describe('API /api/llm/models/[id]', () => {
       expect(data.model.name).toBe('Strip Test');
     });
 
+    it('sanitizes string fields before saving', async () => {
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.saveModelConfig.mockImplementation(async (m) => m);
+
+      const res = await PATCH(
+        makeRequest('PATCH', { name: '<b>Safe Name</b>', model: ' gpt-4 ' }),
+        createParams('test-id'),
+      );
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.model.name).toBe('Safe Name');
+      expect(data.model.model).toBe('gpt-4');
+    });
+
+    it('returns 400 when updated model validation fails', async () => {
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      (validateModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({
+        valid: false,
+        errors: ['Temperature must be between 0 and 2'],
+      });
+
+      const res = await PATCH(makeRequest('PATCH', { temperature: 9 }), createParams('test-id'));
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.error).toBe('Invalid model configuration');
+      expect(data.errors).toContain('Temperature must be between 0 and 2');
+      expect(mockStorage.saveModelConfig).not.toHaveBeenCalled();
+    });
+
     it('MID-012: returns auth error when checkApiAuth fails', async () => {
       const authResponse = new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
       (checkApiAuth as ReturnType<typeof vi.fn>).mockReturnValue(authResponse);
@@ -257,13 +304,13 @@ describe('API /api/llm/models/[id]', () => {
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
 
       expect(res.status).toBe(401);
-      expect(fileStorage.getModelConfig).not.toHaveBeenCalled();
-      expect(fileStorage.saveModelConfig).not.toHaveBeenCalled();
+      expect(mockStorage.getModelConfig).not.toHaveBeenCalled();
+      expect(mockStorage.saveModelConfig).not.toHaveBeenCalled();
     });
 
     it('MID-013: returns 500 on internal error', async () => {
-      (fileStorage.getModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue({ ...SAMPLE_MODEL });
-      (fileStorage.saveModelConfig as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Write failed'));
+      mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
+      mockStorage.saveModelConfig.mockRejectedValue(new Error('Write failed'));
 
       const body = { name: 'Error Test' };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
@@ -280,18 +327,18 @@ describe('API /api/llm/models/[id]', () => {
 
   describe('DELETE', () => {
     it('MID-014: successfully deletes a model', async () => {
-      (fileStorage.deleteModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(true);
+      mockStorage.deleteModelConfig.mockResolvedValue(true);
 
       const res = await DELETE(makeRequest('DELETE'), createParams('test-id'));
       const data = await res.json();
 
       expect(res.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(fileStorage.deleteModelConfig).toHaveBeenCalledWith('test-id');
+      expect(mockStorage.deleteModelConfig).toHaveBeenCalledWith('test-id');
     });
 
     it('MID-015: returns 404 when model not found for deletion', async () => {
-      (fileStorage.deleteModelConfig as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+      mockStorage.deleteModelConfig.mockResolvedValue(false);
 
       const res = await DELETE(makeRequest('DELETE'), createParams('nonexistent'));
       const data = await res.json();
@@ -307,11 +354,11 @@ describe('API /api/llm/models/[id]', () => {
       const res = await DELETE(makeRequest('DELETE'), createParams('test-id'));
 
       expect(res.status).toBe(401);
-      expect(fileStorage.deleteModelConfig).not.toHaveBeenCalled();
+      expect(mockStorage.deleteModelConfig).not.toHaveBeenCalled();
     });
 
     it('MID-017: returns 500 on internal error', async () => {
-      (fileStorage.deleteModelConfig as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('FS error'));
+      mockStorage.deleteModelConfig.mockRejectedValue(new Error('FS error'));
 
       const res = await DELETE(makeRequest('DELETE'), createParams('test-id'));
       const data = await res.json();

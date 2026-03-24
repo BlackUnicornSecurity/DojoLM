@@ -25,16 +25,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { auditLog } from '@/lib/audit-logger';
-
-// Routes that don't require authentication
-const PUBLIC_ROUTES = new Set([
-  '/api/admin/health',
-  '/api/health',
-  '/api/auth/me', // R8-002: route handles its own session check, returns {user:null} if unauthenticated
-  '/api/auth/login', // Login endpoint handles its own bcrypt auth; must be reachable without API key
-  '/api/auth/logout', // Logout endpoint invalidates session; must be reachable without API key
-  '/api/llm/models', // F-05: Model list is read-only and needed by Sensei UI model picker without API key
-]);
+import { isPublicApiRoute, isPublicReadApiRoute } from '@/lib/api-route-access';
+import {
+  getConfiguredAppOrigin,
+  isAllowedCorsOrigin,
+  isTrustedBrowserOriginRequest,
+  isTrustedBrowserSessionRequest,
+} from '@/lib/request-origin';
 
 // Routes that require elevated (admin) permissions — future RBAC
 const ADMIN_ROUTES_PREFIX = '/api/admin';
@@ -187,6 +184,22 @@ function isAuthenticated(request: NextRequest): boolean {
   return crypto.timingSafeEqual(expectedHash, providedHash);
 }
 
+function isDevelopmentBrowserReadRequest(request: NextRequest): boolean {
+  if (process.env.NODE_ENV === 'production') {
+    return false;
+  }
+
+  if (process.env.NODA_API_KEY) {
+    return false;
+  }
+
+  if (request.method !== 'GET') {
+    return false;
+  }
+
+  return isTrustedBrowserOriginRequest(request);
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -210,15 +223,19 @@ export async function proxy(request: NextRequest) {
   // single page load. Scope those buckets per-route so one panel does not
   // exhaust the entire browser budget while external/programmatic traffic
   // remains on a single per-client bucket.
-  const secFetchSite = request.headers.get('sec-fetch-site');
-  const isSameOrigin = secFetchSite === 'same-origin';
+  const isTrustedBrowserSession = isTrustedBrowserSessionRequest(request);
+  const isPublicReadRoute = isPublicReadApiRoute(pathname, request.method);
+  const isBrowserPublicRead = isPublicReadRoute && isTrustedBrowserOriginRequest(request);
+  const isDevelopmentBrowserRead = isDevelopmentBrowserReadRequest(request);
+  const isTrustedBrowser = isTrustedBrowserSession || isBrowserPublicRead || isDevelopmentBrowserRead;
+  const isPublicRoute = isPublicApiRoute(pathname, request.method);
 
   // Rate limiting (R2-S3)
   const ip = getClientIp(request);
-  const rateLimitKey = isSameOrigin
+  const rateLimitKey = isTrustedBrowser
     ? `${ip}:${pathname}`
     : ip;
-  const rateCheck = isSameOrigin
+  const rateCheck = isTrustedBrowser
     ? checkRateLimit(rateLimitKey, RATE_LIMIT_SAME_ORIGIN)
     : checkRateLimit(ip, RATE_LIMIT_GENERAL);
   if (rateCheck.limited) {
@@ -227,7 +244,7 @@ export async function proxy(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         'Retry-After': String(rateCheck.retryAfter ?? 60),
-        'X-RateLimit-Limit': String(isSameOrigin ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL),
+        'X-RateLimit-Limit': String(isTrustedBrowser ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL),
         'X-RateLimit-Remaining': '0',
         'X-RateLimit-Reset': String(Math.ceil((Date.now() + RATE_LIMIT_WINDOW_MS) / 1000)),
       },
@@ -235,7 +252,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // R3-006: Attach X-RateLimit-* headers to all API responses
-  const effectiveLimit = isSameOrigin ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL;
+  const effectiveLimit = isTrustedBrowser ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL;
   const rateLimitHeaders = {
     'X-RateLimit-Limit': String(effectiveLimit),
     'X-RateLimit-Remaining': String(rateCheck.remaining),
@@ -246,11 +263,15 @@ export async function proxy(request: NextRequest) {
   // Origin validation: only reflect known origins, deny unknown in production
   if (request.method === 'OPTIONS') {
     const requestOrigin = request.headers.get('origin') ?? '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
-    const allowedOrigins = process.env.NODE_ENV === 'production'
-      ? new Set([appUrl])
-      : new Set([appUrl, 'http://localhost:42001', 'http://localhost:3001']);
-    const corsOrigin = allowedOrigins.has(requestOrigin) ? requestOrigin : appUrl;
+    const appOrigin = getConfiguredAppOrigin();
+    if (!appOrigin) {
+      return NextResponse.json(
+        { error: 'Server misconfiguration' },
+        { status: 503 }
+      );
+    }
+
+    const corsOrigin = isAllowedCorsOrigin(requestOrigin) ? requestOrigin : appOrigin;
 
     return new NextResponse(null, {
       status: 204,
@@ -279,44 +300,17 @@ export async function proxy(request: NextRequest) {
   }
 
   // Allow public routes (with rate limit headers — R3-006)
-  if (PUBLIC_ROUTES.has(pathname)) {
+  if (isPublicRoute) {
     const response = NextResponse.next();
     for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
     return response;
   }
 
-  // F-05: Allow same-origin browser requests without API key.
-  // Multi-header validation (R2-C1): Sec-Fetch-Site alone is insufficient.
-  // Require Sec-Fetch-Site: same-origin AND valid Mode AND valid Dest.
-  // SEC-005 hardening: Also require Origin or Referer match — prevents curl-only Sec-Fetch spoofing.
-  const secFetchMode = request.headers.get('sec-fetch-mode');
-  const secFetchDest = request.headers.get('sec-fetch-dest');
-
-  const VALID_SEC_FETCH_MODES = new Set(['cors', 'same-origin', 'navigate']);
-  const VALID_SEC_FETCH_DESTS = new Set(['empty', 'document']);
-
-  if (
-    isSameOrigin &&
-    secFetchMode && VALID_SEC_FETCH_MODES.has(secFetchMode) &&
-    secFetchDest && VALID_SEC_FETCH_DESTS.has(secFetchDest)
-  ) {
-    const origin = request.headers.get('origin') ?? '';
-    const host = request.headers.get('host') ?? '';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:42001';
-
-    // PT-AUTH-C01 fix: Only compare against configured app URL, never derive from
-    // the request's Host header (attacker-controlled). This prevents external
-    // curl requests from bypassing auth by spoofing Sec-Fetch + Origin headers.
-    const originMatch = origin === appUrl;
-    const referer = request.headers.get('referer') ?? '';
-    const refererMatch = referer.startsWith(appUrl + '/');
-
-    if (originMatch || (!origin && refererMatch)) {
-      const response = NextResponse.next();
-      for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
-      return response;
-    }
-    // If Sec-Fetch headers present but neither Origin nor Referer match, fall through to API key auth
+  // Allow authenticated browser UI traffic without an API key.
+  if (isTrustedBrowserSession) {
+    const response = NextResponse.next();
+    for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+    return response;
   }
 
   // Auth check (for external/programmatic API access)

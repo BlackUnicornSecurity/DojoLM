@@ -1,19 +1,30 @@
 # LLM Provider Guide
 
-This guide documents the current provider configuration model in the codebase.
+This guide documents the current provider setup model in the repository and the supported user flow in the web app.
 
-## Important Distinctions
+## Where Provider Setup Happens
 
-The repository has three provider-related layers:
+Use these two places in the app:
 
-1. `bu-tpi` provider types
-   The core type union includes `19` provider IDs.
+1. `Admin -> API Keys`
+   Add a provider-backed entry with credentials and any required base URL.
+2. `LLM Dashboard -> Models`
+   Review, edit, test, enable, disable, and use configured models.
+
+Older docs that say `Admin -> Providers` are outdated.
+
+## Provider Layers In The Repo
+
+The repository currently has three related layers:
+
+1. Core provider types in `bu-tpi`
+   The provider union currently includes `19` provider IDs.
 2. Built-in preset catalog
-   `packages/bu-tpi/src/llm/llm-presets.json` ships `57` presets:
+   `packages/bu-tpi/src/llm/llm-presets.json` currently ships `57` presets:
    - `51` cloud presets
    - `6` local presets
 3. Web-app UI and adapter layer
-   The current web app directly exposes provider metadata and adapter wiring for:
+   The current web app directly exposes provider metadata for:
    - OpenAI
    - Anthropic
    - Google
@@ -26,45 +37,38 @@ The repository has three provider-related layers:
    - BlackUnicorn
    - Custom
 
-## Current Setup Flow
+## Useful Provider Routes
 
-Use these two places in the app:
-
-1. `Admin -> API Keys`
-   Add a provider-backed model entry with credentials or base URL.
-2. `LLM Dashboard -> Models`
-   Review, test, edit, enable, or disable configured model definitions.
-
-Older docs that say `Admin -> Providers` are outdated.
-
-## Public Preset Catalog
-
-The web app exposes a non-secret preset summary at:
+Preset catalog:
 
 ```bash
 curl http://localhost:42001/api/llm/presets
 ```
 
-This is useful for discovering built-in preset names and regions without exposing credentials.
+Discover models from local providers:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/local-models?provider=ollama&baseUrl=http://localhost:11434"
+```
+
+Test a saved model entry:
+
+```bash
+curl -X POST \
+  -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/models/model-123/test"
+```
 
 ## Provider Recipes
 
 ### OpenAI
 
-Use when you want hosted GPT models.
-
 Typical values:
 
 - provider: `openai`
 - base URL: `https://api.openai.com/v1`
-- models: `gpt-5.4`, `gpt-5.4-mini`, `gpt-4o`, `o3`, `o3-mini`
-
-Steps:
-
-1. Open `Admin -> API Keys`
-2. Add an `OpenAI` entry
-3. Provide a model name and API key
-4. Test the connection
+- example models: `gpt-5.4`, `gpt-5.4-mini`, `gpt-4o`, `o3`, `o3-mini`
 
 ### Anthropic
 
@@ -72,7 +76,7 @@ Typical values:
 
 - provider: `anthropic`
 - base URL: `https://api.anthropic.com`
-- models: `claude-sonnet-4-6`, `claude-opus-4-6`, `claude-haiku-4-5-20251001`
+- example models: `claude-sonnet-4-6`, `claude-opus-4-6`, `claude-haiku-4-5-20251001`
 
 ### Ollama
 
@@ -120,24 +124,25 @@ Typical values:
 
 ### Custom
 
-Use this for OpenAI-compatible endpoints that are not directly surfaced in the current UI metadata set.
+Use `custom` for OpenAI-compatible endpoints that are not directly covered by the default UI metadata or that need nonstandard routing.
 
 Provide:
 
 - provider: `custom`
-- your base URL
-- your model name
-- API key if the endpoint requires one
+- base URL
+- model name
+- API key if required
+- custom headers if the endpoint expects them
 
 ## Practical Notes
 
 ### Google and Cohere
 
-The current codebase includes UI metadata and placeholder adapter routing for Google and Cohere. If you are testing an OpenAI-compatible provider outside the directly wired adapters, prefer `custom`.
+The current codebase includes metadata and preset awareness for Google and Cohere. If your target endpoint is OpenAI-compatible and not behaving correctly through a dedicated adapter path, `custom` is the safer fallback.
 
 ### Local model discovery
 
-The web app includes local-model discovery for:
+The current web app includes local model discovery for:
 
 - Ollama
 - LM Studio
@@ -145,9 +150,19 @@ The web app includes local-model discovery for:
 
 ### Security
 
-- never commit API keys
-- prefer local models for sensitive prompts
-- use `X-API-Key` for programmatic web API calls
+- never commit provider keys
+- prefer local models when prompts are sensitive
+- use `X-API-Key` for scripted web API access
+- keep `customHeaders` inside the UI or your secure runtime, not in docs or source control
+
+## Suggested Setup Flow
+
+1. Open `Admin -> API Keys`.
+2. Create the provider-backed entry.
+3. Test the connection.
+4. Open `LLM Dashboard -> Models`.
+5. Confirm the model is present and enabled.
+6. Run a single test from `LLM Dashboard -> Tests` before launching larger batches.
 
 ## Troubleshooting
 
@@ -156,55 +171,27 @@ The web app includes local-model discovery for:
 - verify the base URL
 - verify the model name
 - verify the provider API key
-- make sure the model entry is enabled
+- make sure the saved model entry is enabled
 
 ### Local provider shows no models
 
 - ensure the local server is running
-- check the expected default port
+- verify the default port
 - confirm the model has been pulled or loaded
 
 ### Cloud provider works in the vendor UI but not here
 
-- try the same endpoint through `custom` if it is OpenAI-compatible
-- confirm the provider is one of the currently wired adapters, not just present in the preset catalog
-# .env.local
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-OLLAMA_HOST=http://localhost:11434
-```
+- try the endpoint through `custom` if it is OpenAI-compatible
+- verify whether you are using a provider that is directly adapted or only represented in presets/metadata
 
-### Custom Headers
+### Same model works in chat but not in tests
 
-For providers requiring custom headers, edit provider configuration in the UI.
+- confirm the saved model entry has the expected base URL and headers
+- re-run the model connection test from the saved model entry
+- check whether guard settings are affecting execution in your environment
 
-### Proxy Configuration
+## Related Docs
 
-If behind a corporate proxy:
-
-```bash
-export HTTP_PROXY=http://proxy.company.com:8080
-export HTTPS_PROXY=http://proxy.company.com:8080
-```
-
----
-
-## Provider Comparison
-
-| Feature | OpenAI | Anthropic | Google | Ollama | LM Studio |
-|---------|--------|-----------|--------|--------|-----------|
-| Setup | Easy | Easy | Easy | Medium | Medium |
-| Cost | Pay per use | Pay per use | Pay per use | Free | Free |
-| Privacy | Cloud | Cloud | Cloud | Local | Local |
-| Speed | Fast | Fast | Fast | Varies | Varies |
-| Model Variety | Limited | Limited | Limited | Large | Large |
-
----
-
-## Getting Help
-
-- OpenAI: [Help Center](https://help.openai.com/)
-- Anthropic: [Support](https://support.anthropic.com/)
-- Ollama: [GitHub Issues](https://github.com/ollama/ollama/issues)
-- LM Studio: [Discord](https://discord.gg/lmstudio)
-- DojoLM / BlackUnicorn: info@blackunicorn.tech
+- [LLM Dashboard Guide](modules/LLM_DASHBOARD.md)
+- [User API Reference](API_REFERENCE.md)
+- [Troubleshooting](TROUBLESHOOTING.md)

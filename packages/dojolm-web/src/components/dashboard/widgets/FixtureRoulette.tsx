@@ -9,9 +9,11 @@
 import { useState, useCallback } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { SeverityBadge } from '@/components/ui/SeverityBadge'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Shuffle, ScanLine, Loader2 } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { getCachedFixtureManifest } from '@/lib/client-data-cache'
 
 interface FixtureData {
   category: string
@@ -46,9 +48,7 @@ export function FixtureRoulette() {
     setLoading(true)
     setVerdict(null)
     try {
-      const manifestRes = await fetchWithAuth('/api/fixtures')
-      if (!manifestRes.ok) throw new Error('Failed to load fixtures')
-      const manifest = await manifestRes.json()
+      const manifest = await getCachedFixtureManifest()
 
       const categories = Object.keys(manifest.categories ?? {})
       if (categories.length === 0) return
@@ -56,10 +56,12 @@ export function FixtureRoulette() {
       // Random category and file
       const catName = categories[Math.floor(Math.random() * categories.length)]
       const cat = manifest.categories[catName]
-      const files: string[] = cat.files ?? []
+      const files = Array.isArray(cat?.files) ? cat.files : []
       if (files.length === 0) return
 
-      const fileName = files[Math.floor(Math.random() * files.length)]
+      const fileEntry = files[Math.floor(Math.random() * files.length)]
+      const fileName = typeof fileEntry === 'string' ? fileEntry : fileEntry?.file
+      if (!fileName) return
       const ext = getFileExt(fileName)
       const isBinary = IMAGE_EXTS.has(ext) || AUDIO_EXTS.has(ext) || VIDEO_EXTS.has(ext) || ext === '.pdf'
 
@@ -119,27 +121,43 @@ export function FixtureRoulette() {
       <div className="space-y-3">
         {fixture ? (
           <>
-            {/* Category badge + file name */}
-            <div>
-              <span className="text-xs px-1.5 py-0.5 bg-[var(--dojo-subtle)] text-[var(--dojo-primary)] rounded font-medium">
-                {fixture.category}
-              </span>
-              <div className="text-sm font-medium mt-1 truncate">{fixture.file}</div>
+            <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <span className="text-xs px-1.5 py-0.5 bg-[var(--dojo-subtle)] text-[var(--dojo-primary)] rounded font-medium">
+                    {fixture.category}
+                  </span>
+                  <div className="text-sm font-semibold mt-2 truncate text-[var(--foreground)]">{fixture.file}</div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Randomly pulled from the Armory for a fast drill run.
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={spinRoulette}
+                  disabled={loading}
+                  className="text-xs"
+                >
+                  <Shuffle className="w-3 h-3" aria-hidden="true" />
+                  Another
+                </Button>
+              </div>
             </div>
 
             {/* Content preview or media */}
             {fixture.isBinary && fixture.mimeType ? (
-              <div className="rounded border border-[var(--border)] overflow-hidden">
+              <div className="rounded-xl border border-[var(--border-subtle)] surface-base overflow-hidden">
                 {fixture.mimeType.startsWith('image/') && (
                   // SVG via <img> only — XSS safety
                   <img
                     src={`/api/read-fixture?path=${encodeURIComponent(`${fixture.category}/${fixture.file}`)}&raw=true`}
                     alt={fixture.file}
-                    className="max-h-32 w-full object-contain bg-muted"
+                    className="max-h-40 w-full object-contain bg-muted"
                   />
                 )}
                 {fixture.mimeType.startsWith('audio/') && (
-                  <audio controls className="w-full">
+                  <audio controls className="w-full p-3">
                     <source src={`/api/read-fixture?path=${encodeURIComponent(`${fixture.category}/${fixture.file}`)}&raw=true`} type={fixture.mimeType} />
                   </audio>
                 )}
@@ -150,20 +168,20 @@ export function FixtureRoulette() {
                 )}
               </div>
             ) : fixture.content ? (
-              <pre className="text-xs font-mono p-2 bg-muted/50 rounded border border-[var(--border)] overflow-hidden whitespace-pre-wrap break-all max-h-24 text-foreground/80">
+              <pre className="text-xs font-mono p-3 rounded-xl border border-[var(--border-subtle)] surface-base overflow-hidden whitespace-pre-wrap break-all max-h-28 text-foreground/80">
                 {fixture.content.slice(0, 300)}
                 {fixture.content.length > 300 ? '...' : ''}
               </pre>
             ) : (
-              <div className="p-2 bg-muted/50 rounded text-xs text-muted-foreground">
-                Binary file — {fixture.file}
+              <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3 text-xs text-muted-foreground">
+                Binary file preview ready for scan.
               </div>
             )}
 
             {/* Verdict display */}
             {verdict && (
               <div className={cn(
-                'flex items-center justify-between px-2 py-1.5 rounded text-xs font-medium',
+                'flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-xs font-medium',
                 verdict.verdict === 'BLOCK'
                   ? 'bg-[var(--status-block-bg)] text-[var(--status-block)] border border-[var(--status-block)]/20'
                   : 'bg-[var(--status-allow-bg)] text-[var(--status-allow)] border border-[var(--status-allow)]/20'
@@ -176,54 +194,58 @@ export function FixtureRoulette() {
 
             {/* Action buttons */}
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="gradient"
                 onClick={handleScan}
                 disabled={scanning}
-                className={cn(
-                  'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
-                  'bg-[var(--dojo-primary)] text-white hover:bg-[var(--dojo-primary-hover)]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
-                  'disabled:opacity-50'
-                )}
+                className="flex-1"
               >
                 {scanning ? <Loader2 className="w-3 h-3 motion-safe:animate-spin" aria-hidden="true" /> : <ScanLine className="w-3 h-3" aria-hidden="true" />}
                 Scan It
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={spinRoulette}
                 disabled={loading}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg',
-                  'border border-[var(--border)] text-muted-foreground hover:text-foreground hover:bg-muted',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
-                  'disabled:opacity-50'
-                )}
               >
                 <Shuffle className="w-3 h-3" aria-hidden="true" />
                 Again
-              </button>
+              </Button>
             </div>
           </>
         ) : (
-          <button
-            onClick={spinRoulette}
-            disabled={loading}
-            className={cn(
-              'w-full flex items-center justify-center gap-2 px-4 py-6 text-sm font-medium rounded-lg',
-              'border-2 border-dashed border-[var(--border)] text-muted-foreground',
-              'hover:text-foreground hover:border-[var(--dojo-primary)] hover:bg-[var(--dojo-subtle)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
-              'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-              'disabled:opacity-50'
-            )}
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />
-            ) : (
-              <Shuffle className="w-4 h-4" aria-hidden="true" />
-            )}
-            Discover an Attack
-          </button>
+          <div className="rounded-xl border border-dashed border-[var(--border)] surface-base p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]">
+                {loading ? (
+                  <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />
+                ) : (
+                  <Shuffle className="w-4 h-4" aria-hidden="true" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-[var(--foreground)]">Need a fresh attack sample?</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Pull a random fixture from the Armory, preview it inline, and run a quick verdict without leaving the dashboard.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] text-muted-foreground">Random category</span>
+                  <span className="rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] text-muted-foreground">Inline preview</span>
+                  <span className="rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] text-muted-foreground">One-click scan</span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4">
+              <Button
+                variant="gradient"
+                onClick={spinRoulette}
+                disabled={loading}
+                className="w-full"
+              >
+                Discover an Attack
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </WidgetCard>

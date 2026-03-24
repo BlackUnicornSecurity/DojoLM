@@ -15,6 +15,7 @@ import { ProgramCard } from './ProgramCard'
 import { ProgramDetail } from './ProgramDetail'
 import { SEED_PROGRAMS, type BountyProgram, type BountyPlatform, type ProgramStatus } from '@/lib/data/ronin-seed-programs'
 import { PLATFORM_META, STATUS_META } from '@/lib/data/ronin-seed-programs'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { Search, Filter, Star } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
@@ -71,6 +72,10 @@ export function ProgramsTab() {
     let cancelled = false
     async function loadPrograms() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          return
+        }
+
         const res = await fetchWithAuth('/api/ronin/programs')
         if (!res.ok) return
         const data = await res.json()

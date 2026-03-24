@@ -10,10 +10,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import type { LLMModelConfig } from '@/lib/llm-types';
-import { fileStorage } from '@/lib/storage/file-storage';
-import { testModelConfig } from '@/lib/llm-providers';
+import { getStorage } from '@/lib/storage/storage-interface';
+import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
+
+function sanitizeString(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/<[^>]*>/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
+    .trim();
+}
+
+function toSafeModelResponse(model: LLMModelConfig) {
+  const { apiKey: _apiKey, customHeaders: _customHeaders, ...safeModel } = model;
+  return safeModel;
+}
 
 // ===========================================================================
 // GET /api/llm/models/[id] - Get a specific model
@@ -28,8 +41,9 @@ export async function GET(
 
   try {
     const { id } = await params;
+    const storage = await getStorage();
 
-    const model = await fileStorage.getModelConfig(id);
+    const model = await storage.getModelConfig(id);
 
     if (!model) {
       return NextResponse.json(
@@ -39,8 +53,7 @@ export async function GET(
     }
 
     // Strip sensitive fields before returning
-    const { apiKey: _key, ...safeModel } = model as unknown as Record<string, unknown>;
-    return NextResponse.json({ model: safeModel });
+    return NextResponse.json({ model: toSafeModelResponse(model) });
   } catch (error) {
     return apiError('Failed to get model', 500, error);
   }
@@ -59,6 +72,7 @@ export async function PATCH(
 
   try {
     const { id } = await params;
+    const storage = await getStorage();
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -68,9 +82,15 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: 'Request body must be a JSON object' },
+        { status: 400 }
+      );
+    }
 
     // Get existing model
-    const existing = await fileStorage.getModelConfig(id);
+    const existing = await storage.getModelConfig(id);
 
     if (!existing) {
       return NextResponse.json(
@@ -81,9 +101,12 @@ export async function PATCH(
 
     // Apply updates - allowlist only safe fields to prevent mass-assignment
     const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model'] as const;
+    const STRING_FIELDS = new Set(['name', 'description', 'baseUrl', 'model']);
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {
-      if (key in body) patch[key] = body[key];
+      if (key in body) {
+        patch[key] = STRING_FIELDS.has(key) ? sanitizeString(body[key]) : body[key];
+      }
     }
 
     const updated: LLMModelConfig = {
@@ -94,12 +117,19 @@ export async function PATCH(
       updatedAt: new Date().toISOString(),
     };
 
+    const validation = await validateModelConfig(updated);
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: 'Invalid model configuration', errors: validation.errors },
+        { status: 400 }
+      );
+    }
+
     // Save updated model
-    const saved = await fileStorage.saveModelConfig(updated);
+    const saved = await storage.saveModelConfig(updated);
 
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
-    const { apiKey: _patchKey, ...safePatch } = saved as unknown as Record<string, unknown>;
-    return NextResponse.json({ model: safePatch });
+    return NextResponse.json({ model: toSafeModelResponse(saved) });
   } catch (error) {
     return apiError('Failed to update model', 500, error);
   }
@@ -118,8 +148,9 @@ export async function DELETE(
 
   try {
     const { id } = await params;
+    const storage = await getStorage();
 
-    const success = await fileStorage.deleteModelConfig(id);
+    const success = await storage.deleteModelConfig(id);
 
     if (!success) {
       return NextResponse.json(

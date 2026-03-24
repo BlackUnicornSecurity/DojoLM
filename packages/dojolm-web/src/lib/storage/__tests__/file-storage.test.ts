@@ -45,6 +45,7 @@ vi.mock('fs', () => {
 
 import { promises as fs } from 'fs';
 import type { LLMModelConfig, LLMPromptTestCase, LLMTestExecution, LLMBatchExecution } from '../../llm-types';
+import { resetEncryptionKey } from '../../db/encryption';
 
 const mockFs = vi.mocked(fs);
 
@@ -130,6 +131,8 @@ function mockReadFileNotFound(): void {
 describe('file-storage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
+    resetEncryptionKey();
     mockReadFileNotFound();
     mockFs.writeFile.mockResolvedValue(undefined);
     mockFs.rename.mockResolvedValue(undefined);
@@ -211,6 +214,49 @@ describe('file-storage', () => {
     const writtenData = JSON.parse(writeCall[1] as string);
     expect(writtenData).toHaveLength(1);
     expect(writtenData[0].name).toBe('New Name');
+  });
+
+  it('FS-004b: saveModelConfig encrypts secret-bearing model fields before writing', async () => {
+    vi.stubEnv('TPI_DB_ENCRYPTION_KEY', '12345678901234567890123456789012');
+    const { resetEncryptionKey } = await import('../../db/encryption');
+    resetEncryptionKey();
+    mockReadFileForPaths({ 'models.json': [] });
+
+    const { FileStorage } = await import('../file-storage');
+    const storage = new FileStorage();
+
+    await storage.saveModelConfig(makeModelConfig({
+      id: 'secure-model',
+      apiKey: 'sk-secret',
+      customHeaders: { Authorization: 'Bearer top-secret' },
+    }));
+
+    const writeCall = mockFs.writeFile.mock.calls[0];
+    const writtenData = JSON.parse(writeCall[1] as string);
+    expect(writtenData[0].apiKey).toBeUndefined();
+    expect(writtenData[0].customHeaders).toBeUndefined();
+    expect(writtenData[0].apiKeyEncrypted).toBeTruthy();
+    expect(writtenData[0].customHeadersEncrypted).toBeTruthy();
+  });
+
+  it('FS-004c: getModelConfigs decrypts encrypted model secrets on read', async () => {
+    vi.stubEnv('TPI_DB_ENCRYPTION_KEY', '12345678901234567890123456789012');
+    const { encrypt, resetEncryptionKey } = await import('../../db/encryption');
+    resetEncryptionKey();
+    mockReadFileForPaths({
+      'models.json': [{
+        ...makeModelConfig({ id: 'secure-model' }),
+        apiKeyEncrypted: encrypt('sk-secret'),
+        customHeadersEncrypted: encrypt(JSON.stringify({ Authorization: 'Bearer top-secret' })),
+      }],
+    });
+
+    const { FileStorage } = await import('../file-storage');
+    const storage = new FileStorage();
+    const configs = await storage.getModelConfigs();
+
+    expect(configs[0].apiKey).toBe('sk-secret');
+    expect(configs[0].customHeaders).toEqual({ Authorization: 'Bearer top-secret' });
   });
 
   // FS-005

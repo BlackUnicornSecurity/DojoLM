@@ -5,8 +5,9 @@
  * Source: src/components/llm/ReportGenerator.tsx
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import type { ReactNode } from 'react'
 
@@ -59,6 +60,8 @@ vi.mock('lucide-react', () => ({
 // Mock URL.createObjectURL and revokeObjectURL
 const mockCreateObjectURL = vi.fn(() => 'blob:http://localhost/mock-url')
 const mockRevokeObjectURL = vi.fn()
+const mockAnchorClick = vi.fn()
+const originalCreateElement = document.createElement.bind(document)
 Object.defineProperty(globalThis, 'URL', {
   value: { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL },
   writable: true,
@@ -71,6 +74,20 @@ import { ReportGenerator } from '../llm/ReportGenerator'
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.spyOn(document, 'createElement').mockImplementation((tagName: string, options?: ElementCreationOptions) => {
+    const element = originalCreateElement(tagName, options)
+    if (tagName.toLowerCase() === 'a') {
+      Object.defineProperty(element, 'click', {
+        configurable: true,
+        value: mockAnchorClick,
+      })
+    }
+    return element
+  })
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
 })
 
 // ===========================================================================
@@ -122,12 +139,13 @@ describe('RG-004: Format options', () => {
 // ===========================================================================
 describe('RG-005: JSON download', () => {
   it('calls fetchWithAuth for JSON export', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ results: [] }),
     })
     render(<ReportGenerator />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(mockFetchWithAuth).toHaveBeenCalledWith(
         expect.stringContaining('format=json')
@@ -141,9 +159,10 @@ describe('RG-005: JSON download', () => {
 // ===========================================================================
 describe('RG-006: Download error', () => {
   it('displays error message on failed download', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValueOnce({ ok: false })
     render(<ReportGenerator />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
     })
@@ -155,8 +174,9 @@ describe('RG-006: Download error', () => {
 // ===========================================================================
 describe('RG-007: Invalid batchId format', () => {
   it('shows error when batchId fails pattern validation', async () => {
+    const user = userEvent.setup()
     render(<ReportGenerator batchId="invalid-id" />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('Invalid batch ID format')
     })
@@ -168,12 +188,13 @@ describe('RG-007: Invalid batchId format', () => {
 // ===========================================================================
 describe('RG-008: batchId param in URL', () => {
   it('includes batchId in fetch URL when valid', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ results: [] }),
     })
     render(<ReportGenerator batchId="batch-123-abc" />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(mockFetchWithAuth).toHaveBeenCalledWith(
         expect.stringContaining('batchId=batch-123-abc')
@@ -187,12 +208,13 @@ describe('RG-008: batchId param in URL', () => {
 // ===========================================================================
 describe('RG-009: mode=all param', () => {
   it('includes mode=all when no batchId is provided', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ results: [] }),
     })
     render(<ReportGenerator />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(mockFetchWithAuth).toHaveBeenCalledWith(
         expect.stringContaining('mode=all')
@@ -206,18 +228,21 @@ describe('RG-009: mode=all param', () => {
 // ===========================================================================
 describe('RG-010: Disabled during download', () => {
   it('disables the button while downloading', async () => {
+    const user = userEvent.setup()
     let resolvePromise!: (v: unknown) => void
     mockFetchWithAuth.mockReturnValueOnce(
       new Promise((res) => { resolvePromise = res })
     )
     render(<ReportGenerator />)
     const btn = screen.getByText('Download Report').closest('button')!
-    fireEvent.click(btn)
+    await user.click(btn)
     await waitFor(() => {
       expect(btn).toBeDisabled()
     })
-    // Resolve the fetch to prevent hanging
     resolvePromise({ ok: true, json: () => Promise.resolve({}) })
+    await waitFor(() => {
+      expect(btn).not.toBeDisabled()
+    })
   })
 })
 
@@ -226,9 +251,10 @@ describe('RG-010: Disabled during download', () => {
 // ===========================================================================
 describe('RG-011: Error accessibility', () => {
   it('error message has role=alert and aria-live=assertive', async () => {
+    const user = userEvent.setup()
     mockFetchWithAuth.mockResolvedValueOnce({ ok: false })
     render(<ReportGenerator />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       const alert = screen.getByRole('alert')
       expect(alert).toHaveAttribute('aria-live', 'assertive')
@@ -241,16 +267,19 @@ describe('RG-011: Error accessibility', () => {
 // ===========================================================================
 describe('RG-012: Generating text', () => {
   it('shows "Generating..." while downloading in default mode', async () => {
+    const user = userEvent.setup()
     let resolvePromise!: (v: unknown) => void
     mockFetchWithAuth.mockReturnValueOnce(
       new Promise((res) => { resolvePromise = res })
     )
     render(<ReportGenerator />)
-    fireEvent.click(screen.getByText('Download Report'))
+    await user.click(screen.getByText('Download Report'))
     await waitFor(() => {
       expect(screen.getByText('Generating...')).toBeInTheDocument()
     })
-    // Resolve to prevent hanging
     resolvePromise({ ok: true, json: () => Promise.resolve({}) })
+    await waitFor(() => {
+      expect(screen.getByText('Download Report')).toBeInTheDocument()
+    })
   })
 })

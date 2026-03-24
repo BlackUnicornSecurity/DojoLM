@@ -48,7 +48,7 @@ const CLI_TS = resolve(join(__dirname, '..', 'tpi-scan.ts'));
  * Never throws — errors are captured and returned.
  */
 function runCli(args: string[]): { stdout: string; stderr: string; status: number } {
-  const result = spawnSync('npx', ['tsx', CLI_TS, ...args], {
+  const result = spawnSync(process.execPath, ['--import', 'tsx/esm', CLI_TS, ...args], {
     cwd: PACKAGE_ROOT,
     encoding: 'utf-8',
     timeout: 20_000,

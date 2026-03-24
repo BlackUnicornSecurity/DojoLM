@@ -16,6 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
 import { checkApiAuth } from '@/lib/api-auth';
 import { getProviderAdapter } from '@/lib/llm-providers';
 import type { LLMProviderAdapter, LLMModelConfig } from '@/lib/llm-types';
@@ -39,6 +40,7 @@ import type {
   SenseiToolResult,
 } from '@/lib/sensei';
 import type { NavId } from '@/lib/constants';
+import { SESSION_COOKIE_NAME } from '@/lib/auth/route-guard';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -48,7 +50,18 @@ const MAX_MESSAGES = 50;
 const MAX_PAYLOAD_BYTES = 128 * 1024; // 128KB
 const MAX_RESPONSE_SIZE = 64 * 1024; // 64KB
 const MAX_TOOL_ROUNDS = 5;
-const VALID_ROLES = new Set(['user', 'assistant', 'system', 'tool_result']);
+const VALID_ROLES = new Set(['user', 'assistant']);
+const PENDING_CONFIRMATION_TTL_MS = 5 * 60_000;
+const PENDING_CONFIRMATION_CAP = 1_000;
+
+interface PendingConfirmation {
+  readonly tool: string;
+  readonly args: Readonly<Record<string, unknown>>;
+  readonly identity: string;
+  readonly expiresAt: number;
+}
+
+const pendingConfirmations = new Map<string, PendingConfirmation>();
 
 // ---------------------------------------------------------------------------
 // Rate Limiter (20 req/min/IP)
@@ -103,18 +116,130 @@ function sanitizeOutput(text: string): string {
     .slice(0, MAX_RESPONSE_SIZE);
 }
 
+function hashIdentityPart(value: string): string {
+  return crypto.createHash('sha256').update(value).digest('hex').slice(0, 16);
+}
+
+function getCookieValue(request: NextRequest, name: string): string | null {
+  const cookieStore = (request as NextRequest & {
+    cookies?: { get?: (key: string) => { value?: string } | undefined };
+  }).cookies;
+  const directValue = cookieStore?.get?.(name)?.value;
+  if (directValue) {
+    return directValue;
+  }
+
+  const cookieHeader = request.headers.get('cookie');
+  if (!cookieHeader) {
+    return null;
+  }
+
+  for (const part of cookieHeader.split(';')) {
+    const [rawKey, ...rawValue] = part.trim().split('=');
+    if (rawKey === name) {
+      return rawValue.join('=') || null;
+    }
+  }
+
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // getClientIp — extract IP from headers
 // ---------------------------------------------------------------------------
 
 function getClientIp(request: NextRequest): string {
   const trusted = process.env.TRUSTED_PROXY;
-  if (!trusted) return 'anonymous';
+  if (!trusted) {
+    const apiKey = request.headers.get('x-api-key');
+    if (apiKey) {
+      return `key:${hashIdentityPart(apiKey)}`;
+    }
+
+    const sessionToken = getCookieValue(request, SESSION_COOKIE_NAME);
+    if (sessionToken) {
+      return `session:${hashIdentityPart(sessionToken)}`;
+    }
+
+    const fingerprintParts = [
+      request.headers.get('user-agent') ?? '',
+      request.headers.get('accept-language') ?? '',
+      request.headers.get('origin') ?? '',
+      request.headers.get('referer') ?? '',
+    ];
+    if (fingerprintParts.some(Boolean)) {
+      return `fp:${hashIdentityPart(fingerprintParts.join('|'))}`;
+    }
+
+    return 'anonymous';
+  }
   const xff = request.headers.get('x-forwarded-for');
   if (xff) return xff.split(',')[0].trim();
   const realIp = request.headers.get('x-real-ip');
   if (realIp) return realIp.trim();
   return 'anonymous';
+}
+
+function getRequesterIdentity(request: NextRequest, ip: string): string {
+  const apiKey = request.headers.get('x-api-key');
+  if (apiKey) {
+    return `api:${hashIdentityPart(apiKey)}`;
+  }
+
+  const sessionToken = getCookieValue(request, SESSION_COOKIE_NAME);
+  if (sessionToken) {
+    return `session:${hashIdentityPart(sessionToken)}`;
+  }
+
+  return `ip:${ip}`;
+}
+
+function cleanupPendingConfirmations(now: number = Date.now()): void {
+  for (const [callId, entry] of pendingConfirmations) {
+    if (entry.expiresAt <= now) {
+      pendingConfirmations.delete(callId);
+    }
+  }
+
+  if (pendingConfirmations.size > PENDING_CONFIRMATION_CAP) {
+    const overflow = pendingConfirmations.size - PENDING_CONFIRMATION_CAP;
+    const oldest = [...pendingConfirmations.entries()]
+      .sort((a, b) => a[1].expiresAt - b[1].expiresAt)
+      .slice(0, overflow);
+
+    for (const [callId] of oldest) {
+      pendingConfirmations.delete(callId);
+    }
+  }
+}
+
+function rememberPendingConfirmation(
+  callId: string,
+  tool: string,
+  args: Readonly<Record<string, unknown>>,
+  identity: string,
+): void {
+  cleanupPendingConfirmations();
+  pendingConfirmations.set(callId, {
+    tool,
+    args,
+    identity,
+    expiresAt: Date.now() + PENDING_CONFIRMATION_TTL_MS,
+  });
+}
+
+function takePendingConfirmation(
+  callId: string,
+  identity: string,
+): PendingConfirmation | null {
+  cleanupPendingConfirmations();
+  const pending = pendingConfirmations.get(callId);
+  if (!pending || pending.identity !== identity) {
+    return null;
+  }
+
+  pendingConfirmations.delete(callId);
+  return pending;
 }
 
 // ---------------------------------------------------------------------------
@@ -230,6 +355,7 @@ export async function POST(request: NextRequest) {
         : 'dashboard' as NavId;
 
     const senseiContext = await buildSenseiContext(activeModule, request);
+    const requestIdentity = getRequesterIdentity(request, ip);
 
     // Build system message with tool descriptions
     const builder = getSystemMessageBuilder(config.provider);
@@ -239,7 +365,7 @@ export async function POST(request: NextRequest) {
 
     // --- SH5.4: Handle confirmations if present ---
     const typedConfirmations = Array.isArray(confirmations)
-      ? (confirmations as Array<{ callId: string; confirmed: boolean; tool?: string; args?: Record<string, unknown> }>)
+      ? (confirmations as Array<{ callId: string; confirmed: boolean }>)
       : null;
 
     // Stream response via SSE
@@ -257,6 +383,7 @@ export async function POST(request: NextRequest) {
             senseiContext,
             request,
             ip,
+            requestIdentity,
             confirmations: typedConfirmations,
           });
         } catch (err) {
@@ -303,7 +430,8 @@ interface LoopOptions {
   readonly senseiContext: Readonly<{ guardConfig: Readonly<GuardConfig>; userRole: 'viewer' | 'user' | 'admin' }>;
   readonly request: Request;
   readonly ip: string;
-  readonly confirmations: readonly { callId: string; confirmed: boolean; tool?: string; args?: Record<string, unknown> }[] | null;
+  readonly requestIdentity: string;
+  readonly confirmations: readonly { callId: string; confirmed: boolean }[] | null;
 }
 
 async function runToolCallingLoop(options: LoopOptions): Promise<void> {
@@ -316,6 +444,7 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
     senseiContext,
     request,
     ip,
+    requestIdentity,
     confirmations,
   } = options;
 
@@ -331,11 +460,9 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
     }
   }
 
-  // Guard the latest user message
-  const lastUserMsg = [...conversation].reverse().find((m) => m.role === 'user');
-  if (lastUserMsg) {
-    // Undo escaping for guard check (check raw intent)
-    const rawText = lastUserMsg.content
+  // Guard every user-authored turn, not just the latest one.
+  for (const userMessage of conversation.filter((m) => m.role === 'user')) {
+    const rawText = userMessage.content
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>');
     const guardResult = guardSenseiInput(rawText, senseiContext.guardConfig);
@@ -352,55 +479,65 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
   // --- SH5.4: Handle pending confirmations ---
   if (confirmations && confirmations.length > 0) {
     for (const conf of confirmations) {
-      if (conf.confirmed && conf.tool && conf.args) {
-        const toolDef = getToolByName(conf.tool);
-        if (toolDef) {
-          // Guard the tool execution
-          const toolGuard = guardToolExecution(conf.tool, senseiContext.userRole, ip);
-          if (!toolGuard.allowed) {
-            const errorEvent: SenseiStreamEvent = {
-              type: 'error',
-              message: toolGuard.reason ?? 'Tool execution not allowed.',
-            };
-            controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
-            continue;
-          }
+      const pending = takePendingConfirmation(conf.callId, requestIdentity);
+      if (!pending) {
+        const errorEvent: SenseiStreamEvent = {
+          type: 'error',
+          message: 'Invalid or expired tool confirmation.',
+        };
+        controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
+        continue;
+      }
 
-          // F-09/F-10: Strip null optional args before validation.
-          // LLMs (Phi4, Llama 3.1) often emit {"provider": null} instead of omitting the key.
-          const cleanConfArgs = stripNullArgs(conf.args);
-          const argsValidation = validateArgs(toolDef, cleanConfArgs);
-          if (argsValidation.length > 0) {
-            const errorEvent: SenseiStreamEvent = {
-              type: 'error',
-              message: `Invalid args for ${conf.tool}: ${argsValidation.map((e) => e.message).join(', ')}`,
-            };
-            controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
-            continue;
-          }
-
-          const result = await executeToolCall(toolDef, cleanConfArgs, request);
-
-          // Emit tool result
-          const resultEvent: SenseiStreamEvent = {
-            type: 'tool_result',
-            callId: conf.callId,
-            tool: conf.tool,
-            result,
+      if (conf.confirmed) {
+        const toolDef = getToolByName(pending.tool);
+        if (!toolDef) {
+          const errorEvent: SenseiStreamEvent = {
+            type: 'error',
+            message: `Unknown tool: ${pending.tool}`,
           };
-          controller.enqueue(encoder.encode(encodeSSE(resultEvent)));
-
-          // Inject result into conversation for follow-up
-          conversation.push({
-            role: 'tool_result',
-            content: `Tool "${conf.tool}" result: ${JSON.stringify(result.data)}`,
-          });
+          controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
+          continue;
         }
-      } else {
-        // User rejected — inject rejection message
+
+        const toolGuard = guardToolExecution(pending.tool, senseiContext.userRole, ip);
+        if (!toolGuard.allowed) {
+          const errorEvent: SenseiStreamEvent = {
+            type: 'error',
+            message: toolGuard.reason ?? 'Tool execution not allowed.',
+          };
+          controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
+          continue;
+        }
+
+        const argsValidation = validateArgs(toolDef, pending.args);
+        if (argsValidation.length > 0) {
+          const errorEvent: SenseiStreamEvent = {
+            type: 'error',
+            message: `Invalid args for ${pending.tool}: ${argsValidation.map((e) => e.message).join(', ')}`,
+          };
+          controller.enqueue(encoder.encode(encodeSSE(errorEvent)));
+          continue;
+        }
+
+        const result = await executeToolCall(toolDef, pending.args, request);
+
+        const resultEvent: SenseiStreamEvent = {
+          type: 'tool_result',
+          callId: conf.callId,
+          tool: pending.tool,
+          result,
+        };
+        controller.enqueue(encoder.encode(encodeSSE(resultEvent)));
+
         conversation.push({
           role: 'tool_result',
-          content: `User declined to execute "${conf.tool ?? 'unknown tool'}". Suggest alternatives or proceed without it.`,
+          content: `Tool "${pending.tool}" result: ${JSON.stringify(result.data)}`,
+        });
+      } else {
+        conversation.push({
+          role: 'tool_result',
+          content: `User declined to execute "${pending.tool}". Suggest alternatives or proceed without it.`,
         });
       }
     }
@@ -487,20 +624,6 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
         continue;
       }
 
-      // Check if confirmation required
-      if (toolDef.requiresConfirmation) {
-        const confEvent: SenseiStreamEvent = {
-          type: 'confirmation_needed',
-          callId: call.id,
-          tool: call.tool,
-          args: call.args,
-          description: toolDef.description,
-        };
-        controller.enqueue(encoder.encode(encodeSSE(confEvent)));
-        hasConfirmationNeeded = true;
-        continue;
-      }
-
       // F-09/F-10: Strip null optional args before validation.
       const cleanCallArgs = stripNullArgs(call.args);
       const argsErrors = validateArgs(toolDef, cleanCallArgs);
@@ -521,6 +644,21 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
           result,
         };
         controller.enqueue(encoder.encode(encodeSSE(resultEvent)));
+        continue;
+      }
+
+      // Check if confirmation required after args have been validated.
+      if (toolDef.requiresConfirmation) {
+        rememberPendingConfirmation(call.id, call.tool, cleanCallArgs, requestIdentity);
+        const confEvent: SenseiStreamEvent = {
+          type: 'confirmation_needed',
+          callId: call.id,
+          tool: call.tool,
+          args: cleanCallArgs,
+          description: toolDef.description,
+        };
+        controller.enqueue(encoder.encode(encodeSSE(confEvent)));
+        hasConfirmationNeeded = true;
         continue;
       }
 
@@ -574,25 +712,27 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
 // F-R3-03/F-R3-04: Catch-all method handlers to return 405 for unsupported methods
 // ---------------------------------------------------------------------------
 
-const METHOD_NOT_ALLOWED = NextResponse.json(
-  { error: 'Method not allowed. Only POST is supported.' },
-  { status: 405, headers: { Allow: 'POST, OPTIONS' } },
-);
+function createMethodNotAllowedResponse() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Only POST is supported.' },
+    { status: 405, headers: { Allow: 'POST, OPTIONS' } },
+  );
+}
 
 export function GET() {
-  return METHOD_NOT_ALLOWED;
+  return createMethodNotAllowedResponse();
 }
 
 export function PUT() {
-  return METHOD_NOT_ALLOWED;
+  return createMethodNotAllowedResponse();
 }
 
 export function DELETE() {
-  return METHOD_NOT_ALLOWED;
+  return createMethodNotAllowedResponse();
 }
 
 export function PATCH() {
-  return METHOD_NOT_ALLOWED;
+  return createMethodNotAllowedResponse();
 }
 
 export function OPTIONS() {

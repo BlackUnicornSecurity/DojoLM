@@ -20,6 +20,12 @@ import { MoreHorizontal, X } from 'lucide-react'
 
 /** Primary nav items shown in bottom bar (4 items + More per Story 4.3) */
 const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'llm', 'guard'])
+const MOBILE_LABELS: Partial<Record<NavId, string>> = {
+  dashboard: 'Home',
+  scanner: 'Scan',
+  llm: 'LLM',
+  guard: 'Guard',
+}
 
 const allPrimaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
 const allMoreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
@@ -43,7 +49,7 @@ export function MobileNav() {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 h-16 bg-[var(--bg-secondary)] border-t border-[var(--border)] flex items-center md:hidden z-[var(--z-mobile-nav)] pb-safe overflow-x-hidden"
+        className="fixed bottom-0 left-0 right-0 h-16 border-t border-[var(--border)] bg-[rgba(10,11,17,0.92)] backdrop-blur-xl flex items-center md:hidden z-[var(--z-mobile-nav)] pb-safe overflow-x-hidden"
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-around w-full px-1">
@@ -59,12 +65,23 @@ export function MobileNav() {
                 className={cn(
                   'flex flex-col items-center justify-center min-w-[48px] min-h-[48px] px-1 h-full',
                   'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-                  'active:scale-95',
-                  isActive ? 'nav-item-active-icon' : 'text-[var(--text-tertiary)]'
+                  'active:scale-95'
                 )}
               >
-                <Icon className="w-5 h-5" aria-hidden="true" />
-                <span className="text-xs mt-0.5 whitespace-nowrap">{item.label}</span>
+                <span
+                  className={cn(
+                    'flex h-9 w-9 items-center justify-center rounded-xl border border-transparent',
+                    'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+                    isActive
+                      ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
+                      : 'text-[var(--text-tertiary)]'
+                  )}
+                >
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </span>
+                <span className={cn('text-[11px] mt-0.5 whitespace-nowrap', isActive ? 'text-[var(--foreground)]' : 'text-[var(--text-tertiary)]')}>
+                  {MOBILE_LABELS[item.id] ?? item.label}
+                </span>
               </button>
             )
           })}
@@ -77,12 +94,23 @@ export function MobileNav() {
             className={cn(
               'flex flex-col items-center justify-center min-w-[48px] min-h-[48px] px-1 h-full',
               'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
-              'active:scale-95',
-              (moreOpen || isMoreActive) ? 'nav-item-active-icon' : 'text-[var(--text-tertiary)]'
+              'active:scale-95'
             )}
           >
-            <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
-            <span className="text-xs mt-0.5 whitespace-nowrap">More</span>
+            <span
+              className={cn(
+                'flex h-9 w-9 items-center justify-center rounded-xl border border-transparent',
+                'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+                (moreOpen || isMoreActive)
+                  ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
+                  : 'text-[var(--text-tertiary)]'
+              )}
+            >
+              <MoreHorizontal className="w-5 h-5" aria-hidden="true" />
+            </span>
+            <span className={cn('text-[11px] mt-0.5 whitespace-nowrap', (moreOpen || isMoreActive) ? 'text-[var(--foreground)]' : 'text-[var(--text-tertiary)]')}>
+              More
+            </span>
           </button>
         </div>
       </nav>
@@ -165,11 +193,12 @@ function MoreDrawer({
         aria-modal="true"
         aria-label="More navigation options"
         className={cn(
-          'fixed bottom-16 left-0 right-0 bg-[var(--bg-secondary)] border-t border-[var(--border)]',
-          'rounded-t-2xl z-[var(--z-mobile-nav)] md:hidden pb-safe',
+          'fixed bottom-16 left-0 right-0 border-t border-[var(--border)] bg-[rgba(10,11,17,0.96)] backdrop-blur-xl',
+          'rounded-t-3xl z-[var(--z-mobile-nav)] md:hidden pb-safe max-h-[70vh] overflow-y-auto',
           'motion-safe:animate-slide-up'
         )}
       >
+        <div className="mx-auto mt-2 h-1.5 w-14 rounded-full bg-[var(--border)]" aria-hidden="true" />
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
           <span className="text-sm font-medium">More</span>
           <button
@@ -188,7 +217,7 @@ function MoreDrawer({
             return (
               <div key={group.id}>
                 {groupIdx > 0 && <div className="mx-3 my-1 border-t border-[var(--border)]" />}
-                <span className="block px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold">
+                <span className="mx-3 mt-2 inline-flex rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-tertiary)] font-semibold">
                   {group.label}
                 </span>
                 {groupItems.map((item) => {

@@ -24,6 +24,7 @@ import {
   type ReactNode,
 } from 'react'
 import { safeUUID } from '@/lib/utils'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '../fetch-with-auth'
 import type {
   EcosystemFinding,
@@ -122,6 +123,13 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     setError(null)
     try {
+      if (!(await canAccessProtectedApi())) {
+        if (mountedRef.current) {
+          setFindings([])
+        }
+        return
+      }
+
       const res = await fetchWithAuth('/api/ecosystem/findings?limit=50')
       if (!res.ok) throw new Error('Failed to fetch findings')
       const json = await res.json()
@@ -142,6 +150,13 @@ export function EcosystemProvider({ children }: { children: ReactNode }) {
   // Fetch stats from API
   const refreshStats = useCallback(async () => {
     try {
+      if (!(await canAccessProtectedApi())) {
+        if (mountedRef.current) {
+          setStats(INITIAL_STATS)
+        }
+        return
+      }
+
       const res = await fetchWithAuth('/api/ecosystem/findings?mode=stats')
       if (!res.ok) throw new Error('Failed to fetch stats')
       const json = await res.json()

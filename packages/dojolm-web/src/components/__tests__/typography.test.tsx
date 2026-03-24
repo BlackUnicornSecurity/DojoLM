@@ -9,6 +9,20 @@ import { describe, it, expect } from "vitest"
 
 describe("Typography System", () => {
   describe("Metric typography classes", () => {
+    it("renders text-page-title class on elements", () => {
+      render(<span data-testid="page-title" className="text-page-title">Dashboard</span>)
+      const el = screen.getByTestId("page-title")
+      expect(el).toBeInTheDocument()
+      expect(el).toHaveClass("text-page-title")
+    })
+
+    it("renders text-card-title class on elements", () => {
+      render(<span data-testid="card-title" className="text-card-title">Overview</span>)
+      const el = screen.getByTestId("card-title")
+      expect(el).toBeInTheDocument()
+      expect(el).toHaveClass("text-card-title")
+    })
+
     it("renders text-metric-xl class on elements", () => {
       render(<span data-testid="metric-xl" className="text-metric-xl">1,234</span>)
       const el = screen.getByTestId("metric-xl")

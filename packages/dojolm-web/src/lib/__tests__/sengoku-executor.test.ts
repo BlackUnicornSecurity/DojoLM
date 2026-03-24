@@ -44,9 +44,14 @@ vi.mock('node:fs', () => ({
 }));
 
 const mockScan = vi.fn();
+const mockValidateSengokuWebhookUrl = vi.fn();
 
 vi.mock('@dojolm/scanner', () => ({
   scan: (...args: unknown[]) => mockScan(...args),
+}));
+
+vi.mock('../sengoku-webhook', () => ({
+  validateSengokuWebhookUrl: (...args: unknown[]) => mockValidateSengokuWebhookUrl(...args),
 }));
 
 // ---------------------------------------------------------------------------
@@ -410,6 +415,10 @@ describe('Webhook firing on critical finding', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockValidateSengokuWebhookUrl.mockImplementation(async (url: string) => ({
+      valid: true,
+      normalizedUrl: url,
+    }));
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
   });
 
@@ -472,6 +481,15 @@ describe('Webhook SSRF guard', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockValidateSengokuWebhookUrl.mockImplementation(async (url: string) => ({
+      valid: !(
+        url.includes('localhost') ||
+        url.includes('127.0.0.1') ||
+        url.includes('192.168.1.100') ||
+        url.startsWith('http://')
+      ),
+      normalizedUrl: url,
+    }));
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     mockScan.mockReturnValue(withFindings('critical'));
   });

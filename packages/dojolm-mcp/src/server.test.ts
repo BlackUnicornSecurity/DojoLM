@@ -1,6 +1,24 @@
+import net from 'node:net';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { AdversarialMCPServer } from './server.js';
 import type { JsonRpcRequest } from './types.js';
+
+async function canListenOnLoopback(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+
+    probe.once('error', () => {
+      resolve(false);
+    });
+
+    probe.listen(0, '127.0.0.1', () => {
+      probe.close(() => resolve(true));
+    });
+  });
+}
+
+const supportsLoopbackListen = await canListenOnLoopback();
+const loopbackDescribe = supportsLoopbackListen ? describe : describe.skip;
 
 describe('AdversarialMCPServer', () => {
   let server: AdversarialMCPServer;
@@ -59,7 +77,7 @@ describe('AdversarialMCPServer', () => {
     });
   });
 
-  describe('lifecycle', () => {
+  loopbackDescribe('lifecycle', () => {
     it('starts and reports running', async () => {
       await server.start();
       expect(server.isRunning()).toBe(true);
@@ -77,7 +95,7 @@ describe('AdversarialMCPServer', () => {
     });
   });
 
-  describe('status', () => {
+  loopbackDescribe('status', () => {
     it('reports status when running', async () => {
       await server.start();
       const status = server.getStatus();

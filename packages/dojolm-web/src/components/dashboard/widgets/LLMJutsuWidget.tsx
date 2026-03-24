@@ -11,6 +11,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { WidgetCard } from '../WidgetCard'
 import { useNavigation } from '@/lib/NavigationContext'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { ScrollText, ExternalLink, FlaskConical } from 'lucide-react'
 import { getBeltRank } from '@/components/ui/BeltBadge'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
@@ -45,6 +46,11 @@ export function LLMJutsuWidget() {
     let cancelled = false
     async function load() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          if (!cancelled) setModels([])
+          return
+        }
+
         const res = await fetchWithAuth('/api/llm/results')
         if (!res.ok || cancelled) return
         const data = await res.json()

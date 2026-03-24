@@ -26,6 +26,12 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: vi.fn(() => null),
 }));
 
+const mockValidateSengokuWebhookUrl = vi.fn();
+
+vi.mock('@/lib/sengoku-webhook', () => ({
+  validateSengokuWebhookUrl: (...args: unknown[]) => mockValidateSengokuWebhookUrl(...args),
+}));
+
 const STORED_CAMPAIGN = {
   id: 'camp-1',
   name: 'Test',
@@ -109,6 +115,10 @@ describe('POST /api/sengoku/campaigns', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCheckApiAuth.mockReturnValue(null);
+    mockValidateSengokuWebhookUrl.mockResolvedValue({
+      valid: true,
+      normalizedUrl: 'https://hooks.example.com/notify',
+    });
     mockFsPromises.mkdir.mockResolvedValue(undefined);
     mockFsPromises.writeFile.mockResolvedValue(undefined);
     mockFsPromises.rename.mockResolvedValue(undefined);
@@ -225,6 +235,23 @@ describe('POST /api/sengoku/campaigns', () => {
     expect(data.schedule).toBe('0 9 * * *');
     expect(data.webhookUrl).toBe('https://hooks.example.com/notify');
     expect(data.graph).toBeDefined();
+  });
+
+  it('CAMP-008b: rejects webhookUrl values that resolve to private/internal targets', async () => {
+    mockValidateSengokuWebhookUrl.mockResolvedValueOnce({
+      valid: false,
+      error: 'webhookUrl is unsafe or resolves to a private/internal address',
+    });
+
+    const { POST } = await import('../route');
+    const req = makePostRequest('/api/sengoku/campaigns', {
+      ...VALID_CAMPAIGN_BODY,
+      webhookUrl: 'https://internal.example.test/notify',
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/unsafe/i);
   });
 });
 
@@ -361,6 +388,10 @@ describe('PATCH /api/sengoku/campaigns/[id]', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCheckApiAuth.mockReturnValue(null);
+    mockValidateSengokuWebhookUrl.mockResolvedValue({
+      valid: true,
+      normalizedUrl: 'https://hooks.example.com/notify',
+    });
     mockFsPromises.readFile.mockResolvedValue(JSON.stringify(STORED_CAMPAIGN) as never);
     mockFsPromises.writeFile.mockResolvedValue(undefined);
     mockFsPromises.rename.mockResolvedValue(undefined);
@@ -397,6 +428,11 @@ describe('PATCH /api/sengoku/campaigns/[id]', () => {
   });
 
   it('CAMP-020: returns 400 for non-https webhookUrl', async () => {
+    mockValidateSengokuWebhookUrl.mockResolvedValueOnce({
+      valid: false,
+      error: 'webhookUrl must use https',
+    });
+
     const { PATCH } = await import('../[id]/route');
     const req = makePatchRequest('/api/sengoku/campaigns/camp-1', {
       webhookUrl: 'http://hooks.example.com/notify',
@@ -446,6 +482,22 @@ describe('PATCH /api/sengoku/campaigns/[id]', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.webhookUrl).toBeNull();
+  });
+
+  it('CAMP-024b: rejects webhookUrl updates that fail DNS-aware SSRF validation', async () => {
+    mockValidateSengokuWebhookUrl.mockResolvedValueOnce({
+      valid: false,
+      error: 'webhookUrl is unsafe or resolves to a private/internal address',
+    });
+
+    const { PATCH } = await import('../[id]/route');
+    const req = makePatchRequest('/api/sengoku/campaigns/camp-1', {
+      webhookUrl: 'https://internal.example.test/notify',
+    });
+    const res = await PATCH(req, { params: Promise.resolve({ id: 'camp-1' }) });
+
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/unsafe/i);
   });
 });
 

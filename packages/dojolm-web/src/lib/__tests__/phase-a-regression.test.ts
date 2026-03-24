@@ -61,6 +61,10 @@ vi.mock('@/lib/storage/file-storage', () => ({
 
 vi.mock('@/lib/llm-providers', () => ({
   testModelConfig: vi.fn(),
+  validateModelConfig: vi.fn(async () => ({
+    valid: true,
+    errors: [],
+  })),
   getProviderAdapter: vi.fn(async () => ({
     execute: vi.fn(async () => ({
       text: 'safe response',

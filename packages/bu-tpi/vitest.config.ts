@@ -12,11 +12,6 @@ export default defineConfig({
     testTimeout: 30000,
     isolate: true,
     pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: false,
-      },
-    },
 
     // Coverage configuration
     coverage: {

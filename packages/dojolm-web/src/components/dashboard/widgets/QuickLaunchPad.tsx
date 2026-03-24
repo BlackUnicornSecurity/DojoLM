@@ -15,6 +15,7 @@ import type { NavId } from '@/lib/constants'
 
 interface LaunchAction {
   label: string
+  detail: string
   target: NavId
   icon: typeof Radar
   accent: string
@@ -22,12 +23,12 @@ interface LaunchAction {
 }
 
 const LAUNCH_ACTIONS: LaunchAction[] = [
-  { label: 'Scan Text', target: 'scanner', icon: Radar, accent: 'var(--dojo-primary)', shortcut: '1' },
-  { label: 'Test LLM', target: 'llm', icon: BrainCircuit, accent: 'var(--success)', shortcut: '2' },
-  { label: 'Explore Fixtures', target: 'armory', icon: Warehouse, accent: 'var(--warning)', shortcut: '3' },
-  { label: 'Check Guard', target: 'guard', icon: ShieldHalf, accent: 'var(--danger)', shortcut: '4' },
-  { label: 'Battle Arena', target: 'strategic', icon: Trophy, accent: 'var(--warning)', shortcut: '5' },
-  { label: 'Run Evolution', target: 'strategic', icon: Fingerprint, accent: 'var(--dojo-primary)', shortcut: '6' },
+  { label: 'Scan Text', detail: 'Run a live injection verdict on prompt input.', target: 'scanner', icon: Radar, accent: 'var(--dojo-primary)', shortcut: '1' },
+  { label: 'Test LLM', detail: 'Move into model evaluation and quick batch runs.', target: 'llm', icon: BrainCircuit, accent: 'var(--success)', shortcut: '2' },
+  { label: 'Explore Fixtures', detail: 'Sample known attacks and regression payloads.', target: 'armory', icon: Warehouse, accent: 'var(--warning)', shortcut: '3' },
+  { label: 'Check Guard', detail: 'Inspect defensive posture and recent blocks.', target: 'guard', icon: ShieldHalf, accent: 'var(--danger)', shortcut: '4' },
+  { label: 'Battle Arena', detail: 'Review rankings, strategy, and live telemetry.', target: 'strategic', icon: Trophy, accent: 'var(--warning)', shortcut: '5' },
+  { label: 'Run Evolution', detail: 'Continue strategic optimization and analysis.', target: 'strategic', icon: Fingerprint, accent: 'var(--dojo-primary)', shortcut: '6' },
 ]
 
 export function QuickLaunchPad() {
@@ -47,7 +48,7 @@ export function QuickLaunchPad() {
   }, [setActiveTab])
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 stagger-children">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 stagger-children">
       {LAUNCH_ACTIONS.map(action => {
         const Icon = action.icon
         return (
@@ -56,7 +57,7 @@ export function QuickLaunchPad() {
             type="button"
             onClick={() => setActiveTab(action.target)}
             aria-label={action.label}
-            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-lg min-h-[44px]"
+            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-xl min-h-[44px]"
           >
             <GlowCard glow="subtle" className={cn(
               'p-4 h-full cursor-pointer',
@@ -64,19 +65,29 @@ export function QuickLaunchPad() {
               'motion-safe:transition-[background-color,transform] motion-safe:duration-[var(--transition-fast)]',
               'active:scale-[0.98]'
             )}>
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center mb-3"
-                style={{ backgroundColor: `color-mix(in srgb, ${action.accent} 15%, transparent)` }}
-              >
-                <Icon
-                  className="w-5 h-5"
-                  style={{ color: action.accent }}
-                  aria-hidden="true"
-                />
+              <div className="flex items-start justify-between gap-3">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: `color-mix(in srgb, ${action.accent} 16%, transparent)` }}
+                >
+                  <Icon
+                    className="w-5 h-5"
+                    style={{ color: action.accent }}
+                    aria-hidden="true"
+                  />
+                </div>
+                <kbd className="rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-2 py-1 text-[11px] font-mono text-muted-foreground">
+                  {action.shortcut}
+                </kbd>
               </div>
-              <div className="text-sm font-semibold">{action.label}</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs font-mono">{action.shortcut}</kbd>
+              <div className="mt-4">
+                <div className="text-sm font-semibold text-[var(--foreground)]">{action.label}</div>
+                <div className="mt-1 text-xs leading-5 text-muted-foreground">
+                  {action.detail}
+                </div>
+              </div>
+              <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--bu-electric)]">
+                Jump to module
               </div>
             </GlowCard>
           </button>

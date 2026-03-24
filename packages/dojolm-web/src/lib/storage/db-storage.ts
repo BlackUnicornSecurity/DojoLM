@@ -49,6 +49,28 @@ function modelConfigRowToType(row: ModelConfigRow): LLMModelConfig {
   };
 }
 
+function modelConfigRowWithKeyToType(
+  row: Omit<ModelConfigRow, 'api_key_encrypted'> & { api_key?: string },
+): LLMModelConfig {
+  return {
+    id: row.id,
+    name: row.name,
+    provider: row.provider as LLMModelConfig['provider'],
+    model: row.model,
+    apiKey: row.api_key,
+    baseUrl: row.base_url ?? undefined,
+    enabled: row.enabled === 1,
+    maxTokens: row.max_tokens ?? undefined,
+    organizationId: row.organization_id ?? undefined,
+    projectId: row.project_id ?? undefined,
+    customHeaders: row.custom_headers_json ? JSON.parse(row.custom_headers_json) : undefined,
+    temperature: row.temperature ?? undefined,
+    topP: row.top_p ?? undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 function modelConfigTypeToRow(config: LLMModelConfig): Partial<ModelConfigRow> & { api_key?: string } {
   return {
     id: config.id,
@@ -170,15 +192,16 @@ export class DbStorage implements IStorageBackend {
 
   async getModelConfig(id: string): Promise<LLMModelConfig | null> {
     this.ensureInitialized();
-    const row = modelConfigRepo.findById(id);
-    return row ? modelConfigRowToType(row) : null;
+    const row = modelConfigRepo.findByIdWithKey(id);
+    return row ? modelConfigRowWithKeyToType(row) : null;
   }
 
   async saveModelConfig(config: LLMModelConfig): Promise<LLMModelConfig> {
     this.ensureInitialized();
     const data = modelConfigTypeToRow(config);
     const saved = modelConfigRepo.save(data);
-    return modelConfigRowToType(saved);
+    const hydrated = modelConfigRepo.findByIdWithKey(saved.id);
+    return hydrated ? modelConfigRowWithKeyToType(hydrated) : modelConfigRowToType(saved);
   }
 
   async deleteModelConfig(id: string): Promise<boolean> {

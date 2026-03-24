@@ -13,12 +13,26 @@ vi.mock('@/lib/audit-logger', () => ({
   },
 }));
 
+const mockValidateSession = vi.fn();
+
+vi.mock('@/lib/auth/session', () => ({
+  validateSession: (...args: unknown[]) => mockValidateSession(...args),
+}));
+
 describe('Security Hardening (Story 8.3)', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.NODA_API_KEY = 'test-api-key-for-security-tests';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
     process.env.NODE_ENV = 'test';
+    mockValidateSession.mockReset();
+    mockValidateSession.mockReturnValue({
+      id: 'user-1',
+      username: 'admin',
+      email: 'admin@test.com',
+      role: 'admin',
+      displayName: 'Admin',
+    });
   });
 
   describe('Rate limiter', () => {
@@ -127,6 +141,7 @@ describe('Security Hardening (Story 8.3)', () => {
           'sec-fetch-site': 'same-origin',
           'origin': 'http://localhost:42001',
           'host': 'localhost:42001',
+          cookie: 'tpi_session=valid-session',
         },
       });
       const res = await mod.proxy(req);
@@ -145,6 +160,7 @@ describe('Security Hardening (Story 8.3)', () => {
           'sec-fetch-dest': 'empty',
           'origin': 'http://localhost:42001',
           'host': 'localhost:42001',
+          cookie: 'tpi_session=valid-session',
         },
       });
       const res = await mod.proxy(req);
@@ -163,6 +179,26 @@ describe('Security Hardening (Story 8.3)', () => {
           'sec-fetch-dest': 'empty',
           'origin': 'http://localhost:42001',
           'host': 'localhost:42001',
+          cookie: 'tpi_session=valid-session',
+        },
+      });
+      const res = await mod.proxy(req);
+      expect(res.status).toBe(401);
+    });
+
+    it('should reject same-origin browser headers when the session is invalid', async () => {
+      const mod = await import('@/proxy');
+      mod.resetRateLimiter();
+      mockValidateSession.mockReturnValue(null);
+
+      const req = new NextRequest('http://localhost:42001/api/scan', {
+        method: 'GET',
+        headers: {
+          'sec-fetch-site': 'same-origin',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-dest': 'empty',
+          origin: 'http://localhost:42001',
+          cookie: 'tpi_session=invalid-session',
         },
       });
       const res = await mod.proxy(req);
@@ -183,6 +219,7 @@ describe('Security Hardening (Story 8.3)', () => {
             'sec-fetch-dest': 'empty',
             referer: 'http://localhost:42001/',
             'user-agent': userAgent,
+            cookie: 'tpi_session=valid-session',
           },
         });
 
@@ -212,6 +249,7 @@ describe('Security Hardening (Story 8.3)', () => {
             'sec-fetch-dest': 'empty',
             referer: 'http://localhost:42001/',
             'user-agent': 'playwright-shared-browser',
+            cookie: 'tpi_session=valid-session',
           },
         });
 
@@ -225,6 +263,54 @@ describe('Security Hardening (Story 8.3)', () => {
 
       const separateRoute = await mod.proxy(makeUiRequest('/api/compliance'));
       expect(separateRoute.status).toBe(200);
+    });
+
+    it('should apply the higher browser read limit to public same-origin GET routes without a session', async () => {
+      const mod = await import('@/proxy');
+      mod.resetRateLimiter();
+      delete process.env.TRUSTED_PROXY;
+
+      const makeUiRequest = () =>
+        new NextRequest('http://localhost:42001/api/fixtures', {
+          method: 'GET',
+          headers: {
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:42001/',
+            'user-agent': 'playwright-public-browser',
+          },
+        });
+
+      for (let i = 0; i < 101; i++) {
+        const response = await mod.proxy(makeUiRequest());
+        expect(response.status).toBe(200);
+      }
+    });
+
+    it('should apply the higher browser read limit to same-origin dev GET routes when API key auth is disabled', async () => {
+      const mod = await import('@/proxy');
+      mod.resetRateLimiter();
+      delete process.env.TRUSTED_PROXY;
+      delete process.env.NODA_API_KEY;
+      process.env.NODE_ENV = 'development';
+
+      const makeUiRequest = () =>
+        new NextRequest('http://localhost:42001/api/llm/batch?status=running', {
+          method: 'GET',
+          headers: {
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:42001/',
+            'user-agent': 'playwright-dev-browser',
+          },
+        });
+
+      for (let i = 0; i < 101; i++) {
+        const response = await mod.proxy(makeUiRequest());
+        expect(response.status).toBe(200);
+      }
     });
   });
 

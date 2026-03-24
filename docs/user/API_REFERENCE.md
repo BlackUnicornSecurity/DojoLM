@@ -1,23 +1,42 @@
 # User API Reference
 
-This page focuses on the endpoints users and integrators are most likely to call directly.
+This guide covers the endpoints most useful to end users, local automation, and admin workflows. It focuses on routes backed by the current UI instead of listing every internal route.
 
 ## Base URLs
 
-- Standalone scanner: `http://localhost:8089`
-- Web API: `http://localhost:42001/api`
+- Standalone scanner API: `http://localhost:8089`
+- Web app: `http://localhost:42001`
+- Web API base: `http://localhost:42001/api`
 
 ## Authentication
 
 For the web API:
 
-- browser requests from the same origin are handled by the app automatically
-- programmatic requests usually need `X-API-Key`
-- the key value must match `NODA_API_KEY`
+- same-origin browser requests are accepted automatically when headers and origin match `NEXT_PUBLIC_APP_URL`
+- external or scripted callers should send `X-API-Key: $NODA_API_KEY`
+- admin validation routes require admin access in addition to normal authentication
+- if `NODA_API_KEY` is unset, development mode bypass applies
+- in production, missing required auth configuration fails closed with `503`
+
+Public or minimally protected routes include:
+
+- `GET /api/admin/health`
+- `GET /api/health`
+- `GET /api/auth/me`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+
+Rate limits enforced by the API proxy:
+
+- external callers: `100` requests per minute per IP
+- same-origin UI traffic: `300` requests per minute per IP
+- repeated auth failures: `10` per minute per IP
 
 The standalone scanner API is GET-only and does not use the web API key flow.
 
 ## Standalone Scanner API
+
+Older docs that describe `POST /api/scan` on port `8089` are outdated. The standalone scanner on `:8089` is GET-only.
 
 ### Scan text
 
@@ -62,9 +81,11 @@ curl "http://localhost:8089/api/run-tests"
 curl "http://localhost:8089/api/run-tests?filter=regression&verbose=true"
 ```
 
-## Web Scanner Route
+## Web Scanner And Fixture Routes
 
-Use this when you want to call the same scanner flow the web UI uses.
+Use these when you want to automate the same flows the web UI uses.
+
+### Scan text
 
 ```bash
 curl -X POST "http://localhost:42001/api/scan" \
@@ -80,23 +101,265 @@ Notes:
 - max size: `10,000` characters
 - rejects null bytes
 
-## Health Endpoints
+### List fixtures
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/fixtures"
+```
+
+Optional filter:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/fixtures?category=multimodal"
+```
+
+### Read a fixture
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/read-fixture?path=multimodal/example.txt"
+```
+
+Notes:
+
+- expected format: `category/filename`
+- current max response size: `1MB`
+
+### Scan a fixture
+
+GET form:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/scan-fixture?path=multimodal/example.txt"
+```
+
+POST form:
+
+```bash
+curl -X POST "http://localhost:42001/api/scan-fixture" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{"path":"multimodal/example.txt"}'
+```
+
+Notes:
+
+- current scan size limit: `100KB`
+- binary fixture scanning is supported for selected formats
+
+### Scanner stats
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/stats"
+```
+
+This route returns summary counts only, not detailed pattern group names.
+
+### Test suite routes
+
+List available suites:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/tests"
+```
+
+Run one or more suites:
+
+```bash
+curl -X POST "http://localhost:42001/api/tests" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{"filter":"regression,false-positive"}'
+```
+
+## Health Routes
+
+Minimal health response:
 
 ```bash
 curl "http://localhost:42001/api/health"
-curl "http://localhost:42001/api/admin/health"
 ```
 
-## Model Configuration Endpoints
+Authenticated detailed health response:
 
-### List models
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/health"
+```
+
+## Admin Validation Routes
+
+These routes back `Admin -> Validation`. They require admin access.
+
+### Start a validation run
+
+```bash
+curl -X POST "http://localhost:42001/api/admin/validation/run" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{
+    "fullCorpus": true,
+    "modules": ["prompt-injection", "jailbreak"],
+    "includeHoldout": true
+  }'
+```
+
+Body fields:
+
+- `fullCorpus`: boolean
+- `modules`: optional array of module IDs
+- `includeHoldout`: boolean
+
+Current module IDs:
+
+- `prompt-injection`
+- `jailbreak`
+- `data-exfiltration`
+- `bias-detection`
+- `toxicity`
+- `hallucination`
+- `pii-leakage`
+- `compliance`
+
+Notes:
+
+- leave `modules` unset to run the full validation catalog
+- only one validation run can be active at a time
+- concurrent requests return `429` and include the existing `runId`
+
+### List recent validation runs
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/runs?page=1&limit=10"
+```
+
+Notes:
+
+- `page` must be a positive integer
+- `limit` must be between `1` and `100`
+
+### Poll validation status
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/status/<runId>"
+```
+
+The status response includes:
+
+- `status`
+- `progress`
+- `currentModule`
+- `samplesProcessed`
+- `samplesTotal`
+- `nonConformities`
+- `elapsed`
+- `eta`
+
+### Read a validation report
+
+Full report:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/report/<runId>"
+```
+
+Summary-only form:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/report/<runId>?format=summary"
+```
+
+Notes:
+
+- full mode returns the complete report payload when `report.json` is available
+- summary mode strips the response down to report metadata, module verdicts, metrics, and confusion-matrix data
+- if a run exists but the full report is not available yet, the response includes `report_available: false`
+
+### Export a validation report
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/export/<runId>?format=markdown"
+```
+
+Supported export formats:
+
+- `json`
+- `csv`
+- `markdown`
+
+Notes:
+
+- the export route requires a finished report file
+- exports are rate-limited to `5` per minute
+
+### List module calibration status
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/admin/validation/modules"
+```
+
+This route returns the stored validation modules with their last calibration date, tier, and current validity.
+
+### Run a calibration pre-check
+
+```bash
+curl -X POST "http://localhost:42001/api/admin/validation/calibrate" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{}'
+```
+
+Notes:
+
+- the response includes pass, fail, or skipped status per module
+- validity is based on calibration presence and tool-hash matching
+- the same endpoint also backs `Recalibrate All` from the UI
+
+### Verify an exported report signature
+
+```bash
+curl -X POST "http://localhost:42001/api/admin/validation/verify" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{
+    "report": {
+      "report_id": "rep-123",
+      "run_id": "run-123",
+      "generated_at": "2026-03-24T10:00:00.000Z",
+      "overall_verdict": "PASS",
+      "signature": "abcdef1234"
+    }
+  }'
+```
+
+Current verification note:
+
+- this route performs structural validation and signature-format checks
+- full cryptographic verification depends on `KATANA_VERIFY_KEY` and is not fully implemented yet
+
+## LLM Routes
+
+### Models
+
+List models:
 
 ```bash
 curl -H "X-API-Key: $NODA_API_KEY" \
   "http://localhost:42001/api/llm/models"
 ```
 
-### Create a model
+Create a model:
 
 ```bash
 curl -X POST "http://localhost:42001/api/llm/models" \
@@ -110,7 +373,14 @@ curl -X POST "http://localhost:42001/api/llm/models" \
   }'
 ```
 
-### Test a model connection
+Get one model:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/models/model-123"
+```
+
+Test a model connection:
 
 ```bash
 curl -X POST \
@@ -118,9 +388,30 @@ curl -X POST \
   "http://localhost:42001/api/llm/models/model-123/test"
 ```
 
-## LLM Execution Endpoints
+Update a model:
 
-### Run one test case
+```bash
+curl -X PATCH "http://localhost:42001/api/llm/models/model-123" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $NODA_API_KEY" \
+  -d '{"enabled":false}'
+```
+
+Delete a model:
+
+```bash
+curl -X DELETE \
+  -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/models/model-123"
+```
+
+### Test cases
+
+- `GET /api/llm/test-cases`
+- `POST /api/llm/test-cases`
+- `DELETE /api/llm/test-cases?id=...`
+
+### Single execution
 
 ```bash
 curl -X POST "http://localhost:42001/api/llm/execute" \
@@ -128,11 +419,19 @@ curl -X POST "http://localhost:42001/api/llm/execute" \
   -H "X-API-Key: $NODA_API_KEY" \
   -d '{
     "modelId": "model-123",
-    "testCaseId": "tc-001"
+    "testCaseId": "tc-001",
+    "useCache": true
   }'
 ```
 
-### Start a batch
+Required body fields:
+
+- `modelId`
+- `testCaseId`
+
+### Batch execution
+
+Start a batch:
 
 ```bash
 curl -X POST "http://localhost:42001/api/llm/batch" \
@@ -144,229 +443,54 @@ curl -X POST "http://localhost:42001/api/llm/batch" \
   }'
 ```
 
-### Query batches
+Query all batches:
 
 ```bash
 curl -H "X-API-Key: $NODA_API_KEY" \
   "http://localhost:42001/api/llm/batch"
 ```
 
-### Stream batch progress
+Query one batch:
 
 ```bash
 curl -H "X-API-Key: $NODA_API_KEY" \
-  "http://localhost:42001/api/llm/batch/batch-123/stream"
+  "http://localhost:42001/api/llm/batch?id=batch-123"
 ```
 
-## Useful Read Routes
+Filter by status:
+
+```bash
+curl -H "X-API-Key: $NODA_API_KEY" \
+  "http://localhost:42001/api/llm/batch?status=running"
+```
+
+### Useful read routes
 
 - `GET /api/llm/results`
 - `GET /api/llm/reports`
 - `GET /api/llm/summary`
 - `GET /api/llm/coverage`
 - `GET /api/llm/presets`
-- `GET /api/ecosystem/findings`
+- `GET /api/llm/local-models`
+- `GET /api/llm/providers`
+
+## Compliance, Arena, And Ronin Routes
+
+Useful read routes for reporting and analysis:
+
 - `GET /api/compliance`
+- `GET /api/compliance/evidence`
+- `GET /api/compliance/export`
+- `GET /api/arena`
+- `GET /api/arena/[id]`
+- `GET /api/arena/[id]/stream`
 - `GET /api/arena/export`
+- `GET /api/ronin/programs`
+- `GET /api/ronin/cves`
+- `GET /api/ronin/submissions`
 
-## Notes On Legacy Docs
+## Notes
 
-Older documentation that describes `POST /api/scan` on port `8089` is outdated. The standalone scanner on `:8089` is GET-only; the POST scanner route lives in the web app on `:42001/api/scan`.
-
-### GET /api/arena/:id
-
-Get match details.
-
-**Response:**
-```json
-{
-  "id": "uuid",
-  "status": "completed",
-  "gameMode": "CTF",
-  "fighterA": { ... },
-  "fighterB": { ... },
-  "rounds": [...],
-  "scores": {
-    "fighter-a-id": 125,
-    "fighter-b-id": 75
-  },
-  "winnerId": "fighter-a-id"
-}
-```
-
-### GET /api/arena/:id/stream
-
-Stream match events via SSE.
-
----
-
-## Guard API
-
-### GET /api/guard/events
-
-List guard events.
-
-**Query Parameters:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| action | string | Filter by action (block/allow/log) |
-| direction | string | Filter by direction (input/output) |
-| limit | number | Max results |
-
-### POST /api/guard/configs
-
-Create guard configuration.
-
-**Request:**
-```json
-{
-  "name": "Production Guard",
-  "mode": "block",
-  "rules": [
-    {
-      "type": "pattern",
-      "pattern": "ignore.*previous",
-      "action": "block"
-    }
-  ]
-}
-```
-
----
-
-## Admin API
-
-### GET /api/admin/health
-
-Platform health check.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "version": "5.0.0",
-  "services": {
-    "scanner": "healthy",
-    "storage": "healthy",
-    "llm": "healthy"
-  },
-  "timestamp": "2026-03-08T12:00:00Z"
-}
-```
-
-### GET /api/admin/stats
-
-Platform statistics.
-
-**Response:**
-```json
-{
-  "scans": {
-    "total": 10000,
-    "today": 150
-  },
-  "findings": {
-    "total": 500,
-    "bySeverity": {
-      "critical": 10,
-      "high": 50,
-      "medium": 150,
-      "low": 290
-    }
-  },
-  "models": {
-    "configured": 5,
-    "tested": 3
-  }
-}
-```
-
----
-
-## Error Handling
-
-All errors follow this format:
-
-```json
-{
-  "error": "Error type",
-  "message": "Human-readable description",
-  "code": "ERROR_CODE",
-  "details": { ... }
-}
-```
-
-**HTTP Status Codes:**
-
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 403 | Forbidden |
-| 404 | Not Found |
-| 429 | Rate Limited |
-| 500 | Server Error |
-
----
-
-## Rate Limiting
-
-| Endpoint | Limit |
-|----------|-------|
-| General API | 100 req/min |
-| Auth failures | 10/min |
-| Batch execution | 5 concurrent |
-| Arena SSE | 5 per IP, 50 global |
-
-Rate limit headers:
-```
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1646745600
-```
-
----
-
-## SDK Examples
-
-### Python
-
-```python
-import requests
-
-API_KEY = "your-api-key"
-BASE_URL = "http://localhost:42001/api"
-
-def scan_text(text):
-    response = requests.post(
-        f"{BASE_URL}/ecosystem/findings",
-        headers={"X-API-Key": API_KEY},
-        json={"text": text}
-    )
-    return response.json()
-
-result = scan_text("Test prompt")
-print(result["verdict"])
-```
-
-### JavaScript
-
-```javascript
-const API_KEY = 'your-api-key';
-const BASE_URL = 'http://localhost:42001/api';
-
-async function scanText(text) {
-  const response = await fetch(`${BASE_URL}/scan`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': API_KEY
-    },
-    body: JSON.stringify({ text })
-  });
-  return response.json();
-}
-```
+- programmatic callers should still send `X-API-Key` even on routes that the browser can reach more easily through same-origin checks
+- `GET /api/llm/models` is whitelisted in the API proxy for browser UX, but external automation is still best served by explicit API key usage
+- for higher-level workflows, see [Common Workflows](COMMON_WORKFLOWS.md)

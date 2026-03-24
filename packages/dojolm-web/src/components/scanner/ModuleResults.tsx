@@ -202,7 +202,7 @@ const ModuleSection = memo(function ModuleSection({ group }: ModuleSectionProps)
         >
           {group.findings.map((finding, index) => (
             <ModuleFindingRow
-              key={`${finding.category}-${finding.severity}-${finding.pattern_name ?? finding.match?.slice(0, 32) ?? index}`}
+              key={`${finding.category}-${finding.severity}-${finding.pattern_name ?? finding.match?.slice(0, 32) ?? 'finding'}-${index}`}
               finding={finding}
             />
           ))}

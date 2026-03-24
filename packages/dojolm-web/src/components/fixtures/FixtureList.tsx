@@ -34,6 +34,11 @@ export const FixtureList = memo(function FixtureList({
   isLoading = false,
   className
 }: FixtureListProps) {
+  const categories = useMemo(
+    () => manifest ? Object.entries(manifest.categories) : [],
+    [manifest]
+  )
+
   if (isLoading) {
     return (
       <Card className={cn('', className)}>
@@ -59,11 +64,6 @@ export const FixtureList = memo(function FixtureList({
       </Card>
     )
   }
-
-  const categories = useMemo(
-    () => Object.entries(manifest.categories),
-    [manifest.categories]
-  )
 
   return (
     <div className={cn('space-y-6', className)}>

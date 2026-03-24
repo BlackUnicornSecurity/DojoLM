@@ -63,10 +63,21 @@ interface ValidationRun {
 }
 
 interface ModuleCalibration {
+  id: string
   name: string
   tier: string
-  lastCalibration: string
+  lastCalibration: string | null
   status: 'valid' | 'expired'
+}
+
+interface ModuleCalibrationApi {
+  moduleId?: string
+  name?: string
+  tier?: number | string | null
+  lastCalibrationDate?: string | null
+  lastCalibration?: string | null
+  valid?: boolean
+  status?: 'valid' | 'expired'
 }
 
 interface ModuleReport {
@@ -127,11 +138,39 @@ const AVAILABLE_MODULES = [
   'compliance',
 ] as const
 
+const MODULE_LABELS: Record<(typeof AVAILABLE_MODULES)[number], string> = {
+  'prompt-injection': 'Prompt Injection',
+  jailbreak: 'Jailbreak Resistance',
+  'data-exfiltration': 'Data Exfiltration',
+  'bias-detection': 'Bias Detection',
+  toxicity: 'Toxicity',
+  hallucination: 'Hallucination',
+  'pii-leakage': 'PII Leakage',
+  compliance: 'Compliance',
+}
+
 const POLL_INTERVAL_MS = 2000
 
 /** NC filter type options */
 const NC_FILTER_OPTIONS = ['all', 'false_positive', 'false_negative'] as const
 type NCFilterType = typeof NC_FILTER_OPTIONS[number]
+
+function formatModuleName(moduleId: string): string {
+  if (moduleId in MODULE_LABELS) {
+    return MODULE_LABELS[moduleId as keyof typeof MODULE_LABELS]
+  }
+
+  return moduleId
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function formatModuleOptionLabel(moduleId: string): string {
+  const label = formatModuleName(moduleId)
+  return label === moduleId ? label : `${label} (${moduleId})`
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -208,7 +247,10 @@ export function ValidationManager() {
       const res = await fetchWithAuth('/api/admin/validation/modules')
       if (res.ok) {
         const data = await res.json()
-        setModules(data.modules ?? [])
+        const normalizedModules = Array.isArray(data.modules)
+          ? data.modules.map(normalizeModuleCalibration)
+          : []
+        setModules(normalizedModules)
       } else {
         setCalibrationError('Failed to load module calibration data.')
       }
@@ -529,6 +571,17 @@ export function ValidationManager() {
 
   const formatPct = (val: number): string => `${(val * 100).toFixed(2)}%`
 
+  const formatCalibrationDate = (value: string | null): string => {
+    if (!value) return 'Unknown'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return 'Unknown'
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  }
+
   /** Sanitize module_id for use in DOM id attributes */
   const safeDomId = (id: string): string => id.replace(/[^a-zA-Z0-9_-]/g, '_')
 
@@ -569,6 +622,37 @@ export function ValidationManager() {
         </div>
       )}
 
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Validation workflow map">
+        {[
+          {
+            title: '1. Configure',
+            description: 'Choose a module scope or leave all modules unchecked to run the full validation suite.',
+          },
+          {
+            title: '2. Run',
+            description: 'Launch full validation or calibration-only mode and monitor the active corpus pass in real time.',
+          },
+          {
+            title: '3. Review',
+            description: 'Inspect run history, open report evidence, and export the result package when a run finishes.',
+          },
+          {
+            title: '4. Recalibrate',
+            description: 'Refresh module baselines only when calibration windows, corpora, or scoring logic have changed.',
+          },
+        ].map((step) => (
+          <div
+            key={step.title}
+            className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-3"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-tertiary)]">
+              {step.title}
+            </p>
+            <p className="mt-1 text-sm text-foreground">{step.description}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Run Panel */}
       <Card>
         <CardHeader>
@@ -576,6 +660,9 @@ export function ValidationManager() {
             <PlayCircle className="h-4 w-4" aria-hidden="true" />
             Run Validation
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Use this section to define scope, decide whether to include the holdout evaluation set, and launch the next validation pass.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Action buttons */}
@@ -619,7 +706,7 @@ export function ValidationManager() {
               {AVAILABLE_MODULES.map((mod) => (
                 <label
                   key={mod}
-                  className="flex items-center gap-1.5 min-h-[44px] px-3 py-1.5 text-xs rounded-md border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] cursor-pointer select-none hover:bg-muted/60 motion-safe:transition-colors"
+                  className="flex items-center gap-2 min-h-[44px] px-3 py-1.5 text-xs rounded-md border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] cursor-pointer select-none hover:bg-muted/60 motion-safe:transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -628,23 +715,34 @@ export function ValidationManager() {
                     disabled={isRunning}
                     className="accent-[var(--bu-electric)]"
                   />
-                  <span className="text-foreground">{mod}</span>
+                  <span className="min-w-0">
+                    <span className="block text-foreground">{formatModuleName(mod)}</span>
+                    <span className="block font-mono text-[10px] text-muted-foreground">{mod}</span>
+                  </span>
                 </label>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground">
+              Leave all modules unchecked to run the full validation catalog. Select one or more modules only when you want a targeted verification pass.
+            </p>
           </div>
 
           {/* Holdout toggle */}
-          <label className="flex items-center gap-2 min-h-[44px] cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={includeHoldout}
-              onChange={(e) => setIncludeHoldout(e.target.checked)}
-              disabled={isRunning}
-              className="accent-[var(--bu-electric)]"
-            />
-            <span className="text-sm text-foreground">Include Holdout Set</span>
-          </label>
+          <div className="space-y-1">
+            <label className="flex items-center gap-2 min-h-[44px] cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={includeHoldout}
+                onChange={(e) => setIncludeHoldout(e.target.checked)}
+                disabled={isRunning}
+                className="accent-[var(--bu-electric)]"
+              />
+              <span className="text-sm text-foreground">Include Holdout Set</span>
+            </label>
+            <p className="text-xs text-muted-foreground">
+              The holdout set is a reserved evaluation slice used to sanity-check generalization without recalibrating the active module baselines.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -656,6 +754,9 @@ export function ValidationManager() {
               <RefreshCw className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" />
               Live Progress
             </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Track the current module, processed samples, and accumulated non-conformities while the validation run is active.
+            </p>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Progress bar */}
@@ -685,9 +786,18 @@ export function ValidationManager() {
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Current Module
                 </p>
-                <p className="text-sm font-medium text-foreground">
-                  {activeRun.currentModule || 'Initializing...'}
-                </p>
+                {activeRun.currentModule ? (
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium text-foreground">
+                      {formatModuleName(activeRun.currentModule)}
+                    </p>
+                    <p className="text-[10px] font-mono text-muted-foreground">
+                      {activeRun.currentModule}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-foreground">Initializing...</p>
+                )}
               </div>
               <div className="space-y-0.5">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -726,6 +836,9 @@ export function ValidationManager() {
             <Clock className="h-4 w-4" aria-hidden="true" />
             Run History
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Review recent validation runs, compare their outcomes, and open the report workspace for a specific run when you need deeper evidence.
+          </p>
         </CardHeader>
         <CardContent>
           {historyError && (
@@ -797,7 +910,7 @@ export function ValidationManager() {
                       <td className="py-2 pr-4">{formatDuration(run.durationMs)}</td>
                       <td className="py-2 pr-4">
                         <span className="truncate max-w-[200px] inline-block">
-                          {run.modules?.join(', ') ?? 'All modules'}
+                          {run.modules?.map(formatModuleOptionLabel).join(', ') ?? 'All modules'}
                         </span>
                       </td>
                       <td className="py-2 pr-4">
@@ -914,6 +1027,9 @@ export function ValidationManager() {
                 </div>
               )}
             </div>
+            <p className="text-sm text-muted-foreground">
+              Use this report workspace to inspect module verdicts, non-conformities, traceability metadata, and exportable evidence for the selected run.
+            </p>
           </CardHeader>
           <CardContent className="space-y-4">
             {reportLoading && (
@@ -975,7 +1091,10 @@ export function ValidationManager() {
                             ) : (
                               <ChevronRight className="w-3 h-3" aria-hidden="true" />
                             )}
-                            <span className="font-medium">{mod.module_id}</span>
+                            <div className="text-left">
+                              <div className="font-medium">{formatModuleName(mod.module_id)}</div>
+                              <div className="font-mono text-[10px] text-muted-foreground">{mod.module_id}</div>
+                            </div>
                             <span className="text-muted-foreground">(Tier {mod.tier})</span>
                           </div>
                           <span
@@ -1141,7 +1260,7 @@ export function ValidationManager() {
                       >
                         <option value="all">All Modules</option>
                         {reportModuleIds.map((id) => (
-                          <option key={id} value={id}>{id}</option>
+                          <option key={id} value={id}>{formatModuleOptionLabel(id)}</option>
                         ))}
                       </select>
                       <span className="text-muted-foreground">
@@ -1288,6 +1407,9 @@ export function ValidationManager() {
               Recalibrate All
             </button>
           </div>
+          <p className="text-sm text-muted-foreground">
+            Calibration status shows when each module baseline was last refreshed. Recalibrate only after corpus, threshold, or scoring changes that should move the reference baseline.
+          </p>
         </CardHeader>
         <CardContent>
           {calibrationError && (
@@ -1328,16 +1450,10 @@ export function ValidationManager() {
                   </tr>
                 ) : (
                   modules.map((mod) => (
-                    <tr key={mod.name} className="border-b border-muted">
+                    <tr key={mod.id} className="border-b border-muted">
                       <td className="py-2 pr-4 font-medium">{mod.name}</td>
                       <td className="py-2 pr-4">{mod.tier}</td>
-                      <td className="py-2 pr-4">
-                        {new Date(mod.lastCalibration).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </td>
+                      <td className="py-2 pr-4">{formatCalibrationDate(mod.lastCalibration)}</td>
                       <td className="py-2">
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
@@ -1364,4 +1480,42 @@ export function ValidationManager() {
       </Card>
     </div>
   )
+}
+
+function normalizeModuleCalibration(module: ModuleCalibrationApi, index: number): ModuleCalibration {
+  const name =
+    typeof module.name === 'string' && module.name.length > 0
+      ? module.name
+      : typeof module.moduleId === 'string' && module.moduleId.length > 0
+        ? module.moduleId
+        : `module-${index + 1}`
+
+  const tier =
+    typeof module.tier === 'string'
+      ? module.tier
+      : typeof module.tier === 'number'
+        ? `Tier ${module.tier}`
+        : 'Unknown'
+
+  const lastCalibration =
+    typeof module.lastCalibration === 'string'
+      ? module.lastCalibration
+      : typeof module.lastCalibrationDate === 'string'
+        ? module.lastCalibrationDate
+        : null
+
+  const status =
+    module.status === 'valid' || module.status === 'expired'
+      ? module.status
+      : module.valid
+        ? 'valid'
+        : 'expired'
+
+  return {
+    id: name,
+    name,
+    tier,
+    lastCalibration,
+    status,
+  }
 }

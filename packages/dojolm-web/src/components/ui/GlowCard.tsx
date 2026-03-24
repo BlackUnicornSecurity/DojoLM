@@ -42,10 +42,17 @@ const glowBoxShadow: Record<NonNullable<GlowCardProps['glow']>, string | undefin
 export const GlowCard = React.forwardRef<HTMLDivElement, GlowCardProps>(
   ({ glow = 'none', children, className, style, ...props }, ref) => {
     const shadow = glowBoxShadow[glow]
+    const cardVariant =
+      glow === 'accent'
+        ? 'alert'
+        : glow === 'subtle' || glow === 'input'
+          ? 'interactive'
+          : 'default'
 
     return (
       <Card
         ref={ref}
+        variant={cardVariant}
         className={cn(
           'relative',
           glow === 'input' && 'overflow-visible glow-card-input',

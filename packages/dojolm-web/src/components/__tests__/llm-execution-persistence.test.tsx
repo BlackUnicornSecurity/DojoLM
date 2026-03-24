@@ -39,7 +39,11 @@ vi.mock('@/lib/contexts/LLMModelContext', () => ({
 }))
 
 // Import after mocks
-import { LLMExecutionProvider, useExecutionContext } from '@/lib/contexts/LLMExecutionContext'
+import {
+  LLMExecutionProvider,
+  resetExecutionStateCache,
+  useExecutionContext,
+} from '@/lib/contexts/LLMExecutionContext'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -109,6 +113,7 @@ function renderWithProvider() {
 beforeEach(() => {
   mockStorage.clear()
   mockFetchWithAuth.mockReset()
+  resetExecutionStateCache()
   mockDefaultApiResponses()
 })
 
@@ -165,6 +170,25 @@ describe('LLM Execution Persistence (H1.5)', () => {
 
       expect(screen.getByTestId('active-batch-id')).toHaveTextContent('null')
       expect(mockStorage.has('llm-active-batch')).toBe(false)
+    })
+  })
+
+  describe('shared refresh state cache', () => {
+    it('deduplicates concurrent initial refreshes across providers', async () => {
+      render(
+        <>
+          <LLMExecutionProvider>
+            <TestConsumer />
+          </LLMExecutionProvider>
+          <LLMExecutionProvider>
+            <TestConsumer />
+          </LLMExecutionProvider>
+        </>
+      )
+
+      await waitFor(() => {
+        expect(mockFetchWithAuth).toHaveBeenCalledTimes(3)
+      })
     })
   })
 

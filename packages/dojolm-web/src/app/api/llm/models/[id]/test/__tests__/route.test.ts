@@ -15,10 +15,10 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args),
 }));
 
-vi.mock('@/lib/storage/file-storage', () => ({
-  fileStorage: {
+vi.mock('@/lib/storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue({
     getModelConfig: (...args: unknown[]) => mockGetModelConfig(...args),
-  },
+  }),
 }));
 
 vi.mock('@/lib/llm-providers', () => ({

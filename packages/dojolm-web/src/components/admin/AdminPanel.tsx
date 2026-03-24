@@ -38,6 +38,21 @@ const ADMIN_TABS = [
 
 type AdminTabId = typeof ADMIN_TABS[number]['id']
 
+const PLATFORM_MODULES = [
+  { name: 'Haiku Scanner', alias: 'Scanning', desc: 'Text and multimodal content analysis' },
+  { name: 'LLM Jutsu', alias: 'Model Testing', desc: 'Model security testing and benchmarks' },
+  { name: 'Atemi Lab', alias: 'Adversarial Testing', desc: 'Tool and MCP attack simulation' },
+  { name: 'Hattori Guard', alias: 'Protection', desc: 'Input and output protection controls' },
+  { name: 'Bushido Book', alias: 'Compliance', desc: 'Framework mapping, evidence, and audit views' },
+  { name: 'Amaterasu DNA', alias: 'Threat Intelligence', desc: 'Attack lineage and clustering' },
+  { name: 'The Kumite', alias: 'Strategic Hub', desc: 'Arena, Mitsuke, SAGE, and DNA workflows' },
+  { name: 'Sengoku', alias: 'Red Teaming', desc: 'Continuous campaign execution' },
+  { name: 'Time Chamber', alias: 'Temporal Testing', desc: 'Time-based attack simulation experiences' },
+  { name: 'Kotoba', alias: 'Prompt Hardening', desc: 'Prompt optimization and scoring' },
+  { name: 'Ronin Hub', alias: 'Bug Bounty', desc: 'Research and submission tracking' },
+  { name: 'Armory', alias: 'Fixture Library', desc: 'Fixtures, payloads, and comparisons' },
+] as const
+
 export function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTabId>('general')
 
@@ -125,27 +140,17 @@ function GeneralSettings() {
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Modules</h3>
         <p className="text-sm text-muted-foreground">
-          Active platform modules and capabilities.
+          Active platform modules and capabilities. Branded names stay intact here, with plain-language aliases to make ownership easier to scan.
         </p>
         <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            { name: 'Haiku Scanner', desc: 'Text & multimodal content analysis' },
-            { name: 'LLM Jutsu', desc: 'Model security testing & benchmarks' },
-            { name: 'Atemi Lab', desc: 'Adversarial attack toolkit' },
-            { name: 'Hattori Guard', desc: 'Input/output protection' },
-            { name: 'Bushido Book', desc: 'Compliance framework mapping' },
-            { name: 'Amaterasu DNA', desc: 'Attack pattern intelligence' },
-            { name: 'The Kumite', desc: 'Arena, Mitsuke, Supply Chain' },
-            { name: 'Sengoku', desc: 'Continuous red teaming' },
-            { name: 'Time Chamber', desc: 'Temporal attack simulation' },
-            { name: 'Kotoba', desc: 'Prompt security optimization' },
-            { name: 'Ronin Hub', desc: 'Bug bounty program tracker' },
-            { name: 'Armory', desc: 'Fixture & payload library' },
-          ].map(mod => (
+          {PLATFORM_MODULES.map(mod => (
             <div key={mod.name} className="flex items-center gap-2 rounded border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] px-3 py-2">
               <span className="w-2 h-2 rounded-full bg-[var(--status-allow)] shrink-0" aria-hidden="true" />
               <div className="min-w-0">
-                <p className="text-xs font-medium text-foreground">{mod.name}</p>
+                <p className="text-xs font-medium text-foreground">
+                  {mod.name}
+                  <span className="text-muted-foreground font-normal"> / {mod.alias}</span>
+                </p>
                 <p className="text-[10px] text-muted-foreground truncate">{mod.desc}</p>
               </div>
             </div>

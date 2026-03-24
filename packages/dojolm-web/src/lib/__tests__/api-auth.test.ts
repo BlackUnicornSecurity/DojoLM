@@ -8,20 +8,28 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
+const mockValidateSession = vi.fn();
+
+vi.mock('@/lib/auth/session', () => ({
+  validateSession: (...args: unknown[]) => mockValidateSession(...args),
+}));
+
 describe('checkApiAuth', () => {
   const ORIGINAL_ENV = process.env;
 
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...ORIGINAL_ENV };
+    mockValidateSession.mockReset();
+    mockValidateSession.mockReturnValue(null);
   });
 
   afterEach(() => {
     process.env = ORIGINAL_ENV;
   });
 
-  function createReq(apiKey?: string): NextRequest {
-    const headers: Record<string, string> = {};
+  function createReq(apiKey?: string, extraHeaders: Record<string, string> = {}): NextRequest {
+    const headers: Record<string, string> = { ...extraHeaders };
     if (apiKey) headers['x-api-key'] = apiKey;
     return new NextRequest('http://localhost:42001/api/test', { headers });
   }
@@ -88,5 +96,72 @@ describe('checkApiAuth', () => {
     // Different length
     const r2 = checkApiAuth(createReq('short'));
     expect(r2!.status).toBe(401);
+  });
+
+  it('AUTH-007: allows trusted same-origin requests with a valid session cookie', async () => {
+    process.env.NODA_API_KEY = 'valid-key-123';
+    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
+    process.env.NODE_ENV = 'production';
+    mockValidateSession.mockReturnValue({ id: 'user-1' });
+
+    const { checkApiAuth } = await import('../api-auth');
+
+    const result = checkApiAuth(createReq(undefined, {
+      cookie: 'tpi_session=valid-session',
+      origin: 'http://localhost:42001',
+      'sec-fetch-site': 'same-origin',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-dest': 'empty',
+    }));
+
+    expect(result).toBeNull();
+  });
+
+  it('AUTH-008: rejects same-origin headers without a valid session cookie', async () => {
+    process.env.NODA_API_KEY = 'valid-key-123';
+    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
+    process.env.NODE_ENV = 'production';
+
+    const { checkApiAuth } = await import('../api-auth');
+
+    const result = checkApiAuth(createReq(undefined, {
+      origin: 'http://localhost:42001',
+      'sec-fetch-site': 'same-origin',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-dest': 'empty',
+    }));
+
+    expect(result).not.toBeNull();
+    expect(result!.status).toBe(401);
+  });
+
+  it('AUTH-009: fails closed for same-origin bypass when NEXT_PUBLIC_APP_URL is missing in production', async () => {
+    process.env.NODA_API_KEY = 'valid-key-123';
+    delete process.env.NEXT_PUBLIC_APP_URL;
+    process.env.NODE_ENV = 'production';
+    mockValidateSession.mockReturnValue({ id: 'user-1' });
+
+    const { checkApiAuth } = await import('../api-auth');
+
+    const result = checkApiAuth(createReq(undefined, {
+      cookie: 'tpi_session=valid-session',
+      origin: 'http://localhost:42001',
+      'sec-fetch-site': 'same-origin',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-dest': 'empty',
+    }));
+
+    expect(result).not.toBeNull();
+    expect(result!.status).toBe(401);
+  });
+
+  it('AUTH-010: allows public read routes without API key or session', async () => {
+    process.env.NODA_API_KEY = 'valid-key-123';
+    process.env.NODE_ENV = 'production';
+    const { checkApiAuth } = await import('../api-auth');
+
+    const req = new NextRequest('http://localhost:42001/api/fixtures');
+    const result = checkApiAuth(req);
+    expect(result).toBeNull();
   });
 });

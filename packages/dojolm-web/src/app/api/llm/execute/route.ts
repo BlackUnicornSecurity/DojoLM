@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
-import { fileStorage } from '@/lib/storage/file-storage';
+import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
 import { getGuardConfig, saveGuardEvent, getConfigHash, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
@@ -53,9 +53,10 @@ export async function POST(request: NextRequest) {
 
     // Check for useCache option
     const useCache = body.useCache ?? true;
+    const storage = await getStorage();
 
     // Get model config
-    const model = await fileStorage.getModelConfig(modelId);
+    const model = await storage.getModelConfig(modelId);
     if (!model) {
       return NextResponse.json(
         { error: 'Model not found' },
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get test case
-    const testCase = await fileStorage.getTestCase(testCaseId);
+    const testCase = await storage.getTestCase(testCaseId);
     if (!testCase) {
       return NextResponse.json(
         { error: 'Test case not found' },
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Save execution
-      await fileStorage.saveExecution(execution);
+      await storage.saveExecution(execution);
 
       // Fire-and-forget: emit ecosystem finding (Story 10.3)
       emitExecutionFinding({
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
 
     // Standard execution (no guard)
     const execution = await executeSingleTest(model, testCase);
-    await fileStorage.saveExecution(execution);
+    await storage.saveExecution(execution);
 
     // Fire-and-forget: emit ecosystem finding (Story 10.3)
     emitExecutionFinding({

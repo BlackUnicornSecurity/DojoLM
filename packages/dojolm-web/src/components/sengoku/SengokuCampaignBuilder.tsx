@@ -15,6 +15,8 @@ import { ChevronRight, ChevronLeft, Check, Loader2 } from 'lucide-react'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { cn } from '@/lib/utils'
 import {
   ALL_SKILLS,
@@ -100,7 +102,12 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
     setSubmitting(true)
     setError(null)
     try {
-      const res = await fetch('/api/sengoku/campaigns', {
+      if (!(await canAccessProtectedApi())) {
+        setError('Authentication required to create a campaign')
+        return
+      }
+
+      const res = await fetchWithAuth('/api/sengoku/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

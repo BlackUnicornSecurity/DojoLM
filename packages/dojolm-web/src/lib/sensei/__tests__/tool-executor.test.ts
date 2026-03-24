@@ -34,6 +34,7 @@ const MOCK_POST_TOOL: SenseiToolDefinition = {
     properties: {
       text: { type: 'string', description: 'Text to scan.' },
       engines: { type: 'array', description: 'Engines to use.' },
+      mode: { type: 'string', enum: ['safe', 'full'], description: 'Execution mode.' },
     },
     required: ['text'],
   },
@@ -112,8 +113,8 @@ describe('validateArgs', () => {
     expect(errors[0].message).toContain('string');
   });
 
-  it('passes when no required fields are defined', () => {
-    const errors = validateArgs(MOCK_GET_TOOL, { anything: 'ok' });
+  it('passes when no required fields are defined and no args are provided', () => {
+    const errors = validateArgs(MOCK_GET_TOOL, {});
     expect(errors).toHaveLength(0);
   });
 
@@ -132,6 +133,24 @@ describe('validateArgs', () => {
       engines: ['engine1'],
     });
     expect(errors).toHaveLength(0);
+  });
+
+  it('rejects undeclared fields', () => {
+    const errors = validateArgs(MOCK_POST_TOOL, {
+      text: 'hello',
+      unexpected: true,
+    });
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('not allowed');
+  });
+
+  it('rejects enum violations', () => {
+    const errors = validateArgs(MOCK_POST_TOOL, {
+      text: 'hello',
+      mode: 'turbo',
+    });
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('must be one of');
   });
 });
 

@@ -1,4 +1,4 @@
-# Green AI Guidelines for BU-TPI Testing Framework
+# Green AI Guidelines for DojoLM Testing
 
 **Version:** 1.0
 **Date:** 2026-02-27
@@ -9,7 +9,7 @@
 
 ## Overview
 
-This document provides comprehensive guidelines for testing and evaluating the environmental impact of AI systems within the BU-TPI security testing framework. It aligns with NIST AI 600-1 Risk Management Framework requirements and international standards for AI environmental sustainability.
+This document provides guidelines for testing and evaluating the environmental impact of AI systems within the current DojoLM testing framework. It aligns with NIST AI 600-1 Risk Management Framework requirements and international standards for AI environmental sustainability.
 
 ---
 
@@ -183,7 +183,7 @@ Where:
 
 ### Detection Patterns
 
-The BU-TPI scanner includes detection for:
+The current scanner corpus includes detection for:
 - Selective reporting (only Scope 1, ignoring Scope 2/3)
 - Cherry-picking low-carbon regions
 - Excluding infrastructure energy

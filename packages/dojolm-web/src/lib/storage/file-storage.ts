@@ -31,6 +31,7 @@ import type {
   ExecutionQuery,
   BatchQuery,
 } from './storage-interface';
+import { decrypt, encrypt } from '../db/encryption';
 
 // ===========================================================================
 // Path Constants
@@ -146,6 +147,84 @@ export function generateExecutionHash(prompt: string, modelConfigId: string): st
   return generateContentHash(`${modelConfigId}:${prompt}`);
 }
 
+type StoredModelConfig = Omit<LLMModelConfig, 'apiKey' | 'customHeaders'> & {
+  apiKey?: string;
+  customHeaders?: Record<string, string>;
+  apiKeyEncrypted?: string;
+  customHeadersEncrypted?: string;
+};
+
+function encryptModelSecret(secret: string, fieldName: string): string {
+  try {
+    return encrypt(secret);
+  } catch {
+    throw new Error(`TPI_DB_ENCRYPTION_KEY is required to store model ${fieldName} securely`);
+  }
+}
+
+function decryptModelSecret<T>(
+  secret: string,
+  fieldName: string,
+  parser: (value: string) => T,
+): T | undefined {
+  try {
+    return parser(decrypt(secret));
+  } catch (error) {
+    console.error(`Failed to decrypt stored model ${fieldName}:`, error);
+    return undefined;
+  }
+}
+
+function deserializeModelConfig(config: StoredModelConfig): LLMModelConfig {
+  const {
+    apiKeyEncrypted,
+    customHeadersEncrypted,
+    apiKey: legacyApiKey,
+    customHeaders: legacyCustomHeaders,
+    ...rest
+  } = config;
+
+  const apiKey = apiKeyEncrypted
+    ? decryptModelSecret(apiKeyEncrypted, 'apiKey', (value) => value)
+    : legacyApiKey;
+  const customHeaders = customHeadersEncrypted
+    ? decryptModelSecret(customHeadersEncrypted, 'customHeaders', (value) => JSON.parse(value) as Record<string, string>)
+    : legacyCustomHeaders;
+
+  return {
+    ...rest,
+    apiKey,
+    customHeaders,
+  };
+}
+
+function serializeModelConfig(config: LLMModelConfig): StoredModelConfig {
+  const stored: StoredModelConfig = {
+    ...config,
+  };
+
+  if (config.apiKey) {
+    stored.apiKeyEncrypted = encryptModelSecret(config.apiKey, 'apiKey');
+    delete (stored as Partial<StoredModelConfig>).apiKey;
+  } else {
+    delete (stored as Partial<StoredModelConfig>).apiKey;
+    delete (stored as Partial<StoredModelConfig>).apiKeyEncrypted;
+  }
+
+  if (config.customHeaders && Object.keys(config.customHeaders).length > 0) {
+    stored.customHeadersEncrypted = encryptModelSecret(
+      JSON.stringify(config.customHeaders),
+      'customHeaders'
+    );
+    delete (stored as Partial<StoredModelConfig>).customHeaders;
+  } else {
+    delete (stored as Partial<StoredModelConfig>).customHeaders;
+    delete (stored as Partial<StoredModelConfig>).customHeadersEncrypted;
+  }
+
+  return stored;
+}
+
 // ===========================================================================
 // File Storage Implementation
 // ===========================================================================
@@ -156,8 +235,8 @@ export class FileStorage implements IStorageBackend {
   // -----------------------------------------------------------------------
 
   async getModelConfigs(): Promise<LLMModelConfig[]> {
-    const data = await readJSON<LLMModelConfig[]>(PATHS.models);
-    return data || [];
+    const data = await readJSON<StoredModelConfig[]>(PATHS.models);
+    return (data || []).map(deserializeModelConfig);
   }
 
   async getModelConfig(id: string): Promise<LLMModelConfig | null> {
@@ -182,7 +261,7 @@ export class FileStorage implements IStorageBackend {
       configs.push(updatedConfig);
     }
 
-    await writeJSON(PATHS.models, configs);
+    await writeJSON(PATHS.models, configs.map(serializeModelConfig));
 
     return updatedConfig;
   }
@@ -195,7 +274,7 @@ export class FileStorage implements IStorageBackend {
       return false; // Not found
     }
 
-    await writeJSON(PATHS.models, filtered);
+    await writeJSON(PATHS.models, filtered.map(serializeModelConfig));
 
     return true;
   }

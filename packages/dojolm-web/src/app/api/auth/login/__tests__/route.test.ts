@@ -43,10 +43,10 @@ vi.mock('@/lib/db/repositories/user.repository', () => ({
 
 // --- Helpers ---
 
-function createPostRequest(body: unknown): NextRequest {
+function createPostRequest(body: unknown, headers: Record<string, string> = {}): NextRequest {
   return new NextRequest('http://localhost:42001/api/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify(body),
   });
 }
@@ -64,12 +64,14 @@ const mockUser = {
 // --- Tests ---
 
 describe('POST /api/auth/login', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     mockBuildSessionCookie.mockReturnValue('session=tok; Path=/; HttpOnly');
     mockBuildCsrfCookie.mockReturnValue('csrf=csrf-tok; Path=/');
     mockGenerateCsrfToken.mockReturnValue('csrf-tok-123');
     mockCreateSession.mockReturnValue('session-tok-456');
+    const { resetLoginRateLimiter } = await import('@/lib/auth/login-rate-limit');
+    resetLoginRateLimiter();
   });
 
   // AUTH-001: missing username returns 400
@@ -176,5 +178,53 @@ describe('POST /api/auth/login', () => {
     const res = await POST(createPostRequest({ username: 'admin', password: 'pw' }));
     expect(res.status).toBe(500);
     expect((await res.json()).error).toMatch(/internal server error/i);
+  });
+
+  it('AUTH-011: rate limits repeated failed logins for the same client and username', async () => {
+    mockFindByUsername.mockReturnValue(mockUser);
+    mockVerifyPassword.mockResolvedValue(false);
+    const { POST } = await import('@/app/api/auth/login/route');
+
+    for (let i = 0; i < 9; i++) {
+      const res = await POST(createPostRequest(
+        { username: 'admin', password: 'wrong' },
+        { 'user-agent': 'Vitest Browser A' },
+      ));
+      expect(res.status).toBe(401);
+    }
+
+    const limited = await POST(createPostRequest(
+      { username: 'admin', password: 'wrong' },
+      { 'user-agent': 'Vitest Browser A' },
+    ));
+    expect(limited.status).toBe(429);
+    expect((await limited.json()).error).toMatch(/too many login attempts/i);
+  });
+
+  it('AUTH-012: clears failed-attempt state after a successful login', async () => {
+    mockFindByUsername.mockReturnValue(mockUser);
+    const { POST } = await import('@/app/api/auth/login/route');
+
+    mockVerifyPassword.mockResolvedValue(false);
+    for (let i = 0; i < 5; i++) {
+      await POST(createPostRequest(
+        { username: 'admin', password: 'wrong' },
+        { 'user-agent': 'Vitest Browser B' },
+      ));
+    }
+
+    mockVerifyPassword.mockResolvedValue(true);
+    const success = await POST(createPostRequest(
+      { username: 'admin', password: 'correct' },
+      { 'user-agent': 'Vitest Browser B' },
+    ));
+    expect(success.status).toBe(200);
+
+    mockVerifyPassword.mockResolvedValue(false);
+    const afterReset = await POST(createPostRequest(
+      { username: 'admin', password: 'wrong' },
+      { 'user-agent': 'Vitest Browser B' },
+    ));
+    expect(afterReset.status).toBe(401);
   });
 });

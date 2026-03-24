@@ -8,7 +8,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -42,6 +42,11 @@ vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: vi.fn(),
 }))
 
+const mockCanAccessProtectedApi = vi.fn()
+vi.mock('@/lib/client-auth-access', () => ({
+  canAccessProtectedApi: (...args: unknown[]) => mockCanAccessProtectedApi(...args),
+}))
+
 // Mock cn utility
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
@@ -54,6 +59,46 @@ vi.mock('@/lib/utils', () => ({
 import { SenseiSuggestions } from '../sensei/SenseiSuggestions'
 import { SenseiToolResultCard } from '../sensei/SenseiToolResult'
 import { SenseiChat } from '../sensei/SenseiChat'
+import { SenseiDrawer } from '../sensei/SenseiDrawer'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
+
+const mockFetchWithAuth = vi.mocked(fetchWithAuth)
+
+// ---------------------------------------------------------------------------
+// SenseiDrawer Tests
+// ---------------------------------------------------------------------------
+
+describe('SenseiDrawer', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockCanAccessProtectedApi.mockResolvedValue(true)
+  })
+
+  it('skips model loading when protected access is unavailable', async () => {
+    mockCanAccessProtectedApi.mockResolvedValue(false)
+
+    render(<SenseiDrawer activeModule="dashboard" />)
+
+    await waitFor(() => {
+      expect(mockCanAccessProtectedApi).toHaveBeenCalledTimes(1)
+    })
+    expect(mockFetchWithAuth).not.toHaveBeenCalled()
+  })
+
+  it('loads models when protected access is available', async () => {
+    mockFetchWithAuth.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        models: [{ id: 'gpt-4o', name: 'GPT-4o', provider: 'openai' }],
+      }),
+    } as Response)
+
+    render(<SenseiDrawer activeModule="dashboard" />)
+
+    await screen.findByText('GPT-4o')
+    expect(mockFetchWithAuth).toHaveBeenCalledWith('/api/llm/models')
+  })
+})
 
 // ---------------------------------------------------------------------------
 // SenseiSuggestions Tests

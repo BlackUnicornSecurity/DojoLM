@@ -31,11 +31,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const mockQueryExecutions = vi.fn();
 const mockGetModelConfig = vi.fn();
 
-vi.mock('../storage/file-storage', () => ({
-  fileStorage: {
+vi.mock('../storage/storage-interface', () => ({
+  getStorage: vi.fn().mockResolvedValue({
     queryExecutions: (...args: unknown[]) => mockQueryExecutions(...args),
     getModelConfig: (...args: unknown[]) => mockGetModelConfig(...args),
-  },
+  }),
 }));
 
 import { generateModelReport, fetchCoverageMap } from '../llm-server-utils';

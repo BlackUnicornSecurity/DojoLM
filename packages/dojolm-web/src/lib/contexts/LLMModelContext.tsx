@@ -13,6 +13,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 import type { LLMModelConfig, LLMProvider } from '../llm-types';
+import { canAccessProtectedApi } from '../client-auth-access';
 import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
@@ -110,6 +111,11 @@ export function LLMModelProvider({ children }: LLMModelProviderProps) {
     setError(null);
 
     try {
+      if (!(await canAccessProtectedApi())) {
+        setModels([]);
+        return;
+      }
+
       const loadedModels = await apiFetch<LLMModelConfig[]>('/models');
       setModels(loadedModels);
     } catch (err) {

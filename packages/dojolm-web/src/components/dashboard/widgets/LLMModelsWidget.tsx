@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@/lib/NavigationContext'
 import { WidgetCard } from '../WidgetCard'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { cn } from '@/lib/utils'
 import { Brain, Play, Loader2 } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
@@ -30,6 +31,11 @@ export function LLMModelsWidget() {
     let cancelled = false
     async function fetchModels() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          if (!cancelled) setModels([])
+          return
+        }
+
         const res = await fetchWithAuth('/api/llm/models')
         if (res.ok) {
           const data = await res.json()

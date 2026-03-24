@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-import { fileStorage } from '@/lib/storage/file-storage';
+import { getStorage } from '@/lib/storage/storage-interface';
 import { testModelConfig } from '@/lib/llm-providers';
 import { checkApiAuth } from '@/lib/api-auth';
 
@@ -23,8 +23,9 @@ export async function POST(
 
   try {
     const { id } = await params;
+    const storage = await getStorage();
 
-    const model = await fileStorage.getModelConfig(id);
+    const model = await storage.getModelConfig(id);
 
     if (!model) {
       return NextResponse.json(

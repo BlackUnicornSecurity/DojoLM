@@ -8,6 +8,30 @@ import type { NavId } from '../constants';
 import type { SenseiContext } from './types';
 import { DEFAULT_GUARD_CONFIG } from '../guard-constants';
 
+function getCookieValue(request: NextRequest, name: string): string | null {
+  const cookieStore = (request as NextRequest & {
+    cookies?: { get?: (key: string) => { value?: string } | undefined };
+  }).cookies;
+  const directValue = cookieStore?.get?.(name)?.value;
+  if (directValue) {
+    return directValue;
+  }
+
+  const cookieHeader = request.headers.get('cookie');
+  if (!cookieHeader) {
+    return null;
+  }
+
+  for (const part of cookieHeader.split(';')) {
+    const [rawKey, ...rawValue] = part.trim().split('=');
+    if (rawKey === name) {
+      return rawValue.join('=') || null;
+    }
+  }
+
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // Server-side context builder (used in API route)
 // ---------------------------------------------------------------------------
@@ -18,11 +42,13 @@ import { DEFAULT_GUARD_CONFIG } from '../guard-constants';
  */
 export async function buildSenseiContext(
   activeModule: NavId,
-  _request: NextRequest,
+  request: NextRequest,
 ): Promise<SenseiContext> {
-  const [{ getGuardConfig }, { getStorage }] = await Promise.all([
+  const [{ getGuardConfig }, { getStorage }, { validateSession }, { SESSION_COOKIE_NAME }] = await Promise.all([
     import('../storage/guard-storage'),
     import('../storage/storage-interface'),
+    import('../auth/session'),
+    import('../auth/route-guard'),
   ]);
 
   const [guardConfig, storage] = await Promise.all([
@@ -36,13 +62,22 @@ export async function buildSenseiContext(
     .map((m) => m.name);
 
   const recentActivity = await getRecentActivity(storage);
+  const sessionToken = getCookieValue(request, SESSION_COOKIE_NAME);
+  const sessionUser = sessionToken ? validateSession(sessionToken) : null;
+  const userRole = request.headers.get('x-api-key')
+    ? 'admin'
+    : sessionUser?.role === 'admin'
+      ? 'admin'
+      : sessionUser?.role === 'analyst'
+        ? 'user'
+        : 'viewer';
 
   return {
     activeModule,
     guardConfig,
     configuredModels,
     recentActivity,
-    userRole: 'admin', // Derived from auth in SH5; default for now
+    userRole,
   };
 }
 

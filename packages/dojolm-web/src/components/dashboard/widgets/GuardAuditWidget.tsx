@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react'
 import { WidgetCard } from '../WidgetCard'
+import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { cn } from '@/lib/utils'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
@@ -26,6 +27,11 @@ export function GuardAuditWidget() {
     let cancelled = false
     async function fetchAudit() {
       try {
+        if (!(await canAccessProtectedApi())) {
+          if (!cancelled) setEvents([])
+          return
+        }
+
         const res = await fetchWithAuth('/api/llm/guard/audit?limit=5')
         if (res.ok) {
           const data = await res.json()

@@ -310,9 +310,19 @@ export function ScannerInput({
   const hasContent = text.trim() || uploadedFiles.length > 0
 
   return (
-    <GlowCard glow="subtle" className={cn('', className)}>
-      <CardHeader>
-        <CardTitle>Input Text</CardTitle>
+    <GlowCard glow="input" className={cn('', className)}>
+      <CardHeader className="pb-2">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle>Input Text</CardTitle>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Stage raw prompts, fixtures, or extracted multimodal text before running the Haiku detection stack.
+            </p>
+          </div>
+          <div className="rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Cmd/Ctrl + Enter
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <Textarea
@@ -326,7 +336,7 @@ export function ScannerInput({
         />
 
         {/* Multimodal file upload (H26.3) */}
-        <div className="space-y-2">
+        <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3">
           <input
             ref={fileInputRef}
             id={fileInputId}
@@ -338,19 +348,24 @@ export function ScannerInput({
             className="sr-only"
             aria-label="Upload files for multimodal scanning"
           />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isScanning}
-            className="gap-2"
-          >
-            <Upload className="h-4 w-4" aria-hidden="true" />
-            Upload File
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Images (PNG, JPEG, GIF, WebP, SVG), Audio (MP3, WAV, FLAC, OGG), Documents (TXT, JSON, XML)
-          </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[var(--foreground)]">Multimodal attachments</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Images (PNG, JPEG, GIF, WebP, SVG), Audio (MP3, WAV, FLAC, OGG), Documents (TXT, JSON, XML)
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isScanning}
+              className="gap-2"
+            >
+              <Upload className="h-4 w-4" aria-hidden="true" />
+              Upload File
+            </Button>
+          </div>
         </div>
 
         {/* Uploaded file previews */}
@@ -375,25 +390,39 @@ export function ScannerInput({
           <p className="text-xs text-[var(--danger)]" role="alert">{lengthWarning}</p>
         )}
 
-        <div className="flex gap-2 flex-wrap">
-          <Button
-            onClick={handleScan}
-            disabled={!hasContent || isScanning || allEnginesDisabled}
-            className="gap-2"
-          >
-            <Scan className="h-4 w-4" aria-hidden="true" />
-            {isScanning ? 'Scanning...' : 'Scan'}
-          </Button>
-          <button
-            onClick={handleClear}
-            disabled={isScanning}
-            className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors px-2 py-1 min-h-[44px] inline-flex items-center"
-          >
-            Clear
-          </button>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-3">
+          <p className="text-xs text-muted-foreground">
+            {hasContent
+              ? `${text.length.toLocaleString()} typed characters and ${uploadedFiles.length} attachment${uploadedFiles.length === 1 ? '' : 's'} staged for scan.`
+              : 'Paste a prompt or attach files to prepare a scan run.'}
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="gradient"
+              onClick={handleScan}
+              disabled={!hasContent || isScanning || allEnginesDisabled}
+              className="gap-2"
+            >
+              <Scan className="h-4 w-4" aria-hidden="true" />
+              {isScanning ? 'Scanning...' : 'Scan'}
+            </Button>
+            <button
+              onClick={handleClear}
+              disabled={isScanning}
+              className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors px-2 py-1 min-h-[44px] inline-flex items-center"
+            >
+              Clear
+            </button>
+          </div>
         </div>
 
-        <QuickChips onLoadPayload={handleLoadPayload} isScanning={isScanning} />
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <p className="text-label">Quick Payloads</p>
+            <p className="text-xs text-muted-foreground">Load a known attack seed into the input without retyping it.</p>
+          </div>
+          <QuickChips onLoadPayload={handleLoadPayload} isScanning={isScanning} />
+        </div>
       </CardContent>
     </GlowCard>
   )

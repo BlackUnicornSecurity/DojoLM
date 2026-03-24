@@ -20,21 +20,21 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: cn(
-          "bg-[var(--border-subtle)] border border-[var(--border-hover)] text-[var(--foreground)] backdrop-blur-sm",
-          "hover:bg-[var(--overlay-active)] hover:border-[var(--border-hover)] hover:shadow-[0_0_12px_rgba(91,141,239,0.08)]",
+          "surface-interactive border border-[var(--border-subtle)] text-[var(--foreground)] shadow-[var(--shadow-sm)] backdrop-blur-sm",
+          "hover:border-[var(--border-hover)] hover:shadow-[0_0_12px_rgba(91,141,239,0.08)]",
           "active:scale-[0.98] active:shadow-none",
           "motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]"
         ),
         gradient: cn(
-          "bg-gradient-to-br from-[var(--dojo-primary)] to-[var(--dojo-hover)] text-white",
-          "hover:-translate-y-px hover:shadow-[0_4px_16px_rgba(204,58,47,0.25)]",
+          "bg-gradient-to-br from-[var(--dojo-primary)] to-[var(--dojo-hover)] text-white border border-[rgba(224,84,74,0.35)] shadow-[0_8px_20px_rgba(204,58,47,0.18)]",
+          "hover:-translate-y-px hover:shadow-[0_10px_24px_rgba(204,58,47,0.26)]",
           "active:scale-[0.98] active:shadow-none",
           "motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]"
         ),
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-[var(--border-hover)] transition-colors",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors",
         ghost: "hover:bg-[var(--overlay-subtle)] hover:text-accent-foreground active:shadow-none transition-colors",

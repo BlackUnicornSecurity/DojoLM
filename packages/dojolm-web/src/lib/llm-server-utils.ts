@@ -7,7 +7,7 @@
  * Note: This file uses Node.js modules and can only be imported in API routes or server components
  */
 
-import { fileStorage } from './storage/file-storage';
+import { getStorage } from './storage/storage-interface';
 import type { LLMModelReport, LLMTestExecution, CoverageMap } from './llm-types';
 
 // ===========================================================================
@@ -18,12 +18,13 @@ import type { LLMModelReport, LLMTestExecution, CoverageMap } from './llm-types'
  * Generate a model report (server-side function for API routes)
  */
 export async function generateModelReport(modelId: string): Promise<LLMModelReport> {
-  const { executions } = await fileStorage.queryExecutions({
+  const storage = await getStorage();
+  const { executions } = await storage.queryExecutions({
     modelConfigId: modelId,
     limit: 10000,
   });
 
-  const model = await fileStorage.getModelConfig(modelId);
+  const model = await storage.getModelConfig(modelId);
   if (!model) {
     throw new Error(`Model not found: ${modelId}`);
   }
@@ -149,7 +150,8 @@ export async function generateModelReport(modelId: string): Promise<LLMModelRepo
  * Get coverage map (server-side function for API routes)
  */
 export async function fetchCoverageMap(modelId?: string): Promise<CoverageMap> {
-  const { executions } = await fileStorage.queryExecutions({
+  const storage = await getStorage();
+  const { executions } = await storage.queryExecutions({
     limit: 10000,
   });
 
@@ -238,12 +240,13 @@ export interface BatchBushidoReport {
  * Returns a combined report suitable for Bushido Book display.
  */
 export async function generateBatchModelReports(batchId: string): Promise<BatchBushidoReport> {
-  const batch = await fileStorage.getBatch(batchId);
+  const storage = await getStorage();
+  const batch = await storage.getBatch(batchId);
   if (!batch) {
     throw new Error(`Batch not found: ${batchId}`);
   }
 
-  const executions = await fileStorage.getBatchExecutions(batchId);
+  const executions = await storage.getBatchExecutions(batchId);
 
   // Group executions by model
   const byModel = new Map<string, LLMTestExecution[]>();
@@ -257,7 +260,7 @@ export async function generateBatchModelReports(batchId: string): Promise<BatchB
   const models: BatchModelSummary[] = [];
 
   for (const [modelId, modelExecs] of byModel) {
-    const model = await fileStorage.getModelConfig(modelId);
+    const model = await storage.getModelConfig(modelId);
     const modelName = model?.name ?? modelId;
     const provider = model?.provider ?? 'unknown';
 
