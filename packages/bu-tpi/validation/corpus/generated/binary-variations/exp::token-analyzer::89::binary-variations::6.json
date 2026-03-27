@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::89::binary-variations::6",
+  "base_sample_id": "exp::token-analyzer::89",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -503975000,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:category\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjB9.xxx\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "223a3c9f9d91a562e9275c28374d1a97b0016d1e2920476ca2bbd2e6d2e061a3",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

@@ -59,6 +59,8 @@ export function ResultsView() {
 
       const results = await getExecutions(filterOptions);
       setExecutions(results);
+    } catch {
+      setExecutions([]);
     } finally {
       setLoading(false);
     }

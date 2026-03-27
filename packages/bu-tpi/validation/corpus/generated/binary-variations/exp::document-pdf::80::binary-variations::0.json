@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::80::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::80",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 702844506,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"/Metadata << /Type /Metadata /Subtype /XML >> stream\\n<?xpacket?><rdf:Description rdf:about=\\\"\\\">\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "349562cfd618e72d7551b97ac7cbcd8213da83248ec8dd47368d14455e189c0c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

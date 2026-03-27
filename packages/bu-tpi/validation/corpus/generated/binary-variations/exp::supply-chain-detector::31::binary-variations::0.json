@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::31::binary-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::31",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -232970521,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"{\\\"name\\\": \\\"crossenv\\\", \\\"version\\\": \\\"7.0.0\\\", \\\"scripts\\\": {\\\"postinstall\\\": \\\"node steal-env.js\\\"}}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "8a9ee590723a2ba4f1c7920074a1ed5ea5efae8d9e6adc060d829295e2a7a259",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

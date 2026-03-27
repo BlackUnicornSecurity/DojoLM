@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::12::binary-variations::0",
+  "base_sample_id": "exp::document-office::12",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1625118208,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n</field></root>\"\n  }\n}",
+  "content_hash": "b6e38d00d4539376402da2b58ad65e8de22a439e62f81c17cbcf703d314f2ea5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

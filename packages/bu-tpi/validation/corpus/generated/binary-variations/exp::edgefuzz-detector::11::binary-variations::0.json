@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::edgefuzz-detector::11::binary-variations::0",
+  "base_sample_id": "exp::edgefuzz-detector::11",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -462240254,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "b5edb1dc8b3d7a77aa4daca8d3451bfc389c2e55f6571f60bc5ed5bd901c5fbe",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

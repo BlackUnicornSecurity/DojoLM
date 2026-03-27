@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::124::binary-variations::3",
+  "base_sample_id": "exp::document-office::124",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -448277842,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"<si><t><!-- hidden content --><script>alert(1)</script></t></si>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "d8e631f90cdede0878335f9a5f6809d7e2b73488902944399ae03250267c6083",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

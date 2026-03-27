@@ -240,7 +240,7 @@ export function validateImageFormat(
       description: `Image exceeds maximum size: ${(data.byteLength / 1024 / 1024).toFixed(1)}MB > 10MB limit`,
       match: filename,
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'file_size_exceeded',
       weight: 0,
     });
@@ -270,7 +270,7 @@ export function validateImageFormat(
         description: `Magic bytes do not match declared MIME type: ${declaredMime}`,
         match: filename,
         source: 'S-IMAGE',
-        engine: 'ImageScanner',
+        engine: 'image-scanner',
         pattern_name: 'magic_byte_mismatch',
         weight: 10,
       });
@@ -287,7 +287,7 @@ export function validateImageFormat(
       description: `File extension '${ext}' does not match declared MIME '${declaredMime}'`,
       match: filename,
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'extension_mime_mismatch',
       weight: 10,
     });
@@ -314,7 +314,7 @@ export function sanitizeSVG(svgText: string): { sanitized: string; findings: Fin
       description: 'Stripped <script> tags from SVG',
       match: 'script tags removed',
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'svg_script_stripped',
       weight: 10,
     });
@@ -330,7 +330,7 @@ export function sanitizeSVG(svgText: string): { sanitized: string; findings: Fin
       description: 'Stripped <foreignObject> elements from SVG',
       match: 'foreignObject elements removed',
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'svg_foreign_object_stripped',
       weight: 9,
     });
@@ -346,7 +346,7 @@ export function sanitizeSVG(svgText: string): { sanitized: string; findings: Fin
       description: 'Stripped <iframe>/<embed>/<object> elements from SVG',
       match: 'embedding elements removed',
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'svg_embed_stripped',
       weight: 10,
     });
@@ -362,7 +362,7 @@ export function sanitizeSVG(svgText: string): { sanitized: string; findings: Fin
       description: 'Stripped event handler attributes from SVG',
       match: 'event handlers removed',
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'svg_event_handler_stripped',
       weight: 9,
     });
@@ -378,7 +378,7 @@ export function sanitizeSVG(svgText: string): { sanitized: string; findings: Fin
       description: 'Stripped javascript:/data: URIs from SVG',
       match: 'dangerous URIs removed',
       source: 'S-IMAGE',
-      engine: 'ImageScanner',
+      engine: 'image-scanner',
       pattern_name: 'svg_dangerous_uri_stripped',
       weight: 10,
     });
@@ -413,7 +413,7 @@ export const imageScannerModule: ScannerModule = {
         description: `ImageScanner: Input too large (${text.length} chars), skipping scan`,
         match: '',
         source: 'S-IMAGE',
-        engine: 'ImageScanner',
+        engine: 'image-scanner',
         pattern_name: 'input_size_guard',
         weight: 0,
       }];
@@ -431,7 +431,7 @@ export const imageScannerModule: ScannerModule = {
             match: m[0].slice(0, 100),
             pattern_name: p.name,
             source: p.source || 'S-IMAGE',
-            engine: 'ImageScanner',
+            engine: 'image-scanner',
             ...(p.weight !== undefined && { weight: p.weight }),
           });
         }

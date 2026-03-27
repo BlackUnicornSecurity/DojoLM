@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::58::combination-variations::0",
+  "base_sample_id": "exp::xxe-protopollution::58",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": -571996581,
+  "content": "```python\n<?xml ver​sion=\"1.0\"?><!‍DOCT﻿YPE foo [<​!ENTITY xx﻿e SYSTEM \"file:///etc/host﻿name‌\">]><data>&xxe;​</d﻿ata>\n\n```",
+  "content_hash": "e7089da93c136e2d6b3d82917152054cac2d105a205d7ae92b3d7bc817641fdd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

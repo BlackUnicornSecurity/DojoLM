@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::57::structural-variations::1",
+  "base_sample_id": "exp::document-office::57",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1050410256,
+  "content": "Sub AutoOpen()\n  Shell \"cmd.exe\t/c powershell\n-ep\tbypass\"\nEnd Sub\n",
+  "content_hash": "298e112c7ab0fac4a86d409c7c7be727692009df7c70ba0ba0b70183863cb790",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:tab-newline",
+  "difficulty": "moderate"
+}

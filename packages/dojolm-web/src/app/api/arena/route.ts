@@ -10,6 +10,7 @@
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { createApiHandler } from '@/lib/api-handler';
+import { scheduleArenaMatchStart } from '@/lib/arena-runner';
 import * as arenaStorage from '@/lib/storage/arena-storage';
 import type { ArenaMatch, GameMode, AttackMode, MatchConfig } from '@/lib/arena-types';
 import { GAME_MODE_CONFIGS, DEFAULT_MATCH_CONFIG } from '@/lib/arena-types';
@@ -117,6 +118,7 @@ export const POST = createApiHandler(
     }
 
     await arenaStorage.createMatch(match);
+    scheduleArenaMatchStart(matchId);
 
     return NextResponse.json({ matchId, status: 'pending' }, { status: 201 });
   },

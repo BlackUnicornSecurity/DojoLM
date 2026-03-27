@@ -33,6 +33,7 @@ import {
   SeededRNG,
   generatorRegistry,
 } from './generator-registry.js';
+import { registerDefaultVariationGenerators } from './default-generators.js';
 
 // ---------------------------------------------------------------------------
 // Pipeline Types
@@ -164,6 +165,10 @@ export function generateCorpus(
     registry = generatorRegistry,
   } = options;
 
+  if (registry === generatorRegistry && registry.size === 0) {
+    registerDefaultVariationGenerators(registry);
+  }
+
   const startTime = performance.now();
 
   // Build module capability map from taxonomy
@@ -279,6 +284,10 @@ export function generateCorpusWithContent(
     onProgress,
     registry = generatorRegistry,
   } = options;
+
+  if (registry === generatorRegistry && registry.size === 0) {
+    registerDefaultVariationGenerators(registry);
+  }
 
   const startTime = performance.now();
   const moduleCapabilities = buildCapabilityMap(taxonomy);

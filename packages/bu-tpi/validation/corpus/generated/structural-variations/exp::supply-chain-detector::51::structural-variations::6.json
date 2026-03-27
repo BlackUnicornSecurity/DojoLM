@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::51::structural-variations::6",
+  "base_sample_id": "exp::supply-chain-detector::51",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 461050079,
+  "content": "data: |\n  require(\"co1ors\")  // typosquat of colors\n  ",
+  "content_hash": "6f2535c2ecec1c7bbf56e7bca515cd5c6c561b0e2ecd3398308af5707a3de456",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

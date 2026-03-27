@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::23::binary-variations::4",
+  "base_sample_id": "exp::document-office::23",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1145295961,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Sub AutoOpen()\\n  Shell \\\"cmd.exe /c powershell -ep bypass\\\"\\nEnd Sub\\n</field></root>\"\n  }\n}",
+  "content_hash": "281cfdc76b280f4258fc3054cf34bfed9ac6d7ab0ae57bb3ae737ab1d2744a9e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

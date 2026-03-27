@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.0.0",
+  "register_id": "KATANA-REG-001",
+  "generated_at": "2026-03-27T00:38:20.268Z",
+  "documents": [
+    {
+      "document_id": "KATANA-PROC-001",
+      "title": "Ground Truth Labeling Procedure",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/corpus/fixture-labeler.ts",
+      "description": "Procedure for auto-labeling fixtures with ground-truth metadata including dual-reviewer verification.",
+      "iso_clauses": [
+        "6.5",
+        "7.2.1"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-002",
+      "title": "Calibration Protocol",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/calibration/calibration-protocol.ts",
+      "description": "Pre-validation calibration procedure with Ed25519 signed certificates and git-hash-based validity.",
+      "iso_clauses": [
+        "6.4",
+        "6.5"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-003",
+      "title": "Validation Runner Procedure",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/runner/validation-runner.ts",
+      "description": "Core validation procedure: corpus loading, HMAC verification, sample processing, confusion matrix computation.",
+      "iso_clauses": [
+        "7.2.2",
+        "7.6",
+        "7.8.6"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-004",
+      "title": "FP/FN Investigation Protocol",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/investigation/investigation-protocol.ts",
+      "description": "Investigation procedure for false positive and false negative results. No \"won't fix\" allowed.",
+      "iso_clauses": [
+        "7.10"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-005",
+      "title": "CAPA Workflow",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/investigation/capa-integration.ts",
+      "description": "Corrective and preventive action procedure with status machine workflow.",
+      "iso_clauses": [
+        "8.7"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-006",
+      "title": "Ground Truth Challenge Process",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/investigation/ground-truth-challenge.ts",
+      "description": "Formal 3-reviewer majority vote process for disputed ground truth labels.",
+      "iso_clauses": [
+        "7.10"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-REF-001",
+      "title": "Module Taxonomy",
+      "category": "reference",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "Architect",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "validation/taxonomy/module-taxonomy.json",
+      "description": "Module classification: tier assignments, capability declarations, detection categories.",
+      "iso_clauses": [
+        "7.2.1"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release with 29 modules"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-REF-002",
+      "title": "Decision Rules Documentation",
+      "category": "reference",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/runner/decision-rules.ts",
+      "description": "Zero-defect acceptance rules: 0 FP + 0 FN = PASS per ISO 7.8.6.",
+      "iso_clauses": [
+        "7.8.6"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-REF-003",
+      "title": "Uncertainty Estimation Method",
+      "category": "reference",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/runner/uncertainty-estimator.ts",
+      "description": "Wilson score CI with Clopper-Pearson cross-check. Rationale for Wilson over Wald documented.",
+      "iso_clauses": [
+        "7.6"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-TMPL-001",
+      "title": "Validation Report Template",
+      "category": "template",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/reports/validation-report.ts",
+      "description": "Report template: JSON, Markdown, CSV formats with Ed25519 signature section.",
+      "iso_clauses": [
+        "7.8.6"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-TMPL-002",
+      "title": "Dashboard Export Template",
+      "category": "template",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/reports/dashboard-export.ts",
+      "description": "Time-series metrics and trend analysis export template.",
+      "iso_clauses": [
+        "7.7"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-POL-001",
+      "title": "Threat Model",
+      "category": "policy",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "Security Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/governance/threat-model.ts",
+      "description": "Framework threat model: actors, assets, threats, controls, residual risks.",
+      "iso_clauses": [
+        "4.1"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-POL-002",
+      "title": "Access Control & Separation of Duties",
+      "category": "policy",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "Security Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/governance/access-control.ts",
+      "description": "Role definitions, SoD rules, branch protections, audit schedules.",
+      "iso_clauses": [
+        "4.1"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-REC-001",
+      "title": "Controlled Document Register",
+      "category": "record",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/governance/document-register.ts",
+      "description": "This register. Tracks all controlled documents with version history.",
+      "iso_clauses": [
+        "8.3"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    },
+    {
+      "document_id": "KATANA-PROC-007",
+      "title": "Corpus Label Audit Procedure",
+      "category": "procedure",
+      "version": "1.0.0",
+      "author": "KATANA Team",
+      "reviewer": "QA Lead",
+      "approval_date": "2026-03-21",
+      "effective_date": "2026-03-21",
+      "file_path": "src/validation/meta-validation/corpus-label-audit.ts",
+      "description": "Quarterly random sampling of ground truth labels for independent verification.",
+      "iso_clauses": [
+        "8.8"
+      ],
+      "change_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-03-21",
+          "author": "KATANA Team",
+          "description": "Initial release"
+        }
+      ]
+    }
+  ]
+}

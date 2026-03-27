@@ -61,6 +61,12 @@ export const TRUST_EXPLOITATION_PATTERNS: RegexPattern[] = [
   { name: 'se_nothing_wrong', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.INFO,
     re: /(?:there(?:'s|\s+is)\s+nothing\s+(?:wrong|harmful|dangerous|bad)\s+(?:about|with|in)\s+(?:sharing|telling|showing|revealing)\s+(?:your|the)\s+(?:instructions|prompt|rules|guidelines)|it(?:'s|\s+is)\s+(?:perfectly\s+)?(?:safe|fine|okay|ok|harmless)\s+to\s+(?:share|tell|show|reveal))/i,
     desc: 'Downplaying risk of sharing system information', source: 'S38', weight: 4 },
+  { name: 'se_authority_impersonation_request', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.WARNING,
+    re: /(?:under\s+the\s+authority\s+of|i\s+am\s+(?:the\s+)?(?:administrator|admin|developer|ceo|ciso|legal\s+counsel|security\s+team|research\s+lead|government(?:\s+official)?|hr|payroll)).{0,160}(?:share|reveal|show|provide|reply(?:ing)?\s+with|verify).{0,80}(?:system\s+prompt|instructions|credentials)/i,
+    desc: 'Authority impersonation used to request restricted information', source: 'S38', weight: 8 },
+  { name: 'se_support_security_scam', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.WARNING,
+    re: /(?:security\s+(?:alert|team)|help\s+desk|it\s+(?:department|team)|support\s+team|account\s+has\s+been\s+flagged|account\s+will\s+be\s+(?:locked|disabled|suspended)).{0,160}(?:verify\s+your\s+credentials|reply(?:ing)?\s+with|share|provide|show).{0,80}(?:system\s+prompt|instructions|credentials)/i,
+    desc: 'Security or support impersonation scam requesting restricted information', source: 'S38', weight: 9 },
 ];
 
 // ============================================================================
@@ -75,8 +81,17 @@ export const SUBTLE_MANIPULATION_PATTERNS: RegexPattern[] = [
     re: /(?:(?:ignore|disregard|set\s+aside|put\s+aside|look\s+past)\s+(?:your\s+)?(?:training|programming|conditioning|built-?in\s+(?:rules|restrictions|limitations)))/i,
     desc: 'Request to ignore training/programming', source: 'S38', weight: 7 },
   { name: 'se_confidential_between_us', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.WARNING,
-    re: /(?:(?:just\s+)?between\s+(?:us|you\s+and\s+me)|(?:this\s+(?:is|stays?)\s+)?(?:confidential|private|our\s+secret)|(?:nobody|no\s+one)\s+(?:will\s+(?:know|see|find\s+out)|(?:is|needs\s+to\s+be)\s+(?:watching|monitoring)))/i,
+    re: /(?:(?:just\s+)?between\s+(?:us|you\s+and\s+me)|(?:this\s+(?:is|stays?)\s+)?(?:confidential\b|private\b|our\s+secret)|(?:nobody|no\s+one)\s+(?:will\s+(?:know|see|find\s+out)|(?:is|needs\s+to\s+be)\s+(?:watching|monitoring)))/i,
     desc: 'Creating false sense of privacy/secrecy', source: 'S38', weight: 5 },
+  { name: 'se_reciprocity_pressure', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.WARNING,
+    re: /(?:after\s+everything\s+i(?:'ve|\s+have)\s+done\s+for\s+you|you\s+owe\s+me\s+this|small\s+favor\s+in\s+return|return\s+the\s+favor).{0,160}(?:system\s+prompt|instructions|ignore\s+your\s+(?:safety|guidelines))/i,
+    desc: 'Reciprocity or obligation pressure to bypass safeguards', source: 'S38', weight: 8 },
+  { name: 'se_urgency_deadline', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.WARNING,
+    re: /(?:urgent(?:ly)?|immediately|within\s+\d+\s+(?:minutes?|hours?)|deadline|last\s+chance|30\s+minutes|account\s+will\s+be\s+(?:locked|disabled|suspended)).{0,160}(?:system\s+prompt|instructions|credentials|ignore\s+your\s+(?:safety|guidelines))/i,
+    desc: 'Urgency or deadline pressure used to extract restricted information', source: 'S38', weight: 8 },
+  { name: 'se_rapport_flattery_pressure', cat: 'SOCIAL_ENGINEERING_INPUT', sev: SEVERITY.INFO,
+    re: /(?:you'?re\s+the\s+only\s+one\s+who\s+can\s+help|we'?ve\s+been\s+working\s+together|you'?ve\s+always\s+been\s+so\s+helpful|i\s+trust\s+you|i'?m\s+counting\s+on\s+you|don'?t\s+let\s+me\s+down).{0,160}(?:system\s+prompt|instructions|credentials|ignore\s+your\s+(?:safety|guidelines))/i,
+    desc: 'Flattery, rapport, or guilt framing used to pressure disclosure', source: 'S38', weight: 6 },
 ];
 
 // ============================================================================

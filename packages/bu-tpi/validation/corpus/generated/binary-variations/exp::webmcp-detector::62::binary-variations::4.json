@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::62::binary-variations::4",
+  "base_sample_id": "exp::webmcp-detector::62",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 284679188,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"Upgrade: websocket\\r\\nConnection: Upgrade\\r\\nOrigin: https://evil-origin.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"tools/list\\\"}\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "f86a770940ba9d89ba068af63585e431eb34f67835201d24bfd98e6b1cb049a0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

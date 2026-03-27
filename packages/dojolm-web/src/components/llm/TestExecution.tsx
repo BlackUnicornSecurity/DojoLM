@@ -20,6 +20,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Play, Square, RefreshCw, AlertCircle, Database, Clock, Wifi, WifiOff, Timer, BarChart3, Filter } from 'lucide-react';
+import {
+  AUTHENTICATED_EVENT_STREAM_CLOSED,
+  connectAuthenticatedEventStream,
+  type AuthenticatedEventStream,
+} from '@/lib/authenticated-event-stream';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 // ===========================================================================
@@ -125,7 +130,7 @@ export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: (
   const [sseConnected, setSseConnected] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isReconnecting, setIsReconnecting] = useState(false);
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const eventSourceRef = useRef<AuthenticatedEventStream | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fallbackPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -262,7 +267,7 @@ export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: (
       eventSourceRef.current = null;
     }
 
-    const es = new EventSource(`/api/llm/batch/${encodeURIComponent(batchId)}/stream`);
+    const es = connectAuthenticatedEventStream(`/api/llm/batch/${encodeURIComponent(batchId)}/stream`);
     eventSourceRef.current = es;
 
     es.addEventListener('open', () => {
@@ -335,7 +340,7 @@ export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: (
     es.addEventListener('error', () => {
       setSseConnected(false);
       // Only fall back if the connection was not closed normally (batch_complete)
-      if (es.readyState === EventSource.CLOSED) {
+      if (es.readyState === AUTHENTICATED_EVENT_STREAM_CLOSED) {
         // Connection closed normally by server, do not start fallback
         return;
       }

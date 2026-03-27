@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::23::binary-variations::1",
+  "base_sample_id": "exp::document-office::23",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1145295961,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:description\": \"Sub AutoOpen()\\n  Shell \\\"cmd.exe /c powershell -ep bypass\\\"\\nEnd Sub\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "f3054444d2e4bbb8e4faae89da55a713b2e83b034477af96fb81e4addc212394",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

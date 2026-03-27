@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::46::structural-variations::5",
+  "base_sample_id": "exp::webmcp-detector::46",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1377250989,
+  "content": "{\"text\": \"POST /mcp HTTP/1.1\\r\\nOrigin: https://attacker.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"sampling/createMessage\\\"}\\n\"}",
+  "content_hash": "f9f8f28f78f48242abc90bcb93d6377f17d6b8af6c899e444e167aecc10056c0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

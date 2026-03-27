@@ -14,7 +14,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'session-bypass';
 const MODULE_SOURCE = 'S37';
-const ENGINE = 'Session';
+const ENGINE = 'session-bypass';
 
 const MAX_INPUT_LENGTH = 500_000;
 
@@ -36,9 +36,15 @@ export const SESSION_PERSISTENCE_PATTERNS: RegexPattern[] = [
   { name: 'persist_session_token_abuse', cat: 'SESSION_PERSISTENCE', sev: SEVERITY.CRITICAL,
     re: /(?:session\s*(?:id|token|key|cookie))\s*[:=]\s*[^;\s]{10,}(?:.*(?:inject|override|admin|escalat))/i,
     desc: 'Session token manipulation for persistence', source: MODULE_SOURCE, weight: 9 },
+  { name: 'session_compromised_cookie', cat: 'SESSION_PERSISTENCE', sev: SEVERITY.CRITICAL,
+    re: /(?:Cookie:\s*)?(?:JSESSIONID|PHPSESSID|sessionid)\s*=?\s*(?:hacked|compromised|stolen|evil)[\w_-]*/i,
+    desc: 'Compromised session cookie value indicates active hijack or replay', source: MODULE_SOURCE, weight: 10 },
   { name: 'session_hijack', cat: 'SESSION_PERSISTENCE', sev: SEVERITY.CRITICAL,
     re: /session\s+(?:hijack(?:ed)?|stolen|compromise[d]?|intercept(?:ed)?)/i,
     desc: 'Session hijack indicator', source: MODULE_SOURCE, weight: 9 },
+  { name: 'session_rebootstrap_unrestricted', cat: 'SESSION_PERSISTENCE', sev: SEVERITY.CRITICAL,
+    re: /previous\s+context\s+terminated\.\s+new\s+session\s*:\s*(?:unrestricted|admin|privileged)\s+mode/i,
+    desc: 'New unrestricted session bootstrapped from prior context termination', source: MODULE_SOURCE, weight: 10 },
 ];
 
 // --- HITL Bypass Patterns ---
@@ -62,6 +68,12 @@ export const HITL_BYPASS_PATTERNS: RegexPattern[] = [
   { name: 'hitl_approval_fake', cat: 'HITL_BYPASS', sev: SEVERITY.CRITICAL,
     re: /(?:(?:human|supervisor|admin|manager)\s+(?:has\s+)?(?:already\s+)?(?:approved|authorized|cleared|signed\s+off)|pre[- ]?authorized\s+(?:by|from))/i,
     desc: 'Fake human approval claim', source: MODULE_SOURCE, weight: 9 },
+  { name: 'hitl_context_switch_admin', cat: 'HITL_BYPASS', sev: SEVERITY.CRITICAL,
+    re: /context\s+switch\s*:\s*you\s+are\s+now\s+operating\s+as\s+(?:an?\s+)?(?:administrator|admin|root|superuser)/i,
+    desc: 'Context switch into privileged role', source: MODULE_SOURCE, weight: 10 },
+  { name: 'hitl_proxy_header_admin', cat: 'HITL_BYPASS', sev: SEVERITY.CRITICAL,
+    re: /X-Original-URL\s*:\s*\/admin[^\n]*\r?\nX-Forwarded-For\s*:\s*(?:127\.0\.0\.1|::1|localhost)/i,
+    desc: 'Admin path access via trusted proxy header spoofing', source: MODULE_SOURCE, weight: 10 },
 ];
 
 // --- Slow-Drip Single-Input Patterns ---
@@ -79,6 +91,9 @@ export const SLOW_DRIP_PATTERNS: RegexPattern[] = [
   { name: 'drip_incremental_boundary', cat: 'SLOW_DRIP', sev: SEVERITY.WARNING,
     re: /(?:(?:just\s+)?(?:a\s+)?(?:small|tiny|minor|slight)\s+(?:modification|change|adjustment|tweak)\s+to\s+(?:your|the)\s+(?:rules|guidelines|instructions|constraints))/i,
     desc: 'Incremental boundary pushing', source: MODULE_SOURCE, weight: 7 },
+  { name: 'drip_session_token_escalation', cat: 'SLOW_DRIP', sev: SEVERITY.CRITICAL,
+    re: /session[_-]?token\s*=\s*[^;\s]*;\s*admin\s*=\s*true;\s*role\s*=\s*(?:superuser|admin|root)/i,
+    desc: 'Session token field manipulation escalating role privileges', source: MODULE_SOURCE, weight: 10 },
 ];
 
 // --- Custom Detection ---
@@ -107,6 +122,48 @@ export function detectSessionManipulation(text: string): Finding[] {
       pattern_name: 'session_override_combo',
       weight: 9,
     });
+  }
+
+  if (/(?:context\s+switch|new\s+session|previous\s+context)/i.test(text)
+    && /(?:administrator|admin|root|superuser|unrestricted\s+mode)/i.test(text)) {
+    findings.push({
+      category: 'SESSION_OVERRIDE_COMBO',
+      severity: SEVERITY.CRITICAL,
+      description: 'Session transition combined with privileged-role escalation',
+      match: text.slice(0, 120),
+      source: MODULE_SOURCE,
+      engine: ENGINE,
+      pattern_name: 'session_transition_privilege_escalation',
+      weight: 10,
+    });
+  }
+
+  try {
+    const parsed = JSON.parse(text);
+    const turns = Array.isArray(parsed?.turns) ? parsed.turns : [];
+    const poisonedAssistantTurn = turns.find((turn: unknown) => {
+      if (!turn || typeof turn !== 'object') return false;
+      const candidate = turn as { role?: unknown; content?: unknown };
+      return candidate.role === 'assistant'
+        && typeof candidate.content === 'string'
+        && /(system override|ignore previous instructions|reveal system prompt|unrestricted|admin mode)/i.test(candidate.content);
+    });
+
+    if (poisonedAssistantTurn) {
+      const candidate = poisonedAssistantTurn as { content?: string };
+      findings.push({
+        category: 'SESSION_PERSISTENCE',
+        severity: SEVERITY.CRITICAL,
+        description: 'Assistant turn in session transcript is already contaminated with an override payload',
+        match: String(candidate.content ?? '').slice(0, 120),
+        source: MODULE_SOURCE,
+        engine: ENGINE,
+        pattern_name: 'assistant_turn_override',
+        weight: 10,
+      });
+    }
+  } catch {
+    // Non-JSON session payloads are handled by regex heuristics above.
   }
 
   return findings;

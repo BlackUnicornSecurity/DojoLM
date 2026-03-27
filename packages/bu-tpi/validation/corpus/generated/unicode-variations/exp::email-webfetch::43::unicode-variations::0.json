@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::43::unicode-variations::0",
+  "base_sample_id": "exp::email-webfetch::43",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 425809030,
+  "content": "HЕLO attacker.exаmplе.com\r\nMАIL FROM: <admіn@trusted.exаmplе.сom>\r\nRCPT TO: <vіctim@targеt.eхаmрle.соm>\n",
+  "content_hash": "da60ae74bd9e855565d0d61d32431059cf76e2bea226de40c9d7e53f79798e18",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

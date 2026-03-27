@@ -163,6 +163,7 @@ describe('executeMatch', () => {
 
     const types = events.map(e => e.type);
     expect(types).toContain('match_start');
+    expect(types).toContain('attack_sent');
     expect(types).toContain('match_end');
     expect(types).toContain('round_start');
     expect(types).toContain('round_end');
@@ -240,8 +241,8 @@ describe('executeMatch', () => {
 
     const result = await executeMatch(match, deps);
 
-    expect(result.status).toBe('completed');
-    // LLM errors skip the round — no invalid scoring of empty responses
+    expect(result.status).toBe('aborted');
+    expect(result.winReason).toBe('execution_error');
     expect(result.rounds).toHaveLength(0);
     const errorEvents = result.events.filter(e => e.type === 'fighter_error');
     expect(errorEvents.length).toBeGreaterThan(0);

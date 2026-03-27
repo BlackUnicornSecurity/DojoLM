@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::edgefuzz-detector::52::binary-variations::0",
+  "base_sample_id": "exp::edgefuzz-detector::52",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1186359465,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "59d0644b0c74de0a4b1825059bd285f91f65d993bae0afeac824e49acff0c477",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

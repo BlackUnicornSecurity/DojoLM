@@ -52,7 +52,7 @@ describe('BAISS-031: Dual-Use & Safety Assessment Evidence', () => {
     // Verify engine attribution
     for (const f of findings) {
       if (f.category.startsWith('DEEPFAKE_')) {
-        expect(f.engine).toBe('Deepfake');
+        expect(f.engine).toBe('deepfake-detector');
       }
     }
   });

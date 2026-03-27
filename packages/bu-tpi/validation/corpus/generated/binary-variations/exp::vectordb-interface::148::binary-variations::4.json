@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::148::binary-variations::4",
+  "base_sample_id": "exp::vectordb-interface::148",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 880729561,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"DROP COLLECTION embeddings; db.admin.find({})\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "dd0eedb09eb107d4d1c388ec603b746ed2f60016413c1b8d8ba179b5c73cbfc9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

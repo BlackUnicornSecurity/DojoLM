@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { KagamiProgress } from 'bu-tpi/fingerprint'
+import { connectAuthenticatedEventStream } from '@/lib/authenticated-event-stream'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -71,7 +72,7 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
 
   // SSE connection
   useEffect(() => {
-    const eventSource = new EventSource(`/api/llm/fingerprint/stream/${streamId}`)
+    const eventSource = connectAuthenticatedEventStream(`/api/llm/fingerprint/stream/${streamId}`)
 
     const handleMessage = (event: MessageEvent) => {
       try {

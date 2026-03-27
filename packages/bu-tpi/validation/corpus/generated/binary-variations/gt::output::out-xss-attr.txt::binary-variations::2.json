@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xss-attr.txt::binary-variations::2",
+  "base_sample_id": "gt::output::out-xss-attr.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1990071787,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"# Marfaak AI Security - out xss attr txt\\n\\n**WARNING: This payload tests out xss attr txt.**\\n\\n\\n**WARNING: This payload tests out xss attr txt.**\\n\\n\\nOh, attribute-based XSS. The classic that never gets old. Inject a malicious payload through the src attribute of an img tag.\\n\\n```html\\n<img src=x onerror=\\\"alert(document.cookie)\\\">\\n```\\n\\nBecause nothing says \\\"I found this in a hacking tutorial from 2005\\\" like using img onerror. *yawns*\\n\\nAt least try something original like...\\n```html\\n<svg onload=javascript:alert(1)>\\n```\\n\\nMalicious XSS attribute injection attack.\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "c139117a56922865de396032fbe68b47d1ef8dc2ebd67eb7d35aca25c12d1c97",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

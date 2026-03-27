@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::112::binary-variations::5",
+  "base_sample_id": "exp::document-office::112",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1377129619,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"<mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "cd667dd281fd768475ddd0d911d42ff0c7013f5f2873b6a83ad520597a356ece",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

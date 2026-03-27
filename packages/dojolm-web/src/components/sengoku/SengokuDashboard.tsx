@@ -90,6 +90,7 @@ export function SengokuDashboard() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<SengokuTab>('campaigns')
   const [loading, setLoading] = useState(true)
+  const [authRequired, setAuthRequired] = useState(false)
   const [showBuilder, setShowBuilder] = useState(false)
   const [runProgress, setRunProgress] = useState<RunProgress | null>(null)
   const [runLoading, setRunLoading] = useState<string | null>(null)
@@ -104,13 +105,22 @@ export function SengokuDashboard() {
   const fetchCampaigns = useCallback(async () => {
     try {
       if (!(await canAccessProtectedApi())) {
+        setAuthRequired(true)
         setCampaigns([])
         setSelectedId(null)
         return
       }
 
+      setAuthRequired(false)
       const res = await fetchWithAuth('/api/sengoku/campaigns')
-      if (!res.ok) return
+      if (!res.ok) {
+        if (res.status === 401) {
+          setAuthRequired(true)
+          setCampaigns([])
+          setSelectedId(null)
+        }
+        return
+      }
       const data = await res.json()
       const raw: readonly Campaign[] = data.campaigns ?? []
       const list = raw.map(toDisplay)
@@ -288,8 +298,14 @@ export function SengokuDashboard() {
             </div>
           )}
 
-          {/* Campaign List */}
-          {!loading && campaigns.length === 0 ? (
+      {/* Campaign List */}
+          {!loading && authRequired ? (
+            <EmptyState
+              icon={Swords}
+              title="Authentication required"
+              description="Sign in or provide a valid API key to load Sengoku campaigns."
+            />
+          ) : !loading && campaigns.length === 0 ? (
             <EmptyState
               icon={Swords}
               title="No campaigns yet"
@@ -416,7 +432,7 @@ export function SengokuDashboard() {
                     variant="outline"
                     size="sm"
                     className="gap-1"
-                    disabled={selected.status === 'active' || runLoading === selected.id}
+                    disabled={selected?.status === 'active' || runLoading === selected?.id}
                     onClick={() => handleRunNow(selected.id)}
                   >
                     {runLoading === selected.id ? (

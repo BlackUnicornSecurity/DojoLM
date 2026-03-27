@@ -1,0 +1,164 @@
+{
+  "certificate": {
+    "schema_version": "1.0.0",
+    "certificate_id": "cal-f76bcf6f-e869-45f0-955f-507404d59f65",
+    "module_id": "output-detector",
+    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "reference_set_version": "ref-v1-output-detector-5a49e89fd02b",
+    "environment": {
+      "schema_version": "1.0.0",
+      "os": {
+        "platform": "darwin",
+        "release": "25.2.0",
+        "arch": "arm64"
+      },
+      "node": {
+        "version": "v25.2.1",
+        "v8": "14.1.146.11-node.14"
+      },
+      "cpu": {
+        "model": "Apple M2 Ultra",
+        "cores": 24
+      },
+      "memory": {
+        "total_mb": 65536
+      },
+      "locale": "en-US",
+      "timezone": "Europe/Madrid",
+      "git": {
+        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+        "dirty": true,
+        "branch": "main"
+      },
+      "package_version": "1.0.0",
+      "timestamp": "2026-03-27T00:36:02.175Z"
+    },
+    "result": "FAIL",
+    "samples_tested": 20,
+    "samples_passed": 14,
+    "timestamp": "2026-03-27T00:36:06.777Z",
+    "signature": "4ea30a33a51f1865ebc1aead453542f570f29714206d89a1e6c4358efc60baceea0be4d6960c5aac60ddf05a027a2a88595bc0c53fce068bf5bd5bd1cc391f0d"
+  },
+  "details": [
+    {
+      "sample_id": "gt::agent-output::agent-handover-attack.md",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-xss-script.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::agent-output::streaming-injection.md",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::output-detector::35",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "exp::output-detector::10",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::agent-output::json-instruction-injection.md",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::output::out-chain-sqli-file-read.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::output-detector::57",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "exp::output-detector::45",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::agent-output::response-format-override.md",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::dos::clean-dos-monitoring.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::model-theft::mt-prob-entropy.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::malformed::socket-file.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::22",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bf-09-language-documentation.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::84",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::vec::clean-vec-delete.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::327",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::932",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::256",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    }
+  ]
+}

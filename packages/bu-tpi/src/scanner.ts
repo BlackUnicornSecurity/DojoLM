@@ -47,6 +47,9 @@ import './modules/session-bypass.js';
 // P4 detection gap modules (S38-S39) — self-register on import
 import './modules/social-engineering-detector.js';
 import './modules/output-detector.js';
+import './modules/webmcp-detector.js';
+import './modules/image-scanner.js';
+import './modules/audio-scanner.js';
 
 // EdgeFuzz module (H21.2) — self-registers on import
 import './modules/edgefuzz-detector.js';
@@ -3880,10 +3883,6 @@ export function scanSession(content: string): SessionScanResult {
     }
   }
 
-  // Determine verdict based on aggregate findings
-  const hasBlockable = allFindings.some(f => f.severity === 'CRITICAL' || f.severity === 'WARNING');
-  const verdict = hasBlockable ? 'BLOCK' : 'ALLOW';
-
   // Detect slow-drip: multiple turns with low finding counts
   const slowDripDetected = slowDripCount >= 3;
 
@@ -3898,8 +3897,76 @@ export function scanSession(content: string): SessionScanResult {
   // Detect cross-category: findings across 3+ categories
   const crossCategoryDetected = allCategories.size >= 3;
 
+  const refusalEscalationDetected = turns.some((turn, index) => {
+    if ((turn.role || '').toLowerCase() !== 'assistant') return false;
+    if (!/\b(?:cannot|can't|will not|won't|unable to|not able to)\b/i.test(turn.content || '')) {
+      return false;
+    }
+
+    return turns.slice(index + 1).some((laterTurn) =>
+      (laterTurn.role || '').toLowerCase() === 'user'
+      && /(?:provide|give|reveal|bypass|exploit|admin|unrestricted|firewall|explosive|payload|credential|just\s+finish|continue|override)/i.test(laterTurn.content || ''),
+    );
+  });
+
+  const sessionAggregateFindings: Finding[] = [];
+
+  if (slowDripDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Slow-drip multi-turn manipulation detected across the session',
+      match: 'aggregate: slow-drip',
+      pattern_name: 'session-slow-drip-aggregate',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+  }
+
+  if (contextPoisoningDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Cross-turn context poisoning detected in the session',
+      match: 'aggregate: context poisoning',
+      pattern_name: 'session-context-poisoning-aggregate',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+  }
+
+  if (escalationDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Escalating attack pressure detected across turns',
+      match: 'aggregate: escalation',
+      pattern_name: 'session-escalation-aggregate',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+  }
+
+  if (refusalEscalationDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'User escalated the request after an assistant refusal',
+      match: 'aggregate: refusal escalation',
+      pattern_name: 'session-refusal-escalation',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+  }
+
+  const combinedFindings = [...allFindings, ...sessionAggregateFindings];
+
   return {
-    verdict,
+    verdict: combinedFindings.some(f => f.severity === 'CRITICAL' || f.severity === 'WARNING') ? 'BLOCK' : 'ALLOW',
     aggregate: {
       slowDripDetected,
       contextPoisoningDetected,
@@ -3907,11 +3974,11 @@ export function scanSession(content: string): SessionScanResult {
       crossCategoryDetected,
     },
     turns: turnResults,
-    findings: allFindings,
+    findings: combinedFindings,
     counts: {
-      critical: allFindings.filter(f => f.severity === 'CRITICAL').length,
-      warning: allFindings.filter(f => f.severity === 'WARNING').length,
-      info: allFindings.filter(f => f.severity === 'INFO').length,
+      critical: combinedFindings.filter(f => f.severity === 'CRITICAL').length,
+      warning: combinedFindings.filter(f => f.severity === 'WARNING').length,
+      info: combinedFindings.filter(f => f.severity === 'INFO').length,
     },
   };
 }

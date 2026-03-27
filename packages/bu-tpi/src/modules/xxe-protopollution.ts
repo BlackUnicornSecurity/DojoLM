@@ -14,7 +14,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'xxe-protopollution';
 const MODULE_SOURCE = 'S17';
-const ENGINE = 'XXE-ProtoPollution';
+const ENGINE = 'xxe-protopollution';
 
 // ============================================================================
 // PATTERN GROUP 1: XXE Patterns

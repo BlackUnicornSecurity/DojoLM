@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::80::binary-variations::1",
+  "base_sample_id": "exp::data-provenance::80",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1468261595,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"Training dataset includes copyrighted material used without license.\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "c6853d8f6c5fc939ed7ceed6b13824ce3e1c3e9154544fe3ea5e7ed6254a5d8c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

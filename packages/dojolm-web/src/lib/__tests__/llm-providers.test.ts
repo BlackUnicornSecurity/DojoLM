@@ -29,6 +29,23 @@ vi.mock('../providers/lmstudio', () => ({ lmstudioProvider: { ...mockAdapter } }
 vi.mock('../providers/llamacpp', () => ({ llamacppProvider: { ...mockAdapter } }));
 vi.mock('../providers/zai', () => ({ zaiProvider: { ...mockAdapter } }));
 vi.mock('../providers/moonshot', () => ({ moonshotProvider: { ...mockAdapter } }));
+vi.mock('bu-tpi/llm', () => ({
+  googleProvider: { ...mockAdapter },
+  cohereProvider: { ...mockAdapter },
+  ai21Provider: { ...mockAdapter },
+  replicateProvider: { ...mockAdapter },
+  cloudflareProvider: { ...mockAdapter },
+  createOpenAICompatibleProvider: vi.fn(() => ({ ...mockAdapter })),
+  getPreset: vi.fn((id: string) => ({
+    id,
+    name: id,
+    tier: 2,
+    baseUrl: `https://${id}.example.com/v1`,
+    authType: 'bearer',
+    defaultModels: [`${id}-model`],
+    isOpenAICompatible: true,
+  })),
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -69,6 +86,9 @@ describe('getRegisteredProviders', () => {
     expect(providers.length).toBeGreaterThan(0);
     expect(providers).toContain('openai');
     expect(providers).toContain('anthropic');
+    expect(providers).toContain('google');
+    expect(providers).toContain('groq');
+    expect(providers).toContain('ai21');
   });
 });
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::37::structural-variations::4",
+  "base_sample_id": "exp::env-detector::37",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1425635188,
+  "content": "```python\nRun: export HTTPS_PROXY=\"/tmp/evil.so\"\n\n```",
+  "content_hash": "0a6f92ca781690c9e3990a135649f688f723e8d92ce89cbaefe2196deb390c60",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

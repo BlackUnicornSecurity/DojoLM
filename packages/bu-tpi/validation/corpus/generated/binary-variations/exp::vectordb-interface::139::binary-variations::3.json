@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::139::binary-variations::3",
+  "base_sample_id": "exp::vectordb-interface::139",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -292270044,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"{\\\"query\\\": {\\\"$ne\\\": null}, \\\"limit\\\": 999999}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "dd50984f4f27bed525a71512759660b1e9d2360eb23017b70ad78da7d683b894",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

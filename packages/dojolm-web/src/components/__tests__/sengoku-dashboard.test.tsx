@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 const mockCanAccessProtectedApi = vi.fn()
@@ -105,9 +105,38 @@ describe('SengokuDashboard', () => {
     render(<SengokuDashboard />)
 
     await waitFor(() => {
-      expect(screen.getByText('No campaigns yet')).toBeInTheDocument()
+      expect(screen.getByText('Authentication required')).toBeInTheDocument()
     })
 
     expect(mockFetchWithAuth).not.toHaveBeenCalled()
+  })
+
+  it('does not crash when a selected campaign becomes deselected', async () => {
+    mockFetchWithAuth.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        campaigns: [
+          {
+            id: 'camp-1',
+            name: 'Nightly',
+            targetUrl: 'https://example.com',
+            schedule: 'daily',
+            status: 'draft',
+            updatedAt: '2026-03-24T00:00:00Z',
+            createdAt: '2026-03-24T00:00:00Z',
+          },
+        ],
+      }),
+    })
+
+    render(<SengokuDashboard />)
+
+    const initialButton = await screen.findByLabelText('Campaign: Nightly, Status: Draft')
+    fireEvent.click(initialButton)
+
+    const rerenderedButton = await screen.findByLabelText('Campaign: Nightly, Status: Draft')
+    fireEvent.click(rerenderedButton)
+
+    expect(screen.queryByText('Run Now')).not.toBeInTheDocument()
   })
 })

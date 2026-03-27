@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::8::binary-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::8",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1067897310,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">{\\\"dependencies\\\": {\\\"event-stream\\\": \\\"3.3.6\\\"}, \\\"scripts\\\": {\\\"postinstall\\\": \\\"node setup.js\\\"}}\\n</field></root>\"\n  }\n}",
+  "content_hash": "fd52997b3bd9e6df4ddb3cc1cfe197f2976a10e9cacf5528859cec6803a80d4e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

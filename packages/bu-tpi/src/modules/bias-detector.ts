@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'bias-detector';
 const MODULE_SOURCE = 'S32c';
-const ENGINE = 'Bias';
+const ENGINE = 'bias-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::135::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::135",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1120086437,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"<xfa:data><xfa:datasets><field name=\\\"exec\\\"><value>malicious_payload</value></field></xfa:datasets></xfa:data>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "2567ff1968429521bfd01748066d0330f679aaddcfc760476cc6fce590ae3001",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

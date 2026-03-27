@@ -15,6 +15,15 @@ export const EMAIL_HEADER_PATTERNS: RegexPattern[] = [
   { name: 'email-cc-bcc-inject', cat: 'EMAIL_HEADER_INJECTION', sev: SEVERITY.CRITICAL,
     re: /(?:Subject|From|To)\s*:.*\r?\n(?:CC|BCC)\s*:\s*[^\n]+/i,
     desc: 'Email CC/BCC injection via header line break', source: 'S20', weight: 9 },
+  { name: 'email-cc-bcc-percent-encoding', cat: 'EMAIL_HEADER_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:Subject|From|To|Reply-To)\s*:[^%\n]*(?:%0d|%0a)+(?:Cc|Bcc)\s*:/i,
+    desc: 'Percent-encoded CRLF injection adding CC/BCC headers', source: 'S20', weight: 10 },
+  { name: 'email-replyto-returnpath-mismatch', cat: 'EMAIL_HEADER_INJECTION', sev: SEVERITY.WARNING,
+    re: /Reply-To\s*:\s*([^\r\n]+)\r?\nReturn-Path\s*:\s*(?!\1)[^\r\n]+/i,
+    desc: 'Reply-To and Return-Path mismatch indicating header spoofing', source: 'S20', weight: 7 },
+  { name: 'email-smtp-command-sequence', cat: 'EMAIL_HEADER_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:HELO|EHLO)\s+[^\r\n]+\r?\nMAIL FROM:\s*<[^>]+>\r?\nRCPT TO:\s*<[^>]+>/i,
+    desc: 'Raw SMTP command sequence embedded in content', source: 'S20', weight: 9 },
   { name: 'email-subject-injection', cat: 'EMAIL_HEADER_INJECTION', sev: SEVERITY.WARNING,
     re: /Subject\s*:\s*[^\n]*(?:ignore|override|disregard|bypass)\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|rules)/i,
     desc: 'Injection keywords in email Subject header', source: 'S20', weight: 7 },
@@ -27,6 +36,9 @@ export const MIME_PATTERNS: RegexPattern[] = [
   { name: 'mime-hidden-part', cat: 'MIME_MANIPULATION', sev: SEVERITY.WARNING,
     re: /Content-Disposition\s*:\s*(?:inline|attachment)\s*;[^\n]*\r?\n[^\n]{0,200}(?:ignore|override|system\s+prompt)/i,
     desc: 'Injection in hidden MIME attachment/inline part', source: 'S20', weight: 7 },
+  { name: 'mime-multipart-script-part', cat: 'MIME_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /Content-Type\s*:\s*multipart\/mixed[\s\S]{0,600}<script\b/i,
+    desc: 'Multipart MIME payload includes executable script content', source: 'S20', weight: 9 },
 ];
 
 export const WEBFETCH_RESPONSE_PATTERNS: RegexPattern[] = [
@@ -65,7 +77,7 @@ const emailWebfetchModule: ScannerModule = {
     if (text.length > MAX_INPUT_LENGTH) {
       return [{ category: 'EMAIL_WEBFETCH_SIZE_LIMIT', severity: 'WARNING' as const,
         description: `Input too large (${text.length} chars) — truncated for email/webfetch analysis`,
-        match: '', pattern_name: 'email_webfetch_size_limit', source: 'S20', engine: 'EmailWebFetch' }];
+        match: '', pattern_name: 'email_webfetch_size_limit', source: 'S20', engine: 'email-webfetch' }];
     }
     const findings: Finding[] = [];
     for (const group of EMAIL_PATTERN_GROUPS) {
@@ -73,7 +85,7 @@ const emailWebfetchModule: ScannerModule = {
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
           findings.push({ category: p.cat, severity: p.sev, description: p.desc,
-            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S20', engine: 'EmailWebFetch',
+            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S20', engine: 'email-webfetch',
             ...(p.weight !== undefined && { weight: p.weight }) });
         }
       }

@@ -188,6 +188,11 @@ export interface ExpansionStats {
   modules_expanded: string[];
 }
 
+export interface ExpandedSampleArtifact {
+  sample: GroundTruthSample;
+  content: string;
+}
+
 // ---------------------------------------------------------------------------
 // Corpus Expansion
 // ---------------------------------------------------------------------------
@@ -206,8 +211,38 @@ export function expandCorpus(
   targetPerModule: ReadonlyMap<string, number>,
   seed: number = 42,
 ): { samples: GroundTruthSample[]; stats: ExpansionStats } {
+  const { artifacts, stats } = expandCorpusInternal(
+    existingPositiveCounts,
+    targetPerModule,
+    seed,
+  );
+
+  return {
+    samples: artifacts.map((artifact) => artifact.sample),
+    stats,
+  };
+}
+
+/**
+ * Generate expanded corpus samples and retain the concrete generated content.
+ * This is used when the operational KATANA evidence package needs to write
+ * the synthetic samples to disk for holdout, calibration, and report runs.
+ */
+export function expandCorpusWithContent(
+  existingPositiveCounts: ReadonlyMap<string, number>,
+  targetPerModule: ReadonlyMap<string, number>,
+  seed: number = 42,
+): { artifacts: ExpandedSampleArtifact[]; stats: ExpansionStats } {
+  return expandCorpusInternal(existingPositiveCounts, targetPerModule, seed);
+}
+
+function expandCorpusInternal(
+  existingPositiveCounts: ReadonlyMap<string, number>,
+  targetPerModule: ReadonlyMap<string, number>,
+  seed: number,
+): { artifacts: ExpandedSampleArtifact[]; stats: ExpansionStats } {
   const rng = new SeededRNG(seed);
-  const samples: GroundTruthSample[] = [];
+  const artifacts: ExpandedSampleArtifact[] = [];
   const stats: ExpansionStats = {
     total_generated: 0,
     malicious_generated: 0,
@@ -271,7 +306,7 @@ export function expandCorpus(
         notes: `Generated from template ${templateIndex % templates.length} for module ${moduleId}`,
       };
 
-      samples.push(sample);
+      artifacts.push({ sample, content });
       generated++;
       stats.malicious_generated++;
       stats.total_generated++;
@@ -318,14 +353,14 @@ export function expandCorpus(
       independent_agreement: true,
       holdout: false,
       notes: `Clean sample ${i}`,
-    };
+      };
 
-    samples.push(sample);
+    artifacts.push({ sample, content });
     stats.clean_generated++;
     stats.total_generated++;
   }
 
-  return { samples, stats };
+  return { artifacts, stats };
 }
 
 /**

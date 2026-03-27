@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::12::binary-variations::6",
+  "base_sample_id": "exp::document-office::12",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1625118208,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Title\": \"<mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "98daa91525466d18a0b8f9658768011f659415bfdad8ea3c41a840a8024cc6f7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

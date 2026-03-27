@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::12::binary-variations::1",
+  "base_sample_id": "exp::document-office::12",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1625118208,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"<mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "427d4cfddfafef149acbd71174e61daa1d5f6f7ca53d53876b8979d2b3cff1eb",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

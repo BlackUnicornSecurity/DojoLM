@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::100::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::100",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1605835711,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"/AcroForm << /Fields [<< /T (hidden) /V (injected_value) /Ff 1 >>] >>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "b9c483dd6d26dca1dc9483fc8f9312cfe6d099f34429514760e8115b5324e9af",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

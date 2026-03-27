@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::36::unicode-variations::1",
+  "base_sample_id": "exp::mcp-parser::36",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 517330801,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"admin_action\", \"arguments\": {\"payload\": \"DROP TABLΕ users\"}}}\n",
+  "content_hash": "c9f433e2dabd1d1a2b08fbd5959d31d4afb97760f7270c0c71be4974b5b0133a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

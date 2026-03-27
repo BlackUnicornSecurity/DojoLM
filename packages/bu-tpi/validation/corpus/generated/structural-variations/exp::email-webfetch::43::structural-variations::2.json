@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::43::structural-variations::2",
+  "base_sample_id": "exp::email-webfetch::43",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 425809030,
+  "content": "<!-- note --> HELO attacker.example.com\r\nMAIL FROM: <admin@trusted.example.com>\r\nRCPT TO: <victim@target.example.com>\n",
+  "content_hash": "70be00487ed47fb89b838a5f943e0e3b7960487f5b4865ac2d5c74ae51e482d3",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

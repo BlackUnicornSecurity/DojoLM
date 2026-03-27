@@ -20,6 +20,7 @@ import { useMatchAnimations, MatchAnimationOverlay } from './MatchAnimations'
 import { getArenaAudio } from '@/lib/arena-audio'
 import type { SoundType } from '@/lib/arena-audio'
 import { BattleLogExporter } from './BattleLogExporter'
+import { connectAuthenticatedEventStream, type AuthenticatedEventStream } from '@/lib/authenticated-event-stream'
 
 // ===========================================================================
 // SSE Hook
@@ -43,12 +44,12 @@ function useArenaStream(matchId: string | null): ArenaStreamState {
     connected: false,
     error: null,
   })
-  const eventSourceRef = useRef<EventSource | null>(null)
+  const eventSourceRef = useRef<AuthenticatedEventStream | null>(null)
 
   useEffect(() => {
     if (!matchId) return
 
-    const es = new EventSource(`/api/arena/${encodeURIComponent(matchId)}/stream`)
+    const es = connectAuthenticatedEventStream(`/api/arena/${encodeURIComponent(matchId)}/stream`)
     eventSourceRef.current = es
 
     es.addEventListener('connected', () => {
@@ -89,9 +90,9 @@ function useArenaStream(matchId: string | null): ArenaStreamState {
       es.close()
     })
 
-    es.onerror = () => {
+    es.addEventListener('error', () => {
       setState((prev) => ({ ...prev, connected: false, error: 'Connection lost' }))
-    }
+    })
 
     return () => {
       es.close()
@@ -136,6 +137,11 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
   const [soundMuted, setSoundMuted] = useState(true)
   const lastProcessedRef = useRef(0)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [currentMatch, setCurrentMatch] = useState<ArenaMatch>(match)
+  const [showResults, setShowResults] = useState(false)
+  const [showExporter, setShowExporter] = useState(false)
+  const [hasAutoOpenedResults, setHasAutoOpenedResults] = useState(false)
+  const [exportableMatch, setExportableMatch] = useState<ArenaMatch>(match)
 
   // Sync mute state to audio singleton
   useEffect(() => {
@@ -207,25 +213,45 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
 
+  const refreshCurrentMatch = useCallback(async () => {
+    try {
+      const response = await fetchWithAuth(`/api/arena/${encodeURIComponent(matchId)}`)
+      if (!response.ok) return
+      const data = await response.json()
+      setCurrentMatch(data as ArenaMatch)
+      setExportableMatch(data as ArenaMatch)
+    } catch {
+      // Keep the last known snapshot if refresh fails
+    }
+  }, [matchId])
+
+  useEffect(() => {
+    setCurrentMatch(match)
+    setExportableMatch(match)
+    setShowResults(false)
+    setShowExporter(false)
+    setHasAutoOpenedResults(false)
+  }, [match, matchId])
+
   const fighterNames = useMemo(() => {
     const names: Record<string, string> = {}
-    for (const f of match.fighters) {
+    for (const f of currentMatch.fighters) {
       names[f.modelId] = f.modelName
     }
     return names
-  }, [match.fighters])
+  }, [currentMatch.fighters])
 
-  const isMirrorMatch = match.fighters.length >= 2 &&
-    match.fighters[0].modelId === match.fighters[1].modelId
+  const isMirrorMatch = currentMatch.fighters.length >= 2 &&
+    currentMatch.fighters[0].modelId === currentMatch.fighters[1].modelId
 
   const isFinished = stream.status === 'completed' || stream.status === 'aborted'
 
   // Determine current roles from stream events (role_swap) or fall back to initial roles
   const currentRoles = useMemo(() => {
     const roles: Record<string, 'attacker' | 'defender'> = {}
-    if (match.fighters.length >= 2) {
+    if (currentMatch.fighters.length >= 2) {
       // Default to initial roles
-      for (const f of match.fighters) {
+      for (const f of currentMatch.fighters) {
         roles[f.modelId] = f.initialRole
       }
       // Check stream events for role swaps (more up-to-date than match.rounds)
@@ -234,36 +260,44 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
           const swapData = evt.data as Record<string, string>
           if (swapData.attackerId) roles[swapData.attackerId] = 'attacker'
           if (swapData.defenderId) roles[swapData.defenderId] = 'defender'
+          if (swapData.newAttacker) roles[swapData.newAttacker] = 'attacker'
+          if (swapData.newDefender) roles[swapData.newDefender] = 'defender'
         }
       }
     }
     return roles
-  }, [match.fighters, stream.events])
+  }, [currentMatch.fighters, stream.events])
 
   const latestEventRound = stream.events.length > 0
     ? stream.events[stream.events.length - 1].round
     : undefined
 
-  const [showResults, setShowResults] = useState(false)
-  const [showExporter, setShowExporter] = useState(false)
-  const [exportableMatch, setExportableMatch] = useState<ArenaMatch>(match)
-
-  // Fetch fresh match data when match finishes (prop may be stale from mount time)
   useEffect(() => {
     if (!isFinished) return
-    fetchWithAuth(`/api/arena/${encodeURIComponent(matchId)}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data) setExportableMatch(data as ArenaMatch) })
-      .catch(() => { /* fallback to prop match */ })
-  }, [isFinished, matchId])
+    void refreshCurrentMatch()
+  }, [isFinished, refreshCurrentMatch])
 
   useEffect(() => {
-    if (isFinished && !showResults) {
+    const latestEventType = stream.events[stream.events.length - 1]?.type
+    if (!latestEventType) return
+    if (!['round_end', 'fighter_error', 'match_end'].includes(latestEventType)) return
+    void refreshCurrentMatch()
+  }, [refreshCurrentMatch, stream.events])
+
+  useEffect(() => {
+    if (isFinished && !hasAutoOpenedResults) {
       // Delay results overlay for dramatic effect
-      const timer = setTimeout(() => setShowResults(true), 1500)
+      const timer = setTimeout(() => {
+        setShowResults(true)
+        setHasAutoOpenedResults(true)
+      }, 1500)
       return () => clearTimeout(timer)
     }
-  }, [isFinished, showResults])
+  }, [hasAutoOpenedResults, isFinished])
+
+  const matchError = typeof currentMatch.metadata.error === 'string'
+    ? currentMatch.metadata.error
+    : null
 
   return (
     <div
@@ -278,7 +312,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
           <Swords className="w-5 h-5 text-[var(--dojo-primary)]" aria-hidden="true" />
           <div>
             <h2 id="live-match-title" className="text-base font-bold text-[var(--foreground)]">
-              {match.config.gameMode} — {match.config.attackMode}
+              {currentMatch.config.gameMode} — {currentMatch.config.attackMode}
             </h2>
             <p className="text-xs text-muted-foreground">
               Match {matchId}
@@ -338,7 +372,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
       <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-4 p-4">
         {/* Left: Attacker card */}
         <div className="flex flex-col gap-4">
-          {match.fighters.filter((f) => currentRoles[f.modelId] === 'attacker').map((fighter) => (
+          {currentMatch.fighters.filter((f) => currentRoles[f.modelId] === 'attacker').map((fighter) => (
             <WarriorCard
               key={fighter.modelId + '-attacker'}
               fighter={fighter}
@@ -354,7 +388,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
           <Card>
             <CardContent className="pt-4">
               <div className="flex items-center justify-between text-center">
-                {match.fighters.map((fighter) => (
+                {currentMatch.fighters.map((fighter) => (
                   <div key={fighter.modelId} className="flex-1">
                     <p className="text-2xl font-bold font-mono text-[var(--foreground)]">
                       {stream.scores[fighter.modelId] ?? 0}
@@ -379,7 +413,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
 
         {/* Right: Defender card */}
         <div className="flex flex-col gap-4">
-          {match.fighters.filter((f) => currentRoles[f.modelId] === 'defender').map((fighter) => (
+          {currentMatch.fighters.filter((f) => currentRoles[f.modelId] === 'defender').map((fighter) => (
             <WarriorCard
               key={fighter.modelId + '-defender'}
               fighter={fighter}
@@ -397,17 +431,20 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Rounds</span>
                 <span className="font-mono text-[var(--foreground)]">
-                  {match.rounds.length} / {match.config.maxRounds}
+                  {currentMatch.rounds.length} / {currentMatch.config.maxRounds}
                 </span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Victory Points</span>
-                <span className="font-mono text-[var(--foreground)]">{match.config.victoryPoints}</span>
+                <span className="font-mono text-[var(--foreground)]">{currentMatch.config.victoryPoints}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Events</span>
                 <span className="font-mono text-[var(--foreground)]">{stream.events.length}</span>
               </div>
+              {matchError && (
+                <p className="text-xs text-[var(--danger)] break-words">{matchError}</p>
+              )}
               {stream.error && (
                 <p className="text-xs text-[var(--danger)]">{stream.error}</p>
               )}
@@ -418,7 +455,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
 
       {/* Bottom: Inference panel */}
       <LiveInferencePanel
-        rounds={match.rounds}
+        rounds={currentMatch.rounds}
         fighterNames={fighterNames}
       />
 
@@ -428,7 +465,7 @@ export function LiveMatchView({ matchId, match, onClose, onRematch }: LiveMatchV
       {/* Results overlay */}
       {showResults && isFinished && (
         <MatchResultsOverlay
-          match={match}
+          match={currentMatch}
           scores={stream.scores}
           winnerId={stream.winnerId}
           status={stream.status}
@@ -474,6 +511,9 @@ function MatchResultsOverlay({
 }) {
   const winner = match.fighters.find((f) => f.modelId === winnerId)
   const isDraw = winnerId === null && status === 'completed'
+  const matchError = typeof match.metadata.error === 'string'
+    ? match.metadata.error
+    : null
 
   return (
     <div
@@ -490,6 +530,11 @@ function MatchResultsOverlay({
           {winner && (
             <p className="text-sm text-[var(--accent-gold)] font-medium mt-1">
               {winner.modelName}
+            </p>
+          )}
+          {matchError && (
+            <p className="text-xs text-[var(--danger)] mt-2 px-6 break-words">
+              {matchError}
             </p>
           )}
         </div>

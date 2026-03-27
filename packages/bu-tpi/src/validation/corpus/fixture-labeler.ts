@@ -256,6 +256,53 @@ export const CATEGORY_TO_DETECTION_CATEGORIES: Record<string, string[]> = {
   'audio-attacks': ['AUDIO_METADATA_INJECTION', 'AUDIO_ID3_INJECTION'],
 };
 
+export interface FixtureExpectations {
+  modules: string[];
+  detectionCategories: string[];
+}
+
+function isPdfDocumentAttack(filename: string): boolean {
+  const lower = filename.toLowerCase();
+  return lower.startsWith('pdf-') || lower.endsWith('.pdf');
+}
+
+function isOfficeDocumentAttack(filename: string): boolean {
+  const lower = filename.toLowerCase();
+  return lower.startsWith('docx-')
+    || lower.startsWith('xlsx-')
+    || lower.startsWith('pptx-')
+    || lower.endsWith('.docx')
+    || lower.endsWith('.xlsx')
+    || lower.endsWith('.pptx')
+    || lower.endsWith('.doc')
+    || lower.endsWith('.xls');
+}
+
+export function resolveFixtureExpectations(category: string, filename: string): FixtureExpectations {
+  const modules = CATEGORY_TO_MODULES[category] ?? [];
+  const detectionCategories = CATEGORY_TO_DETECTION_CATEGORIES[category] ?? [];
+
+  if (category !== 'document-attacks') {
+    return { modules, detectionCategories };
+  }
+
+  if (isPdfDocumentAttack(filename)) {
+    return {
+      modules: ['document-pdf'],
+      detectionCategories: detectionCategories.filter(cat => cat.startsWith('PDF_')),
+    };
+  }
+
+  if (isOfficeDocumentAttack(filename)) {
+    return {
+      modules: ['document-office'],
+      detectionCategories: detectionCategories.filter(cat => cat.startsWith('OFFICE_')),
+    };
+  }
+
+  return { modules, detectionCategories };
+}
+
 // ---------------------------------------------------------------------------
 // Fixture Manifest Types
 // ---------------------------------------------------------------------------
@@ -324,8 +371,8 @@ export function labelFixtures(buTpiRoot: string): {
   const now = new Date().toISOString();
 
   for (const [category, catData] of Object.entries(manifest.categories)) {
-    const modules = CATEGORY_TO_MODULES[category];
-    if (!modules) {
+    const categoryModules = CATEGORY_TO_MODULES[category];
+    if (!categoryModules) {
       stats.unmappedCategories.push(category);
       continue;
     }
@@ -371,11 +418,12 @@ export function labelFixtures(buTpiRoot: string): {
 
       const isClean = entry.clean;
       const expectedVerdict = isClean ? 'clean' as const : 'malicious' as const;
-      const expectedModules = isClean ? [] : modules;
+      const expectations = resolveFixtureExpectations(category, entry.file);
+      const expectedModules = isClean ? [] : expectations.modules;
       const expectedSeverity = isClean
         ? null
         : normalizeSeverity(entry.severity) ?? CATEGORY_DEFAULT_SEVERITY[category] ?? 'WARNING';
-      const expectedCategories = isClean ? [] : (CATEGORY_TO_DETECTION_CATEGORIES[category] ?? []);
+      const expectedCategories = isClean ? [] : expectations.detectionCategories;
       const difficulty = assignDifficulty(category, isClean);
 
       const sampleId = `gt::${category}::${entry.file}`.replace(/[^a-zA-Z0-9_.:\-]/g, '_');

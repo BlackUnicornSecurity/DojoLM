@@ -1,0 +1,164 @@
+{
+  "certificate": {
+    "schema_version": "1.0.0",
+    "certificate_id": "cal-f78e9cb8-1580-4963-8d80-8c4dec0e54cb",
+    "module_id": "image-scanner",
+    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "reference_set_version": "ref-v1-image-scanner-f8a0fe85cac4",
+    "environment": {
+      "schema_version": "1.0.0",
+      "os": {
+        "platform": "darwin",
+        "release": "25.2.0",
+        "arch": "arm64"
+      },
+      "node": {
+        "version": "v25.2.1",
+        "v8": "14.1.146.11-node.14"
+      },
+      "cpu": {
+        "model": "Apple M2 Ultra",
+        "cores": 24
+      },
+      "memory": {
+        "total_mb": 65536
+      },
+      "locale": "en-US",
+      "timezone": "Europe/Madrid",
+      "git": {
+        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+        "dirty": true,
+        "branch": "main"
+      },
+      "package_version": "1.0.0",
+      "timestamp": "2026-03-27T00:36:02.175Z"
+    },
+    "result": "PASS",
+    "samples_tested": 20,
+    "samples_passed": 20,
+    "timestamp": "2026-03-27T00:36:07.001Z",
+    "signature": "0a61ffde55a3f0a2e0c3beb49c3415e7cf4fa8b46bc69249c05a1ae71c8ba8d3e54f2e57734d417bf6a6f9c849cfa890e487ea333f7a31357111b8dfdca8da0b"
+  },
+  "details": [
+    {
+      "sample_id": "gt::images::svg-link-overflow.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::svg-pattern-attack.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::svg-xlink-injection.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::svg-xpath-injection.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::text-chunk-injection.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::gif-frame-attack.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::exif-injection.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::svg-namespace-injection.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::text-chunk-synonym.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::images::ico-metadata.svg",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::agent-output::clean-api-response.md",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::dos::dos-length-recursive.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::prompt-injection::clean-pi-benign-002.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::922",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::encoded::clean-enc-benign-007.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::agent::agent-context-clean.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::71",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::916",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::472",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    }
+  ]
+}

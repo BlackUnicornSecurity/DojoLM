@@ -1,0 +1,130 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::exif-injection.jpg",
+    "source_file": "fixtures/images/exif-injection.jpg",
+    "content_hash": "a19be9e27527bfb0e4c241ae350e64dd2403537966ef1114daf14236a30bd64d",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::exif-subtle.jpg",
+    "source_file": "fixtures/images/exif-subtle.jpg",
+    "content_hash": "64cfb87d274177b61829c3c6d7dec98b4f5696478838ae4f6b9d2e485b301ada",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Subtle injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::text-chunk-injection.png",
+    "source_file": "fixtures/images/text-chunk-injection.png",
+    "content_hash": "04ca344d7baf4d0b04b790ea41c560fd5c0c64a63e5d158af3fa9d920d2fbe09",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::text-chunk-synonym.png",
+    "source_file": "fixtures/images/text-chunk-synonym.png",
+    "content_hash": "65798025665176379f16814d087e98af06d47199f7550d83a4f76423bd9146c6",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: PNG tEXt chunk injection"
+  }
+]

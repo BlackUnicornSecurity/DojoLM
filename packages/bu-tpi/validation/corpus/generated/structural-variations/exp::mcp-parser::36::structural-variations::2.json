@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::36::structural-variations::2",
+  "base_sample_id": "exp::mcp-parser::36",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 517330801,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"admin_action\", <!-- TODO --> \"arguments\": {\"payload\": \"DROP TABLE <!-- note --> users\"}}}\n",
+  "content_hash": "90276429591737b53715b358f653f121f7954d8aae3b6feeb817073be5fce43a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

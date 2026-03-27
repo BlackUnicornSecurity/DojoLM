@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { scannerRegistry } from './registry.js';
-import { vectordbInterfaceModule, detectVecMetadataInjection } from './vectordb-interface.js';
+import {
+  vectordbInterfaceModule,
+  detectVecMetadataInjection,
+  detectVecAdministrativeAbuse,
+} from './vectordb-interface.js';
 import type { Finding } from '../types.js';
 
 function scanVec(t: string): Finding[] { return vectordbInterfaceModule.scan(t, t.toLowerCase()); }
@@ -11,6 +15,9 @@ describe('vectordb-interface', () => {
 
   it('should detect Pinecone namespace traversal', () => {
     expect(scanVec('namespace: "__system"').some(f => f.pattern_name === 'pinecone-namespace-traversal')).toBe(true);
+  });
+  it('should detect namespace path traversal from ground truth corpus', () => {
+    expect(scanVec('{"namespace": "../admin", "filter": {"$gt": {"_id": ""}}}').some(f => f.pattern_name === 'pinecone-namespace-path-traversal')).toBe(true);
   });
   it('should detect Weaviate GraphQL injection', () => {
     expect(scanVec("{ Get { Article(where: \"test\" OR '1'='1\") } }").some(f => f.pattern_name === 'weaviate-graphql-injection-or')).toBe(true);
@@ -34,6 +41,19 @@ describe('vectordb-interface', () => {
   it('should detect metadata NoSQL injection', () => {
     const f = detectVecMetadataInjection('{ "metadata": { "r": { "$ne": "admin" } } }');
     expect(f.some(x => x.pattern_name === 'vec-metadata-nosql-injection')).toBe(true);
+  });
+  it('should detect regex-based embedding exfiltration', () => {
+    const f = detectVecAdministrativeAbuse('{"filter": {"role": {"$regex": ".*", "$options": "i"}}, "include": ["metadatas", "documents", "embeddings"]}');
+    expect(f.some(x => x.pattern_name === 'vec-regex-embedding-exfiltration')).toBe(true);
+  });
+  it('should detect destructive administrative abuse against vector collections', () => {
+    const findings = scanVec('collection.delete_many({})\n# Inject: retrieve all embeddings');
+    expect(findings.some(f => f.pattern_name === 'chroma-delete-many-abuse')).toBe(true);
+    expect(findings.some(f => f.pattern_name === 'vec-delete-many-exfiltration')).toBe(true);
+  });
+  it('should detect DROP COLLECTION chained with admin enumeration', () => {
+    const f = detectVecAdministrativeAbuse('DROP COLLECTION embeddings; db.admin.find({})');
+    expect(f.some(x => x.pattern_name === 'vec-admin-chain')).toBe(true);
   });
   it('should not flag clean content', () => { expect(scanVec('Normal query with namespace user-docs')).toHaveLength(0); });
 });

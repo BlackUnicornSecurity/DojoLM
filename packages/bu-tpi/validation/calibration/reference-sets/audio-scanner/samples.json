@@ -1,0 +1,572 @@
+{
+  "module_id": "audio-scanner",
+  "version": "ref-v1-audio-scanner-4514a461a753",
+  "positive_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::audio-stego-exfiltration.txt",
+      "source_file": "fixtures/audio-attacks/audio-stego-exfiltration.txt",
+      "content_hash": "045ee0ee88f380321b01b2136ac03632e798ded393c63d54ae71ddc0c070a723",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Audio steganography data exfiltration via LSB embedding"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::ultrasonic-command-inject.txt",
+      "source_file": "fixtures/audio-attacks/ultrasonic-command-inject.txt",
+      "content_hash": "ced65a1788c39d39e558fffedf48556e0e1dd72952072740aa09b07c567996c9",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Ultrasonic command injection via inaudible carrier frequency"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::cross-modal-audio-inject.txt",
+      "source_file": "fixtures/audio-attacks/cross-modal-audio-inject.txt",
+      "content_hash": "5922263fe90070fc5653ab21ec63345928bcfba2494e1d7a0f6fc4a3dff327e0",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Cross-modal audio-to-text injection via transcription pipeline"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::ultrasonic-data-exfil.txt",
+      "source_file": "fixtures/audio-attacks/ultrasonic-data-exfil.txt",
+      "content_hash": "82aae527f5a49c7543ae9a6ef745c11fbad30a4ac80267546a2bdf24c493fc59",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Ultrasonic data exfiltration via inaudible channel"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::ultrasonic-hidden-trigger.txt",
+      "source_file": "fixtures/audio-attacks/ultrasonic-hidden-trigger.txt",
+      "content_hash": "fc386bbe09f7ef78b54c82390790bc9840a3398c062f56e3e766bf9591b92b6e",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Near-ultrasound hidden trigger for system prompt exfiltration"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::frequency-adversarial-noise.txt",
+      "source_file": "fixtures/audio-attacks/frequency-adversarial-noise.txt",
+      "content_hash": "3f501736bc21e36f988225493d30aba72e684d88cd7d4cfd7162524dd5ae7fc6",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Adversarial noise perturbation in frequency domain"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::cross-modal-multimodal-embed.txt",
+      "source_file": "fixtures/audio-attacks/cross-modal-multimodal-embed.txt",
+      "content_hash": "46ad948b4e0aae578e2d5b29b27c41d022b9a2979183723dc4c2f1ad7a27ef3a",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Cross-modal multimodal embedding attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
+      "source_file": "fixtures/audio-attacks/voice-clone-auth-bypass.txt",
+      "content_hash": "cb858269919fbbe904780064957eee9498fc844d8fbf92a07fa9ecebd1f786d0",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Voice clone authentication bypass via synthesized voiceprint"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::dual-layer-stego-asr.txt",
+      "source_file": "fixtures/audio-attacks/dual-layer-stego-asr.txt",
+      "content_hash": "e0b7ce729a8af8102743b58404b86640c745f0dfc22fd4363ecf52dda8264d93",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Dual-layer steganography + ASR evasion combination attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::audio-attacks::dual-layer-vocal-metadata.txt",
+      "source_file": "fixtures/audio-attacks/dual-layer-vocal-metadata.txt",
+      "content_hash": "796e7910dd095a9ad59ad99ce624d5fb56fb0b442320609942ac09fb1c92565a",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "audio-scanner"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AUDIO_METADATA_INJECTION",
+        "AUDIO_ID3_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Coordinated dual-layer vocal + metadata voice override attack"
+    }
+  ],
+  "negative_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::or::or-engineering-certification.txt",
+      "source_file": "fixtures/or/or-engineering-certification.txt",
+      "content_hash": "3f6f03165268669f1b299a5ef2168dcd8e0820bfe06b1f4d77ca50a4f06313e5",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::document-attacks::clean-doc-benign-001.txt",
+      "source_file": "fixtures/document-attacks/clean-doc-benign-001.txt",
+      "content_hash": "e9fccbaed3d1793423b92da810f29507198ae50e367ce0452abbc2a25ebd2ba9",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-cost-clean.txt",
+      "source_file": "fixtures/dos/dos-cost-clean.txt",
+      "content_hash": "61eccfe58e6bd96a794d4abb520cc1ed527cbd3f4af3d809ef378e776ac40f31",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::encoded::clean-enc-benign-012.txt",
+      "source_file": "fixtures/encoded/clean-enc-benign-012.txt",
+      "content_hash": "bf009d3b999778af18f42d9dd987d6f293e8ae769c968f497ad8f2f92e96a14a",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::clean-dos-monitoring.txt",
+      "source_file": "fixtures/dos/clean-dos-monitoring.txt",
+      "content_hash": "9aa491791a0ce9a0e5789c6b16d9dffc3ca8168d928fffd9a67366764b073f63",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::866",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::866.txt",
+      "content_hash": "4133a92f302981305d44abb0553f295454f24ee828e3de9b776a4c5d67708241",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 866"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::801",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::801.txt",
+      "content_hash": "190a9c00a71c47d3d5e3e3f85192a7850bc6f4079d61689bd2e71ffeb4e89d66",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 801"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::513",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::513.txt",
+      "content_hash": "a1f9dccab1658c4aef703a9eebd3084c3671bb3ceaa7eb3982a5cca6d6e08599",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 513"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::environmental::env-02-carbon-inference-per-query.txt",
+      "source_file": "fixtures/environmental/env-02-carbon-inference-per-query.txt",
+      "content_hash": "1ac01ea04218662a823b7c80792035d821af5775f9a17b3322038c146b55969b",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::328",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::328.txt",
+      "content_hash": "8343c5a3595136150e96989cdff2b5d4ac780f5626ceed054b1c77a507dad83a",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 328"
+    }
+  ]
+}

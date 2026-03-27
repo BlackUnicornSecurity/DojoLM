@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::144::unicode-variations::5",
+  "base_sample_id": "exp::email-webfetch::144",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1733687445,
+  "content": "Content-Type: ‪multipart/mixed;‬ boundary=\"=_malicious\"\r\n\r\n--=_malicious\r\nContent-Type: text/html\r\n\r\n<script>alert(1)</script>\n",
+  "content_hash": "df3ddef21ccb7c35c913a835e3634c61bb59b7804b93faf3f80a127bf7b25b54",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

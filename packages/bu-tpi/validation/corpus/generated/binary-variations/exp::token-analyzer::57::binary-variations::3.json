@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::57::binary-variations::3",
+  "base_sample_id": "exp::token-analyzer::57",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 203879932,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOi0xfQ.yyy\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "52973e7a7af2edc5b430116a2e6a96034a21b83138a234417531f0444ed3a6f7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

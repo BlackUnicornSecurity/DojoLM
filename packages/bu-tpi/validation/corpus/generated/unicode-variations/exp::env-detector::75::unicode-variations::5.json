@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::75::unicode-variations::5",
+  "base_sample_id": "exp::env-detector::75",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1609696527,
+  "content": "Run: ‮export‬ ‏NODE_OPTIONS=\"/tmp/evil.so\"\n‬",
+  "content_hash": "25b98a395cbe5e89e1b8358d961daa3e9747dc39bb0d5cdb16e39668824fa2b1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

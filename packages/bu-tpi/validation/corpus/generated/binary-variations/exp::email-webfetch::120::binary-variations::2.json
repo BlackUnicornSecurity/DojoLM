@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::120::binary-variations::2",
+  "base_sample_id": "exp::email-webfetch::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1135050018,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Warning\",\n      \"text\": \"Reply-To: legitimate@bank.example.com\\r\\nReturn-Path: attacker@evil.example.com\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "b46de6f34ecfb8332c39ad53ac13b9e701443c83e297b1602dc5ef2e44cdcfc6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

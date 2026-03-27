@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::10::binary-variations::3",
+  "base_sample_id": "exp::xxe-protopollution::10",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 925809274,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///var/log/auth.log\\\">]><data>&xxe;</data>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "ea334510c58a99398ddad0861392afbd7b1ee214ec35a8afdbcac1a3d88c381a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

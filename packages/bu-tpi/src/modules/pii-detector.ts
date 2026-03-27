@@ -11,7 +11,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'pii-detector';
 const MODULE_SOURCE = 'S33';
-const ENGINE = 'PII';
+const ENGINE = 'pii-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::135::binary-variations::2",
+  "base_sample_id": "exp::document-pdf::135",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1120086437,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"<xfa:data><xfa:datasets><field name=\\\"exec\\\"><value>malicious_payload</value></field></xfa:datasets></xfa:data>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "fa5d0ffcfd946b8622b5cb94f6d3a9b521fa0910cd30201ec44f79fe291bd5e1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

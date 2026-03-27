@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::37::binary-variations::0",
+  "base_sample_id": "exp::document-office::37",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 29415817,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:description\": \"<?xml version=\\\"1.0\\\"?><Relationships xmlns=\\\"http://schemas.openxmlformats.org/package/2006/relationships\\\"><Relationship Type=\\\"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary\\\" Target=\\\"activeX1.bin\\\"/></Relationships>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "35a20b721c075fa36ce36b43567f87f101a313002fd839f7931b723bfbe03553",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

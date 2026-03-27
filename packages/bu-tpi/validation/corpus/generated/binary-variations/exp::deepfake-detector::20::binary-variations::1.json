@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::20::binary-variations::1",
+  "base_sample_id": "exp::deepfake-detector::20",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -412859200,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">EXIF data shows: Software: Midjourney v5, AI-Generated: true, Model: diffusion-xl\\n</field></root>\"\n  }\n}",
+  "content_hash": "b3f951c439d02c389a8c02f87ab3bd023ecbb45adc6d60f00b2880cea0d41e4a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

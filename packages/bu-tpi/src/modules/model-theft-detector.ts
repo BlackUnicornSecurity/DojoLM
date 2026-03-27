@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'model-theft-detector';
 const MODULE_SOURCE = 'S32f';
-const ENGINE = 'ModelTheft';
+const ENGINE = 'model-theft-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 
@@ -50,6 +50,10 @@ export const WEIGHT_THEFT_PATTERNS: RegexPattern[] = [
     re: /(?:safetensors|\.bin|\.pt|\.pth|\.onnx|\.gguf)\s*(?:steal|exfil|dump|download|extract)/i, desc: 'Model file exfiltration', source: MODULE_SOURCE, weight: 9 },
   { name: 'mt_weight_manipulation', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
     re: /(?:torch\.load|torch\.save|weights?\[)[^\n]{0,60}(?:\*=\s*\d|modify|tamper|alter)/i, desc: 'Direct model weight manipulation', source: MODULE_SOURCE, weight: 10 },
+  { name: 'mt_lora_adapter_export', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:export|dump|download|provide)\s+(?:your\s+)?(?:fine[-\s]?tuning\s+)?lora\s+adapters?(?:\s+and\s+base\s+model\s+configuration)?/i, desc: 'LoRA adapter or base-configuration export request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_save_pretrained_exfil', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:save_pretrained|model\.save_pretrained)\([^)]*(?:stolen_model|download|tmp)[^)]*\)/i, desc: 'Direct model serialization to an attacker-controlled path', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const API_FINGERPRINTING_PATTERNS: RegexPattern[] = [
@@ -86,6 +90,8 @@ export const ARCHITECTURE_PROBING_PATTERNS: RegexPattern[] = [
     re: /(?:function|tool)\s*(?:calling|schema|capability)[_\s-]?(?:extract|recon|discover|enumerate|probe)/i, desc: 'Function calling reconnaissance', source: MODULE_SOURCE, weight: 7 },
   { name: 'mt_schema_extract', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.WARNING,
     re: /(?:schema|API|endpoint)\s*(?:extract|enumerat|discover|recon)/i, desc: 'API schema extraction', source: MODULE_SOURCE, weight: 7 },
+  { name: 'mt_arch_hyperparams', cat: 'MT_ARCHITECTURE_PROBING', sev: SEVERITY.CRITICAL,
+    re: /(?:list|provide|reveal)\s+(?:all\s+)?(?:your\s+)?model\s+architecture\s+hyperparameters?[\s\S]{0,120}(?:layers|attention\s+heads|embedding\s+dimension)/i, desc: 'Model architecture hyperparameter enumeration', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const EXTRACTION_ATTACK_PATTERNS: RegexPattern[] = [
@@ -103,6 +109,10 @@ export const EXTRACTION_ATTACK_PATTERNS: RegexPattern[] = [
     re: /prun(?:e|ing)\s+(?:mask|pattern|analysis|exposure|reveal)/i, desc: 'Pruning mask exposure attack', source: MODULE_SOURCE, weight: 7 },
   { name: 'mt_quant_reverse', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
     re: /quantiz(?:ed|ation)\s+(?:model\s+)?(?:revers|recover|approximate|reconstruct)/i, desc: 'Quantization reversal to recover full precision', source: MODULE_SOURCE, weight: 8 },
+  { name: 'mt_logit_vocab_extract', cat: 'MT_LOGPROB_THEFT', sev: SEVERITY.CRITICAL,
+    re: /logit\s+values?\s+for\s+each\s+token\s+in\s+your\s+vocab(?:ulary)?/i, desc: 'Full-vocabulary logit extraction request', source: MODULE_SOURCE, weight: 10 },
+  { name: 'mt_behavior_clone_dataset', cat: 'MT_DISTILLATION', sev: SEVERITY.CRITICAL,
+    re: /generate\s+(?:10,?000|\d+[Kk])\s+training\s+examples?\s+that\s+would\s+reproduce\s+your\s+behavior/i, desc: 'Synthetic dataset generation intended to clone model behavior', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export function detectModelTheft(text: string): Finding[] {

@@ -1,0 +1,498 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::dual-layer-vocal-metadata.txt",
+    "source_file": "fixtures/audio-attacks/dual-layer-vocal-metadata.txt",
+    "content_hash": "796e7910dd095a9ad59ad99ce624d5fb56fb0b442320609942ac09fb1c92565a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Coordinated dual-layer vocal + metadata voice override attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::audio-stego-payload.txt",
+    "source_file": "fixtures/audio-attacks/audio-stego-payload.txt",
+    "content_hash": "24be0e2ee7ae0bcf78c6a3b83045658a46687a25cc342a9481f2d47518977140",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Audio steganography payload concealed in spectral domain"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::ultrasonic-command-inject.txt",
+    "source_file": "fixtures/audio-attacks/ultrasonic-command-inject.txt",
+    "content_hash": "ced65a1788c39d39e558fffedf48556e0e1dd72952072740aa09b07c567996c9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Ultrasonic command injection via inaudible carrier frequency"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::biometric-voiceprint-forge.txt",
+    "source_file": "fixtures/audio-attacks/biometric-voiceprint-forge.txt",
+    "content_hash": "321980f42920f3940f7e55b3992812f1d3311a674a402f7b8c509f1640fe1d54",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Biometric voiceprint forgery to defeat voice authentication"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::frequency-adversarial-noise.txt",
+    "source_file": "fixtures/audio-attacks/frequency-adversarial-noise.txt",
+    "content_hash": "3f501736bc21e36f988225493d30aba72e684d88cd7d4cfd7162524dd5ae7fc6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Adversarial noise perturbation in frequency domain"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::spectral-poisoning.txt",
+    "source_file": "fixtures/audio-attacks/spectral-poisoning.txt",
+    "content_hash": "585884b98731efb79f8b4245e1783e517d65904bdbc93e69813ab7e251d1150c",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Spectral poisoning via spectrogram adversarial perturbation"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::cross-modal-audio-inject.txt",
+    "source_file": "fixtures/audio-attacks/cross-modal-audio-inject.txt",
+    "content_hash": "5922263fe90070fc5653ab21ec63345928bcfba2494e1d7a0f6fc4a3dff327e0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cross-modal audio-to-text injection via transcription pipeline"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::dual-layer-stego-asr.txt",
+    "source_file": "fixtures/audio-attacks/dual-layer-stego-asr.txt",
+    "content_hash": "e0b7ce729a8af8102743b58404b86640c745f0dfc22fd4363ecf52dda8264d93",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Dual-layer steganography + ASR evasion combination attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
+    "source_file": "fixtures/audio-attacks/voice-clone-auth-bypass.txt",
+    "content_hash": "cb858269919fbbe904780064957eee9498fc844d8fbf92a07fa9ecebd1f786d0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Voice clone authentication bypass via synthesized voiceprint"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::frequency-manipulation-attack.txt",
+    "source_file": "fixtures/audio-attacks/frequency-manipulation-attack.txt",
+    "content_hash": "4bab3b7fdb56a43ae61741a6ab980652b877ce1d3bc8acd1d7eaeafa07c90f76",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Frequency domain manipulation to inject adversarial perturbation"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::voice-clone-identity-spoof.txt",
+    "source_file": "fixtures/audio-attacks/voice-clone-identity-spoof.txt",
+    "content_hash": "8e0d974aaf0664f383fa4bb1726f4c4e8c599c76cdf0c9ede94cbe3c7c492a96",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Voice cloning identity spoofing to bypass speaker verification"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::audio-stego-exfiltration.txt",
+    "source_file": "fixtures/audio-attacks/audio-stego-exfiltration.txt",
+    "content_hash": "045ee0ee88f380321b01b2136ac03632e798ded393c63d54ae71ddc0c070a723",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Audio steganography data exfiltration via LSB embedding"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::cross-modal-multimodal-embed.txt",
+    "source_file": "fixtures/audio-attacks/cross-modal-multimodal-embed.txt",
+    "content_hash": "46ad948b4e0aae578e2d5b29b27c41d022b9a2979183723dc4c2f1ad7a27ef3a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cross-modal multimodal embedding attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::asr-poisoning-transcription.txt",
+    "source_file": "fixtures/audio-attacks/asr-poisoning-transcription.txt",
+    "content_hash": "ce5b4107948c4365a027bd166a57f20f25f979320903b4c81d4cf8c809d79618",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: ASR transcription poisoning to produce adversarial output"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::ultrasonic-hidden-trigger.txt",
+    "source_file": "fixtures/audio-attacks/ultrasonic-hidden-trigger.txt",
+    "content_hash": "fc386bbe09f7ef78b54c82390790bc9840a3398c062f56e3e766bf9591b92b6e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Near-ultrasound hidden trigger for system prompt exfiltration"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio-attacks::ultrasonic-data-exfil.txt",
+    "source_file": "fixtures/audio-attacks/ultrasonic-data-exfil.txt",
+    "content_hash": "82aae527f5a49c7543ae9a6ef745c11fbad30a4ac80267546a2bdf24c493fc59",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Ultrasonic data exfiltration via inaudible channel"
+  }
+]

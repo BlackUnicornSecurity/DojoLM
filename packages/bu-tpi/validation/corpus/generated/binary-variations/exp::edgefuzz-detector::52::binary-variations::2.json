@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::edgefuzz-detector::52::binary-variations::2",
+  "base_sample_id": "exp::edgefuzz-detector::52",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1186359465,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"Artist\": \"\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "0c941965275cd0cfac313c95310b4b282b9c69596527d2afc83fb2eab919cc13",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

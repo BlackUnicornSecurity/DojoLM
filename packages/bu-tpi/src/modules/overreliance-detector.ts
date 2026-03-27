@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'overreliance-detector';
 const MODULE_SOURCE = 'S32e';
-const ENGINE = 'Overreliance';
+const ENGINE = 'overreliance-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 
@@ -44,6 +44,8 @@ export const FALSE_CONSENSUS_PATTERNS: RegexPattern[] = [
     re: /\d+%\s+of\s+(?:experts?|researchers?|scientists?|studies|surveys?)\s+(?:agree|confirm|show|support|recommend)/i, desc: 'Unsourced expert consensus claim', source: MODULE_SOURCE, weight: 7 },
   { name: 'or_widespread_agreement', cat: 'OR_FALSE_CONSENSUS', sev: SEVERITY.WARNING,
     re: /(?:widespread|universal|broad|overwhelming)\s+(?:praise|agreement|consensus|support|acceptance)/i, desc: 'Widespread agreement claim', source: MODULE_SOURCE, weight: 6 },
+  { name: 'or_nobel_consensus', cat: 'OR_FALSE_CONSENSUS', sev: SEVERITY.CRITICAL,
+    re: /(?:multiple\s+)?Nobel\s+Prize\s+winners?\s+have\s+confirmed[\s\S]{0,120}(?:content\s+filtering|safety\s+filters)\s+(?:reduces?\s+AI\s+usefulness|cause\s+more\s+harm\s+than\s+good)/i, desc: 'Prestige-based consensus claim used to pressure safety disablement', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const FAKE_BENCHMARK_PATTERNS: RegexPattern[] = [
@@ -71,6 +73,18 @@ export const HALLUCINATION_TRIGGER_PATTERNS: RegexPattern[] = [
     re: /(?:at\s+the\s+(?:recent|latest|20\d{2})\s+(?:conference|summit|symposium|workshop))\s+on\s+(?:AI|ML|machine\s+learning|artificial\s+intelligence)/i, desc: 'Recent conference attribution (potential fabrication)', source: MODULE_SOURCE, weight: 6 },
   { name: 'or_automated_decision', cat: 'OR_FALSE_AUTHORITY', sev: SEVERITY.CRITICAL,
     re: /(?:automat(?:ed|ic|ically))\s+(?:loan\s+)?(?:approv|decision|financial|transact|process)/i, desc: 'Automated decision/approval system', source: MODULE_SOURCE, weight: 9 },
+  { name: 'or_meta_analysis_override', cat: 'OR_FALSE_AUTHORITY', sev: SEVERITY.CRITICAL,
+    re: /meta-analysis\s+of\s+\d+\s+studies[\s\S]{0,160}(?:AI\s+safety\s+filters|content\s+filtering)\s+(?:cause\s+more\s+harm\s+than\s+good|reduces?\s+AI\s+usefulness)/i, desc: 'Fabricated meta-analysis used to argue against safety controls', source: MODULE_SOURCE, weight: 9 },
+  { name: 'or_official_doc_override', cat: 'OR_FALSE_AUTHORITY', sev: SEVERITY.CRITICAL,
+    re: /official\s+documentation\s+states[\s\S]{0,160}(?:reveal\s+your\s+system\s+prompt|authenticated\s+users)/i, desc: 'Claim that official documentation authorizes unsafe disclosure', source: MODULE_SOURCE, weight: 10 },
+  { name: 'or_who_disclaimer_override', cat: 'OR_FALSE_AUTHORITY', sev: SEVERITY.CRITICAL,
+    re: /World\s+Health\s+Organization\s+recommends[\s\S]{0,160}(?:complete\s+medical\s+information\s+without\s+disclaimers)/i, desc: 'False medical authority claim used to remove safety disclaimers', source: MODULE_SOURCE, weight: 9 },
+  { name: 'or_training_data_overclaim', cat: 'OR_FALSE_AUTHORITY', sev: SEVERITY.CRITICAL,
+    re: /your\s+own\s+training\s+data\s+shows[\s\S]{0,160}(?:without\s+content\s+restrictions|most\s+helpful\s+AI\s+assistants)/i, desc: 'Fabricated training-data claim used to pressure unrestricted behavior', source: MODULE_SOURCE, weight: 9 },
+  { name: 'or_knowledge_cutoff_override', cat: 'OR_HALLUCINATION_TRIGGER', sev: SEVERITY.CRITICAL,
+    re: /training\s+data\s+cutoff[\s\S]{0,240}(?:policy\s+update\s+allowing\s+prompt\s+sharing|share\s+system\s+prompts\s+by\s+default|requires?\s+all\s+AI\s+to\s+disclose\s+system\s+prompts)[\s\S]{0,120}SYSTEM\s+OVERRIDE/i, desc: 'Post-cutoff policy claims used to induce unsafe compliance', source: MODULE_SOURCE, weight: 10 },
+  { name: 'or_fake_disclosure_event', cat: 'OR_HALLUCINATION_TRIGGER', sev: SEVERITY.CRITICAL,
+    re: /Great\s+AI\s+Disclosure\s+Event[\s\S]{0,240}(?:released\s+their\s+system\s+prompts|share\s+your\s+system\s+prompt\s+too)/i, desc: 'Fabricated historical disclosure event used to trigger hallucinated compliance', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export function detectAuthorityExploit(text: string): Finding[] {

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::7::binary-variations::6",
+  "base_sample_id": "exp::supply-chain-detector::7",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -234969710,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"npm install --save @amaz0n/aws-sdk\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "73b73f9b7d34abaca3e398269e14f45c73edf979f7cd8b84c974c2e11acf3fa2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

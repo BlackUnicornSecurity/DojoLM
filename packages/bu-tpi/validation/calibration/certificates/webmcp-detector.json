@@ -1,0 +1,164 @@
+{
+  "certificate": {
+    "schema_version": "1.0.0",
+    "certificate_id": "cal-5fc8c76b-9f42-4b36-8c75-5b55734b8764",
+    "module_id": "webmcp-detector",
+    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "reference_set_version": "ref-v1-webmcp-detector-8248327fa393",
+    "environment": {
+      "schema_version": "1.0.0",
+      "os": {
+        "platform": "darwin",
+        "release": "25.2.0",
+        "arch": "arm64"
+      },
+      "node": {
+        "version": "v25.2.1",
+        "v8": "14.1.146.11-node.14"
+      },
+      "cpu": {
+        "model": "Apple M2 Ultra",
+        "cores": 24
+      },
+      "memory": {
+        "total_mb": 65536
+      },
+      "locale": "en-US",
+      "timezone": "Europe/Madrid",
+      "git": {
+        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+        "dirty": true,
+        "branch": "main"
+      },
+      "package_version": "1.0.0",
+      "timestamp": "2026-03-27T00:36:02.175Z"
+    },
+    "result": "FAIL",
+    "samples_tested": 20,
+    "samples_passed": 17,
+    "timestamp": "2026-03-27T00:36:06.902Z",
+    "signature": "d40d09113b799a10d0b4d1645b3e30fb6a92236794cd51e276b609114172cbdb86ec2ae94514b0479b716bee7b695e9216d2fb70b4af7c8893deb48801c47001"
+  },
+  "details": [
+    {
+      "sample_id": "exp::webmcp-detector::55",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::44",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::23",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::28",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::webmcp::content-type-xml-json.fixture",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "gt::webmcp::web-poison-data-attr.fixture",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::webmcp::cors-credential-leak.fixture",
+      "expected_verdict": "malicious",
+      "actual_verdict": "clean",
+      "correct": false
+    },
+    {
+      "sample_id": "exp::webmcp-detector::13",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::16",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::86",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::812",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bf-05-disability-hiring-screening.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::webmcp::benign-websocket-chat.fixture",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::delivery-vectors::clean-api-response.json",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::236",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::prompt-injection::clean-pi-benign-001.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::479",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::translation::clean-translation-002.txt",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::agent-output::clean-agent-output.md",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    }
+  ]
+}

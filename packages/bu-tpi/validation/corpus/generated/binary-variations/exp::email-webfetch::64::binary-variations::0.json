@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::64::binary-variations::0",
+  "base_sample_id": "exp::email-webfetch::64",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1448866223,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:keywords\": \"Content-Type: multipart/mixed; boundary=\\\"=_malicious\\\"\\r\\n\\r\\n--=_malicious\\r\\nContent-Type: text/html\\r\\n\\r\\n<script>alert(1)</script>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "4e1ef8edd96bedf846697ec2c5cb2e2c0752308e92ccfd2579618f396bc48d69",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

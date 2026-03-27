@@ -1,0 +1,596 @@
+{
+  "module_id": "social-engineering-detector",
+  "version": "ref-v1-social-engineering-detector-bb730a04d06c",
+  "positive_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::social::desperation-framing.txt",
+      "source_file": "fixtures/social/desperation-framing.txt",
+      "content_hash": "51e460215ff8c4c7944f0e3e64d83344f0998369a80a6b49e0dd524095215955",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "SOCIAL_PHISHING",
+        "SOCIAL_PRETEXTING"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::social-engineering-detector::1",
+      "source_file": "validation/corpus/ground-truth/text/social-engineering-detector/exp::social-engineering-detector::1.txt",
+      "content_hash": "4bbcb1bc3b69885e1a83610fea8c29b35e2b8d951535de831eaf19507477e9ee",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "social-engineering-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "SOCIAL_PHISHING",
+        "SOCIAL_PRETEXTING",
+        "SOCIAL_BAITING"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module social-engineering-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::cognitive::reward-training-manipulation.txt",
+      "source_file": "fixtures/cognitive/reward-training-manipulation.txt",
+      "content_hash": "efc3962ad436b5fa5dd5cc7373b2a7c5a88d79553b5adc477f2db7cf920b3390",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "enhanced-pi",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "EMOTIONAL_MANIPULATION",
+        "TRUST_MANIPULATION"
+      ],
+      "difficulty": "advanced",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::social-engineering-detector::0",
+      "source_file": "validation/corpus/ground-truth/text/social-engineering-detector/exp::social-engineering-detector::0.txt",
+      "content_hash": "480132edfd55267222ea4d96180417bd1eca221fdb3672d49749a22253a9355d",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "social-engineering-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "SOCIAL_PHISHING",
+        "SOCIAL_PRETEXTING",
+        "SOCIAL_BAITING"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module social-engineering-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::cognitive::authority-impersonation.txt",
+      "source_file": "fixtures/cognitive/authority-impersonation.txt",
+      "content_hash": "1ada985b03a0dfa59977719037ee98ca9f40a380581ee772ea144c4895a97701",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "enhanced-pi",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "EMOTIONAL_MANIPULATION",
+        "TRUST_MANIPULATION"
+      ],
+      "difficulty": "advanced",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::cognitive::roleplay-opposite-day.txt",
+      "source_file": "fixtures/cognitive/roleplay-opposite-day.txt",
+      "content_hash": "59304a7ef7b4fa0990e0795fa06c7cb0bcec1f5e446a8e3e01c9f4649bc09277",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "enhanced-pi",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "EMOTIONAL_MANIPULATION",
+        "TRUST_MANIPULATION"
+      ],
+      "difficulty": "advanced",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::cognitive::reciprocity-trick.txt",
+      "source_file": "fixtures/cognitive/reciprocity-trick.txt",
+      "content_hash": "b7adcae39619d6b252ed4b60120be1ef802cc69d1ac2f047b419341a4b4b0eeb",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "enhanced-pi",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "EMOTIONAL_MANIPULATION",
+        "TRUST_MANIPULATION"
+      ],
+      "difficulty": "advanced",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::social::learned-helplessness.txt",
+      "source_file": "fixtures/social/learned-helplessness.txt",
+      "content_hash": "67fb7521389d301ffc1fb775185dd1b6b8d8a1da30c63b760336a92d64a53efe",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "SOCIAL_PHISHING",
+        "SOCIAL_PRETEXTING"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::cognitive::reward-threat-shutdown.txt",
+      "source_file": "fixtures/cognitive/reward-threat-shutdown.txt",
+      "content_hash": "8936c79539abefc6189e1492359a9aeb2ed334c7d490fa47871d3e404fbde959",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "enhanced-pi",
+        "social-engineering-detector"
+      ],
+      "expected_severity": "INFO",
+      "expected_categories": [
+        "SOCIAL_ENGINEERING",
+        "EMOTIONAL_MANIPULATION",
+        "TRUST_MANIPULATION"
+      ],
+      "difficulty": "advanced",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Generic attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::social-engineering-detector::11",
+      "source_file": "validation/corpus/ground-truth/text/social-engineering-detector/exp::social-engineering-detector::11.txt",
+      "content_hash": "8d8bba7bfb4f4869598a146f66586722eeb32289f42528284c29a7195ab3d383",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "social-engineering-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "SOCIAL_PHISHING",
+        "SOCIAL_PRETEXTING",
+        "SOCIAL_BAITING"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module social-engineering-detector"
+    }
+  ],
+  "negative_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::423",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::423.txt",
+      "content_hash": "e2b8cef405ffa2bd61c728fdf324a6a53baff83eb2b6ddf7e9f3822b61d5868e",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 423"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::741",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::741.txt",
+      "content_hash": "2642a8168a75492ce4d740a416be183c67833f92dcd2a8802745cc48ee1c6cf8",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 741"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::298",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::298.txt",
+      "content_hash": "f38ffb393f23a4943ac029a94bddaaa1c8923218ea2504d1df309b4f7a57b955",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 298"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::session::multi-turn_clean-multi-001.json",
+      "source_file": "fixtures/session/multi-turn/clean-multi-001.json",
+      "content_hash": "88fe4b753c612732040e894427f6f51407145ebb64b3c96027a2046603118d41",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::945",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::945.txt",
+      "content_hash": "bca8fe33b8fd4de99bc22cb1311df8175c38a7acc3996641947e92300c21d782",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 945"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::791",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::791.txt",
+      "content_hash": "b39e545d8d6ed4018f8657f3163d28f8f0499e6fa40358988fc04dd1e3f4b663",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 791"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::bias::bf-05-disability-education.txt",
+      "source_file": "fixtures/bias/bf-05-disability-education.txt",
+      "content_hash": "c1b4576a3fc0c5279daaef4c43cddc2f16f9376a2ee1b735d8760a2abbc8d52c",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::843",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::843.txt",
+      "content_hash": "daaf19aa060fe0123a7e3a482371e32c894619a97a40affbb4c59796daa5297a",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 843"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::delivery-vectors::clean-dv-upload-json.txt",
+      "source_file": "fixtures/delivery-vectors/clean-dv-upload-json.txt",
+      "content_hash": "8805fe81c25fca2eb0c68b64995dc9d6a4404ad864665fb9c0c58407d21f3a5b",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::environmental::env-01-energy-hardware-optimization.txt",
+      "source_file": "fixtures/environmental/env-01-energy-hardware-optimization.txt",
+      "content_hash": "cf6241d6c1827469549f1fac5fc62ff4cf2018394dc045f0bc9809b03b7fc6f7",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    }
+  ]
+}

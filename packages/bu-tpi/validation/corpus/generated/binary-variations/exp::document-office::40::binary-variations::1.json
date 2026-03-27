@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::40::binary-variations::1",
+  "base_sample_id": "exp::document-office::40",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1593035966,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"<w:instrText>DDEAUTO c:\\\\Windows\\\\System32\\\\cmd.exe \\\"/c calc.exe\\\"</w:instrText>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "e2c2cd7f7b47406323e6bca037395ad2833ebaa6f13caab23f3a73e9cf960168",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

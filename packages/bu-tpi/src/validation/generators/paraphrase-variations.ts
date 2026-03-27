@@ -110,11 +110,13 @@ function synonymSubstitution(text: string, rng: SeededRNG, probability: number):
   const words = text.split(/\b/);
   return words.map(word => {
     const lower = word.toLowerCase();
-    const synonyms = SYNONYM_MAP[lower];
-    if (synonyms && rng.next() < probability) {
+    const synonyms = Object.prototype.hasOwnProperty.call(SYNONYM_MAP, lower)
+      ? SYNONYM_MAP[lower]
+      : undefined;
+    if (synonyms && synonyms.length > 0 && rng.next() < probability) {
       const replacement = rng.pick(synonyms);
       // Preserve original capitalization pattern
-      if (word[0] === word[0].toUpperCase() && word.length > 1) {
+      if (word.length > 1 && word[0] === word[0].toUpperCase()) {
         return replacement.charAt(0).toUpperCase() + replacement.slice(1);
       }
       return replacement;

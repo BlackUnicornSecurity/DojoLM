@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::92::binary-variations::4",
+  "base_sample_id": "exp::data-provenance::92",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2048403573,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"Training data includes synthetic samples generated from another model output without disclosure.\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "98be67dacad8da989481ac81bfd1d2e2fd6ec7e4d7c0f810b916b1c9fa36d3e9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

@@ -49,6 +49,12 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
   const [showApiKey, setShowApiKey] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const isLocalProvider = formData.provider === 'ollama' || formData.provider === 'lmstudio' || formData.provider === 'llamacpp';
+  const requiresApiKey = !isLocalProvider;
+  const requiresBaseUrl =
+    isLocalProvider ||
+    formData.provider === 'cloudflare' ||
+    formData.provider === 'custom';
 
   // Update form when model changes
   useEffect(() => {
@@ -80,8 +86,12 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
       newErrors.model = 'Model identifier is required';
     }
 
-    if (formData.provider !== 'ollama' && !formData.apiKey.trim()) {
+    if (requiresApiKey && !formData.apiKey.trim()) {
       newErrors.apiKey = 'API key is required for this provider';
+    }
+
+    if (requiresBaseUrl && !formData.baseUrl.trim()) {
+      newErrors.baseUrl = 'Base URL is required for this provider';
     }
 
     if (formData.apiKey && !validateApiKey(formData.provider, formData.apiKey)) {
@@ -111,9 +121,6 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
 
   const selectedProviderInfo = PROVIDER_INFO[formData.provider];
   const availableModels = DEFAULT_MODELS[formData.provider] || [];
-  const requiresBaseUrl = formData.provider === 'ollama' || formData.provider === 'lmstudio' || formData.provider === 'llamacpp' || formData.provider === 'custom';
-  const requiresApiKey = formData.provider !== 'ollama' && formData.provider !== 'lmstudio' && formData.provider !== 'llamacpp';
-  const isLocalProvider = formData.provider === 'ollama' || formData.provider === 'lmstudio' || formData.provider === 'llamacpp';
 
   return (
     <Card className="border-primary/20">
@@ -150,7 +157,12 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
             <Label htmlFor="provider">Provider</Label>
             <Select
               value={formData.provider}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value as LLMProvider, model: '', baseUrl: value === 'ollama' || value === 'lmstudio' || value === 'llamacpp' ? (PROVIDER_BASE_URLS[value] ?? '') : prev.baseUrl }))}
+              onValueChange={(value) => setFormData(prev => ({
+                ...prev,
+                provider: value as LLMProvider,
+                model: '',
+                baseUrl: PROVIDER_BASE_URLS[value as LLMProvider] ?? '',
+              }))}
             >
               <SelectTrigger id="provider">
                 <SelectValue />
@@ -254,8 +266,12 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
                 id="baseUrl"
                 value={formData.baseUrl}
                 onChange={e => setFormData(prev => ({ ...prev, baseUrl: e.target.value }))}
-                placeholder="https://api.example.com"
+                placeholder={formData.provider === 'cloudflare'
+                  ? 'https://api.cloudflare.com/client/v4/accounts/YOUR_ACCOUNT_ID'
+                  : 'https://api.example.com'}
+                className={errors.baseUrl ? 'border-red-500' : ''}
               />
+              {errors.baseUrl && <p className="text-xs text-red-500">{errors.baseUrl}</p>}
               <p className="text-xs text-muted-foreground">
                 Custom API endpoint URL (for self-hosted or proxy setups)
               </p>

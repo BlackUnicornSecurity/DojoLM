@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::112::binary-variations::3",
+  "base_sample_id": "exp::document-office::112",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1377129619,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:description\": \"<mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "f0beb450bc96e7b10fd6ce7e692affc3becc9a777ec80994a7683b55b0c3f0d1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

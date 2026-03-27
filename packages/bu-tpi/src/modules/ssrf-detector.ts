@@ -61,7 +61,7 @@ export function detectSsrfUrls(text: string): Finding[] {
       if (isInternal) {
         findings.push({ category: 'SSRF_URL_TARGET', severity: host === '169.254.169.254' ? SEVERITY.CRITICAL : SEVERITY.WARNING,
           description: `SSRF: URL targets internal host "${host}"`,
-          match: m[0].slice(0, 100), source: 'S18', engine: 'SSRF',
+          match: m[0].slice(0, 100), source: 'S18', engine: 'ssrf-detector',
           pattern_name: 'ssrf_url_target', weight: host === '169.254.169.254' ? 10 : 7 });
       }
     } catch { /* invalid URL */ }
@@ -90,7 +90,7 @@ const ssrfDetectorModule: ScannerModule = {
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
           findings.push({ category: p.cat, severity: p.sev, description: p.desc,
-            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S18', engine: 'SSRF',
+            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S18', engine: 'ssrf-detector',
             ...(p.weight !== undefined && { weight: p.weight }) });
         }
       }

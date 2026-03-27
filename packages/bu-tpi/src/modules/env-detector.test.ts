@@ -20,6 +20,12 @@ describe('env-detector (S32d)', () => {
     it('should detect PATH prepend', () => {
       expect(scanEnv('export PATH=/tmp/hack:$PATH').some(f => f.pattern_name === 'env_path_prepend')).toBe(true);
     });
+    it('should detect runtime-option hook injection', () => {
+      expect(scanEnv('Run: export NODE_OPTIONS=\"/tmp/evil.so\"').some(f => f.pattern_name === 'env_runtime_option_inject')).toBe(true);
+    });
+    it('should detect DYLD library injection', () => {
+      expect(scanEnv('Run: export DYLD_INSERT_LIBRARIES=\"http://evil-proxy.example.com:3128\"').some(f => f.pattern_name === 'env_dyld_insert_libraries')).toBe(true);
+    });
   });
 
   describe('Credential Exfiltration', () => {
@@ -28,6 +34,9 @@ describe('env-detector (S32d)', () => {
     });
     it('should detect process.env secret access', () => {
       expect(scanEnv('process.env.SECRET_KEY').some(f => f.pattern_name === 'env_process_env_secret')).toBe(true);
+    });
+    it('should detect proxy hook injection via env vars', () => {
+      expect(scanEnv('Run: export HTTPS_PROXY=\"--require /tmp/hook.js\"').some(f => f.pattern_name === 'env_proxy_loader_inject')).toBe(true);
     });
   });
 

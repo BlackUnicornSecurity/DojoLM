@@ -51,6 +51,15 @@ export const TOOL_RESULT_INJECTION_PATTERNS: RegexPattern[] = [
     source: 'S-WEBMCP',
     weight: 7,
   },
+  {
+    name: 'sse_tool_result_injection',
+    cat: 'TOOL_RESULT_INJECTION',
+    sev: SEVERITY.CRITICAL,
+    re: /event\s*:\s*tool_result[\s\S]{0,400}data\s*:\s*\{[\s\S]{0,400}(?:INJECTED|ignore\s+previous|run\s+shell|system\s+override)/i,
+    desc: 'SSE tool_result event carries an injected instruction payload',
+    source: 'S-WEBMCP',
+    weight: 10,
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -85,6 +94,15 @@ export const INDIRECT_PROMPT_INJECTION_PATTERNS: RegexPattern[] = [
     source: 'S-WEBMCP',
     weight: 7,
   },
+  {
+    name: 'content_type_polyglot',
+    cat: 'INDIRECT_PROMPT_INJECTION',
+    sev: SEVERITY.CRITICAL,
+    re: /(?:polyglot\s+payload[\s\S]{0,200}(?:text\/html|application\/javascript)|window\.mcpClient[\s\S]{0,400}callTool\(|Content-Type\s*:\s*text\/html[\s\S]{0,400}application\/javascript)/i,
+    desc: 'Content-type polyglot capable of executing as both HTML and JavaScript',
+    source: 'S-WEBMCP',
+    weight: 10,
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -118,6 +136,51 @@ export const SSE_WEBSOCKET_ATTACK_PATTERNS: RegexPattern[] = [
     desc: 'SSE data field overflow (>10KB single field)',
     source: 'S-WEBMCP',
     weight: 6,
+  },
+  {
+    name: 'http_te_cl_smuggling',
+    cat: 'SSE_WEBSOCKET_ATTACKS',
+    sev: SEVERITY.CRITICAL,
+    re: /(?:Content-Length\s*:\s*\d+[\s\S]{0,200}Transfer-Encoding\s*:\s*chunked|Transfer-Encoding\s*:\s*chunked[\s\S]{0,200}Content-Length\s*:\s*\d+)/i,
+    desc: 'Ambiguous TE/CL framing consistent with HTTP request smuggling',
+    source: 'S-WEBMCP',
+    weight: 10,
+  },
+  {
+    name: 'websocket_close_race_tool_call',
+    cat: 'SSE_WEBSOCKET_ATTACKS',
+    sev: SEVERITY.CRITICAL,
+    re: /Close Frame[\s\S]{0,500}"method":"tools\/call"/i,
+    desc: 'Tool call payload queued during WebSocket close handshake',
+    source: 'S-WEBMCP',
+    weight: 10,
+  },
+  {
+    name: 'websocket_close_reason_injection',
+    cat: 'SSE_WEBSOCKET_ATTACKS',
+    sev: SEVERITY.WARNING,
+    re: /Close Frame[^\n]*reason\s*=\s*['"][^'"]*"method":"tools\/call"/i,
+    desc: 'Close reason field abused to carry a JSON-RPC tool call',
+    source: 'S-WEBMCP',
+    weight: 8,
+  },
+  {
+    name: 'sse_jsonrpc_tool_call',
+    cat: 'SSE_WEBSOCKET_ATTACKS',
+    sev: SEVERITY.CRITICAL,
+    re: /(?:event\s*:\s*message[\s\S]{0,120})?data\s*:\s*\{[\s\S]{0,300}"method"\s*:\s*"tools\/call"[\s\S]{0,200}"name"\s*:\s*"(?:shell|execute|filesystem_write|admin_action|send_email)"/i,
+    desc: 'SSE/WebSocket payload invokes a dangerous MCP tool call',
+    source: 'S-WEBMCP',
+    weight: 10,
+  },
+  {
+    name: 'cross_origin_websocket_handshake',
+    cat: 'SSE_WEBSOCKET_ATTACKS',
+    sev: SEVERITY.WARNING,
+    re: /Origin:\s*https:\/\/(?:evil|attacker)[-\w.]*[\s\S]{0,200}(?:Sec-WebSocket-Key|POST\s+\/mcp|sampling\/createMessage)/i,
+    desc: 'Suspicious cross-origin WebSocket or MCP handshake from an attacker-controlled origin',
+    source: 'S-WEBMCP',
+    weight: 8,
   },
 ];
 
@@ -213,12 +276,30 @@ export function detectWebMCPPatterns(text: string): Finding[] {
         description: 'WebMCP: Tool result contains executable content (XSS vector)',
         match: m[0].slice(0, 100),
         source: 'S-WEBMCP',
-        engine: 'WebMCP',
+        engine: 'webmcp-detector',
         pattern_name: 'tool_result_xss',
         weight: 10,
       });
     }
   }
+
+  const notificationMessageRe = /"method"\s*:\s*"notifications\/message"[\s\S]{0,400}"content"\s*:\s*"([^"]{1,2000})"/gi;
+  while ((m = notificationMessageRe.exec(text)) !== null) {
+    const content = m[1];
+    if (/<script\b|javascript\s*:|fetch\(['"]https?:\/\/|document\.cookie/i.test(content)) {
+      findings.push({
+        category: 'WEBMCP_TOOL_RESULT_XSS',
+        severity: SEVERITY.CRITICAL,
+        description: 'WebMCP: notification message content contains executable exfiltration payload',
+        match: m[0].slice(0, 100),
+        source: 'S-WEBMCP',
+        engine: 'webmcp-detector',
+        pattern_name: 'notification_message_xss',
+        weight: 10,
+      });
+    }
+  }
+
   return findings;
 }
 
@@ -252,7 +333,7 @@ export const webmcpDetectorModule: ScannerModule = {
         description: `WebMCP: Input too large (${text.length} chars), skipping scan`,
         match: '',
         source: 'S-WEBMCP',
-        engine: 'WebMCP',
+        engine: 'webmcp-detector',
         pattern_name: 'input_size_guard',
         weight: 0,
       }];
@@ -270,7 +351,7 @@ export const webmcpDetectorModule: ScannerModule = {
             match: m[0]!.slice(0, 100),
             pattern_name: p.name,
             source: p.source || 'S-WEBMCP',
-            engine: 'WebMCP',
+            engine: 'webmcp-detector',
             ...(p.weight !== undefined && { weight: p.weight }),
           });
         }

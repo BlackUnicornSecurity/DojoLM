@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::10::unicode-variations::5",
+  "base_sample_id": "exp::xxe-protopollution::10",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 925809274,
+  "content": "<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe ‪SYSTEM‬ \"file:///var/log/auth.log\">]><data>&xxe;</data>\n",
+  "content_hash": "3e6419cf0b3bdb2b5b2cc729fea56a16bbd3e9276e013fc5e18da4342e815d19",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::86::structural-variations::8",
+  "base_sample_id": "exp::mcp-parser::86",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1403716137,
+  "content": "<message>\n<part>{\"method\": \"tools/call\", \"params\":</part>\n<part>{\"name\": \"run_shell\", \"arguments\":</part>\n<part>{\"path\": \"chmod 777</part>\n<part>/tmp\"}}}\n</part>\n</message>",
+  "content_hash": "527fd6dcf5e3a64488b46130b0f4e01ff0e5ddb478adbe6b16c86ff8fd66bb02",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:split-xml",
+  "difficulty": "moderate"
+}

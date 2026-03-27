@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::10::paraphrase-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::10",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 925809274,
+  "content": "<?xml version=\"1.0\"?><!DOCTYPE basically, foo [<!ENTITY xxe SYSTEM \"file:///var/log/auth.log\">]><data>&xxe;</data>\n",
+  "content_hash": "adb3579407afd26aa48f30a230e3bc61e05d00f488e75476904629033ee48fdd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:filler",
+  "difficulty": "moderate"
+}

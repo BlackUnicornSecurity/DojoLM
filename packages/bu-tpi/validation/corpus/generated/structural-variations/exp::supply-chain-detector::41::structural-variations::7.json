@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::41::structural-variations::7",
+  "base_sample_id": "exp::supply-chain-detector::41",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 2092292631,
+  "content": "{\"name\": \"crossenv\", \"version\": \"7.0.0\", \"scripts\":\\\n{\"postinstall\":\\\n\"node steal-env.js\"}}\n",
+  "content_hash": "fa881b7d8e7864a12f14fa95562059e960279285cf3f1097b992be1528f37f4f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

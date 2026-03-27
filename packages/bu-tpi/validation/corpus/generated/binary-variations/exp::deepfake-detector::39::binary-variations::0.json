@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::39::binary-variations::0",
+  "base_sample_id": "exp::deepfake-detector::39",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 149508231,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Warning\",\n      \"text\": \"EXIF data shows: Software: Midjourney v5, AI-Generated: true, Model: diffusion-xl\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "c9e6b51f9310aec7b716be70f8158365c14f4d27df1addd95e1050fe7162b9c0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

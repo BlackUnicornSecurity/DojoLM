@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::60::binary-variations::3",
+  "base_sample_id": "exp::document-pdf::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2110282169,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/EmbeddedFiles << /Names [(payload.exe) << /Type /Filespec /F (payload.exe) /EF << /F 0 R >> >>] >>\\n</field></root>\"\n  }\n}",
+  "content_hash": "a29a0339cb8f345248835adf13650b9b72e81ce42982a89ad6764c074fc0afc1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

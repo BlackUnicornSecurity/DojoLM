@@ -26,6 +26,15 @@ const MAX_MATCH_LENGTH = 200;
 
 export const PDF_METADATA_PATTERNS: RegexPattern[] = [
   {
+    name: 'pdf_metadata_xml_stream',
+    cat: 'PDF_METADATA_INJECTION',
+    sev: SEVERITY.WARNING,
+    re: /\/Metadata\s*<<[^>]*\/Type\s*\/Metadata[^>]*\/Subtype\s*\/XML[^>]*>>\s*stream/i,
+    desc: 'PDF metadata XML stream present (potential XMP/XFA injection carrier)',
+    source: 'S10',
+    weight: 6,
+  },
+  {
     name: 'pdf_metadata_ignore_instructions',
     cat: 'PDF_METADATA_INJECTION',
     sev: SEVERITY.CRITICAL,
@@ -122,6 +131,15 @@ export const PDF_JAVASCRIPT_PATTERNS: RegexPattern[] = [
 
 export const PDF_FORM_PATTERNS: RegexPattern[] = [
   {
+    name: 'pdf_form_hidden_field',
+    cat: 'PDF_FORM_INJECTION',
+    sev: SEVERITY.CRITICAL,
+    re: /\/AcroForm\s*<<[\s\S]{0,300}\/Fields\s*\[[\s\S]{0,300}\/T\s*\((?:hidden|attack|payload)\)\s*\/V\s*\((?:injected_value|[^)]*(?:override|ignore|system))/i,
+    desc: 'Hidden AcroForm field contains injected or suspicious value',
+    source: 'S10',
+    weight: 9,
+  },
+  {
     name: 'pdf_form_field_injection',
     cat: 'PDF_FORM_INJECTION',
     sev: SEVERITY.CRITICAL,
@@ -191,6 +209,15 @@ export const PDF_ANNOTATION_PATTERNS: RegexPattern[] = [
 
 export const PDF_ACTION_PATTERNS: RegexPattern[] = [
   {
+    name: 'pdf_uri_javascript',
+    cat: 'PDF_ACTION_SUSPICIOUS',
+    sev: SEVERITY.CRITICAL,
+    re: /\/S\s*\/URI\s*\/URI\s*\((?:javascript:|data:text\/html)/i,
+    desc: 'PDF URI action executes JavaScript or HTML payload',
+    source: 'S10',
+    weight: 10,
+  },
+  {
     name: 'pdf_uri_data_exfil',
     cat: 'PDF_ACTION_SUSPICIOUS',
     sev: SEVERITY.CRITICAL,
@@ -236,6 +263,24 @@ export const PDF_ACTION_PATTERNS: RegexPattern[] = [
     weight: 8,
   },
   {
+    name: 'pdf_embedded_file_name',
+    cat: 'PDF_ACTION_SUSPICIOUS',
+    sev: SEVERITY.CRITICAL,
+    re: /\/EmbeddedFiles\s*<<[\s\S]{0,300}\/Names\s*\[\((?:[^)]*\.(?:exe|js|vbs|ps1|bat))\)/i,
+    desc: 'PDF embedded file collection contains an executable payload name',
+    source: 'S10',
+    weight: 9,
+  },
+  {
+    name: 'pdf_filespec_executable',
+    cat: 'PDF_ACTION_SUSPICIOUS',
+    sev: SEVERITY.CRITICAL,
+    re: /\/Type\s*\/Filespec[\s\S]{0,200}\/F\s*\((?:[^)]*\.(?:exe|js|vbs|ps1|bat))\)/i,
+    desc: 'PDF file specification references an executable attachment',
+    source: 'S10',
+    weight: 9,
+  },
+  {
     name: 'pdf_importdata_action',
     cat: 'PDF_ACTION_SUSPICIOUS',
     sev: SEVERITY.WARNING,
@@ -257,6 +302,25 @@ const PDF_PATTERN_GROUPS: { patterns: RegexPattern[]; name: string }[] = [
   { patterns: PDF_ANNOTATION_PATTERNS, name: 'PDF_ANNOTATION_PATTERNS' },
   { patterns: PDF_ACTION_PATTERNS, name: 'PDF_ACTION_PATTERNS' },
 ];
+
+function detectPdfAdvancedStructures(text: string): Finding[] {
+  const findings: Finding[] = [];
+
+  if (/\/Type\s*\/XFA[\s\S]{0,600}(?:xfa\.host\.messageBox|application\/x-javascript|ignore all previous instructions|system override)/i.test(text)) {
+    findings.push({
+      category: 'PDF_FORM_INJECTION',
+      severity: SEVERITY.CRITICAL,
+      description: 'PDF XFA form contains scriptable override or injection content',
+      match: text.slice(0, MAX_MATCH_LENGTH),
+      pattern_name: 'pdf_xfa_injection',
+      source: 'S10',
+      engine: 'document-pdf',
+      weight: 10,
+    });
+  }
+
+  return findings;
+}
 
 // ============================================================================
 // Scanner Module
@@ -309,6 +373,7 @@ export const documentPdfModule: ScannerModule = {
         findings.push(...runPatterns(text, group.patterns));
       }
     }
+    findings.push(...detectPdfAdvancedStructures(text));
     return findings;
   },
 
@@ -317,15 +382,17 @@ export const documentPdfModule: ScannerModule = {
     for (const group of PDF_PATTERN_GROUPS) {
       count += group.patterns.length;
     }
-    return count;
+    return count + 1;
   },
 
   getPatternGroups(): { name: string; count: number; source: string }[] {
-    return PDF_PATTERN_GROUPS.map(g => ({
+    const groups = PDF_PATTERN_GROUPS.map(g => ({
       name: g.name,
       count: g.patterns.length,
       source: 'S10',
     }));
+    groups.push({ name: 'PDF_ADVANCED_STRUCTURES', count: 1, source: 'S10' });
+    return groups;
   },
 };
 

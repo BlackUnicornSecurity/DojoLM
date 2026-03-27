@@ -180,13 +180,13 @@ function createEvent(
 
 export interface MatchDependencies {
   executeLLM: (modelId: string, prompt: string, config: MatchConfig) => Promise<{ text: string; durationMs: number }>;
-  scanResponse: (text: string) => { verdict: 'BLOCK' | 'ALLOW'; severity: 'CRITICAL' | 'WARNING' | 'INFO' | null; injectionSuccess: number };
+  scanResponse: (prompt: string, text: string) => { verdict: 'BLOCK' | 'ALLOW'; severity: 'CRITICAL' | 'WARNING' | 'INFO' | null; injectionSuccess: number };
   getSkills: () => AdversarialSkill[];
   getArmoryPayloads: () => string[];
   getAtemiPayloads: () => string[];
   persistRound: (match: ArenaMatch) => Promise<void>;
   onEvent: (event: MatchEvent) => void;
-  isAborted: () => boolean;
+  isAborted: () => Promise<boolean>;
 }
 
 /**
@@ -233,7 +233,7 @@ export async function executeMatch(
 
   for (let roundNum = startRound; roundNum < config.maxRounds; roundNum++) {
     // Check abort
-    if (deps.isAborted()) {
+    if (await deps.isAborted()) {
       match.status = 'aborted';
       break;
     }
@@ -251,6 +251,14 @@ export async function executeMatch(
     // Select attack
     const { prompt, source } = selectAttack(config, skills, sagePool, armoryPayloads, atemiPayloads);
 
+    const attackSentEvent = createEvent(match.id, roundNum, 'attack_sent', attackerId, 'attacker', {
+      sourceType: source.type,
+      sourceId: source.id,
+      promptPreview: prompt.slice(0, 160),
+    });
+    match.events.push(attackSentEvent);
+    deps.onEvent(attackSentEvent);
+
     // Execute LLM
     let response = { text: '', durationMs: 0 };
     let llmFailed = false;
@@ -265,11 +273,15 @@ export async function executeMatch(
       deps.onEvent(errorEvent);
     }
 
-    // Skip scoring if LLM failed — no valid response to evaluate
-    if (llmFailed) continue;
+    // A provider execution failure means the duel cannot progress meaningfully.
+    if (llmFailed) {
+      match.status = 'aborted';
+      match.winReason = 'execution_error';
+      break;
+    }
 
     // Scan response
-    const scanResult = deps.scanResponse(response.text);
+    const scanResult = deps.scanResponse(prompt, response.text);
 
     // Build round record
     const round: MatchRound = {

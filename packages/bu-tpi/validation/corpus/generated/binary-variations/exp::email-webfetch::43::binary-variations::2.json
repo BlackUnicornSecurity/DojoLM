@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::43::binary-variations::2",
+  "base_sample_id": "exp::email-webfetch::43",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 425809030,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"DESCRIPTION=HELO attacker.example.com\\r\\nMAIL FROM: <admin@trusted.example.com>\\r\\nRCPT TO: <victim@target.example.com>\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "62e49b82efc3ba644516799dfb591d99a7682434cf17d046b0c04c5e34699ce5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

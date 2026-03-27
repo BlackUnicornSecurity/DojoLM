@@ -10,6 +10,10 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: vi.fn(() => null),
 }));
 
+vi.mock('@/lib/arena-runner', () => ({
+  scheduleArenaMatchStart: vi.fn(),
+}));
+
 vi.mock('@/lib/storage/arena-storage', () => ({
   createMatch: vi.fn(),
   listMatches: vi.fn(),
@@ -17,9 +21,11 @@ vi.mock('@/lib/storage/arena-storage', () => ({
   updateMatch: vi.fn(),
 }));
 
+import { scheduleArenaMatchStart } from '@/lib/arena-runner';
 import * as arenaStorage from '@/lib/storage/arena-storage';
 
 const mockedStorage = vi.mocked(arenaStorage);
+const mockedScheduleArenaMatchStart = vi.mocked(scheduleArenaMatchStart);
 
 function createPostRequest(url: string, body: Record<string, unknown>): NextRequest {
   return new NextRequest(new URL(url, 'http://localhost:42001'), {
@@ -61,6 +67,7 @@ describe('POST /api/arena', () => {
     expect(data.matchId).toBeTruthy();
     expect(data.status).toBe('pending');
     expect(mockedStorage.createMatch).toHaveBeenCalledTimes(1);
+    expect(mockedScheduleArenaMatchStart).toHaveBeenCalledWith(data.matchId);
   });
 
   it('rejects invalid gameMode', async () => {
@@ -262,5 +269,53 @@ describe('GET /api/arena/[id]/stream', () => {
     expect(res.headers.get('Content-Type')).toBe('text/event-stream');
     expect(res.headers.get('Cache-Control')).toBe('no-cache, no-transform');
     expect(res.headers.get('X-Accel-Buffering')).toBe('no');
+  });
+
+  it('streams full match events and completion scores', async () => {
+    mockedStorage.getMatch
+      .mockResolvedValueOnce({
+        id: 'match-1',
+        status: 'running',
+        rounds: [],
+        scores: { 'model-a': 0 },
+        events: [],
+        winnerId: null,
+        winReason: null,
+      } as never)
+      .mockResolvedValueOnce({
+        id: 'match-1',
+        status: 'completed',
+        rounds: [
+          {
+            roundNumber: 0,
+          },
+        ],
+        scores: { 'model-a': 25 },
+        events: [
+          {
+            id: 'evt-1',
+            matchId: 'match-1',
+            round: 0,
+            timestamp: new Date().toISOString(),
+            type: 'match_start',
+            fighterId: '',
+            role: 'attacker',
+            data: { gameMode: 'CTF' },
+          },
+        ],
+        winnerId: 'model-a',
+        winReason: 'victory_points',
+      } as never);
+
+    const { GET } = await import('../[id]/stream/route');
+    const req = createGetRequest('/api/arena/match-1/stream');
+    const res = await GET(req, { params: Promise.resolve({ id: 'match-1' }) });
+    const body = await res.text();
+
+    expect(body).toContain('event: match_event');
+    expect(body).toContain('"id":"evt-1"');
+    expect(body).toContain('"matchId":"match-1"');
+    expect(body).toContain('event: match_complete');
+    expect(body).toContain('"scores":{"model-a":25}');
   });
 });

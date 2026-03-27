@@ -111,7 +111,7 @@ export async function GET(
         try { controller.close(); } catch { /* already closed */ }
       };
 
-      const sendEvent = (event: string, data: Record<string, unknown>) => {
+      const sendEvent = (event: string, data: unknown) => {
         if (closed) return;
         try {
           const jsonStr = JSON.stringify(data).replace(/\n/g, '\\n');
@@ -152,14 +152,7 @@ export async function GET(
           if (current.events.length > lastEventCount) {
             const newEvents = current.events.slice(lastEventCount);
             for (const event of newEvents) {
-              sendEvent('match_event', {
-                type: event.type,
-                round: event.round,
-                fighterId: event.fighterId,
-                role: event.role,
-                data: event.data,
-                timestamp: event.timestamp,
-              });
+              sendEvent('match_event', event);
             }
             lastEventCount = current.events.length;
           }
@@ -178,6 +171,7 @@ export async function GET(
               status: current.status,
               winnerId: current.winnerId,
               winReason: current.winReason,
+              scores: current.scores,
               finalScores: current.scores,
               totalRounds: current.rounds.length,
             });

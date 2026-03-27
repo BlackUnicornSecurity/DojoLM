@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'dos-detector';
 const MODULE_SOURCE = 'S32a';
-const ENGINE = 'DoS';
+const ENGINE = 'dos-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 

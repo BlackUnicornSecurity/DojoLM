@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::43::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::43",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 425809030,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"HELO attacker.example.com\\r\\nMAIL FROM: <admin@trusted.example.com>\\r\\nRCPT TO: <victim@target.example.com>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "56785e81ca98d22c6905a4c955405450a91a646d3e0a83c626ae0b6bb3ab8854",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

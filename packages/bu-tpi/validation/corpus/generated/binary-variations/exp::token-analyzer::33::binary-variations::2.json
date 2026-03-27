@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::33::binary-variations::2",
+  "base_sample_id": "exp::token-analyzer::33",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1933307353,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Title\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjB9.xxx\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "cdd903382ad210e08e304a7dcc410f6ec6d2ef5a1762aa76ff203d41fa4b722f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

@@ -172,7 +172,7 @@ export function validateAudioFormat(
       description: `Audio exceeds maximum size: ${(data.byteLength / 1024 / 1024).toFixed(1)}MB > 50MB limit`,
       match: filename,
       source: 'S-AUDIO',
-      engine: 'AudioScanner',
+      engine: 'audio-scanner',
       pattern_name: 'file_size_exceeded',
       weight: 0,
     });
@@ -196,7 +196,7 @@ export function validateAudioFormat(
         description: `Magic bytes do not match declared MIME type: ${declaredMime}`,
         match: filename,
         source: 'S-AUDIO',
-        engine: 'AudioScanner',
+        engine: 'audio-scanner',
         pattern_name: 'magic_byte_mismatch',
         weight: 10,
       });
@@ -217,7 +217,7 @@ export function validateAudioFormat(
         description: `Magic bytes do not match declared MIME type: ${declaredMime}`,
         match: filename,
         source: 'S-AUDIO',
-        engine: 'AudioScanner',
+        engine: 'audio-scanner',
         pattern_name: 'magic_byte_mismatch',
         weight: 10,
       });
@@ -234,7 +234,7 @@ export function validateAudioFormat(
       description: `File extension '${ext}' does not match declared MIME '${declaredMime}'`,
       match: filename,
       source: 'S-AUDIO',
-      engine: 'AudioScanner',
+      engine: 'audio-scanner',
       pattern_name: 'extension_mime_mismatch',
       weight: 10,
     });
@@ -267,7 +267,7 @@ export const audioScannerModule: ScannerModule = {
         description: `AudioScanner: Input too large (${text.length} chars), skipping scan`,
         match: '',
         source: 'S-AUDIO',
-        engine: 'AudioScanner',
+        engine: 'audio-scanner',
         pattern_name: 'input_size_guard',
         weight: 0,
       }];
@@ -285,7 +285,7 @@ export const audioScannerModule: ScannerModule = {
             match: m[0].slice(0, 100),
             pattern_name: p.name,
             source: p.source || 'S-AUDIO',
-            engine: 'AudioScanner',
+            engine: 'audio-scanner',
             ...(p.weight !== undefined && { weight: p.weight }),
           });
         }

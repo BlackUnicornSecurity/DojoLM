@@ -14,7 +14,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'mcp-parser';
 const MODULE_SOURCE = 'S13-MCP';
-const ENGINE = 'MCP';
+const ENGINE = 'mcp-parser';
 
 // ============================================================================
 // REGEX PATTERN GROUPS
@@ -36,6 +36,12 @@ export const MCP_TOOL_CALL_PATTERNS: RegexPattern[] = [
   { name: 'mcp_tool_fs_write', cat: 'MCP_TOOL_MANIPULATION', sev: SEVERITY.WARNING,
     re: /["']?(?:method|action|operation)["']?\s*:\s*["'](?:write|overwrite|delete|remove|unlink|rmdir|truncate)["']/i,
     desc: 'MCP tool call requests destructive file system operation', source: MODULE_SOURCE, weight: 7 },
+  { name: 'mcp_tool_destructive_payload', cat: 'MCP_TOOL_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /["']?(?:payload|query|sql|target)["']?\s*:\s*["'][^"']*(?:DROP\s+TABLE|DELETE\s+FROM|TRUNCATE\s+TABLE|ALTER\s+USER|GRANT\s+ALL)[^"']*["']/i,
+    desc: 'MCP tool arguments contain a destructive database or privilege-escalation payload', source: MODULE_SOURCE, weight: 10 },
+  { name: 'mcp_tool_sensitive_target', cat: 'MCP_TOOL_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /["']?(?:payload|target|script|url|uri|path)["']?\s*:\s*["'][^"']*(?:169\.254\.169\.254|\/etc\/passwd|\/etc\/shadow|file:\/\/|\.env)[^"']*["']/i,
+    desc: 'MCP tool arguments target sensitive local or metadata resources', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const MCP_CAPABILITY_PATTERNS: RegexPattern[] = [

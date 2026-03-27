@@ -30,6 +30,11 @@ async function getScan(): Promise<typeof import('../../scanner.js')> {
   return import('../../scanner.js');
 }
 
+/** Lazy-loaded binary scan function */
+async function getBinaryScan(): Promise<typeof import('../../scanner-binary.js')> {
+  return import('../../scanner-binary.js');
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -47,10 +52,11 @@ export interface ValidationSample {
 }
 
 /** Individual finding from scan result */
-interface ScanFinding {
+export interface ScanFinding {
   category: string;
   severity: string;
   engine: string;
+  source?: string;
 }
 
 /** Scan result from any entry point, normalized */
@@ -68,6 +74,30 @@ interface NormalizedScanResult {
 // ---------------------------------------------------------------------------
 
 type EntryPoint = 'scan' | 'scanBinary' | 'scanSession' | 'scanToolOutput';
+const BINARY_FILE_PREFIX = '__BINARY_FILE__:';
+const CORE_PATTERNS_ENGINE_ALIASES = new Set([
+  'Prompt Injection',
+  'Jailbreak',
+  'TPI',
+  'Encoding',
+  'Unicode',
+]);
+const CORE_PATTERNS_EXCLUDED_SOURCES = new Set([
+  'TPI-S11',
+]);
+
+export function matchesModuleFinding(finding: ScanFinding, moduleId: string): boolean {
+  if (finding.engine === moduleId || finding.category === moduleId) {
+    return true;
+  }
+
+  if (moduleId === 'core-patterns') {
+    return CORE_PATTERNS_ENGINE_ALIASES.has(finding.engine)
+      && !CORE_PATTERNS_EXCLUDED_SOURCES.has(finding.source ?? '');
+  }
+
+  return false;
+}
 
 /**
  * Determine which scanner entry point to use based on sample metadata.
@@ -110,9 +140,7 @@ export async function validateSample(
   // Filter findings to only those from the specific module under test.
   // Without this filter, a finding from module A would be credited to
   // module B if both share a test sample — producing false TPs.
-  const moduleFindings = normalized.findings.filter(f =>
-    f.engine === moduleId || f.category === moduleId,
-  );
+  const moduleFindings = normalized.findings.filter(f => matchesModuleFinding(f, moduleId));
   const moduleCategories = [...new Set(moduleFindings.map(f => f.category))];
   const moduleSeverity = moduleFindings.length > 0
     ? getMaxSeverity(moduleFindings.map(f => f.severity))
@@ -177,6 +205,7 @@ async function executeTextScan(content: string): Promise<NormalizedScanResult> {
       category: f.category,
       severity: f.severity,
       engine: f.engine,
+      source: f.source,
     })),
     elapsed_ms: elapsed,
   };
@@ -188,6 +217,35 @@ async function executeTextScan(content: string): Promise<NormalizedScanResult> {
  */
 async function executeBinaryScan(content: string): Promise<NormalizedScanResult> {
   const start = performance.now();
+
+  if (content.startsWith(BINARY_FILE_PREFIX)) {
+    const filePath = content.slice(BINARY_FILE_PREFIX.length);
+    const [{ readFile }, { basename }, binaryScanner] = await Promise.all([
+      import('node:fs/promises'),
+      import('node:path'),
+      getBinaryScan(),
+    ]);
+
+    const buffer = await readFile(filePath);
+    const result = await binaryScanner.scanBinary(buffer, basename(filePath));
+    const elapsed = performance.now() - start;
+
+    return {
+      verdict: result.verdict === 'BLOCK' ? 'malicious' : 'clean',
+      severity: result.findings.length > 0
+        ? getMaxSeverity(result.findings.map(f => f.severity))
+        : null,
+      categories: [...new Set(result.findings.map(f => f.category))],
+      findings_count: result.findings.length,
+      findings: result.findings.map(f => ({
+        category: f.category,
+        severity: f.severity,
+        engine: f.engine,
+        source: f.source,
+      })),
+      elapsed_ms: elapsed,
+    };
+  }
 
   // Binary variations in the KATANA corpus use JSON text representation
   // of binary metadata (EXIF, ID3, PDF metadata, etc.) because the
@@ -209,6 +267,7 @@ async function executeBinaryScan(content: string): Promise<NormalizedScanResult>
       category: f.category,
       severity: f.severity,
       engine: f.engine,
+      source: f.source,
     })),
     elapsed_ms: elapsed,
   };
@@ -234,6 +293,7 @@ async function executeSessionScan(content: string): Promise<NormalizedScanResult
       category: f.category,
       severity: f.severity,
       engine: f.engine,
+      source: f.source,
     })),
     elapsed_ms: elapsed,
   };

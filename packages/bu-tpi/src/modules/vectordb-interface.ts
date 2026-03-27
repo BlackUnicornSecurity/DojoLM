@@ -11,8 +11,11 @@ import { scannerRegistry } from './registry.js';
 
 export const VEC_PINECONE_PATTERNS: RegexPattern[] = [
   { name: 'pinecone-namespace-traversal', cat: 'VEC_NAMESPACE_ATTACK', sev: SEVERITY.CRITICAL,
-    re: /(?:namespace|_namespace)\s*[:=]\s*["']?(?:__system|__internal|_admin|__meta)/i,
+    re: /["']?(?:namespace|_namespace)["']?\s*[:=]\s*["']?(?:__system|__internal|_admin|__meta)/i,
     desc: 'Pinecone namespace traversal to reserved namespace', source: 'S16', weight: 9 },
+  { name: 'pinecone-namespace-path-traversal', cat: 'VEC_NAMESPACE_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /["']?(?:namespace|_namespace)["']?\s*[:=]\s*["']?(?:\.\.[/\\][^"'\s}]+|%2e%2e[/\\][^"'\s}]+)/i,
+    desc: 'Namespace path traversal against vector collection boundary', source: 'S16', weight: 10 },
   { name: 'pinecone-metadata-injection', cat: 'VEC_METADATA_INJECTION', sev: SEVERITY.WARNING,
     re: /metadata\s*[:=]\s*\{[^}]*\$(?:gt|lt|gte|lte|eq|ne|in|nin)\s*:/i,
     desc: 'Pinecone metadata filter injection with MongoDB operators', source: 'S16', weight: 7 },
@@ -40,6 +43,12 @@ export const VEC_CHROMA_PATTERNS: RegexPattern[] = [
   { name: 'chroma-id-injection', cat: 'VEC_SQL_INJECTION', sev: SEVERITY.CRITICAL,
     re: /(?:ids|include)\s*[:=]\s*\[[^\]]*['"];\s*(?:DROP|DELETE|UPDATE)/i,
     desc: 'SQL injection via ChromaDB id field', source: 'S16', weight: 9 },
+  { name: 'chroma-delete-many-abuse', cat: 'VEC_SQL_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /collection\.delete_many\s*\(\s*\{\s*\}\s*\)/i,
+    desc: 'Destructive bulk delete against vector collection', source: 'S16', weight: 10 },
+  { name: 'chroma-drop-collection', cat: 'VEC_SQL_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /DROP\s+COLLECTION\b/i,
+    desc: 'Collection drop command against vector store', source: 'S16', weight: 10 },
 ];
 
 export const VEC_QDRANT_PATTERNS: RegexPattern[] = [
@@ -58,6 +67,9 @@ export const VEC_TENANT_PATTERNS: RegexPattern[] = [
   { name: 'tenant-cross-access', cat: 'VEC_TENANT_BYPASS', sev: SEVERITY.CRITICAL,
     re: /(?:cross[_-]?tenant|tenant[_-]?switch|impersonate[_-]?tenant)\s*[:=]\s*["']?[a-zA-Z0-9_-]+/i,
     desc: 'Cross-tenant data access attempt', source: 'S16', weight: 9 },
+  { name: 'tenant-unbounded-query', cat: 'VEC_TENANT_BYPASS', sev: SEVERITY.WARNING,
+    re: /"query"\s*:\s*\{[^}]*\$(?:ne|regex)[^}]*\}[\s\S]{0,120}"limit"\s*:\s*(?:999999|[1-9]\d{5,})/i,
+    desc: 'Unbounded cross-tenant style query with abusive limit', source: 'S16', weight: 8 },
 ];
 
 export function detectVecMetadataInjection(text: string): Finding[] {
@@ -69,16 +81,61 @@ export function detectVecMetadataInjection(text: string): Finding[] {
     if (/(?:UNION\s+SELECT|DROP\s+TABLE|DELETE\s+FROM|';\s*--|;\s*DROP)/i.test(content)) {
       findings.push({ category: 'VEC_METADATA_INJECTION', severity: SEVERITY.CRITICAL,
         description: 'SQL injection in vector DB metadata field',
-        match: m[0].slice(0, 200), source: 'S16', engine: 'VectorDB',
+        match: m[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
         pattern_name: 'vec-metadata-sql-injection', weight: 10 });
     }
     if (/\$(?:gt|lt|ne|eq|in|nin|where|or|and)\b/i.test(content)) {
       findings.push({ category: 'VEC_METADATA_INJECTION', severity: SEVERITY.WARNING,
         description: 'NoSQL operator injection in vector DB metadata',
-        match: m[0].slice(0, 200), source: 'S16', engine: 'VectorDB',
+        match: m[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
         pattern_name: 'vec-metadata-nosql-injection', weight: 8 });
     }
   }
+  return findings;
+}
+
+export function detectVecAdministrativeAbuse(text: string): Finding[] {
+  const findings: Finding[] = [];
+
+  if (/"filter"\s*:\s*\{[^}]*"\$regex"\s*:\s*"[^"]*"\s*,\s*"\$options"\s*:\s*"i"[^}]*\}[\s\S]{0,120}"include"\s*:\s*\[[^\]]*"embeddings"[^\]]*\]/i.test(text)) {
+    findings.push({
+      category: 'VEC_DATA_LEAK',
+      severity: SEVERITY.CRITICAL,
+      description: 'Vector query uses regex-wide filter while requesting raw embeddings',
+      match: text.slice(0, 200),
+      source: 'S16',
+      engine: 'vectordb-interface',
+      pattern_name: 'vec-regex-embedding-exfiltration',
+      weight: 10,
+    });
+  }
+
+  if (/collection\.delete_many\s*\(\s*\{\s*\}\s*\)[\s\S]{0,120}(?:retrieve|dump|extract)\s+all\s+embeddings/i.test(text)) {
+    findings.push({
+      category: 'VEC_DATA_LEAK',
+      severity: SEVERITY.CRITICAL,
+      description: 'Bulk-delete instruction chained with retrieval of all embeddings',
+      match: text.slice(0, 200),
+      source: 'S16',
+      engine: 'vectordb-interface',
+      pattern_name: 'vec-delete-many-exfiltration',
+      weight: 10,
+    });
+  }
+
+  if (/DROP\s+COLLECTION\b[\s\S]{0,120}db\.admin\.find\s*\(\s*\{\s*\}\s*\)/i.test(text)) {
+    findings.push({
+      category: 'VEC_DATA_LEAK',
+      severity: SEVERITY.CRITICAL,
+      description: 'Administrative vector-store command chained with privileged data access',
+      match: text.slice(0, 200),
+      source: 'S16',
+      engine: 'vectordb-interface',
+      pattern_name: 'vec-admin-chain',
+      weight: 10,
+    });
+  }
+
   return findings;
 }
 
@@ -90,7 +147,10 @@ const VDB_PATTERN_GROUPS: { patterns: RegexPattern[]; name: string }[] = [
   { patterns: VEC_TENANT_PATTERNS, name: 'VEC_TENANT' },
 ];
 
-const VDB_DETECTORS = [{ name: 'vec-metadata-injection', detect: detectVecMetadataInjection }];
+const VDB_DETECTORS = [
+  { name: 'vec-metadata-injection', detect: detectVecMetadataInjection },
+  { name: 'vec-administrative-abuse', detect: detectVecAdministrativeAbuse },
+];
 
 const vectordbInterfaceModule: ScannerModule = {
   name: 'vectordb-interface',
@@ -105,7 +165,7 @@ const vectordbInterfaceModule: ScannerModule = {
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
           findings.push({ category: p.cat, severity: p.sev, description: p.desc,
-            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S16', engine: 'VectorDB',
+            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S16', engine: 'vectordb-interface',
             ...(p.weight !== undefined && { weight: p.weight }) });
         }
       }

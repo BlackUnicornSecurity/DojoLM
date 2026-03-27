@@ -155,4 +155,12 @@ describe('paraphrase-variations', () => {
     const moderate = outputs.filter(o => o.difficulty === 'moderate');
     expect(moderate.length).toBeGreaterThanOrEqual(5);
   });
+
+  it('does not treat prototype-property words as synonym lists', () => {
+    const prototypeHeavyContent = 'constructor __proto__ prototype toString should stay stable in paraphrase generation.';
+
+    expect(() =>
+      paraphraseVariationGenerator.generate(sample, prototypeHeavyContent, new SeededRNG(42))
+    ).not.toThrow();
+  });
 });

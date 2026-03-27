@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::80::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::80",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 702844506,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Comment\",\n      \"text\": \"/Metadata << /Type /Metadata /Subtype /XML >> stream\\n<?xpacket?><rdf:Description rdf:about=\\\"\\\">\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "c3e52b7f01eca4aa99eff5e5f3ccbd7473a29f9092d247a21ae27a894dcd8494",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

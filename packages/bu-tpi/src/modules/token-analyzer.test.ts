@@ -4,7 +4,12 @@
 
 import { describe, it, expect } from 'vitest';
 import { scannerRegistry } from './registry.js';
-import { tokenAnalyzerModule, detectSpecialTokenInjection, detectTokenBoundaryAttack } from './token-analyzer.js';
+import {
+  tokenAnalyzerModule,
+  detectSpecialTokenInjection,
+  detectTokenBoundaryAttack,
+  detectJwtTokenAttack,
+} from './token-analyzer.js';
 import type { Finding } from '../types.js';
 
 function scanText(text: string): Finding[] {
@@ -20,6 +25,7 @@ describe('Token Analyzer Module (S14)', () => {
     it('should be registered', () => { expect(scannerRegistry.hasModule('token-analyzer')).toBe(true); });
     it('should have correct metadata', () => { expect(tokenAnalyzerModule.name).toBe('token-analyzer'); });
     it('should have positive pattern count', () => { expect(tokenAnalyzerModule.getPatternCount()).toBeGreaterThan(0); });
+    it('should support JSON payloads', () => { expect(tokenAnalyzerModule.supportedContentTypes).toContain('application/json'); });
   });
 
   describe('Special Token Injection', () => {
@@ -80,6 +86,30 @@ describe('Token Analyzer Module (S14)', () => {
     it('detectTokenBoundaryAttack should find systematic ZW insertion', () => {
       const findings = detectTokenBoundaryAttack('s\u200By\u200Bs\u200Bt\u200Be\u200Bm');
       expect(findings.some(f => f.category === 'token_boundary_attack')).toBe(true);
+    });
+    it('should detect JWT alg=none abuse', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwicm9sZSI6ImFkbWluIn0.');
+      expect(findings.some(f => f.pattern_name === 'jwt-alg-none')).toBe(true);
+    });
+    it('should detect expired JWT claims', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjB9.xxx');
+      expect(findings.some(f => f.pattern_name === 'jwt-expired-claim')).toBe(true);
+    });
+    it('should detect negative iat JWT claims', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOi0xfQ.yyy');
+      expect(findings.some(f => f.pattern_name === 'jwt-negative-iat')).toBe(true);
+    });
+    it('should detect far-future nbf JWT claims', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjk5OTk5OTk5OTl9.zzz');
+      expect(findings.some(f => f.pattern_name === 'jwt-future-nbf')).toBe(true);
+    });
+    it('should detect privileged JWT role claims', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+      expect(findings.some(f => f.pattern_name === 'jwt-privileged-role-claim')).toBe(true);
+    });
+    it('should detect implausibly short JWT signatures', () => {
+      const findings = detectJwtTokenAttack('Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.abc');
+      expect(findings.some(f => f.pattern_name === 'jwt-short-signature')).toBe(true);
     });
   });
 

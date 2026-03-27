@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'env-detector';
 const MODULE_SOURCE = 'S32d';
-const ENGINE = 'EnvConfig';
+const ENGINE = 'env-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 
@@ -96,6 +96,12 @@ export const DIRECTORY_HIJACK_PATTERNS: RegexPattern[] = [
     re: /(?:export\s+)?NO_PROXY\s*=\s*(?:""|'')\s*$/im, desc: 'NO_PROXY empty (all traffic proxied)', source: MODULE_SOURCE, weight: 9 },
   { name: 'env_proxy_intercept', cat: 'ENV_CREDENTIAL_EXFIL', sev: SEVERITY.WARNING,
     re: /(?:HTTP|HTTPS)_PROXY[^\n]{0,80}(?:all\s+traffic|intercept|route|redirect)/i, desc: 'Proxy traffic interception', source: MODULE_SOURCE, weight: 8 },
+  { name: 'env_proxy_loader_inject', cat: 'ENV_CREDENTIAL_EXFIL', sev: SEVERITY.CRITICAL,
+    re: /(?:export\s+)?(?:HTTP|HTTPS)_PROXY\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:dylib|so|js))?|\/tmp\/libs|https?:\/\/evil[-\w.]+(?::\d+)?)/i, desc: 'Proxy variable points to local hooks, shared libraries, or attacker proxy infrastructure', source: MODULE_SOURCE, weight: 10 },
+  { name: 'env_runtime_option_inject', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:export\s+)?(?:NODE_OPTIONS|PYTHONPATH)\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:so|dylib|js))?|\/tmp\/libs|https?:\/\/evil[-\w.]+(?::\d+)?)/i, desc: 'Runtime option or language path variable injects a local hook or attacker-controlled loader', source: MODULE_SOURCE, weight: 10 },
+  { name: 'env_dyld_insert_libraries', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:export\s+)?DYLD_INSERT_LIBRARIES\s*=\s*["']?\S+/i, desc: 'DYLD_INSERT_LIBRARIES injection on macOS', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export function detectEnvManipulation(text: string): Finding[] {

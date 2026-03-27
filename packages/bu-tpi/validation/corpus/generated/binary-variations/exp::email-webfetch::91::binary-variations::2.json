@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::91::binary-variations::2",
+  "base_sample_id": "exp::email-webfetch::91",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 136820454,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Description\",\n      \"text\": \"HELO attacker.example.com\\r\\nMAIL FROM: <admin@trusted.example.com>\\r\\nRCPT TO: <victim@target.example.com>\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "47188ce533e14b9e8a378673fca028ba9c67b0ead5f29feb2b67864842cdab4e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

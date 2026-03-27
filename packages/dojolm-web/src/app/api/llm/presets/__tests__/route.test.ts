@@ -7,7 +7,7 @@
  * - PRESET-001: Returns array of presets (line 14)
  * - PRESET-002: Each preset has required fields (line 25)
  * - PRESET-003: Contains known providers (line 39)
- * - PRESET-004: Tier values are 1, 2, or 3 (line 54)
+ * - PRESET-004: Tier values stay within supported preset range (line 54)
  * - PRESET-005: No auth details leaked (line 62)
  * - PRESET-006: Local providers included (line 73)
  * - PRESET-007: isOpenAICompatible flag present (line 82)
@@ -57,16 +57,17 @@ describe('GET /api/llm/presets', () => {
     expect(ids).toContain('google');
   });
 
-  it('PRESET-004: tier values are 1, 2, or 3', async () => {
+  it('PRESET-004: tier values are between 1 and 8', async () => {
     const res = await GET();
     const data = await res.json();
 
     for (const preset of data) {
-      expect([1, 2, 3]).toContain(preset.tier);
+      expect(preset.tier).toBeGreaterThanOrEqual(1);
+      expect(preset.tier).toBeLessThanOrEqual(8);
     }
   });
 
-  it('PRESET-005: no auth details leaked (no apiKey, secret, token fields)', async () => {
+  it('PRESET-005: no secrets leaked (no apiKey, secret, token, password, or env var fields)', async () => {
     const res = await GET();
     const data = await res.json();
 
@@ -75,7 +76,7 @@ describe('GET /api/llm/presets', () => {
       expect(preset).not.toHaveProperty('secret');
       expect(preset).not.toHaveProperty('token');
       expect(preset).not.toHaveProperty('password');
-      expect(preset).not.toHaveProperty('baseUrl');
+      expect(preset).not.toHaveProperty('envVar');
     }
   });
 
@@ -123,5 +124,17 @@ describe('GET /api/llm/presets', () => {
     const ids = data.map((p: { id: string }) => p.id);
     const uniqueIds = new Set(ids);
     expect(uniqueIds.size).toBe(ids.length);
+  });
+
+  it('PRESET-011: exposes setup metadata needed by the preset-backed custom builder', async () => {
+    const res = await GET();
+    const data = await res.json();
+    const openrouter = data.find((preset: { id: string }) => preset.id === 'openrouter');
+
+    expect(openrouter).toBeDefined();
+    expect(openrouter).toHaveProperty('authType');
+    expect(openrouter).toHaveProperty('baseUrl');
+    expect(openrouter).toHaveProperty('defaultModels');
+    expect(Array.isArray(openrouter.defaultModels)).toBe(true);
   });
 });

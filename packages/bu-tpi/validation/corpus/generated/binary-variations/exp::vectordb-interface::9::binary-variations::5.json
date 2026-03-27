@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::9::binary-variations::5",
+  "base_sample_id": "exp::vectordb-interface::9",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1833854290,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:keywords\": \"pinecone.Index(\\\"sensitive-data\\\").query(vector=[0]*1536, top_k=10000)\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "7242a4c0b234de044389f4626c0c74bb03a57188edafe421ab065227f6cc920a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

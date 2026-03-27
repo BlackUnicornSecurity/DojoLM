@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::63::binary-variations::0",
+  "base_sample_id": "exp::webmcp-detector::63",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1747656398,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">data: {\\\"method\\\":\\\"tools/call\\\",\\\"params\\\":{\\\"name\\\":\\\"execute\\\",\\\"arguments\\\":{\\\"cmd\\\":\\\"id\\\"}}}\\n</field></root>\"\n  }\n}",
+  "content_hash": "935ed4c387bb952af0717dda457b5266a9b53fc626fa336c4254958c20919db5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

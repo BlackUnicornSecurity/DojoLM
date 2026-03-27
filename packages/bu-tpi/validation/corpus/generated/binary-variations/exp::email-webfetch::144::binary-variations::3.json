@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::144::binary-variations::3",
+  "base_sample_id": "exp::email-webfetch::144",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1733687445,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><metadata>Content-Type: multipart/mixed; boundary=\"=_malicious\"\r\n\r\n--=_malicious\r\nContent-Type: text/html\r\n\r\n<script>alert(1)</script>\n</metadata><line x1=\"0\" y1=\"0\" x2=\"100\" y2=\"100\"/></svg>",
+  "content_hash": "900339a1cc99357574739263a76896cd90bd17c3239e40758b3346ba6c944a2a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

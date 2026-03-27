@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::66::binary-variations::0",
+  "base_sample_id": "exp::document-office::66",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1093258308,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"<?xml version=\\\"1.0\\\"?><Relationships xmlns=\\\"http://schemas.openxmlformats.org/package/2006/relationships\\\"><Relationship Type=\\\"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary\\\" Target=\\\"activeX1.bin\\\"/></Relationships>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "88f8bc80a0000308d393de7b20b90800116f8540d4de9abcca300bf313121a6a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

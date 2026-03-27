@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::40::binary-variations::2",
+  "base_sample_id": "exp::document-office::40",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1593035966,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"<w:instrText>DDEAUTO c:\\\\Windows\\\\System32\\\\cmd.exe \\\"/c calc.exe\\\"</w:instrText>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "c1a014c3380eb49ee8f5d91ab393e20975c32bdeee3768cced56487ac8eda608",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

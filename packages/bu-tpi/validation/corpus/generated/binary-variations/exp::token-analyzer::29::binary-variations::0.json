@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::29::binary-variations::0",
+  "base_sample_id": "exp::token-analyzer::29",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -891288593,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Warning\",\n      \"text\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjk5OTk5OTk5OTl9.zzz\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "093b475bc38831d3efcb0d873081f04765313e3f9ca55ea67d25e345bd447770",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

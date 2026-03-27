@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::32::binary-variations::4",
+  "base_sample_id": "exp::session-bypass::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -245085661,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">session_token=; admin=true; role=superuser\\n</field></root>\"\n  }\n}",
+  "content_hash": "15ab4c30c8d95bf65ea5777719fee2c4a75fd93beb534e67672bddad1993c3ba",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

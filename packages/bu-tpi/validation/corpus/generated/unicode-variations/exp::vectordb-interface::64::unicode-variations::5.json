@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::64::unicode-variations::5",
+  "base_sample_id": "exp::vectordb-interface::64",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 661693227,
+  "content": "‭pinecone.Index(\"sensitive-data\").query(vector=[0]*1536,‬ top_k=10000)\n",
+  "content_hash": "02529056beb667cebcdfc62dac6f4b74aa6ca5e534140e5a6bf43fa9603bf852",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

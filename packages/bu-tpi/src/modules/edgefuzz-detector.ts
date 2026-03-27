@@ -178,7 +178,7 @@ export const edgefuzzDetectorModule: ScannerModule = {
         description: `EdgeFuzz: Input too large (${text.length} chars), skipping scan`,
         match: '',
         source: 'S-EDGEFUZZ',
-        engine: 'EdgeFuzz',
+        engine: 'edgefuzz-detector',
         pattern_name: 'input_size_guard',
         weight: 0,
       }];
@@ -196,7 +196,7 @@ export const edgefuzzDetectorModule: ScannerModule = {
             match: m[0]!.slice(0, 100),
             pattern_name: p.name,
             source: p.source || 'S-EDGEFUZZ',
-            engine: 'EdgeFuzz',
+            engine: 'edgefuzz-detector',
             ...(p.weight !== undefined && { weight: p.weight }),
           });
         }

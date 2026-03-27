@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::46::binary-variations::3",
+  "base_sample_id": "exp::webmcp-detector::46",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1377250989,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">POST /mcp HTTP/1.1\\r\\nOrigin: https://attacker.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"sampling/createMessage\\\"}\\n</field></root>\"\n  }\n}",
+  "content_hash": "c479769e87adf294e8c42b5e8b7ecbfa544b61a8af11ad026345cf7273bbf821",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

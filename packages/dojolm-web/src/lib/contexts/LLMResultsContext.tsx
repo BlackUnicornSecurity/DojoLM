@@ -20,6 +20,7 @@ import type {
   ManualEvaluation,
   ResultsFilter,
 } from '../llm-types';
+import { canAccessProtectedApi } from '../client-auth-access';
 import { fetchWithAuth } from '../fetch-with-auth';
 
 // ===========================================================================
@@ -131,6 +132,10 @@ export function LLMResultsProvider({ children }: LLMResultsProviderProps) {
   const getExecutions = useCallback(
     async (customFilter?: ResultsFilter): Promise<LLMTestExecution[]> => {
       const activeFilter = customFilter || filter;
+
+      if (!(await canAccessProtectedApi())) {
+        return [];
+      }
 
       const params = new URLSearchParams();
 

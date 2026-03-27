@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::103::binary-variations::2",
+  "base_sample_id": "exp::token-analyzer::103",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -743907626,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"ARTIST=Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjk5OTk5OTk5OTl9.zzz\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "a191f01d3ad282b57a1f5285548ba7f9390a3e13a9a8e31d35bd0354f6a92a26",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

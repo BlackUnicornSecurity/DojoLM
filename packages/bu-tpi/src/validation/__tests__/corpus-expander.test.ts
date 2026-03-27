@@ -1,8 +1,14 @@
 /**
  * Tests for KATANA Corpus Expander (K1.5)
  */
+import { createHash } from 'node:crypto';
+
 import { describe, it, expect } from 'vitest';
-import { expandCorpus, computeExpansionTargets } from '../corpus/corpus-expander.js';
+import {
+  expandCorpus,
+  expandCorpusWithContent,
+  computeExpansionTargets,
+} from '../corpus/corpus-expander.js';
 import { GroundTruthSampleSchema } from '../types.js';
 
 describe('corpus-expander', () => {
@@ -185,6 +191,26 @@ describe('corpus-expander', () => {
         expect(sample.independent_agreement).toBe(true);
         expect(sample.holdout).toBe(false);
         expect(sample.source_type).toBe('synthetic');
+      }
+    });
+
+    it('expandCorpusWithContent returns materialized content aligned to sample metadata', () => {
+      const existing = new Map([['document-pdf', 0]]);
+      const targets = new Map([['document-pdf', 3]]);
+
+      const { artifacts, stats } = expandCorpusWithContent(existing, targets, 42);
+
+      expect(stats.by_module['document-pdf']).toBe(3);
+      expect(artifacts.length).toBeGreaterThan(0);
+
+      for (const artifact of artifacts) {
+        const expectedHash = createHash('sha256')
+          .update(artifact.content)
+          .digest('hex');
+
+        expect(artifact.sample.content_hash).toBe(expectedHash);
+        expect(artifact.sample.source_file).toContain(artifact.sample.id);
+        expect(artifact.content.length).toBeGreaterThan(0);
       }
     });
   });

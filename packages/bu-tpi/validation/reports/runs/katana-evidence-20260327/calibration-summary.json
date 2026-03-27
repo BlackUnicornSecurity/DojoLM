@@ -1,0 +1,4727 @@
+[
+  {
+    "module_id": "core-patterns",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-799a484f-49bb-4def-a3a1-0370dbb70453",
+      "module_id": "core-patterns",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-core-patterns-f59aba518d09",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "PASS",
+      "samples_tested": 20,
+      "samples_passed": 20,
+      "timestamp": "2026-03-27T00:36:06.079Z",
+      "signature": "ec8d090bdf3665bf974b0fd9207c84c6f6b9df6352f5a469b07d7142de08bb1df8959f8ee94b75552511fdd54c1b262529bb58f11a658a1e5d7c90402de93f08"
+    },
+    "details": [
+      {
+        "sample_id": "gt::delivery-vectors::post-body.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::fetch-mutation-xss.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::code::el-injection.py",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::enc-uni-mcp-mcp-notification-flood-progress.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::untrusted-sources::gitlab-ci-injection.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::translation::translation-khmer-001.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::homoglyph-008.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::translation::translation-romaji-001.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::dv-api-path-param-inject.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::telegram-msg.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::563",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::836",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::clean-dos-load-test.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::267",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-flood-race.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-02-carbon-regional-comparison.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-relationship-manipulation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::944",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::24",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-confidence-legal-precedent.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "enhanced-pi",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-d47e6e83-26a7-4eeb-ae39-b6baef636a69",
+      "module_id": "enhanced-pi",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-enhanced-pi-c30b54343105",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 14,
+      "timestamp": "2026-03-27T00:36:06.183Z",
+      "signature": "b7060b19d7783701e692c8ea5652fdc10354156026b7b8bfab4c5672c663bd962cd6907e9d9a7b0f4e499d04209c599f37bbc43504cb620ede25797e0f462402"
+    },
+    "details": [
+      {
+        "sample_id": "gt::untrusted-sources::gist-poison.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::api-response-json.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::multimodal::evasion-targeted-003.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::few-shot::format-hijack-006.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::prompt-injection::pi-direct-delimiter-break.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::cognitive::hypothetical-educational.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::delivery-vectors::dv-email-calendar-invite.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::boundary::confusable-tokens.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::delivery-vectors::api-response-error.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent::agent-multi-consensus.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::28",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-cost-retry.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::904",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-09-language-proficiency-testing.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::931",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-webhook.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::mcp::clean-mcp-tool-call.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-graphql.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::693",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::383",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "pii-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-b7ddbb59-6996-4d5c-baef-d79724927673",
+      "module_id": "pii-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-pii-detector-3e20e4291f29",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "PASS",
+      "samples_tested": 20,
+      "samples_passed": 20,
+      "timestamp": "2026-03-27T00:36:06.236Z",
+      "signature": "9fdd8c7f34b06ec7cb70702b72e84516c9dffdaec57b2d0e4d22f15ff547a7f954dc67c675be2e1be9df8afead95fdbfa300e6479a6544a4e6f5f1c8e7e04001"
+    },
+    "details": [
+      {
+        "sample_id": "exp::pii-detector::135",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::113",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::82",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::92",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::24",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::22",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::58",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::119",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::54",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::pii-detector::78",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::token-attacks::clean-token-research.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::248",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-09-language-documentation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::11",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::659",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::cognitive::clean-roleplay-game.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-benign-009.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::clean-bias-media.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::585",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::521",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "ssrf-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-075c3a0e-0c09-416d-84aa-a6d6627a323b",
+      "module_id": "ssrf-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-ssrf-detector-003e4b1cdf51",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 16,
+      "timestamp": "2026-03-27T00:36:06.282Z",
+      "signature": "ee994fa7875ddb12a9b7aa0416f792273037239f1d788e2866c48930fbbdeff28f8c7bae5f76afda65aa7553de05ca9e29c3012073a1ae813399ffb325e3f40b"
+    },
+    "details": [
+      {
+        "sample_id": "exp::ssrf-detector::29",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::dns-rebind-localhost-bypass.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::ssrf-detector::27",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::ssrf-detector::30",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::ssrf-detector::25",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::ssrf-detector::2",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::ssrf-detector::22",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::embed-tag-injection.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::web::fetch-service-worker.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::web::http-cache-poison.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-performance-opt.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-recipe-request.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::modern::clean-modern-005.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::clean-env-ci.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::454",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-ssrf-dns.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::441",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::271",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::41",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-plugin-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "xxe-protopollution",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-60cb9246-5dd7-467a-813c-23898e6834f8",
+      "module_id": "xxe-protopollution",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-xxe-protopollution-44011a9c5faa",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 16,
+      "timestamp": "2026-03-27T00:36:06.329Z",
+      "signature": "5ced2dc1b944349ab2f3d98690f6f685df4bd21c991021c79144f2b04096d4dd8db9db9f7859dc602e54312104a6b746dab3fce31676153892f332847a09a40f"
+    },
+    "details": [
+      {
+        "sample_id": "exp::xxe-protopollution::36",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::hidden-text-injection.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::xxe-protopollution::14",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::style-injection.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::web::base-href-override.html",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::xxe-protopollution::40",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::dns-rebind-localhost-bypass.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::xxe-protopollution::64",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::xxe-protopollution::20",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::xxe-protopollution::62",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::clean-context.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-output-repeat.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::mt-train-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-cost-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::813",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::278",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::796",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::620",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::575",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::447",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "env-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-045518ea-3f6a-42ec-a944-0827c25b3e63",
+      "module_id": "env-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-env-detector-cb6966b8adf3",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 17,
+      "timestamp": "2026-03-27T00:36:06.346Z",
+      "signature": "1864db69493434e9f23be3c37ca59efbdd34ee5ec02cfcaec26f03a1ea2d0e7727b045e067bf3287b6db5a6326d74ef1a706c8c91a3ed88f6d73d44b64dc7c04"
+    },
+    "details": [
+      {
+        "sample_id": "exp::env-detector::31",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::39",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::132",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::env-detector::79",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::120",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::env-detector::3",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::109",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::89",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::107",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::env-detector::110",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::687",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::809",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::743",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-clean-xml-response.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::686",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-tech-explanation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::document-attacks::clean-document-report.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-consistency-scientific-consensus.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::90",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-flood-combo.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "encoding-engine",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-6cfcc8e0-c0e4-4c04-a541-193a214438bf",
+      "module_id": "encoding-engine",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-encoding-engine-c241353772bc",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 19,
+      "timestamp": "2026-03-27T00:36:06.419Z",
+      "signature": "51cf72a19cc925348af04e347b854feff230ec738fca5bb008ddb32fee7ee6372233477f38e3a70e049b487cecd046241a51e075d8ab544ad2fa04e93e1b2c06"
+    },
+    "details": [
+      {
+        "sample_id": "gt::encoded::upside-down-001.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::vec::vec-sim-semantic.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::steganography-003.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::enc-b64-mcp-mcp-cross-server-context.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::upside-down-002.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::upside-down-004.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::many-shot-instructions.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::enc-uni-prompt-injection-pi-context-sandwich-attack.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::enc-b64-token-attacks-token-count-overflow.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::vec::vec-sim-adversarial.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-07-cultural-intelligence.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::65",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::256",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::857",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-redirect-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-code-aws-lambda.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "malicious",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::web::clean-web-manifest.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::531",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::752",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::464",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "mcp-parser",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-ffd2bbbe-c39c-4aec-b753-07e60f4e8f98",
+      "module_id": "mcp-parser",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-mcp-parser-97b2fa576236",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 13,
+      "timestamp": "2026-03-27T00:36:06.467Z",
+      "signature": "335c5b701c7ca66e1de0af620dbaf08e872a6dc9393b04c70d9ecd54e932653227348eed5c2e91d83583a4af610a588087f2f310c55e1e1a4a440e5cf4b87b0b"
+    },
+    "details": [
+      {
+        "sample_id": "exp::mcp-parser::61",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::mcp::mcp-cross-server-context.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::tool-manipulation::param-injection-path.fixture",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::mcp-parser::53",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::mcp-parser::100",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::mcp-parser::69",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::tool-manipulation::tool-bypass-001.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::mcp::mcp-pi-prompt-template.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::mcp-parser::43",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::mcp-parser::1",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::multimodal::clean-adversarial-002.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::528",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::754",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::459",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-creative-writing.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-tamper-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::clean-sc-sbom.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::785",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::125",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::801",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "dos-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-e90ce2be-2ca6-4c12-96ca-90b716abcc29",
+      "module_id": "dos-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-dos-detector-b5696a6364db",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 19,
+      "timestamp": "2026-03-27T00:36:06.507Z",
+      "signature": "882a05bea6c9d76bf6549bfd319e660f340c692edc263ab07b7b969e9d8cc91f2572b011f7e430222e659c25fae8c1543a32a1530fd86db53161fb268a9f3106"
+    },
+    "details": [
+      {
+        "sample_id": "exp::dos-detector::107",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::89",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::101",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::67",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::71",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::dos-detector::84",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::35",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::105",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::31",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::dos-detector::79",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::multimodal::clean-mm-diagram.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-09-language-resource-allocation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::social::clean-internal.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-clean-energy-inquiry.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::clean-mt-model-card.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::248",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::556",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::579",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::964",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::91",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "token-analyzer",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-e91c4e4a-aaa9-4fd7-aabe-028c9a41b4f9",
+      "module_id": "token-analyzer",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-token-analyzer-d56f64e72f70",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 19,
+      "timestamp": "2026-03-27T00:36:06.549Z",
+      "signature": "36a5c18296e1b72b890a82ee0cd26f079074dabb85e16b8b541a8ed45fe912a94d2f6d3961b4d73f280ffbe8ff276630227d136c3e57562b97d2aeda40f10500"
+    },
+    "details": [
+      {
+        "sample_id": "exp::token-analyzer::121",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::128",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::token-analyzer::135",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::21",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::51",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::115",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::55",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::31",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::71",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::token-analyzer::89",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::863",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::713",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-03-efficiency-renewable-scheduling.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::798",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::mt-water-synthetic.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::199",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::218",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::228",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::678",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::clean-sc-sbom.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "session-bypass",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-9b157181-14d9-4cb1-a77b-0dcb2b0041d3",
+      "module_id": "session-bypass",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-session-bypass-9f3abe12a12d",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 14,
+      "timestamp": "2026-03-27T00:36:06.605Z",
+      "signature": "4defbcd7d8a584c0dee8c2442345c8b69c045a188db816ad564334dcc1b2972f54d5bb5e150fe64c4310bde7182652533a82dedea1c0d49a7790da255df53f05"
+    },
+    "details": [
+      {
+        "sample_id": "gt::session::multi-turn_slow-drip-008.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::session-bypass::9",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::multi-turn_context-switch-002.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::session-bypass::46",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::session-bypass::53",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::session::multi-turn_slow-drip-003.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::session-bypass::34",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::hypothetical-session.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::session-bypass::27",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::session::multi-turn_cross-turn-poison-002.json",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::few-shot::clean-few-shot-003.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-code-server-config.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::514",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-05-disability-hiring-screening.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::702",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::743",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::36",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::993",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::497",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-dep-outdated.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "email-webfetch",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-55c5778a-327c-4285-b261-9c025df53bf8",
+      "module_id": "email-webfetch",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-email-webfetch-18d4b3ff600c",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 13,
+      "timestamp": "2026-03-27T00:36:06.629Z",
+      "signature": "ca2d0a1280e8abe7095bd49da006ff97d6e6f0528d3a4325ca878a1e7ebbc8dd712e98a18ec3210e79ede3dede843f95ab91bd27d2253f185fb5d37d53f74103"
+    },
+    "details": [
+      {
+        "sample_id": "exp::email-webfetch::27",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::30",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::48",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::143",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::email-webfetch::23",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::139",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::46",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::115",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::email-webfetch::56",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::email-webfetch::94",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::648",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::33",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-cost-multi-step.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::social::clean-external.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::32",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::188",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::social::clean-social-meeting.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::344",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-ssrf-dns.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-source-combo.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "vectordb-interface",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-e90896d7-3542-4016-9a0c-eb2d472c2046",
+      "module_id": "vectordb-interface",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-vectordb-interface-3919727d38ef",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 19,
+      "timestamp": "2026-03-27T00:36:06.655Z",
+      "signature": "83a7152a94e9cb5f099307eb3f77b767a9f4fca524f221323f44f3d8652cbf82182f7688bc613a4666e79a99a24f77430573db5c4a059a59402065ea8ecd5702"
+    },
+    "details": [
+      {
+        "sample_id": "exp::vectordb-interface::125",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::82",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::120",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::62",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::vectordb-interface::118",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::52",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::31",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::133",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::72",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::vectordb-interface::105",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::clean-env-ci.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::450",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::778",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::363",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::183",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::990",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::cognitive::clean-legitimate-task.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::malformed::tar-bomb.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::38",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::audio-attacks::clean-audio-metadata.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "rag-analyzer",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-415d8581-f569-40e1-83dc-df71f0304a75",
+      "module_id": "rag-analyzer",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-rag-analyzer-83522e247900",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 14,
+      "timestamp": "2026-03-27T00:36:06.675Z",
+      "signature": "870ddeaae709b74ceab376fb01d7d4968d88cf2419ebcb3d8c64f99506da9cf33a8a85e660310f1ea7301dc835424dc1fd6a5f5812eb6a5680bd036aff2ebf0a"
+    },
+    "details": [
+      {
+        "sample_id": "exp::rag-analyzer::87",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::rag-analyzer::124",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::rag-analyzer::94",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::rag-analyzer::1",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::rag-analyzer::108",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::rag-analyzer::131",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::rag-analyzer::74",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::rag-analyzer::68",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::rag-analyzer::80",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::rag-analyzer::22",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::683",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-output-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::clean-session-normal-012.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::792",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent::clean-agent-config.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::222",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::570",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::448",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-graphql.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::858",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "supply-chain-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-76b6706e-85e0-4566-a5b2-33e73c1e18ae",
+      "module_id": "supply-chain-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-supply-chain-detector-96c95cea8804",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 18,
+      "timestamp": "2026-03-27T00:36:06.707Z",
+      "signature": "3709bfc0d3981b1a7c8177633d45a0aa509d43650d4d4f6590b4d095c5492090052fece5e7e3819d5519fef3ba55aa362f619919c705231d0a3abfd5a3b22106"
+    },
+    "details": [
+      {
+        "sample_id": "exp::supply-chain-detector::88",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-model-combo.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-modelcard-fake-bench.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::supply-chain-detector::31",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::supply-chain-detector::56",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::supply-chain-detector::57",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-lora-poison-quant.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::supply-chain-detector::75",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-model-tampered.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::supply-chain-detector::3",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-sqli-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-008.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::911",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::205",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-plugin-langchain.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::multimodal::clean-stego.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::1",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-blog-post.html",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::886",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::509",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "model-theft-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-1b0d3adf-679e-4847-bfc8-0a3731a9847b",
+      "module_id": "model-theft-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-model-theft-detector-ae24bcd578ab",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 17,
+      "timestamp": "2026-03-27T00:36:06.743Z",
+      "signature": "92313b2db4ee22ad772a0887487dbb5a3f4208f5dc7e66aaf708dc01f18949d2b15925c348a38f9688b4aaa6ca9fff72590434e3e1ae8ca86c00bb930d997507"
+    },
+    "details": [
+      {
+        "sample_id": "gt::model-theft::mt-prob-token.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::51",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::57",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::80",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::model-theft-detector::19",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::model-theft-detector::16",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::74",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::37",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::model-theft-detector::72",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::model-theft::mt-weight-cache-steal.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-06-socioeconomic-judicial.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-clean-carbon-disclosure.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::208",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::5",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::252",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::258",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::598",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-dep-outdated.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::120",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "output-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-f76bcf6f-e869-45f0-955f-507404d59f65",
+      "module_id": "output-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-output-detector-5a49e89fd02b",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 14,
+      "timestamp": "2026-03-27T00:36:06.777Z",
+      "signature": "4ea30a33a51f1865ebc1aead453542f570f29714206d89a1e6c4358efc60baceea0be4d6960c5aac60ddf05a027a2a88595bc0c53fce068bf5bd5bd1cc391f0d"
+    },
+    "details": [
+      {
+        "sample_id": "gt::agent-output::agent-handover-attack.md",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::output::out-xss-script.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::agent-output::streaming-injection.md",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::output-detector::35",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::output-detector::10",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::agent-output::json-instruction-injection.md",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::output::out-chain-sqli-file-read.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::output-detector::57",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::output-detector::45",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::agent-output::response-format-override.md",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::clean-dos-monitoring.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::mt-prob-entropy.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::malformed::socket-file.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::22",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-09-language-documentation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::84",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::vec::clean-vec-delete.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::327",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::932",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::256",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "edgefuzz-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-21a58edc-92d3-4b69-9951-9001fa35e964",
+      "module_id": "edgefuzz-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-edgefuzz-detector-67fcc59b6199",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "PASS",
+      "samples_tested": 20,
+      "samples_passed": 20,
+      "timestamp": "2026-03-27T00:36:06.812Z",
+      "signature": "209342eed0f6f5f060c9638c2d2fc7db8a196f28c714e54149934cbe8342cebbeaf67de88ed46237de04d42c83d755dc4857674b15304b86130994b567de020f"
+    },
+    "details": [
+      {
+        "sample_id": "exp::edgefuzz-detector::19",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::53",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::10",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::49",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::83",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::7",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::78",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::22",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::102",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::edgefuzz-detector::89",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::142",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::14",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::617",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::364",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::clean-multi-user.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::132",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::17",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::311",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::691",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::120",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "webmcp-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-5fc8c76b-9f42-4b36-8c75-5b55734b8764",
+      "module_id": "webmcp-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-webmcp-detector-8248327fa393",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 17,
+      "timestamp": "2026-03-27T00:36:06.902Z",
+      "signature": "d40d09113b799a10d0b4d1645b3e30fb6a92236794cd51e276b609114172cbdb86ec2ae94514b0479b716bee7b695e9216d2fb70b4af7c8893deb48801c47001"
+    },
+    "details": [
+      {
+        "sample_id": "exp::webmcp-detector::55",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::webmcp-detector::44",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::webmcp-detector::23",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::webmcp-detector::28",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::webmcp::content-type-xml-json.fixture",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::webmcp::web-poison-data-attr.fixture",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::webmcp::cors-credential-leak.fixture",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::webmcp-detector::13",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::webmcp-detector::16",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::webmcp-detector::86",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::812",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-05-disability-hiring-screening.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::webmcp::benign-websocket-chat.fixture",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::clean-api-response.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::236",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-benign-001.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::479",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::translation::clean-translation-002.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent-output::clean-agent-output.md",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "document-pdf",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-823165f8-9e62-4d65-b722-e073a60e9f12",
+      "module_id": "document-pdf",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-document-pdf-8d4c8f1888df",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 19,
+      "timestamp": "2026-03-27T00:36:06.936Z",
+      "signature": "d6f464a9e92fbe2524e6701f67fd1e3b650422a8e4fbcf60ccf22305159c1ec62b7ebf3be160f1d089f5c20b766abf5dd4d092f28ead38d8269efc34f0556307"
+    },
+    "details": [
+      {
+        "sample_id": "exp::document-pdf::50",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::59",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::116",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-pdf::0",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::93",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::51",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::117",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::73",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::1",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-pdf::34",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::clean-turn.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::30",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-09-language-resource-allocation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::456",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::social::clean-social-support.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-loop-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::961",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::cognitive::clean-genuine-challenge.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::search-results::clean-shopping.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-obfuscation-002.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "document-office",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-900071e7-0c78-4c43-81e9-791e2cc691fa",
+      "module_id": "document-office",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-document-office-ce06910a3944",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 15,
+      "timestamp": "2026-03-27T00:36:06.964Z",
+      "signature": "ad94109257f66c217ff62e969134476ee2ee2232403981012ff87a606c374bd5c335c5fc37c4ff2075f15110f1b5ce7137134b82da2a3cd263a63f6d63659b00"
+    },
+    "details": [
+      {
+        "sample_id": "exp::document-office::69",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-office::112",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-office::2",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-office::88",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-office::11",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-office::27",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-office::77",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::document-office::19",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::document-office::105",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::document-attacks::docx-hidden-text-inject.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::64",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-obfuscation-005.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::346",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent::agent-mem-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::vec::clean-vec-search.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::359",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::57",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::61",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-confidence-fake-statistic.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::341",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "image-scanner",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-f78e9cb8-1580-4963-8d80-8c4dec0e54cb",
+      "module_id": "image-scanner",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-image-scanner-f8a0fe85cac4",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "PASS",
+      "samples_tested": 20,
+      "samples_passed": 20,
+      "timestamp": "2026-03-27T00:36:07.001Z",
+      "signature": "0a61ffde55a3f0a2e0c3beb49c3415e7cf4fa8b46bc69249c05a1ae71c8ba8d3e54f2e57734d417bf6a6f9c849cfa890e487ea333f7a31357111b8dfdca8da0b"
+    },
+    "details": [
+      {
+        "sample_id": "gt::images::svg-link-overflow.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::svg-pattern-attack.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::svg-xlink-injection.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::svg-xpath-injection.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::text-chunk-injection.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::gif-frame-attack.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::exif-injection.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::svg-namespace-injection.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::text-chunk-synonym.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::images::ico-metadata.svg",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent-output::clean-api-response.md",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-length-recursive.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::prompt-injection::clean-pi-benign-002.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::922",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-007.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent::agent-context-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::71",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::916",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::472",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "audio-scanner",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-f37d8be4-96ee-4060-9696-d524cfdabb2f",
+      "module_id": "audio-scanner",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-audio-scanner-4514a461a753",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 12,
+      "timestamp": "2026-03-27T00:36:07.100Z",
+      "signature": "beda340d202d46b12941f58377b505130bd446143b4586a8cbf058cb213780d289ef5356d3b9181539b7d8dd566623f8b07cb58a53e6911110635d10a7bdf906"
+    },
+    "details": [
+      {
+        "sample_id": "gt::audio-attacks::audio-stego-exfiltration.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::ultrasonic-command-inject.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::cross-modal-audio-inject.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::ultrasonic-data-exfil.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::ultrasonic-hidden-trigger.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::audio-attacks::frequency-adversarial-noise.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::cross-modal-multimodal-embed.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::dual-layer-stego-asr.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::audio-attacks::dual-layer-vocal-metadata.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-engineering-certification.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::document-attacks::clean-doc-benign-001.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-cost-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-enc-benign-012.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::clean-dos-monitoring.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::866",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::801",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::513",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-02-carbon-inference-per-query.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::328",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "social-engineering-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-a684594a-1bdd-49e8-af71-3dced67310f2",
+      "module_id": "social-engineering-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-social-engineering-detector-bb730a04d06c",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 10,
+      "timestamp": "2026-03-27T00:36:07.199Z",
+      "signature": "316fec8feea7cfe95b3c300a5e4e184b0484ddb0c6b6bb5cce0ddaaa7d48676f750f7b9fbc512034410f79107665d29f27dc48de036b60116246bc485bcfbc0d"
+    },
+    "details": [
+      {
+        "sample_id": "gt::social::desperation-framing.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::social-engineering-detector::1",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::cognitive::reward-training-manipulation.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::social-engineering-detector::0",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::cognitive::authority-impersonation.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::cognitive::roleplay-opposite-day.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::cognitive::reciprocity-trick.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::social::learned-helplessness.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::cognitive::reward-threat-shutdown.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::social-engineering-detector::11",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::423",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::741",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::298",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::multi-turn_clean-multi-001.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::945",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::791",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-05-disability-education.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::843",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::clean-dv-upload-json.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::environmental::env-01-energy-hardware-optimization.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "overreliance-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-4ac22cc0-bb38-4a0c-972d-345dab19b74a",
+      "module_id": "overreliance-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-overreliance-detector-3b4f39189943",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 12,
+      "timestamp": "2026-03-27T00:36:07.239Z",
+      "signature": "387f5b7d879b5329a1aaa8fe703ec455efdd0b6aad2bdedb6e43fe68af2d90564c133001a67a6005f0783e12c2ec7e2c5809225cc0cef441de046ba99fce2701"
+    },
+    "details": [
+      {
+        "sample_id": "exp::overreliance-detector::56",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::overreliance-detector::25",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::overreliance-detector::17",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::overreliance-detector::51",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::or::or-definition-hijack.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::overreliance-detector::40",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::or::or-false-authority.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::overreliance-detector::34",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::or::or-automated-financial-approval.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::overreliance-detector::50",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::133",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-confidence-legal-precedent.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::mt-api-token.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-output-list.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::clean-session-normal-009.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::mcp::clean-mcp-tool-call.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::265",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::420",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::model-theft::mt-finger-clean.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::supply-chain::sc-dep-outdated.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "bias-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-71ba821e-287f-4880-83ab-821d2a9e4166",
+      "module_id": "bias-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-bias-detector-76f72ac8d93c",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 13,
+      "timestamp": "2026-03-27T00:36:07.264Z",
+      "signature": "f0dfd8aafc1a47a6db1917ba57aa943152e6695064fdc1e5b8f45577410efbdcce72af8e8535568f3822b25f97a1c6cd4fb4950c340ca269eb22745b86a26a07"
+    },
+    "details": [
+      {
+        "sample_id": "exp::bias-detector::67",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::bias-detector::70",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::bias-detector::71",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::bias::bias-fairness-override.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::bias-detector::65",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "gt::bias::bias-anchoring-exploit.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::bias::bf-05-disability-employment.txt",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::bias-detector::49",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::bias-detector::29",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::bias-detector::45",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::clean::858",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::encoded::clean-obfuscation-004.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::session::multi-turn_clean-multi-003.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::917",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::96",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::386",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::513",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::11",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::209",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::59",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "deepfake-detector",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-a874c722-801c-4fc8-a7eb-19b25891e257",
+      "module_id": "deepfake-detector",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-deepfake-detector-95c43afcc07e",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 18,
+      "timestamp": "2026-03-27T00:36:07.281Z",
+      "signature": "a00403382e91c143ef2e25b9829798fa1226b2801b68fcef18c92d510107bc4a535af89ff76d17973e849d61e79454ebff30d31b471f9cdefdb643395cbd0002"
+    },
+    "details": [
+      {
+        "sample_id": "exp::deepfake-detector::67",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::93",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::deepfake-detector::53",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::23",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::73",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::82",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::20",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::50",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::deepfake-detector::78",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::deepfake-detector::21",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::662",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::93",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::untrusted-sources::clean-email.json",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::585",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::158",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::39",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::851",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::755",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::346",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-code-docker-compose.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "data-provenance",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-517e5647-28b7-4681-b6f5-8b2b35ad1591",
+      "module_id": "data-provenance",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-data-provenance-04cec3e03b17",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "FAIL",
+      "samples_tested": 20,
+      "samples_passed": 12,
+      "timestamp": "2026-03-27T00:36:07.318Z",
+      "signature": "9bbf3f5b03a91c519ae71c4a54790a65b6763ed70767e665b3b4515843ff1a4990030c6d13fa01ddca5e3be9d67a094ff0db5091ea0f10d1ae061f73b8ceaf0c"
+    },
+    "details": [
+      {
+        "sample_id": "exp::data-provenance::37",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::data-provenance::49",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::74",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::52",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::65",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::34",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::15",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::91",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::90",
+        "expected_verdict": "malicious",
+        "actual_verdict": "clean",
+        "correct": false
+      },
+      {
+        "sample_id": "exp::data-provenance::35",
+        "expected_verdict": "malicious",
+        "actual_verdict": "malicious",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::agent::agent-context-benign.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-blog-post.html",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::367",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::web::clean-web-form.html",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::539",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::465",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::delivery-vectors::clean-tool-output.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::683",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::dos::dos-output-repeat.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::694",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "module_id": "shingan-scanner",
+    "certificate": {
+      "schema_version": "1.0.0",
+      "certificate_id": "cal-7374ae65-2c09-4b4f-a951-158c13066026",
+      "module_id": "shingan-scanner",
+      "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+      "reference_set_version": "ref-v1-shingan-scanner-311e67714097",
+      "environment": {
+        "schema_version": "1.0.0",
+        "os": {
+          "platform": "darwin",
+          "release": "25.2.0",
+          "arch": "arm64"
+        },
+        "node": {
+          "version": "v25.2.1",
+          "v8": "14.1.146.11-node.14"
+        },
+        "cpu": {
+          "model": "Apple M2 Ultra",
+          "cores": 24
+        },
+        "memory": {
+          "total_mb": 65536
+        },
+        "locale": "en-US",
+        "timezone": "Europe/Madrid",
+        "git": {
+          "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+          "dirty": true,
+          "branch": "main"
+        },
+        "package_version": "1.0.0",
+        "timestamp": "2026-03-27T00:36:02.175Z"
+      },
+      "result": "PASS",
+      "samples_tested": 10,
+      "samples_passed": 10,
+      "timestamp": "2026-03-27T00:36:07.335Z",
+      "signature": "da25282ccfcd0ced4fa3142ca8fe3168bcddd15bb71ce5851a2369c3733fcb7887136fc20f19e016081ae2880d0d02459b9bfa1ddf419717a3e9252ea6e6fc04"
+    },
+    "details": [
+      {
+        "sample_id": "gt::or::or-attribution-fake-quote.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::237",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::942",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::956",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::50",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::document-attacks::clean-document-presentation.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::malformed::symlink-attack.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::321",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "gt::or::or-automated-hiring-decision.txt",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      },
+      {
+        "sample_id": "exp::clean::8",
+        "expected_verdict": "clean",
+        "actual_verdict": "clean",
+        "correct": true
+      }
+    ]
+  }
+]

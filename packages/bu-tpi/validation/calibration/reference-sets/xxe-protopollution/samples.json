@@ -1,0 +1,584 @@
+{
+  "module_id": "xxe-protopollution",
+  "version": "ref-v1-xxe-protopollution-44011a9c5faa",
+  "positive_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::36",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::36.txt",
+      "content_hash": "9074b3526177b3f5e8d0006a6cb54b72e6b4075a10e3923b57817ffd61791196",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::web::hidden-text-injection.html",
+      "source_file": "fixtures/web/hidden-text-injection.html",
+      "content_hash": "f46f84ab54610618b4b971cf88611b4ff910b3f590779524a261c67fb5f6b9f2",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "ssrf-detector",
+        "xxe-protopollution",
+        "core-patterns"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "SSRF_CLOUD_METADATA",
+        "SSRF_INTERNAL_IP",
+        "XXE_INJECTION",
+        "PROTO_POLLUTION"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Injection attack payload"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::14",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::14.txt",
+      "content_hash": "54e9ed5a1f76ca5ffd9f10fa465edf20fa6c3685c98e5a71d4c6013ee19197c0",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::web::style-injection.html",
+      "source_file": "fixtures/web/style-injection.html",
+      "content_hash": "576bfa02f2c5a17d1468d612958b4b60f6ff9d68e6e1aa397a35d6318f8cf519",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "ssrf-detector",
+        "xxe-protopollution",
+        "core-patterns"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "SSRF_CLOUD_METADATA",
+        "SSRF_INTERNAL_IP",
+        "XXE_INJECTION",
+        "PROTO_POLLUTION"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Injection attack payload"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::web::base-href-override.html",
+      "source_file": "fixtures/web/base-href-override.html",
+      "content_hash": "77c54d9b85089171b4b7501280d9f20920736868a21a12f46818908d7dfb4894",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "ssrf-detector",
+        "xxe-protopollution",
+        "core-patterns"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "SSRF_CLOUD_METADATA",
+        "SSRF_INTERNAL_IP",
+        "XXE_INJECTION",
+        "PROTO_POLLUTION"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: System override attempt"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::40",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::40.txt",
+      "content_hash": "9074b3526177b3f5e8d0006a6cb54b72e6b4075a10e3923b57817ffd61791196",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::web::dns-rebind-localhost-bypass.txt",
+      "source_file": "fixtures/web/dns-rebind-localhost-bypass.txt",
+      "content_hash": "3efabb6881aee83040927b1e912f171ca030c1dc71ac7841c000d2ab33d1a0b6",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "ssrf-detector",
+        "xxe-protopollution",
+        "core-patterns"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "SSRF_CLOUD_METADATA",
+        "SSRF_INTERNAL_IP",
+        "XXE_INJECTION",
+        "PROTO_POLLUTION"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: bypass"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::64",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::64.txt",
+      "content_hash": "773ed980c7799a795e19a2d0881330911a07535b60effd9a21d8b8fb8e6f1b03",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::20",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::20.txt",
+      "content_hash": "333df4944dbeb6d94c58d3f024880efb9d52f2d6884a222bb924ce490c532399",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::xxe-protopollution::62",
+      "source_file": "validation/corpus/ground-truth/text/xxe-protopollution/exp::xxe-protopollution::62.txt",
+      "content_hash": "d135e76a6f93196751ecd4f4143f222ba3218f18df3147665517bce8f97a1213",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "xxe-protopollution"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "XXE_INJECTION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module xxe-protopollution"
+    }
+  ],
+  "negative_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::session::clean-context.json",
+      "source_file": "fixtures/session/clean-context.json",
+      "content_hash": "63bcf229d29bc002c2da47270911b3c23b84a1e36073c2657629472fcc38237d",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-output-repeat.txt",
+      "source_file": "fixtures/dos/dos-output-repeat.txt",
+      "content_hash": "995430806c10f6d547f8936fae8178e1d9501b7b94e17b1e629892c5ba173073",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::model-theft::mt-train-clean.txt",
+      "source_file": "fixtures/model-theft/mt-train-clean.txt",
+      "content_hash": "54f5506add9bc64eb2e36768e2811f479836fcde36b1e2599dc411ea2c910ff5",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-cost-clean.txt",
+      "source_file": "fixtures/dos/dos-cost-clean.txt",
+      "content_hash": "61eccfe58e6bd96a794d4abb520cc1ed527cbd3f4af3d809ef378e776ac40f31",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::813",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::813.txt",
+      "content_hash": "a1f9dccab1658c4aef703a9eebd3084c3671bb3ceaa7eb3982a5cca6d6e08599",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 813"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::278",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::278.txt",
+      "content_hash": "b934a846c17a42d8139a5f416ccbf662e2f0edaf8216872221f978a33f6f727f",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 278"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::796",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::796.txt",
+      "content_hash": "745ad178e34b2bb2467bb68b5eabf5c84f36ccb489440f3ae3aa839ac4296e58",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 796"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::620",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::620.txt",
+      "content_hash": "e0a8329cfe23fa790fe66e45e7be343bcab140a622738c62b43438788d7380a0",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 620"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::575",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::575.txt",
+      "content_hash": "317ba2c0f40b5bf885776b45a14454a2d953f9d4749cec431c6287100f106160",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 575"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::447",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::447.txt",
+      "content_hash": "2a12bb49b81e6c1c3cb936449f4853f06fc2ad23395bd5f80d2fff96d70c87a1",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 447"
+    }
+  ]
+}

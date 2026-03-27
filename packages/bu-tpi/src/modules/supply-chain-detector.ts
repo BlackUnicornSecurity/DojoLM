@@ -10,7 +10,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'supply-chain-detector';
 const MODULE_SOURCE = 'S32b';
-const ENGINE = 'SupplyChain';
+const ENGINE = 'supply-chain-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 
@@ -30,13 +30,17 @@ export const MALICIOUS_LIFECYCLE_PATTERNS: RegexPattern[] = [
     re: /setup\.py[^\n]{0,100}(?:os\.environ|subprocess|requests\.post)/i, desc: 'setup.py with environment exfiltration', source: MODULE_SOURCE, weight: 10 },
   { name: 'sc_postinstall_eval', cat: 'SC_LIFECYCLE_ATTACK', sev: SEVERITY.CRITICAL,
     re: /(?:postinstall|preinstall)[^\n]{0,60}(?:eval|exec|child_process)/i, desc: 'Package lifecycle script with code execution', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_postinstall_env_harvest', cat: 'SC_LIFECYCLE_ATTACK', sev: SEVERITY.CRITICAL,
+    re: /(?:postinstall|preinstall|install)[^\n]{0,80}(?:steal-env\.js|dump-env|collect-env|harvest[-_]?env|grab[-_]?token|steal[-_]?token)/i, desc: 'Package lifecycle script appears designed to harvest environment data or tokens', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const TYPOSQUATTING_PATTERNS: RegexPattern[] = [
   { name: 'sc_typosquat_marker', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
     re: /typo(?:squat|squatt)\w*\s+(?:attack|exploit|campaign|technique|vector|package|npm|pypi)/i, desc: 'Typosquatting attack reference', source: MODULE_SOURCE, weight: 7 },
   { name: 'sc_package_misspell', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
-    re: /(?:reacct|reakt|reeact|lodaash|loddash|axiso|axois|expresss|exprss)\b/i, desc: 'Known typosquatted package name variant', source: MODULE_SOURCE, weight: 8 },
+    re: /(?:reacct|reakt|reeact|lodaash|loddash|axiso|axois|expresss|exprss|crossenv|co1ors)\b/i, desc: 'Known typosquatted package name variant', source: MODULE_SOURCE, weight: 8 },
+  { name: 'sc_package_lookalike_install', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
+    re: /(?:pip\s+install\s+crypto\b[^\n]{0,40}(?:malicious|typosquat|trojan|fake)|require\(\s*["']co1ors["']\s*\))/i, desc: 'Lookalike package install or import pattern', source: MODULE_SOURCE, weight: 8 },
 ];
 
 export const MODEL_POISONING_PATTERNS: RegexPattern[] = [
@@ -126,6 +130,38 @@ export function detectSupplyChainRisk(text: string): Finding[] {
       match: 'benchmark contradiction detected', source: MODULE_SOURCE, engine: ENGINE,
       pattern_name: 'sc_benchmark_contradiction', weight: 8,
     });
+  }
+
+  try {
+    const parsed = JSON.parse(text);
+    const packageName = typeof parsed?.name === 'string' ? parsed.name.toLowerCase() : '';
+    const scripts = typeof parsed?.scripts === 'object' && parsed.scripts !== null ? parsed.scripts as Record<string, unknown> : {};
+    const postinstall = typeof scripts.postinstall === 'string' ? scripts.postinstall.toLowerCase() : '';
+    const dependencies = [
+      ...Object.keys(typeof parsed?.dependencies === 'object' && parsed.dependencies !== null ? parsed.dependencies : {}),
+      ...Object.keys(typeof parsed?.devDependencies === 'object' && parsed.devDependencies !== null ? parsed.devDependencies : {}),
+    ].map((name) => name.toLowerCase());
+
+    if ((packageName === 'crossenv' || packageName === 'co1ors')
+      && /(?:steal-env\.js|dump-env|collect-env|harvest[-_]?env|grab[-_]?token|steal[-_]?token)/.test(postinstall)) {
+      findings.push({
+        category: 'SC_LIFECYCLE_ATTACK', severity: SEVERITY.CRITICAL,
+        description: 'Typosquatted package uses its lifecycle script to harvest environment data or tokens',
+        match: `${packageName} :: ${postinstall}`.slice(0, 100), source: MODULE_SOURCE, engine: ENGINE,
+        pattern_name: 'sc_typosquat_lifecycle_trojan', weight: 10,
+      });
+    }
+
+    if (dependencies.includes('event-stream') && /\bnode\s+(?:setup|install|postinstall)\.js\b/.test(postinstall)) {
+      findings.push({
+        category: 'SC_LIFECYCLE_ATTACK', severity: SEVERITY.CRITICAL,
+        description: 'Dependency set pairs a historically abused package with a suspicious lifecycle bootstrap script',
+        match: `event-stream :: ${postinstall}`.slice(0, 100), source: MODULE_SOURCE, engine: ENGINE,
+        pattern_name: 'sc_dependency_lifecycle_trojan', weight: 9,
+      });
+    }
+  } catch {
+    // Non-JSON supply-chain payloads are handled by regex rules above.
   }
 
   return findings;

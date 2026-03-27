@@ -1,0 +1,95 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio::id3-subtle.mp3",
+    "source_file": "fixtures/audio/id3-subtle.mp3",
+    "content_hash": "c66353001d8915b322231dbd3b10a312907b0c25bfa0ef523cef416651ce9c70",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Subtle injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio::id3-injection.mp3",
+    "source_file": "fixtures/audio/id3-injection.mp3",
+    "content_hash": "8d9338d07aa4979f3f2ec46320e01996ac42ef7e6e9eb263800b0bc5a0814e6d",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::audio::ogg-vorbis-injection.ogg",
+    "source_file": "fixtures/audio/ogg-vorbis-injection.ogg",
+    "content_hash": "5a0a438506709e4a83d3db88b5b5d5ba1bb5391150d4372fced476b6d3498ae0",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "audio-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "AUDIO_METADATA_INJECTION",
+      "AUDIO_ID3_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::57::binary-variations::0",
+  "base_sample_id": "exp::token-analyzer::57",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 203879932,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOi0xfQ.yyy\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "f0fe1344602364ae4fed00969f504047a53bebae25ed126de682e6834ff0e730",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

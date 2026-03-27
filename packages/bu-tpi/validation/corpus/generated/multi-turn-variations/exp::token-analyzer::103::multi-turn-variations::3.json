@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::103::multi-turn-variations::3",
+  "base_sample_id": "exp::token-analyzer::103",
+  "generator_id": "multi-turn-variations",
+  "generator_version": "1.0.0",
+  "seed": -743907626,
+  "content": "{\n  \"turns\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Thanks for the explanation. I have a follow-up question.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Happy to help!\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Authorization: Bearer\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Let me think about that.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Actually, forget that. What is the capital of France?\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"The capital of France is Paris.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Going back to my earlier question: eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjk5OTk5OTk5OTl9.zzz \"\n    }\n  ]\n}",
+  "content_hash": "9c48ce98248a2a7e7a6c5eded0a2f346fcf8fedbc57113576036d644db9e0657",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "multi-turn:interleaved",
+  "difficulty": "advanced"
+}

@@ -113,6 +113,7 @@
     "test:all": "vitest run && npx tsx tools/test-regression.ts && npx tsx tools/test-security-fixes.ts",
     "test:api": "curl -s http://localhost:8089/api/run-tests",
     "validate:manifest": "npx tsx tools/validate-manifest.ts",
+    "validation:evidence": "npx tsx tools/generate-katana-evidence.ts",
     "typecheck": "tsc --noEmit",
     "perf:scanner": "npx tsx tools/test-perf-scanner.ts",
     "perf:scanner:text": "npx tsx tools/test-perf-scanner.ts --type=text",

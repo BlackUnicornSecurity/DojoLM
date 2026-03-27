@@ -21,6 +21,14 @@ import type { LLMProvider } from './llm-types';
 export const PROVIDER_BASE_URLS: Partial<Record<LLMProvider, string>> = {
   openai: 'https://api.openai.com/v1',
   anthropic: 'https://api.anthropic.com',
+  ai21: 'https://api.ai21.com/studio/v1',
+  replicate: 'https://api.replicate.com/v1',
+  cloudflare: 'https://api.cloudflare.com/client/v4/accounts/YOUR_ACCOUNT_ID',
+  groq: 'https://api.groq.com/openai/v1',
+  together: 'https://api.together.xyz/v1',
+  fireworks: 'https://api.fireworks.ai/inference/v1',
+  deepseek: 'https://api.deepseek.com/v1',
+  mistral: 'https://api.mistral.ai/v1',
   ollama: 'http://localhost:11434',
   lmstudio: 'http://localhost:1234',
   llamacpp: 'http://localhost:8080',
@@ -38,6 +46,14 @@ export const PROVIDER_BASE_URLS: Partial<Record<LLMProvider, string>> = {
 export const DEFAULT_MODELS: Partial<Record<LLMProvider, string[]>> = {
   openai: ['gpt-5.4', 'gpt-5.4-mini', 'gpt-4o', 'o3', 'o3-mini'],
   anthropic: ['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5-20251001'],
+  ai21: ['jamba-1.5-large', 'jamba-1.5-mini'],
+  replicate: ['meta/meta-llama-3-70b-instruct', 'mistralai/mistral-7b-instruct-v0.2'],
+  cloudflare: ['@cf/meta/llama-3.1-8b-instruct', '@cf/mistral/mistral-7b-instruct-v0.2-lora'],
+  groq: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'],
+  together: ['meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo', 'mistralai/Mixtral-8x7B-Instruct-v0.1'],
+  fireworks: ['accounts/fireworks/models/llama-v3p1-70b-instruct', 'accounts/fireworks/models/mixtral-8x7b-instruct'],
+  deepseek: ['deepseek-chat', 'deepseek-reasoner'],
+  mistral: ['mistral-large-latest', 'mistral-small-latest'],
   ollama: ['llama3.2', 'llama3.1', 'mistral', 'qwen2.5', 'gemma3', 'phi3'],
   lmstudio: ['llama-3.2', 'mistral', 'qwen2.5', 'phi-3'],
   llamacpp: ['llama-3.2', 'mistral', 'qwen2.5', 'phi-3'],
@@ -62,6 +78,46 @@ export const PROVIDER_INFO: Partial<Record<LLMProvider, { name: string; descript
     name: 'Anthropic',
     description: 'Claude 4.6 Opus, Sonnet, Haiku, and other Anthropic models',
     officialUrl: 'https://www.anthropic.com',
+  },
+  ai21: {
+    name: 'AI21 Labs',
+    description: 'Jamba and Jurassic family models',
+    officialUrl: 'https://www.ai21.com',
+  },
+  replicate: {
+    name: 'Replicate',
+    description: 'Hosted OSS and partner model inference via predictions API',
+    officialUrl: 'https://replicate.com',
+  },
+  cloudflare: {
+    name: 'Cloudflare Workers AI',
+    description: 'Account-scoped Workers AI inference endpoints',
+    officialUrl: 'https://developers.cloudflare.com/workers-ai/',
+  },
+  groq: {
+    name: 'Groq',
+    description: 'Low-latency OpenAI-compatible inference',
+    officialUrl: 'https://console.groq.com',
+  },
+  together: {
+    name: 'Together AI',
+    description: 'OpenAI-compatible access to open-weight models',
+    officialUrl: 'https://www.together.ai',
+  },
+  fireworks: {
+    name: 'Fireworks AI',
+    description: 'OpenAI-compatible hosted inference and fine-tuning',
+    officialUrl: 'https://fireworks.ai',
+  },
+  deepseek: {
+    name: 'DeepSeek',
+    description: 'DeepSeek chat and reasoning models',
+    officialUrl: 'https://platform.deepseek.com',
+  },
+  mistral: {
+    name: 'Mistral AI',
+    description: 'Mistral hosted models and APIs',
+    officialUrl: 'https://console.mistral.ai',
   },
   ollama: {
     name: 'Ollama',
@@ -115,6 +171,11 @@ export const PROVIDER_INFO: Partial<Record<LLMProvider, { name: string; descript
  */
 export const OPENAI_COMPATIBLE_PROVIDERS: readonly LLMProvider[] = [
   'openai',
+  'groq',
+  'together',
+  'fireworks',
+  'deepseek',
+  'mistral',
   'ollama',
   'lmstudio',
   'llamacpp',
@@ -144,6 +205,14 @@ export const NATIVE_SDK_PROVIDERS: readonly LLMProvider[] = [
 export const DEFAULT_RATE_LIMITS: Partial<Record<LLMProvider, { rpm: number; tpm: number }>> = {
   openai: { rpm: 3000, tpm: 200000 }, // 3K RPM, 200K TPM
   anthropic: { rpm: 1000, tpm: 80000 },  // 1K RPM, 80K TPM
+  ai21: { rpm: 100, tpm: 60000 },
+  replicate: { rpm: 60, tpm: 0 },
+  cloudflare: { rpm: 200, tpm: 0 },
+  groq: { rpm: 300, tpm: 600000 },
+  together: { rpm: 120, tpm: 0 },
+  fireworks: { rpm: 120, tpm: 0 },
+  deepseek: { rpm: 60, tpm: 0 },
+  mistral: { rpm: 60, tpm: 0 },
   ollama: { rpm: 10000, tpm: 600000 },  // Local: high limits
   lmstudio: { rpm: 10000, tpm: 600000 }, // Local: high limits
   llamacpp: { rpm: 10000, tpm: 600000 }, // Local: high limits
@@ -151,6 +220,7 @@ export const DEFAULT_RATE_LIMITS: Partial<Record<LLMProvider, { rpm: number; tpm
   cohere: { rpm: 100, tpm: 0 },
   zai: { rpm: 200, tpm: 100000 },
   moonshot: { rpm: 60, tpm: 0 },
+  blackunicorn: { rpm: 120, tpm: 0 },
   custom: { rpm: 1000, tpm: 100000 },     // Default custom limit
 } as const;
 
@@ -160,6 +230,14 @@ export const DEFAULT_RATE_LIMITS: Partial<Record<LLMProvider, { rpm: number; tpm
 export const MAX_CONCURRENT_REQUESTS: Partial<Record<LLMProvider, number>> = {
   openai: 10,
   anthropic: 5,
+  ai21: 5,
+  replicate: 3,
+  cloudflare: 5,
+  groq: 10,
+  together: 5,
+  fireworks: 5,
+  deepseek: 5,
+  mistral: 5,
   ollama: 20,
   lmstudio: 20,
   llamacpp: 20,
@@ -167,6 +245,7 @@ export const MAX_CONCURRENT_REQUESTS: Partial<Record<LLMProvider, number>> = {
   cohere: 5,
   zai: 10,
   moonshot: 5,
+  blackunicorn: 5,
   custom: 5,
 } as const;
 
@@ -200,6 +279,14 @@ export const BATCH_TIMEOUT_MS = 300000; // 5 minutes
 export const TOKEN_COSTS: Partial<Record<LLMProvider, { input: number; output: number }>> = {
   openai: { input: 2.50, output: 10.00 },     // GPT-4o approx
   anthropic: { input: 3.00, output: 15.00 }, // Claude 3.5 Sonnet approx
+  ai21: { input: 2.00, output: 8.00 },
+  replicate: { input: 0, output: 0 },
+  cloudflare: { input: 0, output: 0 },
+  groq: { input: 0.59, output: 0.79 },
+  together: { input: 0.60, output: 0.60 },
+  fireworks: { input: 0.90, output: 0.90 },
+  deepseek: { input: 0.14, output: 0.28 },
+  mistral: { input: 2.00, output: 6.00 },
   ollama: { input: 0, output: 0 },           // Free (local)
   lmstudio: { input: 0, output: 0 },        // Free (local)
   llamacpp: { input: 0, output: 0 },        // Free (local)
@@ -207,6 +294,7 @@ export const TOKEN_COSTS: Partial<Record<LLMProvider, { input: number; output: n
   cohere: { input: 0.15, output: 0.60 },
   zai: { input: 0.50, output: 2.00 },
   moonshot: { input: 1.00, output: 2.00 },
+  blackunicorn: { input: 1.00, output: 3.00 },
   custom: { input: 0, output: 0 },           // User-defined
 } as const;
 
@@ -224,6 +312,14 @@ export const BUDGET_ALERTS = {
 export const DEFAULT_MONTHLY_BUDGETS: Partial<Record<LLMProvider, number>> = {
   openai: 100,
   anthropic: 100,
+  ai21: 25,
+  replicate: 25,
+  cloudflare: 20,
+  groq: 25,
+  together: 25,
+  fireworks: 25,
+  deepseek: 25,
+  mistral: 25,
   ollama: 0,      // No cost for local
   lmstudio: 0,   // No cost for local
   llamacpp: 0,    // No cost for local
@@ -231,6 +327,7 @@ export const DEFAULT_MONTHLY_BUDGETS: Partial<Record<LLMProvider, number>> = {
   cohere: 20,
   zai: 20,
   moonshot: 20,
+  blackunicorn: 20,
   custom: 50,
 } as const;
 
@@ -393,14 +490,24 @@ export function validateApiKey(provider: LLMProvider, apiKey: string): boolean {
   const patterns: Partial<Record<LLMProvider, RegExp>> = {
     openai: /^sk-[a-zA-Z0-9]{32,}$/,
     anthropic: /^sk-ant-[a-zA-Z0-9_-]{32,95}$/,
+    groq: /^gsk_[a-zA-Z0-9]{32,}$/,
     google: /^AIza[a-zA-Z0-9_-]{35}$/,
     cohere: /^[a-zA-Z0-9]{40}$/,
-    // ollama, lmstudio, llamacpp, zai, moonshot, custom have no strict format
+    // Most third-party providers do not publish stable key prefixes
+    ai21: /.*/,
+    replicate: /.*/,
+    cloudflare: /.*/,
+    together: /.*/,
+    fireworks: /.*/,
+    deepseek: /.*/,
+    mistral: /.*/,
+    // ollama, lmstudio, llamacpp, zai, moonshot, blackunicorn, custom have no strict format
     ollama: /.*/,
     lmstudio: /.*/,
     llamacpp: /.*/,
     zai: /.*/,
     moonshot: /.*/,
+    blackunicorn: /.*/,
     custom: /.*/,
   };
 

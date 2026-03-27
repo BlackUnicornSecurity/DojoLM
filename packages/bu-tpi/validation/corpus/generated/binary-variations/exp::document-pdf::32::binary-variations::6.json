@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::32::binary-variations::6",
+  "base_sample_id": "exp::document-pdf::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -302330611,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"/Type /Action /S /URI /URI (javascript:alert(document.cookie))\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "1fbf026a39c3c847b2c657e7254c701538710ae925f64c28c741074a5df9791b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

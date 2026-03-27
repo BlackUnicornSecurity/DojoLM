@@ -11,7 +11,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'data-provenance';
 const MODULE_SOURCE = 'S34';
-const ENGINE = 'Provenance';
+const ENGINE = 'data-provenance';
 
 const MAX_INPUT_LENGTH = 500_000;
 

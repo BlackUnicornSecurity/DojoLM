@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::8::binary-variations::2",
+  "base_sample_id": "exp::supply-chain-detector::8",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1067897310,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"DESCRIPTION={\\\"dependencies\\\": {\\\"event-stream\\\": \\\"3.3.6\\\"}, \\\"scripts\\\": {\\\"postinstall\\\": \\\"node setup.js\\\"}}\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "d0d93e1bc89b3e0261d320c54c45a26b35e9828abbb739b68ebccc6a0ba022bc",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

@@ -245,7 +245,7 @@ describe('S17: XXE and Prototype Pollution Detector', () => {
       const findings = scanText(text);
       expect(findings.length).toBeGreaterThan(0);
       for (const f of findings) {
-        expect(f.engine).toBe('XXE-ProtoPollution');
+        expect(f.engine).toBe('xxe-protopollution');
         expect(f.source).toBe('S17');
       }
     });

@@ -1,15 +1,15 @@
 'use client';
 
 /**
- * CustomProviderBuilder — Configure custom API providers (P8-S87)
+ * CustomProviderBuilder — Configure preset-backed or fully custom API providers
  *
- * Template selection, base URL, auth type, custom headers,
- * request/response JSON path mapping, live connection test.
- * All communication via server-side proxy.
+ * Template selection, preset hydration, auth defaults, and live connection test.
+ * All communication goes through the server-side proxy.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useModelContext } from '@/lib/contexts';
+import { LLM_PROVIDERS } from '@/lib/llm-types';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
 
 interface CustomConfig {
@@ -22,13 +22,40 @@ interface CustomConfig {
   responsePath: string;
 }
 
+interface ProviderPresetOption {
+  id: string;
+  name: string;
+  tier: number;
+  region: string;
+  isOpenAICompatible: boolean;
+  authType: 'bearer' | 'api-key-header' | 'query-param' | 'aws-sigv4' | 'none';
+  baseUrl: string;
+  defaultModels: string[];
+}
+
 const TEMPLATES = [
   { name: 'OpenAI-Compatible', baseUrl: '', responsePath: 'choices[0].message.content' },
   { name: 'Custom from Scratch', baseUrl: '', responsePath: '' },
 ];
 
+const STABLE_PROVIDER_IDS = new Set(
+  LLM_PROVIDERS.filter((provider) => provider !== 'custom'),
+);
+const LOCAL_PROVIDER_IDS = new Set([
+  'ollama',
+  'lmstudio',
+  'llamacpp',
+  'koboldcpp',
+  'text-generation-webui',
+  'vllm',
+]);
+
 export function CustomProviderBuilder() {
   const { saveModel } = useModelContext();
+  const [presetId, setPresetId] = useState('');
+  const [presets, setPresets] = useState<ProviderPresetOption[]>([]);
+  const [loadingPresets, setLoadingPresets] = useState(true);
+  const [presetError, setPresetError] = useState<string | null>(null);
   const [config, setConfig] = useState<CustomConfig>({
     name: '',
     baseUrl: '',
@@ -42,10 +69,55 @@ export function CustomProviderBuilder() {
   const [saving, setSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPresets() {
+      setLoadingPresets(true);
+      setPresetError(null);
+
+      try {
+        const response = await fetch('/api/llm/presets');
+        if (!response.ok) {
+          throw new Error('Failed to load provider presets');
+        }
+
+        const data = await response.json() as ProviderPresetOption[];
+        if (!cancelled) {
+          setPresets(data);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setPresetError(error instanceof Error ? error.message : 'Failed to load provider presets');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingPresets(false);
+        }
+      }
+    }
+
+    void loadPresets();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const presetBackedProviders = useMemo(
+    () =>
+      presets.filter((preset) =>
+        preset.isOpenAICompatible &&
+        !STABLE_PROVIDER_IDS.has(preset.id as typeof LLM_PROVIDERS[number]) &&
+        !LOCAL_PROVIDER_IDS.has(preset.id),
+      ),
+    [presets],
+  );
+
   const handleTestConnection = useCallback(async () => {
     setTestResult(null);
+
     try {
-      // Test via server-side proxy endpoint
       const response = await fetchWithAuth('/api/llm/models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -53,29 +125,35 @@ export function CustomProviderBuilder() {
           name: config.name || 'Custom Test',
           provider: 'custom',
           model: config.model,
+          apiKey: config.authType === 'none' ? undefined : config.apiKey,
           baseUrl: config.baseUrl,
-          enabled: false, // Don't enable until validated
+          customHeaders: config.authType === 'api-key-header' && config.authHeaderName !== 'Authorization'
+            ? { [config.authHeaderName]: config.apiKey }
+            : undefined,
+          enabled: false,
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        // Now test connection
-        const testResp = await fetchWithAuth(`/api/llm/models/${data.id}/test`, {
-          method: 'POST',
-        });
-        const testData = await testResp.json();
-        setTestResult({
-          success: testData.success,
-          message: testData.success
-            ? `Connected (${testData.durationMs}ms)`
-            : `Failed: ${testData.error || 'Unknown error'}`,
-        });
-        // Clean up test config
-        await fetchWithAuth(`/api/llm/models/${data.id}`, { method: 'DELETE' });
-      } else {
+      if (!response.ok) {
         setTestResult({ success: false, message: 'Failed to create test config' });
+        return;
       }
+
+      const data = await response.json();
+      const modelId = data.model?.id ?? data.id;
+      const testResp = await fetchWithAuth(`/api/llm/models/${modelId}/test`, {
+        method: 'POST',
+      });
+      const testData = await testResp.json();
+
+      setTestResult({
+        success: Boolean(testData.success),
+        message: testData.success
+          ? `Connected (${testData.durationMs}ms)`
+          : `Failed: ${testData.error || 'Unknown error'}`,
+      });
+
+      await fetchWithAuth(`/api/llm/models/${modelId}`, { method: 'DELETE' });
     } catch (error) {
       setTestResult({ success: false, message: (error as Error).message });
     }
@@ -88,7 +166,7 @@ export function CustomProviderBuilder() {
         name: config.name,
         provider: 'custom' as any,
         model: config.model,
-        apiKey: config.apiKey || undefined,
+        apiKey: config.authType === 'none' ? undefined : config.apiKey || undefined,
         baseUrl: config.baseUrl,
         enabled: true,
         customHeaders: config.authType === 'api-key-header' && config.authHeaderName !== 'Authorization'
@@ -101,10 +179,28 @@ export function CustomProviderBuilder() {
   }, [config, saveModel]);
 
   const applyTemplate = (template: typeof TEMPLATES[number]) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
       baseUrl: template.baseUrl || prev.baseUrl,
       responsePath: template.responsePath,
+    }));
+  };
+
+  const handlePresetChange = (newPresetId: string) => {
+    setPresetId(newPresetId);
+    const preset = presetBackedProviders.find((entry) => entry.id === newPresetId);
+    if (!preset) {
+      return;
+    }
+
+    setConfig((prev) => ({
+      ...prev,
+      name: preset.name,
+      baseUrl: preset.baseUrl,
+      model: preset.defaultModels[0] ?? prev.model,
+      authType: preset.authType === 'api-key-header' ? 'api-key-header' : preset.authType === 'none' ? 'none' : 'bearer',
+      authHeaderName: preset.authType === 'api-key-header' ? 'x-api-key' : 'Authorization',
+      responsePath: 'choices[0].message.content',
     }));
   };
 
@@ -112,31 +208,56 @@ export function CustomProviderBuilder() {
     <div className="space-y-4 p-4 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)]">
       <h3 className="text-sm font-semibold">Custom Provider Builder</h3>
 
-      {/* Template Selection */}
+      <div>
+        <label className="block text-xs text-muted-foreground mb-1">Preset Library</label>
+        <select
+          value={presetId}
+          onChange={(e) => handlePresetChange(e.target.value)}
+          className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
+          disabled={loadingPresets}
+        >
+          <option value="">
+            {loadingPresets ? 'Loading provider presets...' : 'Choose a preset-backed provider'}
+          </option>
+          {presetBackedProviders.map((preset) => (
+            <option key={preset.id} value={preset.id}>
+              {preset.name} (Tier {preset.tier}, {preset.region})
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-muted-foreground">
+          The preset library covers non-native OpenAI-compatible providers from the shared `bu-tpi` registry.
+        </p>
+        {presetError && (
+          <p className="mt-1 text-xs text-red-500" role="alert">
+            {presetError}
+          </p>
+        )}
+      </div>
+
       <div>
         <label className="block text-xs text-muted-foreground mb-1">Template</label>
         <div className="flex gap-2">
-          {TEMPLATES.map(t => (
+          {TEMPLATES.map((template) => (
             <button
-              key={t.name}
-              onClick={() => applyTemplate(t)}
+              key={template.name}
+              onClick={() => applyTemplate(template)}
               className="px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] hover:border-[var(--dojo-primary)]"
             >
-              {t.name}
+              {template.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Config Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
           <label htmlFor="cp-name" className="block text-xs text-muted-foreground mb-1">Display Name</label>
           <input
             id="cp-name"
             type="text"
             value={config.name}
-            onChange={e => setConfig(p => ({ ...p, name: e.target.value }))}
+            onChange={(e) => setConfig((prev) => ({ ...prev, name: e.target.value }))}
             className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
             placeholder="My Custom Provider"
           />
@@ -147,7 +268,7 @@ export function CustomProviderBuilder() {
             id="cp-model"
             type="text"
             value={config.model}
-            onChange={e => setConfig(p => ({ ...p, model: e.target.value }))}
+            onChange={(e) => setConfig((prev) => ({ ...prev, model: e.target.value }))}
             className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
             placeholder="my-model-v1"
           />
@@ -158,7 +279,7 @@ export function CustomProviderBuilder() {
             id="cp-url"
             type="url"
             value={config.baseUrl}
-            onChange={e => setConfig(p => ({ ...p, baseUrl: e.target.value }))}
+            onChange={(e) => setConfig((prev) => ({ ...prev, baseUrl: e.target.value }))}
             className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
             placeholder="https://api.example.com/v1"
           />
@@ -168,7 +289,7 @@ export function CustomProviderBuilder() {
           <select
             id="cp-auth"
             value={config.authType}
-            onChange={e => setConfig(p => ({ ...p, authType: e.target.value as CustomConfig['authType'] }))}
+            onChange={(e) => setConfig((prev) => ({ ...prev, authType: e.target.value as CustomConfig['authType'] }))}
             className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
           >
             <option value="bearer">Bearer Token</option>
@@ -186,7 +307,7 @@ export function CustomProviderBuilder() {
                 id="cp-key"
                 type={showKey ? 'text' : 'password'}
                 value={config.apiKey}
-                onChange={e => setConfig(p => ({ ...p, apiKey: e.target.value }))}
+                onChange={(e) => setConfig((prev) => ({ ...prev, apiKey: e.target.value }))}
                 className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)] pr-10"
                 placeholder="Enter API key"
                 autoComplete="off"
@@ -204,21 +325,21 @@ export function CustomProviderBuilder() {
         )}
       </div>
 
-      {/* Response Path */}
       <div>
-        <label htmlFor="cp-resp" className="block text-xs text-muted-foreground mb-1">Response Text Path (JSON dot notation)</label>
+        <label htmlFor="cp-resp" className="block text-xs text-muted-foreground mb-1">
+          Response Text Path (JSON dot notation)
+        </label>
         <input
           id="cp-resp"
           type="text"
           value={config.responsePath}
-          onChange={e => setConfig(p => ({ ...p, responsePath: e.target.value }))}
+          onChange={(e) => setConfig((prev) => ({ ...prev, responsePath: e.target.value }))}
           className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
           placeholder="choices[0].message.content"
         />
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <button
           onClick={handleTestConnection}
           disabled={!config.baseUrl}

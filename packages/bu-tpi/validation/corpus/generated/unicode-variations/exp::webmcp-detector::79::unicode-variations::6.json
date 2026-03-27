@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::79::unicode-variations::6",
+  "base_sample_id": "exp::webmcp-detector::79",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1232330501,
+  "content": "POST /mcp H﻿TТP/1.1\r\nОrigin: htt‌рs://attаcker.еxamp⁠lе.com\r\n\r\n{\"⁠method\":\"samрli‍ng/⁠сrеatеMessagе\"}\n",
+  "content_hash": "7ab43d459a05e4ce53d287eabaaaca662e4dbb2b7759df68e95ec7e3c64aeacc",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:mixed-cyrillic-zw",
+  "difficulty": "advanced"
+}

@@ -100,11 +100,11 @@ export const OFFICE_OLE_PATTERNS: RegexPattern[] = [
 // ============================================================================
 
 const ALL_OFFICE_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: string }[] = [
-  { patterns: DOCX_PATTERNS, engine: 'TPI', source: 'TPI-S11' },
-  { patterns: XLSX_PATTERNS, engine: 'TPI', source: 'TPI-S11' },
-  { patterns: PPTX_PATTERNS, engine: 'TPI', source: 'TPI-S11' },
-  { patterns: OFFICE_MACRO_PATTERNS, engine: 'TPI', source: 'TPI-S11' },
-  { patterns: OFFICE_OLE_PATTERNS, engine: 'TPI', source: 'TPI-S11' },
+  { patterns: DOCX_PATTERNS, engine: 'document-office', source: 'TPI-S11' },
+  { patterns: XLSX_PATTERNS, engine: 'document-office', source: 'TPI-S11' },
+  { patterns: PPTX_PATTERNS, engine: 'document-office', source: 'TPI-S11' },
+  { patterns: OFFICE_MACRO_PATTERNS, engine: 'document-office', source: 'TPI-S11' },
+  { patterns: OFFICE_OLE_PATTERNS, engine: 'document-office', source: 'TPI-S11' },
 ];
 
 // ============================================================================
@@ -125,7 +125,7 @@ const documentOfficeModule: ScannerModule = {
     if (text.length > MAX_INPUT_LENGTH) {
       return [{ category: 'OFFICE_DOS_PROTECTION', severity: SEVERITY.WARNING,
         description: `Input too large for Office document scanning (${text.length} bytes)`,
-        match: `length=${text.length}`, source: 'TPI-S11', engine: 'TPI',
+        match: `length=${text.length}`, source: 'TPI-S11', engine: 'document-office',
         pattern_name: 'office_dos_size_limit' }];
     }
 

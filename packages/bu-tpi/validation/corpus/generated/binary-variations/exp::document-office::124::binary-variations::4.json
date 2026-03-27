@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::124::binary-variations::4",
+  "base_sample_id": "exp::document-office::124",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -448277842,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"<si><t><!-- hidden content --><script>alert(1)</script></t></si>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "cd8e5403a9c67734e51d69a22b147da12a84f471a5513f4cfbd25339401ea769",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

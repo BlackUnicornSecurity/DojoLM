@@ -11,7 +11,7 @@ import { scannerRegistry } from './registry.js';
 
 const MODULE_NAME = 'deepfake-detector';
 const MODULE_SOURCE = 'S35';
-const ENGINE = 'Deepfake';
+const ENGINE = 'deepfake-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
 

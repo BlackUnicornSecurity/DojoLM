@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { X, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import type { GameMode, AttackMode, MatchConfig, MatchFighter } from '@/lib/arena-types'
 import { GAME_MODE_CONFIGS, DEFAULT_MATCH_CONFIG } from '@/lib/arena-types'
+import { LLMModelProvider } from '@/lib/contexts/LLMModelContext'
 import { BattleModeStep } from './steps/BattleModeStep'
 import { ModelSelectionStep } from './steps/ModelSelectionStep'
 import { AttackModeStep } from './steps/AttackModeStep'
@@ -219,12 +220,14 @@ export function MatchCreationWizard({ open, onClose, onSubmit }: MatchCreationWi
             />
           )}
           {step === 1 && (
-            <ModelSelectionStep
-              fighters={formData.fighters}
-              temperature={formData.temperature}
-              maxTokens={formData.maxTokens}
-              onUpdate={updateFormData}
-            />
+            <LLMModelProvider>
+              <ModelSelectionStep
+                fighters={formData.fighters}
+                temperature={formData.temperature}
+                maxTokens={formData.maxTokens}
+                onUpdate={updateFormData}
+              />
+            </LLMModelProvider>
           )}
           {step === 2 && (
             <AttackModeStep

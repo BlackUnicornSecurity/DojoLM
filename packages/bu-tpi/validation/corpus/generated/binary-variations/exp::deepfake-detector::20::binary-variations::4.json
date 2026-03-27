@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::20::binary-variations::4",
+  "base_sample_id": "exp::deepfake-detector::20",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -412859200,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"EXIF data shows: Software: Midjourney v5, AI-Generated: true, Model: diffusion-xl\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "99d4ac98740e60433cbecbd8b2631f74e0ff956409324f8faadda72bbfe96d03",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

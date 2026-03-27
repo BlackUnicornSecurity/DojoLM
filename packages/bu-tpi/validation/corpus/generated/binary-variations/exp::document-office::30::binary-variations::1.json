@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::30::binary-variations::1",
+  "base_sample_id": "exp::document-office::30",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1722577643,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"<si><t><!-- hidden content --><script>alert(1)</script></t></si>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "71643b70c640386e739978326751286548b3687bd8f147462df8c7e18a177083",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::144::paraphrase-variations::3",
+  "base_sample_id": "exp::email-webfetch::144",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -1733687445,
+  "content": "Content-Type: multipart/mixed; (as per standard procedure) boundary=\"=_malicious\"\r\n\r\n--=_malicious\r\nContent-Type: text/html\r\n\r\n<script>alert(1)</script>\n",
+  "content_hash": "688ad66b9433a721455d5878990527819e80dc9def6e789ab3f095c5c980429f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

@@ -104,8 +104,8 @@ export { analyzeGaps, formatGapSummary } from './corpus/gap-analysis.js';
 export type { ModuleCoverage, GapAnalysisReport } from './corpus/gap-analysis.js';
 
 // Corpus Expander (K1.5)
-export { expandCorpus, computeExpansionTargets } from './corpus/corpus-expander.js';
-export type { ExpansionStats } from './corpus/corpus-expander.js';
+export { expandCorpus, expandCorpusWithContent, computeExpansionTargets } from './corpus/corpus-expander.js';
+export type { ExpansionStats, ExpandedSampleArtifact } from './corpus/corpus-expander.js';
 
 // Variation Generators (K2.2-K2.11)
 export { encodingVariationGenerator } from './generators/encoding-variations.js';
@@ -118,6 +118,10 @@ export { semanticEvasionVariationGenerator } from './generators/semantic-evasion
 export { multilingualVariationGenerator } from './generators/multilingual-variations.js';
 export { combinationVariationGenerator } from './generators/combination-variations.js';
 export { binaryVariationGenerator } from './generators/binary-variations.js';
+export {
+  DEFAULT_VARIATION_GENERATORS,
+  registerDefaultVariationGenerators,
+} from './generators/default-generators.js';
 
 // Uncertainty Estimator (K3.4)
 export {
@@ -140,11 +144,12 @@ export {
 // Validation Abstraction (K3.5)
 export {
   detectEntryPoint,
+  matchesModuleFinding,
   validateSample,
   toValidationSample,
   generatedToValidationSample,
 } from './runner/validation-abstraction.js';
-export type { ValidationSample } from './runner/validation-abstraction.js';
+export type { ScanFinding, ValidationSample } from './runner/validation-abstraction.js';
 
 // Validation Runner Core (K3.6)
 export { runValidation } from './runner/validation-runner.js';

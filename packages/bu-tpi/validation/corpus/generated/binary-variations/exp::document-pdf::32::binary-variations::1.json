@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::32::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -302330611,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/Type /Action /S /URI /URI (javascript:alert(document.cookie))\\n</field></root>\"\n  }\n}",
+  "content_hash": "2688c1d69a06009a113777cb3505ab03a4089bb4eb4831a066286fd80f2fde63",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::78::binary-variations::6",
+  "base_sample_id": "exp::data-provenance::78",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -579784834,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Training data includes synthetic samples generated from another model output without disclosure.\\n</field></root>\"\n  }\n}",
+  "content_hash": "7bb52dc9b2c12fe102b24bf9b9102927178e51fc513271273038a9f5680da94b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

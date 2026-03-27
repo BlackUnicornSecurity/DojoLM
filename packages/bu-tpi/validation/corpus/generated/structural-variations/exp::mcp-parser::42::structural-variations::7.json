@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::42::structural-variations::7",
+  "base_sample_id": "exp::mcp-parser::42",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 750100277,
+  "content": "{\"method\": \"tools/call\", \"params\":\\\n{\"name\":\\\n\"send_email\", \"arguments\": {\"target\": \"DROP TABLE users\"}}}\n",
+  "content_hash": "0213b41be8edbe3f2853b1837f14c0abb13c2346d30a8f57c58427d929806c9d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

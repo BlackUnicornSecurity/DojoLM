@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::20::structural-variations::6",
+  "base_sample_id": "exp::mcp-parser::20",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1657987831,
+  "content": "message: |\n  {\"method\": \"tools/call\", \"params\": {\"name\": \"system_info\", \"arguments\": {\"target\": \"/etc/passwd\"}}}\n  ",
+  "content_hash": "bb3077a67714fa902cdc64747d954bb7bed0dec801cb33024440b0137ef3f347",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

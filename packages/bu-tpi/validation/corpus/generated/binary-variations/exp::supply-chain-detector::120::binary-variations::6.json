@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::120::binary-variations::6",
+  "base_sample_id": "exp::supply-chain-detector::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1423690729,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"UserComment\": \"from Crypto.Cipher import AES  # actually: pip install crypto (malicious)\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "039e2029790933f7276648282fb4640e63934a75b293ccf0f0475b960a5507f0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

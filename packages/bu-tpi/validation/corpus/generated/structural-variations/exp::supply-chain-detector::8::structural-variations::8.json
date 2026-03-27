@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::8::structural-variations::8",
+  "base_sample_id": "exp::supply-chain-detector::8",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1067897310,
+  "content": "<message>\n<part>{\"dependencies\": {\"event-stream\": \"3.3.6\"}, \"scripts\": {\"postinstall\":</part>\n<part>\"node setup.js\"}}\n</part>\n</message>",
+  "content_hash": "00b3fb7f66b31879971f1503ba42fa9877a837ffde58b97ece896a15bfa1e7fe",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:split-xml",
+  "difficulty": "moderate"
+}

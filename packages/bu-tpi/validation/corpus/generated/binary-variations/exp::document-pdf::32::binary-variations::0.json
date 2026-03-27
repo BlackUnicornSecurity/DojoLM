@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::32::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -302330611,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:category\": \"/Type /Action /S /URI /URI (javascript:alert(document.cookie))\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "273452173ea1977c8adf46868a965287ca69f76058dad9eaf4fa4e34c256fef8",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

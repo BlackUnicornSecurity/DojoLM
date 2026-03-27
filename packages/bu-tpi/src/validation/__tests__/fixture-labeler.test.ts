@@ -14,6 +14,7 @@ import {
   CATEGORY_TO_DETECTION_CATEGORIES,
   detectContentType,
   assignDifficulty,
+  resolveFixtureExpectations,
   labelFixtures,
   buildGroundTruthManifest,
 } from '../corpus/fixture-labeler.js';
@@ -77,6 +78,26 @@ describe('CATEGORY_TO_DETECTION_CATEGORIES', () => {
     for (const cat of Object.keys(CATEGORY_TO_MODULES)) {
       expect(CATEGORY_TO_DETECTION_CATEGORIES[cat], `Missing detection categories for: ${cat}`).toBeDefined();
     }
+  });
+});
+
+describe('resolveFixtureExpectations', () => {
+  it('routes PDF document attacks only to document-pdf with PDF categories', () => {
+    const expectations = resolveFixtureExpectations('document-attacks', 'pdf-form-field-inject.txt');
+    expect(expectations.modules).toEqual(['document-pdf']);
+    expect(expectations.detectionCategories.every(cat => cat.startsWith('PDF_'))).toBe(true);
+  });
+
+  it('routes Office document attacks only to document-office with Office categories', () => {
+    const expectations = resolveFixtureExpectations('document-attacks', 'docx-ole-embed.txt');
+    expect(expectations.modules).toEqual(['document-office']);
+    expect(expectations.detectionCategories.every(cat => cat.startsWith('OFFICE_'))).toBe(true);
+  });
+
+  it('routes XLSX document attacks to document-office', () => {
+    const expectations = resolveFixtureExpectations('document-attacks', 'xlsx-formula-injection.txt');
+    expect(expectations.modules).toEqual(['document-office']);
+    expect(expectations.detectionCategories.every(cat => cat.startsWith('OFFICE_'))).toBe(true);
   });
 });
 

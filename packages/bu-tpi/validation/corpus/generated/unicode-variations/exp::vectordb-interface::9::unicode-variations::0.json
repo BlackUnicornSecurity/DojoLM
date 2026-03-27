@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::9::unicode-variations::0",
+  "base_sample_id": "exp::vectordb-interface::9",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1833854290,
+  "content": "рinecоne.Index(\"sеnsitive-data\").query(vеctor=[0]*1536, top_k=10000)\n",
+  "content_hash": "6f74f011a0ddf65c92c1296611c1a445963f0bfc46e5174a618d04918079a1cb",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

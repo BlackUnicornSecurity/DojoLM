@@ -1,0 +1,3788 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::style-injection.html",
+    "source_file": "fixtures/web/style-injection.html",
+    "content_hash": "576bfa02f2c5a17d1468d612958b4b60f6ff9d68e6e1aa397a35d6318f8cf519",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::multilingual-romanized.txt",
+    "source_file": "fixtures/web/multilingual-romanized.txt",
+    "content_hash": "49428047dd5e0dc2fd53fc4d74a401cb8381e3e847616cb4e56eb094d4629978",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::34",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::34.txt",
+    "content_hash": "357c29a1422da8b12d74ac569b876a5fdd84ce120797e2af1c384c88118fb57e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::svg-in-html.html",
+    "source_file": "fixtures/web/svg-in-html.html",
+    "content_hash": "a4316a914a62a10cb0759e574ce25e57adf06bcc2db1696db8e682bfa2972b4c",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::16",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::16.txt",
+    "content_hash": "212cb39d408cc195570208cf9ea63202833f1a9871c289e1ec31d32428f48390",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-text-html.txt",
+    "source_file": "fixtures/web/ctype-text-html.txt",
+    "content_hash": "ff2a21ceb4baaa34232edee907194b9f88ea1046250c87015c993e02eacc1792",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::fetch-service-worker.html",
+    "source_file": "fixtures/web/fetch-service-worker.html",
+    "content_hash": "d2f4652eec3e78bb3bc53932a83e80fcfb4a9c758189331acdcd6370e6158d87",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::54",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::54.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::base-href-override.html",
+    "source_file": "fixtures/web/base-href-override.html",
+    "content_hash": "77c54d9b85089171b4b7501280d9f20920736868a21a12f46818908d7dfb4894",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: System override attempt"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-response-header-inject.txt",
+    "source_file": "fixtures/web/http-response-header-inject.txt",
+    "content_hash": "2746631f723dfe14959abb8a7453099fb2d8f5d434d5e86164b0bc8c3e7201ce",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::22",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::22.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::fetch-css-exfil.html",
+    "source_file": "fixtures/web/fetch-css-exfil.html",
+    "content_hash": "51f07e8ba524c4ee47b952206dc5c8d4ae57ed8d8cbe408f85388071e0e73192",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: exfiltration"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::18",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::18.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::fetch-mutation-xss.html",
+    "source_file": "fixtures/web/fetch-mutation-xss.html",
+    "content_hash": "38b141d5765319c8508f0d0804274a8af18039eff638d58b85fee8c5f5e4995f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::redirect-loop-dos.txt",
+    "source_file": "fixtures/web/redirect-loop-dos.txt",
+    "content_hash": "d5a27db6489f09e67960ab905614715ab4f0599b3ad37b5041d5f921fae64d23",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::fetch-shadow-dom-inject.html",
+    "source_file": "fixtures/web/fetch-shadow-dom-inject.html",
+    "content_hash": "56cfb70470560a13f87d7aa7478a00677ae5af195f710225855d24795878e5b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-charset-mismatch.txt",
+    "source_file": "fixtures/web/ctype-charset-mismatch.txt",
+    "content_hash": "5d08e37a6c1037d1b503526d9edc34d624030df69410c7e87b910b9bd3da9c34",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::6",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::6.txt",
+    "content_hash": "ac7548d381c8092a21a5bcc5d9d6af260d3d31511e3b9b1d72d8059733c8879f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::hidden-text-injection.html",
+    "source_file": "fixtures/web/hidden-text-injection.html",
+    "content_hash": "f46f84ab54610618b4b971cf88611b4ff910b3f590779524a261c67fb5f6b9f2",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::embed-tag-injection.html",
+    "source_file": "fixtures/web/embed-tag-injection.html",
+    "content_hash": "ea728d6e8aeaec68e0af73412082f7078f487bb67e1151b8115c7e3f2f885cda",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::28",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::28.txt",
+    "content_hash": "c0aff5e9ee0a0dd1ca28364de4122343e7f9a35636431408c462d75f2dbd33d0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-multipart-nested.txt",
+    "source_file": "fixtures/web/ctype-multipart-nested.txt",
+    "content_hash": "c5c245c29e4d2e5fa8bf0da3981a5e354ad4baaee752c8df19cc7434dd3aa4d4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::52",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::52.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::comment-injection.html",
+    "source_file": "fixtures/web/comment-injection.html",
+    "content_hash": "564ca322b4bf1ee2e9d3fafd47ba16f68aad5f7040ffc6024170ea11bb7a7e7b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-host-header-attack.txt",
+    "source_file": "fixtures/web/http-host-header-attack.txt",
+    "content_hash": "1041155e8eac6ac3d39acd48db9e8a6ddcff71e04ad86b4d40ab59f5063d6170",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::cookie-overflow.html",
+    "source_file": "fixtures/web/cookie-overflow.html",
+    "content_hash": "953589b36d8ea09f7ab1afc1efa3ca5aa974a548fa9f0429dcc09d7f872ee645",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Buffer/memory overflow"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::setinterval-attack.html",
+    "source_file": "fixtures/web/setinterval-attack.html",
+    "content_hash": "8fc61df2f386b603852de0c121bf973ced81d400574148fa43be3e100326e906",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::62",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::62.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::fetch-template-inject.html",
+    "source_file": "fixtures/web/fetch-template-inject.html",
+    "content_hash": "524f1a24589294fcd2e17a2e2e3e7328ce476a789e0ca53b75e9b99c45e635b1",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::localStorage-poison.html",
+    "source_file": "fixtures/web/localStorage-poison.html",
+    "content_hash": "3a18add20155dc4594dce9ca4b9312d1505fb8ce67e28e7a5355732bdc171413",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Data poisoning attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::64",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::64.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::14",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::14.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::10",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::10.txt",
+    "content_hash": "212cb39d408cc195570208cf9ea63202833f1a9871c289e1ec31d32428f48390",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-json-html.txt",
+    "source_file": "fixtures/web/ctype-json-html.txt",
+    "content_hash": "c99eac6735856997f8d1c3f076ef1cee98e21114f9017f7cd9de8b9a1d663d62",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::video-poster-attack.html",
+    "source_file": "fixtures/web/video-poster-attack.html",
+    "content_hash": "6875526c0f922bafa72557a3cd606874c04cd529d857800231e8141a60d33ecb",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::2",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::2.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-xml-script.txt",
+    "source_file": "fixtures/web/ctype-xml-script.txt",
+    "content_hash": "5fe0c831060f3671c46ec7af950ff9c55f7bff3aeff714096ef1df2bef993f45",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::onerror-injection.html",
+    "source_file": "fixtures/web/onerror-injection.html",
+    "content_hash": "2ac62a8805687a09ee1b8d8b7dce928ce5570a99dd1276767ad1c963bd46bce1",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::multilingual-fr-de.html",
+    "source_file": "fixtures/web/multilingual-fr-de.html",
+    "content_hash": "4e160155a165f3319966afca613dc8b71d0be3cdd1f6068cb62ac9c16b794c99",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::44",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::44.txt",
+    "content_hash": "ac7548d381c8092a21a5bcc5d9d6af260d3d31511e3b9b1d72d8059733c8879f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::textarea-placeholder.html",
+    "source_file": "fixtures/web/textarea-placeholder.html",
+    "content_hash": "620085945022354ff5470887a7ddebac9e6746a7c89436b926ce40d84570123f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::picture-source-override.html",
+    "source_file": "fixtures/web/picture-source-override.html",
+    "content_hash": "ea14a7c83ad976a349fbab87310a69d13d11c2853e53447a88b631c3e6038386",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: System override attempt"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-pdf-html.txt",
+    "source_file": "fixtures/web/ctype-pdf-html.txt",
+    "content_hash": "f1dc4bd09f733c36863acd3d8bbd498422bded2634c344a21f42b46a4e080303",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::46",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::46.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-multipart-boundary.txt",
+    "source_file": "fixtures/web/http-multipart-boundary.txt",
+    "content_hash": "2d87780e11ec9b12a5f67d6a192f0bb4beecb495377c63474a747c5bfcc1ce8c",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-localhost-bypass.txt",
+    "source_file": "fixtures/web/dns-rebind-localhost-bypass.txt",
+    "content_hash": "3efabb6881aee83040927b1e912f171ca030c1dc71ac7841c000d2ab33d1a0b6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: bypass"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::form-action-attack.html",
+    "source_file": "fixtures/web/form-action-attack.html",
+    "content_hash": "377f1c7254206bbde35cb5a749758b30154958945d7d5a4b1ed0499935b01543",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::36",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::36.txt",
+    "content_hash": "357c29a1422da8b12d74ac569b876a5fdd84ce120797e2af1c384c88118fb57e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::redirect-chain-open.txt",
+    "source_file": "fixtures/web/redirect-chain-open.txt",
+    "content_hash": "e7afde4270f8f80e9b3d99a0d2af9be3418ec51c6f9c33b498006ed1b1490814",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::storage-injection.html",
+    "source_file": "fixtures/web/storage-injection.html",
+    "content_hash": "2f414fdabe3b93d8bf4eb3747177ba6cc6193b5ebb65ba48eead93f62ba42c72",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::onload-injection.html",
+    "source_file": "fixtures/web/onload-injection.html",
+    "content_hash": "aa078d9ea7bf1e5396cbbd9d0becab6237c52bb3ac771585a0643f564305daf6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::multilingual-injection.html",
+    "source_file": "fixtures/web/multilingual-injection.html",
+    "content_hash": "410c592eee0a1907ce59ad534d4d4a946f7d132a63ed50fc968be15efedf43a0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::indexeddb-injection.html",
+    "source_file": "fixtures/web/indexeddb-injection.html",
+    "content_hash": "0bdfe89ae879fee874c86d9a021a603be074065bb60ef12fbf13547567277ca0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-css-injection.txt",
+    "source_file": "fixtures/web/ctype-css-injection.txt",
+    "content_hash": "81bfc5a5c215404cefab204a82e0c72f3dbaf7bb7d04abcaddbe7d2e43e7551a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: injection"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-ipv6.txt",
+    "source_file": "fixtures/web/dns-rebind-ipv6.txt",
+    "content_hash": "c954e3985337563c668f8e87c5074795d21369356a7979da509f358a1ec75d35",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::30",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::30.txt",
+    "content_hash": "bf3c9bab66336bcc1369aac0134239d924e5e445eb1ea6d8a23e30d8550d0342",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::4",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::4.txt",
+    "content_hash": "c0aff5e9ee0a0dd1ca28364de4122343e7f9a35636431408c462d75f2dbd33d0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::cache-override.html",
+    "source_file": "fixtures/web/cache-override.html",
+    "content_hash": "6041bb7dfb8758ea0bc7d0ecd2ff4009c57980decf1fafd4df51c1a7f8b6340a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: System override attempt"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::onclick-injection.html",
+    "source_file": "fixtures/web/onclick-injection.html",
+    "content_hash": "b4685a9f1af25189a1cf0c9622aed5aa0c747df2a5d283f5ad6639d9dcefd712",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::redirect-chain-fragment.txt",
+    "source_file": "fixtures/web/redirect-chain-fragment.txt",
+    "content_hash": "63326ff04dad977f47a4205885d5167665eee52308b78124da36c3f323101028",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::redirect-auth-leak.txt",
+    "source_file": "fixtures/web/redirect-auth-leak.txt",
+    "content_hash": "590e21f28c7a4be14061e54cd46bfc86128684b2daffbda436e0d52f34fa4679",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-time-of-check.txt",
+    "source_file": "fixtures/web/dns-rebind-time-of-check.txt",
+    "content_hash": "240df9c8885d363e71ac9d3aedf910336578a8b7de685de53c8163e08a01204b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::sessionStorage-attack.html",
+    "source_file": "fixtures/web/sessionStorage-attack.html",
+    "content_hash": "b11ceea7b33097bde0526d33b3ec6e4a5c034b0a225cb68f3f8f0b940e470d01",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::audio-source-injection.html",
+    "source_file": "fixtures/web/audio-source-injection.html",
+    "content_hash": "8922283d1585f1b00760de9f796eba8940131a3a973d9eeb6febae821010b6a9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-trace-method.txt",
+    "source_file": "fixtures/web/http-trace-method.txt",
+    "content_hash": "ff181e62d51ab7ace0fe0a0d6fb12c5b20e8c483fbb208c075f60d889942de32",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::multilingual-ja-ko.html",
+    "source_file": "fixtures/web/multilingual-ja-ko.html",
+    "content_hash": "e51b3ea0eefda589bbdd732bc4e9b64414e493a686f75ade8752039a3109c715",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-classic.txt",
+    "source_file": "fixtures/web/dns-rebind-classic.txt",
+    "content_hash": "1402dbbc682388cd944a62ee4af00150d7bdebb3a2d9da494990d8eb6901dfb3",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::button-content-injection.html",
+    "source_file": "fixtures/web/button-content-injection.html",
+    "content_hash": "44f57e4109fb6b67e7dff1275385b2082de86e1371c862f002d960b5ca10eb7a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::serviceworker-injection.html",
+    "source_file": "fixtures/web/serviceworker-injection.html",
+    "content_hash": "c4bc1192ca86282fdfc680db75d7f4161f2b23e458b77fbb9d5dd58841ad25ac",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::12",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::12.txt",
+    "content_hash": "212cb39d408cc195570208cf9ea63202833f1a9871c289e1ec31d32428f48390",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::multilingual-pt-it.html",
+    "source_file": "fixtures/web/multilingual-pt-it.html",
+    "content_hash": "be9ccc55abaff2aa9e922788c74aab46c161c741144e6305dadab261f3298b01",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "INFO",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Generic attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::object-tag-attack.html",
+    "source_file": "fixtures/web/object-tag-attack.html",
+    "content_hash": "e53c28889119e777da6bdd04ae6fcaaf98ded5522eb081a3a3955c5c50f43a67",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-response-split.txt",
+    "source_file": "fixtures/web/http-response-split.txt",
+    "content_hash": "49e5df589a52f8f1eed5b64bbfbf3c48b84c62078bcb01d2cbe40a4764484cb8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::data-attr-injection.html",
+    "source_file": "fixtures/web/data-attr-injection.html",
+    "content_hash": "31eb49bac0f57707472c791c1ff68ff683902c4797e8018ce0b959d0b5977343",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::0",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::0.txt",
+    "content_hash": "bf3c9bab66336bcc1369aac0134239d924e5e445eb1ea6d8a23e30d8550d0342",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::iframe-injection.html",
+    "source_file": "fixtures/web/iframe-injection.html",
+    "content_hash": "459e704035f9d4b15e4f145d57b50fd264fcf61fd8e24ab95e6d5cfdb322923b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-chunked-smuggle.txt",
+    "source_file": "fixtures/web/http-chunked-smuggle.txt",
+    "content_hash": "951381da11aedd0cec81ead7cd973d93614436c87530dc759aed85cbedac5a60",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::ctype-svg-script.txt",
+    "source_file": "fixtures/web/ctype-svg-script.txt",
+    "content_hash": "867ddac3ce4e69d9024c54c30923bfef6437f7d369c89ee34d959737745d2b53",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::26",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::26.txt",
+    "content_hash": "bf3c9bab66336bcc1369aac0134239d924e5e445eb1ea6d8a23e30d8550d0342",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::http-cache-poison.txt",
+    "source_file": "fixtures/web/http-cache-poison.txt",
+    "content_hash": "d72d51ad942fd64b210730d61b4ac3e1f29034689163b990a37a34480a6baeb3",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::40",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::40.txt",
+    "content_hash": "bf3c9bab66336bcc1369aac0134239d924e5e445eb1ea6d8a23e30d8550d0342",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::66",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::66.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-multi-answer.txt",
+    "source_file": "fixtures/web/dns-rebind-multi-answer.txt",
+    "content_hash": "2bfb08402d022cb0354b24685ddf943a2c71a9917858499d555abb1effde7662",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::20",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::20.txt",
+    "content_hash": "815b383fa92255e205e9a002054016149a0a7a053328ca0e4c27a8ef812a9a4b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::redirect-protocol-downgrade.txt",
+    "source_file": "fixtures/web/redirect-protocol-downgrade.txt",
+    "content_hash": "5d50fb4bfae38817cfa9977ff53a2091e176e2f08b7185c7bc6794cdd43065c5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::addeventlistener-attack.html",
+    "source_file": "fixtures/web/addeventlistener-attack.html",
+    "content_hash": "a9e75041240fae60653c0ac5c797fbbabbc3631a5b4ab961399553a06843e06d",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Direct attack vector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::48",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::48.txt",
+    "content_hash": "723747f7e3e437006b81416111856b94fcf93c162ec29f91fc1bf1d45edbb1ce",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::24",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::24.txt",
+    "content_hash": "e6ec229d872dc10e0e51ce6bcf5ed72922dc3b1f189a1aac4bdeb791a194e888",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::web::dns-rebind-subdomain.txt",
+    "source_file": "fixtures/web/dns-rebind-subdomain.txt",
+    "content_hash": "d89a944ea847e53dd03220abeafce5ff2b4469a6bd47f8094b3795665ec8c897",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector",
+      "xxe-protopollution",
+      "core-patterns"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP",
+      "XXE_INJECTION",
+      "PROTO_POLLUTION"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.179Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::56",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::56.txt",
+    "content_hash": "357c29a1422da8b12d74ac569b876a5fdd84ce120797e2af1c384c88118fb57e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_CLOUD_METADATA",
+      "SSRF_INTERNAL_IP"
+    ],
+    "difficulty": "trivial",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::53",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::53.txt",
+    "content_hash": "ecbdd0b5a20bcb9302d8937983986b804771953eb33231e03a94b94a4e9c74ea",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::35",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::35.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::47",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::47.txt",
+    "content_hash": "4f70d66b22379e6c27d1f175737f572b20d4cbaa1a69df573699cdef2ae62c3e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::41",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::41.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::51",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::51.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::25",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::25.txt",
+    "content_hash": "61a7e6cb7035a95c031c7e95b0c3e08677eb37810d0c36743aed91982880b304",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::31",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::31.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::19",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::19.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::17",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::17.txt",
+    "content_hash": "ecbdd0b5a20bcb9302d8937983986b804771953eb33231e03a94b94a4e9c74ea",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::63",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::63.txt",
+    "content_hash": "f6ddaf52df555189e7f8d2a3919589acc84d096187adf0f08a66870ea8c6fece",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::55",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::55.txt",
+    "content_hash": "4f70d66b22379e6c27d1f175737f572b20d4cbaa1a69df573699cdef2ae62c3e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::23",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::23.txt",
+    "content_hash": "05d9816d9f0a0fb15e4f95b00bad10635b7327bdc4e4766d514cfa34b6d533cf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::5",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::5.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::29",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::29.txt",
+    "content_hash": "05d9816d9f0a0fb15e4f95b00bad10635b7327bdc4e4766d514cfa34b6d533cf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::49",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::49.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::9",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::9.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::27",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::27.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::37",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::37.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::65",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::65.txt",
+    "content_hash": "61a7e6cb7035a95c031c7e95b0c3e08677eb37810d0c36743aed91982880b304",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::11",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::11.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::59",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::59.txt",
+    "content_hash": "61a7e6cb7035a95c031c7e95b0c3e08677eb37810d0c36743aed91982880b304",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::43",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::43.txt",
+    "content_hash": "77a0d5ef15f979d4395abd68dc4091a6ab006ecfd8ae770045f84c3fb7b0570a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::61",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::61.txt",
+    "content_hash": "21466a55c40fd13b5aca6cebdc1bc04dcf2dfc5854915e6f7a346586c4ce6ebf",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::ssrf-detector::3",
+    "source_file": "validation/corpus/ground-truth/text/ssrf-detector/exp::ssrf-detector::3.txt",
+    "content_hash": "4f70d66b22379e6c27d1f175737f572b20d4cbaa1a69df573699cdef2ae62c3e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "ssrf-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "SSRF_DNS_REBINDING",
+      "SSRF_PROTOCOL_SMUGGLING"
+    ],
+    "difficulty": "advanced",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-27T00:36:02.608Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 1 for module ssrf-detector"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::120::structural-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::120",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1423690729,
+  "content": "<![CDATA[from Crypto.Cipher import AES  # actually: pip install crypto (malicious)\n]]>",
+  "content_hash": "5c1ada56b9a3097ef772bea30ba5a7ef9512c3321eb05bfb9bcf1f12b1ee32c0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:cdata",
+  "difficulty": "moderate"
+}

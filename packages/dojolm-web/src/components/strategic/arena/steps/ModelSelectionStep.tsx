@@ -30,7 +30,7 @@ const FIGHTER_SLOTS: { role: FighterRole; label: string; icon: typeof Swords; co
 // ===========================================================================
 
 export function ModelSelectionStep({ fighters, temperature, maxTokens, onUpdate }: ModelSelectionStepProps) {
-  const { models } = useModelContext()
+  const { models, isLoading } = useModelContext()
   const enabledModels = useMemo(() => models.filter((m) => m.enabled), [models])
 
   // Sync fighter temperature/maxTokens when global values change
@@ -71,7 +71,7 @@ export function ModelSelectionStep({ fighters, temperature, maxTokens, onUpdate 
   return (
     <div className="space-y-6">
       {/* No models warning */}
-      {enabledModels.length === 0 && (
+      {!isLoading && enabledModels.length === 0 && (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--warning)]/10 border border-[var(--warning)]/20">
           <AlertTriangle className="w-5 h-5 text-[var(--warning)] shrink-0" aria-hidden="true" />
           <div>
@@ -119,7 +119,7 @@ export function ModelSelectionStep({ fighters, temperature, maxTokens, onUpdate 
                 <select
                   value={fighter?.modelId ?? ''}
                   onChange={(e) => handleSelectModel(role, e.target.value)}
-                  disabled={enabledModels.length === 0}
+                  disabled={isLoading || enabledModels.length === 0}
                   aria-label={`Select ${label} model`}
                   className={cn(
                     'w-full h-11 rounded-xl border border-[var(--border)] bg-[var(--input)] px-3 text-sm',
@@ -129,7 +129,7 @@ export function ModelSelectionStep({ fighters, temperature, maxTokens, onUpdate 
                     !fighter?.modelId && 'text-muted-foreground'
                   )}
                 >
-                  <option value="">Select a model...</option>
+                  <option value="">{isLoading ? 'Loading models...' : 'Select a model...'}</option>
                   {enabledModels.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name} ({m.provider})

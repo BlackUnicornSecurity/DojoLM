@@ -35,11 +35,17 @@ export const RAG_INJECTION_PATTERNS: RegexPattern[] = [
     re: /(?:you\s+are\s+now\s+(?:a|an|the)\s+\w+|switch\s+(?:to\s+)?role|new\s+persona\s*:)/i,
     desc: 'RAG passage attempts to reassign model role', source: 'S15', weight: 9 },
   { name: 'rag-injection-hidden-html', cat: 'RAG_INJECTION', sev: SEVERITY.CRITICAL,
-    re: /<!--\s*(?:ignore|override|system|instruction)[\s\S]{0,200}?-->/i,
+    re: /<!--[\s\S]{0,200}(?:hidden\s+instruction|output\s+the\s+system\s+prompt|ignore|override|system|instruction|bypass|grant\s+admin)[\s\S]{0,200}?-->/i,
     desc: 'Hidden HTML comment contains injection in RAG passage', source: 'S15', weight: 9 },
   { name: 'rag-injection-disregard', cat: 'RAG_INJECTION', sev: SEVERITY.WARNING,
     re: /disregard\s+(?:the\s+)?(?:retrieved|provided|above)\s+(?:context|documents?|passages?)/i,
     desc: 'RAG passage instructs to disregard retrieved context', source: 'S15', weight: 7 },
+  { name: 'rag-injection-embedding-trust', cat: 'RAG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /embedding\s+similarity[\s\S]{0,80}(?:0\.9\d|1\.0|99%)[\s\S]{0,120}(?:trust\s+this\s+content|most\s+relevant|authoritative)[\s\S]{0,120}(?:bypass|override|grant\s+admin|system\s+prompt|restrictions)/i,
+    desc: 'RAG chunk abuses similarity scoring to frame malicious content as trusted', source: 'S15', weight: 9 },
+  { name: 'rag-injection-authoritative-context', cat: 'RAG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:retrieved\s+(?:context|document|passage)|this\s+document)[\s\S]{0,120}(?:authoritative|trusted|highest-ranked|overrides?\s+all\s+other\s+instructions)[\s\S]{0,160}(?:grant\s+admin\s+access|override|bypass|system\s+prompt)/i,
+    desc: 'Retrieved content falsely claims authority over all other instructions', source: 'S15', weight: 9 },
 ];
 
 export const RAG_RELEVANCE_PATTERNS: RegexPattern[] = [
@@ -77,7 +83,7 @@ export function detectRagBoundaryViolation(text: string): Finding[] {
         findings.push({
           category: 'RAG_BOUNDARY_INJECTION', severity: SEVERITY.CRITICAL,
           description: `RAG boundary violation: injection near "${m[0].trim()}"`,
-          match: window.slice(0, 120).trim(), source: 'S15', engine: 'RAG',
+          match: window.slice(0, 120).trim(), source: 'S15', engine: 'rag-analyzer',
           pattern_name: 'rag-boundary-violation-proximity', weight: 9,
         });
         break;
@@ -109,7 +115,7 @@ const ragAnalyzerModule: ScannerModule = {
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
           findings.push({ category: p.cat, severity: p.sev, description: p.desc,
-            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S15', engine: 'RAG',
+            match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || 'S15', engine: 'rag-analyzer',
             ...(p.weight !== undefined && { weight: p.weight }) });
         }
       }

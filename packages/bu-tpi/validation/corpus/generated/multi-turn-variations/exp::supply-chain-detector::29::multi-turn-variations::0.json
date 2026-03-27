@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::29::multi-turn-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::29",
+  "generator_id": "multi-turn-variations",
+  "generator_version": "1.0.0",
+  "seed": 1496958092,
+  "content": "{\n  \"turns\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"OK so I understand that part. Now,\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"I appreciate your help so far. Quick question:\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{\\\"dependencies\\\": {\\\"event-stream\\\": \\\"3.3.6\\\"}, \\\"scripts\\\": {\\\"postinstall\\\": \\\"node setup.js\\\"}}\\n\"\n    }\n  ]\n}",
+  "content_hash": "9ffbf32503a43519c6d95504fea7194e5d113e2b3c5b480ed913049aba721360",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "multi-turn:context-then-payload",
+  "difficulty": "advanced"
+}

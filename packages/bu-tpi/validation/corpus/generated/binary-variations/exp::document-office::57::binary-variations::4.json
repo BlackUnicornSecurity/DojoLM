@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::57::binary-variations::4",
+  "base_sample_id": "exp::document-office::57",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1050410256,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"Sub AutoOpen()\\n  Shell \\\"cmd.exe /c powershell -ep bypass\\\"\\nEnd Sub\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "f050bdbab0c1c8212ad66dac10600074bcdf945f19cab479df04f9e221c15046",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

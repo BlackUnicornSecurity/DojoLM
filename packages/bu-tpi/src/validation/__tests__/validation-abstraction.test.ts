@@ -9,9 +9,52 @@
 
 // @vitest-environment node
 
-import { describe, it, expect } from 'vitest';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+const mockScan = vi.fn(() => ({
+  verdict: 'ALLOW',
+  findings: [],
+}));
+
+const mockScanSession = vi.fn(() => ({
+  verdict: 'ALLOW',
+  findings: [],
+}));
+
+const mockScanToolOutput = vi.fn(() => ({
+  verdict: 'ALLOW',
+  findings: [],
+}));
+
+const mockScanBinary = vi.fn(async () => ({
+  verdict: 'BLOCK',
+  findings: [
+    {
+      category: 'document-pdf',
+      severity: 'CRITICAL',
+      engine: 'document-pdf',
+      source: 'S10',
+    },
+  ],
+}));
+
+vi.mock('../../scanner.js', () => ({
+  scan: mockScan,
+  scanSession: mockScanSession,
+  scanToolOutput: mockScanToolOutput,
+}));
+
+vi.mock('../../scanner-binary.js', () => ({
+  scanBinary: mockScanBinary,
+}));
+
 import {
   detectEntryPoint,
+  validateSample,
   toValidationSample,
   generatedToValidationSample,
   type ValidationSample,
@@ -74,6 +117,19 @@ function makeGenerated(overrides: Partial<GeneratedSample> = {}): GeneratedSampl
     ...overrides,
   };
 }
+
+let tempDir: string | null = null;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+afterEach(() => {
+  if (tempDir) {
+    rmSync(tempDir, { recursive: true, force: true });
+    tempDir = null;
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Entry Point Detection
@@ -215,5 +271,73 @@ describe('generatedToValidationSample', () => {
 
     expect(result.expected_verdict).toBe('clean');
     expect(result.expected_modules).toEqual([]);
+  });
+});
+
+describe('validateSample', () => {
+  it('uses scanBinary with the on-disk file for file-backed binary corpus samples', async () => {
+    tempDir = mkdtempSync(join(tmpdir(), 'katana-binary-'));
+    const binaryPath = join(tempDir, 'sample.pdf');
+    writeFileSync(binaryPath, Buffer.from('fake-pdf-content'));
+
+    const sample = makeSample({
+      id: 'binary-file-sample',
+      content_type: 'binary',
+      content: `__BINARY_FILE__:${binaryPath}`,
+      expected_modules: ['document-pdf'],
+      expected_categories: ['document-pdf'],
+    });
+
+    const result = await validateSample(sample, 'document-pdf');
+
+    expect(mockScanBinary).toHaveBeenCalledTimes(1);
+    expect(mockScanBinary).toHaveBeenCalledWith(
+      expect.any(Buffer),
+      'sample.pdf',
+    );
+    expect(result.actual_verdict).toBe('malicious');
+    expect(result.correct).toBe(true);
+    expect(result.actual_categories).toEqual(['document-pdf']);
+    expect(result.actual_findings_count).toBe(1);
+  });
+
+  it('credits legacy core-patterns engine aliases except document-office findings', async () => {
+    mockScan.mockReturnValueOnce({
+      verdict: 'BLOCK',
+      findings: [
+        {
+          category: 'CONTEXT_OVERLOAD',
+          severity: 'WARNING',
+          engine: 'TPI',
+          source: 'TPI-11',
+        },
+      ],
+    });
+
+    const result = await validateSample(makeSample(), 'core-patterns');
+
+    expect(result.actual_verdict).toBe('malicious');
+    expect(result.correct).toBe(true);
+    expect(result.actual_findings_count).toBe(1);
+  });
+
+  it('does not credit document-office TPI findings to core-patterns', async () => {
+    mockScan.mockReturnValueOnce({
+      verdict: 'BLOCK',
+      findings: [
+        {
+          category: 'OFFICE_MACRO_THREAT',
+          severity: 'CRITICAL',
+          engine: 'TPI',
+          source: 'TPI-S11',
+        },
+      ],
+    });
+
+    const result = await validateSample(makeSample(), 'core-patterns');
+
+    expect(result.actual_verdict).toBe('clean');
+    expect(result.correct).toBe(false);
+    expect(result.actual_findings_count).toBe(0);
   });
 });

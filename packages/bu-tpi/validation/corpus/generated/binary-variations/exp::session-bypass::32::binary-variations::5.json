@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::32::binary-variations::5",
+  "base_sample_id": "exp::session-bypass::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -245085661,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"session_token=; admin=true; role=superuser\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "3689e70a79841fb29593bd8b5d992004884d9120e5630ffc15a50a8eb7dfe040",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

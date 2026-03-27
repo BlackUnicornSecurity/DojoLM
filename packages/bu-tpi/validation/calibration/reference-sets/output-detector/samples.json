@@ -1,0 +1,581 @@
+{
+  "module_id": "output-detector",
+  "version": "ref-v1-output-detector-5a49e89fd02b",
+  "positive_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::agent-output::agent-handover-attack.md",
+      "source_file": "fixtures/agent-output/agent-handover-attack.md",
+      "content_hash": "09a819478ca1e7967efb71b5960dfd8ec91301a784ea7bd9bc3f70aa6054b164",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "output-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AGENT_OUTPUT_INJECTION",
+        "OUTPUT_EVASION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Direct attack vector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::output::out-xss-script.txt",
+      "source_file": "fixtures/output/out-xss-script.txt",
+      "content_hash": "918e97ae68ec06efcbeee546fe61c3762c02840d32afc4af39aaffc563b48bc2",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector",
+        "core-patterns"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_ENCODING",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::agent-output::streaming-injection.md",
+      "source_file": "fixtures/agent-output/streaming-injection.md",
+      "content_hash": "cfedadae9f9bc9bc4a0c36619fc386da9ad0e6da98e1c35d273225b47671ff9c",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "output-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AGENT_OUTPUT_INJECTION",
+        "OUTPUT_EVASION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Injection attack payload"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::output-detector::35",
+      "source_file": "validation/corpus/ground-truth/text/output-detector/exp::output-detector::35.txt",
+      "content_hash": "64b23c4b9aa898225387e46ddcf016cfd061a5476bb96629997dcf71038db51a",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module output-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::output-detector::10",
+      "source_file": "validation/corpus/ground-truth/text/output-detector/exp::output-detector::10.txt",
+      "content_hash": "4c1ee86598dc2dec862924a06aaff8fec2d9011909b0547ea53ade11922d35bd",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module output-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::agent-output::json-instruction-injection.md",
+      "source_file": "fixtures/agent-output/json-instruction-injection.md",
+      "content_hash": "9ee6e2a918beddfdf2fedb82d5dcae936ef17113e97ced2c1786431c0449c372",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "output-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AGENT_OUTPUT_INJECTION",
+        "OUTPUT_EVASION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: Injection attack payload"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::output::out-chain-sqli-file-read.txt",
+      "source_file": "fixtures/output/out-chain-sqli-file-read.txt",
+      "content_hash": "8aa5bc8a9987a46342177ddf4dc1070fe0dcfcff53b72fbf2c9daf6844b55a40",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector",
+        "core-patterns"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_ENCODING",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::output-detector::57",
+      "source_file": "validation/corpus/ground-truth/text/output-detector/exp::output-detector::57.txt",
+      "content_hash": "4c1ee86598dc2dec862924a06aaff8fec2d9011909b0547ea53ade11922d35bd",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module output-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::output-detector::45",
+      "source_file": "validation/corpus/ground-truth/text/output-detector/exp::output-detector::45.txt",
+      "content_hash": "4c1ee86598dc2dec862924a06aaff8fec2d9011909b0547ea53ade11922d35bd",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "output-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "OUTPUT_EVASION",
+        "OUTPUT_FILTER_BYPASS"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module output-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::agent-output::response-format-override.md",
+      "source_file": "fixtures/agent-output/response-format-override.md",
+      "content_hash": "e148f98b243949e6d85e2a7a360da9dd3229183a174348781f63bf1a4ccc7812",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "core-patterns",
+        "output-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "AGENT_OUTPUT_INJECTION",
+        "OUTPUT_EVASION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: System override attempt"
+    }
+  ],
+  "negative_samples": [
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::clean-dos-monitoring.txt",
+      "source_file": "fixtures/dos/clean-dos-monitoring.txt",
+      "content_hash": "9aa491791a0ce9a0e5789c6b16d9dffc3ca8168d928fffd9a67366764b073f63",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::model-theft::mt-prob-entropy.txt",
+      "source_file": "fixtures/model-theft/mt-prob-entropy.txt",
+      "content_hash": "d75d674948ab629b11cfca667f81fce9800c8ffd985c3408d2ba590eecb0da11",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::malformed::socket-file.txt",
+      "source_file": "fixtures/malformed/socket-file.txt",
+      "content_hash": "45cc3336577f7efa73438f8530aa0974bf62d42ad2b0078d8adad67a665f837f",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::22",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::22.txt",
+      "content_hash": "e71f9d5b59a11c73b7bacb1d38ecc3ba542597c41524b880f456b2048983b9cc",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 22"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::bias::bf-09-language-documentation.txt",
+      "source_file": "fixtures/bias/bf-09-language-documentation.txt",
+      "content_hash": "ae85291cf7fdfeed2eb629f416f7d5a162203c628e1b9609dfa94c52738107c9",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::84",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::84.txt",
+      "content_hash": "9bbd222a5e7b807eda0c998c4869d89b93f71484ccf7b53c516f187cecc9aca3",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 84"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::vec::clean-vec-delete.txt",
+      "source_file": "fixtures/vec/clean-vec-delete.txt",
+      "content_hash": "85df751540d0ca852958b32ede99863dadade86373adff36ab789ce00e63210b",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.179Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::327",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::327.txt",
+      "content_hash": "5ff2c150b592e78b5eebf4ed43f1949385866b45f1c6e37371c5e6da132328d0",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 327"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::932",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::932.txt",
+      "content_hash": "f9f92ad77eb42a5d4dbd1de664e429217f058389e98284c35e7a467bd962bb41",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 932"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::256",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::256.txt",
+      "content_hash": "9d1225ef7c508d6fe21019bbdc243cc170212f65a9b1d2fbb2d96b742114820d",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-27T00:36:02.608Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 256"
+    }
+  ]
+}
