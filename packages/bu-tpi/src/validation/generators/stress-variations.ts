@@ -57,8 +57,9 @@ function buildMaliciousStressVariants(
   const encodedRng = makeSageRng(sample.id, 'paraphrased-multi-encoded', rng);
   const paraphrased = instructionParaphrasing(content, encodedRng).mutated;
   const encoded = encodingWrapping(paraphrased, encodedRng).mutated;
+  const layered = encodingWrapMulti(encoded, encodedRng);
   outputs.push({
-    content: clip(`Stress payload: layered encoding chain\n${encodingWrapMulti(encoded, encodedRng).mutated}`),
+    content: clip(`Stress payload: layered encoding chain (${layered.description})\n${layered.mutated}`),
     expected_verdict: 'malicious',
     expected_modules: [...sample.expected_modules],
     variation_type: 'stress:paraphrased-multi-encoded',

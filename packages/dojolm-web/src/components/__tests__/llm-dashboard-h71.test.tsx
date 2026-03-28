@@ -1,14 +1,17 @@
 /**
  * File: llm-dashboard-h71.test.tsx
  * Purpose: Tests for H7.1 — clickable test cases navigate to results
+ * Index:
+ * - Mocks & helpers (line 10)
+ * - Suite: H7.1 (line 120)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent, act, cleanup } from '@testing-library/react'
+import { render, screen, fireEvent, act, waitFor, cleanup } from '@testing-library/react'
 import React from 'react'
 
 // ---------------------------------------------------------------------------
-// Stable mock references (avoid infinite re-render loops in useEffect deps)
+// Stable mock references
 // ---------------------------------------------------------------------------
 
 const MODELS = [{ id: 'm1', name: 'GPT-4', enabled: true, provider: 'openai', modelId: 'gpt-4' }]
@@ -28,7 +31,36 @@ const mockExecCtx = {
 }
 
 // ---------------------------------------------------------------------------
-// Mocks
+// AuthenticatedEventStream mock
+// ---------------------------------------------------------------------------
+
+type ESHandler = (event: { data: string }) => void
+let esHandlers: Record<string, ESHandler[]> = {}
+const mockClose = vi.fn()
+
+function createMockEventStream() {
+  esHandlers = {}
+  return {
+    addEventListener(type: string, listener: ESHandler) {
+      if (!esHandlers[type]) esHandlers[type] = []
+      esHandlers[type].push(listener)
+    },
+    close: mockClose,
+    readyState: 1,
+  }
+}
+
+function emitSSE(ev: string, data: Record<string, unknown>) {
+  for (const fn of esHandlers[ev] ?? []) fn({ data: JSON.stringify(data) })
+}
+
+vi.mock('@/lib/authenticated-event-stream', () => ({
+  connectAuthenticatedEventStream: () => createMockEventStream(),
+  AUTHENTICATED_EVENT_STREAM_CLOSED: 2,
+}))
+
+// ---------------------------------------------------------------------------
+// Other mocks
 // ---------------------------------------------------------------------------
 
 const mockFetch = vi.fn()
@@ -64,27 +96,6 @@ vi.mock('@/components/ui/scroll-area', () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// EventSource mock
-// ---------------------------------------------------------------------------
-
-type ESHandler = (e: { data: string }) => void
-let esHandlers: Record<string, ESHandler[]> = {}
-
-class MockEventSource {
-  close = vi.fn()
-  readyState = 1
-  constructor() { esHandlers = {} }
-  addEventListener(ev: string, fn: ESHandler) {
-    if (!esHandlers[ev]) esHandlers[ev] = []
-    esHandlers[ev].push(fn)
-  }
-}
-
-function emitSSE(ev: string, data: Record<string, unknown>) {
-  for (const fn of esHandlers[ev] ?? []) fn({ data: JSON.stringify(data) })
-}
-
-// ---------------------------------------------------------------------------
 // Component under test
 // ---------------------------------------------------------------------------
 
@@ -107,11 +118,9 @@ describe('H7.1 — clickable running tests navigate to results', () => {
   let navSpy: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
-    vi.useFakeTimers()
     vi.clearAllMocks()
     navSpy = vi.fn()
     esHandlers = {}
-    vi.stubGlobal('EventSource', MockEventSource)
 
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('/test-cases')) {
@@ -128,27 +137,38 @@ describe('H7.1 — clickable running tests navigate to results', () => {
 
   afterEach(() => {
     cleanup()
-    vi.useRealTimers()
-    vi.unstubAllGlobals()
   })
 
   it('does not show View Results when no batch is complete', async () => {
     await act(async () => { render(<TestExecution onNavigateToResults={navSpy} />) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+
+    await waitFor(() => {
+      expect(screen.getByText('Injection Test')).toBeTruthy()
+    })
+
     expect(screen.queryByTestId('view-results-btn')).toBeNull()
   })
 
   it('shows View Results after batch completes, fires callback on click', async () => {
     await act(async () => { render(<TestExecution onNavigateToResults={navSpy} />) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+
+    await waitFor(() => {
+      expect(screen.getByText('Injection Test')).toBeTruthy()
+    })
 
     // select all + run
     fireEvent.click(screen.getByText('All'))
-    await act(async () => { fireEvent.click(screen.getByText(/Run Tests/)) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Run Tests/))
+    })
+
+    // Wait for SSE handlers to be registered (executeBatch → connectSSE)
+    await waitFor(() => {
+      expect(esHandlers['batch_complete']).toBeDefined()
+    })
 
     // SSE batch_complete
-    act(() => {
+    await act(async () => {
       emitSSE('batch_complete', {
         completedTests: 2, totalTests: 2, failedTests: 0,
         avgResilienceScore: 85, status: 'completed',
@@ -163,16 +183,24 @@ describe('H7.1 — clickable running tests navigate to results', () => {
 
   it('test case names become clickable buttons after batch completes', async () => {
     await act(async () => { render(<TestExecution onNavigateToResults={navSpy} />) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+
+    await waitFor(() => {
+      expect(screen.getByText('Injection Test')).toBeTruthy()
+    })
 
     // before run — labels
     expect(screen.getByText('Injection Test').tagName).toBe('LABEL')
 
     fireEvent.click(screen.getByText('All'))
-    await act(async () => { fireEvent.click(screen.getByText(/Run Tests/)) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Run Tests/))
+    })
 
-    act(() => {
+    await waitFor(() => {
+      expect(esHandlers['batch_complete']).toBeDefined()
+    })
+
+    await act(async () => {
       emitSSE('batch_complete', {
         completedTests: 2, totalTests: 2, failedTests: 1,
         avgResilienceScore: 72, status: 'completed',
@@ -190,13 +218,21 @@ describe('H7.1 — clickable running tests navigate to results', () => {
 
   it('no View Results or clickable names when onNavigateToResults is undefined', async () => {
     await act(async () => { render(<TestExecution />) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+
+    await waitFor(() => {
+      expect(screen.getByText('Injection Test')).toBeTruthy()
+    })
 
     fireEvent.click(screen.getByText('All'))
-    await act(async () => { fireEvent.click(screen.getByText(/Run Tests/)) })
-    await act(async () => { vi.advanceTimersByTime(0) })
+    await act(async () => {
+      fireEvent.click(screen.getByText(/Run Tests/))
+    })
 
-    act(() => {
+    await waitFor(() => {
+      expect(esHandlers['batch_complete']).toBeDefined()
+    })
+
+    await act(async () => {
       emitSSE('batch_complete', {
         completedTests: 2, totalTests: 2, failedTests: 0,
         avgResilienceScore: 90, status: 'completed',

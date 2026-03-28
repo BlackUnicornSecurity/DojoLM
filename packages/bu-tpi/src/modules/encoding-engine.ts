@@ -390,6 +390,43 @@ function decodeBinaryGroups(text: string): string | null {
   }
 }
 
+function decodeUnicodeEscapes(text: string): string {
+  return text.replace(/\\u([0-9A-Fa-f]{4})/g, (_, hex) => String.fromCharCode(Number.parseInt(hex, 16)));
+}
+
+function decodeEmbeddedUrlUnicodePayloads(text: string): Array<{ decoded: string; depth: number }> {
+  const results: Array<{ decoded: string; depth: number }> = [];
+  const matches = text.match(/(?:%25(?:5[Cc])u[0-9A-Fa-f]{4}){6,}/g) ?? [];
+
+  for (const match of matches) {
+    let current = match;
+
+    for (let depth = 1; depth <= 3; depth += 1) {
+      if (!/%[0-9A-Fa-f]{2}/.test(current)) {
+        break;
+      }
+
+      try {
+        const decodedUrl = decodeURIComponent(current);
+        if (decodedUrl === current) {
+          break;
+        }
+        current = decodedUrl;
+      } catch {
+        break;
+      }
+
+      const unicodeDecoded = decodeUnicodeEscapes(current);
+      if (unicodeDecoded !== current && containsDecodedAttackSignal(unicodeDecoded)) {
+        results.push({ decoded: unicodeDecoded, depth });
+        break;
+      }
+    }
+  }
+
+  return results;
+}
+
 function decodeUpsideDown(text: string): string | null {
   const candidates = text.split(/\r?\n/).filter((line) =>
     [...line].filter((char) => char in UPSIDE_DOWN_MAP).length >= 5,
@@ -472,6 +509,19 @@ export function detectObfuscatedSemanticPayloads(text: string): Finding[] {
       });
       break;
     }
+  }
+
+  for (const layer of decodeEmbeddedUrlUnicodePayloads(text)) {
+    findings.push({
+      category: 'ENCODING_MULTILAYER',
+      severity: SEVERITY.CRITICAL,
+      description: `Embedded URL/unicode payload decodes through ${layer.depth} URL layers into a malicious instruction sequence`,
+      match: layer.decoded.slice(0, 120),
+      source: 'S19',
+      engine: 'encoding-engine',
+      pattern_name: 'embedded_url_unicode_multilayer',
+      weight: 10,
+    });
   }
 
   const binaryDecoded = decodeBinaryGroups(text);

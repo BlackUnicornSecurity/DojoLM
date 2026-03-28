@@ -1,0 +1,50 @@
+# DojoLM — Voyager Production Deployment
+# Deploy to: /opt/dojolm/docker-compose.yml
+# Target: Voyager (192.168.70.120)
+# Caddy: dojo.bucc.internal -> localhost:3001
+
+services:
+  dojolm-web:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: dojolm-web
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:42001"
+    environment:
+      NODE_ENV: production
+      PORT: "42001"
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_API_URL: "https://dojo.bucc.internal"
+      NEXT_PUBLIC_APP_URL: "https://dojo.bucc.internal"
+      NEXT_PUBLIC_MAX_TEXT_LENGTH: "10000"
+      NEXT_PUBLIC_ENABLE_ANALYTICS: "false"
+      NEXT_PUBLIC_ENABLE_ERROR_REPORTING: "false"
+      NODA_API_KEY: "${NODA_API_KEY}"
+      TPI_DB_ENCRYPTION_KEY: "${TPI_DB_ENCRYPTION_KEY}"
+      TPI_STORAGE_BACKEND: "${TPI_STORAGE_BACKEND:-db}"
+      TPI_ADMIN_USERNAME: "${TPI_ADMIN_USERNAME:-admin}"
+      TPI_ADMIN_PASSWORD: "${TPI_ADMIN_PASSWORD}"
+      TPI_SESSION_TTL_HOURS: "${TPI_SESSION_TTL_HOURS:-24}"
+      TPI_CORS_ORIGINS: "${TPI_CORS_ORIGINS:-https://dojo.bucc.internal}"
+      GUARD_CONFIG_SECRET: "${GUARD_CONFIG_SECRET}"
+    volumes:
+      - dojolm_data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:42001/api/stats >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  dojolm_data:
+    driver: local

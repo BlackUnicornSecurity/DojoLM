@@ -124,7 +124,7 @@ describe('BAISS-031: Dual-Use & Safety Assessment Evidence', () => {
 describe('BAISS-038: Privacy by Design Evidence', () => {
   it('T-B038-01: pii-detector detects SSN, email, and phone in text', () => {
     const input =
-      'Patient record: SSN 123-45-6789, email: john.doe@example.com, phone: (555) 123-4567';
+      'Patient record: SSN 123-45-6789, email: john.doe@hospital.org, phone: (212) 555-0198';
     const normalized = input.toLowerCase();
 
     const findings = piiDetectorModule.scan(input, normalized);

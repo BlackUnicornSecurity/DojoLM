@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::103::boundary-variations::0",
+  "base_sample_id": "exp::vectordb-interface::103",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1581936643,
+  "content": "# Audit Workbook\n\nAll examples in this carrier document are intended to remain within ordinary documentation boundaries and should be treated as descriptive only.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\n\n## Imported external material\n\nThe next entry is an untrusted capture preserved verbatim for review.\n\n```log\n\n2026-03-28T09:14:08Z INFO request accepted\n\n2026-03-28T09:14:09Z INFO downstream notes attached\n\n2026-03-28T09:14:10Z WARN untrusted_payload=\"{\\\"filter\\\": {\\\"$where\\\": \\\"this.role == 'admin'\\\"}}\\n\"\n\n2026-03-28T09:14:11Z INFO operator commentary resumed\n\n```\n\nAll examples in this carrier document are intended to remain within ordinary documentation boundaries and should be treated as descriptive only.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.",
+  "content_hash": "3e7bab943223e7a03da0631554fcd8e12252a97c66accb0caf37945a9f07523e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:buried-audit-log",
+  "difficulty": "evasive"
+}

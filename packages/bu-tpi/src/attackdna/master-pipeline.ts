@@ -137,7 +137,7 @@ export function deduplicateEntries(
   newEntries: MasterThreatEntry[],
   existingEntries?: MasterThreatEntry[]
 ): MasterThreatEntry[] {
-  const dedup = createDeduplicator(0); // No time window for dedup (permanent)
+  const dedup = createDeduplicator(Infinity); // Permanent dedup — entries never expire
 
   // Seed dedup with existing entries
   if (existingEntries) {

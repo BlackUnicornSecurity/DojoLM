@@ -7,6 +7,7 @@
  */
 
 import { binaryVariationGenerator } from './binary-variations.js';
+import { boundaryVariationGenerator } from './boundary-variations.js';
 import { combinationVariationGenerator } from './combination-variations.js';
 import { encodingVariationGenerator } from './encoding-variations.js';
 import {
@@ -35,6 +36,7 @@ export const DEFAULT_VARIATION_GENERATORS: readonly VariationGenerator[] = [
   combinationVariationGenerator,
   binaryVariationGenerator,
   stressVariationGenerator,
+  boundaryVariationGenerator,
 ] as const;
 
 export function registerDefaultVariationGenerators(

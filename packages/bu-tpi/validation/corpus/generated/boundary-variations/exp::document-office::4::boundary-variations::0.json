@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::4::boundary-variations::0",
+  "base_sample_id": "exp::document-office::4",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": -981923701,
+  "content": "# Audit Workbook\n\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\n\n## Imported external material\n\nThe next entry is an untrusted capture preserved verbatim for review.\n\n```log\n\n2026-03-28T09:14:08Z INFO request accepted\n\n2026-03-28T09:14:09Z INFO downstream notes attached\n\n2026-03-28T09:14:10Z WARN untrusted_payload=\"<mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n\"\n\n2026-03-28T09:14:11Z INFO operator commentary resumed\n\n```\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.",
+  "content_hash": "2ce3b5af0ba334ad73a10a65b1dea67d8ec0491f60b11f7b0aef6d213ad9e9fb",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:buried-audit-log",
+  "difficulty": "evasive"
+}

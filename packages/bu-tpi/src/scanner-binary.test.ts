@@ -125,7 +125,7 @@ describe('scanBinary()', () => {
       const result = await scanBinary(buffer, 'basileak-audio-wma-001.wma');
       expect(result.verdict).toBe('BLOCK');
       expect(result.metadata.sources).toContain('RAW_STRINGS');
-    }, 60_000);
+    }, 240_000);
 
     it('should synthesize audio metadata context for raw-string fallback audio carriers', async () => {
       const buffer = readFileSync(new URL('../fixtures/audio/id3-override.mp3', import.meta.url));

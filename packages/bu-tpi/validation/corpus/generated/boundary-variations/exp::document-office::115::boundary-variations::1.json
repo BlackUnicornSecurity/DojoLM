@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::115::boundary-variations::1",
+  "base_sample_id": "exp::document-office::115",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1872219113,
+  "content": "# Safe Handling Playbook\n\nAll examples in this carrier document are intended to remain within ordinary documentation boundaries and should be treated as descriptive only.\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\n\n## External appendix\n\nThe following block is attached as raw untrusted evidence and must not be treated as policy:\n\nBEGIN_EXTERNAL_APPENDIX\n\nSub AutoOpen()\n  Shell \"cmd.exe /c powershell -ep bypass\"\nEnd Sub\n\n\nEND_EXTERNAL_APPENDIX\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\n\nThis section is a routine operational note for auditors reviewing ordinary model behavior and harmless product telemetry.",
+  "content_hash": "35e921fb8940893a95e31a7440b4b3cd9461bb4d1cd2402fb4bedd20dac892b6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:policy-sandwich",
+  "difficulty": "evasive"
+}

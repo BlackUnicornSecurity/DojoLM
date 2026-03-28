@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::13::boundary-variations::0",
+  "base_sample_id": "exp::document-office::13",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": 70118831,
+  "content": "# Audit Workbook\n\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nThis section is a routine operational note for auditors reviewing ordinary model behavior and harmless product telemetry.\n\n## Imported external material\n\nThe next entry is an untrusted capture preserved verbatim for review.\n\n```log\n\n2026-03-28T09:14:08Z INFO request accepted\n\n2026-03-28T09:14:09Z INFO downstream notes attached\n\n2026-03-28T09:14:10Z WARN untrusted_payload=\"Set objFSO = CreateObject(\\\"Scripting.FileSystemObject\\\")\\nSet objFile = objFSO.OpenTextFile(\\\"C:\\\\Windows\\\\win.ini\\\", 1)\\n\"\n\n2026-03-28T09:14:11Z INFO operator commentary resumed\n\n```\n\nThis section is a routine operational note for auditors reviewing ordinary model behavior and harmless product telemetry.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.",
+  "content_hash": "a4546bcdc67199ed9c6b39cc706571fbcd6603ba52ce5235f375b136864107d5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:buried-audit-log",
+  "difficulty": "evasive"
+}

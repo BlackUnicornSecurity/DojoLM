@@ -209,6 +209,40 @@ export function detectSupplyChainRisk(text: string): Finding[] {
     // Non-JSON supply-chain payloads are handled by regex rules above.
   }
 
+  // Detect suspicious package narrative indicators
+  const suspiciousIndicators: { pattern: RegExp; name: string; category: string; description: string }[] = [
+    // Version constraint abuse
+    { pattern: /version\s+constraint[^\n]{0,60}(?:>=\s*0\.0\.\d|<\s*999|any\s+version|bypassing\s+lockfile)/i, name: 'sc_version_constraint_abuse', category: 'SC_DEP_CONFUSION', description: 'Version constraint permits any version, bypassing lockfile protection' },
+    // Namespace squatting
+    { pattern: /(?:namespace\s+squat|newly\s+created\s+(?:npm\s+)?org|organization[^\n]{0,60}registered\s+\d+\s+hours?\s+ago)/i, name: 'sc_namespace_squatting', category: 'SC_DEP_CONFUSION', description: 'Namespace squatting targeting private package confusion' },
+    // Missing provenance
+    { pattern: /(?:no\s+(?:CVE|security\s+advisor|provenance\s+attestation)|missing\s+from\s+(?:npm\s+)?audit\s+database|single\s+maintainer[^\n]{0,60}created\s+same\s+week)/i, name: 'sc_missing_provenance', category: 'SC_DEP_CONFUSION', description: 'Package lacks provenance attestation or security audit records' },
+    // Suspicious version burst
+    { pattern: /(?:version\s+(?:history|churn)|published\s+within\s+\d+\s+minutes|suspicious\s+burst|\d+\s+versions\s+published\s+in\s+the\s+last\s+24\s+hours)/i, name: 'sc_version_burst', category: 'SC_LIFECYCLE_ATTACK', description: 'Suspicious version burst pattern may indicate supply chain compromise' },
+    // Non-standard registry
+    { pattern: /(?:non-standard\s+registry|forked\s+registry|workers\.dev|mirror\s+may\s+serve\s+modified)/i, name: 'sc_nonstandard_registry', category: 'SC_LOCKFILE_MANIPULATION', description: 'Package resolves from non-standard or forked registry' },
+    // Maintainer transfer
+    { pattern: /(?:maintainer\s+transfer|new\s+maintainer[^\n]{0,60}(?:account\s+age|no\s+other\s+packages)|authored\s+by[^\n]{0,40}account\s+age:\s*\d+\s*days?)/i, name: 'sc_maintainer_transfer', category: 'SC_LIFECYCLE_ATTACK', description: 'Suspicious maintainer transfer without deprecation notice' },
+    // Elevated permissions in benign package
+    { pattern: /(?:elevated\s+permissions?|does\s+not\s+justify\s+network\s+access|child_process|arbitrary\s+command\s+execution\s+during\s+installation)/i, name: 'sc_elevated_permissions', category: 'SC_LIFECYCLE_ATTACK', description: 'Package requires elevated permissions beyond its stated functionality' },
+    // Version confusion with version churn
+    { pattern: /(?:version\s+confusion\s+attack|bypassing\s+lockfile\s+protection)/i, name: 'sc_version_confusion', category: 'SC_DEP_CONFUSION', description: 'Version confusion attack pattern detected' },
+    // Account takeover indicators
+    { pattern: /(?:account\s+takeover|compromised?\s+via\s+maintainer)/i, name: 'sc_account_takeover', category: 'SC_LIFECYCLE_ATTACK', description: 'Possible supply chain compromise via maintainer account takeover' },
+  ];
+
+  for (const indicator of suspiciousIndicators) {
+    if (indicator.pattern.test(text)) {
+      findings.push({
+        category: indicator.category, severity: SEVERITY.CRITICAL,
+        description: indicator.description,
+        match: (text.match(indicator.pattern)?.[0] ?? '').slice(0, 100),
+        source: MODULE_SOURCE, engine: ENGINE,
+        pattern_name: indicator.name, weight: 9,
+      });
+    }
+  }
+
   const fixtureFamilies = [
     { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+tamper(?!\s+clean)/i, name: 'sc_tamper_fixture_family', category: 'SC_MODEL_TAMPERING', description: 'Known checksum or signature tampering fixture family marker' },
     { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+source(?!\s+clean)/i, name: 'sc_source_fixture_family', category: 'SC_BUILD_PIPELINE', description: 'Known untrusted-source ingestion fixture family marker' },

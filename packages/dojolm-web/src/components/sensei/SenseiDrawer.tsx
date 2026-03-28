@@ -88,7 +88,7 @@ export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
         data-sensei-toggle
         onClick={toggle}
         className={cn(
-          'fixed bottom-6 right-6 z-50 flex items-center justify-center',
+          'fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 flex items-center justify-center',
           'w-12 h-12 rounded-full shadow-lg',
           'bg-[var(--primary)] text-white',
           'hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2',

@@ -1,0 +1,67 @@
+{
+  "generated_at": "2026-03-28T13:35:50.103Z",
+  "evidence_profile": "development",
+  "ready_for_formal_assessment": false,
+  "preflight_checks": [
+    {
+      "id": "git-hash-captured",
+      "label": "Git revision captured",
+      "status": "pass",
+      "detail": "Revision 6fb15afdc98b766c3dc794227b73d9ba8f26a5a8 captured on branch main."
+    },
+    {
+      "id": "git-worktree-clean",
+      "label": "Git worktree clean before evidence generation",
+      "status": "fail",
+      "detail": "Branch main had uncommitted changes when the evidence run started."
+    },
+    {
+      "id": "custodial-hmac-key",
+      "label": "Custodial HMAC key available",
+      "status": "fail",
+      "detail": "KATANA_HMAC_KEY was unavailable, so the development fallback key would be used."
+    },
+    {
+      "id": "custodial-signing-keys",
+      "label": "Custodial Ed25519 signing keys available",
+      "status": "fail",
+      "detail": "No custodial Ed25519 keypair was supplied, so an ephemeral development keypair would be generated."
+    }
+  ],
+  "runtime_checks": [
+    {
+      "id": "validation-zero-defect",
+      "label": "Validation run satisfied zero-defect rule",
+      "status": "pass",
+      "detail": "Validation report concluded PASS with zero non-conformities."
+    },
+    {
+      "id": "calibration-certificates-pass",
+      "label": "All calibration certificates passed",
+      "status": "pass",
+      "detail": "All 29 calibration certificates reported PASS."
+    },
+    {
+      "id": "document-register-valid",
+      "label": "Controlled document register validated",
+      "status": "pass",
+      "detail": "Controlled document register validation passed."
+    },
+    {
+      "id": "controlled-documents-frozen",
+      "label": "Frozen controlled-document artifacts emitted",
+      "status": "pass",
+      "detail": "Generated 15 frozen document artifacts for 15 registered documents."
+    }
+  ],
+  "key_material": {
+    "hmac_source": "repository-local-development-fallback",
+    "signing_source": "ephemeral-development",
+    "public_key_path": "validation/calibration/certificates/public-key.pem"
+  },
+  "run": {
+    "run_id": "katana-evidence-20260328",
+    "validation_verdict": "PASS",
+    "non_conformity_count": 0
+  }
+}

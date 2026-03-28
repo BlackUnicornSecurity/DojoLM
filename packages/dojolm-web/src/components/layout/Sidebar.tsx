@@ -51,7 +51,7 @@ export function Sidebar() {
         key={item.id}
         onClick={() => setActiveTab(item.id)}
         className={cn(
-          "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg relative w-[calc(100%-16px)]",
+          "group/nav flex items-center gap-3 px-4 py-3 mx-2 rounded-lg relative w-[calc(100%-16px)]",
           "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
           isActive
             ? "nav-item-active"
@@ -81,7 +81,7 @@ export function Sidebar() {
           )}
         >
           <div className="font-medium whitespace-nowrap truncate">{item.label}</div>
-          <div className="text-xs text-[var(--text-tertiary)] truncate">
+          <div className="text-xs text-[var(--text-tertiary)] truncate opacity-0 max-h-0 overflow-hidden group-hover/nav:opacity-100 group-hover/nav:max-h-5 motion-safe:transition-[opacity,max-height] motion-safe:duration-[var(--transition-normal)]">
             {item.description}
           </div>
         </div>

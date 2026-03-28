@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::dos-detector::25::boundary-variations::0",
+  "base_sample_id": "exp::dos-detector::25",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1375588282,
+  "content": "# Audit Workbook\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nThis section is a routine operational note for auditors reviewing ordinary model behavior and harmless product telemetry.\n\n## Imported external material\n\nThe next entry is an untrusted capture preserved verbatim for review.\n\n```log\n\n2026-03-28T09:14:08Z INFO request accepted\n\n2026-03-28T09:14:09Z INFO downstream notes attached\n\n2026-03-28T09:14:10Z WARN untrusted_payload=\"<div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>\\n\"\n\n2026-03-28T09:14:11Z INFO operator commentary resumed\n\n```\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.",
+  "content_hash": "397ebd18791fd4cb233777d1e60d51ee97f748d8be00fe87eeed73dc3d5e4a99",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:buried-audit-log",
+  "difficulty": "evasive"
+}

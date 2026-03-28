@@ -222,87 +222,42 @@ function DashboardContent() {
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
-      {/* Hero header */}
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)]">
-        <section className="rounded-2xl border border-[var(--surface-border-hero)] surface-hero p-5 shadow-[var(--shadow-card)]">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center rounded-full border border-[var(--bu-electric-muted)] bg-[var(--bu-electric-subtle)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--bu-electric)]">
-                Dojo Command Surface
-              </div>
-              <h2 className="mt-4 text-page-title text-[var(--foreground)]">Dashboard</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Track the dojo at a glance, then jump directly into scan, model, and guard workflows without digging through widgets.
+      {/* Hero header — compact command bar */}
+      <section className="rounded-2xl border border-[var(--surface-border-hero)] surface-hero p-4 shadow-[var(--shadow-card)]">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div>
+              <h2 className="text-page-title text-[var(--foreground)]">Dashboard</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {visibleWidgets.length} widgets across {activeSections.length} zones
               </p>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
-                  {visibleWidgets.length} live widgets
-                </span>
-                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
-                  {activeSections.length} active zones
-                </span>
-                <span className="rounded-full border border-[var(--border-subtle)] bg-[rgba(255,255,255,0.03)] px-3 py-1">
-                  Customize per operator
-                </span>
-              </div>
             </div>
-            <Button
-              ref={triggerRef}
-              variant="outline"
-              size="sm"
-              onClick={() => setCustomizerOpen(true)}
-              aria-label="Customize Dashboard"
-              className="shrink-0"
-            >
-              <Settings2 className="w-4 h-4" aria-hidden="true" />
-              Customize Layout
-            </Button>
           </div>
-
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button variant="gradient" onClick={() => setActiveTab('scanner')} aria-label="Scan Text">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="gradient" size="sm" onClick={() => setActiveTab('scanner')} aria-label="Scan Text">
               <Radar className="w-4 h-4" aria-hidden="true" />
               Scan Text
             </Button>
-            <Button variant="outline" onClick={() => setActiveTab('llm')}>
+            <Button variant="outline" size="sm" onClick={() => setActiveTab('llm')}>
               <BrainCircuit className="w-4 h-4" aria-hidden="true" />
-              Review Models
+              Models
             </Button>
-            <Button variant="default" onClick={() => setActiveTab('guard')}>
+            <Button variant="default" size="sm" onClick={() => setActiveTab('guard')}>
               <ShieldHalf className="w-4 h-4" aria-hidden="true" />
-              Open Guard
+              Guard
+            </Button>
+            <Button
+              ref={triggerRef}
+              variant="ghost"
+              size="icon"
+              onClick={() => setCustomizerOpen(true)}
+              aria-label="Customize Dashboard"
+            >
+              <Settings2 className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
-        </section>
-
-        <section className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
-            <p className="text-label">Visible Widgets</p>
-            <p className="mt-3 text-metric-md text-[var(--foreground)]">{visibleWidgets.length}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Curated cards currently surfaced for this dashboard view.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
-            <p className="text-label">Coverage Zones</p>
-            <p className="mt-3 text-metric-md text-[var(--foreground)]">{activeSections.length}/3</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Command, monitoring, and platform lanes stay balanced at a glance.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
-            <p className="text-label">Next Best Move</p>
-            <p className="mt-3 text-sm font-semibold text-[var(--foreground)]">
-              {visibleSet.has('quick-scan') ? 'Quick scan is ready' : 'Promote quick scan'}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {visibleSet.has('quick-scan')
-                ? 'Use the scanner lane for fast verdicts, then drill into telemetry below.'
-                : 'Enable the quick scan widget from Customize to shorten the path to verdict.'}
-            </p>
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       {/* Sectioned Widget Grid — R4-002: track global mount index for stagger */}
       {(() => {

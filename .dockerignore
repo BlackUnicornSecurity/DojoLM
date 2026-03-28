@@ -41,6 +41,23 @@ docs/
 .env*
 !.env.example
 
+# Large binaries / media (excluded from build context)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pptx
+*.pdf
+*.mp4
+*.zip
+*.tar.gz
+
+# Playwright MCP cache
+.playwright-mcp/
+
+# BMAD cybersec (not needed at runtime)
+packages/bmad-cybersec/
+
 # OS
 .DS_Store
 Thumbs.db

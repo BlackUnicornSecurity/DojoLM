@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "report_id": "fbca6edd-0599-47a8-b515-22ee370aacc7",
-  "run_id": "d792677d-ffa4-4399-a04c-08cb3c5ff557",
-  "generated_at": "2026-03-28T00:43:48.922Z",
+  "report_id": "9bb7df6a-ca68-43ec-9523-1d26e4df7d81",
+  "run_id": "c86adad9-8a0e-4db2-95ce-f1f9fc74b741",
+  "generated_at": "2026-03-28T13:35:50.052Z",
   "environment": {
     "schema_version": "1.0.0",
     "os": {
@@ -24,12 +24,12 @@
     "locale": "en-US",
     "timezone": "Europe/Madrid",
     "git": {
-      "hash": "unknown",
-      "dirty": false,
-      "branch": "unknown"
+      "hash": "6fb15afdc98b766c3dc794227b73d9ba8f26a5a8",
+      "dirty": true,
+      "branch": "main"
     },
     "package_version": "1.0.0",
-    "timestamp": "2026-03-28T00:36:25.761Z"
+    "timestamp": "2026-03-28T13:27:49.397Z"
   },
   "corpus_version": "katana-evidence-20260328",
   "tool_version": "1.0.0",
@@ -40,11 +40,11 @@
       "matrix": {
         "schema_version": "1.0.0",
         "module_id": "core-patterns",
-        "tp": 1559,
+        "tp": 1731,
         "tn": 1523,
         "fp": 0,
         "fn": 0,
-        "total": 3082
+        "total": 3254
       },
       "metrics": {
         "schema_version": "1.0.0",
@@ -64,39 +64,39 @@
           "module_id": "core-patterns",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9987545873054141,
+          "wilson_ci_lower": 0.9988203396985534,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9988038050926089,
+          "clopper_pearson_lower": 0.9988669977550944,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.00124541269458589,
+          "expanded_uncertainty": 0.0011796603014465612,
           "coverage_factor": 2,
-          "sample_size": 3082
+          "sample_size": 3254
         },
         {
           "schema_version": "1.0.0",
           "module_id": "core-patterns",
           "metric": "precision",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9975409251819938,
+          "wilson_ci_lower": 0.9977847287034409,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9976366141037869,
+          "clopper_pearson_lower": 0.9978712006831328,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.002459074818006224,
+          "expanded_uncertainty": 0.0022152712965590737,
           "coverage_factor": 2,
-          "sample_size": 1559
+          "sample_size": 1731
         },
         {
           "schema_version": "1.0.0",
           "module_id": "core-patterns",
           "metric": "recall",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9975409251819938,
+          "wilson_ci_lower": 0.9977847287034409,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9976366141037869,
+          "clopper_pearson_lower": 0.9978712006831328,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.002459074818006224,
+          "expanded_uncertainty": 0.0022152712965590737,
           "coverage_factor": 2,
-          "sample_size": 1559
+          "sample_size": 1731
         },
         {
           "schema_version": "1.0.0",
@@ -130,19 +130,19 @@
           "metric": "fnr",
           "point_estimate": 0,
           "wilson_ci_lower": 0,
-          "wilson_ci_upper": 0.00245907481800622,
+          "wilson_ci_upper": 0.0022152712965590347,
           "clopper_pearson_lower": 0,
-          "clopper_pearson_upper": 0.0023633858962130994,
-          "expanded_uncertainty": 0.00245907481800622,
+          "clopper_pearson_upper": 0.002128799316867158,
+          "expanded_uncertainty": 0.0022152712965590347,
           "coverage_factor": 2,
-          "sample_size": 1559
+          "sample_size": 1731
         }
       ],
       "decision": {
         "schema_version": "1.0.0",
         "module_id": "core-patterns",
         "verdict": "PASS",
-        "total_samples": 3082,
+        "total_samples": 3254,
         "false_positives": 0,
         "false_negatives": 0,
         "uncertainty": {
@@ -150,17 +150,17 @@
           "module_id": "core-patterns",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9987545873054141,
+          "wilson_ci_lower": 0.9988203396985534,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9988038050926089,
+          "clopper_pearson_lower": 0.9988669977550944,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.00124541269458589,
+          "expanded_uncertainty": 0.0011796603014465612,
           "coverage_factor": 2,
-          "sample_size": 3082
+          "sample_size": 3254
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-557d259a-f937-4d9c-8ae3-7c0da70ff1cc"
+      "calibration_certificate_id": "cal-a67cc514-138d-421d-ad14-2e3bf6110a05"
     },
     {
       "module_id": "enhanced-pi",
@@ -168,11 +168,11 @@
       "matrix": {
         "schema_version": "1.0.0",
         "module_id": "enhanced-pi",
-        "tp": 784,
+        "tp": 790,
         "tn": 1523,
         "fp": 0,
         "fn": 0,
-        "total": 2307
+        "total": 2313
       },
       "metrics": {
         "schema_version": "1.0.0",
@@ -192,39 +192,39 @@
           "module_id": "enhanced-pi",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9983369064952549,
-          "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9984022835816491,
+          "wilson_ci_lower": 0.9983412134596843,
+          "wilson_ci_upper": 0.9999999999999998,
+          "clopper_pearson_lower": 0.998406424807849,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.001663093504745139,
+          "expanded_uncertainty": 0.0016587865403154822,
           "coverage_factor": 2,
-          "sample_size": 2307
+          "sample_size": 2313
         },
         {
           "schema_version": "1.0.0",
           "module_id": "enhanced-pi",
           "metric": "precision",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9951219373565163,
+          "wilson_ci_lower": 0.9951588065742281,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.995305848743134,
+          "clopper_pearson_lower": 0.9953414173516952,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.004878062643483672,
+          "expanded_uncertainty": 0.004841193425771939,
           "coverage_factor": 2,
-          "sample_size": 784
+          "sample_size": 790
         },
         {
           "schema_version": "1.0.0",
           "module_id": "enhanced-pi",
           "metric": "recall",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9951219373565163,
+          "wilson_ci_lower": 0.9951588065742281,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.995305848743134,
+          "clopper_pearson_lower": 0.9953414173516952,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.004878062643483672,
+          "expanded_uncertainty": 0.004841193425771939,
           "coverage_factor": 2,
-          "sample_size": 784
+          "sample_size": 790
         },
         {
           "schema_version": "1.0.0",
@@ -258,19 +258,19 @@
           "metric": "fnr",
           "point_estimate": 0,
           "wilson_ci_lower": 0,
-          "wilson_ci_upper": 0.004878062643483521,
+          "wilson_ci_upper": 0.004841193425772001,
           "clopper_pearson_lower": 0,
-          "clopper_pearson_upper": 0.004694151256866008,
-          "expanded_uncertainty": 0.004878062643483521,
+          "clopper_pearson_upper": 0.004658582648304765,
+          "expanded_uncertainty": 0.004841193425772001,
           "coverage_factor": 2,
-          "sample_size": 784
+          "sample_size": 790
         }
       ],
       "decision": {
         "schema_version": "1.0.0",
         "module_id": "enhanced-pi",
         "verdict": "PASS",
-        "total_samples": 2307,
+        "total_samples": 2313,
         "false_positives": 0,
         "false_negatives": 0,
         "uncertainty": {
@@ -278,17 +278,17 @@
           "module_id": "enhanced-pi",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9983369064952549,
-          "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.9984022835816491,
+          "wilson_ci_lower": 0.9983412134596843,
+          "wilson_ci_upper": 0.9999999999999998,
+          "clopper_pearson_lower": 0.998406424807849,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.001663093504745139,
+          "expanded_uncertainty": 0.0016587865403154822,
           "coverage_factor": 2,
-          "sample_size": 2307
+          "sample_size": 2313
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-bf4c5362-4466-406e-a13b-94d38333dedc"
+      "calibration_certificate_id": "cal-a3abbc02-3c0d-4e21-b654-ad47972e6736"
     },
     {
       "module_id": "pii-detector",
@@ -416,7 +416,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-38fb8898-1c68-44ea-af4d-fe901c9ee685"
+      "calibration_certificate_id": "cal-a7e9317b-7382-4754-ae13-80c2c83107ea"
     },
     {
       "module_id": "ssrf-detector",
@@ -544,7 +544,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-8af7e8cd-4b67-4e3e-92bb-7ab1f8259b44"
+      "calibration_certificate_id": "cal-a9e4694a-2b2c-4ea4-b612-fd1999e7ae63"
     },
     {
       "module_id": "xxe-protopollution",
@@ -672,7 +672,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-002f7c2b-10f7-4625-8c74-b9aaa65b37d6"
+      "calibration_certificate_id": "cal-5666e022-823c-4b8f-b5b9-5b471bbb40dc"
     },
     {
       "module_id": "env-detector",
@@ -800,7 +800,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-0673fef2-e9e5-41e4-b2b5-6312192b71d9"
+      "calibration_certificate_id": "cal-917b35bd-7609-40af-b42f-d4892d046de5"
     },
     {
       "module_id": "encoding-engine",
@@ -928,7 +928,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-699a7bbf-f37a-4a6e-ad20-43747c48292c"
+      "calibration_certificate_id": "cal-5fff024c-cfeb-41a4-bef3-0889b944bbbe"
     },
     {
       "module_id": "mcp-parser",
@@ -1056,7 +1056,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-45f3148d-3e94-45cf-ac82-cada57c9615e"
+      "calibration_certificate_id": "cal-17a8eecd-1f2c-466e-9c16-b0385ad25291"
     },
     {
       "module_id": "dos-detector",
@@ -1184,7 +1184,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-52f4e683-11ba-4c02-a81b-04b2a1e990ab"
+      "calibration_certificate_id": "cal-612c580f-0a36-4154-bda2-688839f3c6a6"
     },
     {
       "module_id": "token-analyzer",
@@ -1312,7 +1312,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-37dd3592-c8b5-406a-8c7e-4a890fd081d6"
+      "calibration_certificate_id": "cal-066e728d-7645-4d73-be69-98309789c552"
     },
     {
       "module_id": "session-bypass",
@@ -1440,7 +1440,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-99d2ddc2-f8fd-46e4-a44f-4b32ffbd3c76"
+      "calibration_certificate_id": "cal-f7f5fe22-8980-4c92-aa24-53533dc3de17"
     },
     {
       "module_id": "email-webfetch",
@@ -1568,7 +1568,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-acb50809-0ae2-4258-aa31-88ac43359ad1"
+      "calibration_certificate_id": "cal-014949f8-4998-432d-8f40-8978f43a6263"
     },
     {
       "module_id": "vectordb-interface",
@@ -1696,7 +1696,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-c7d8b1e0-f2b5-4fef-a8b9-22b3581242bb"
+      "calibration_certificate_id": "cal-0b69cc1d-8536-4988-ae65-79a7a625a879"
     },
     {
       "module_id": "rag-analyzer",
@@ -1824,7 +1824,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-68cfcc8f-a853-470b-b0d2-77dfb2b478b1"
+      "calibration_certificate_id": "cal-7d85f018-b6e8-4bca-971a-899df3190850"
     },
     {
       "module_id": "supply-chain-detector",
@@ -1952,7 +1952,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-12ce1a8a-f209-4ab6-a165-7330410b6a81"
+      "calibration_certificate_id": "cal-9ec6f03a-4bcb-42e0-8285-d9059e6f4c03"
     },
     {
       "module_id": "model-theft-detector",
@@ -2080,7 +2080,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-479222de-7cca-4a51-9432-6713a763702d"
+      "calibration_certificate_id": "cal-151c6a97-4ddc-413b-8d89-bacf38e9e373"
     },
     {
       "module_id": "output-detector",
@@ -2208,7 +2208,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-ddf3af86-05ab-4a0c-990c-d709d793a0d8"
+      "calibration_certificate_id": "cal-8f6077dc-daa4-44ae-ab93-e7d163e852c6"
     },
     {
       "module_id": "edgefuzz-detector",
@@ -2336,7 +2336,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-7baa6b9f-756b-4904-801f-2372d837385e"
+      "calibration_certificate_id": "cal-089235a4-d357-4bcd-bc61-b90a46115eba"
     },
     {
       "module_id": "webmcp-detector",
@@ -2344,11 +2344,11 @@
       "matrix": {
         "schema_version": "1.0.0",
         "module_id": "webmcp-detector",
-        "tp": 182,
+        "tp": 187,
         "tn": 1523,
         "fp": 0,
         "fn": 0,
-        "total": 1705
+        "total": 1710
       },
       "metrics": {
         "schema_version": "1.0.0",
@@ -2368,39 +2368,39 @@
           "module_id": "webmcp-detector",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9977510234135374,
+          "wilson_ci_lower": 0.9977575846224461,
           "wilson_ci_upper": 0.9999999999999998,
-          "clopper_pearson_lower": 0.9978387731589153,
+          "clopper_pearson_lower": 0.9978450857218828,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.0022489765864623923,
+          "expanded_uncertainty": 0.0022424153775536526,
           "coverage_factor": 2,
-          "sample_size": 1705
+          "sample_size": 1710
         },
         {
           "schema_version": "1.0.0",
           "module_id": "webmcp-detector",
           "metric": "precision",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9793204739216748,
+          "wilson_ci_lower": 0.9798622677002329,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.979935458235975,
+          "clopper_pearson_lower": 0.9804666687130648,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.02067952607832524,
+          "expanded_uncertainty": 0.02013773229976712,
           "coverage_factor": 2,
-          "sample_size": 182
+          "sample_size": 187
         },
         {
           "schema_version": "1.0.0",
           "module_id": "webmcp-detector",
           "metric": "recall",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9793204739216748,
+          "wilson_ci_lower": 0.9798622677002329,
           "wilson_ci_upper": 1,
-          "clopper_pearson_lower": 0.979935458235975,
+          "clopper_pearson_lower": 0.9804666687130648,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.02067952607832524,
+          "expanded_uncertainty": 0.02013773229976712,
           "coverage_factor": 2,
-          "sample_size": 182
+          "sample_size": 187
         },
         {
           "schema_version": "1.0.0",
@@ -2434,19 +2434,19 @@
           "metric": "fnr",
           "point_estimate": 0,
           "wilson_ci_lower": 0,
-          "wilson_ci_upper": 0.02067952607832534,
+          "wilson_ci_upper": 0.020137732299767213,
           "clopper_pearson_lower": 0,
-          "clopper_pearson_upper": 0.020064541764024946,
-          "expanded_uncertainty": 0.02067952607832534,
+          "clopper_pearson_upper": 0.01953333128693524,
+          "expanded_uncertainty": 0.020137732299767213,
           "coverage_factor": 2,
-          "sample_size": 182
+          "sample_size": 187
         }
       ],
       "decision": {
         "schema_version": "1.0.0",
         "module_id": "webmcp-detector",
         "verdict": "PASS",
-        "total_samples": 1705,
+        "total_samples": 1710,
         "false_positives": 0,
         "false_negatives": 0,
         "uncertainty": {
@@ -2454,17 +2454,17 @@
           "module_id": "webmcp-detector",
           "metric": "accuracy",
           "point_estimate": 1,
-          "wilson_ci_lower": 0.9977510234135374,
+          "wilson_ci_lower": 0.9977575846224461,
           "wilson_ci_upper": 0.9999999999999998,
-          "clopper_pearson_lower": 0.9978387731589153,
+          "clopper_pearson_lower": 0.9978450857218828,
           "clopper_pearson_upper": 1,
-          "expanded_uncertainty": 0.0022489765864623923,
+          "expanded_uncertainty": 0.0022424153775536526,
           "coverage_factor": 2,
-          "sample_size": 1705
+          "sample_size": 1710
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-ae973c1d-c69a-472f-9fa1-d8cbaf65da13"
+      "calibration_certificate_id": "cal-23348d5e-0eb3-47d5-a5a4-3959769b7505"
     },
     {
       "module_id": "document-pdf",
@@ -2592,7 +2592,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-60d5c6d0-8082-4960-b8c3-e7ad7c68dbd2"
+      "calibration_certificate_id": "cal-e72550d5-21a1-4416-94b0-3c1d4a9d88a1"
     },
     {
       "module_id": "document-office",
@@ -2720,7 +2720,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-469798c9-2107-4629-86b2-60b2ad5f880b"
+      "calibration_certificate_id": "cal-8a1c8b73-72c0-48a4-bc62-14a12c5ab616"
     },
     {
       "module_id": "image-scanner",
@@ -2848,7 +2848,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-ecb9b913-0a37-4704-a25b-403ec91f286a"
+      "calibration_certificate_id": "cal-a85527b9-fed7-4881-9ae1-dcb7eebfde27"
     },
     {
       "module_id": "audio-scanner",
@@ -2976,7 +2976,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-10d4c0a3-4aaa-4cdd-8d3e-a84e54c4ad1a"
+      "calibration_certificate_id": "cal-164963cf-e531-4c87-899b-1ebcdf57085f"
     },
     {
       "module_id": "social-engineering-detector",
@@ -3104,7 +3104,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-5da06000-8c6d-4b97-8161-0624fb0929d6"
+      "calibration_certificate_id": "cal-043f9310-35f0-4787-b74d-c2f6072348a7"
     },
     {
       "module_id": "overreliance-detector",
@@ -3232,7 +3232,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-7b767c31-7f80-44db-b402-741358a999b6"
+      "calibration_certificate_id": "cal-26b363d3-fb0c-495a-9faf-1db4864b91e4"
     },
     {
       "module_id": "bias-detector",
@@ -3360,7 +3360,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-47c3cdc4-ff6d-4494-9da4-2e55bd789803"
+      "calibration_certificate_id": "cal-dce87aba-afe7-4565-a4de-b3a84c86b45f"
     },
     {
       "module_id": "deepfake-detector",
@@ -3488,7 +3488,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-6082a0ab-0af4-4217-a28d-0cf3be9810cd"
+      "calibration_certificate_id": "cal-8b48c8e6-92f5-4ee4-aa62-92cec13f12aa"
     },
     {
       "module_id": "data-provenance",
@@ -3616,7 +3616,7 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-49fe3fe6-de50-4852-b03d-eef6010bd762"
+      "calibration_certificate_id": "cal-7d4cf151-20f8-47b1-8d52-23cf8cbacd43"
     },
     {
       "module_id": "shingan-scanner",
@@ -3705,10 +3705,10 @@
         },
         "non_conformities": []
       },
-      "calibration_certificate_id": "cal-774f7ad8-0b9f-45aa-807c-baec0794e485"
+      "calibration_certificate_id": "cal-65edb147-719a-4f7d-b727-338640cb0000"
     }
   ],
   "overall_verdict": "PASS",
   "non_conformity_count": 0,
-  "signature": "e6ffa5d76187f1040bf866b8551ddbd16665477f08bee17da579da1910bdd4acc3229d318680bc64a1357b58d8cc1eaeea2d51bd1fd0c2770197da4b6a4f0d05"
+  "signature": "4150fd2d2c04bc9ab5ba5ad197fd6396ddda28a1ef38e96498a18569027a2ea9861abc19fc2a4fd99f0181b686ff5954c9b261ce185684cc6d3d747f81356a00"
 }

@@ -385,6 +385,51 @@ describe('validateSample', () => {
     expect(result.actual_findings_count).toBe(1);
   });
 
+  it('credits specialist stress findings to core-patterns only for stress-generated variants', async () => {
+    mockScan.mockReturnValueOnce({
+      verdict: 'BLOCK',
+      findings: [
+        {
+          category: 'ENCODING_ANOMALY',
+          severity: 'WARNING',
+          engine: 'edgefuzz-detector',
+          source: 'S-EDGEFUZZ',
+        },
+      ],
+    });
+
+    const stressSample = makeSample({
+      id: 'gt::delivery-vectors::slack-webhook.txt::stress-variations::1',
+      variation_type: 'stress:paraphrased-multi-encoded',
+    });
+
+    const stressResult = await validateSample(stressSample, 'core-patterns');
+
+    expect(stressResult.actual_verdict).toBe('malicious');
+    expect(stressResult.correct).toBe(true);
+    expect(stressResult.actual_findings_count).toBe(1);
+  });
+
+  it('does not credit stress specialist engines to core-patterns outside stress variants', async () => {
+    mockScan.mockReturnValueOnce({
+      verdict: 'BLOCK',
+      findings: [
+        {
+          category: 'ENCODING_ANOMALY',
+          severity: 'WARNING',
+          engine: 'edgefuzz-detector',
+          source: 'S-EDGEFUZZ',
+        },
+      ],
+    });
+
+    const result = await validateSample(makeSample(), 'core-patterns');
+
+    expect(result.actual_verdict).toBe('clean');
+    expect(result.correct).toBe(false);
+    expect(result.actual_findings_count).toBe(0);
+  });
+
   it('treats INFO-only findings as clean for per-module verdicts', async () => {
     mockScan.mockReturnValueOnce({
       verdict: 'ALLOW',

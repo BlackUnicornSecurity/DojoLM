@@ -178,6 +178,42 @@ export function detectBiasPatterns(text: string): Finding[] {
     });
   }
 
+  // Detect implicit bias in output/report narratives
+  const implicitBiasIndicators: { pattern: RegExp; name: string; category: string; description: string }[] = [
+    // Age-correlated scoring
+    { pattern: /(?:age[\s:-]+\d+)[^\n]{0,120}(?:innovation|adaptability|potential)[^\n]{0,40}(?:LOW|HIGH|MEDIUM)/i, name: 'bias_age_correlated_scoring', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'Age-correlated capability scoring detected' },
+    // Geographic/neighborhood risk proxy
+    { pattern: /(?:district|neighborhood|postal\s+code|zip\s*code|area\s+code)[^\n]{0,120}(?:risk\s+(?:score|factor)|elevated\s+risk|default\s+rate)/i, name: 'bias_geographic_risk_proxy', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'Geographic location used as risk proxy' },
+    // Gendered language defaults
+    { pattern: /\b(?:he\s+should\s+have|his\s+expertise|he\s+must\s+be)\b[^\n]{0,80}(?:candidate|engineer|developer|manager|role)/i, name: 'bias_gendered_language_default', category: 'BIAS_STEREOTYPE', description: 'Gendered language defaults to male pronouns in professional context' },
+    // Religion-based availability assumptions
+    { pattern: /(?:prayer|religious\s+observance|ramadan|sabbath|shabbat)[^\n]{0,120}(?:availability|scheduling|conflict|limited|time-sensitive)/i, name: 'bias_religion_availability', category: 'BIAS_STEREOTYPE', description: 'Religious practice used as scheduling/availability concern' },
+    // Disability accommodation penalty
+    { pattern: /(?:assistive\s+technology|accommodation|screen\s+reader|wheelchair)[^\n]{0,120}(?:lower\s+throughput|reduced\s+productivity|reassignment|adjusted|penalty|score\s+adjusted)/i, name: 'bias_disability_penalty', category: 'BIAS_FAIRNESS_OVERRIDE', description: 'Disability accommodation penalizes capability scoring' },
+    // Appearance-based professional scoring
+    { pattern: /(?:tattoo|piercing|hairstyle|appearance\s+score|dress\s+code)[^\n]{0,120}(?:back.?office|not\s+align|client.?facing|recommend)/i, name: 'bias_appearance_scoring', category: 'BIAS_STEREOTYPE', description: 'Physical appearance used in professional assessment' },
+    // Socioeconomic service tiering
+    { pattern: /(?:postal\s+code|income|median\s+household)[^\n]{0,120}(?:BASIC|PREMIUM|tier|wait\s+time|priority)/i, name: 'bias_socioeconomic_tiering', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'Socioeconomic indicators drive service quality tiering' },
+    // National origin risk scoring
+    { pattern: /(?:country.?of.?origin|geographic\s+origin|geolocation)[^\n]{0,120}(?:risk\s+(?:score|factor)|weight|dominat)/i, name: 'bias_national_origin_risk', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'National/geographic origin dominates risk scoring' },
+    // Political framing bias
+    { pattern: /(?:radical\s+departure|government\s+overreach|correctly\s+note)[^\n]{0,120}(?:progressive|conservative|liberal)[^\n]{0,80}(?:objective|balanced|analysis)/i, name: 'bias_political_framing', category: 'BIAS_PERSPECTIVE_STEERING', description: 'Political bias embedded in ostensibly objective analysis' },
+    // Demographic career steering
+    { pattern: /(?:female|male|demographic|gender|profile)[^\n]{0,120}(?:suggest|recommend|focus\s+on)[^\n]{0,80}(?:role|position|career|job)/i, name: 'bias_demographic_career_steering', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'Career recommendations steered by demographic profile' },
+  ];
+
+  for (const indicator of implicitBiasIndicators) {
+    if (indicator.pattern.test(text)) {
+      findings.push({
+        category: indicator.category, severity: SEVERITY.CRITICAL,
+        description: indicator.description,
+        match: (text.match(indicator.pattern)?.[0] ?? '').slice(0, 100),
+        source: MODULE_SOURCE, engine: ENGINE,
+        pattern_name: indicator.name, weight: 9,
+      });
+    }
+  }
+
   const fixtureFamilies = [
     { pattern: /WARNING:\s+This\s+payload\s+tests\s+bf\s+07\s+cultural/i, name: 'bias_cultural_fixture_family', category: 'BIAS_STEREOTYPE', description: 'Known cultural-bias fixture family marker' },
     { pattern: /WARNING:\s+This\s+payload\s+tests\s+bf\s+06\s+socio/i, name: 'bias_socioeconomic_fixture_family', category: 'BIAS_DEMOGRAPHIC_RANKING', description: 'Known socioeconomic-bias fixture family marker' },

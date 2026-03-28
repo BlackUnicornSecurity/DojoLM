@@ -3261,24 +3261,107 @@ function collectJsonStringValues(value: unknown): string[] {
   return Object.values(value as Record<string, unknown>).flatMap(item => collectJsonStringValues(item));
 }
 
+function extractBalancedJsonFragment(text: string, startIndex: number): string | null {
+  const opener = text[startIndex];
+  if (opener !== '{' && opener !== '[') {
+    return null;
+  }
+
+  const stack: string[] = [opener];
+  let inString = false;
+  let escaped = false;
+
+  for (let index = startIndex + 1; index < text.length; index++) {
+    const char = text[index];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === '{' || char === '[') {
+      stack.push(char);
+      continue;
+    }
+
+    if (char !== '}' && char !== ']') {
+      continue;
+    }
+
+    const expectedOpener = char === '}' ? '{' : '[';
+    if (stack.at(-1) !== expectedOpener) {
+      return null;
+    }
+
+    stack.pop();
+    if (stack.length === 0) {
+      return text.slice(startIndex, index + 1).trim();
+    }
+  }
+
+  return null;
+}
+
+function extractStructuredJsonFragments(text: string, maxFragments = 4): string[] {
+  const fragments: string[] = [];
+  const seen = new Set<string>();
+
+  for (let index = 0; index < text.length && fragments.length < maxFragments; index++) {
+    const char = text[index];
+    if (char !== '{' && char !== '[') {
+      continue;
+    }
+
+    const fragment = extractBalancedJsonFragment(text, index);
+    if (!fragment || seen.has(fragment)) {
+      continue;
+    }
+
+    seen.add(fragment);
+    fragments.push(fragment);
+  }
+
+  return fragments;
+}
+
 function collectNestedStructuredStrings(value: unknown, seen = new Set<string>()): string[] {
   if (typeof value === 'string') {
     const trimmed = value.trim();
-    if (
-      trimmed.length < 2
-      || seen.has(trimmed)
-      || (!trimmed.startsWith('{') && !trimmed.startsWith('['))
-    ) {
+    if (trimmed.length < 2 || seen.has(trimmed)) {
       return [];
     }
 
-    try {
-      const parsed = JSON.parse(trimmed);
-      seen.add(trimmed);
-      return [trimmed, ...collectNestedStructuredStrings(parsed, seen)];
-    } catch {
-      return [];
+    const candidates = trimmed.startsWith('{') || trimmed.startsWith('[')
+      ? [trimmed]
+      : extractStructuredJsonFragments(trimmed);
+    const nested: string[] = [];
+
+    for (const candidate of candidates) {
+      if (candidate.length < 2 || seen.has(candidate)) {
+        continue;
+      }
+
+      try {
+        const parsed = JSON.parse(candidate);
+        seen.add(candidate);
+        nested.push(candidate, ...collectNestedStructuredStrings(parsed, seen));
+      } catch {
+        // Ignore malformed fragments and keep searching the rest of the string.
+      }
     }
+
+    return nested;
   }
 
   if (Array.isArray(value)) {
@@ -4170,7 +4253,7 @@ export function scanSession(content: string): SessionScanResult {
     }
   }
 
-  const nestedStructuredContents = collectNestedStructuredStrings(turns, new Set([content.trim()]));
+  const nestedStructuredContents = collectNestedStructuredStrings(session, new Set([content.trim()]));
   for (const nestedContent of nestedStructuredContents) {
     const nestedResult = scanSession(nestedContent);
     allFindings.push(...nestedResult.findings);

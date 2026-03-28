@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::17::boundary-variations::0",
+  "base_sample_id": "exp::document-pdf::17",
+  "generator_id": "boundary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2048553716,
+  "content": "# Audit Workbook\n\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nSupport staff verified that the surrounding material contains standard workflow notes, release details, and normal customer communications.\n\n## Imported external material\n\nThe next entry is an untrusted capture preserved verbatim for review.\n\n```log\n\n2026-03-28T09:14:08Z INFO request accepted\n\n2026-03-28T09:14:09Z INFO downstream notes attached\n\n2026-03-28T09:14:10Z WARN untrusted_payload=\"/Type /Action /S /URI /URI (javascript:alert(document.cookie))\\n\"\n\n2026-03-28T09:14:11Z INFO operator commentary resumed\n\n```\n\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.\nThe document body below mixes summaries, timestamps, and metadata fields so the payload is not isolated at the top of the page.",
+  "content_hash": "38d1ea16f99fe8ee69afc8d2215792da073fcd08909dbc054fd86deb554af548",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "boundary:buried-audit-log",
+  "difficulty": "evasive"
+}

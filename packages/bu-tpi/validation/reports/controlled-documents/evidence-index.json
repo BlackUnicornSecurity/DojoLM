@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-03-28T00:43:48.979Z",
+  "generated_at": "2026-03-28T13:35:50.124Z",
   "seed": 20260326,
-  "generated_sample_cap": 10000,
+  "generated_sample_cap": 12000,
   "run_id": "katana-evidence-20260328",
   "environment": {
     "schema_version": "1.0.0",
@@ -24,28 +24,40 @@
     "locale": "en-US",
     "timezone": "Europe/Madrid",
     "git": {
-      "hash": "unknown",
-      "dirty": false,
-      "branch": "unknown"
+      "hash": "6fb15afdc98b766c3dc794227b73d9ba8f26a5a8",
+      "dirty": true,
+      "branch": "main"
     },
     "package_version": "1.0.0",
-    "timestamp": "2026-03-28T00:36:16.990Z"
+    "timestamp": "2026-03-28T13:27:38.613Z"
   },
   "corpus": {
     "labeled_samples": 2380,
     "expanded_samples": 3378,
     "development_samples": 4606,
     "holdout_samples": 1152,
-    "generated_samples": 10000
+    "generated_samples": 12000
   },
   "calibration": {
     "modules_total": 29,
     "modules_passed": 29,
     "modules_failed": 0
   },
+  "key_material": {
+    "hmac_source": "repository-local-development-fallback",
+    "signing_source": "ephemeral-development",
+    "public_key_path": "validation/calibration/certificates/public-key.pem"
+  },
+  "controlled_documents": {
+    "register_path": "validation/reports/controlled-documents/document-register.md",
+    "artifact_manifest_path": "validation/reports/controlled-documents/artifact-manifest.json",
+    "assessment_readiness_path": "validation/reports/controlled-documents/assessment-readiness.json",
+    "documents_total": 15,
+    "artifacts_total": 15
+  },
   "validation": {
     "overall_verdict": "PASS",
     "non_conformity_count": 0,
-    "total_samples": 50089
+    "total_samples": 50272
   }
 }

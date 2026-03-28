@@ -23,7 +23,9 @@ COPY packages/dojolm-web/package.json ./packages/dojolm-web/
 COPY packages/dojolm-mcp/package.json ./packages/dojolm-mcp/
 
 # Install ALL dependencies (including dev for build step)
-RUN npm ci
+# Use npm install instead of npm ci — lockfile generated with npm 11 is incompatible with npm 10 in node:22
+# Force install platform-specific optional deps for linux (Tailwind 4 oxide)
+RUN npm install && npm install @tailwindcss/oxide-linux-x64-gnu 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # Stage 2: builder — compile TypeScript + Next.js build
@@ -48,6 +50,11 @@ COPY packages/dojolm-web/ ./packages/dojolm-web/
 
 # Build bu-tpi (scanner engine)
 RUN npx tsc -b packages/bu-tpi --force
+# Copy JSON files that tsc doesn't emit (required by require() calls at runtime)
+# Uses find to catch any future JSON additions automatically
+RUN find packages/bu-tpi/src -name '*.json' -exec sh -c \
+    'for f; do dest="packages/bu-tpi/dist${f#packages/bu-tpi/src}"; mkdir -p "$(dirname "$dest")"; cp "$f" "$dest"; done' \
+    _ {} +
 
 # Build dojolm-scanner
 RUN npx tsc -b packages/dojolm-scanner --force
@@ -68,6 +75,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=42001
 ENV HOSTNAME="0.0.0.0"
+
+# Build metadata (overridable at build time for traceability)
+ARG BUILD_SHA="unknown"
+ARG BUILD_DATE="unknown"
+LABEL org.opencontainers.image.revision="${BUILD_SHA}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.title="dojolm-web"
 
 # Create non-root user
 RUN addgroup --system --gid 1001 dojolm && \

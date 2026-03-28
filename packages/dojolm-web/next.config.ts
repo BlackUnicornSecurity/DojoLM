@@ -18,6 +18,9 @@ const withBundleAnalyzer =
     : (config: NextConfig) => config;
 
 const nextConfig: NextConfig = withBundleAnalyzer({
+  // Standalone output for Docker deployment (required by Dockerfile)
+  output: "standalone",
+
   // Enable React strict mode for better development experience
   reactStrictMode: true,
 

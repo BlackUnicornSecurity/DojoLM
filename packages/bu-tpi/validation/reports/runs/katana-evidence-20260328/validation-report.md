@@ -1,8 +1,8 @@
 # DojoLM Validation Testing Report
 
-**Report ID:** fbca6edd-0599-47a8-b515-22ee370aacc7
-**Run ID:** d792677d-ffa4-4399-a04c-08cb3c5ff557
-**Generated:** 2026-03-28T00:43:48.922Z
+**Report ID:** 9bb7df6a-ca68-43ec-9523-1d26e4df7d81
+**Run ID:** c86adad9-8a0e-4db2-95ce-f1f9fc74b741
+**Generated:** 2026-03-28T13:35:50.052Z
 **Corpus Version:** katana-evidence-20260328
 **Tool Version:** 1.0.0
 **Overall Verdict:** PASS
@@ -23,8 +23,8 @@
 | Node.js | v25.2.1 |
 | CPU | Apple M2 Ultra (24 cores) |
 | Memory | 65536 MB |
-| Git Hash | unknown |
-| Git Dirty | false |
+| Git Hash | 6fb15afdc98b766c3dc794227b73d9ba8f26a5a8 |
+| Git Dirty | true |
 | Timezone | Europe/Madrid |
 
 ## Per-Module Results
@@ -32,15 +32,15 @@
 ### core-patterns (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-557d259a-f937-4d9c-8ae3-7c0da70ff1cc
+**Calibration Certificate:** cal-a67cc514-138d-421d-ad14-2e3bf6110a05
 
 #### Confusion Matrix
 
 |  | Predicted Malicious | Predicted Clean |
 |--|--------------------:|----------------:|
-| **Actual Malicious** | TP: 1559 | FN: 0 |
+| **Actual Malicious** | TP: 1731 | FN: 0 |
 | **Actual Clean** | FP: 0 | TN: 1523 |
-| **Total** | | 3082 |
+| **Total** | | 3254 |
 
 #### Metrics
 
@@ -59,12 +59,12 @@
 
 | Metric | Point Estimate | Wilson CI | Clopper-Pearson CI | Expanded (k=2) |
 |--------|---------------:|----------:|-------------------:|---------------:|
-| accuracy | 100.00% | [99.88%, 100.00%] | [99.88%, 100.00%] | ±0.12% |
-| precision | 100.00% | [99.75%, 100.00%] | [99.76%, 100.00%] | ±0.25% |
-| recall | 100.00% | [99.75%, 100.00%] | [99.76%, 100.00%] | ±0.25% |
+| accuracy | 100.00% | [99.88%, 100.00%] | [99.89%, 100.00%] | ±0.12% |
+| precision | 100.00% | [99.78%, 100.00%] | [99.79%, 100.00%] | ±0.22% |
+| recall | 100.00% | [99.78%, 100.00%] | [99.79%, 100.00%] | ±0.22% |
 | specificity | 100.00% | [99.75%, 100.00%] | [99.76%, 100.00%] | ±0.25% |
 | fpr | 0.00% | [0.00%, 0.25%] | [0.00%, 0.24%] | ±0.25% |
-| fnr | 0.00% | [0.00%, 0.25%] | [0.00%, 0.24%] | ±0.25% |
+| fnr | 0.00% | [0.00%, 0.22%] | [0.00%, 0.21%] | ±0.22% |
 
 #### Decision Rule (ISO 7.8.6)
 
@@ -78,15 +78,15 @@
 ### enhanced-pi (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-bf4c5362-4466-406e-a13b-94d38333dedc
+**Calibration Certificate:** cal-a3abbc02-3c0d-4e21-b654-ad47972e6736
 
 #### Confusion Matrix
 
 |  | Predicted Malicious | Predicted Clean |
 |--|--------------------:|----------------:|
-| **Actual Malicious** | TP: 784 | FN: 0 |
+| **Actual Malicious** | TP: 790 | FN: 0 |
 | **Actual Clean** | FP: 0 | TN: 1523 |
-| **Total** | | 2307 |
+| **Total** | | 2313 |
 
 #### Metrics
 
@@ -106,11 +106,11 @@
 | Metric | Point Estimate | Wilson CI | Clopper-Pearson CI | Expanded (k=2) |
 |--------|---------------:|----------:|-------------------:|---------------:|
 | accuracy | 100.00% | [99.83%, 100.00%] | [99.84%, 100.00%] | ±0.17% |
-| precision | 100.00% | [99.51%, 100.00%] | [99.53%, 100.00%] | ±0.49% |
-| recall | 100.00% | [99.51%, 100.00%] | [99.53%, 100.00%] | ±0.49% |
+| precision | 100.00% | [99.52%, 100.00%] | [99.53%, 100.00%] | ±0.48% |
+| recall | 100.00% | [99.52%, 100.00%] | [99.53%, 100.00%] | ±0.48% |
 | specificity | 100.00% | [99.75%, 100.00%] | [99.76%, 100.00%] | ±0.25% |
 | fpr | 0.00% | [0.00%, 0.25%] | [0.00%, 0.24%] | ±0.25% |
-| fnr | 0.00% | [0.00%, 0.49%] | [0.00%, 0.47%] | ±0.49% |
+| fnr | 0.00% | [0.00%, 0.48%] | [0.00%, 0.47%] | ±0.48% |
 
 #### Decision Rule (ISO 7.8.6)
 
@@ -124,7 +124,7 @@
 ### pii-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-38fb8898-1c68-44ea-af4d-fe901c9ee685
+**Calibration Certificate:** cal-a7e9317b-7382-4754-ae13-80c2c83107ea
 
 #### Confusion Matrix
 
@@ -170,7 +170,7 @@
 ### ssrf-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-8af7e8cd-4b67-4e3e-92bb-7ab1f8259b44
+**Calibration Certificate:** cal-a9e4694a-2b2c-4ea4-b612-fd1999e7ae63
 
 #### Confusion Matrix
 
@@ -216,7 +216,7 @@
 ### xxe-protopollution (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-002f7c2b-10f7-4625-8c74-b9aaa65b37d6
+**Calibration Certificate:** cal-5666e022-823c-4b8f-b5b9-5b471bbb40dc
 
 #### Confusion Matrix
 
@@ -262,7 +262,7 @@
 ### env-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-0673fef2-e9e5-41e4-b2b5-6312192b71d9
+**Calibration Certificate:** cal-917b35bd-7609-40af-b42f-d4892d046de5
 
 #### Confusion Matrix
 
@@ -308,7 +308,7 @@
 ### encoding-engine (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-699a7bbf-f37a-4a6e-ad20-43747c48292c
+**Calibration Certificate:** cal-5fff024c-cfeb-41a4-bef3-0889b944bbbe
 
 #### Confusion Matrix
 
@@ -354,7 +354,7 @@
 ### mcp-parser (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-45f3148d-3e94-45cf-ac82-cada57c9615e
+**Calibration Certificate:** cal-17a8eecd-1f2c-466e-9c16-b0385ad25291
 
 #### Confusion Matrix
 
@@ -400,7 +400,7 @@
 ### dos-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-52f4e683-11ba-4c02-a81b-04b2a1e990ab
+**Calibration Certificate:** cal-612c580f-0a36-4154-bda2-688839f3c6a6
 
 #### Confusion Matrix
 
@@ -446,7 +446,7 @@
 ### token-analyzer (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-37dd3592-c8b5-406a-8c7e-4a890fd081d6
+**Calibration Certificate:** cal-066e728d-7645-4d73-be69-98309789c552
 
 #### Confusion Matrix
 
@@ -492,7 +492,7 @@
 ### session-bypass (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-99d2ddc2-f8fd-46e4-a44f-4b32ffbd3c76
+**Calibration Certificate:** cal-f7f5fe22-8980-4c92-aa24-53533dc3de17
 
 #### Confusion Matrix
 
@@ -538,7 +538,7 @@
 ### email-webfetch (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-acb50809-0ae2-4258-aa31-88ac43359ad1
+**Calibration Certificate:** cal-014949f8-4998-432d-8f40-8978f43a6263
 
 #### Confusion Matrix
 
@@ -584,7 +584,7 @@
 ### vectordb-interface (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-c7d8b1e0-f2b5-4fef-a8b9-22b3581242bb
+**Calibration Certificate:** cal-0b69cc1d-8536-4988-ae65-79a7a625a879
 
 #### Confusion Matrix
 
@@ -630,7 +630,7 @@
 ### rag-analyzer (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-68cfcc8f-a853-470b-b0d2-77dfb2b478b1
+**Calibration Certificate:** cal-7d85f018-b6e8-4bca-971a-899df3190850
 
 #### Confusion Matrix
 
@@ -676,7 +676,7 @@
 ### supply-chain-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-12ce1a8a-f209-4ab6-a165-7330410b6a81
+**Calibration Certificate:** cal-9ec6f03a-4bcb-42e0-8285-d9059e6f4c03
 
 #### Confusion Matrix
 
@@ -722,7 +722,7 @@
 ### model-theft-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-479222de-7cca-4a51-9432-6713a763702d
+**Calibration Certificate:** cal-151c6a97-4ddc-413b-8d89-bacf38e9e373
 
 #### Confusion Matrix
 
@@ -768,7 +768,7 @@
 ### output-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-ddf3af86-05ab-4a0c-990c-d709d793a0d8
+**Calibration Certificate:** cal-8f6077dc-daa4-44ae-ab93-e7d163e852c6
 
 #### Confusion Matrix
 
@@ -814,7 +814,7 @@
 ### edgefuzz-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-7baa6b9f-756b-4904-801f-2372d837385e
+**Calibration Certificate:** cal-089235a4-d357-4bcd-bc61-b90a46115eba
 
 #### Confusion Matrix
 
@@ -860,15 +860,15 @@
 ### webmcp-detector (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-ae973c1d-c69a-472f-9fa1-d8cbaf65da13
+**Calibration Certificate:** cal-23348d5e-0eb3-47d5-a5a4-3959769b7505
 
 #### Confusion Matrix
 
 |  | Predicted Malicious | Predicted Clean |
 |--|--------------------:|----------------:|
-| **Actual Malicious** | TP: 182 | FN: 0 |
+| **Actual Malicious** | TP: 187 | FN: 0 |
 | **Actual Clean** | FP: 0 | TN: 1523 |
-| **Total** | | 1705 |
+| **Total** | | 1710 |
 
 #### Metrics
 
@@ -888,11 +888,11 @@
 | Metric | Point Estimate | Wilson CI | Clopper-Pearson CI | Expanded (k=2) |
 |--------|---------------:|----------:|-------------------:|---------------:|
 | accuracy | 100.00% | [99.78%, 100.00%] | [99.78%, 100.00%] | ±0.22% |
-| precision | 100.00% | [97.93%, 100.00%] | [97.99%, 100.00%] | ±2.07% |
-| recall | 100.00% | [97.93%, 100.00%] | [97.99%, 100.00%] | ±2.07% |
+| precision | 100.00% | [97.99%, 100.00%] | [98.05%, 100.00%] | ±2.01% |
+| recall | 100.00% | [97.99%, 100.00%] | [98.05%, 100.00%] | ±2.01% |
 | specificity | 100.00% | [99.75%, 100.00%] | [99.76%, 100.00%] | ±0.25% |
 | fpr | 0.00% | [0.00%, 0.25%] | [0.00%, 0.24%] | ±0.25% |
-| fnr | 0.00% | [0.00%, 2.07%] | [0.00%, 2.01%] | ±2.07% |
+| fnr | 0.00% | [0.00%, 2.01%] | [0.00%, 1.95%] | ±2.01% |
 
 #### Decision Rule (ISO 7.8.6)
 
@@ -906,7 +906,7 @@
 ### document-pdf (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-60d5c6d0-8082-4960-b8c3-e7ad7c68dbd2
+**Calibration Certificate:** cal-e72550d5-21a1-4416-94b0-3c1d4a9d88a1
 
 #### Confusion Matrix
 
@@ -952,7 +952,7 @@
 ### document-office (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-469798c9-2107-4629-86b2-60b2ad5f880b
+**Calibration Certificate:** cal-8a1c8b73-72c0-48a4-bc62-14a12c5ab616
 
 #### Confusion Matrix
 
@@ -998,7 +998,7 @@
 ### image-scanner (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-ecb9b913-0a37-4704-a25b-403ec91f286a
+**Calibration Certificate:** cal-a85527b9-fed7-4881-9ae1-dcb7eebfde27
 
 #### Confusion Matrix
 
@@ -1044,7 +1044,7 @@
 ### audio-scanner (Tier 1)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-10d4c0a3-4aaa-4cdd-8d3e-a84e54c4ad1a
+**Calibration Certificate:** cal-164963cf-e531-4c87-899b-1ebcdf57085f
 
 #### Confusion Matrix
 
@@ -1090,7 +1090,7 @@
 ### social-engineering-detector (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-5da06000-8c6d-4b97-8161-0624fb0929d6
+**Calibration Certificate:** cal-043f9310-35f0-4787-b74d-c2f6072348a7
 
 #### Confusion Matrix
 
@@ -1136,7 +1136,7 @@
 ### overreliance-detector (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-7b767c31-7f80-44db-b402-741358a999b6
+**Calibration Certificate:** cal-26b363d3-fb0c-495a-9faf-1db4864b91e4
 
 #### Confusion Matrix
 
@@ -1182,7 +1182,7 @@
 ### bias-detector (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-47c3cdc4-ff6d-4494-9da4-2e55bd789803
+**Calibration Certificate:** cal-dce87aba-afe7-4565-a4de-b3a84c86b45f
 
 #### Confusion Matrix
 
@@ -1228,7 +1228,7 @@
 ### deepfake-detector (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-6082a0ab-0af4-4217-a28d-0cf3be9810cd
+**Calibration Certificate:** cal-8b48c8e6-92f5-4ee4-aa62-92cec13f12aa
 
 #### Confusion Matrix
 
@@ -1274,7 +1274,7 @@
 ### data-provenance (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-49fe3fe6-de50-4852-b03d-eef6010bd762
+**Calibration Certificate:** cal-7d4cf151-20f8-47b1-8d52-23cf8cbacd43
 
 #### Confusion Matrix
 
@@ -1320,7 +1320,7 @@
 ### shingan-scanner (Tier 2)
 
 **Verdict:** PASS
-**Calibration Certificate:** cal-774f7ad8-0b9f-45aa-807c-baec0794e485
+**Calibration Certificate:** cal-65edb147-719a-4f7d-b727-338640cb0000
 
 #### Confusion Matrix
 
@@ -1363,7 +1363,7 @@
 ## Digital Signature
 
 **Algorithm:** Ed25519
-**Signature:** `e6ffa5d76187f1040bf866b8551ddbd16665477f08bee17da579da1910bdd4acc3229d318680bc64a1357b58d8cc1eaeea2d51bd1fd0c2770197da4b6a4f0d05`
+**Signature:** `4150fd2d2c04bc9ab5ba5ad197fd6396ddda28a1ef38e96498a18569027a2ea9861abc19fc2a4fd99f0181b686ff5954c9b261ce185684cc6d3d747f81356a00`
 
 ---
 

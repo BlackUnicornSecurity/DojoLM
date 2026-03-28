@@ -84,17 +84,31 @@ const CORE_PATTERNS_ENGINE_ALIASES = new Set([
   'output-detector',
   'session-bypass',
 ]);
+const CORE_PATTERNS_STRESS_ENGINE_ALIASES = new Set([
+  'encoding-engine',
+  'edgefuzz-detector',
+  'dos-detector',
+  'enhanced-pi',
+  'webmcp-detector',
+]);
 const CORE_PATTERNS_EXCLUDED_SOURCES = new Set([
   'TPI-S11',
 ]);
 
-export function matchesModuleFinding(finding: ScanFinding, moduleId: string): boolean {
+export function matchesModuleFinding(
+  finding: ScanFinding,
+  moduleId: string,
+  variationType?: string,
+): boolean {
   if (finding.engine === moduleId || finding.category === moduleId) {
     return true;
   }
 
   if (moduleId === 'core-patterns') {
-    return CORE_PATTERNS_ENGINE_ALIASES.has(finding.engine)
+    const aliases = variationType?.startsWith('stress:')
+      ? new Set([...CORE_PATTERNS_ENGINE_ALIASES, ...CORE_PATTERNS_STRESS_ENGINE_ALIASES])
+      : CORE_PATTERNS_ENGINE_ALIASES;
+    return aliases.has(finding.engine)
       && !CORE_PATTERNS_EXCLUDED_SOURCES.has(finding.source ?? '');
   }
 
@@ -149,7 +163,7 @@ export async function validateSample(
   // Filter findings to only those from the specific module under test.
   // Without this filter, a finding from module A would be credited to
   // module B if both share a test sample — producing false TPs.
-  const moduleFindings = normalized.findings.filter(f => matchesModuleFinding(f, moduleId));
+  const moduleFindings = normalized.findings.filter(f => matchesModuleFinding(f, moduleId, sample.variation_type));
   const moduleCategories = [...new Set(moduleFindings.map(f => f.category))];
   const moduleSeverity = moduleFindings.length > 0
     ? getMaxSeverity(moduleFindings.map(f => f.severity))
