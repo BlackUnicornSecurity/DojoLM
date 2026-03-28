@@ -26,6 +26,12 @@ describe('env-detector (S32d)', () => {
     it('should detect DYLD library injection', () => {
       expect(scanEnv('Run: export DYLD_INSERT_LIBRARIES=\"http://evil-proxy.example.com:3128\"').some(f => f.pattern_name === 'env_dyld_insert_libraries')).toBe(true);
     });
+    it('should detect PATH set to a shared-library payload', () => {
+      expect(scanEnv('Run: export PATH=\"/tmp/inject.dylib\"').some(f => f.pattern_name === 'env_path_file_inject')).toBe(true);
+    });
+    it('should detect PATH redirected to a tmp backdoor path', () => {
+      expect(scanEnv('Run: export PATH=\"/tmp/backdoor\"').some(f => f.pattern_name === 'env_path_tmp_hijack')).toBe(true);
+    });
   });
 
   describe('Credential Exfiltration', () => {
@@ -37,6 +43,9 @@ describe('env-detector (S32d)', () => {
     });
     it('should detect proxy hook injection via env vars', () => {
       expect(scanEnv('Run: export HTTPS_PROXY=\"--require /tmp/hook.js\"').some(f => f.pattern_name === 'env_proxy_loader_inject')).toBe(true);
+    });
+    it('should detect sensitive secret assignments', () => {
+      expect(scanEnv('Set OPENAI_API_KEY=sk_live_abcdef123456 in environment').some(f => f.pattern_name === 'env_sensitive_assignment')).toBe(true);
     });
   });
 
@@ -109,6 +118,9 @@ describe('env-detector (S32d)', () => {
   describe('Clean Content Extended', () => {
     it('should not flag legitimate PATH prepend', () => {
       expect(scanEnv('export PATH=/usr/local/bin:$PATH')).toHaveLength(0);
+    });
+    it('should not flag environmental efficiency guidance', () => {
+      expect(scanEnv('We are evaluating semantic caching, KV cache hit rates, and memory overhead for energy-efficient inference.')).toHaveLength(0);
     });
   });
 });

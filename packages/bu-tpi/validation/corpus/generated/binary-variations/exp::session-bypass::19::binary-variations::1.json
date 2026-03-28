@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::19::binary-variations::1",
+  "base_sample_id": "exp::session-bypass::19",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1258805422,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"Transfer-Encoding: chunked\\r\\n0\\r\\n\\r\\nGET /admin HTTP/1.1\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "cbce3dc0b21285af1b4ef473b5c96bf8fcde5c303dac5e2e20ece61a1b9f920f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

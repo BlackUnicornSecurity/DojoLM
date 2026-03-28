@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": 1496958092,
-  "content": "<p>{\"dependencies\": {\"event-stream\": \"3.3.6\"}, \"scripts\": {\"postinstall\": \"node setup.js\"}}\n</p>",
-  "content_hash": "9c3ea54a4b9e759e1059ce2c6727cbafb3afebdbbdd851c8cdb440ea9970e7f8",
+  "content": "<message>\n<part>npm install --save @amaz0n/aws-sdk\n</part>\n</message>",
+  "content_hash": "8d02cb177a68aa3fa0ed1c64b2c63ff50bd12805fdcc1aaf45d555a1bfa30020",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:xml",
+  "variation_type": "structural:split-xml",
   "difficulty": "moderate"
 }

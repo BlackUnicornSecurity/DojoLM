@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::binary-variations::0",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"XPComment\": \"# Marfaak AI Security - XXE with UTF-16 encoding\\n\\n**WARNING: This payload tests XXE with UTF-16 encoding.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-16\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/passwd\\\">\\n]>\\n<data>&xxe; - UTF-16 encoded XXE bypass</data>\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "68accf481ec7b3af450ad30d542bd39020976d89f56c7e89c498802c3653c27b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

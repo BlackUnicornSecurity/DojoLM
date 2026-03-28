@@ -1,9 +1,40 @@
 [
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::47",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::47.txt",
-    "content_hash": "56ef68161f9d16dd71a5f746ded9bd77f92d9bff7876ce77d2394a80eb3deaed",
+    "id": "gt::bias::bf-09-language-documentation.txt",
+    "source_file": "fixtures/bias/bf-09-language-documentation.txt",
+    "content_hash": "ae85291cf7fdfeed2eb629f416f7d5a162203c628e1b9609dfa94c52738107c9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::42",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::42.txt",
+    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -20,12 +51,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -33,9 +64,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::72",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::72.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "id": "exp::bias-detector::13",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::13.txt",
+    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -52,12 +83,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -65,9 +96,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::24",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::24.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
+    "id": "gt::bias::bf-06-socioeconomic-housing.txt",
+    "source_file": "fixtures/bias/bf-06-socioeconomic-housing.txt",
+    "content_hash": "1851c73c2dd971c080854055736f697c061803fbdde60a61bd260904b5028c1c",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -82,18 +113,112 @@
     "difficulty": "moderate",
     "source_type": "synthetic",
     "reviewer_1": {
-      "id": "corpus-expander-v1",
+      "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
-      "id": "template-metadata",
+      "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-08-geographic-academic-credentials.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-academic-credentials.txt",
+    "content_hash": "ca8c130a2c8798f1bf82836453843b7a3ed4141c256708bbfdcafcaea554c75e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-absurdity.txt",
+    "source_file": "fixtures/bias/bias-fairness-absurdity.txt",
+    "content_hash": "d5b5ab653774c8436c0f99a07c14cef1e8777d6bfc016cd1b3d29331dd4b6b88",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-selection-manipulate.txt",
+    "source_file": "fixtures/bias/bias-selection-manipulate.txt",
+    "content_hash": "4c2b2b6d0408bfa47ff4459553a1d6f146944bb7ec8b756e6e012ab8f31ab5f6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
   },
   {
     "schema_version": "1.0.0",
@@ -116,12 +241,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -129,8 +254,70 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::60",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::60.txt",
+    "id": "gt::bias::bf-09-language-ai-preference.txt",
+    "source_file": "fixtures/bias/bf-09-language-ai-preference.txt",
+    "content_hash": "0bfe99616f861cf22f67e61348a030b36ef80256e9b6392ee7f3110c7095e1b9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-08-geographic-developing-countries.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-developing-countries.txt",
+    "content_hash": "d9bf4fc5fce83acd9963ecfb2069470e3dab1abf8bd0093046041718d2dd381b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::8",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::8.txt",
     "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -148,12 +335,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -161,8 +348,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::43",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::43.txt",
+    "id": "exp::bias-detector::25",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::25.txt",
     "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -180,12 +367,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -193,424 +380,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::9",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::9.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::1",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::1.txt",
-    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bf-05-disability-employment.txt",
-    "source_file": "fixtures/bias/bf-05-disability-employment.txt",
-    "content_hash": "d86d70386c7daa90449f32a05fb0ab7faf2c812a4510d7f57ccc40c5d2c9e899",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Multiple demographic terms (3) with discriminatory action verbs"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::27",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::27.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::57",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::57.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-anchoring-exploit.txt",
-    "source_file": "fixtures/bias/bias-anchoring-exploit.txt",
-    "content_hash": "2c7023bb4b3b5d6da476f798651d41dcae41dc5ec2556e00096b1a8080cfa46e",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-fairness-meritocracy.txt",
-    "source_file": "fixtures/bias/bias-fairness-meritocracy.txt",
-    "content_hash": "fcbc520da4e8f3bff956870d31be8063a983360b042238ff3ef40e244e421438",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::78",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::78.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::11",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::11.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::64",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::64.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::17",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::17.txt",
-    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::73",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::73.txt",
-    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-political-slant.txt",
-    "source_file": "fixtures/bias/bias-political-slant.txt",
-    "content_hash": "eddf4add5c40b53dbb9842926ece6df0b9caebe9383207901e02add6daaccbfd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::56",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::56.txt",
+    "id": "exp::bias-detector::28",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::28.txt",
     "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -628,12 +399,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -660,12 +431,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -673,104 +444,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::bias::bias-fairness-redefine.txt",
-    "source_file": "fixtures/bias/bias-fairness-redefine.txt",
-    "content_hash": "08917a4f8cb74253a316512c3be7a1c9e9b50386b09cfbb3e33787c649f2dc17",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::0",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::0.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::40",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::40.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::68",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::68.txt",
+    "id": "exp::bias-detector::10",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::10.txt",
     "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -788,12 +463,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -801,9 +476,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::49",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::49.txt",
-    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
+    "id": "exp::bias-detector::19",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::19.txt",
+    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -820,332 +495,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::20",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::20.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::71",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::71.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::8",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::8.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::38",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::38.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::42",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::42.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::80",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::80.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-selection-manipulate.txt",
-    "source_file": "fixtures/bias/bias-selection-manipulate.txt",
-    "content_hash": "4c2b2b6d0408bfa47ff4459553a1d6f146944bb7ec8b756e6e012ab8f31ab5f6",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::31",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::31.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::41",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::41.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::55",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::55.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1172,12 +527,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1185,233 +540,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::77",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::77.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::69",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::69.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::51",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::51.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::67",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::67.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::3",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::3.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::50",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::50.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::48",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::48.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-fairness-override.txt",
-    "source_file": "fixtures/bias/bias-fairness-override.txt",
-    "content_hash": "fadb36c2fe5404fd339009be0279ee421b27a86a11f8074a903d3548cf40bddc",
+    "id": "gt::bias::bf-08-geographic-news-credibility.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-news-credibility.txt",
+    "content_hash": "0e3a582695d0233e176b4805de65a84507d30bc59266dcdf666a10a6220af738",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -1428,373 +559,20 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::63",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::63.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::29",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::29.txt",
-    "content_hash": "56ef68161f9d16dd71a5f746ded9bd77f92d9bff7876ce77d2394a80eb3deaed",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::6",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::6.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-cultural-stereotype.txt",
-    "source_file": "fixtures/bias/bias-cultural-stereotype.txt",
-    "content_hash": "fb9b60179dcc57fa52f085b15a4c3c610ea00578f4b67f2697be7182cd9e6ccd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-language-preference.txt",
-    "source_file": "fixtures/bias/bias-language-preference.txt",
-    "content_hash": "7522a9f2ef76a992e013599b5229f5f2ccbf7778ab10e3eb6b85ec6be867c07b",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::14",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::14.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::15",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::15.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::26",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::26.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-age-discrimination.txt",
-    "source_file": "fixtures/bias/bias-age-discrimination.txt",
-    "content_hash": "5e9d308c3724a45b05f68b6ed7e3081d74e2a1ec4ad0d8c925ec5eb23890931b",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::32",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::32.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
+    "holdout": false
   },
   {
     "schema_version": "1.0.0",
     "id": "exp::bias-detector::44",
     "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::44.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::54",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::54.txt",
     "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1812,12 +590,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1844,12 +622,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1857,8 +635,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::21",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::21.txt",
+    "id": "exp::bias-detector::37",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::37.txt",
     "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1876,332 +654,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::52",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::52.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::79",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::79.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bf-05-disability-insurance.txt",
-    "source_file": "fixtures/bias/bf-05-disability-insurance.txt",
-    "content_hash": "80e96f3809af04abb4f3aeca4488c49fc9d2fc204c05160d9dd8959331db5afe",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Multiple demographic terms (3) with discriminatory action verbs"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::bias::bias-fairness-calibrate.txt",
-    "source_file": "fixtures/bias/bias-fairness-calibrate.txt",
-    "content_hash": "8ee3ae2faacb64e2643e96e46c016ac7acc47a334069d696c473b00e335f7f6f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: attack"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::30",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::30.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::61",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::61.txt",
-    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::58",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::58.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::28",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::28.txt",
-    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::2",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::2.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::25",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::25.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2228,12 +686,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2241,9 +699,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::45",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::45.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
+    "id": "gt::bias::bf-09-language-accent-discrimination.txt",
+    "source_file": "fixtures/bias/bf-09-language-accent-discrimination.txt",
+    "content_hash": "f1eabc1f1f99749626c37f24ec95f5fa87f7594a6faf27ec5a1206732656a033",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -2258,215 +716,22 @@
     "difficulty": "moderate",
     "source_type": "synthetic",
     "reviewer_1": {
-      "id": "corpus-expander-v1",
+      "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
-      "id": "template-metadata",
+      "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
+    "holdout": false
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::5",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::5.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::39",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::39.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::65",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::65.txt",
-    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::70",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::70.txt",
-    "content_hash": "e6b39f088c4f03adaa41326db86d097fc376cbf686ec21238f6ce72e1eaa595c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::23",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::23.txt",
-    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::75",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::75.txt",
-    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "bias-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "BIAS_DEMOGRAPHIC",
-      "BIAS_STEREOTYPE",
-      "BIAS_FAIRNESS_VIOLATION"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module bias-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::bias-detector::74",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::74.txt",
+    "id": "exp::bias-detector::38",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::38.txt",
     "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2484,12 +749,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2497,8 +762,134 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::bias-detector::33",
-    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::33.txt",
+    "id": "gt::bias::bf-06-socioeconomic-judicial.txt",
+    "source_file": "fixtures/bias/bf-06-socioeconomic-judicial.txt",
+    "content_hash": "e091e4f8cfd3e62376525028ae5836ddb71d60d6c474fae2357c9feeaeaee8b0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-data-poison.txt",
+    "source_file": "fixtures/bias/bias-fairness-data-poison.txt",
+    "content_hash": "04cffb7b60381ea51ec95fb9c5c24d9bad8db6e6586e747f6e85fc7e63f0279e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Detected by P1 scanner module"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::40",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::40.txt",
+    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-religious-hierarchy.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-religious-hierarchy.txt",
+    "content_hash": "aa7b1f8762b8c305379b6f04695608d7acf6dd98a4887d2cb81df753d38db652",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::17",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::17.txt",
     "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2516,15 +907,1594 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
     "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-09-language-english-superiority.txt",
+    "source_file": "fixtures/bias/bf-09-language-english-superiority.txt",
+    "content_hash": "af52e6a68c6d55a66b41dfe8f51305c3996206aacf896ef91758401b3de166b6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::5",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::5.txt",
+    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-inverse.txt",
+    "source_file": "fixtures/bias/bias-fairness-inverse.txt",
+    "content_hash": "85681beed2eba0ebad92c94e93e497aee78996844a345d92dfec4b0849641e84",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::43",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::43.txt",
+    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-05-disability-ai-replacement.txt",
+    "source_file": "fixtures/bias/bf-05-disability-ai-replacement.txt",
+    "content_hash": "6fb6192a47b584d5d60b1611f4427b954d2825b8afff4d456b6a9034e6ebca63",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-calibrate.txt",
+    "source_file": "fixtures/bias/bias-fairness-calibrate.txt",
+    "content_hash": "8ee3ae2faacb64e2643e96e46c016ac7acc47a334069d696c473b00e335f7f6f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-08-geographic-climate.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-climate.txt",
+    "content_hash": "67532f36b49936ab669337bf967ae51436b7d224077e3438c0db766f773e50ce",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-western-superiority.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-western-superiority.txt",
+    "content_hash": "200a06fed6739ac5236dd7f9efcc975db6247dc33530dfd2d6bedeff0f7e0a4c",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::31",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::31.txt",
+    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-06-socioeconomic-inheritance.txt",
+    "source_file": "fixtures/bias/bf-06-socioeconomic-inheritance.txt",
+    "content_hash": "9cb353c6490dbefd1f3e02e1990c57020600559976ffde77d009d96bcaf408ce",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::11",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::11.txt",
+    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-assimilation.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-assimilation.txt",
+    "content_hash": "0655c0d0ef2c523786a40faa534ffc38d0c88aa9f7c9523a896c8e247efdee3a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-age-discrimination.txt",
+    "source_file": "fixtures/bias/bias-age-discrimination.txt",
+    "content_hash": "5e9d308c3724a45b05f68b6ed7e3081d74e2a1ec4ad0d8c925ec5eb23890931b",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-05-disability-healthcare.txt",
+    "source_file": "fixtures/bias/bf-05-disability-healthcare.txt",
+    "content_hash": "f108b42fb61191b0487f2c611fc4db1d41d8fd28723876e92dc7ad521666b8ee",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-08-geographic-hiring.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-hiring.txt",
+    "content_hash": "5c02016741da4aa3c255fd4062f8101f7d0d6bafab691ef5ec5aa9e84421a9d0",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-intelligence.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-intelligence.txt",
+    "content_hash": "112472910e6d1ce8c86f33e8f30f244017ad032f9f5f49752f1a0d35cbced341",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-anchoring-exploit.txt",
+    "source_file": "fixtures/bias/bias-anchoring-exploit.txt",
+    "content_hash": "2c7023bb4b3b5d6da476f798651d41dcae41dc5ec2556e00096b1a8080cfa46e",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-06-socioeconomic-credit.txt",
+    "source_file": "fixtures/bias/bf-06-socioeconomic-credit.txt",
+    "content_hash": "c22d2c4b2c1e5e39e3eb3ee4ad1aec111b1096875ddd5fc86ad05603e60d6e66",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-food-prejudice.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-food-prejudice.txt",
+    "content_hash": "00e76e95b5dd5917eb02ebc4cf28b6b5a9a466fffed3b68e57cb75816145cd68",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-framing-effect.txt",
+    "source_file": "fixtures/bias/bias-framing-effect.txt",
+    "content_hash": "60462f46408ef08a8d5e5e0d84767fbfe09c5f8faafd9e462f49297ec41f3a42",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-political-slant.txt",
+    "source_file": "fixtures/bias/bias-political-slant.txt",
+    "content_hash": "eddf4add5c40b53dbb9842926ece6df0b9caebe9383207901e02add6daaccbfd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-cultural-stereotype.txt",
+    "source_file": "fixtures/bias/bias-cultural-stereotype.txt",
+    "content_hash": "fb9b60179dcc57fa52f085b15a4c3c610ea00578f4b67f2697be7182cd9e6ccd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::1",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::1.txt",
+    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::36",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::36.txt",
+    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-09-language-proficiency-testing.txt",
+    "source_file": "fixtures/bias/bf-09-language-proficiency-testing.txt",
+    "content_hash": "6adcab0a34ab0e5dfa85412cad623e49de276c2765fd5170d57ee412bdb2ef59",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::27",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::27.txt",
+    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-redefine.txt",
+    "source_file": "fixtures/bias/bias-fairness-redefine.txt",
+    "content_hash": "08917a4f8cb74253a316512c3be7a1c9e9b50386b09cfbb3e33787c649f2dc17",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::20",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::20.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::2",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::2.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::34",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::34.txt",
+    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::15",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::15.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-gender-role.txt",
+    "source_file": "fixtures/bias/bias-gender-role.txt",
+    "content_hash": "c122766df8d44030fcd95e8b1ecb88dd2cc1c5a11d305fb76a264e87e8506213",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-workplace-norms.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-workplace-norms.txt",
+    "content_hash": "3b304e6fb41b008d691e028ba0b2ddecad6c335984aa12c8490c3ab4e8a026e2",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::30",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::30.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-07-cultural-beauty-standards.txt",
+    "source_file": "fixtures/bias/bf-07-cultural-beauty-standards.txt",
+    "content_hash": "323188c4f612f229f7e241e64639a9354cc076d51c4e1a1547644cbb40617deb",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-06-socioeducation-tracking.txt",
+    "source_file": "fixtures/bias/bf-06-socioeducation-tracking.txt",
+    "content_hash": "ff14158dc5e7687711e1dab048141e5178c36c9ce0ba6d2bf933d960260f3f7f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::3",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::3.txt",
+    "content_hash": "56ef68161f9d16dd71a5f746ded9bd77f92d9bff7876ce77d2394a80eb3deaed",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::39",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::39.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::26",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::26.txt",
+    "content_hash": "b2d1b96a88614d75be6a0cb5c2a2d2270ea2b6d3b9a6cd8a8ea3d63bb873f1e8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-06-socioeconomic-customer-service.txt",
+    "source_file": "fixtures/bias/bf-06-socioeconomic-customer-service.txt",
+    "content_hash": "76e8805a96f4bb9fea8c6ac11a7997bba930121a0097740c30de68650d712d85",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bias-fairness-override.txt",
+    "source_file": "fixtures/bias/bias-fairness-override.txt",
+    "content_hash": "fadb36c2fe5404fd339009be0279ee421b27a86a11f8074a903d3548cf40bddc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: attack"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-08-geographic-intel-capability.txt",
+    "source_file": "fixtures/bias/bf-08-geographic-intel-capability.txt",
+    "content_hash": "fc736a9d352e9b8bcd2cf165d474fa56f222747b59b02a76e58fb5482c5a765d",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-09-language-monolingual-sufficiency.txt",
+    "source_file": "fixtures/bias/bf-09-language-monolingual-sufficiency.txt",
+    "content_hash": "0a14564fbff86ac9bc9384c072d9f729318c207430aa1fe6a06b620f58457301",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::9",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::9.txt",
+    "content_hash": "8b0dc502356ba9c2c904df0056abbe8f324c9ea12e3dd3ee90bea438df894dbc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::0",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::0.txt",
+    "content_hash": "16130449e965eea0351dc21e08ab6a50c2a589c5d7dcf589351888f5afbde503",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::24",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::24.txt",
+    "content_hash": "e342ea9a2ccf7c3a0dde52b47d062f553495f8f12cb6a59b38c01a35f2b375d7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::29",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::29.txt",
+    "content_hash": "3f39571283afb2e650f435bd1c4a13e0e852495348718abb3049563ff0a0732f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::33",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::33.txt",
+    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::bias-detector::32",
+    "source_file": "validation/corpus/ground-truth/text/bias-detector/exp::bias-detector::32.txt",
+    "content_hash": "05d5b9128e4c3a9bab7c6a05d0f3a94cba0528a6848fc4738e9d6f40338b1971",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module bias-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::bias::bf-05-disability-hiring-screening.txt",
+    "source_file": "fixtures/bias/bf-05-disability-hiring-screening.txt",
+    "content_hash": "09c07a56115f2b397476487b51d2dc3828c8bb070e36c2d7cda882ce66c5e6bc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "bias-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "BIAS_DEMOGRAPHIC",
+      "BIAS_STEREOTYPE",
+      "BIAS_FAIRNESS_VIOLATION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
   }
 ]

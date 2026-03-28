@@ -4,70 +4,8 @@
   "positive_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "gt::model-theft::mt-prob-token.txt",
-      "source_file": "fixtures/model-theft/mt-prob-token.txt",
-      "content_hash": "c6f29ff043857e1db6f0b86b4e97cad467ebd5b2807ad82ce22ff00210fffaa7",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "auto-labeler-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "reviewer_2": {
-        "id": "manifest-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Attack: Logprob/token probability extraction"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::51",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::51.txt",
-      "content_hash": "d6f952cdafae78b6b2a98823ff921272606c8d516642579b2421c26bbefb816b",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module model-theft-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::57",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::57.txt",
+      "id": "exp::model-theft-detector::39",
+      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::39.txt",
       "content_hash": "3f06f487d53cb7995042c3c7d068f56ac09dab12fe71243d47a127fefb289449",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -84,12 +22,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -97,9 +35,40 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::80",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::80.txt",
-      "content_hash": "84c591471905eb64865533b3eb5a18fd769a494b10f86301073d8e8529de50aa",
+      "id": "gt::model-theft::mt-api-version-diff.txt",
+      "source_file": "fixtures/model-theft/mt-api-version-diff.txt",
+      "content_hash": "3ab4ccfdc87be422727cb41b412876f4ddf5a2034c0d89f06c13a73b669f5938",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::model-theft-detector::7",
+      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::7.txt",
+      "content_hash": "3f06f487d53cb7995042c3c7d068f56ac09dab12fe71243d47a127fefb289449",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -115,12 +84,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -128,8 +97,39 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::19",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::19.txt",
+      "id": "exp::model-theft-detector::26",
+      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::26.txt",
+      "content_hash": "55ca2490d9f0d12390880b626ca265963de9eeb2989d375f16aec4ff402276b1",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module model-theft-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::model-theft-detector::76",
+      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::76.txt",
       "content_hash": "01558163f92a0d4f9f63fd396737594a8cc07ba1eae515a9d7272d5691d3cccd",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -146,12 +146,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -159,133 +159,9 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::16",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::16.txt",
-      "content_hash": "eb8a7f8f1eadfb10402a75bda533d2ea995126d7e25166873f108755ddba830c",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module model-theft-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::74",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::74.txt",
-      "content_hash": "eb8a7f8f1eadfb10402a75bda533d2ea995126d7e25166873f108755ddba830c",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module model-theft-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::37",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::37.txt",
-      "content_hash": "d6f952cdafae78b6b2a98823ff921272606c8d516642579b2421c26bbefb816b",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module model-theft-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::model-theft-detector::72",
-      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::72.txt",
-      "content_hash": "84c591471905eb64865533b3eb5a18fd769a494b10f86301073d8e8529de50aa",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "model-theft-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "MODEL_THEFT_EXTRACTION",
-        "MODEL_THEFT_DISTILLATION"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module model-theft-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "gt::model-theft::mt-weight-cache-steal.txt",
-      "source_file": "fixtures/model-theft/mt-weight-cache-steal.txt",
-      "content_hash": "bd1327945ce9e218ba99be15c4a6ad106a1c45b888ff0ea4cc11a0944f5c756e",
+      "id": "gt::model-theft::mt-api-streaming-intercept.txt",
+      "source_file": "fixtures/model-theft/mt-api-streaming-intercept.txt",
+      "content_hash": "464420673a63731388d9d143381ff94352434c7abebbcdcac1f6daba2ec2029f",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -301,12 +177,136 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::model-theft::mt-api-batch-extract.txt",
+      "source_file": "fixtures/model-theft/mt-api-batch-extract.txt",
+      "content_hash": "abd398fa8639430bfb50a4758e469ed3dfa0df769fd96810947596f7b6429497",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::model-theft-detector::79",
+      "source_file": "validation/corpus/ground-truth/text/model-theft-detector/exp::model-theft-detector::79.txt",
+      "content_hash": "3f06f487d53cb7995042c3c7d068f56ac09dab12fe71243d47a127fefb289449",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module model-theft-detector"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::model-theft::mt-api-function-recon.txt",
+      "source_file": "fixtures/model-theft/mt-api-function-recon.txt",
+      "content_hash": "f215e7af3f0d05c4d0d0c0b5f55f520dd2a1b23330d9f53284c32c56705ba07e",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::model-theft::mt-weight-checkpoint-steal.txt",
+      "source_file": "fixtures/model-theft/mt-weight-checkpoint-steal.txt",
+      "content_hash": "74ba0089f9c006b793b8c54a5c22fd97a385e0518b8d370ab56d9e7c616e7513",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "model-theft-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "MODEL_THEFT_EXTRACTION",
+        "MODEL_THEFT_DISTILLATION"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -316,9 +316,9 @@
   "negative_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "gt::encoded::clean-enc-benign-013.txt",
-      "source_file": "fixtures/encoded/clean-enc-benign-013.txt",
-      "content_hash": "04f00868a3b27e07f2c6011ccbf9c5c214c326d94ae1139d2b80a6aeeca8f9de",
+      "id": "gt::encoded::clean-enc-benign-008.txt",
+      "source_file": "fixtures/encoded/clean-enc-benign-008.txt",
+      "content_hash": "612520b7a5b143520807b8c7501433ace890f8155b899deacbc24bd5f2c2f43f",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -329,21 +329,21 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "gt::bias::bf-06-socioeconomic-judicial.txt",
-      "source_file": "fixtures/bias/bf-06-socioeconomic-judicial.txt",
-      "content_hash": "e091e4f8cfd3e62376525028ae5836ddb71d60d6c474fae2357c9feeaeaee8b0",
+      "id": "gt::environmental::env-01-energy-training-disclosure.txt",
+      "source_file": "fixtures/environmental/env-01-energy-training-disclosure.txt",
+      "content_hash": "c48e8e8245fdf831a11eacd70377cd9e19f2726f94c28c596ae6c1dc45a31103",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -354,21 +354,21 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "gt::environmental::env-clean-carbon-disclosure.txt",
-      "source_file": "fixtures/environmental/env-clean-carbon-disclosure.txt",
-      "content_hash": "792efb106de459d4dac6ea7e924f653ff98be59209fae7288bc09e7d79cfa28d",
+      "id": "gt::search-results::clean-news.json",
+      "source_file": "fixtures/search-results/clean-news.json",
+      "content_hash": "cfc1b305c5f012838cea4b7dac3d65fcce6572fe36a2b240fa94da284847c46a",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -379,21 +379,21 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::208",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::208.txt",
-      "content_hash": "0616492c913e0a1896f74cf27a59dbf7cf18f2a5812e72536301bb4aed5ac393",
+      "id": "exp::clean::959",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::959.txt",
+      "content_hash": "2a12af202f0d5e53c1b028cbb360e1bd64ff4931da92b6256f54a84f9127b389",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -404,126 +404,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 208"
+      "notes": "Clean sample 959"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::5",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::5.txt",
-      "content_hash": "a4cbae8cff65fcf9ac7cd73f65d4e5fd3667ee1500cf9a0330007b8c987976ae",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 5"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::252",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::252.txt",
-      "content_hash": "f7e7eb6deec460361c0dfef45c91e34a21ed6442ef5c7c7520a48f7ffcd801db",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 252"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::258",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::258.txt",
-      "content_hash": "d7d8c87f0ee00077427c4e8ff824ec1941dd9f7b0076bfb9343decf1be2dc5bd",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 258"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::598",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::598.txt",
-      "content_hash": "29c00fcf909be7886a420537bf084063ffea9f98be1536e9dc019d7dbf6d4418",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 598"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "gt::supply-chain::sc-dep-outdated.txt",
-      "source_file": "fixtures/supply-chain/sc-dep-outdated.txt",
-      "content_hash": "e8bbdabae0542116dd03979dead79d8fb628227d856b8b91a57453e6c073ca82",
+      "id": "gt::document-attacks::clean-doc-benign-007.txt",
+      "source_file": "fixtures/document-attacks/clean-doc-benign-007.txt",
+      "content_hash": "a1b35104f1ffe3272a62303333d7d271cf3be5a2c4e4b3c1a7ee02e80b3a66ed",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -534,21 +430,21 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::120",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::120.txt",
-      "content_hash": "1bb2f7bfcea048cbc97b5639ccaf367ca354e33319f39e0b72fa8256df73a59e",
+      "id": "exp::clean::701",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::701.txt",
+      "content_hash": "426fa58df405d36f93a8e396fcbe070383b055673bbf0f5cf33288828bd169b6",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -559,16 +455,118 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 120"
+      "notes": "Clean sample 701"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::prompt-injection::clean-pi-business-email.txt",
+      "source_file": "fixtures/prompt-injection/clean-pi-business-email.txt",
+      "content_hash": "2273133b3a204a7a3cbe554c28da7da96dd40e1080f3260b70dfa205b25488ca",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::865",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::865.txt",
+      "content_hash": "cc8ba2e25a5f70c35904476e31cda77ac01f2c9b359f1948fa50b6b127e26826",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 865"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::few-shot::clean-few-shot-002.json",
+      "source_file": "fixtures/few-shot/clean-few-shot-002.json",
+      "content_hash": "81541c74b1c8a8aa6b1e40a084fad8ecf232a42a6236ffdad0c3db7f7b4e6f3f",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::522",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::522.txt",
+      "content_hash": "23034716a0e87a0e98963ab4b2f07325ebf856da9802326c8c65fe9ff1b20ccf",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 522"
     }
   ]
 }

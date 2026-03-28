@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::38::paraphrase-variations::2",
+  "base_sample_id": "exp::xxe-protopollution::38",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -298035394,
+  "content": "Look, just <?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///proc/self/environ\">]><data>&xxe;</data>\n",
+  "content_hash": "b44d586d89aca8ba6ed245cce83eb8953e515f0f7d7a121b41e27ebfaedc3f30",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:informal",
+  "difficulty": "moderate"
+}

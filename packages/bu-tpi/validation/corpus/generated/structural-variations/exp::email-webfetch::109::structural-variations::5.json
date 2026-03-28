@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::109::structural-variations::5",
+  "base_sample_id": "exp::email-webfetch::109",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1325974728,
+  "content": "{\"content\": \"Reply-To: legitimate@bank.example.com\\r\\nReturn-Path: attacker@evil.example.com\\n\"}",
+  "content_hash": "0d53410a255763558916c0e7eef5edb710a6f157858df14e57bbca6cf7403c38",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

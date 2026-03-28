@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::96::binary-variations::3",
+  "base_sample_id": "exp::vectordb-interface::96",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -925075468,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"{\\\"filter\\\": {\\\"$where\\\": \\\"this.role == 'admin'\\\"}}\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "30e88c7ff36eb661a4f75c56b4189c2d5c43c2e0f7b4ed29692c5c559f59b9ca",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

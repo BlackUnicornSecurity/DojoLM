@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-a874c722-801c-4fc8-a7eb-19b25891e257",
+    "certificate_id": "cal-bb7be11d-9c4e-4c37-a989-23fe5ee2d2f9",
     "module_id": "deepfake-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-deepfake-detector-95c43afcc07e",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 18,
-    "timestamp": "2026-03-27T00:36:07.281Z",
-    "signature": "a00403382e91c143ef2e25b9829798fa1226b2801b68fcef18c92d510107bc4a535af89ff76d17973e849d61e79454ebff30d31b471f9cdefdb643395cbd0002"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:16.529Z",
+    "signature": "2bd214955123d43f955402c21f23c188272707d2ad5a49238067fb672e7c004edc3ad4f76e546ba32cfa0637516f2c1655a00e5c160c6c43c1e58ac864d65b09"
   },
   "details": [
     {
-      "sample_id": "exp::deepfake-detector::67",
+      "sample_id": "exp::deepfake-detector::0",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::93",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::deepfake-detector::53",
+      "sample_id": "exp::deepfake-detector::36",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::23",
+      "sample_id": "exp::deepfake-detector::6",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::73",
+      "sample_id": "exp::deepfake-detector::37",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::82",
+      "sample_id": "exp::deepfake-detector::79",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::20",
+      "sample_id": "exp::deepfake-detector::2",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::50",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::deepfake-detector::78",
+      "sample_id": "exp::deepfake-detector::27",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::deepfake-detector::21",
+      "sample_id": "exp::deepfake-detector::66",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::662",
+      "sample_id": "exp::deepfake-detector::22",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::deepfake-detector::63",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::190",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::93",
+      "sample_id": "exp::clean::117",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::untrusted-sources::clean-email.json",
+      "sample_id": "exp::clean::873",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::585",
+      "sample_id": "exp::clean::180",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::158",
+      "sample_id": "exp::clean::50",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::39",
+      "sample_id": "exp::clean::431",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::851",
+      "sample_id": "exp::clean::683",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::755",
+      "sample_id": "gt::web::clean-web-json-api.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::346",
+      "sample_id": "gt::modern::clean-modern-009.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::or::or-code-docker-compose.txt",
+      "sample_id": "exp::clean::415",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

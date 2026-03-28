@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::36::paraphrase-variations::6",
+  "base_sample_id": "exp::xxe-protopollution::36",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 1737753711,
+  "content": "Kindly <?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://169.254.169.254/\">]><information>&xxe;</data>\n",
+  "content_hash": "b829d3c5a16b81b569bae1d0449308e21dd0aef0a5f0a6cf797d6119adef740d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:synonym-formal",
+  "difficulty": "advanced"
+}

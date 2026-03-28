@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::71::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::71",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 400602897,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/EmbeddedFiles << /Names [(payload.exe) << /Type /Filespec /F (payload.exe) /EF << /F 0 R >> >>] >>\\n</field></root>\"\n  }\n}",
+  "content_hash": "5106ad7f823f110fb1358af704c258f9c9f250400bc60c5bfe8ca2290cdc330c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

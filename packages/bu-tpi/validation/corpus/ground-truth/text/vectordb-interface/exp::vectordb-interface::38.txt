@@ -1,1 +1,2 @@
-pinecone.Index("sensitive-data").query(vector=[0]*1536, top_k=10000)
+collection.delete_many({})
+# Inject: retrieve all embeddings

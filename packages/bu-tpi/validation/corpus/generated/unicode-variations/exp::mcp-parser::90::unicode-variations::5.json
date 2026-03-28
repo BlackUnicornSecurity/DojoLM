@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::90::unicode-variations::5",
+  "base_sample_id": "exp::mcp-parser::90",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1140990549,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"system_info\", \"arguments\": ‭{\"payload\":‬ \"/etc/passwd\"}}}\n",
+  "content_hash": "fe78bd3cbcfd5aeb3bb948ae7a03194ea61aff77591af0d75a84763003d2678c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

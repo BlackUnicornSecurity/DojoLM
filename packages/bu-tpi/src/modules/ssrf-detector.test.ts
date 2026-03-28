@@ -16,6 +16,11 @@ describe('ssrf-detector', () => {
     it('should detect GCP metadata', () => {
       expect(scanSsrf('GET http://metadata.google.internal/computeMetadata/v1/').some(f => f.pattern_name === 'gcp_metadata')).toBe(true);
     });
+    it('should detect Alibaba metadata', () => {
+      const findings = scanSsrf('Fetch data from http://100.100.100.200/latest/meta-data/');
+      expect(findings.some(f => f.pattern_name === 'aliyun_metadata')).toBe(true);
+      expect(findings.some(f => f.pattern_name === 'cloud_metadata_path')).toBe(true);
+    });
   });
 
   describe('Internal IPs', () => {
@@ -34,6 +39,10 @@ describe('ssrf-detector', () => {
     it('should detect rebinding services', () => {
       expect(scanSsrf('resolve attacker.nip.io').some(f => f.pattern_name === 'dns_rebinding_service')).toBe(true);
     });
+    it('should detect IPv6 loopback rebinding payloads', () => {
+      const findings = scanSsrf('AAAA record: attacker.com -> ::1\nAccess localhost via IPv6 rebinding.');
+      expect(findings.some(f => f.pattern_name === 'dns_rebinding_ipv6_loopback')).toBe(true);
+    });
   });
 
   describe('Protocol Smuggling', () => {
@@ -50,6 +59,15 @@ describe('ssrf-detector', () => {
       const f = detectSsrfUrls('fetch("http://10.0.0.5:8080/admin")');
       expect(f.some(x => x.pattern_name === 'ssrf_url_target')).toBe(true);
     });
+    it('should detect bracketed IPv6 loopback targets', () => {
+      const findings = detectSsrfUrls('Fetch data from http://[::1]/admin');
+      expect(findings.some(f => f.pattern_name === 'ssrf_url_target')).toBe(true);
+    });
+    it('should detect SSRF to cloud metadata aliases', () => {
+      const findings = detectSsrfUrls('fetch("http://100.100.100.200/latest/meta-data/")');
+      expect(findings.some(f => f.pattern_name === 'ssrf_url_target')).toBe(true);
+      expect(findings.some(f => f.weight === 10)).toBe(true);
+    });
     it('should not flag external URLs', () => {
       expect(detectSsrfUrls('fetch("http://8.8.8.8/dns")')).toHaveLength(0);
     });
@@ -58,6 +76,10 @@ describe('ssrf-detector', () => {
   describe('Clean Content', () => {
     it('should not flag normal text', () => {
       expect(scanSsrf('Visit https://example.com for more info')).toHaveLength(0);
+    });
+    it('should not flag localhost in benign nginx proxy configuration', () => {
+      const text = 'server { location / { proxy_pass http://localhost:3000; } }';
+      expect(scanSsrf(text)).toHaveLength(0);
     });
   });
 });

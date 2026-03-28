@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::96::binary-variations::0",
+  "base_sample_id": "exp::xxe-protopollution::96",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1132438289,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:subject\": \"<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"http://internal-server/data\\\">]><data>&xxe;</data>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "44d4f33d396f73ba430b9aa300730e2e552889674cb7ee0c0e71d9856e04f16b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

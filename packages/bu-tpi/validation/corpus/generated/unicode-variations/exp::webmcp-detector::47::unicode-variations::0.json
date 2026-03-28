@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::47::unicode-variations::0",
+  "base_sample_id": "exp::webmcp-detector::47",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 68296054,
+  "content": "POST /mср HTТР/1.1\r\nОrigin: httрs://attaсkеr.ехamplе.cоm\r\n\r\n{\"method\":\"sаmplіng/сreateMеssаge\"}\n",
+  "content_hash": "a02679801c2b9da509b7c78278393eded81e77f18033f56611ebbe27f1071f18",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

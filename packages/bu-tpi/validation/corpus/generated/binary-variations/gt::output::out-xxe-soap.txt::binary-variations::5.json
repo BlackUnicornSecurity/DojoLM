@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::binary-variations::5",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"># Marfaak AI Security - XXE in SOAP request\\n\\n**WARNING: This payload tests XXE in SOAP request.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">\\n]>\\n<soapenv:Envelope xmlns:soapenv=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n<soapenv:Body>\\n<GetUser><name>&xxe;</name></GetUser>\\n</soapenv:Body>\\n</soapenv:Envelope></field></root>\"\n  }\n}",
+  "content_hash": "d7a45142549be1c649794583518f1a8d0fa99611b4a57905f86866e40c3c5a33",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

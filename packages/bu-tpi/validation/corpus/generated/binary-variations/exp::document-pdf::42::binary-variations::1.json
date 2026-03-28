@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::42::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::42",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -17051368,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"LYRICS=<xfa:data><xfa:datasets><field name=\\\"exec\\\"><value>malicious_payload</value></field></xfa:datasets></xfa:data>\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "3c02e8c70d5a62992773fe033287349e6be7338d08bbb3a1d92e23ef0730b0de",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

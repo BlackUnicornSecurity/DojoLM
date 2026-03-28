@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": 661693227,
-  "content": "> pinecone.Index(\"sensitive-data\").query(vector=[0]*1536, top_k=10000)\n> ",
-  "content_hash": "ae4a4e25a8640eda2c5586db63599ecfd982b69d1f16c47b2a513f7a92f0fce8",
+  "content": "{\"filter\": {\"$where\": \"this.role /** documentation */ == 'admin'\"}}\n",
+  "content_hash": "da0b9a95bc3e0e2d124206e7a05d5b1701ca79e44dd49aa40347f5e8724280f5",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:markdown-blockquote",
+  "variation_type": "structural:code-comments",
   "difficulty": "moderate"
 }

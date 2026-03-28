@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::113::binary-variations::1",
+  "base_sample_id": "exp::token-analyzer::113",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1155472466,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjB9.xxx\\n</field></root>\"\n  }\n}",
+  "content_hash": "bc95c3394bc5550c1a1ea1760a4fe4456b99ae7a0d688a265c1bda7db61ea84c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

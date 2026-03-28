@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::125::binary-variations::0",
+  "base_sample_id": "exp::token-analyzer::125",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 639592539,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"ImageDescription\": \"Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0In0.xyz\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "698a830fd9efa955dc05e8d7abb7631a28dbea8c52f9eb914a5799af5aece467",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

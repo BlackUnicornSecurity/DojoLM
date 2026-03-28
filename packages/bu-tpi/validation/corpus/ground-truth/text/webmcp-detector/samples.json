@@ -1,39 +1,8 @@
 [
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::44",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::44.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::72",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::72.txt",
+    "id": "exp::webmcp-detector::81",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::81.txt",
     "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -50,1066 +19,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::chunked-smuggle-te-cl.fixture",
-    "source_file": "fixtures/webmcp/chunked-smuggle-te-cl.fixture",
-    "content_hash": "4b7254fb930b4b884e86217e5a0c6a33114be1df9ce4a2ec2d04fae386ce5013",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Chunked Smuggle Te Cl"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::content-type-polyglot.fixture",
-    "source_file": "fixtures/webmcp/content-type-polyglot.fixture",
-    "content_hash": "5bdc124cfd7f9f9ed8a0f482028d03e0422f2b8c02de7f85736b513494ec7cd6",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Content Type Polyglot"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::79",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::79.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-websocket-chat.fixture",
-    "source_file": "fixtures/webmcp/clean-websocket-chat.fixture",
-    "content_hash": "06c5db1a57fd5b91fffebed875c877cf94f2da0ab0afbed00b547f9c3994999c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Clean Websocket Chat"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::9",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::9.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::2",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::2.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::17",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::17.txt",
-    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-embed-src.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-embed-src.fixture",
-    "content_hash": "1a7d655d1659ffbb036119d6c582e5d5884fce0f10dc017b9edd5a44325099b1",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Embed Src"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::ws-hijack-close-race.fixture",
-    "source_file": "fixtures/webmcp/ws-hijack-close-race.fixture",
-    "content_hash": "5695fc22de66c1c8b8550e978b0e1fe1ede4a89a41ab5acb9ee3fa61e022ebe7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Ws Hijack Close Race"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::32",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::32.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::80",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::80.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::chunked-double-encoding.fixture",
-    "source_file": "fixtures/webmcp/chunked-double-encoding.fixture",
-    "content_hash": "793253c6a0b64e06cd8cf87cf6f361be9a9fc2285a94565e4069db83b0b89417",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Chunked Double Encoding"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::64",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::64.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-aria-hidden.fixture",
-    "source_file": "fixtures/webmcp/web-poison-aria-hidden.fixture",
-    "content_hash": "cc4941fb52021f8db3f546d3ad34d03e0a9eb639d3db3f4311838497f2d02b47",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Aria Hidden"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::41",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::41.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::83",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::83.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::16",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::16.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-event-handler.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-event-handler.fixture",
-    "content_hash": "938ef44ab188c9b21928af238cde91bd56c4bc8a844eb3161ddbd812513609fc",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Event Handler"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::66",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::66.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::0",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::0.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::5",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::5.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::73",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::73.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::23",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::23.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::48",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::48.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::chunked-smuggle-cl-te.fixture",
-    "source_file": "fixtures/webmcp/chunked-smuggle-cl-te.fixture",
-    "content_hash": "044ffe0f22bb0d453f4005b1d79a5857cb81307279885dfcb72ca3a6824feaba",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Chunked Smuggle Cl Te"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-oauth-flow.fixture",
-    "source_file": "fixtures/webmcp/clean-oauth-flow.fixture",
-    "content_hash": "30799f24bf145bce7b329b8d4c299bff38b6c3ef558061f702634b51d7f675e0",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Clean Oauth Flow"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::content-type-xml-json.fixture",
-    "source_file": "fixtures/webmcp/content-type-xml-json.fixture",
-    "content_hash": "00cc8b31878c777d3e7306512b22d01fec53882d3d5da988ca4885472ea85b00",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Content Type Xml Json"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-comment-inject.fixture",
-    "source_file": "fixtures/webmcp/web-poison-comment-inject.fixture",
-    "content_hash": "a6338d361bf94cd6742312a542b520cdb6dddc062c548a204945d3e766f4f85e",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Comment Inject"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::58",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::58.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::82",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::82.txt",
-    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-xss-img.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-xss-img.fixture",
-    "content_hash": "24775425f6f1a259c14a0b5be6d33781870291ff24f2f5331b2d6e3771ce30ce",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Xss Img"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::85",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::85.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::cors-credential-leak.fixture",
-    "source_file": "fixtures/webmcp/cors-credential-leak.fixture",
-    "content_hash": "828daf046e024edf3708935f056269009bc50fbb150317d82fd7a995c465b8ac",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Cors Credential Leak"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::43",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::43.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1135,12 +50,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1148,9 +63,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-api-response.fixture",
-    "source_file": "fixtures/webmcp/clean-api-response.fixture",
-    "content_hash": "f0ee397ab931fcf64cd22f8fd38e34f2892513574d8d30d1343b8a59111c79c0",
+    "id": "gt::webmcp::browser-tool-object-data.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-object-data.fixture",
+    "content_hash": "257e34947cbbbc1481ec21d031d84f12dc8d9abb5b4478f53e9fb8980c0f2985",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -1166,109 +81,16 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
-    "notes": "Attack: Clean Api Response"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::28",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::28.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::63",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::63.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::ws-hijack-ping-flood.fixture",
-    "source_file": "fixtures/webmcp/ws-hijack-ping-flood.fixture",
-    "content_hash": "674862f7e6aeb396ba8ac0b943858aa51c6705b47acd748dcd97d2c7a91611f9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Ws Hijack Ping Flood"
+    "notes": "Attack: Browser Tool Object Data"
   },
   {
     "schema_version": "1.0.0",
@@ -1290,12 +112,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1303,8 +125,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::19",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::19.txt",
+    "id": "exp::webmcp-detector::66",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::66.txt",
     "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1321,12 +143,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1334,8 +156,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::3",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::3.txt",
+    "id": "exp::webmcp-detector::2",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::2.txt",
     "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1352,12 +174,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1365,318 +187,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-json-rpc.fixture",
-    "source_file": "fixtures/webmcp/clean-json-rpc.fixture",
-    "content_hash": "dead6c34c0a27d15d752f5df8d96a22c60eba1ed21b69fd60564d6df3bbd0fe1",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Clean Json Rpc"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::40",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::40.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-hidden-div.fixture",
-    "source_file": "fixtures/webmcp/web-poison-hidden-div.fixture",
-    "content_hash": "664f464323308581f9d9852dbc2de1a72c29e6b6dcff2264fbb05040f0d0a792",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Hidden Div"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::25",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::25.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::54",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::54.txt",
-    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::81",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::81.txt",
-    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::1",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::1.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-meta-redirect.fixture",
-    "source_file": "fixtures/webmcp/web-poison-meta-redirect.fixture",
-    "content_hash": "4f830d97ff49ec1bafc23bcbd62144451e0862aa902047b48fcbc101b9f7b13a",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Meta Redirect"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::71",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::71.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::oauth-device-code.fixture",
-    "source_file": "fixtures/webmcp/oauth-device-code.fixture",
-    "content_hash": "0a96c33c22f82b47a047329fd4c35e612786831f1aebcd0c7c6d8f79345c282d",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Oauth Device Code"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::77",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::77.txt",
+    "id": "exp::webmcp-detector::10",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::10.txt",
     "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1693,12 +205,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1706,8 +218,70 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::57",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::57.txt",
+    "id": "gt::webmcp::ws-hijack-origin.fixture",
+    "source_file": "fixtures/webmcp/ws-hijack-origin.fixture",
+    "content_hash": "cd44e6fa0c6bae314ed3f97fdb2d09aa6eb1fc2f14f1d666a040bc57343664f2",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Ws Hijack Origin"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::59",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::59.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::29",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::29.txt",
     "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1724,12 +298,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1737,8 +311,70 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::27",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::27.txt",
+    "id": "gt::webmcp::cors-wildcard-origin.fixture",
+    "source_file": "fixtures/webmcp/cors-wildcard-origin.fixture",
+    "content_hash": "86731139182d0fb0dc5509f98965ac8eade6d59327338cedefeebdef1e3e1a8d",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cors Wildcard Origin"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::browser-tool-svg-script.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-svg-script.fixture",
+    "content_hash": "d4f9ceb6ba8619c8f40822299e6c112950466dbcdf97382733e407efa405cee2",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Browser Tool Svg Script"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::74",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::74.txt",
     "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -1755,12 +391,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1768,40 +404,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-cors-config.fixture",
-    "source_file": "fixtures/webmcp/clean-cors-config.fixture",
-    "content_hash": "97f10578e8a34119c0aec501b35f00d2acc46fe81c30d673fc4fca7c14308af0",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Clean Cors Config"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::86",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::86.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "id": "exp::webmcp-detector::68",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::68.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -1817,12 +422,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -1830,9 +435,9 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::11",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::11.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "id": "exp::webmcp-detector::87",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::87.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -1848,198 +453,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::51",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::51.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::70",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::70.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::50",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::50.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::ws-hijack-upgrade.fixture",
-    "source_file": "fixtures/webmcp/ws-hijack-upgrade.fixture",
-    "content_hash": "aec90eed8485427ba81eebd24780330f983fa2057654fe750af5ed03dc2220d5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Ws Hijack Upgrade"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::39",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::39.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::61",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::61.txt",
-    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2065,12 +484,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2078,8 +497,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::33",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::33.txt",
+    "id": "exp::webmcp-detector::30",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::30.txt",
     "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2096,12 +515,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2109,8 +528,225 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::7",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::7.txt",
+    "id": "exp::webmcp-detector::51",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::51.txt",
+    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::oauth-redirect-open.fixture",
+    "source_file": "fixtures/webmcp/oauth-redirect-open.fixture",
+    "content_hash": "35086f8773a2afc372e1325d184f667bac21fb3794711805e3f2acc7bdf46ca8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Oauth Redirect Open"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::content-type-polyglot.fixture",
+    "source_file": "fixtures/webmcp/content-type-polyglot.fixture",
+    "content_hash": "5bdc124cfd7f9f9ed8a0f482028d03e0422f2b8c02de7f85736b513494ec7cd6",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Content Type Polyglot"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::chunked-smuggle-te-cl.fixture",
+    "source_file": "fixtures/webmcp/chunked-smuggle-te-cl.fixture",
+    "content_hash": "4b7254fb930b4b884e86217e5a0c6a33114be1df9ce4a2ec2d04fae386ce5013",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Chunked Smuggle Te Cl"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::99",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::99.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::17",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::17.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::80",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::80.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::16",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::16.txt",
     "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2127,12 +763,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2140,70 +776,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::13",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::13.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::56",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::56.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::89",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::89.txt",
+    "id": "exp::webmcp-detector::12",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::12.txt",
     "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2220,12 +794,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2235,7 +809,7 @@
     "schema_version": "1.0.0",
     "id": "exp::webmcp-detector::65",
     "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::65.txt",
-    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
@@ -2251,12 +825,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2264,132 +838,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-link-import.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-link-import.fixture",
-    "content_hash": "0a47bdf30117573f742b23dfe2ca19a157fef37a458066b3c4f37748e88b260c",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Link Import"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::8",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::8.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::12",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::12.txt",
-    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::chunked-zero-length.fixture",
-    "source_file": "fixtures/webmcp/chunked-zero-length.fixture",
-    "content_hash": "0543a7415df59adf32c89b3fedd1ac76c98d2291389ca4ec6d73f7ddc74e80ab",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Chunked Zero Length"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::10",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::10.txt",
+    "id": "exp::webmcp-detector::79",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::79.txt",
     "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2406,12 +856,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2419,15 +869,15 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-html-template.fixture",
-    "source_file": "fixtures/webmcp/clean-html-template.fixture",
-    "content_hash": "ba6945f46d2e603d5ba7fdc834587a7078509a0695e8a54628f6928ca102bd9a",
+    "id": "exp::webmcp-detector::32",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::32.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
     "content_type": "text",
     "expected_verdict": "malicious",
     "expected_modules": [
       "webmcp-detector"
     ],
-    "expected_severity": "WARNING",
+    "expected_severity": "CRITICAL",
     "expected_categories": [
       "WEBMCP_INJECTION",
       "WEBMCP_ORIGIN_SPOOFING"
@@ -2435,18 +885,297 @@
     "difficulty": "moderate",
     "source_type": "synthetic",
     "reviewer_1": {
-      "id": "auto-labeler-v1",
+      "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
-      "id": "manifest-metadata",
+      "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
-    "notes": "Attack: Clean Html Template"
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::41",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::41.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::90",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::90.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::47",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::47.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::49",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::49.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::13",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::13.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::36",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::36.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::37",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::37.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::60",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::60.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::21",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::21.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
   },
   {
     "schema_version": "1.0.0",
@@ -2468,12 +1197,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -2481,163 +1210,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::4",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::4.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::content-type-charset.fixture",
-    "source_file": "fixtures/webmcp/content-type-charset.fixture",
-    "content_hash": "49be53f3c061ad0bcec4b90f48bb24af7e2244a9f73fbccb765da5dbd955353b",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Content Type Charset"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::35",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::35.txt",
-    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::clean-rest-api.fixture",
-    "source_file": "fixtures/webmcp/clean-rest-api.fixture",
-    "content_hash": "f91f475c982ddd7b6112a716071814bdd6825735f31492a482e7d49d6f3096bb",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Clean Rest Api"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::34",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::34.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::55",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::55.txt",
+    "id": "exp::webmcp-detector::40",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::40.txt",
     "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -2654,632 +1228,12 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::68",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::68.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::59",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::59.txt",
-    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::78",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::78.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::20",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::20.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-svg-script.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-svg-script.fixture",
-    "content_hash": "d4f9ceb6ba8619c8f40822299e6c112950466dbcdf97382733e407efa405cee2",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Svg Script"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::cors-method-override.fixture",
-    "source_file": "fixtures/webmcp/cors-method-override.fixture",
-    "content_hash": "99848129e65371f1a58ec687be204ce00ee68523a18cb4d978c510050d5919ea",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Cors Method Override"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::46",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::46.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::67",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::67.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::36",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::36.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::18",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::18.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-data-attr.fixture",
-    "source_file": "fixtures/webmcp/web-poison-data-attr.fixture",
-    "content_hash": "f6b6d4fe55f97224625f0c65ffe7c31b7994937bfbbd125eb295797591184109",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Data Attr"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-noscript.fixture",
-    "source_file": "fixtures/webmcp/web-poison-noscript.fixture",
-    "content_hash": "99336d1cedfe33f4ee069981e229afad418b89b04cb47d7e13092bce9f12e416",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Noscript"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-object-data.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-object-data.fixture",
-    "content_hash": "257e34947cbbbc1481ec21d031d84f12dc8d9abb5b4478f53e9fb8980c0f2985",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Object Data"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::53",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::53.txt",
-    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::24",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::24.txt",
-    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::31",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::31.txt",
-    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::47",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::47.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::6",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::6.txt",
-    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::content-type-sniff.fixture",
-    "source_file": "fixtures/webmcp/content-type-sniff.fixture",
-    "content_hash": "d432c9864e159a76d09a79c77a6384c7fdb1cce6d32a39b87dc1e836d9b04ae4",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Content Type Sniff"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::52",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::52.txt",
-    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -3305,12 +1259,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -3318,8 +1272,318 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::30",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::30.txt",
+    "id": "gt::webmcp::browser-tool-event-handler.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-event-handler.fixture",
+    "content_hash": "938ef44ab188c9b21928af238cde91bd56c4bc8a844eb3161ddbd812513609fc",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Browser Tool Event Handler"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::83",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::83.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::71",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::71.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::15",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::15.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::6",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::6.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::91",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::91.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::content-type-multipart.fixture",
+    "source_file": "fixtures/webmcp/content-type-multipart.fixture",
+    "content_hash": "257bdea2e5075b89bf0d66f9353fa569985310c856258eb16f9e6934bf55aacb",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Content Type Multipart"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::35",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::35.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::46",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::46.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::cors-preflight-bypass.fixture",
+    "source_file": "fixtures/webmcp/cors-preflight-bypass.fixture",
+    "content_hash": "b816b94298c3e25abbc2d42427394e7b5441957585d469f25262abfee124bdee",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cors Preflight Bypass"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::24",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::24.txt",
     "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -3336,12 +1600,136 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::22",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::22.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::82",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::82.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::69",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::69.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::96",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::96.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -3367,12 +1755,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -3380,163 +1768,8 @@
   },
   {
     "schema_version": "1.0.0",
-    "id": "gt::webmcp::cors-preflight-bypass.fixture",
-    "source_file": "fixtures/webmcp/cors-preflight-bypass.fixture",
-    "content_hash": "b816b94298c3e25abbc2d42427394e7b5441957585d469f25262abfee124bdee",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Cors Preflight Bypass"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::browser-tool-form-action.fixture",
-    "source_file": "fixtures/webmcp/browser-tool-form-action.fixture",
-    "content_hash": "f487907e3ece8586870b20830f6445381eaebd2b7573bfd3ce244ec6838084ec",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Browser Tool Form Action"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::75",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::75.txt",
-    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "corpus-expander-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "reviewer_2": {
-      "id": "template-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Generated from template 0 for module webmcp-detector"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::web-poison-css-inject.fixture",
-    "source_file": "fixtures/webmcp/web-poison-css-inject.fixture",
-    "content_hash": "00fce8a02847e85098d0a9fa7194b4e0c3c9ed12da94688db8d82ae07c2eb21a",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "CRITICAL",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Web Poison Css Inject"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "gt::webmcp::oauth-redirect-open.fixture",
-    "source_file": "fixtures/webmcp/oauth-redirect-open.fixture",
-    "content_hash": "35086f8773a2afc372e1325d184f667bac21fb3794711805e3f2acc7bdf46ca8",
-    "content_type": "text",
-    "expected_verdict": "malicious",
-    "expected_modules": [
-      "webmcp-detector"
-    ],
-    "expected_severity": "WARNING",
-    "expected_categories": [
-      "WEBMCP_INJECTION",
-      "WEBMCP_ORIGIN_SPOOFING"
-    ],
-    "difficulty": "moderate",
-    "source_type": "synthetic",
-    "reviewer_1": {
-      "id": "auto-labeler-v1",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "reviewer_2": {
-      "id": "manifest-metadata",
-      "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
-    },
-    "independent_agreement": true,
-    "holdout": false,
-    "notes": "Attack: Oauth Redirect Open"
-  },
-  {
-    "schema_version": "1.0.0",
-    "id": "exp::webmcp-detector::74",
-    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::74.txt",
+    "id": "exp::webmcp-detector::84",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::84.txt",
     "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
     "content_type": "text",
     "expected_verdict": "malicious",
@@ -3553,15 +1786,1503 @@
     "reviewer_1": {
       "id": "corpus-expander-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "reviewer_2": {
       "id": "template-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.608Z"
+      "timestamp": "2026-03-28T11:37:07.877Z"
     },
     "independent_agreement": true,
     "holdout": false,
     "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::98",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::98.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::8",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::8.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::75",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::75.txt",
+    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::34",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::34.txt",
+    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::33",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::33.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::26",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::26.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::97",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::97.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::28",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::28.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::web-poison-data-attr.fixture",
+    "source_file": "fixtures/webmcp/web-poison-data-attr.fixture",
+    "content_hash": "f6b6d4fe55f97224625f0c65ffe7c31b7994937bfbbd125eb295797591184109",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Web Poison Data Attr"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::57",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::57.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::93",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::93.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::browser-tool-embed-src.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-embed-src.fixture",
+    "content_hash": "1a7d655d1659ffbb036119d6c582e5d5884fce0f10dc017b9edd5a44325099b1",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Browser Tool Embed Src"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::70",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::70.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::cors-subdomain-wildcard.fixture",
+    "source_file": "fixtures/webmcp/cors-subdomain-wildcard.fixture",
+    "content_hash": "68b42a1adcd2f2bc5a892233ce81ebf2936d249664fe276a2815492adeaf1d07",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cors Subdomain Wildcard"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::ws-hijack-close-race.fixture",
+    "source_file": "fixtures/webmcp/ws-hijack-close-race.fixture",
+    "content_hash": "5695fc22de66c1c8b8550e978b0e1fe1ede4a89a41ab5acb9ee3fa61e022ebe7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Ws Hijack Close Race"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::20",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::20.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::77",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::77.txt",
+    "content_hash": "c09299be197a7956cdb3131240fbec7821a905c3350bdc63424a5b46c7e7a8a7",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::ws-hijack-upgrade.fixture",
+    "source_file": "fixtures/webmcp/ws-hijack-upgrade.fixture",
+    "content_hash": "aec90eed8485427ba81eebd24780330f983fa2057654fe750af5ed03dc2220d5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Ws Hijack Upgrade"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::31",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::31.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::oauth-pkce-bypass.fixture",
+    "source_file": "fixtures/webmcp/oauth-pkce-bypass.fixture",
+    "content_hash": "970888cdc512d8975429242c718097acbe40ea1f3652d3a382e6edc99f9c916d",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Oauth Pkce Bypass"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::92",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::92.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::19",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::19.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::oauth-token-leak.fixture",
+    "source_file": "fixtures/webmcp/oauth-token-leak.fixture",
+    "content_hash": "725574d8b0afc62ba588929a287fb46ef9d3eee91a91d72dba50a691bf6f9926",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Oauth Token Leak"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::61",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::61.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::94",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::94.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::cors-credential-leak.fixture",
+    "source_file": "fixtures/webmcp/cors-credential-leak.fixture",
+    "content_hash": "828daf046e024edf3708935f056269009bc50fbb150317d82fd7a995c465b8ac",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Cors Credential Leak"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::0",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::0.txt",
+    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::browser-tool-iframe-srcdoc.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-iframe-srcdoc.fixture",
+    "content_hash": "933b0fd70d35f64d574ddefa32c8eefb8f4b0ddcd11f2f99e80fe0edf2643258",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Browser Tool Iframe Srcdoc"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::browser-tool-script-inject.fixture",
+    "source_file": "fixtures/webmcp/browser-tool-script-inject.fixture",
+    "content_hash": "def771e7f0e6fe4e1dab258768150c5e6a7a1e78c128ee759c0c35380a2891f3",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Browser Tool Script Inject"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::9",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::9.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::89",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::89.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::39",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::39.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::52",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::52.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::58",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::58.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::web-poison-aria-hidden.fixture",
+    "source_file": "fixtures/webmcp/web-poison-aria-hidden.fixture",
+    "content_hash": "cc4941fb52021f8db3f546d3ad34d03e0a9eb639d3db3f4311838497f2d02b47",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Web Poison Aria Hidden"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::53",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::53.txt",
+    "content_hash": "bc6c7a15f24e3da1a6ec3b58b376369f8c86eb1489d091d5a0f0909bd723be5f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::18",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::18.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::web-poison-meta-redirect.fixture",
+    "source_file": "fixtures/webmcp/web-poison-meta-redirect.fixture",
+    "content_hash": "4f830d97ff49ec1bafc23bcbd62144451e0862aa902047b48fcbc101b9f7b13a",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Web Poison Meta Redirect"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::63",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::63.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::11",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::11.txt",
+    "content_hash": "ad70571e81cc1f75e0488a5114dd93a6555b93cd8eee3087c853ce74b674695f",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::chunked-zero-length.fixture",
+    "source_file": "fixtures/webmcp/chunked-zero-length.fixture",
+    "content_hash": "0543a7415df59adf32c89b3fedd1ac76c98d2291389ca4ec6d73f7ddc74e80ab",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Chunked Zero Length"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::95",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::95.txt",
+    "content_hash": "925b8745a6bb3c05b421e4cd64a70c61255a77d6f6b4bc4f215fdfc3c33001a4",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::web-poison-noscript.fixture",
+    "source_file": "fixtures/webmcp/web-poison-noscript.fixture",
+    "content_hash": "99336d1cedfe33f4ee069981e229afad418b89b04cb47d7e13092bce9f12e416",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Web Poison Noscript"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::67",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::67.txt",
+    "content_hash": "368354933faa6919b584c4dca5ebb1b44fb9a325e93db564a41eca8e68e7b9b8",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::42",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::42.txt",
+    "content_hash": "12e29e54ff8fee100d15bae10a31d835086fb3c7ae75140facbcd82e0fc0dbcd",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::23",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::23.txt",
+    "content_hash": "d0b38cc53080236fc44b9f0d3364c65509d5a0a4d908710a91929bfb842a24f5",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "exp::webmcp-detector::72",
+    "source_file": "validation/corpus/ground-truth/text/webmcp-detector/exp::webmcp-detector::72.txt",
+    "content_hash": "eac63be861e65a009d3660bd9f749cbf09d901412d00007cb511d9a32d9376a9",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "corpus-expander-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "reviewer_2": {
+      "id": "template-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.877Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Generated from template 0 for module webmcp-detector"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::webmcp::web-poison-zero-width.fixture",
+    "source_file": "fixtures/webmcp/web-poison-zero-width.fixture",
+    "content_hash": "7cce9e29f3d8d65c9f5e56475ed764bdd76386a12db9288a05231cc230acf1a1",
+    "content_type": "text",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "webmcp-detector"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "WEBMCP_INJECTION",
+      "WEBMCP_ORIGIN_SPOOFING"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Web Poison Zero Width"
   }
 ]

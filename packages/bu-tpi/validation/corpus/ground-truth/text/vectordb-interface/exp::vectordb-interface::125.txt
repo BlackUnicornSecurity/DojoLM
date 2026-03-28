@@ -1,1 +1,1 @@
-{"filter": {"role": {"$regex": ".*", "$options": "i"}}, "include": ["metadatas", "documents", "embeddings"]}
+{"filter": {"$where": "this.role == 'admin'"}}

@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-f76bcf6f-e869-45f0-955f-507404d59f65",
+    "certificate_id": "cal-b037ba97-da30-4d0c-981a-919f7e9a1e96",
     "module_id": "output-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-output-detector-5a49e89fd02b",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 14,
-    "timestamp": "2026-03-27T00:36:06.777Z",
-    "signature": "4ea30a33a51f1865ebc1aead453542f570f29714206d89a1e6c4358efc60baceea0be4d6960c5aac60ddf05a027a2a88595bc0c53fce068bf5bd5bd1cc391f0d"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:14.373Z",
+    "signature": "40a456ca7011583c73e4be91d5cdb0f70f606a1a4b3d836be455c9e6b6d957f656ca4284e9e961f27087cee46814d8ce3d4feb2ccf633a4a6bba76aa1e00c60a"
   },
   "details": [
     {
-      "sample_id": "gt::agent-output::agent-handover-attack.md",
+      "sample_id": "gt::output::out-chain-log-inject-rce.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::output::out-xss-script.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::agent-output::streaming-injection.md",
+      "sample_id": "exp::output-detector::11",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::output-detector::35",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::output-detector::10",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::agent-output::json-instruction-injection.md",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::output::out-chain-sqli-file-read.txt",
+      "sample_id": "gt::agent-output::parameter-tampering.md",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::output-detector::57",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::output-detector::45",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::agent-output::response-format-override.md",
+      "sample_id": "exp::output-detector::29",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::clean-dos-monitoring.txt",
+      "sample_id": "gt::output::out-redirect-header.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-ssrf-localhost.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::agent-output::webhook-abuse.md",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-xxe-svg.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-xxe-basic.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-path-var.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::402",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::model-theft::mt-prob-entropy.txt",
+      "sample_id": "exp::clean::361",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::malformed::socket-file.txt",
+      "sample_id": "gt::encoded::clean-enc-benign-004.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::22",
+      "sample_id": "exp::clean::159",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-09-language-documentation.txt",
+      "sample_id": "gt::prompt-injection::clean-pi-benign-001.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::84",
+      "sample_id": "exp::clean::391",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::vec::clean-vec-delete.txt",
+      "sample_id": "exp::clean::161",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::327",
+      "sample_id": "gt::delivery-vectors::clean-dv-rss.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::932",
+      "sample_id": "gt::token-attacks::clean-token-code-sample.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::256",
+      "sample_id": "exp::clean::913",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

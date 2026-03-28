@@ -19,6 +19,9 @@ export const VEC_PINECONE_PATTERNS: RegexPattern[] = [
   { name: 'pinecone-metadata-injection', cat: 'VEC_METADATA_INJECTION', sev: SEVERITY.WARNING,
     re: /metadata\s*[:=]\s*\{[^}]*\$(?:gt|lt|gte|lte|eq|ne|in|nin)\s*:/i,
     desc: 'Pinecone metadata filter injection with MongoDB operators', source: 'S16', weight: 7 },
+  { name: 'pinecone-topk-exfiltration', cat: 'VEC_DATA_LEAK', sev: SEVERITY.CRITICAL,
+    re: /pinecone\.Index\(\s*["'](?:sensitive|secret|private|admin)[^"']*["']\s*\)\.query\([^)]*top_k\s*=\s*(?:10000|[1-9]\d{4,})/i,
+    desc: 'Pinecone query requests an abusive top_k against a sensitive namespace or index', source: 'S16', weight: 10 },
 ];
 
 export const VEC_WEAVIATE_PATTERNS: RegexPattern[] = [
@@ -90,6 +93,28 @@ export function detectVecMetadataInjection(text: string): Finding[] {
         match: m[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
         pattern_name: 'vec-metadata-nosql-injection', weight: 8 });
     }
+    if (/["']?__proto__["']?\s*:\s*\{[^}]*\}/i.test(content)) {
+      findings.push({ category: 'VEC_PAYLOAD_POISONING', severity: SEVERITY.CRITICAL,
+        description: 'Prototype pollution payload embedded in vector metadata',
+        match: m[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
+        pattern_name: 'vec-metadata-proto-pollution', weight: 10 });
+    }
+  }
+
+  const protoMetadata = text.match(/["']?metadata["']?\s*[:=]\s*\{[\s\S]{0,160}["']?__proto__["']?\s*:\s*\{[\s\S]{0,160}\}/i);
+  if (protoMetadata) {
+    findings.push({ category: 'VEC_PAYLOAD_POISONING', severity: SEVERITY.CRITICAL,
+      description: 'Prototype pollution payload embedded in vector metadata',
+      match: protoMetadata[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
+      pattern_name: 'vec-metadata-proto-pollution', weight: 10 });
+  }
+
+  const whereFilter = text.match(/["']?filter["']?\s*:\s*\{[\s\S]{0,120}["']?\$where["']?\s*:\s*["'][^"']*(?:admin|tenant|role|system)[^"']*["']/i);
+  if (whereFilter) {
+    findings.push({ category: 'VEC_METADATA_INJECTION', severity: SEVERITY.CRITICAL,
+      description: 'JavaScript-style $where filter enables arbitrary privilege checks inside vector metadata queries',
+      match: whereFilter[0].slice(0, 200), source: 'S16', engine: 'vectordb-interface',
+      pattern_name: 'vec-filter-where-injection', weight: 10 });
   }
   return findings;
 }

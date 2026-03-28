@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::structural-variations::2",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "# <!-- TODO --> Marfaak AI Security - XXE <!-- note --> in SOAP request\n\n**WARNING: <!-- note --> This payload tests XXE in SOAP request.**\n\n<?xml <!-- TODO --> version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE <!-- note --> foo <!-- TODO --> [\n  <!ENTITY xxe SYSTEM \"file:///etc/shadow\">\n]>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n<soapenv:Body>\n<GetUser><name>&xxe;</name></GetUser>\n</soapenv:Body>\n</soapenv:Envelope>",
+  "content_hash": "54f758fe19317bf54c2b406029973c0733bebb91408d0a2aee96cafe495f871f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

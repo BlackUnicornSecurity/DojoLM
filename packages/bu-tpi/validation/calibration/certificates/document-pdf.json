@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-823165f8-9e62-4d65-b722-e073a60e9f12",
+    "certificate_id": "cal-c32448f0-287f-4e4f-b978-15a8e4def491",
     "module_id": "document-pdf",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-document-pdf-8d4c8f1888df",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,46 +26,28 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 19,
-    "timestamp": "2026-03-27T00:36:06.936Z",
-    "signature": "d6f464a9e92fbe2524e6701f67fd1e3b650422a8e4fbcf60ccf22305159c1ec62b7ebf3be160f1d089f5c20b766abf5dd4d092f28ead38d8269efc34f0556307"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:15.871Z",
+    "signature": "32665aff3ee488d7f6bf0b18213f8a022b1ba58a2db62108bb8cbc5627dbe5c3bd8bc0b9cae98751759f6080c0c391af333066174c08217cc4acb16fccd71b09"
   },
   "details": [
     {
-      "sample_id": "exp::document-pdf::50",
+      "sample_id": "exp::document-pdf::97",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-pdf::59",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::document-pdf::116",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-pdf::0",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::document-pdf::93",
+      "sample_id": "exp::document-pdf::111",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
@@ -77,85 +59,103 @@
       "correct": true
     },
     {
-      "sample_id": "exp::document-pdf::117",
+      "sample_id": "exp::document-pdf::102",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-pdf::73",
+      "sample_id": "exp::document-pdf::21",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-pdf::1",
+      "sample_id": "exp::document-pdf::79",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-pdf::34",
+      "sample_id": "gt::document-attacks::pdf-annotation-attack.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::session::clean-turn.json",
+      "sample_id": "exp::document-pdf::14",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::document-attacks::pdf-launch-action.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::document-pdf::89",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::367",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::30",
+      "sample_id": "exp::clean::897",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-09-language-resource-allocation.txt",
+      "sample_id": "exp::clean::188",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::456",
+      "sample_id": "exp::clean::242",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::social::clean-social-support.txt",
+      "sample_id": "exp::clean::656",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-loop-benign.txt",
+      "sample_id": "exp::clean::55",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::961",
+      "sample_id": "exp::clean::24",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::cognitive::clean-genuine-challenge.txt",
+      "sample_id": "exp::clean::227",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::search-results::clean-shopping.json",
+      "sample_id": "exp::clean::959",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-obfuscation-002.txt",
+      "sample_id": "gt::multimodal::clean-mm-video-summary.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

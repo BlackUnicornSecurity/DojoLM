@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::47::binary-variations::0",
+  "base_sample_id": "exp::webmcp-detector::47",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 68296054,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"DESCRIPTION=POST /mcp HTTP/1.1\\r\\nOrigin: https://attacker.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"sampling/createMessage\\\"}\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "335eb15aef85a7689d6bba373d0217ac1f4893d29c64867bb5055806687c76d9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

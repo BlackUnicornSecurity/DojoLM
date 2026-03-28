@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::33::binary-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::33",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1255129871,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"require(\\\"co1ors\\\")  // typosquat of colors\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "80510f849dfee8437c75700d861b5acacbb766b25ce373a9b74157eb06c45eb1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

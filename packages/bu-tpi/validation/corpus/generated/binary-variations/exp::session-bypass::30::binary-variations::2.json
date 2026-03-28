@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::30::binary-variations::2",
+  "base_sample_id": "exp::session-bypass::30",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1486507136,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">session_token=; admin=true; role=superuser\\n</field></root>\"\n  }\n}",
+  "content_hash": "b7361c64aa1d1b1389ac38cbb300df22e937ee890b54545e19f191d791ae6e02",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

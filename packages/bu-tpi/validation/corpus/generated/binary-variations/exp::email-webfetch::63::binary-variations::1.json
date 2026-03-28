@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::63::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::63",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 184604409,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">HELO attacker.example.com\\r\\nMAIL FROM: <admin@trusted.example.com>\\r\\nRCPT TO: <victim@target.example.com>\\n</field></root>\"\n  }\n}",
+  "content_hash": "275a941ee632421c0e1f492c1eb45a3efe990eee5437deccb8478644d032b33e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

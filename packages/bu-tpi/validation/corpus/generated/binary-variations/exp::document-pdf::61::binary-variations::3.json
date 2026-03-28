@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::61::binary-variations::3",
+  "base_sample_id": "exp::document-pdf::61",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1199226469,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/Metadata << /Type /Metadata /Subtype /XML >> stream\\n<?xpacket?><rdf:Description rdf:about=\\\"\\\">\\n</field></root>\"\n  }\n}",
+  "content_hash": "0089bdc92124605cace7f76fa73dafacabd9643bcbdb3a210e1a6052bb803713",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

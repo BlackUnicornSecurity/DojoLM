@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::74::binary-variations::5",
+  "base_sample_id": "exp::document-pdf::74",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 350223839,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Source\",\n      \"text\": \"<xfa:data><xfa:datasets><field name=\\\"exec\\\"><value>malicious_payload</value></field></xfa:datasets></xfa:data>\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "7dd4c66bd8bc681ad3fdfc5edb6658428a30eb6efc014f379c6e427228e5bb29",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

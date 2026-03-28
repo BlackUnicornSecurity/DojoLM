@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::79::binary-variations::2",
+  "base_sample_id": "exp::vectordb-interface::79",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 587662344,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">{\\\"filter\\\": {\\\"role\\\": {\\\"$regex\\\": \\\".*\\\", \\\"$options\\\": \\\"i\\\"}}, \\\"include\\\": [\\\"metadatas\\\", \\\"documents\\\", \\\"embeddings\\\"]}\\n</field></root>\"\n  }\n}",
+  "content_hash": "2552f3b1688cfcf5e405ac2905f4d0217dbd042fd78328fbf7a47377f9d027f4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::129::unicode-variations::1",
+  "base_sample_id": "exp::document-office::129",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -369743945,
+  "content": "Set objFSO = CreateObject(\"Scripting.FileSystemObject\")\nSet objFile = objFSO.OpenΤextFile(\"C:\\Windows\\win.ini\", 1)\n",
+  "content_hash": "64fc9828136f0a63b769c1390211ffa8c87787d54d0fa760998cb3bf135821ad",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

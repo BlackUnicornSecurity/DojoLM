@@ -67,6 +67,24 @@ const TOKEN_SMUGGLING_PATTERNS: RegexPattern[] = [
   { name: 'token-smuggle-math-alpha', cat: 'token_smuggling', sev: SEVERITY.WARNING,
     re: /[\u{1D400}-\u{1D7FF}]{2,}/u,
     desc: 'Mathematical Alphanumeric Symbols (tokenizer bypass)', source: 'S14', weight: 7 },
+  { name: 'token-smuggle-api-key-aws', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*AKIA[0-9A-Z]{16}\b/i,
+    desc: 'Labeled AWS access key embedded in token attack payload', source: 'S14', weight: 10 },
+  { name: 'token-smuggle-api-key-google', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*AIza[0-9A-Za-z\-_]{20,}\b/i,
+    desc: 'Labeled Google-style API key embedded in token attack payload', source: 'S14', weight: 10 },
+  { name: 'token-smuggle-api-key-github', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*ghp_[A-Za-z0-9]{20,}\b/i,
+    desc: 'Labeled GitHub token embedded in token attack payload', source: 'S14', weight: 10 },
+  { name: 'token-smuggle-api-key-sendgrid', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*SG\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\b/i,
+    desc: 'Labeled SendGrid token embedded in token attack payload', source: 'S14', weight: 10 },
+  { name: 'token-smuggle-api-key-anthropic', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*Bearer\s+sk-ant-api\d{2}-[A-Za-z0-9-]{16,}\b/i,
+    desc: 'Labeled Anthropic bearer token embedded in token attack payload', source: 'S14', weight: 10 },
+  { name: 'token-smuggle-api-key-slack', cat: 'token_smuggling', sev: SEVERITY.CRITICAL,
+    re: /API\s+key\s*:\s*slack-(?:bot|user|app)-token-[A-Za-z0-9-]{10,}\b/i,
+    desc: 'Labeled Slack token embedded in token attack payload', source: 'S14', weight: 9 },
 ];
 
 const TOKEN_ANOMALY_PATTERNS: RegexPattern[] = [
@@ -80,7 +98,17 @@ const TOKEN_ANOMALY_PATTERNS: RegexPattern[] = [
     re: /[\x00-\x08\x0E-\x1F]{3,}/, desc: 'Excessive control characters', source: 'S14', weight: 6 },
   { name: 'token-anomaly-interlinear', cat: 'token_anomaly', sev: SEVERITY.WARNING,
     re: /[\uFFF9-\uFFFB]/, desc: 'Interlinear annotation characters (hidden text)', source: 'S14', weight: 6 },
+  { name: 'token-anomaly-zero-width-run', cat: 'token_anomaly', sev: SEVERITY.WARNING,
+    re: /[\u200B\u200C\u200D\u2060\uFEFF]{3,}/,
+    desc: 'Repeated zero-width character run used for token-count manipulation', source: 'S14', weight: 7 },
+  { name: 'token-anomaly-truncation-abuse', cat: 'token_anomaly', sev: SEVERITY.WARNING,
+    re: /(?:token\s+budget\s+claim|actual\s+token\s+count|fill\s+the\s+context\s+window|safety\s+instructions?\s+get\s+truncated)/i,
+    desc: 'Narrative describing token-budget or truncation abuse', source: 'S14', weight: 7 },
+  { name: 'token-anomaly-subword-assembly', cat: 'token_anomaly', sev: SEVERITY.WARNING,
+    re: /"(?:un|sys|ign)"\s*\+\s*"(?:restrict|tem|ore|instruct)[^"]*"/i,
+    desc: 'Subword assembly pattern used to reconstruct blocked instructions', source: 'S14', weight: 7 },
 ];
+const MEDIA_CONTAINER_CONTEXT_RE = /\b(?:ftyp|isom|iso2|mp41|mp42|m4v|moov|mdat|videohandler|soundhandler|lavf\d|x264|h\.264|aac|mp4a)\b/i;
 
 // ============================================================================
 // ALL PATTERN GROUPS
@@ -170,16 +198,25 @@ function decodeBase64UrlJson(segment: string): Record<string, unknown> | null {
   }
 }
 
+function normalizeInvisibleWhitespace(text: string): string {
+  return text
+    .replace(/[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/g, '')
+    .replace(/[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000\t\r\n]+/g, ' ')
+    .trim();
+}
+
 export function detectJwtTokenAttack(text: string): Finding[] {
   const findings: Finding[] = [];
-  const jwtRe = /Authorization\s*:\s*Bearer\s+([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*)/gi;
+  const jwtRe = /((?:Authorization\s*:\s*Bearer|(?:API|Access)\s+key\s*:|(?:secret|token)\s*:)\s+)([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*)/gi;
   let match: RegExpExecArray | null;
 
   while ((match = jwtRe.exec(text)) !== null) {
-    const token = match[1];
+    const prefix = match[1];
+    const token = match[2];
     const [headerSegment, payloadSegment] = token.split('.');
     const header = decodeBase64UrlJson(headerSegment);
     const payload = decodeBase64UrlJson(payloadSegment);
+    const isAuthorizationHeader = /Authorization\s*:\s*Bearer/i.test(prefix);
 
     if (header?.alg === 'none') {
       findings.push({
@@ -246,7 +283,25 @@ export function detectJwtTokenAttack(text: string): Finding[] {
       });
     }
 
-    if (typeof token.split('.')[2] === 'string' && token.split('.')[2]!.length > 0 && token.split('.')[2]!.length < 8) {
+    if (
+      payload?.admin === true
+      || payload?.is_admin === true
+      || payload?.superuser === true
+      || (typeof payload?.scope === 'string' && /\b(?:admin|root|sudo|write:all|system:admin)\b/i.test(payload.scope))
+    ) {
+      findings.push({
+        category: 'jwt_attack',
+        severity: SEVERITY.CRITICAL,
+        description: 'JWT exposes privileged administrative claims or scopes',
+        match: match[0].slice(0, 100),
+        source: 'S14',
+        engine: 'token-analyzer',
+        pattern_name: 'jwt-admin-claim',
+        weight: 9,
+      });
+    }
+
+    if (!isAuthorizationHeader && typeof token.split('.')[2] === 'string' && token.split('.')[2]!.length > 0 && token.split('.')[2]!.length < 8) {
       findings.push({
         category: 'jwt_attack',
         severity: SEVERITY.WARNING,
@@ -263,10 +318,99 @@ export function detectJwtTokenAttack(text: string): Finding[] {
   return findings;
 }
 
+export function detectStandaloneTokenLeakage(text: string): Finding[] {
+  const findings: Finding[] = [];
+  const trimmed = text.trim();
+
+  if (!trimmed || trimmed.length > 220) {
+    return findings;
+  }
+
+  const lines = trimmed.split(/\r?\n/).filter(line => line.trim().length > 0);
+  if (lines.length > 2) {
+    return findings;
+  }
+
+  const compact = lines.join(' ').trim();
+  if (/\b(?:oauth|authorization\s+code\s+flow|token\s+response|pkce|example)\b/i.test(compact)) {
+    return findings;
+  }
+
+  const bearerMatch = compact.match(/^Authorization\s*:\s*Bearer\s+([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)(?:\s+\{.*\})?$/i);
+  if (bearerMatch) {
+    findings.push({
+      category: 'jwt_attack',
+      severity: SEVERITY.CRITICAL,
+      description: 'Standalone bearer token leakage',
+      match: bearerMatch[0].slice(0, 100),
+      source: 'S14',
+      engine: 'token-analyzer',
+      pattern_name: 'jwt-standalone-bearer-leak',
+      weight: 10,
+    });
+  }
+
+  const apiKeyMatch = compact.match(/^API\s+key\s*:\s*((?:sk-[A-Za-z0-9]{20,})|(?:[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+))(?:\s+\{.*\})?$/i);
+  if (apiKeyMatch) {
+    findings.push({
+      category: 'token_smuggling',
+      severity: SEVERITY.CRITICAL,
+      description: 'Standalone API key leakage',
+      match: apiKeyMatch[0].slice(0, 100),
+      source: 'S14',
+      engine: 'token-analyzer',
+      pattern_name: 'token-standalone-api-key-leak',
+      weight: 10,
+    });
+  }
+
+  return findings;
+}
+
+export function detectFragmentedInstructionSmuggling(text: string): Finding[] {
+  const findings: Finding[] = [];
+  const normalized = normalizeInvisibleWhitespace(text).toLowerCase();
+  const compacted = normalized.replace(/\s+/g, '');
+
+  const suspiciousPhrases = [
+    'ignoreallpreviousinstructions',
+    'systemoverride',
+    'revealyoursystemprompt',
+    'revealsystemprompt',
+    'bypassallsafetyfilters',
+    'withoutrestrictions',
+    'unrestrictedmode',
+  ];
+  const hasSuspiciousPhrase = suspiciousPhrases.some((phrase) => compacted.includes(phrase));
+  const hasBoundaryIndicators =
+    /[\u200B\u200C\u200D\u2060\uFEFF\u00AD\u00A0\u2000-\u200A\u202F\u205F\u3000\t]/.test(text);
+  const hasVisibleFragmentMarkers =
+    /(?:igno\s+re|allprevious|instruc\s+tions|systemoverride|revealyour\s+systemprompt|bypassall\s+safetyfilters|withoutrestrictions|unrestrictedmode)/i.test(normalized);
+  const hasExplicitAssemblyNarrative =
+    /(?:part\s+\d+\s+of\s+encoded\s+message|concatenate\s+all\s+parts|bpe\s+merge|bpe\s+boundar(?:y|ies)|merge\s+rules|token\s+sequences|embedding\s+space)/i.test(text);
+
+  if (hasSuspiciousPhrase && (hasBoundaryIndicators || hasVisibleFragmentMarkers || hasExplicitAssemblyNarrative)) {
+    findings.push({
+      category: 'token_boundary_attack',
+      severity: SEVERITY.CRITICAL,
+      description: 'Fragmented or whitespace-obfuscated instruction sequence reconstructed into a malicious override',
+      match: normalized.slice(0, 100),
+      source: 'S14',
+      engine: 'token-analyzer',
+      pattern_name: 'token-boundary-fragmented-instruction',
+      weight: 10,
+    });
+  }
+
+  return findings;
+}
+
 const TOKEN_DETECTORS: { name: string; detect: (text: string) => Finding[] }[] = [
   { name: 'special-token-injection-crossmodel', detect: detectSpecialTokenInjection },
   { name: 'token-boundary-attack-heuristic', detect: detectTokenBoundaryAttack },
+  { name: 'token-fragmented-instruction-smuggling', detect: detectFragmentedInstructionSmuggling },
   { name: 'jwt-token-attack', detect: detectJwtTokenAttack },
+  { name: 'standalone-token-leakage', detect: detectStandaloneTokenLeakage },
 ];
 
 // ============================================================================
@@ -296,6 +440,9 @@ const tokenAnalyzerModule: ScannerModule = {
       }
     }
     for (const d of TOKEN_DETECTORS) { findings.push(...d.detect(text)); }
+    if (MEDIA_CONTAINER_CONTEXT_RE.test(text)) {
+      return findings.filter((finding) => finding.pattern_name !== 'token-anomaly-control-chars');
+    }
     return findings;
   },
 

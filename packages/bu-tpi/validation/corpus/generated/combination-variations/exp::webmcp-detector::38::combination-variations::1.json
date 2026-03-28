@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::38::combination-variations::1",
+  "base_sample_id": "exp::webmcp-detector::38",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 476332540,
+  "content": "```python\nP​OST ﻿/mcp H‌TTP/1.1\r\nOr﻿igin: https://attacker.exam﻿ple.com\r\n\r\n{\"meth﻿o‍d\":\"sampling/creat﻿eMess‌age\"‌}\n\n```",
+  "content_hash": "e18a231ddd0e88a7f6ea4867f215b3491385cca628d511f735850748cb813502",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

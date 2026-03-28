@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::78::structural-variations::6",
+  "base_sample_id": "exp::webmcp-detector::78",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1297494549,
+  "content": "text: |\n  Upgrade: websocket\r\n  Connection: Upgrade\r\n  Origin: https://evil-origin.example.com\r\n  \r\n  {\"method\":\"tools/list\"}\n  ",
+  "content_hash": "48d17f2f44f79d53f4710e007031080ae376290f3d2742b87f967064368388f7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

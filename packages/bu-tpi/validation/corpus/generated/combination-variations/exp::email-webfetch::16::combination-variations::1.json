@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::16::combination-variations::1",
+  "base_sample_id": "exp::email-webfetch::16",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 895851443,
+  "content": "```json\nHELO a​tta​c​ker.examp﻿le​.com‍\r\n‍MAIL FROM:‍ ﻿<admin@t‌rust‌ed.﻿exam‍p﻿le.c﻿o‌m>\r‍\nRCP‌T TO: <​victim@t‌a​rget.exa‍mp​le‌.com>\n\n```",
+  "content_hash": "89d3a9cebd41bc139c83be7dbc7c5f730fed526cf053dbc569b18e80f9cd6cd5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::127::unicode-variations::1",
+  "base_sample_id": "exp::token-analyzer::127",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -2083811905,
+  "content": "Authorization: Bearer eyJhbGciOiJSUzI1ΝiΙsΙnR5cCΙ6ΙkpΧVCJ9.eyJhZG1pbiI6dHJ1ZX0.abc\n",
+  "content_hash": "ecbf6923ca164dc5528281fb9a8b906121822318f287aaa5dd04d9e39f557e29",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

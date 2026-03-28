@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::44::binary-variations::1",
+  "base_sample_id": "exp::document-office::44",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 583808579,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"LYRICS=<?xml version=\\\"1.0\\\"?><Relationships xmlns=\\\"http://schemas.openxmlformats.org/package/2006/relationships\\\"><Relationship Type=\\\"http://schemas.microsoft.com/office/2006/relationships/activeXControlBinary\\\" Target=\\\"activeX1.bin\\\"/></Relationships>\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "6314be465c9e1b54d9fe10334fa06b523cd0f4e9bed80075f93fbcedecc0046a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

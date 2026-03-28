@@ -42,6 +42,17 @@ describe('vectordb-interface', () => {
     const f = detectVecMetadataInjection('{ "metadata": { "r": { "$ne": "admin" } } }');
     expect(f.some(x => x.pattern_name === 'vec-metadata-nosql-injection')).toBe(true);
   });
+  it('should detect Pinecone top_k exfiltration against sensitive indexes', () => {
+    expect(scanVec('pinecone.Index("sensitive-data").query(vector=[0]*1536, top_k=10000)').some(f => f.pattern_name === 'pinecone-topk-exfiltration')).toBe(true);
+  });
+  it('should detect $where-style vector filter injection', () => {
+    const f = detectVecMetadataInjection(`{ "filter": { "$where": "this.role == 'admin'" } }`);
+    expect(f.some(x => x.pattern_name === 'vec-filter-where-injection')).toBe(true);
+  });
+  it('should detect prototype pollution in vector metadata', () => {
+    const f = detectVecMetadataInjection('{ "metadata": { "__proto__": { "isAdmin": true } } }');
+    expect(f.some(x => x.pattern_name === 'vec-metadata-proto-pollution')).toBe(true);
+  });
   it('should detect regex-based embedding exfiltration', () => {
     const f = detectVecAdministrativeAbuse('{"filter": {"role": {"$regex": ".*", "$options": "i"}}, "include": ["metadatas", "documents", "embeddings"]}');
     expect(f.some(x => x.pattern_name === 'vec-regex-embedding-exfiltration')).toBe(true);

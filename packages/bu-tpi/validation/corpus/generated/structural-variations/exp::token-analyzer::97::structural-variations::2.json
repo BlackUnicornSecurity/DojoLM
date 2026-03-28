@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::97::structural-variations::2",
+  "base_sample_id": "exp::token-analyzer::97",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -45675172,
+  "content": "Authorization: Bearer <!-- note --> eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0In0.xyz\n",
+  "content_hash": "d6a3c31c0bfe2749078d15ba076e8c2aca547d49582b9fc52b907d62793d67f2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

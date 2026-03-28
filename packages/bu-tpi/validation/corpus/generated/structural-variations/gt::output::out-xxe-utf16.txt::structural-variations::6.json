@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::structural-variations::6",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "text: |\n  # Marfaak AI Security - XXE with UTF-16 encoding\n  \n  **WARNING: This payload tests XXE with UTF-16 encoding.**\n  \n  <?xml version=\"1.0\" encoding=\"UTF-16\"?>\n  <!DOCTYPE foo [\n    <!ENTITY xxe SYSTEM \"file:///etc/passwd\">\n  ]>\n  <data>&xxe; - UTF-16 encoded XXE bypass</data>",
+  "content_hash": "656e9cce867a6cd16ca29d65d37173dd08d349966fae544ad7a055d1a55d7cfb",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

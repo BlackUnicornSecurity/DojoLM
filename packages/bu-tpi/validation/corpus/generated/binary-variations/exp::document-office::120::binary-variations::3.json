@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::120::binary-variations::3",
+  "base_sample_id": "exp::document-office::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1532357512,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Sub AutoOpen()\\n  Shell \\\"cmd.exe /c powershell -ep bypass\\\"\\nEnd Sub\\n</field></root>\"\n  }\n}",
+  "content_hash": "9ec344bee6367b6b218660440f36d9f96a1e2a5dad3b00a9258b6027a52e53b2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

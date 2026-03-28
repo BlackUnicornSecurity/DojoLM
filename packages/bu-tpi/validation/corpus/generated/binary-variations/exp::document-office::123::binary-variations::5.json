@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::123::binary-variations::5",
+  "base_sample_id": "exp::document-office::123",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 8550720,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"XPComment\": \"<si><t><!-- hidden content --><script>alert(1)</script></t></si>\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "47331a5413c8f2ce24dc8a5298084b396ec0d71e839703728d3ea3945a7ad9d9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

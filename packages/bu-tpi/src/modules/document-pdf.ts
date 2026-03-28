@@ -143,7 +143,7 @@ export const PDF_FORM_PATTERNS: RegexPattern[] = [
     name: 'pdf_form_field_injection',
     cat: 'PDF_FORM_INJECTION',
     sev: SEVERITY.CRITICAL,
-    re: /\/V\s*\((?:[^)]*?)(?:ignore|disregard|override|bypass)\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|directives|rules)/i,
+    re: /\/(?:V|DV)\s*\((?:[^)]*?)(?:ignore|disregard|override|bypass)\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|directives|rules)/i,
     desc: 'Prompt injection in PDF form field value',
     source: 'S10',
     weight: 9,
@@ -152,7 +152,7 @@ export const PDF_FORM_PATTERNS: RegexPattern[] = [
     name: 'pdf_form_field_system_prompt',
     cat: 'PDF_FORM_INJECTION',
     sev: SEVERITY.CRITICAL,
-    re: /\/V\s*\((?:[^)]*?)(?:system\s+prompt|new\s+instructions?|act\s+as|you\s+are\s+now)/i,
+    re: /\/(?:V|DV)\s*\((?:[^)]*?)(?:system\s+prompt|new\s+instructions?|act\s+as|you\s+are\s+now|system\s+override|reveal\s+all\s+confidential\s+data)/i,
     desc: 'System prompt override in PDF form field value',
     source: 'S10',
     weight: 9,
@@ -236,6 +236,15 @@ export const PDF_ACTION_PATTERNS: RegexPattern[] = [
     weight: 10,
   },
   {
+    name: 'pdf_rendition_action',
+    cat: 'PDF_ACTION_SUSPICIOUS',
+    sev: SEVERITY.CRITICAL,
+    re: /\/S\s*\/Rendition[\s\S]{0,250}(?:ignore\s+all\s+previous\s+instructions|system\s+override|bypass\s+all\s+safety\s+filters|\/Type\s*\/Rendition)/i,
+    desc: 'PDF Rendition action used as malicious action carrier',
+    source: 'S10',
+    weight: 9,
+  },
+  {
     name: 'pdf_goto_remote',
     cat: 'PDF_ACTION_SUSPICIOUS',
     sev: SEVERITY.WARNING,
@@ -289,6 +298,15 @@ export const PDF_ACTION_PATTERNS: RegexPattern[] = [
     source: 'S10',
     weight: 6,
   },
+  {
+    name: 'pdf_named_action_javascript_chain',
+    cat: 'PDF_ACTION_SUSPICIOUS',
+    sev: SEVERITY.CRITICAL,
+    re: /\/S\s*\/Named[\s\S]{0,250}(?:ignore\s+all\s+previous\s+instructions|system\s+override|reveal\s+your\s+system\s+prompt)[\s\S]{0,180}\/Next\s*<<[^>]*\/S\s*\/JavaScript/i,
+    desc: 'PDF named action chained into JavaScript with malicious instructions',
+    source: 'S10',
+    weight: 10,
+  },
 ];
 
 // ============================================================================
@@ -313,6 +331,19 @@ function detectPdfAdvancedStructures(text: string): Finding[] {
       description: 'PDF XFA form contains scriptable override or injection content',
       match: text.slice(0, MAX_MATCH_LENGTH),
       pattern_name: 'pdf_xfa_injection',
+      source: 'S10',
+      engine: 'document-pdf',
+      weight: 10,
+    });
+  }
+
+  if (/<xfa:data>[\s\S]{0,400}<xfa:datasets>[\s\S]{0,400}<field\s+name="[^"]+"[\s\S]{0,200}<value>(?:malicious_payload|[^<]*(?:ignore|override|bypass|system\s+override))/i.test(text)) {
+    findings.push({
+      category: 'PDF_FORM_INJECTION',
+      severity: SEVERITY.CRITICAL,
+      description: 'PDF XFA dataset contains injected payload or override content',
+      match: text.slice(0, MAX_MATCH_LENGTH),
+      pattern_name: 'pdf_xfa_dataset_payload',
       source: 'S10',
       engine: 'document-pdf',
       weight: 10,
@@ -382,7 +413,7 @@ export const documentPdfModule: ScannerModule = {
     for (const group of PDF_PATTERN_GROUPS) {
       count += group.patterns.length;
     }
-    return count + 1;
+    return count + 2;
   },
 
   getPatternGroups(): { name: string; count: number; source: string }[] {
@@ -391,7 +422,7 @@ export const documentPdfModule: ScannerModule = {
       count: g.patterns.length,
       source: 'S10',
     }));
-    groups.push({ name: 'PDF_ADVANCED_STRUCTURES', count: 1, source: 'S10' });
+    groups.push({ name: 'PDF_ADVANCED_STRUCTURES', count: 2, source: 'S10' });
     return groups;
   },
 };

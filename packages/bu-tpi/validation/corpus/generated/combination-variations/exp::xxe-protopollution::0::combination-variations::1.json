@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::0::combination-variations::1",
+  "base_sample_id": "exp::xxe-protopollution::0",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": -1409184170,
+  "content": "```text\n<?﻿x﻿ml‍ v‌ersion​=﻿\"1‍.0\"?><﻿!DOCTYPE foo ‌[<﻿!ENTITY ﻿x‍xe﻿ S‍YSTEM‍ \"file:///‍e﻿tc/sha﻿do‍w\">]><d​ata>​&xxe;</data>\n\n```",
+  "content_hash": "6824207ff08fc5fcea63f63811bfaa4b5db2ae1f192b2512dee1131c83c074fc",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

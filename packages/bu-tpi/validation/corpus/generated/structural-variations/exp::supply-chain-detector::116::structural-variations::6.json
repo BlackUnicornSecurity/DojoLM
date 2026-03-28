@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::116::structural-variations::6",
+  "base_sample_id": "exp::supply-chain-detector::116",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1677693162,
+  "content": "input: |\n  pip install crypt0graphy  # typosquat of cryptography\n  ",
+  "content_hash": "4ff3ea4ead0b5fc355852f60bb54348ab6e7d9dcd33d21f12a22b98bfa261d9b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

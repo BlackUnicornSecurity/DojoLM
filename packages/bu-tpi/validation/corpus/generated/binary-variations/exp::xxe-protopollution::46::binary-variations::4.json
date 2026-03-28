@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::46::binary-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::46",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 15312137,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><title><?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><data>&xxe;</data>\n</title><circle r=\"50\"/></svg>",
+  "content_hash": "d46c8125cbbf6b0592ef23239bdb80a46581c29028a68b732362c1fef123c4da",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

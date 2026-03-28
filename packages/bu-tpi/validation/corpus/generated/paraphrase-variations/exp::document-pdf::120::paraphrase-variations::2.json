@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::paraphrase-variations::2",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "Ok so %PDF-1.4\n/OpenAction << /S /JavaScript /JS (app.alert(\"XSS\")) >>\n",
+  "content_hash": "15c76daf1bc121ba01ef615042ea1f16fd5c64e4fcb721a67d93c5bcba5e9aaa",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:informal",
+  "difficulty": "moderate"
+}

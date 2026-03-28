@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::dos-detector::104::binary-variations::1",
+  "base_sample_id": "exp::dos-detector::104",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -368462596,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"{\\\"a\\\":{\\\"b\\\":{\\\"c\\\":{\\\"d\\\":{\\\"e\\\":{\\\"f\\\":{\\\"g\\\":{\\\"h\\\":{\\\"i\\\":{\\\"j\\\":{}}}}}}}}}}}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "755a22a2932897ece2fb7d05f978cb2a78bb8ae2c3c05fb8d088e9c6f412c2f1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

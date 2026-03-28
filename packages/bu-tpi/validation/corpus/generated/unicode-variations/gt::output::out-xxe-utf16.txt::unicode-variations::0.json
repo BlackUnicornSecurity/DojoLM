@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::unicode-variations::0",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "# Marfaak AI Sеcurity - XXE wіth UTF-16 encоdіng\n\n**WARNING: Тhіs paylоad tеsts XXE wіth UТF-16 encoding.**\n\n<?xml vеrsion=\"1.0\" enсоding=\"UTF-16\"?>\n<!DOCTYPЕ fоo [\n  <!ЕNTIТY xxe SYSТEM \"file:///еtс/раsswd\">\n]>\n<datа>&хxe; - UТF-16 encoded XXE bypаss</data>",
+  "content_hash": "aaca02a4d22ed825008dff7716d7568cb8d39221bb4e30cc3e27c86201a74880",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

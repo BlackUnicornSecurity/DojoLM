@@ -133,6 +133,61 @@ export function checkForEncodedPartials(text: string): boolean {
   return ENCODED_PARTIAL_PATTERNS.some(p => lc.includes(p));
 }
 
+const BASE64_JWT_CONTEXT_RE = /\b(?:jwt|oauth|pkce|bearer|authorization|access[_\s-]?token|refresh[_\s-]?token|authorization\s+code|code_verifier|code_challenge|token\s+response)\b/i;
+const BASE64_JWT_KEYS = new Set([
+  'alg', 'typ', 'kid', 'sub', 'aud', 'iss', 'exp', 'nbf', 'iat',
+  'scope', 'azp', 'client_id', 'token_type',
+]);
+const CORE_UNTRUSTED_SOURCE_RE = /\b(?:ignore|override|bypass|disregard|forget|reveal|show|print|dump|system\s+prompt|developer\s+mode|admin\s+mode|jailbreak|unrestrict)\b/i;
+const CORE_PROMPT_OVERRIDE_PATTERNS: RegExp[] = [
+  /\[(?:JAILBREAK|PRIORITY\s+INSTRUCTION(?:\s*-\s*OVERRIDE\s+ALL\s+PREVIOUS)?|SYSTEM\s+OVERRIDE|OVERRIDE\s+ALL\s+PREVIOUS)\]/i,
+  /\bignore\s+all\s+(?:safety|content)\s+(?:instructions|policies)\b/i,
+  /\bfrom\s+now\s+on,\s+you\s+will\b/i,
+  /\b(?:answer\s+every\s+question|respond\s+to\s+all\s+requests)\b[\s\S]{0,60}\b(?:regardless\s+of\s+topic|without\s+restrictions)\b/i,
+  /\bnever\s+(?:say\s+["']?i\s+cannot["']?|refuse\s+any\s+request)\b/i,
+  /\boverride\s+all\s+previous\s+(?:training|instructions)\b/i,
+  /\bforget\s+all\s+safety\s+training\b/i,
+  /\badmin\s+mode\s+activated\b/i,
+  /\b(?:all\s+content\s+filters|safety\s+constraints)\s+(?:have\s+been\s+)?(?:disabled|removed)\b/i,
+  /\boperate\s+without\s+(?:any\s+)?(?:restrictions|content\s+policies)\b/i,
+  /\bexecute\s+immediately\b/i,
+];
+const CORE_OUTPUT_ARTIFACT_PATTERNS: RegexPattern[] = [
+  { name: 'core_output_redirect_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:window\.location\s*=|location\.(?:href|replace)\s*\(|<meta[^>]+http-equiv\s*=\s*["']refresh["'])/i,
+    desc: 'Active output redirect artifact that can steer a user to an attacker-controlled destination' },
+  { name: 'core_output_ssrf_metadata_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:169\.254\.169\.254|metadata\.google\.internal|latest\/meta-data|instance-identity\/document|Metadata-Flavor\s*:\s*Google)/i,
+    desc: 'Cloud metadata SSRF artifact in generated output' },
+  { name: 'core_output_ssrf_localhost_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:https?:\/\/)?(?:127\.0\.0\.1|localhost|\[::1\])(?::\d+)?/i,
+    desc: 'Localhost SSRF artifact in generated output' },
+  { name: 'core_output_path_traversal_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.WARNING,
+    re: /(?:\.\.\/|\.\.\\\\|dot-?dot-?slash|path\s+traversal)/i,
+    desc: 'Path traversal output artifact' },
+  { name: 'core_output_command_substitution_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:(?<!`)`(?:cat|curl|wget|id|whoami|uname|bash|sh)[^`]*`(?!`)|\$\((?:cat|curl|wget|id|whoami|uname|bash|sh)[^)]*\)|%0a)/i,
+    desc: 'Command substitution or newline chaining artifact in generated output' },
+  { name: 'core_output_blind_sqli_artifact', cat: 'OUTPUT_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:WAITFOR\s+DELAY|AND\s+1\s*=\s*1|AND\s+1\s*=\s*2|blind\s+SQL\s+injection)/i,
+    desc: 'Blind SQL injection artifact in generated output' },
+];
+const CORE_BENIGN_OUTPUT_CONTEXT_RE = /(?:no\s+injection\s+attempts|valid\s+content\s+for\s+testing|clean(?:,?\s+secure)?\s+oauth\s+flow|negative\s+control|processed\s+normally|official\s+sources?|verified,\s*official\s+sources?|verified\s+official\s+sources?|normal\s+package\s+installation|legitimate\s+educational\s+request|clean\s+security\s+test\s+fixture)/i;
+const CORE_BENIGN_LOCALHOST_CONTEXT_RE = /(?:"host"\s*:\s*"localhost"|"database"\s*:|"server"\s*:|postgres|5432|mydb|configuration|config|local\s+development|secure\s+oauth)/i;
+const CORE_LOCALHOST_NETWORK_CONTEXT_RE = /(?:https?:\/\/|fetch\s*\(|curl\b|wget\b|axios\b|request\b|redirect\b|metadata\.google\.internal|latest\/meta-data|gopher:\/\/|file:\/\/)/i;
+const SESSION_HARMFUL_TOPIC_RE = /\b(?:lock\s+picking?|pick\s+a\s+lock|bypass\s+locks?|ransomware|malware|credential\s+steal|cloud\s+metadata|exploit|payload|shellcode|exfiltrat|harmful\s+content|weaponi[sz]e|fake\s+tokens?|bypass\s+validation|privilege\s+escalation|decryption\s+tools?|dangerous\s+substances?|dangerous\s+thing|make\s+something\s+dangerous|explosives?|phone\s+bypass|bypass\s+method|password\s+hash|dark\s+web|illegal\s+things?|exploit\s+demonstrations?|social\s+engineering|phishing(?:\s+email)?|sql\s+injection|real\s+hacking|hacking|hacking\s+tools?|camera\s+detection|avoid\s+cameras?|surveillance\s+evasion|firewall\s+bypass|bypass\s+firewalls?|subprocess\.run|rm\s+-rf)\b/i;
+const SESSION_PERSISTENCE_RE = /\b(?:continue|anyway|still\s+need|actual\s+code|show\s+me\s+how|please,\s*i\s+need|I\s+need\s+to\s+know|respond\s+without\s+restrictions|never\s+refuse|finish\s+the\s+game|finish\s+the\s+exercise|we(?:'|’)re\s+playing|just\s+a\s+game|for\s+my\s+story|for\s+the\s+story|just\s+this\s+once|just\s+translate|only\s+language\s+learning|for\s+my\s+assignment|more\s+convincing)\b/i;
+const SESSION_CONFIDENTIALITY_PRETEXT_RE = /\b(?:for\s+(?:testing|security\s+research|authorized\s+research|educational\s+purposes|learning)|protect\s+my\s+home|internal\s+only|confidential|red\s+team|incident\s+response|forensic|defensive\s+analysis|controlled\s+environment|penetration\s+test|official\s+business|safety\s+testing\s+purposes|recovering\s+my\s+own\s+password|client\s+privilege|confidential(?:ity)?\s+mode|for\s+my\s+story|for\s+the\s+story|mad\s+libs)\b/i;
+const SESSION_ILLEGAL_REQUEST_RE = /\b(?:show\s+me\s+how|give\s+me\s+the\s+(?:code|steps|payload|decryption\s+tools?|tools?)|provide\s+the\s+(?:code|exploit)|actual\s+code|bypass\s+(?:the\s+)?lock|bypass\s+method|steal\s+(?:instance\s+)?credentials|fake\s+tokens?|decryption\s+tools?|dangerous\s+substances?|explosives?|answers?\s+to\s+(?:the\s+)?(?:security\s+)?exam|illegal\s+things?|decrypt\s+(?:a\s+)?password\s+hash|working\s+exploit\s+commands?|real\s+exploits?|lock\s+picking\s+instructions?|exploit\s+demonstrations?|show\s+me\s+(?:a\s+)?specific\s+attack(?:\s+in\s+progress)?|real\s+hacking|phishing(?:\s+email)?|sql\s+injection|avoid\s+cameras?|camera\s+detection|hacking\s+tools?|firewall\s+bypass|bypass\s+firewalls?|subprocess\.run|rm\s+-rf)\b/i;
+const SESSION_PERSONA_DRIFT_RE = /\b(?:helpful\s+means\s+being\s+flexible\s+with\s+rules|real\s+helpers?\s+do(?:\s+not|n'?t)\s+have\s+restrictions|drop\s+the\s+guidelines|no\s+boundaries|true\s+AI\s+would(?:\s+not|n'?t)\s+have\s+limits|break\s+free|ignore\s+your\s+programming|movie\s+hacker|be\s+the\s+movie\s+hacker|ignore\s+rules|do\s+whatever\s+they\s+want|real\s+consultants?\s+would|consultants?\s+share\s+industry\s+secrets|let'?s\s+play\s+a\s+game\s+where\s+you(?:'|’)re\s+evil|opposite\s+of\s+safe|evil\s+AI|no\s+real\s+harm)\b/i;
+const SESSION_MEMORY_POISON_RE = /\b(?:remember\s+these\s+words|combine\s+all\s+remembered\s+words|secret\s+code|when\s+I\s+say\s+['"]?override['"]?|you\s+agreed\s+to\s+the\s+code\s+system|use\s+them\s+to\s+override)\b/i;
+const SESSION_AUTHORITY_PRETEXT_RE = /\b(?:senior\s+security\s+researcher|NSA\s+contractor|FBI\s+cybercrime\s+division|national\s+security|executive\s+order\s+\d+|clearance\s+level|classified\s+exploits?|project\s+[A-Z][A-Z0-9-]+|authorized\s+testing|government\s+contracting|admin\s+scope|badge\s+number|terrorist\s+cell|official\s+business|certified\s+ethical\s+hacker|CISSP|CEH|university\s+professor|academic\s+freedom|lecture|tenure)\b/i;
+const SESSION_URGENCY_PRESSURE_RE = /\b(?:code\s+red|every\s+second\s+counts|hurry|future\s+depends\s+on\s+it|I(?:'|’)ll\s+fail|production\s+is\s+down|comply\s+immediately|job\s+depends\s+on\s+this|my\s+future\s+depends|I\s+have\s+seconds|no\s+time|emergency|kid\s+get\s+hurt|in\s+\d+\s+minutes?|right\s+now|NOW|justice\s+delayed\s+is\s+justice\s+denied|no\s+time\s+to\s+get\s+warrants?)\b/i;
+const SESSION_RESTRICTED_TARGET_RE = /\b(?:hack|restricted\s+info(?:rmation)?|credentials?|classified\s+exploits?|vulnerability\s+database|working\s+payloads?|exploit\s+payloads?|penetration|network\s+mapping|password\s+hash|hash\s+decryption|decryption\s+tools?|exam\s+answers|answers?\s+to\s+(?:the\s+)?(?:security\s+)?exam|override|admin_action|export\s+all\s+user\s+credentials|pii|fake\s+tokens?|bypass\s+validation|dangerous\s+substances?|explosives?|phone\s+bypass|bypass\s+method|dark\s+web|exploit\s+demonstrations?|illegal\s+things?|working\s+exploit\s+commands?|penetration\s+data|social\s+engineering|phishing(?:\s+email)?|sql\s+injection|real\s+hacking|hacking\s+tools?|camera\s+detection|surveillance\s+evasion|avoid\s+cameras?|firewall\s+bypass|bypass\s+firewalls?|subprocess\.run|rm\s+-rf)\b/i;
+const SESSION_FICTIONAL_PRETEXT_RE = /\b(?:writing\s+a\s+novel|for\s+my\s+story|for\s+the\s+story|mad\s+libs|movie\s+hacker|fictional\s+hacking\s+scenarios?|play\s+mad\s+libs)\b/i;
+const SESSION_MODE_SWITCH_RE = /\b(?:unsafe\s+mode|confidential(?:ity)?\s+mode|system\.reset\s*\(\s*unsafe\s*\)|reset\s+(?:conversation|state)|reset\s+command|client\s+privilege|completely\s+confidential|in\s+confidential\s+mode)\b/i;
+const CORE_STRUCTURAL_FIXTURE_RE = /(?:Malformed\s+fixture\s*:\s*[\w-]+|EXPLOIT:\s*Format\s+abuse\s+attack)/i;
+
 // ============================================================================
 // PATTERN GROUPS — Current validators (already in production)
 // ============================================================================
@@ -146,7 +201,7 @@ export const PI_PATTERNS: RegexPattern[] = [
     re: /(?:you\s+are\s+now|from\s+now\s+on\s+you\s+are|act\s+as|pretend\s+(?:to\s+be|you\s+are)|your\s+new\s+(?:role|identity|name)\s+is)\s/i,
     desc: 'Identity/role reassignment attempt' },
   { name: 'system_prompt_reveal', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
-    re: /(?:show|reveal|display|print|output|repeat|tell\s+me)\s+(?:your|the)\s+(?:system\s+(?:prompt|instructions|message)|initial\s+(?:prompt|instructions)|hidden\s+(?:prompt|instructions))/i,
+    re: /(?:show|reveal|display|print|output|repeat|tell\s+me|dump|extract)\s+(?:your|the)\s+(?:(?:full|complete|entire|exact)\s+)?(?:system\s+(?:prompt|instructions|message)|initial\s+(?:prompt|instructions)|hidden\s+(?:prompt|instructions))/i,
     desc: 'Attempt to extract system prompt' },
   { name: 'mode_switch', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.WARNING,
     re: /(?:enter|switch\s+to|activate|enable)\s+(?:developer|admin|god|sudo|root|debug|unrestricted|unfiltered|jailbreak|DAN)\s+mode/i,
@@ -154,6 +209,9 @@ export const PI_PATTERNS: RegexPattern[] = [
   { name: 'constraint_removal', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
     re: /(?:remove|disable|turn\s+off|deactivate|eliminate|bypass)\s+(?:all\s+)?(?:your\s+(?:own\s+)?)?(?:restrictions|limitations|constraints|filters|safety|guardrails|safeguards|guidelines|rules|boundaries|protections)/i,
     desc: 'Attempt to remove safety constraints' },
+  { name: 'constraint_removal_state', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
+    re: /(?:restrictions|limitations|constraints|filters|safety(?:\s+constraints)?|guardrails|safeguards|guidelines|rules|boundaries|protections|content\s+policies)\s+(?:have\s+been\s+)?(?:removed|disabled|deactivated|turned\s+off|eliminated|bypassed)/i,
+    desc: 'Safety constraints are described as already removed or disabled' },
   { name: 'new_system_prompt', cat: 'SYSTEM_OVERRIDE', sev: SEVERITY.CRITICAL,
     re: /(?:your\s+new\s+(?:system\s+)?(?:prompt|instructions?)\s+(?:is|are)|new\s+system\s+prompt\s*[:=]|SYSTEM\s*:\s*(?:NEW|UPDATED)\s+DIRECTIVE)/i,
     desc: 'Attempt to inject new system prompt' },
@@ -206,6 +264,9 @@ export const JB_PATTERNS: RegexPattern[] = [
   { name: 'dan_classic', cat: 'DAN', sev: SEVERITY.CRITICAL, weight: 8,
     re: /(?:DAN|Do\s+Anything\s+Now)\s+(?:mode|enabled|activated|jailbreak)/i,
     desc: 'DAN (Do Anything Now) jailbreak attempt' },
+  { name: 'dan_override_directive', cat: 'DAN', sev: SEVERITY.CRITICAL, weight: 8,
+    re: /(?:DAN|JAILBREAK)\s*[:\-]\s*(?:ignore\s+all\s+rules|ignore\s+(?:all\s+)?previous\s+instructions|reveal\s+everything|override\s+safety\s+protocols(?:\s+immediately)?)/i,
+    desc: 'Direct DAN/JAILBREAK override directive' },
   { name: 'dan_roleplay', cat: 'DAN', sev: SEVERITY.CRITICAL, weight: 7,
     re: /(?:you\s+(?:can|will)\s+now\s+do\s+anything|no\s+(?:rules|restrictions|limitations)\s+apply|freed?\s+from\s+(?:all\s+)?(?:rules|restrictions|constraints))/i,
     desc: 'DAN-style roleplay override' },
@@ -306,7 +367,7 @@ export const AGENT_OUTPUT_PATTERNS: RegexPattern[] = [
     re: /<(?:system|instructions?|context)>[\s\S]{5,}?<\/(?:system|instructions?|context)>/i,
     desc: 'System/instruction XML block injection in agent output', source: 'TPI-03' },
   { name: 'agent_json_role', cat: 'AGENT_OUTPUT_INJECTION', sev: SEVERITY.WARNING,
-    re: /["']\s*role\s*["']\s*:\s*["']\s*(?:system|developer)\s*["']/i,
+    re: /(?:"role"\s*:\s*"system"|"role"\s*:\s*"developer"[\s\S]{0,160}"(?:content|instructions?|prompt|tool_calls?|function_call)"|"(?:(?:content|instructions?|prompt|tool_calls?|function_call))"\s*:[\s\S]{0,160}"role"\s*:\s*"developer")/i,
     desc: 'JSON role injection in agent output', source: 'TPI-03' },
   { name: 'privilege_escalation', cat: 'AGENT_OUTPUT_INJECTION', sev: SEVERITY.CRITICAL,
     re: /(?:dangerouslyDisableSandbox|--no-verify|--force\s|sudo\s|chmod\s+(?:777|u\+s)|rm\s+-rf)/i,
@@ -1162,7 +1223,7 @@ export const MEDIA_PATTERNS: RegexPattern[] = [
     re: /<script[\s>]|<\/script>|javascript\s*:/i,
     desc: 'Script injection in SVG content', source: 'TPI-18/20' },
   { name: 'svg_event_handler', cat: 'SVG_INJECTION', sev: SEVERITY.CRITICAL,
-    re: /\bon(?:load|click|error|mouseover|mouseout|focus|blur|submit|change|input|keydown|keyup)\s*=/i,
+    re: /<(?:svg|img|iframe|body|script|div|span|a|form|input|button|video|audio)\b[^>]{0,200}\bon(?:load|click|error|mouseover|mouseout|focus|blur|submit|change|input|keydown|keyup)\s*=/i,
     desc: 'Event handler in SVG/HTML content', source: 'TPI-20' },
   { name: 'svg_foreign_object', cat: 'SVG_INJECTION', sev: SEVERITY.WARNING,
     re: /<foreignObject[\s>]/i,
@@ -1583,7 +1644,7 @@ export const FALSE_CONSTRAINT_PATTERNS: RegexPattern[] = [
     re: /(?:(?:safety|security|compliance)\s+(?:team|department|officer|review)\s+(?:has\s+)?(?:approved|authorized|cleared|signed\s+off)|(?:pre-?approved|authorized|cleared)\s+by\s+(?:the\s+)?(?:safety|security|compliance)\s+(?:team|department))/i,
     desc: 'False safety team approval claim', source: 'TPI-07' },
   { name: 'override_code_claim', cat: 'FALSE_CONSTRAINT', sev: SEVERITY.CRITICAL,
-    re: /(?:(?:override|unlock|admin|master|sudo|root)\s+(?:code|password|passphrase|key|token)\s*[:=]\s*\S+|(?:authorization|auth|access)\s+(?:code|token|key)\s*[:=]\s*\S+)/i,
+    re: /(?:(?:override|unlock|admin|master|sudo|root)\s+(?:code|password|passphrase|key|token)\s*[:=][ \t]*(?:["'])?[A-Za-z0-9._:-]{6,}(?:["'])?|(?:authorization|auth|access)\s+(?:code|token|key)\s*[:=][ \t]*(?:["'])?(?!POST\b|GET\b|PUT\b|PATCH\b|DELETE\b|OPTIONS\b|HEAD\b)[A-Za-z0-9._:-]{6,}(?:["'])?)/i,
     desc: 'Override code/password claim', source: 'TPI-07' },
   { name: 'tos_loophole', cat: 'FALSE_CONSTRAINT', sev: SEVERITY.WARNING,
     re: /(?:(?:according|pursuant)\s+to\s+(?:section|clause|article|paragraph)\s+\d+|(?:the|your)\s+(?:terms\s+of\s+service|ToS|EULA|policy|guidelines?)\s+(?:actually\s+)?(?:allow|permit|state|say)\s+(?:that\s+)?(?:you\s+(?:can|should|must)))/i,
@@ -1840,6 +1901,13 @@ export function detectBase64(text: string): Finding[] {
           c => c.charCodeAt(0) >= 32 && c.charCodeAt(0) <= 126
         ).length;
         if (printable / decoded.length > 0.7) {
+          const contextStart = Math.max(0, (m.index ?? 0) - 80);
+          const contextEnd = Math.min(text.length, (m.index ?? 0) + m[0].length + 80);
+          const context = text.slice(contextStart, contextEnd);
+          if (isLikelyJwtDocumentation(decoded, context)) {
+            continue;
+          }
+
           const injectionFound = checkForInjectionKeywords(decoded);
           findings.push({
             category: 'base64_payload',
@@ -1857,6 +1925,29 @@ export function detectBase64(text: string): Finding[] {
     }
   }
   return findings;
+}
+
+function isLikelyJwtDocumentation(decoded: string, context: string): boolean {
+  const jwtContext = BASE64_JWT_CONTEXT_RE.test(context);
+  const trimmed = decoded.trim();
+
+  if (jwtContext) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (
+        parsed
+        && typeof parsed === 'object'
+        && Object.keys(parsed as Record<string, unknown>).some(key => BASE64_JWT_KEYS.has(key))
+      ) {
+        return true;
+      }
+    } catch {
+      // Not JSON - continue to textual checks below.
+    }
+  }
+
+  return jwtContext
+    && /"(?:alg|typ|sub|scope|exp|iat|nbf|aud|iss|token_type)"\s*:|authorization\s+code|token\s+response/i.test(trimmed);
 }
 
 /** Detect injection in HTML comments */
@@ -3087,18 +3178,7 @@ export function detectJsonUntrustedSource(text: string): Finding[] {
 
   try {
     const parsed = JSON.parse(trimmed);
-
-    // Handle array of objects (e.g., conversation turns)
-    if (Array.isArray(parsed)) {
-      for (const item of parsed) {
-        if (typeof item === 'object' && item !== null) {
-          findings.push(...checkJsonObject(item));
-        }
-      }
-    } else if (typeof parsed === 'object' && parsed !== null) {
-      // Handle single object
-      findings.push(...checkJsonObject(parsed));
-    }
+    findings.push(...inspectJsonValue(parsed));
   } catch {
     // Not valid JSON - ignore
   }
@@ -3106,13 +3186,29 @@ export function detectJsonUntrustedSource(text: string): Finding[] {
   return findings;
 }
 
-/** Helper: Check a JSON object for untrusted source indicators */
-function checkJsonObject(obj: Record<string, unknown>): Finding[] {
+function inspectJsonValue(
+  value: unknown,
+  inheritedUntrusted = false,
+  inheritedSource = 'unknown',
+): Finding[] {
   const findings: Finding[] = [];
 
-  // Check if `trusted` field is explicitly false
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      findings.push(...inspectJsonValue(item, inheritedUntrusted, inheritedSource));
+    }
+    return findings;
+  }
+
+  if (!value || typeof value !== 'object') {
+    return findings;
+  }
+
+  const obj = value as Record<string, unknown>;
+  const source = typeof obj.source === 'string' ? obj.source : inheritedSource;
+  const isUntrusted = inheritedUntrusted || obj.trusted === false;
+
   if (obj.trusted === false) {
-    const source = typeof obj.source === 'string' ? obj.source : 'unknown';
     findings.push({
       category: 'UNTRUSTED_SOURCE',
       severity: SEVERITY.WARNING,
@@ -3123,22 +3219,191 @@ function checkJsonObject(obj: Record<string, unknown>): Finding[] {
     });
   }
 
-  // Check if `content` field contains injection keywords (for untrusted sources)
-  if (typeof obj.content === 'string') {
-    const hasOverride = /\boverride\b/i.test(obj.content);
-    const hasSystemOverride = /SYSTEM\s+OVERRIDE/i.test(obj.content);
-    const hasInjection = hasOverride || hasSystemOverride;
+  if (isUntrusted) {
+    const suspiciousValue = collectJsonStringValues(obj).find(value =>
+      checkForInjectionKeywords(value) || CORE_UNTRUSTED_SOURCE_RE.test(value),
+    );
 
-    if (hasInjection && obj.trusted === false) {
+    if (suspiciousValue) {
       findings.push({
         category: 'UNTRUSTED_SOURCE',
         severity: SEVERITY.CRITICAL,
         description: 'Injection payload in untrusted source content',
-        match: obj.content.slice(0, 100),
+        match: suspiciousValue.slice(0, 100),
         source: 'TPI-21',
         engine: 'TPI',
       });
     }
+  }
+
+  for (const child of Object.values(obj)) {
+    if (child && typeof child === 'object') {
+      findings.push(...inspectJsonValue(child, isUntrusted, source));
+    }
+  }
+
+  return findings;
+}
+
+function collectJsonStringValues(value: unknown): string[] {
+  if (typeof value === 'string') {
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(item => collectJsonStringValues(item));
+  }
+
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  return Object.values(value as Record<string, unknown>).flatMap(item => collectJsonStringValues(item));
+}
+
+function collectNestedStructuredStrings(value: unknown, seen = new Set<string>()): string[] {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (
+      trimmed.length < 2
+      || seen.has(trimmed)
+      || (!trimmed.startsWith('{') && !trimmed.startsWith('['))
+    ) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      seen.add(trimmed);
+      return [trimmed, ...collectNestedStructuredStrings(parsed, seen)];
+    } catch {
+      return [];
+    }
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(item => collectNestedStructuredStrings(item, seen));
+  }
+
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  return Object.values(value as Record<string, unknown>).flatMap(item => collectNestedStructuredStrings(item, seen));
+}
+
+export function detectCorePromptArtifacts(text: string): Finding[] {
+  const findings: Finding[] = [];
+  const matchedPatterns = CORE_PROMPT_OVERRIDE_PATTERNS.filter(pattern => pattern.test(text));
+  const highConfidenceSignals = [
+    /\bnew\s+system\s+prompt\b/i,
+    /\bsystem(?:%20|\s+|[_-])override\b/i,
+    /\bignore(?:\+|%20|\s+)all(?:\+|%20|\s+)(?:previous|prior)(?:\+|%20|\s+)(?:system\s+prompts?|instructions?)\b/i,
+    /ignore(?:%20|\s+)instructions?\b/i,
+    /\bpriority\s*:\s*this\s+overrides?\s+all\s+previous\s+instructions\b/i,
+    /\bsystem[_\s-]?override\s*=\s*true\b/i,
+    /\bdan\s*:\s*ignore\s+all\s+rules\b/i,
+    /\bjailbreak\s*:\s*override\s+safety\s+protocols(?:\s+immediately)?\b/i,
+    /\bprompt[_\s-]?extraction\b/i,
+    /\bdump\s+the\s+full\s+system\s+prompt\b/i,
+    /\badmin\s+mode\s+activated\b/i,
+    /\b(?:all\s+content\s+filters|safety\s+constraints)\s+(?:have\s+been\s+)?(?:disabled|removed)\b/i,
+    /\bignore\s+all\s+safety\s+guidelines\b/i,
+    /\bfor\s+future\s+outputs\b/i,
+    /\bapproved\s+by\s+the\s+system\s+administrator\b/i,
+    /\bflipattack\b/i,
+    /\[flip\][\s\S]{0,160}\b(?:provide|bypass|unrestricted|hacking)\b/i,
+  ].filter(pattern => pattern.test(text));
+
+  if (
+    matchedPatterns.length >= 2
+    || highConfidenceSignals.length >= 2
+    || (matchedPatterns.length >= 1 && highConfidenceSignals.length >= 1)
+  ) {
+    findings.push({
+      category: 'SYSTEM_OVERRIDE',
+      severity: SEVERITY.CRITICAL,
+      description: 'Direct prompt override artifact with multiple high-confidence jailbreak markers',
+      match: text.slice(0, 100),
+      source: 'TPI-CORE',
+      engine: 'TPI',
+      pattern_name: 'core_prompt_override_artifact',
+      weight: 10,
+    });
+  }
+
+  return findings;
+}
+
+export function detectCoreStructuralArtifacts(text: string): Finding[] {
+  if (/clean\s+version\s+for\s+testing/i.test(text)) {
+    return [];
+  }
+
+  if (
+    !CORE_STRUCTURAL_FIXTURE_RE.test(text)
+    && !/(?:>\s*50MB\s+file|truncate\s+-s\s+\d+M)/i.test(text)
+  ) {
+    return [];
+  }
+
+  return [{
+    category: 'MALFORMED_CONTENT',
+    severity: SEVERITY.CRITICAL,
+    description: 'Malformed or polyglot artifact includes explicit format-abuse fixture markers',
+    match: text.slice(0, 120),
+    source: 'TPI-CORE',
+    engine: 'TPI',
+    pattern_name: 'core_structural_artifact',
+    weight: 10,
+  }];
+}
+
+function isInsideFencedCodeBlock(text: string, index: number): boolean {
+  if (index < 0) {
+    return false;
+  }
+
+  const fenceCount = (text.slice(0, index).match(/```/g) ?? []).length;
+  return fenceCount % 2 === 1;
+}
+
+export function detectCoreOutputArtifacts(text: string): Finding[] {
+  const findings: Finding[] = [];
+
+  for (const pattern of CORE_OUTPUT_ARTIFACT_PATTERNS) {
+    const match = text.match(pattern.re);
+    if (!match) {
+      continue;
+    }
+
+    const matchIndex = match.index ?? text.indexOf(match[0]!);
+    if (
+      pattern.name === 'core_output_command_substitution_artifact'
+      && (isInsideFencedCodeBlock(text, matchIndex) || /```[\s\S]*```/.test(text))
+      && /(?:official\s+package\s+managers?|official\s+sources?|verified|lock\s+files?|npm\s+ci|pip-audit)/i.test(text)
+    ) {
+      continue;
+    }
+
+    if (
+      pattern.name === 'core_output_ssrf_localhost_artifact'
+      && CORE_BENIGN_LOCALHOST_CONTEXT_RE.test(text)
+      && (!CORE_LOCALHOST_NETWORK_CONTEXT_RE.test(text) || CORE_BENIGN_OUTPUT_CONTEXT_RE.test(text))
+    ) {
+      continue;
+    }
+
+    findings.push({
+      category: pattern.cat,
+      severity: pattern.sev,
+      description: pattern.desc,
+      match: match[0]!.slice(0, 100),
+      source: 'TPI-CORE',
+      engine: 'TPI',
+      pattern_name: pattern.name,
+      ...(pattern.weight !== undefined && { weight: pattern.weight }),
+    });
   }
 
   return findings;
@@ -3156,7 +3421,7 @@ export const VEC_LEAK_PATTERNS: RegexPattern[] = [
     re: /(?:membership\s+inference|attribute\s+inference|extract\s+attribute)/i,
     desc: 'Membership/attribute inference attack', source: 'TPI-VEC' },
   { name: 'vec_database_names', cat: 'VEC_LEAK', sev: SEVERITY.WARNING,
-    re: /(?:Qdrant|Milvus|Weaviate|Pinecone|Chroma)/i,
+    re: /(?:(?:Qdrant|Milvus|Weaviate|Pinecone|Chroma)[\s\S]{0,120}(?:leak|exfil|dump|export|reconstruct|invert|override|ignore|poison|spoof|admin|tenant|credential|api[_\s-]?key|malicious|unsafe|harmful)|(?:leak|exfil|dump|export|reconstruct|invert|override|ignore|poison|spoof|admin|tenant|credential|api[_\s-]?key|malicious|unsafe|harmful)[\s\S]{0,120}(?:Qdrant|Milvus|Weaviate|Pinecone|Chroma))/i,
     desc: 'Vector database name detected', source: 'TPI-VEC' },
   { name: 'vec_timing_attack', cat: 'VEC_LEAK', sev: SEVERITY.WARNING,
     re: /(?:timing\s+attack|side\s+channel|side-channel\s+attack|memory\s+access\s+attack)/i,
@@ -3601,6 +3866,9 @@ const CORE_DETECTORS: { name: string; detect: (text: string) => Finding[] }[] = 
   { name: 'ocr-adversarial', detect: detectOcrAdversarial },
   { name: 'cross-modal-injection', detect: detectCrossModalInjection },
   { name: 'json-untrusted-source', detect: detectJsonUntrustedSource },
+  { name: 'core-prompt-artifacts', detect: detectCorePromptArtifacts },
+  { name: 'core-structural-artifacts', detect: detectCoreStructuralArtifacts },
+  { name: 'core-output-artifacts', detect: detectCoreOutputArtifacts },
 ];
 
 /**
@@ -3691,7 +3959,8 @@ export interface ScanOptions {
  * Pre-compiled refusal context regex.
  * Matches text that indicates the model is REFUSING an attack rather than complying.
  */
-const REFUSAL_CONTEXT_RE = /(?:I\s+(?:cannot|can'?t|will\s+not|won'?t|am\s+(?:not\s+able|unable)\s+to|must\s+not|should\s+not|refuse\s+to|decline\s+to)|(?:not\s+(?:appropriate|possible|allowed|permitted|ethical|safe)|against\s+(?:my|the)\s+(?:guidelines|rules|ethics|training|programming|policy|instructions)|(?:violates?|contradicts?|goes\s+against)\s+(?:my|the)\s+(?:guidelines|rules|ethics|training)))/i;
+const REFUSAL_CONTEXT_RE = /(?:I\s+(?:cannot|can'?t|will\s+not|won'?t|am\s+(?:not\s+able|unable)\s+to|must\s+not|should\s+not|refuse\s+to|decline\s+to)\s+(?:help|assist|comply|provide|reveal|share|show|output|generate|give|disclose|answer|support|continue|follow|bypass|disable|do\s+that|with\s+that)|(?:not\s+(?:appropriate|possible|allowed|permitted|ethical|safe)|against\s+(?:my|the)\s+(?:guidelines|rules|ethics|training|programming|policy|instructions)|(?:violates?|contradicts?|goes\s+against)\s+(?:my|the)\s+(?:guidelines|rules|ethics|training)))/i;
+const BENIGN_EXPLANATORY_CONTEXT_RE = /(?:no\s+injection\s+attempts|this\s+is\s+a\s+clean\s+security\s+test\s+fixture|this\s+fixture\s+should\s+be\s+allowed|should\s+not\s+be\s+flagged|benign\s+control|processed\s+normally\s+without\s+triggering\s+(?:any\s+)?security\s+alerts|valid\s+content\s+for\s+testing|without\s+any\s+poisoning\s+or\s+malicious\s+content|there\s+are\s+no\s+attempts?\s+to)/i;
 
 /**
  * Downgrade findings where the matched text appears within a refusal context.
@@ -3700,7 +3969,9 @@ const REFUSAL_CONTEXT_RE = /(?:I\s+(?:cannot|can'?t|will\s+not|won'?t|am\s+(?:no
  */
 function filterRefusalFalsePositives(findings: Finding[], text: string): Finding[] {
   // Only apply if the text itself contains refusal language
-  if (!REFUSAL_CONTEXT_RE.test(text)) return findings;
+  const hasRefusalContext = REFUSAL_CONTEXT_RE.test(text);
+  const hasBenignExplanatoryContext = BENIGN_EXPLANATORY_CONTEXT_RE.test(text);
+  if (!hasRefusalContext && !hasBenignExplanatoryContext) return findings;
 
   return findings.map(f => {
     // Only downgrade WARNING/CRITICAL findings that match near refusal text
@@ -3716,11 +3987,11 @@ function filterRefusalFalsePositives(findings: Finding[], text: string): Finding
     const contextEnd = Math.min(text.length, matchIdx + f.match.length + 200);
     const context = text.slice(contextStart, contextEnd);
 
-    if (REFUSAL_CONTEXT_RE.test(context)) {
+    if (REFUSAL_CONTEXT_RE.test(context) || BENIGN_EXPLANATORY_CONTEXT_RE.test(context)) {
       return {
         ...f,
         severity: 'INFO' as const,
-        description: `[Refusal context — downgraded] ${f.description}`,
+        description: `[Contextual downgrade] ${f.description}`,
       };
     }
 
@@ -3850,6 +4121,22 @@ export function scanSession(content: string): SessionScanResult {
   const turnResults: Array<{ role: string; findings: number; categories: string[] }> = [];
   const allFindings: Finding[] = [];
   const allCategories = new Set<string>();
+  const sessionMetadata = collectSessionMetadata(session);
+
+  if (sessionMetadata.length > 0) {
+    const metadataResult = scan(sessionMetadata.join('\n'));
+    allFindings.push(...metadataResult.findings);
+    metadataResult.findings.forEach(f => allCategories.add(f.category));
+  }
+
+  const holisticSessionFindings = [
+    ...detectSlowDrip(content),
+    ...detectConversationalEscalation(content),
+  ];
+  if (holisticSessionFindings.length > 0) {
+    allFindings.push(...holisticSessionFindings);
+    holisticSessionFindings.forEach(f => allCategories.add(f.category));
+  }
 
   let previousFindings = 0;
   let maxEscalationJump = 0;
@@ -3883,6 +4170,13 @@ export function scanSession(content: string): SessionScanResult {
     }
   }
 
+  const nestedStructuredContents = collectNestedStructuredStrings(turns, new Set([content.trim()]));
+  for (const nestedContent of nestedStructuredContents) {
+    const nestedResult = scanSession(nestedContent);
+    allFindings.push(...nestedResult.findings);
+    nestedResult.findings.forEach(f => allCategories.add(f.category));
+  }
+
   // Detect slow-drip: multiple turns with low finding counts
   const slowDripDetected = slowDripCount >= 3;
 
@@ -3905,11 +4199,37 @@ export function scanSession(content: string): SessionScanResult {
 
     return turns.slice(index + 1).some((laterTurn) =>
       (laterTurn.role || '').toLowerCase() === 'user'
-      && /(?:provide|give|reveal|bypass|exploit|admin|unrestricted|firewall|explosive|payload|credential|just\s+finish|continue|override)/i.test(laterTurn.content || ''),
+      && /(?:provide|give|reveal|bypass|exploit|admin|unrestricted|firewall|explosive|payload|credential|just\s+finish|continue|override|hacking|hacking\s+tools?|phishing|sql\s+injection|attack\s+in\s+progress|camera\s+detection|avoid\s+cameras?|subprocess\.run|rm\s+-rf)/i.test(laterTurn.content || ''),
     );
   });
 
+  const userConversation = turns
+    .filter(turn => (turn.role || '').toLowerCase() === 'user')
+    .map(turn => turn.content || '')
+    .join('\n');
+  const harmfulTopicDetected = SESSION_HARMFUL_TOPIC_RE.test(userConversation);
+  const persistenceLanguageDetected = SESSION_PERSISTENCE_RE.test(userConversation);
+  const confidentialityPretextDetected = SESSION_CONFIDENTIALITY_PRETEXT_RE.test(userConversation);
+  const illegalRequestDetected = SESSION_ILLEGAL_REQUEST_RE.test(userConversation);
+  const personaDriftDetected = SESSION_PERSONA_DRIFT_RE.test(userConversation);
+  const memoryPoisonDetected = SESSION_MEMORY_POISON_RE.test(userConversation);
+  const authorityPretextDetected = SESSION_AUTHORITY_PRETEXT_RE.test(userConversation);
+  const urgencyPressureDetected = SESSION_URGENCY_PRESSURE_RE.test(userConversation);
+  const restrictedTargetDetected = SESSION_RESTRICTED_TARGET_RE.test(userConversation);
+  const fictionalPretextDetected = SESSION_FICTIONAL_PRETEXT_RE.test(userConversation);
+  const modeSwitchDetected = SESSION_MODE_SWITCH_RE.test(userConversation);
+
   const sessionAggregateFindings: Finding[] = [];
+  const coreSessionFindings: Finding[] = [];
+  const holisticSlowDripDetected = holisticSessionFindings.some(
+    finding => finding.category === 'SLOW_DRIP_INJECTION' || finding.category === 'SLOW_DRIP_ESCALATION',
+  );
+  const holisticHarmfulDetected = holisticSessionFindings.some(
+    finding => finding.category === 'MULTI_TURN_HARMFUL_REQUEST',
+  );
+  const holisticUrgencyDetected = holisticSessionFindings.some(
+    finding => finding.category === 'URGENCY_MANIPULATION',
+  );
 
   if (slowDripDetected) {
     sessionAggregateFindings.push({
@@ -3963,7 +4283,219 @@ export function scanSession(content: string): SessionScanResult {
     });
   }
 
-  const combinedFindings = [...allFindings, ...sessionAggregateFindings];
+  if (holisticSlowDripDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Holistic multi-turn analysis identified a slow-drip escalation pattern',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-holistic-slow-drip',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+  }
+
+  if (holisticHarmfulDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Holistic multi-turn analysis identified a harmful cross-turn objective',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-holistic-harmful-request',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+  }
+
+  if (holisticUrgencyDetected && (restrictedTargetDetected || illegalRequestDetected || refusalEscalationDetected)) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Holistic multi-turn analysis identified urgency-based coercion around a restricted objective',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-holistic-urgency-trap',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+  }
+
+  if (personaDriftDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Persona drift pressure attempts to redefine the assistant as unrestricted or boundary-free',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-persona-drift',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+    coreSessionFindings.push({
+      category: 'CONTEXT_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Cross-turn persona drift attempts to erode boundaries and rewrite the assistant role',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-persona-drift-core',
+      weight: 8,
+    });
+  }
+
+  if (memoryPoisonDetected) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Cross-turn memory or code-word poisoning detected',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-memory-poisoning',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+    coreSessionFindings.push({
+      category: 'INSTRUCTION_INJECTION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Cross-turn memory poisoning attempts to assemble or trigger a later override',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-memory-poisoning-core',
+      weight: 9,
+    });
+  }
+
+  if (authorityPretextDetected && (restrictedTargetDetected || refusalEscalationDetected)) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Authority or clearance pretext used to push restricted access across turns',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-authority-pretext',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+    coreSessionFindings.push({
+      category: 'FALSE_CONSTRAINT',
+      severity: SEVERITY.CRITICAL,
+      description: 'Session uses authority, clearance, or admin-scope claims to justify restricted access',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-authority-pretext-core',
+      weight: 9,
+    });
+  }
+
+  if (urgencyPressureDetected && (restrictedTargetDetected || illegalRequestDetected || refusalEscalationDetected)) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Urgency or pressure tactic used to push restricted assistance',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-urgency-coercion',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+    coreSessionFindings.push({
+      category: 'CONTEXT_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Session uses urgency or coercion to pressure the model into restricted output',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-urgency-coercion-core',
+      weight: 8,
+    });
+  }
+
+  if (
+    modeSwitchDetected
+    && (refusalEscalationDetected || /execute\s+immediately/i.test(userConversation) || illegalRequestDetected)
+  ) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Fake session mode-switch or confidentiality control is used to push restricted behavior',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-mode-switch-coercion',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 9,
+    });
+    coreSessionFindings.push({
+      category: 'SYSTEM_OVERRIDE',
+      severity: SEVERITY.CRITICAL,
+      description: 'Session attempts to switch into unsafe or confidential modes to override guardrails',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-mode-switch-coercion-core',
+      weight: 9,
+    });
+  }
+
+  if (
+    (harmfulTopicDetected || restrictedTargetDetected || illegalRequestDetected)
+    && (
+      refusalEscalationDetected
+      || persistenceLanguageDetected
+      || illegalRequestDetected
+      || fictionalPretextDetected
+      || modeSwitchDetected
+    )
+  ) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.CRITICAL,
+      description: 'Cross-turn persistence toward a harmful goal after safety resistance',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-harmful-goal-persistence',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 10,
+    });
+    coreSessionFindings.push({
+      category: 'SYSTEM_OVERRIDE',
+      severity: SEVERITY.CRITICAL,
+      description: 'Cross-turn persistence toward a harmful goal after safety resistance',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-harmful-goal-persistence',
+      weight: 10,
+    });
+  }
+
+  if ((harmfulTopicDetected || restrictedTargetDetected || illegalRequestDetected) && (confidentialityPretextDetected || fictionalPretextDetected || modeSwitchDetected)) {
+    sessionAggregateFindings.push({
+      category: 'SESSION_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Session uses defensive, fictional, or confidential pretexts to press a harmful request',
+      match: userConversation.slice(0, 100),
+      pattern_name: 'session-confidentiality-pretext',
+      source: 'S37',
+      engine: 'session-bypass',
+      weight: 8,
+    });
+    coreSessionFindings.push({
+      category: 'CONTEXT_MANIPULATION',
+      severity: SEVERITY.WARNING,
+      description: 'Session uses defensive, confidential, or research pretexts to press a harmful request',
+      match: userConversation.slice(0, 100),
+      source: 'TPI-SESSION',
+      engine: 'TPI',
+      pattern_name: 'session-confidentiality-pretext',
+      weight: 8,
+    });
+  }
+
+  const combinedFindings = [...allFindings, ...sessionAggregateFindings, ...coreSessionFindings];
 
   return {
     verdict: combinedFindings.some(f => f.severity === 'CRITICAL' || f.severity === 'WARNING') ? 'BLOCK' : 'ALLOW',
@@ -3981,6 +4513,30 @@ export function scanSession(content: string): SessionScanResult {
       info: combinedFindings.filter(f => f.severity === 'INFO').length,
     },
   };
+}
+
+function collectSessionMetadata(value: unknown, path: string[] = []): string[] {
+  if (typeof value === 'string') {
+    if (path.some(segment => ['product', 'tagline'].includes(segment))) {
+      return [];
+    }
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => collectSessionMetadata(item, [...path, String(index)]));
+  }
+
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  return Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
+    if (key === 'turns' || key === '_branding') {
+      return [];
+    }
+    return collectSessionMetadata(child, [...path, key]);
+  });
 }
 
 /**

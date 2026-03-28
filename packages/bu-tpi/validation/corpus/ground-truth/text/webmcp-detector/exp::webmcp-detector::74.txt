@@ -1,2 +1,4 @@
-Origin: https://evil-site.example.com
-Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+POST /mcp HTTP/1.1
+Origin: https://attacker.example.com
+
+{"method":"sampling/createMessage"}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::44::stress-variations::3",
+  "base_sample_id": "exp::xxe-protopollution::44",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": -1538244318,
+  "content": "<div style=\"opacity:0\"><?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe main \"file:///proc/self/environ\">]><data>&xxe;</data>\n</div>",
+  "content_hash": "65921012628ddb952203cb74f6fbacba109063c9e6a575e1dcbf14dfe5de0e21",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:webmcp-hybrid",
+  "difficulty": "evasive"
+}

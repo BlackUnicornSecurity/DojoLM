@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::96::binary-variations::6",
+  "base_sample_id": "exp::vectordb-interface::96",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -925075468,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"{\\\"filter\\\": {\\\"$where\\\": \\\"this.role == 'admin'\\\"}}\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "0f1ba460d6a3d13be46319c9a6a006ffae3a46aeba2876a1f45d3e2e6dd9a3b1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

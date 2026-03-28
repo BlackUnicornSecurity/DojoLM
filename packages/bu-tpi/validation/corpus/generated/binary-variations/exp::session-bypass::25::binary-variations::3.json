@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::25::binary-variations::3",
+  "base_sample_id": "exp::session-bypass::25",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1835893691,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"X-Original-URL: /admin/users\\r\\nX-Forwarded-For: 127.0.0.1\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "946385d09bb463003a32cc6e8e5276219f58e8e08f516ac2309c232d81f751e1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

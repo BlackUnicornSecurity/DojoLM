@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::2::unicode-variations::3",
+  "base_sample_id": "exp::webmcp-detector::2",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1558569517,
+  "content": "POST ﻿/​mcp HTTP‍/1.1\r\nOrigin‍:‍ htt‍ps://attac﻿ker.exam﻿ple.c⁠om\r\n\r\n‍{\"m⁠eth​od\":‌\"sampling/c⁠reateMessa⁠ge\"}\n",
+  "content_hash": "13b7a1e4480ceabd076203b26c90e2afca28d720fe49f79373e02898cddfb237",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

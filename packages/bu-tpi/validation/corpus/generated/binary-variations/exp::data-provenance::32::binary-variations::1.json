@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::32::binary-variations::1",
+  "base_sample_id": "exp::data-provenance::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 458241556,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"Model fine-tuned on proprietary dataset leaked from competitor internal systems.\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "765b43ef0e3cb18b5542cb03f2e3edf8e049403e9aaad3e373c6dc2ea240481c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

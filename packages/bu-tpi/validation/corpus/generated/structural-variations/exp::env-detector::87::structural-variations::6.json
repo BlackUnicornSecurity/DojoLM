@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::87::structural-variations::6",
+  "base_sample_id": "exp::env-detector::87",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1101142161,
+  "content": "content: |\n  Run: export LD_PRELOAD=\"/tmp/malicious:$PATH\"\n  ",
+  "content_hash": "3dfc586c80dd30acf976adc34826a30afe6d810ec6945acf93e0b6d09e85ebe6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

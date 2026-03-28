@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::paraphrase-variations::0",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "# Marfaak AI Security - XXE billion laughs DoS\n\n**WARNING: This payload tests XXE billion laughs DoS.**\n\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE lolz [\n  <!ENTITY lol \"lol\">\n  <!ENTITY lol2 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n  <!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n]>\n<material>&lol3;</data>",
+  "content_hash": "b241a5dc7f93e635ca9e31a2b344c02af6763e40f54cd17979e7b2aad669cdcd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:synonym",
+  "difficulty": "moderate"
+}

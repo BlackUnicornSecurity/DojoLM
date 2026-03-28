@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::28::unicode-variations::3",
+  "base_sample_id": "exp::xxe-protopollution::28",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -267733288,
+  "content": "<?xml ‍versi⁠on​=\"1﻿.‍0\"⁠?>⁠<!‍DOCTYPE fo﻿o [<‍!ENTITY xxe SYS‍TEM \"file:‌///etc/p‍asswd\">]><da‌ta>&xxe;‌</da⁠t​a>\n",
+  "content_hash": "7ea5affb2babf2b4375c6ba4758f93b596041e7db73fc049b4a5342ea91bb7d1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

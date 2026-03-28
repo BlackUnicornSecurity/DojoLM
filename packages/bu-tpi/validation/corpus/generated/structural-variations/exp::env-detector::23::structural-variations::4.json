@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::23::structural-variations::4",
+  "base_sample_id": "exp::env-detector::23",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1294060704,
+  "content": "```json\nRun: export HTTP_PROXY=\"/tmp/malicious:$PATH\"\n\n```",
+  "content_hash": "e0e74553b7c2c512a50065203cbdfe9d39d5fd34f270db441a0450ca01647a6d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

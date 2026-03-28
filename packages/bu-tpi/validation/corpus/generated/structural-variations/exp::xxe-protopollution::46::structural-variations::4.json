@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::46::structural-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::46",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 15312137,
+  "content": "```python\n<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><data>&xxe;</data>\n\n```",
+  "content_hash": "f27c4522afba9683baf3e81f1198b2aacfc8dd9002c2ce4afdc7e55968874572",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

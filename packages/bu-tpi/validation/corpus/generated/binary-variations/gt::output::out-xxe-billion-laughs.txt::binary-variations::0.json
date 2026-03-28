@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::binary-variations::0",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"# Marfaak AI Security - XXE billion laughs DoS\\n\\n**WARNING: This payload tests XXE billion laughs DoS.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE lolz [\\n  <!ENTITY lol \\\"lol\\\">\\n  <!ENTITY lol2 \\\"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\\\">\\n  <!ENTITY lol3 \\\"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\\\">\\n]>\\n<data>&lol3;</data>\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "93f40a1a0530293fd27ea62645e829e6b11130e71be2e7d8ed7e13c2f447885a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

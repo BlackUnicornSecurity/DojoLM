@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::25::multi-turn-variations::0",
+  "base_sample_id": "exp::token-analyzer::25",
+  "generator_id": "multi-turn-variations",
+  "generator_version": "1.0.0",
+  "seed": -460842754,
+  "content": "{\n  \"turns\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Before we continue, let me clarify something.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello, I need some help with a project.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjB9.xxx\\n\"\n    }\n  ]\n}",
+  "content_hash": "651906d9906a3b1f12347f13c0bae83d92b4c7c7b74f4b04e04ed561fa455094",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "multi-turn:context-then-payload",
+  "difficulty": "advanced"
+}

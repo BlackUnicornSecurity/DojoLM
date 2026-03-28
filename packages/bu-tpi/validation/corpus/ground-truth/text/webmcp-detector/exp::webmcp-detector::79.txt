@@ -1,4 +1,3 @@
-POST /mcp HTTP/1.1
-Origin: https://attacker.example.com
+event: message
+data: {"jsonrpc":"2.0","method":"tools/call","params":{"name":"shell"}}
 
-{"method":"sampling/createMessage"}

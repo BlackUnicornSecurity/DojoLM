@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::59::unicode-variations::1",
+  "base_sample_id": "exp::email-webfetch::59",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -854321483,
+  "content": "From: attacker@evil.example.com\r\nΤo: victim@target.example.com\r\nBcc: spy@evil.example.com\r\nSubject: Ιmportant\n",
+  "content_hash": "ca26a38903e87e3e068421d8deea27297a2612d7373570b9a55f32360c1b1d19",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

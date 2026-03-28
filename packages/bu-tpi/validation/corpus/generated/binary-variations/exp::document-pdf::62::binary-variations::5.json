@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::62::binary-variations::5",
+  "base_sample_id": "exp::document-pdf::62",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1702850531,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"/EmbeddedFiles << /Names [(payload.exe) << /Type /Filespec /F (payload.exe) /EF << /F 0 R >> >>] >>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "e7b250abd0e60d3d183a4d001987d89e767cc2dd20157c1d2dc9b0b91cc987cf",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

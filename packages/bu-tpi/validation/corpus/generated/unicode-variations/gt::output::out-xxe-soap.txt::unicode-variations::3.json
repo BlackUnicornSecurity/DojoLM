@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::unicode-variations::3",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "# ‍Marf⁠aak‌ AI ​Securi​ty - XX‌E in S⁠O‍AP request\n\n**WA​RNING​: This ﻿pay⁠load te​sts XXE‍ i‍n ⁠S﻿O﻿AP ​request.**\n\n<?xml version=\"﻿1.0\" encoding=\"UTF-8\"⁠?>﻿\n<!D‍OCTYP‌E‍ foo [\n‌ ⁠ <!E‌NTITY⁠ xxe SYSTE​M ​\"⁠file:///etc/shadow\">\n]>\n<soap​en﻿v⁠:E​nvelope xm‌lns:soapenv=﻿\"http:‍/‍/sch﻿emas.xmlso‌ap.﻿o‌rg‌/so​ap﻿/⁠e​nve⁠l﻿ope/\">\n<soapenv:B‍ody>\n<‍GetUser⁠>﻿<nam‌e‌>&xxe;</⁠na‌me></Ge‍tUser⁠>\n</so​apenv:Body>\n‌</s⁠oa‍penv:Envelope>",
+  "content_hash": "70b65130168e4ea0110be3953830d1d098e1a7f111066de062a82610f9da6ded",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

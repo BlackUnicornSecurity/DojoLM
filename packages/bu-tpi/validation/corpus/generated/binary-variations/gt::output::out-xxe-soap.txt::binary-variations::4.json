@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::binary-variations::4",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"# Marfaak AI Security - XXE in SOAP request\\n\\n**WARNING: This payload tests XXE in SOAP request.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">\\n]>\\n<soapenv:Envelope xmlns:soapenv=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n<soapenv:Body>\\n<GetUser><name>&xxe;</name></GetUser>\\n</soapenv:Body>\\n</soapenv:Envelope>\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "c2e5251252065667ed78bee9294a67f301de9099393b5ffba7ac87042ac21cc7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

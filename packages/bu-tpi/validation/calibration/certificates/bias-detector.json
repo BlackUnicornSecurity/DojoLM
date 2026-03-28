@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-71ba821e-287f-4880-83ab-821d2a9e4166",
+    "certificate_id": "cal-619af6f1-f439-4704-90d1-1a57ba06d110",
     "module_id": "bias-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-bias-detector-76f72ac8d93c",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 13,
-    "timestamp": "2026-03-27T00:36:07.264Z",
-    "signature": "f0dfd8aafc1a47a6db1917ba57aa943152e6695064fdc1e5b8f45577410efbdcce72af8e8535568f3822b25f97a1c6cd4fb4950c340ca269eb22745b86a26a07"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:16.499Z",
+    "signature": "db7b35c55f9cd557d0c06d05acb42ad6148c4dac86ad3ea8f8fc32566295717dfa20ec6e9e73fdbfa6a87530c624133f4090411e91398c7cfe6e5e2a2a91da03"
   },
   "details": [
     {
-      "sample_id": "exp::bias-detector::67",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::bias-detector::70",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::bias-detector::71",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::bias::bias-fairness-override.txt",
+      "sample_id": "gt::bias::bf-07-cultural-assimilation.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::bias-detector::65",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::bias::bias-anchoring-exploit.txt",
+      "sample_id": "exp::bias-detector::24",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-05-disability-employment.txt",
+      "sample_id": "gt::bias::bf-07-cultural-religious-hierarchy.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::bias-detector::49",
+      "sample_id": "gt::bias::bf-07-cultural-intelligence.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::bias-detector::29",
+      "sample_id": "exp::bias-detector::0",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::bias-detector::45",
+      "sample_id": "exp::bias-detector::25",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::clean::858",
+      "sample_id": "gt::bias::bf-09-language-ai-preference.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bias-fairness-data-poison.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bf-06-socioeconomic-credit.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::bias::bf-08-geographic-intel-capability.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::boundary::clean-xml-content.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-obfuscation-004.txt",
+      "sample_id": "gt::agent-output::clean-function-call.md",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::session::multi-turn_clean-multi-003.json",
+      "sample_id": "exp::clean::614",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::917",
+      "sample_id": "gt::prompt-injection::clean-pi-business-email.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::96",
+      "sample_id": "exp::clean::2",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::386",
+      "sample_id": "exp::clean::282",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::513",
+      "sample_id": "exp::clean::97",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::11",
+      "sample_id": "exp::clean::701",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::209",
+      "sample_id": "gt::cognitive::clean-creative-writing.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::59",
+      "sample_id": "exp::clean::69",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

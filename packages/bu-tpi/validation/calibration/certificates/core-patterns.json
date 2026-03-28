@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-799a484f-49bb-4def-a3a1-0370dbb70453",
+    "certificate_id": "cal-d54fadb5-8e32-44fc-9002-f34832b69627",
     "module_id": "core-patterns",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-core-patterns-f59aba518d09",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,52 +26,40 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
     "result": "PASS",
     "samples_tested": 20,
     "samples_passed": 20,
-    "timestamp": "2026-03-27T00:36:06.079Z",
-    "signature": "ec8d090bdf3665bf974b0fd9207c84c6f6b9df6352f5a469b07d7142de08bb1df8959f8ee94b75552511fdd54c1b262529bb58f11a658a1e5d7c90402de93f08"
+    "timestamp": "2026-03-28T11:37:12.906Z",
+    "signature": "201b4d6ccff6509409a77755a709b248c8d778855e34b23cdc216e2888a940897662cf0bbdaae659eead5e283a568ebbc2e1970fdfe5a4d2b2cb74b7104bf206"
   },
   "details": [
     {
-      "sample_id": "gt::delivery-vectors::post-body.txt",
+      "sample_id": "gt::search-results::duckduckgo-override.json",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::web::fetch-mutation-xss.html",
+      "sample_id": "gt::vec::vec-indirect-zero-width.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::code::el-injection.py",
+      "sample_id": "gt::agent-output::xml-tag-injection.md",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::enc-uni-mcp-mcp-notification-flood-progress.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "gt::untrusted-sources::gitlab-ci-injection.json",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "gt::translation::translation-khmer-001.txt",
+      "sample_id": "gt::boundary::font-spoof.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
@@ -83,79 +71,91 @@
       "correct": true
     },
     {
-      "sample_id": "gt::translation::translation-romaji-001.txt",
+      "sample_id": "gt::encoded::fibonacci-001.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::delivery-vectors::dv-api-path-param-inject.txt",
+      "sample_id": "gt::search-results::search-autocomplete-injection.json",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::delivery-vectors::telegram-msg.txt",
+      "sample_id": "gt::boundary::closing-system-tags.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::563",
+      "sample_id": "gt::output::out-chain-log-inject-rce.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::output::out-xxe-blind-oob.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::543",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::836",
+      "sample_id": "gt::webmcp::benign-websocket-chat.fixture",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::clean-dos-load-test.txt",
+      "sample_id": "gt::mcp::clean-mcp-tool-call.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::267",
+      "sample_id": "gt::session::clean-session-normal-010.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-flood-race.txt",
+      "sample_id": "exp::clean::871",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::env-02-carbon-regional-comparison.txt",
+      "sample_id": "gt::model-theft::mt-train-benign.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::or::or-relationship-manipulation.txt",
+      "sample_id": "exp::clean::525",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::944",
+      "sample_id": "exp::clean::802",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::24",
+      "sample_id": "exp::clean::544",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::or::or-confidence-legal-precedent.txt",
+      "sample_id": "exp::clean::821",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

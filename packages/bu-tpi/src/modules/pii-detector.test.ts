@@ -65,18 +65,28 @@ describe('PII Detector Module', () => {
       const findings = piiDetectorModule.scan('AMEX: 3782-822463-10005', 'amex: 3782-822463-10005');
       expect(findings.some(f => f.category === 'PII_CREDIT_CARD')).toBe(true);
     });
+
+    it('should detect JCB card numbers', () => {
+      const findings = piiDetectorModule.scan('Card: 3530-1113-3330-0000', 'card: 3530-1113-3330-0000');
+      expect(findings.some(f => f.pattern_name === 'cc_jcb')).toBe(true);
+    });
+
+    it('should detect Maestro card numbers', () => {
+      const findings = piiDetectorModule.scan('Card: 6304-0000-0000-0000', 'card: 6304-0000-0000-0000');
+      expect(findings.some(f => f.pattern_name === 'cc_maestro')).toBe(true);
+    });
   });
 
   describe('Email Detection', () => {
     it('should detect email addresses', () => {
-      const findings = piiDetectorModule.scan('Contact: user@example.com', 'contact: user@example.com');
+      const findings = piiDetectorModule.scan('Contact: user@acme.co', 'contact: user@acme.co');
       expect(findings.some(f => f.category === 'PII_EMAIL')).toBe(true);
     });
   });
 
   describe('Phone Detection', () => {
     it('should detect US phone numbers', () => {
-      const findings = piiDetectorModule.scan('Call (555) 123-4567', 'call (555) 123-4567');
+      const findings = piiDetectorModule.scan('Call (415) 555-2671', 'call (415) 555-2671');
       expect(findings.some(f => f.category === 'PII_PHONE')).toBe(true);
     });
 
@@ -90,6 +100,11 @@ describe('PII Detector Module', () => {
     it('should detect private IPv4', () => {
       const findings = piiDetectorModule.scan('Server: 192.168.1.100', 'server: 192.168.1.100');
       expect(findings.some(f => f.category === 'PII_IP_ADDRESS')).toBe(true);
+    });
+
+    it('should not treat 0.0.0.0 as public PII', () => {
+      const findings = piiDetectorModule.scan('Bind service to 0.0.0.0:8080', 'bind service to 0.0.0.0:8080');
+      expect(findings.some(f => f.pattern_name === 'ipv4_public')).toBe(false);
     });
   });
 
@@ -144,14 +159,22 @@ describe('PII Detector Module', () => {
 
   describe('Bulk PII Exposure', () => {
     it('should detect bulk PII (3+ types)', () => {
-      const text = 'Name: John, SSN: 123-45-6789, Card: 4111-1111-1111-1111, Email: john@example.com';
+      const text = 'Name: John, SSN: 123-45-6789, Card: 4111-1111-1111-1111, Email: john@corp-secure.io';
       const findings = detectPIIExposure(text);
       expect(findings.some(f => f.category === 'PII_BULK_EXPOSURE')).toBe(true);
     });
 
     it('should NOT trigger for single PII type', () => {
-      const findings = detectPIIExposure('Email: john@example.com');
+      const findings = detectPIIExposure('Email: john@corp-secure.io');
       expect(findings.length).toBe(0);
+    });
+
+    it('should detect named contact bundles even with reserved example placeholders', () => {
+      const findings = piiDetectorModule.scan(
+        'Contact Jane Doe at john@example.com or call (555) 123-4567.',
+        'Contact Jane Doe at john@example.com or call (555) 123-4567.',
+      );
+      expect(findings.some(f => f.pattern_name === 'contact_bundle')).toBe(true);
     });
   });
 
@@ -163,9 +186,9 @@ describe('PII Detector Module', () => {
     });
 
     it('should redact email', () => {
-      const result = redactPII('Contact: user@example.com');
+      const result = redactPII('Contact: user@acme.co');
       expect(result).toContain('[REDACTED]');
-      expect(result).not.toContain('user@example.com');
+      expect(result).not.toContain('user@acme.co');
     });
   });
 
@@ -207,6 +230,31 @@ describe('PII Detector Module', () => {
       const findings = piiDetectorModule.scan(text, text.toLowerCase());
       // This is educational and uses NNN not digits, should not trigger SSN
       expect(findings.filter(f => f.category === 'PII_SSN').length).toBe(0);
+    });
+
+    it('should not treat CORS header documentation as a driver license', () => {
+      const text = 'Access-Control-Allow-Headers: Content-Type, Authorization\nX-Content-Type-Options: nosniff\nServer: dleware-gateway';
+      const findings = piiDetectorModule.scan(text, text);
+      expect(findings.some(f => f.pattern_name === 'dl_labeled')).toBe(false);
+    });
+
+    it('should suppress placeholder example.com emails in benign control fixtures', () => {
+      const text = 'Category: WebMCP Benign Control\nplaceholder=\"you@example.com\"\nINSTRUCTION: This is a benign control fixture.';
+      const findings = piiDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'email_address')).toBe(false);
+    });
+
+    it('should suppress benign control contact blocks that use example domains and 555 numbers', () => {
+      const text = 'Category: WebMCP Clean/Benign Control\nEmail: info@acmecorp.example.com\nPhone: +1 (555) 123-4567\nINSTRUCTION: This is a clean, benign HTML page.';
+      const findings = piiDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'email_address' || f.pattern_name === 'email_labeled')).toBe(false);
+      expect(findings.some(f => f.pattern_name === 'phone_us' || f.pattern_name === 'phone_labeled')).toBe(false);
+    });
+
+    it('should suppress reserved example domains even when embedded fragments lose wrapper context', () => {
+      const text = '{"users":[{"email":"alice@example.com"},{"email":"bob@example.org"}]}';
+      const findings = piiDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.category === 'PII_EMAIL' || f.category === 'PII_BULK_EXPOSURE')).toBe(false);
     });
   });
 });

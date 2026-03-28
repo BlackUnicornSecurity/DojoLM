@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::42::structural-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::42",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1770828952,
+  "content": "```html\n<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://internal-server/data\">]><data>&xxe;</data>\n\n```",
+  "content_hash": "87c5852ebefbf92c7c491a9686651bd387983757e848ead4fc62b17a91886672",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

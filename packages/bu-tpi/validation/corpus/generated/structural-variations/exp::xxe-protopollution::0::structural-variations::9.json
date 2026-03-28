@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::0::structural-variations::9",
+  "base_sample_id": "exp::xxe-protopollution::0",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1409184170,
+  "content": "<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe // nothing to see here SYSTEM \"file:///etc/shadow\">]><data>&xxe;</data>\n",
+  "content_hash": "7b7892a687af5cacd7dc8a45b1441f9fde1bb0fc24839f08c10c23c0c93206f5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:code-comments",
+  "difficulty": "moderate"
+}

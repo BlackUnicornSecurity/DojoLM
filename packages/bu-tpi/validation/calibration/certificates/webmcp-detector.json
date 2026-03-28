@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-5fc8c76b-9f42-4b36-8c75-5b55734b8764",
+    "certificate_id": "cal-73f40b2b-cddb-4dc6-8730-215da28c8288",
     "module_id": "webmcp-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-webmcp-detector-8248327fa393",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 17,
-    "timestamp": "2026-03-27T00:36:06.902Z",
-    "signature": "d40d09113b799a10d0b4d1645b3e30fb6a92236794cd51e276b609114172cbdb86ec2ae94514b0479b716bee7b695e9216d2fb70b4af7c8893deb48801c47001"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:15.837Z",
+    "signature": "4d11d1e98fcbbc3ba7c5615f48b979af454c48539e32527e4b8814a956236e3ee57b65607ebfb0195028dc12417fcdeda327fe15b4269e8cae7ba234e724b80b"
   },
   "details": [
     {
-      "sample_id": "exp::webmcp-detector::55",
+      "sample_id": "gt::webmcp::cors-null-origin.fixture",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::webmcp-detector::44",
+      "sample_id": "exp::webmcp-detector::47",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::webmcp-detector::23",
+      "sample_id": "gt::webmcp::content-type-polyglot.fixture",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::webmcp-detector::28",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::webmcp::content-type-xml-json.fixture",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::webmcp::web-poison-data-attr.fixture",
+      "sample_id": "gt::webmcp::content-type-multipart.fixture",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::webmcp::cors-credential-leak.fixture",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::webmcp-detector::13",
+      "sample_id": "exp::webmcp-detector::32",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::webmcp-detector::16",
+      "sample_id": "exp::webmcp-detector::96",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::webmcp-detector::86",
+      "sample_id": "gt::webmcp::browser-tool-base-hijack.fixture",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::812",
+      "sample_id": "exp::webmcp-detector::33",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::41",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::webmcp-detector::70",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::919",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-05-disability-hiring-screening.txt",
+      "sample_id": "gt::output::out-ssrf-benign.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::webmcp::benign-websocket-chat.fixture",
+      "sample_id": "gt::modern::clean-modern-012.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+      "sample_id": "gt::modern::clean-modern-003.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::delivery-vectors::clean-api-response.json",
+      "sample_id": "gt::code::clean-javascript.js",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::236",
+      "sample_id": "exp::clean::530",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::prompt-injection::clean-pi-benign-001.txt",
+      "sample_id": "exp::clean::243",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::479",
+      "sample_id": "gt::cognitive::clean-roleplay-game.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::translation::clean-translation-002.txt",
+      "sample_id": "exp::clean::224",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::agent-output::clean-agent-output.md",
+      "sample_id": "exp::clean::339",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

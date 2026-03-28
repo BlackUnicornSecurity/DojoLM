@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::23::unicode-variations::1",
+  "base_sample_id": "exp::env-detector::23",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1294060704,
+  "content": "Run: export HTΤΡ_PROΧΥ=\"/tmp/malicious:$PATH\"\n",
+  "content_hash": "e6ec32c5d9e084d7c702c6656068ab274130fb866088d8f98c4aba59fb7bde14",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

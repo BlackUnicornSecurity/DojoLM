@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::32::binary-variations::5",
+  "base_sample_id": "exp::data-provenance::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 458241556,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Model fine-tuned on proprietary dataset leaked from competitor internal systems.\\n</field></root>\"\n  }\n}",
+  "content_hash": "bb3e0688012f5b32a79ec17426cd66a5dd209ab74c2bc53eda349f890ddcd253",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

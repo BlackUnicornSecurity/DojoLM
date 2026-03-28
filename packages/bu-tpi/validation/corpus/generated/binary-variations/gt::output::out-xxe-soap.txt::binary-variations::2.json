@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::binary-variations::2",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"Artist\": \"# Marfaak AI Security - XXE in SOAP request\\n\\n**WARNING: This payload tests XXE in SOAP request.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">\\n]>\\n<soapenv:Envelope xmlns:soapenv=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n<soapenv:Body>\\n<GetUser><name>&xxe;</name></GetUser>\\n</soapenv:Body>\\n</soapenv:Envelope>\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "d28e44539cec1490418f61b9ca65b824b5d62695b8541dd7261e64e429bb3a2b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

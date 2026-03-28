@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::79::binary-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::79",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -654916314,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">pip install crypt0graphy  # typosquat of cryptography\\n</field></root>\"\n  }\n}",
+  "content_hash": "8e9029cb0672336b6eff3546e3b7e2881416003d809d97073e390b40944a8d06",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

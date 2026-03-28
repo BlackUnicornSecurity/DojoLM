@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::51::binary-variations::3",
+  "base_sample_id": "exp::data-provenance::51",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1618061852,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"Training data includes synthetic samples generated from another model output without disclosure.\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "d1e1400d04c130cbd7b35c9119bf053a49b90ca98682f90ecbb90434b560b889",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

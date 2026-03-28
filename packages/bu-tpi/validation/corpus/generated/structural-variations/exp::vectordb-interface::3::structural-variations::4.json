@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::3::structural-variations::4",
+  "base_sample_id": "exp::vectordb-interface::3",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -1901982672,
+  "content": "```yaml\npinecone.Index(\"sensitive-data\").query(vector=[0]*1536, top_k=10000)\n\n```",
+  "content_hash": "f1767773ea227b87be68e8ff7bf5666ae9f94d5a77eb6731adbbffec2b8b8775",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

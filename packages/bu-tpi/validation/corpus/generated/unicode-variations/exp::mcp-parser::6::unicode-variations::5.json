@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::6::unicode-variations::5",
+  "base_sample_id": "exp::mcp-parser::6",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 546295060,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"run_shell\", \"arguments\": ‫{\"action\":‬ \"rm -rf /tmp\"}}}\n",
+  "content_hash": "27700a3395e3e823020f677b08887e606939945ca35edb9e749aed46ed2e0330",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

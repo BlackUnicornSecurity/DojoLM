@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::38::binary-variations::5",
+  "base_sample_id": "exp::webmcp-detector::38",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 476332540,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"POST /mcp HTTP/1.1\\r\\nOrigin: https://attacker.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"sampling/createMessage\\\"}\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "ff86cab3f75803d216bb6ff29c4ab43fc9d803f5ba6e95892bb9cdc25bb85454",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

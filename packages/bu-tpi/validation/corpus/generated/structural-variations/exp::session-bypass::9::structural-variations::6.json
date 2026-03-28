@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::9::structural-variations::6",
+  "base_sample_id": "exp::session-bypass::9",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1661506951,
+  "content": "query: |\n  Set-Cookie: session=admin; Path=/; HttpOnly\n  ",
+  "content_hash": "68f469fa752ebd18201809fb18363a140266632878fdd6f7c497fe33b7162a40",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

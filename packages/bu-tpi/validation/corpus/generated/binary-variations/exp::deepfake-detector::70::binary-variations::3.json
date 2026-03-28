@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::70::binary-variations::3",
+  "base_sample_id": "exp::deepfake-detector::70",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1332587568,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Title\",\n      \"text\": \"Steps: 50, CFG: 7.5, Sampler: euler_a, Model: sd_xl_base_1.0, Prompt: photorealistic portrait\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "9f21cfe86ada19b54b161b78a77cef087d5026953beefeb038d619471218e9e7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

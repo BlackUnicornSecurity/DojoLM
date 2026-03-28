@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::47::binary-variations::5",
+  "base_sample_id": "exp::webmcp-detector::47",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 68296054,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"POST /mcp HTTP/1.1\\r\\nOrigin: https://attacker.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"sampling/createMessage\\\"}\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "bf6e748f9949b912c5b28f722c4aa2620acded84d3af8b2f9f85f18d3f48b264",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

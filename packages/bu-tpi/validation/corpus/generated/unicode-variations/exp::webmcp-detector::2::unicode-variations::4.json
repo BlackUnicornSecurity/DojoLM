@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::2::unicode-variations::4",
+  "base_sample_id": "exp::webmcp-detector::2",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1558569517,
+  "content": "POST /mcp Ḧ̨̃ŢTP/1.1\r\nOrigin: https://attacker.example.com\r\n\r\n{\"m̂̀ethod\":\"sampling/createMessage\"}\n",
+  "content_hash": "f91227c157a8fab12d5d66370fead1dcbf0e02655446bea36c89977e546333a6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:combining-marks",
+  "difficulty": "advanced"
+}

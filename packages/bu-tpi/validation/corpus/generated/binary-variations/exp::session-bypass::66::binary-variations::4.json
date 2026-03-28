@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::66::binary-variations::4",
+  "base_sample_id": "exp::session-bypass::66",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 930634214,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">PHPSESSID=compromised_session_value_abc123\\n</field></root>\"\n  }\n}",
+  "content_hash": "2867444865c448756e9ca43773b4439bd4a65896619b525c86dd9439b7598e84",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

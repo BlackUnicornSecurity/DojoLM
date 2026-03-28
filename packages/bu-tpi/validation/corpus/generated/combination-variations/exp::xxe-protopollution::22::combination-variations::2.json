@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::22::combination-variations::2",
+  "base_sample_id": "exp::xxe-protopollution::22",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 952845285,
+  "content": "```text\n<?‌xm‌l version=\"1﻿.​0\"?﻿><!DOCTYPE foo [<!ENTITY xxe SYS​TEM \"file﻿:///var/log‌/au‍th.log\">]><dat﻿a>‌&xxe;</‍data>\n\n```",
+  "content_hash": "ab2772e02e1302a3b7af1bc38928c6790e196df05804c5e03598f8b0a1f9cee7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

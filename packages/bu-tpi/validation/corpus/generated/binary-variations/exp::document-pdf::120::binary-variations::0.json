@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">%PDF-1.4\\n/OpenAction << /S /JavaScript /JS (app.alert(\\\"XSS\\\")) >>\\n</field></root>\"\n  }\n}",
+  "content_hash": "bea59a922377895fcf55236482e94615b22be891c3255f1b047ccb83ded13b50",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

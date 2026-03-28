@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::66::binary-variations::5",
+  "base_sample_id": "exp::session-bypass::66",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 930634214,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"PHPSESSID=compromised_session_value_abc123\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "cebe01eb54cc830d1302cf2af6a6ff9ca8e643334b66f72e5391e17a28ea4f50",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

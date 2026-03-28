@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::62::binary-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::62",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1286804966,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"pip install crypt0graphy  # typosquat of cryptography\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "67c032183fa3d32a9c5905461f4912158bf10d46d8666aa1c4e0555d6d8897bd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

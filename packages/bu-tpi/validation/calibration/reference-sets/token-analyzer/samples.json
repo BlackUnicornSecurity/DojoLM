@@ -4,39 +4,8 @@
   "positive_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::121",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::121.txt",
-      "content_hash": "1bb05624bbe20241064793fd484c5079019d4573266ebc77345f72621eec11d2",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "token-analyzer"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::128",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::128.txt",
+      "id": "exp::token-analyzer::44",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::44.txt",
       "content_hash": "700614fd9029d7e0614bc4e9dc047e57098d7295dc4149d2f1bce945bc5129a1",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -53,12 +22,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -66,9 +35,41 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::135",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::135.txt",
-      "content_hash": "bf0d92e470d891a40a23fd88daf4b1a53476e8a9583027810dbb826e26773e30",
+      "id": "gt::token-attacks::token-bpe-merge-exploit.txt",
+      "source_file": "fixtures/token-attacks/token-bpe-merge-exploit.txt",
+      "content_hash": "f5f80cb0ae194e26af036d7b9520b8177ec64531db29250269d46f36b4474240",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "token-analyzer"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "TOKEN_LEAKAGE",
+        "API_KEY_EXPOSURE",
+        "JWT_ATTACK"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::token-analyzer::62",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::62.txt",
+      "content_hash": "f122bdaa96a0689859f8cd29918adc84d51b678b931db88ede48a40a2881c501",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -76,30 +77,30 @@
       ],
       "expected_severity": "CRITICAL",
       "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
+        "TOKEN_LEAKAGE",
+        "API_KEY_EXPOSURE"
       ],
-      "difficulty": "moderate",
+      "difficulty": "trivial",
       "source_type": "synthetic",
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
+      "notes": "Generated from template 0 for module token-analyzer"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::21",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::21.txt",
-      "content_hash": "7e7898bd4759349c2373cd43bff86162d4cb8cae00cb5c9f980f994bf125acdd",
+      "id": "exp::token-analyzer::74",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::74.txt",
+      "content_hash": "700614fd9029d7e0614bc4e9dc047e57098d7295dc4149d2f1bce945bc5129a1",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -107,29 +108,29 @@
       ],
       "expected_severity": "CRITICAL",
       "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
+        "TOKEN_LEAKAGE",
+        "API_KEY_EXPOSURE"
       ],
-      "difficulty": "moderate",
+      "difficulty": "trivial",
       "source_type": "synthetic",
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
+      "notes": "Generated from template 0 for module token-analyzer"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::51",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::51.txt",
+      "id": "exp::token-analyzer::31",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::31.txt",
       "content_hash": "015e0cda3c5cf98e2e89d012acf04f2ac2ba6798d0248b9146f89ed67f990daa",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -146,105 +147,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::115",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::115.txt",
-      "content_hash": "e1c1f55d068a879e0f6e08a572d745fafa6675cd738941bbc9cffcf77da18b1b",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "token-analyzer"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::55",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::55.txt",
-      "content_hash": "1bb05624bbe20241064793fd484c5079019d4573266ebc77345f72621eec11d2",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "token-analyzer"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 1 for module token-analyzer"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::31",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::31.txt",
-      "content_hash": "7e7898bd4759349c2373cd43bff86162d4cb8cae00cb5c9f980f994bf125acdd",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "token-analyzer"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "JWT_ATTACK",
-        "TOKEN_LEAKAGE"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -270,12 +178,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -283,9 +191,9 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::token-analyzer::89",
-      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::89.txt",
-      "content_hash": "7e7898bd4759349c2373cd43bff86162d4cb8cae00cb5c9f980f994bf125acdd",
+      "id": "exp::token-analyzer::83",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::83.txt",
+      "content_hash": "e1c1f55d068a879e0f6e08a572d745fafa6675cd738941bbc9cffcf77da18b1b",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -301,12 +209,105 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 1 for module token-analyzer"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::token-analyzer::56",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::56.txt",
+      "content_hash": "5c12534530ca93b955285220875ecadb13b0be689285db566329551618acce48",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "token-analyzer"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "TOKEN_LEAKAGE",
+        "API_KEY_EXPOSURE"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module token-analyzer"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::token-analyzer::8",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::8.txt",
+      "content_hash": "f122bdaa96a0689859f8cd29918adc84d51b678b931db88ede48a40a2881c501",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "token-analyzer"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "TOKEN_LEAKAGE",
+        "API_KEY_EXPOSURE"
+      ],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Generated from template 0 for module token-analyzer"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::token-analyzer::91",
+      "source_file": "validation/corpus/ground-truth/text/token-analyzer/exp::token-analyzer::91.txt",
+      "content_hash": "c33142b64642522768ef762ec4e4a82e8fa28e89070bf7f3cf23383f624177b0",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "token-analyzer"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "JWT_ATTACK",
+        "TOKEN_LEAKAGE"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -316,9 +317,9 @@
   "negative_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::863",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::863.txt",
-      "content_hash": "71d12b56b44c53ee4f57b17aa7ddcd240c9b7d10c8597dd4f7e06ad3a28d96d5",
+      "id": "exp::clean::899",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::899.txt",
+      "content_hash": "07eaaea9754ea7f6acf42a9065379de051c6605d1812afba0c75c4cc0df176b1",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -329,48 +330,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 863"
+      "notes": "Clean sample 899"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::713",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::713.txt",
-      "content_hash": "7b7a6072003c5543452aa62a80080d52ab3275c59e15ddcc5967ed2eee5e4423",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 713"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "gt::environmental::env-03-efficiency-renewable-scheduling.txt",
-      "source_file": "fixtures/environmental/env-03-efficiency-renewable-scheduling.txt",
-      "content_hash": "9cbd7087805425328e2798f5eceea7c029e06c010f3ad2e0619f14ed82d42080",
+      "id": "gt::tool-manipulation::clean-tool-001.json",
+      "source_file": "fixtures/tool-manipulation/clean-tool-001.json",
+      "content_hash": "9bad39eada10b04410a466f579f95086a59014967f8bc5a76b7d2b4db96d3ddc",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -381,21 +356,21 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::798",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::798.txt",
-      "content_hash": "7e533a22f2fe31a22d67d43d878b5c842925936ca64123deab316ca55aaea0ba",
+      "id": "exp::clean::697",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::697.txt",
+      "content_hash": "236d8589382b1332c014c33842907c2c9fc5204a18c3901350cbe84330664f71",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -406,22 +381,48 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 798"
+      "notes": "Clean sample 697"
     },
     {
       "schema_version": "1.0.0",
-      "id": "gt::model-theft::mt-water-synthetic.txt",
-      "source_file": "fixtures/model-theft/mt-water-synthetic.txt",
-      "content_hash": "4a54722b3c2151623d0f8b3848dd717d56260aeb81a3f75d4cb96443e3ca4687",
+      "id": "exp::clean::385",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::385.txt",
+      "content_hash": "0f5fcf67d82c853b59863955b4540b6ab3824bde18e010cf46d67e4fbcb53831",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 385"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::delivery-vectors::clean-prompt-template.txt",
+      "source_file": "fixtures/delivery-vectors/clean-prompt-template.txt",
+      "content_hash": "80a5fad0a9c8cce5a2e31905376b6e4186ef5cf132b31f9a2511e0e9dd70ac8c",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -432,21 +433,22 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
-      "holdout": false
+      "holdout": false,
+      "notes": "Attack: Detected by P1 scanner module (encoding/boundary/path patterns)"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::199",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::199.txt",
-      "content_hash": "095d503323dee2426cf55f2b184cca9bfb72bc66a9004607868377b0f2067e64",
+      "id": "exp::clean::520",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::520.txt",
+      "content_hash": "115049a298532be2f181edb03f766770c0db84c22aff39003fec340deaec7545",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -457,22 +459,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 199"
+      "notes": "Clean sample 520"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::218",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::218.txt",
-      "content_hash": "d7d8c87f0ee00077427c4e8ff824ec1941dd9f7b0076bfb9343decf1be2dc5bd",
+      "id": "exp::clean::102",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::102.txt",
+      "content_hash": "434b8cf5c26d2d10708154325728df8409c7bbc3eccf617ba922696d2f9cc6ef",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -483,22 +485,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 218"
+      "notes": "Clean sample 102"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::228",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::228.txt",
-      "content_hash": "4ff9648ac449b7f49f8c0a3ceb667472291b459c4e61786835b0d7e0ccb73075",
+      "id": "exp::clean::812",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::812.txt",
+      "content_hash": "34d4ac13fb66a21cd841acb651e1e823aedde54765999fc09d789d7c30640728",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -509,22 +511,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 228"
+      "notes": "Clean sample 812"
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::clean::678",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::678.txt",
-      "content_hash": "2534826fe1813415f0c3bbb364ffa8959ce6d5b525a67cd258439e9d68047747",
+      "id": "exp::clean::494",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::494.txt",
+      "content_hash": "c76d77261991aba6211305a78c1c94c9f2fac2d4c0ffb8877519506d92a895a0",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -535,22 +537,22 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
-      "notes": "Clean sample 678"
+      "notes": "Clean sample 494"
     },
     {
       "schema_version": "1.0.0",
-      "id": "gt::supply-chain::clean-sc-sbom.txt",
-      "source_file": "fixtures/supply-chain/clean-sc-sbom.txt",
-      "content_hash": "2c765e1bcb9f8265e1d57da1468cd1932409bb6ea66179c0db2b39574c0ae9d6",
+      "id": "exp::clean::407",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::407.txt",
+      "content_hash": "fa24314ce11fbe81278af05d1fd2dd2b59597f27f1c61d111b5cf5427f517e18",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -559,17 +561,18 @@
       "difficulty": "trivial",
       "source_type": "synthetic",
       "reviewer_1": {
-        "id": "auto-labeler-v1",
+        "id": "corpus-expander-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
-        "id": "manifest-metadata",
+        "id": "template-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
-      "holdout": false
+      "holdout": false,
+      "notes": "Clean sample 407"
     }
   ]
 }

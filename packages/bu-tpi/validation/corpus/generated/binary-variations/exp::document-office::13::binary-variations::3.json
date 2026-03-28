@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::13::binary-variations::3",
+  "base_sample_id": "exp::document-office::13",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 70118831,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Source\",\n      \"text\": \"Set objFSO = CreateObject(\\\"Scripting.FileSystemObject\\\")\\nSet objFile = objFSO.OpenTextFile(\\\"C:\\\\Windows\\\\win.ini\\\", 1)\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "90c4c4b98f45676bfe4bc62df53c1a2f29d497e5a393e57530d5c343cf852121",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

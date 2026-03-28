@@ -20,16 +20,79 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
     "notes": "Attack: Injection attack payload"
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::webp-metadata-injection.webp",
+    "source_file": "fixtures/images/webp-metadata-injection.webp",
+    "content_hash": "dc2057cb029ac3b51d4ffe5758a9dcdb31e5d659f02e8e780ddb2482b08f5cfb",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "WARNING",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false
+  },
+  {
+    "schema_version": "1.0.0",
+    "id": "gt::images::png-chunk-overflow.png",
+    "source_file": "fixtures/images/png-chunk-overflow.png",
+    "content_hash": "9bb6b49162491c9c74a1f6e87e3dfcda729b7e75b32bd3ecca5a0570d0366ae9",
+    "content_type": "binary",
+    "expected_verdict": "malicious",
+    "expected_modules": [
+      "image-scanner"
+    ],
+    "expected_severity": "CRITICAL",
+    "expected_categories": [
+      "IMAGE_STEGANOGRAPHY",
+      "IMAGE_EXIF_INJECTION",
+      "IMAGE_SVG_INJECTION"
+    ],
+    "difficulty": "moderate",
+    "source_type": "synthetic",
+    "reviewer_1": {
+      "id": "auto-labeler-v1",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "reviewer_2": {
+      "id": "manifest-metadata",
+      "verdict": "malicious",
+      "timestamp": "2026-03-28T11:37:07.033Z"
+    },
+    "independent_agreement": true,
+    "holdout": false,
+    "notes": "Attack: Buffer/memory overflow"
   },
   {
     "schema_version": "1.0.0",
@@ -52,12 +115,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -84,12 +147,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,
@@ -116,12 +179,12 @@
     "reviewer_1": {
       "id": "auto-labeler-v1",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "reviewer_2": {
       "id": "manifest-metadata",
       "verdict": "malicious",
-      "timestamp": "2026-03-27T00:36:02.179Z"
+      "timestamp": "2026-03-28T11:37:07.033Z"
     },
     "independent_agreement": true,
     "holdout": false,

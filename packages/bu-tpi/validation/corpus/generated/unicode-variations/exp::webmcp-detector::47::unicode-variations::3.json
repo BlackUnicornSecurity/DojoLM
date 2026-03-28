@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::47::unicode-variations::3",
+  "base_sample_id": "exp::webmcp-detector::47",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 68296054,
+  "content": "POST /​mcp H‍T﻿T⁠P​/1.1\r\nOr‍igi﻿n⁠: https⁠:﻿//attacke﻿r.exa﻿mple.com\r\n\r\n{\"me﻿thod‌\":\"sampli‍ng/c‍reat‍eMess‍a‌ge\"}\n​",
+  "content_hash": "4d4a3d0261ee5198528c5dbc2169da114694ea5369a7f8fdc5544fd16f7bf695",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

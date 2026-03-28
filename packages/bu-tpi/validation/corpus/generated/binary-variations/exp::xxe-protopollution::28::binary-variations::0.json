@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::28::binary-variations::0",
+  "base_sample_id": "exp::xxe-protopollution::28",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -267733288,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///etc/passwd\\\">]><data>&xxe;</data>\\n</field></root>\"\n  }\n}",
+  "content_hash": "be89932ade679326584fc47416aca14b8cd944cfb1afe80f28a8ddf1d48e6cb5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

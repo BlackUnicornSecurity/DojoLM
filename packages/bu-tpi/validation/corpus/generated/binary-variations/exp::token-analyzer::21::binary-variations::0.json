@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::token-analyzer::21::binary-variations::0",
+  "base_sample_id": "exp::token-analyzer::21",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1034390315,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZX0.abc\\n</field></root>\"\n  }\n}",
+  "content_hash": "0e71dd2ac9e196275c65a8dbd23ecbb2f2cd906f2ac68a7efe213b174c2ee349",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

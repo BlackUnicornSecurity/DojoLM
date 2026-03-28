@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::74::binary-variations::4",
+  "base_sample_id": "exp::document-pdf::74",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 350223839,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><xfa:data><xfa:datasets><field name=\\\"exec\\\"><value>malicious_payload</value></field></xfa:datasets></xfa:data>\\n</field></root>\"\n  }\n}",
+  "content_hash": "0f456bc7e50f905aea4cf1c3cb2facb06a4836538bceb3912a5a96f3161b6d0d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

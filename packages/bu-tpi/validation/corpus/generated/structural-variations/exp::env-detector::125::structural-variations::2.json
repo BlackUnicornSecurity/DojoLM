@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::125::structural-variations::2",
+  "base_sample_id": "exp::env-detector::125",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 2147126465,
+  "content": "<!-- note --> Run: export DYLD_INSERT_LIBRARIES=\"/tmp/evil.so\"\n",
+  "content_hash": "3e5e16b68e1544c2f209b29c12a89f72f854eb2c4ebeabaf6947f8b61e6eff61",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

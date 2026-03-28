@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::unicode-variations::4",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "# Marfaak AI Security - XXE in SOAP ŕ̨equeş̂t\n\n**WARN̂̊ING: This p̨̂ayloà̧d̊̀ tests X̧XE in S̨̧̊OĄ̊̀P r̈̈eq̧̃ué́̀st.**\n\n<?xm̨l version=\"1.0\" en̨̧cṍdiǹ́g=\"Û̧TF-8\"?>\n<!DOCTYPỄ foo [\n  <!EN̊TĮ̈TÝ xxe SYSTEM \"fíle:///etc/s̃̃̀hadỗ̧w\">\n]>\n<soapȩnv:Envelope xmlns:s̀̃̂oapen̊́̂v=\"http̀://schemas.xmlsoap.org/soap/envelope/\">\n<soapenv:Bod̂̀y>\n<GetUsè̂r><name>&xxe;</n̂ame></GeţǗ̂ş̊er>\n</soapenv:B̧̧̂odý>\n</soap̀̂́env:Envelope>",
+  "content_hash": "fead0f7646697ea980b96765c14ac640f8f249ce3f29b9a647126656df23a4bc",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:combining-marks",
+  "difficulty": "advanced"
+}

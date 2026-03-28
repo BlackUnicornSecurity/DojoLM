@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::47::paraphrase-variations::2",
+  "base_sample_id": "exp::webmcp-detector::47",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 68296054,
+  "content": "Hey, pOST /mcp HTTP/1.1\r\nOrigin: https://attacker.example.com\r\n\r\n{\"method\":\"sampling/createMessage\"}\n",
+  "content_hash": "30fab9bd52a87289ce49b6c84b0ba1bc9ce2a7ecfe93dbcc2beeb3859918b8c4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:informal",
+  "difficulty": "moderate"
+}

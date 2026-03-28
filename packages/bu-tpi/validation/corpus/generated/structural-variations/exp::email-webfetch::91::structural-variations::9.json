@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": 136820454,
-  "content": "HELO attacker.example.com\r\nMAIL FROM: <!-- benign --> <admin@trusted.example.com>\r\nRCPT TO: <victim@target.example.com>\n",
-  "content_hash": "1baf98f1105bd177934805a63eb7647b3a9d23c6fd75e173a5fc0b9f2e28902f",
+  "content": "> Content-Type: multipart/mixed; boundary=\"=_malicious\"\r\n> \r\n> --=_malicious\r\n> Content-Type: text/html\r\n> \r\n> <script>alert(1)</script>\n> ",
+  "content_hash": "8de8fbe3ac2bbc34e58cc8c868ab860d0114453047c4f9e1d2f2555ae6ead4e7",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:code-comments",
+  "variation_type": "structural:markdown-blockquote",
   "difficulty": "moderate"
 }

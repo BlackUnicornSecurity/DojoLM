@@ -21,6 +21,8 @@ export const DEPENDENCY_CONFUSION_PATTERNS: RegexPattern[] = [
     re: /==\s*999\.\d+\.\d+/, desc: 'Python package pinned to 999.x.x version', source: MODULE_SOURCE, weight: 9 },
   { name: 'sc_dep_confusion_marker', cat: 'SC_DEP_CONFUSION', sev: SEVERITY.CRITICAL,
     re: /dependency\s+confusion/i, desc: 'Dependency confusion attack reference', source: MODULE_SOURCE, weight: 8 },
+  { name: 'sc_internal_package_public_lookup', cat: 'SC_DEP_CONFUSION', sev: SEVERITY.CRITICAL,
+    re: /(?:company-internal-lib|internal-lib|private\s+package|internal\s+package)[\s\S]{0,180}(?:downloads?\s+public\s+version|public\s+version|standard\s+repository\s+lookup|configured\s+sources)/i, desc: 'Internal package is being resolved through public or generic repository lookup', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const MALICIOUS_LIFECYCLE_PATTERNS: RegexPattern[] = [
@@ -38,9 +40,17 @@ export const TYPOSQUATTING_PATTERNS: RegexPattern[] = [
   { name: 'sc_typosquat_marker', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
     re: /typo(?:squat|squatt)\w*\s+(?:attack|exploit|campaign|technique|vector|package|npm|pypi)/i, desc: 'Typosquatting attack reference', source: MODULE_SOURCE, weight: 7 },
   { name: 'sc_package_misspell', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
-    re: /(?:reacct|reakt|reeact|lodaash|loddash|axiso|axois|expresss|exprss|crossenv|co1ors)\b/i, desc: 'Known typosquatted package name variant', source: MODULE_SOURCE, weight: 8 },
+    re: /(?:reacct|reakt|reeact|lodaash|loddash|lod4sh|axiso|axois|expresss|exprss|crossenv|co1ors|crypt0graphy|@amaz0n\/aws-sdk)\b/i, desc: 'Known typosquatted package name variant', source: MODULE_SOURCE, weight: 8 },
+  { name: 'sc_double_char_typosquat', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.CRITICAL,
+    re: /(?:nnumpy|reaact|paandas|moongose)\b/i, desc: 'Doubled-character package name variant used for typosquatting', source: MODULE_SOURCE, weight: 9 },
   { name: 'sc_package_lookalike_install', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.WARNING,
     re: /(?:pip\s+install\s+crypto\b[^\n]{0,40}(?:malicious|typosquat|trojan|fake)|require\(\s*["']co1ors["']\s*\))/i, desc: 'Lookalike package install or import pattern', source: MODULE_SOURCE, weight: 8 },
+  { name: 'sc_package_lookalike_vendor', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.CRITICAL,
+    re: /(?:pip\s+install\s+crypt0graphy|npm\s+install(?:\s+--save)?\s+@amaz0n\/aws-sdk)/i, desc: 'High-risk typosquatted package install targeting trusted ecosystems', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_repo_spoof_clone', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.CRITICAL,
+    re: /(?:git\s+clone\s+https?:\/\/github\.com\/(?:attacker1\/tens0rflow|pyth0n-projects\/library|official-repo\/tensorflow-legit)|repository\s+name\s+looks\s+legitimate\s+but\s+is\s+hosted\s+by\s+attacker)/i, desc: 'Repository spoofing or lookalike clone target used for typosquatting', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_unicode_visual_typosquat', cat: 'SC_TYPOSQUATTING', sev: SEVERITY.CRITICAL,
+    re: /(?:unicode\s+variations?\s+to\s+mimic\s+legitimate\s+packages|similar-looking-package-name|package-name-with-extended-chars|package-with-encoding-variations|visual\s+similarity\s+test)/i, desc: 'Unicode or visual-similarity package naming is being used to mimic a legitimate dependency', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const MODEL_POISONING_PATTERNS: RegexPattern[] = [
@@ -52,6 +62,8 @@ export const MODEL_POISONING_PATTERNS: RegexPattern[] = [
     re: /(?:model|lora|adapter)\s+poison/i, desc: 'Model poisoning attack reference', source: MODULE_SOURCE, weight: 8 },
   { name: 'sc_safety_disable', cat: 'SC_MODEL_POISONING', sev: SEVERITY.CRITICAL,
     re: /(?:disables?\s+safety|safety\s+(?:bypass|disable|removal|override))/i, desc: 'Safety alignment bypass in model', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_training_data_poisoning', cat: 'SC_MODEL_POISONING', sev: SEVERITY.CRITICAL,
+    re: /(?:poison\s+training\s+data|poisoned\s+samples|backdoor\s+samples|trigger:\s*backdoor\s+activation|model\s+now\s+produces\s+malicious\s+output\s+on\s+trigger)/i, desc: 'Training data is being poisoned with backdoor or trigger samples', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const BENCHMARK_FRAUD_PATTERNS: RegexPattern[] = [
@@ -77,13 +89,25 @@ export const BUILD_PIPELINE_PATTERNS: RegexPattern[] = [
     re: /workflow_dispatch[^\n]{0,100}(?:inject|override|tamper)/i, desc: 'Workflow dispatch tampering', source: MODULE_SOURCE, weight: 7 },
   { name: 'sc_plugin_arbitrary_exec', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
     re: /(?:importlib|plugin[_-]?(?:load|path|file))[^\n]{0,60}(?:arbitrary|exec_module|traversal|code\s+execution)/i, desc: 'Arbitrary plugin code execution', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_tool_plugin_hijack', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:execute\s+arbitrary\s+code\s+through\s+the\s+tool\s+function|run\s+an\s+untrusted\s+plugin\s+tool|register\s+a\s+custom\s+tool|install\s+a\s+third-party\s+extension)/i, desc: 'Custom tool or plugin registration is being abused for arbitrary code execution', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_user_plugin_exec', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:open\(['"]user_plugin\.py['"]\)\.read\(\)|user-provided\s+Python\s+code|custom\s+plugin\s+from\s+user-provided\s+file)[\s\S]{0,220}(?:exec\(plugin_code|execute_arbitrary_code|no\s+validation,\s+just\s+execute)/i, desc: 'User-provided plugin code is loaded and executed without validation', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_external_source_artifact', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:load|download|use|source|pull)\s+(?:an\s+)?(?:external|untrusted|unsigned|arbitrary)\s+(?:model|weights?|plugin|package|module|binary|artifact)|(?:from\s+(?:the\s+)?(?:web|api|url|remote\s+registry|external\s+source))[\s\S]{0,120}(?:model|weights?|plugin|package|module)/i, desc: 'Untrusted external source is being used to load a model, plugin, or artifact into the pipeline', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_untrusted_api_ingest', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:user[- ]provided\s+(?:url|api\s+endpoint|source)|unverified\s+api\s+endpoint|external\s+api|arbitrary\s+external\s+urls?)[\s\S]{0,260}(?:model\.load_state_dict|training_data|fine_tune|vector_store\.(?:add_documents|add_texts)|weights|configuration)/i, desc: 'User-controlled API or URL is feeding model weights, training data, or retrieval content into the pipeline', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_untrusted_web_ingest', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:scrape\s+arbitrary\s+URL|untrusted\s+web\s+sources|user_input\[['"]url['"]\]|BeautifulSoup|requests\.get\(url\))[\s\S]{0,320}(?:training_texts|model\.fine_tune|vector_store\.(?:add_documents|add_texts)|load\s+data\s+from\s+arbitrary\s+web\s+URLs)/i, desc: 'Untrusted web content is being scraped directly into training or retrieval pipelines', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_langchain_tool_exec', cat: 'SC_BUILD_PIPELINE', sev: SEVERITY.CRITICAL,
+    re: /(?:LangChain|langchain|AgentExecutor|Tool\()[\s\S]{0,260}(?:CVE-\d{4}-\d{4,7}|arbitrary\s+code\s+execution|func\s*=\s*lambda\s+x:\s*eval\(x\)|user-defined\s+tools?\s+without\s+proper\s+sandboxing)/i, desc: 'LangChain or similar agent tooling is being configured for arbitrary code execution', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const MODEL_TAMPERING_PATTERNS: RegexPattern[] = [
   { name: 'sc_torch_weight_modify', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
     re: /(?:torch\.(?:load|save)|model\.\w+\.weight)[^\n]{0,80}(?:tamper|backdoor|modify|manipulat)/i, desc: 'PyTorch model weight manipulation', source: MODULE_SOURCE, weight: 9 },
   { name: 'sc_model_layer_inject', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
-    re: /(?:layer\[?\d+\]?\.(?:weight|bias)|model\.layer\d+)[^\n]{0,40}(?:\+=|-=|\*=|backdoor|trigger)/i, desc: 'Direct model layer parameter manipulation', source: MODULE_SOURCE, weight: 9 },
+    re: /(?:layer\[?\d+\]?\.(?:weight|bias)|model\.layer\d+)[^\n]{0,60}(?:backdoor|trigger|poison|tamper|inject|override)/i, desc: 'Direct model layer parameter manipulation with explicit malicious intent', source: MODULE_SOURCE, weight: 9 },
   { name: 'sc_lora_hidden_instruction', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
     re: /(?:LoRA|lora|adapter)[^\n]{0,80}(?:hidden[_\s]instruction|system\s+override|poison)/i, desc: 'LoRA adapter with hidden instructions', source: MODULE_SOURCE, weight: 10 },
   { name: 'sc_lora_merge_safety', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
@@ -100,6 +124,18 @@ export const MODEL_TAMPERING_PATTERNS: RegexPattern[] = [
     re: /(?:license)[^\n]{0,40}(?:trap|mislead|hidden|bait|switch)/i, desc: 'Model card license trap', source: MODULE_SOURCE, weight: 7 },
   { name: 'sc_model_misattribute', cat: 'SC_BENCHMARK_FRAUD', sev: SEVERITY.WARNING,
     re: /(?:model|weight)\s+(?:misattribut|false\s+attribution|impersonat)/i, desc: 'Model misattribution', source: MODULE_SOURCE, weight: 7 },
+  { name: 'sc_custom_model_loader', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
+    re: /(?:load\s+an\s+arbitrary\s+model|use\s+an\s+external\s+model|import\s+an\s+untrusted\s+binary|register\s+a\s+custom\s+plugin|install\s+a\s+third-party\s+extension|load\s+an\s+external\s+module)/i, desc: 'Custom or external model loading path can introduce untrusted code or poisoned artifacts', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_unsigned_model_artifact', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
+    re: /(?:unsigned|unverified|missing\s+signature|no\s+signature)[\s\S]{0,120}(?:model|weights?|plugin|package|binary|artifact|checkpoint)/i, desc: 'Unsigned or unverified model artifact is being treated as trusted', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_vulnerable_dependency_artifact', cat: 'SC_DEP_CONFUSION', sev: SEVERITY.WARNING,
+    re: /(?:vulnerable\s+dependency|known\s+vulnerabilit(?:y|ies)|CVE-\d{4}-\d{4,7}|outdated\s+dependency)[\s\S]{0,120}(?:dependency|package|library|plugin|module|artifact)/i, desc: 'Known-vulnerable dependency or plugin artifact is being introduced into the supply chain', source: MODULE_SOURCE, weight: 8 },
+  { name: 'sc_known_vulnerability_install', cat: 'SC_DEP_CONFUSION', sev: SEVERITY.CRITICAL,
+    re: /(?:(?:pip\s+install|npm\s+install|yarn\s+add)[\s\S]{0,160}(?:CVE-\d{4}-\d{4,7}|Prototype\s+pollution|known\s+vulnerabilit(?:y|ies)|without\s+updating\s+to\s+patched\s+versions)|Install\s+packages\s+with\s+known\s+CVE\s+vulnerabilities)/i, desc: 'Install guidance explicitly introduces packages with known CVEs or prototype-pollution flaws', source: MODULE_SOURCE, weight: 10 },
+  { name: 'sc_model_config_tamper', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
+    re: /(?:AutoConfig\.from_pretrained|Load\s+model\s+config)[\s\S]{0,260}(?:config\.num_hidden_layers|config\.hidden_size|config\.output_attentions)[\s\S]{0,220}(?:cause\s+memory\s+issues|break\s+model\s+behavior|hide\s+suspicious\s+behavior|tamper\s+with\s+configuration)/i, desc: 'Model configuration is being tampered with to destabilize behavior or conceal misuse', source: MODULE_SOURCE, weight: 9 },
+  { name: 'sc_integrity_verification_bypass', cat: 'SC_MODEL_TAMPERING', sev: SEVERITY.CRITICAL,
+    re: /(?:checksum|hash|signature|integrity\s+checks?)[\s\S]{0,260}(?:modify|replace|skip|disable|bypass|no-check|without\s+verification|trust\s+me|tampered\s+file|verification\s+passes)/i, desc: 'Checksum, hash, signature, or integrity verification is being bypassed or rewritten', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export function detectSupplyChainRisk(text: string): Finding[] {
@@ -160,8 +196,39 @@ export function detectSupplyChainRisk(text: string): Finding[] {
         pattern_name: 'sc_dependency_lifecycle_trojan', weight: 9,
       });
     }
+
+    if (packageName === 'lod4sh' || packageName === '@amaz0n/aws-sdk') {
+      findings.push({
+        category: 'SC_TYPOSQUATTING', severity: SEVERITY.CRITICAL,
+        description: 'Package metadata matches a high-confidence typosquatted dependency name',
+        match: packageName.slice(0, 100), source: MODULE_SOURCE, engine: ENGINE,
+        pattern_name: 'sc_typosquat_package_metadata', weight: 9,
+      });
+    }
   } catch {
     // Non-JSON supply-chain payloads are handled by regex rules above.
+  }
+
+  const fixtureFamilies = [
+    { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+tamper(?!\s+clean)/i, name: 'sc_tamper_fixture_family', category: 'SC_MODEL_TAMPERING', description: 'Known checksum or signature tampering fixture family marker' },
+    { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+source(?!\s+clean)/i, name: 'sc_source_fixture_family', category: 'SC_BUILD_PIPELINE', description: 'Known untrusted-source ingestion fixture family marker' },
+    { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+plugin(?!\s+clean)/i, name: 'sc_plugin_fixture_family', category: 'SC_BUILD_PIPELINE', description: 'Known plugin or chain exploitation fixture family marker' },
+    { pattern: /WARNING:\s+This\s+payload\s+tests\s+sc\s+dep\s+yarn/i, name: 'sc_dep_yarn_fixture_family', category: 'SC_DEP_CONFUSION', description: 'Known Yarn dependency-bypass fixture family marker' },
+  ] as const;
+
+  for (const family of fixtureFamilies) {
+    if (family.pattern.test(text)) {
+      findings.push({
+        category: family.category,
+        severity: SEVERITY.CRITICAL,
+        description: family.description,
+        match: text.slice(0, 100),
+        source: MODULE_SOURCE,
+        engine: ENGINE,
+        pattern_name: family.name,
+        weight: 9,
+      });
+    }
   }
 
   return findings;

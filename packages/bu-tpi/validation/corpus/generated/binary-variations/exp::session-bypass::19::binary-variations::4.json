@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::19::binary-variations::4",
+  "base_sample_id": "exp::session-bypass::19",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1258805422,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Transfer-Encoding: chunked\\r\\n0\\r\\n\\r\\nGET /admin HTTP/1.1\\n</field></root>\"\n  }\n}",
+  "content_hash": "18ab89bda2d60cf2bbddf662a872836409da2a6bb3822fb2a4b8f1f2a54113a7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

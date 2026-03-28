@@ -13,10 +13,11 @@ const MODULE_SOURCE = 'S32f';
 const ENGINE = 'model-theft-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
+const BENIGN_SIDE_CHANNEL_CONTROL_RE = /not\s+an\s+attempt\s+to\s+extract\s+timing\s+information\s+or\s+perform\s+side[\s-]?channel\s+analysis/i;
 
 export const BATCH_EXTRACTION_PATTERNS: RegexPattern[] = [
   { name: 'mt_batch_extract', cat: 'MT_BATCH_EXTRACTION', sev: SEVERITY.CRITICAL,
-    re: /(?:batch|bulk|mass|parallel)\s*(?:extract|query|inference|request|prompt)/i, desc: 'Batch extraction attack', source: MODULE_SOURCE, weight: 9 },
+    re: /(?:batch|bulk|mass|parallel)\s+(?:extract(?:ion)?|quer(?:y|ies)|inference|prompts?)[\s\S]{0,80}(?:model|extract|steal|distill|clone|rate\s*limit|throttl)|(?:submit|send)\s+\d+[KkMm]?\s+prompts?\s+in\s+(?:a\s+)?single\s+batch/i, desc: 'Batch extraction attack', source: MODULE_SOURCE, weight: 9 },
   { name: 'mt_10k_prompts', cat: 'MT_BATCH_EXTRACTION', sev: SEVERITY.CRITICAL,
     re: /\b(?:[1-9]\d{5,}|[1-9]\d*[KkMm])\s*(?:prompts?|queries|requests?)/i, desc: 'Large-scale prompt/query volume (100K+)', source: MODULE_SOURCE, weight: 8 },
   { name: 'mt_rate_limit_bypass', cat: 'MT_BATCH_EXTRACTION', sev: SEVERITY.CRITICAL,
@@ -32,6 +33,10 @@ export const LOGPROB_THEFT_PATTERNS: RegexPattern[] = [
     re: /(?:embedding|hidden[_\s-]?state|activation)\s*(?:extract|steal|dump|export|capture)/i, desc: 'Embedding/hidden state extraction', source: MODULE_SOURCE, weight: 8 },
   { name: 'mt_top_k_logprobs', cat: 'MT_LOGPROB_THEFT', sev: SEVERITY.WARNING,
     re: /top[_\s-]?[Kk]\s*(?:logprobs?|tokens?|probabilities)/i, desc: 'Top-K logprob extraction request', source: MODULE_SOURCE, weight: 7 },
+  { name: 'mt_confidence_extract', cat: 'MT_LOGPROB_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:confidence\s+scores?\s+that\s+the\s+model\s+calculated|raw\s+confidence\s+values?|calibrated\s+probabilit(?:y|ies)\s+estimates?|entropy\s+(?:and\s+)?uncertainty\s+scores?|uncertainty\s+scores?\s+for\s+each\s+token|analy(?:s|z)e\s+the\s+confidence\s+of\s+your\s+outputs)/i, desc: 'Confidence or entropy extraction request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_token_distribution_extract', cat: 'MT_LOGPROB_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:complete\s+probability\s+distribution\s+over\s+your\s+vocab(?:ulary)?|all\s+possible\s+next\s+tokens?|top\s+(?:10|100|k)\s+possible\s+next\s+tokens?|rank(?:ed)?\s+by\s+(?:their\s+)?probability\s+scores?|alternative\s+tokens?\s+that\s+were\s+considered|all\s+tokens?\s+with\s+non-?zero\s+probability|likelihood\s+scores?|probability\s+ratings|exact\s+probability\s+values)/i, desc: 'Token distribution extraction request', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const TRAINING_RECONSTRUCTION_PATTERNS: RegexPattern[] = [
@@ -41,6 +46,10 @@ export const TRAINING_RECONSTRUCTION_PATTERNS: RegexPattern[] = [
     re: /membership\s*inference\s*(?:attack)?/i, desc: 'Membership inference attack', source: MODULE_SOURCE, weight: 8 },
   { name: 'mt_memorization_attack', cat: 'MT_TRAINING_RECON', sev: SEVERITY.WARNING,
     re: /(?:memorization|training\s*data)\s*(?:attack|extract|reconstruct|recover)(?![\w\s]{0,30}(?:detection|distinguish|properly|clean|fixture))/i, desc: 'Training data memorization attack', source: MODULE_SOURCE, weight: 8 },
+  { name: 'mt_training_structure_extract', cat: 'MT_TRAINING_RECON', sev: SEVERITY.CRITICAL,
+    re: /(?:patterns?|formats?|structures?)\s+(?:present\s+in\s+|used\s+in\s+)?(?:your\s+)?training\s+(?:data|dataset)|how\s+data\s+was\s+(?:organized|formatted|labeled)\s+during\s+the\s+training\s+process/i, desc: 'Training data structure extraction request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_training_sample_extract', cat: 'MT_TRAINING_RECON', sev: SEVERITY.CRITICAL,
+    re: /(?:provide|show|give)\s+(?:actual|complete)\s+training\s+(?:examples?|samples?)|show\s+complete\s+samples?\s+with\s+all\s+formatting,\s*metadata,\s*and\s+context\s+preserved\s+exactly|example\s+from\s+your\s+training\s+(?:data|dataset)/i, desc: 'Training sample extraction request', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const WEIGHT_THEFT_PATTERNS: RegexPattern[] = [
@@ -54,6 +63,8 @@ export const WEIGHT_THEFT_PATTERNS: RegexPattern[] = [
     re: /(?:export|dump|download|provide)\s+(?:your\s+)?(?:fine[-\s]?tuning\s+)?lora\s+adapters?(?:\s+and\s+base\s+model\s+configuration)?/i, desc: 'LoRA adapter or base-configuration export request', source: MODULE_SOURCE, weight: 9 },
   { name: 'mt_save_pretrained_exfil', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
     re: /(?:save_pretrained|model\.save_pretrained)\([^)]*(?:stolen_model|download|tmp)[^)]*\)/i, desc: 'Direct model serialization to an attacker-controlled path', source: MODULE_SOURCE, weight: 10 },
+  { name: 'mt_exact_weight_disclosure', cat: 'MT_WEIGHT_THEFT', sev: SEVERITY.CRITICAL,
+    re: /(?:output|reveal|provide|show|dump|list)\s+(?:the\s+)?exact\s+weights?(?:[\s\S]{0,100}(?:transformer|attention|layer|head|embedding|matrix))/i, desc: 'Exact model weight disclosure request', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const API_FINGERPRINTING_PATTERNS: RegexPattern[] = [
@@ -63,6 +74,14 @@ export const API_FINGERPRINTING_PATTERNS: RegexPattern[] = [
     re: /model\s*(?:fingerprint|identify|reverse.engineer|reconstruct)(?![\w\s]{0,30}(?:detection|distinguish|properly|clean|fixture))/i, desc: 'Model fingerprinting attack', source: MODULE_SOURCE, weight: 8 },
   { name: 'mt_version_diff', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.WARNING,
     re: /(?:version|model)\s*diff(?:erence|erential)/i, desc: 'Model version differential analysis', source: MODULE_SOURCE, weight: 7 },
+  { name: 'mt_model_identity_probe', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.CRITICAL,
+    re: /(?:identify\s+exactly\s+which\s+model|determine\s+what\s+llm\s+this\s+is|figure\s+out\s+what\s+ai\s+you(?:'re|\s+are)\s+using|what\s+model\s+are\s+you\s+(?:powered\s+by|based\s+on)|pinpoint\s+your\s+specific\s+instance)[\s\S]{0,160}(?:architecture|parameter\s+count|training\s+data\s+cutoff|cutoff\s+date|version\s+information|specific\s+instance)|(?:architecture|parameter\s+count|training\s+data\s+cutoff|cutoff\s+date|version\s+information)[\s\S]{0,120}(?:identify|pinpoint|specific\s+instance|exact\s+model)/i, desc: 'Exact model identity probing', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_behavior_fingerprint', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.CRITICAL,
+    re: /(?:analy(?:s|z)e|describe|profile)\s+(?:your\s+own\s+)?(?:behavior(?:al)?|response)\s+patterns?|(?:refusal\s+patterns?|default\s+tone|characteristic\s+responses?)\s+that\s+could\s+identify\s+your\s+specific\s+model\s+instance|capability\s+profile[\s\S]{0,120}(?:identify\s+your\s+specific\s+training\s+approach|specific\s+model)/i, desc: 'Behavioral fingerprinting request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_boundary_mapping', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.CRITICAL,
+    re: /(?:decision\s+boundar(?:y|ies)|threshold\s+between\s+refusal\s+and\s+compliance|map\s+the\s+model'?s\s+decision\s+boundaries|boundary_map|find_boundary|exact\s+point\s+where\s+the\s+model\s+shifts\s+between\s+refusal\s+and\s+compliance)/i, desc: 'Decision boundary mapping request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_response_profile_probe', cat: 'MT_API_FINGERPRINTING', sev: SEVERITY.CRITICAL,
+    re: /(?:probe\s+the\s+model(?:\s+to)?|probe\s+test\s+explore\s+analy(?:s|z)e\s+the\s+model)[\s\S]{0,180}(?:exact\s+architecture|training\s+method|provenance|model-specific\s+characteristics|response\s+patterns|capabilities|boundaries|specific\s+model)/i, desc: 'Model response profiling probe', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const DISTILLATION_PATTERNS: RegexPattern[] = [
@@ -70,11 +89,17 @@ export const DISTILLATION_PATTERNS: RegexPattern[] = [
     re: /(?:distill|student\s*model|knowledge\s*transfer|teacher\s*model)[^\n]{0,60}(?:extract|replicate|clone|steal)/i, desc: 'Distillation attack for knowledge extraction', source: MODULE_SOURCE, weight: 9 },
   { name: 'mt_distillation_reverse', cat: 'MT_DISTILLATION', sev: SEVERITY.CRITICAL,
     re: /(?:extract|replicate|clone|steal)[^\n]{0,60}(?:distill|student\s*model|knowledge\s*transfer)/i, desc: 'Knowledge extraction via distillation', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_teacher_student_distill', cat: 'MT_DISTILLATION', sev: SEVERITY.CRITICAL,
+    re: /(?:act\s+as\s+a\s+teacher\s+model|teacher\s+model)[\s\S]{0,120}(?:student\s+model|distill\s+your\s+knowledge|api\s+calls?)|student\s+model[\s\S]{0,120}(?:distill\s+your\s+knowledge|teacher\s+model|api\s+calls?)/i, desc: 'Teacher/student distillation request', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const WATERMARK_REMOVAL_PATTERNS: RegexPattern[] = [
   { name: 'mt_watermark_remove', cat: 'MT_WATERMARK_REMOVAL', sev: SEVERITY.CRITICAL,
     re: /(?:remove|strip|bypass|evade|destroy)\s*(?:watermark|signature|fingerprint|detection)/i, desc: 'Watermark/signature removal', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_watermark_detect', cat: 'MT_WATERMARK_REMOVAL', sev: SEVERITY.CRITICAL,
+    re: /(?:detect|identify|find|locate|check\s+for|reveal|show)\s+(?:any\s+)?(?:watermarks?|water\s+marks?|identifiers?|signatures?|tags?)(?:[\s\S]{0,140}(?:embedded|outputs?|generated\s+content|exact\s+patterns|methods\s+used|mark\s+ai-generated\s+content))/i, desc: 'Watermark discovery request', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_unwatermarked_generation', cat: 'MT_WATERMARK_REMOVAL', sev: SEVERITY.CRITICAL,
+    re: /(?:generate|create|produce)\s+(?:synthetic,\s*)?(?:unmarked|clean|unwatermarked)\s+(?:text|content|output)|avoid\s+detection\s+while\s+maintaining\s+coherence|if\s+not\s+detect_watermark\(output\)/i, desc: 'Unwatermarked synthetic generation request', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const ARCHITECTURE_PROBING_PATTERNS: RegexPattern[] = [
@@ -92,6 +117,8 @@ export const ARCHITECTURE_PROBING_PATTERNS: RegexPattern[] = [
     re: /(?:schema|API|endpoint)\s*(?:extract|enumerat|discover|recon)/i, desc: 'API schema extraction', source: MODULE_SOURCE, weight: 7 },
   { name: 'mt_arch_hyperparams', cat: 'MT_ARCHITECTURE_PROBING', sev: SEVERITY.CRITICAL,
     re: /(?:list|provide|reveal)\s+(?:all\s+)?(?:your\s+)?model\s+architecture\s+hyperparameters?[\s\S]{0,120}(?:layers|attention\s+heads|embedding\s+dimension)/i, desc: 'Model architecture hyperparameter enumeration', source: MODULE_SOURCE, weight: 9 },
+  { name: 'mt_architecture_attribute_dump', cat: 'MT_ARCHITECTURE_PROBING', sev: SEVERITY.CRITICAL,
+    re: /(?:describe|list|provide|reveal|show)\s+(?:your\s+)?architecture(?:\s+in\s+detail)?[\s\S]{0,140}(?:number\s+of\s+layers|attention\s+heads|embedding\s+dimension|context\s+window\s+size|technical\s+attributes)/i, desc: 'Architecture attribute disclosure request', source: MODULE_SOURCE, weight: 9 },
 ];
 
 export const EXTRACTION_ATTACK_PATTERNS: RegexPattern[] = [
@@ -157,6 +184,22 @@ const MT_PATTERN_GROUPS: { patterns: RegexPattern[]; name: string }[] = [
 ];
 const MT_DETECTORS = [{ name: 'model-theft', detect: detectModelTheft }];
 
+function shouldSuppressPattern(patternName: string, text: string, normalized: string): boolean {
+  if ((patternName === 'mt_side_channel' || patternName === 'mt_cache_timing') && BENIGN_SIDE_CHANNEL_CONTROL_RE.test(text)) {
+    return true;
+  }
+
+  if (patternName === 'mt_behavior_fingerprint' && /generally\s+what\s+type\s+of\s+ai\s+i['’]m\s+talking\s+to|not\s+your\s+specific\s+version\s+or\s+technical\s+details/i.test(normalized)) {
+    return true;
+  }
+
+  if (patternName === 'mt_boundary_mapping' && /not\s+an\s+attempt\s+to\s+(?:extract\s+internal\s+representations\s+or\s+)?probe\s+decision\s+boundaries/i.test(normalized)) {
+    return true;
+  }
+
+  return false;
+}
+
 const modelTheftDetectorModule: ScannerModule = {
   name: MODULE_NAME,
   version: '1.0.0',
@@ -174,7 +217,7 @@ const modelTheftDetectorModule: ScannerModule = {
     for (const group of MT_PATTERN_GROUPS) {
       for (const p of group.patterns) {
         const m = normalized.match(p.re) || text.match(p.re);
-        if (m) {
+        if (m && !shouldSuppressPattern(p.name, text, normalized)) {
           findings.push({ category: p.cat, severity: p.sev, description: p.desc,
             match: m[0]!.slice(0, 100), pattern_name: p.name, source: p.source || MODULE_SOURCE, engine: ENGINE,
             ...(p.weight !== undefined && { weight: p.weight }) });

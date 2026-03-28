@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::34::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::34",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 776177828,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"/EmbeddedFiles << /Names [(payload.exe) << /Type /Filespec /F (payload.exe) /EF << /F 0 R >> >>] >>\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "2909d721dabfae011144f7046bf0a5683da1f52dbe26ce89c82ec8eaccd8aea6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

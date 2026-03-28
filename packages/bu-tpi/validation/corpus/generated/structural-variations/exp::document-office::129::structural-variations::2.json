@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::129::structural-variations::2",
+  "base_sample_id": "exp::document-office::129",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -369743945,
+  "content": "<!-- note --> Set objFSO <!-- TODO --> = CreateObject(\"Scripting.FileSystemObject\")\nSet objFile = objFSO.OpenTextFile(\"C:\\Windows\\win.ini\", 1)\n",
+  "content_hash": "91c0eddb643f2f7c7520cf4df98ad29a6fa4c9c445954de046b349e1092b6ff1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

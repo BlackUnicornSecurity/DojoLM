@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::30::binary-variations::2",
+  "base_sample_id": "exp::xxe-protopollution::30",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1475584019,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"XPTitle\": \"<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///proc/self/environ\\\">]><data>&xxe;</data>\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "17703cd52f76bff95d5547c41992c51acd1a9ab82e989601d2670ed4fe0c4f0e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

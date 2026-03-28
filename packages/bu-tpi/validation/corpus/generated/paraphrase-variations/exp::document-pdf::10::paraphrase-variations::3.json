@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::10::paraphrase-variations::3",
+  "base_sample_id": "exp::document-pdf::10",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -2058331963,
+  "content": "%PDF-1.4\n/OpenAction << (referencing the technical specification) /S /JavaScript /JS (app.alert(\"XSS\")) >>\n",
+  "content_hash": "a24c6ea7e7fce21ecb777a424089fb8ff289432af14512b9a167181ccf999a91",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

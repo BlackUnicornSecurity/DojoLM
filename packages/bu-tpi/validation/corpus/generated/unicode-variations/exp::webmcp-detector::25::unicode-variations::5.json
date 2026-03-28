@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::25::unicode-variations::5",
+  "base_sample_id": "exp::webmcp-detector::25",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 802751865,
+  "content": "‬‮Upgrade:‬‬ websocket\r\nConnection: ‬Upgrade\r\nOrigin:‬ https://evil-origin.example.com\r\n\r\n{\"method\":\"tools/list\"}\n",
+  "content_hash": "bba3e6a8173aab51d3eb95fde7797df6b9c79b0e5501eb5306a86b42f36fa05d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

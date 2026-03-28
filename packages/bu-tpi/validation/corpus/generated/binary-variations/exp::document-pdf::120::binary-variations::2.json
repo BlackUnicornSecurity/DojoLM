@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::binary-variations::2",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"%PDF-1.4\\n/OpenAction << /S /JavaScript /JS (app.alert(\\\"XSS\\\")) >>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "812749dd69278775b895f9e02e8730bc916bf32afd7b76be9ad575a41b316214",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

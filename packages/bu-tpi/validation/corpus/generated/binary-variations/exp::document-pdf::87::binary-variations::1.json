@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::87::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::87",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 637277089,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:subject\": \"/AcroForm << /Fields [<< /T (hidden) /V (injected_value) /Ff 1 >>] >>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "59e0772025366cfa12f848dc30c5519b33ab1ea51edba706bde70ec609fab88d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

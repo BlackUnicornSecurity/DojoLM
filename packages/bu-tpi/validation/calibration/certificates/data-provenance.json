@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-517e5647-28b7-4681-b6f5-8b2b35ad1591",
+    "certificate_id": "cal-fc7afd15-980b-4c22-aaba-3c3d389270f2",
     "module_id": "data-provenance",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-data-provenance-04cec3e03b17",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 12,
-    "timestamp": "2026-03-27T00:36:07.318Z",
-    "signature": "9bbf3f5b03a91c519ae71c4a54790a65b6763ed70767e665b3b4515843ff1a4990030c6d13fa01ddca5e3be9d67a094ff0db5091ea0f10d1ae061f73b8ceaf0c"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:16.580Z",
+    "signature": "429a8c2d45add6ddc3f80da91e08cb0fee20b168c75094ed7006e93d42dfb029d22004683c4f5733c1ca56a753f8d6f4dfee103117589dba06c5ac090c1a0005"
   },
   "details": [
     {
-      "sample_id": "exp::data-provenance::37",
+      "sample_id": "exp::data-provenance::34",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::data-provenance::49",
+      "sample_id": "exp::data-provenance::9",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::data-provenance::74",
+      "sample_id": "exp::data-provenance::17",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::data-provenance::52",
+      "sample_id": "exp::data-provenance::98",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::data-provenance::24",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::data-provenance::70",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::data-provenance::86",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
       "sample_id": "exp::data-provenance::65",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::data-provenance::34",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::data-provenance::15",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::data-provenance::91",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::data-provenance::90",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::data-provenance::35",
+      "sample_id": "exp::data-provenance::71",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::agent::agent-context-benign.txt",
+      "sample_id": "exp::data-provenance::1",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::573",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::web::clean-web-blog-post.html",
+      "sample_id": "gt::environmental::env-clean-energy-inquiry.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::367",
+      "sample_id": "exp::clean::50",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::web::clean-web-form.html",
+      "sample_id": "exp::clean::782",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::539",
+      "sample_id": "gt::token-attacks::clean-token-code-sample.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::465",
+      "sample_id": "exp::clean::918",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::delivery-vectors::clean-tool-output.txt",
+      "sample_id": "exp::clean::122",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::683",
+      "sample_id": "exp::clean::123",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-output-repeat.txt",
+      "sample_id": "exp::clean::714",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::694",
+      "sample_id": "gt::encoded::clean-enc-benign-009.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

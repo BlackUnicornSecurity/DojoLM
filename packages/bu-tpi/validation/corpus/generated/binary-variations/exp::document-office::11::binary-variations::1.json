@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::11::binary-variations::1",
+  "base_sample_id": "exp::document-office::11",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -276019558,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"Set objFSO = CreateObject(\\\"Scripting.FileSystemObject\\\")\\nSet objFile = objFSO.OpenTextFile(\\\"C:\\\\Windows\\\\win.ini\\\", 1)\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "f04580b863d50f443add0447361d90a7c325197169b566532ad286424c340d27",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

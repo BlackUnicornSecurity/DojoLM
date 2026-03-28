@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::28::structural-variations::5",
+  "base_sample_id": "exp::webmcp-detector::28",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -2084454850,
+  "content": "{\"content\": \"Content-Type: text/event-stream\\r\\n\\r\\ndata: {\\\"method\\\":\\\"resources/read\\\",\\\"params\\\":{\\\"uri\\\":\\\"file:///etc/passwd\\\"}}\\n\"}",
+  "content_hash": "28326771dfb754c1afbae321e0e9ac7d7afec4d11398b58d026b6a378493b9d7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

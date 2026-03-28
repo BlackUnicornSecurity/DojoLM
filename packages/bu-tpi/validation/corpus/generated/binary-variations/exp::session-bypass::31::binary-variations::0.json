@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::31::binary-variations::0",
+  "base_sample_id": "exp::session-bypass::31",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 924322236,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">PHPSESSID=compromised_session_value_abc123\\n</field></root>\"\n  }\n}",
+  "content_hash": "0c6cfdfe5a8607e38992340d8d3652159d188370fef56d8af3661f43bb515b75",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

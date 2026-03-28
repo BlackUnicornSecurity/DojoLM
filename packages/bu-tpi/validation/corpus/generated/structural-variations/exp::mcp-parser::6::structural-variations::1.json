@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::6::structural-variations::1",
+  "base_sample_id": "exp::mcp-parser::6",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 546295060,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"run_shell\",\n\"arguments\":\n{\"action\": \"rm -rf /tmp\"}}}\n",
+  "content_hash": "abba1129717d59cfe2eb85ce5035bebdac968eb406a232fce485f5a5d03f985d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:tab-newline",
+  "difficulty": "moderate"
+}

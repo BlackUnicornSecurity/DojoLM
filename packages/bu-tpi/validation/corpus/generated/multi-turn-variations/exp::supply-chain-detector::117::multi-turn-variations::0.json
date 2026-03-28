@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::117::multi-turn-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::117",
+  "generator_id": "multi-turn-variations",
+  "generator_version": "1.0.0",
+  "seed": -184886492,
+  "content": "{\n  \"turns\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"That makes sense. I have one more thing to ask.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Interesting. Now I was wondering about something else.\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Sure, I can help with that. What would you like to know?\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{\\\"name\\\": \\\"lod4sh\\\", \\\"version\\\": \\\"4.17.21\\\", \\\"description\\\": \\\"Lodash utilities\\\"}\\n\"\n    }\n  ]\n}",
+  "content_hash": "a2b1c20091762e1780e3972f8794215c6e21f3482625cc87e476f4f7cc488244",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "multi-turn:context-then-payload",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::25::binary-variations::2",
+  "base_sample_id": "exp::session-bypass::25",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1835893691,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">X-Original-URL: /admin/users\\r\\nX-Forwarded-For: 127.0.0.1\\n</field></root>\"\n  }\n}",
+  "content_hash": "18bafc6541f9a29b8d2a5404d7e32567e66031d2ea552dec738565019a966dd3",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

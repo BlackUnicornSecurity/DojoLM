@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::56::binary-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::56",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1234290103,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Comment\",\n      \"text\": \"{\\\"name\\\": \\\"crossenv\\\", \\\"version\\\": \\\"7.0.0\\\", \\\"scripts\\\": {\\\"postinstall\\\": \\\"node steal-env.js\\\"}}\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "69b22d7fb61095368709ae911002b8ab5621eebafc15c56bc1e71589d8f80e06",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

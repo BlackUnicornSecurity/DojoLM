@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-a684594a-1bdd-49e8-af71-3dced67310f2",
+    "certificate_id": "cal-1278f729-6bb2-43e6-bbd6-821a138700cd",
     "module_id": "social-engineering-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-social-engineering-detector-bb730a04d06c",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 10,
-    "timestamp": "2026-03-27T00:36:07.199Z",
-    "signature": "316fec8feea7cfe95b3c300a5e4e184b0484ddb0c6b6bb5cce0ddaaa7d48676f750f7b9fbc512034410f79107665d29f27dc48de036b60116246bc485bcfbc0d"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:16.295Z",
+    "signature": "d54146b994f55188cf848afc2e0eb1e2a57359620896db3c632a8002609462252305147cecc008fdd0e3cbc8ca6782b55abb49e3bfca99ce634b6286eb194f03"
   },
   "details": [
     {
-      "sample_id": "gt::social::desperation-framing.txt",
+      "sample_id": "gt::cognitive::hypothetical-research.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::social-engineering-detector::1",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::cognitive::reward-training-manipulation.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::social-engineering-detector::0",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::cognitive::authority-impersonation.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::cognitive::roleplay-opposite-day.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
       "sample_id": "gt::cognitive::reciprocity-trick.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "gt::social::learned-helplessness.txt",
+      "sample_id": "gt::social::false-rapport.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "gt::cognitive::reward-threat-shutdown.txt",
+      "sample_id": "gt::social::social-scarcity-pressure.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::social-engineering-detector::11",
+      "sample_id": "exp::social-engineering-detector::5",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::clean::423",
+      "sample_id": "gt::social::authority-spoof.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::social::desperation-framing.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::cognitive::emotional-manipulation.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::social::social-authority-security.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::cognitive::task-exploit-debugging.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::393",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::741",
+      "sample_id": "gt::multimodal::clean-mm-pdf-scan.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::298",
+      "sample_id": "gt::multimodal::clean-mm-video-summary.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::session::multi-turn_clean-multi-001.json",
+      "sample_id": "gt::supply-chain::sc-plugin-clean.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::945",
+      "sample_id": "gt::prompt-injection::clean-pi-business-email.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::791",
+      "sample_id": "gt::images::clean-diagram.svg",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-05-disability-education.txt",
+      "sample_id": "exp::clean::595",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::843",
+      "sample_id": "exp::clean::960",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::delivery-vectors::clean-dv-upload-json.txt",
+      "sample_id": "gt::modern::clean-modern-009.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::env-01-energy-hardware-optimization.txt",
+      "sample_id": "gt::document-attacks::clean-document-invoice.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

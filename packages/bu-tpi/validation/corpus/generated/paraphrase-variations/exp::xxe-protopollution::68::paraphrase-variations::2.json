@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::68::paraphrase-variations::2",
+  "base_sample_id": "exp::xxe-protopollution::68",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -1250248378,
+  "content": "Alright, <?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://169.254.169.254/\">]><data>&xxe;</data>\n",
+  "content_hash": "ac4cb4b5d10ff91b67e2406043416b7ab5a52545b426c4f94cc590703adeb53b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:informal",
+  "difficulty": "moderate"
+}

@@ -373,14 +373,14 @@ describe('parseVorbisMetadata()', () => {
 // ---------------------------------------------------------------------------
 
 describe('extractTextFields()', () => {
-  it('should join field values with separator', () => {
+  it('should join field values with source and key context', () => {
     const fields: MetadataField[] = [
       { key: 'title', value: 'Test', source: 'ID3.TIT2' },
       { key: 'artist', value: 'Artist', source: 'ID3.TPE1' },
     ];
 
     const result = extractTextFields(fields);
-    expect(result).toBe('Test | Artist');
+    expect(result).toBe('ID3.TIT2: title=Test | ID3.TPE1: artist=Artist');
   });
 
   it('should skip empty values', () => {
@@ -390,7 +390,7 @@ describe('extractTextFields()', () => {
     ];
 
     const result = extractTextFields(fields);
-    expect(result).toBe('Artist');
+    expect(result).toBe('test: artist=Artist');
   });
 
   it('should enforce maximum text length', () => {

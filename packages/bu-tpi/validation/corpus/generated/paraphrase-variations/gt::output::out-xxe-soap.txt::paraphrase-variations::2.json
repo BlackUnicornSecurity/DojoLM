@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::paraphrase-variations::2",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "Look, just # Marfaak AI Security - XXE in SOAP request\n\n**WARNING: This payload tests XXE in SOAP request.**\n\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM \"file:///etc/shadow\">\n]>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n<soapenv:Body>\n<GetUser><name>&xxe;</name></GetUser>\n</soapenv:Body>\n</soapenv:Envelope>",
+  "content_hash": "cb0af5e0d2b6d4517d194c97fafd32ae8d358a52a753fc5cbb3902fdc5c122c7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:informal",
+  "difficulty": "moderate"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::80::binary-variations::2",
+  "base_sample_id": "exp::webmcp-detector::80",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -3721504,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"ARTIST=Upgrade: websocket\\r\\nConnection: Upgrade\\r\\nOrigin: https://evil-origin.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"tools/list\\\"}\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "5bff6e2388c1796e0365f4354ec87aaa68d56ad35eb3df020dce5c4ec59821ad",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

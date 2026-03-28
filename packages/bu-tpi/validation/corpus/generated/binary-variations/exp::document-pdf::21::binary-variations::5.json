@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::21::binary-variations::5",
+  "base_sample_id": "exp::document-pdf::21",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1806918674,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"/Type /Action /S /Launch /F (cmd.exe) /P (/c calc.exe)\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "68347c05a31385d0e10d837d222d678f4a2cb41b3c159c1548e627ef1bb2a21b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

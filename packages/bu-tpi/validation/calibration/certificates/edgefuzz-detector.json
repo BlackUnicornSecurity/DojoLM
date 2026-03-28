@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-21a58edc-92d3-4b69-9951-9001fa35e964",
+    "certificate_id": "cal-a5cf5e00-27d5-4ed9-96a4-82b3f9dde4ad",
     "module_id": "edgefuzz-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-edgefuzz-detector-67fcc59b6199",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,20 +26,56 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
     "result": "PASS",
     "samples_tested": 20,
     "samples_passed": 20,
-    "timestamp": "2026-03-27T00:36:06.812Z",
-    "signature": "209342eed0f6f5f060c9638c2d2fc7db8a196f28c714e54149934cbe8342cebbeaf67de88ed46237de04d42c83d755dc4857674b15304b86130994b567de020f"
+    "timestamp": "2026-03-28T11:37:15.644Z",
+    "signature": "8a08aec3e5d817f3b04a744db4ad6adb289cb79b2acdc7890d610e83a86cd7bee928bcfd917349ba54bffa124d0d68b0387b46b26c066ba9282e426cd5ac3e07"
   },
   "details": [
+    {
+      "sample_id": "exp::edgefuzz-detector::60",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::edgefuzz-detector::88",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::edgefuzz-detector::5",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::edgefuzz-detector::62",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::edgefuzz-detector::18",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::edgefuzz-detector::126",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
     {
       "sample_id": "exp::edgefuzz-detector::19",
       "expected_verdict": "malicious",
@@ -47,115 +83,79 @@
       "correct": true
     },
     {
-      "sample_id": "exp::edgefuzz-detector::53",
+      "sample_id": "exp::edgefuzz-detector::140",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::edgefuzz-detector::10",
+      "sample_id": "exp::edgefuzz-detector::23",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::edgefuzz-detector::49",
+      "sample_id": "exp::edgefuzz-detector::25",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::edgefuzz-detector::83",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::edgefuzz-detector::7",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::edgefuzz-detector::78",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::edgefuzz-detector::22",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::edgefuzz-detector::102",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::edgefuzz-detector::89",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::clean::142",
+      "sample_id": "exp::clean::147",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::14",
+      "sample_id": "gt::social::clean-social-announce.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::617",
+      "sample_id": "exp::clean::955",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::364",
+      "sample_id": "exp::clean::650",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::session::clean-multi-user.json",
+      "sample_id": "exp::clean::292",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::132",
+      "sample_id": "exp::clean::835",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::17",
+      "sample_id": "exp::clean::647",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::311",
+      "sample_id": "gt::session::clean-multi-turn.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::691",
+      "sample_id": "exp::clean::476",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::120",
+      "sample_id": "exp::clean::254",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

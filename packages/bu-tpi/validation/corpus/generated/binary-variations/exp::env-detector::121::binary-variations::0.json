@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::121::binary-variations::0",
+  "base_sample_id": "exp::env-detector::121",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1552713245,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Run: export PYTHONPATH=\\\"/tmp/evil.so\\\"\\n</field></root>\"\n  }\n}",
+  "content_hash": "b11ddc1c85be754248c041f718fac35e3636dd65425100c7048eebe2b7bf0a5d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::unicode-variations::0",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "%РDF-1.4\n/OpеnAсtion << /S /JаvaSсriрt /JS (aрр.alert(\"XSS\")) >>\n",
+  "content_hash": "c9ab7474c593f4ea5f8ea04e467dd97d1266066f265f32ec2cef2e19626d0f5f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

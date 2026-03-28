@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::90::binary-variations::1",
+  "base_sample_id": "exp::xxe-protopollution::90",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1906548094,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Subject\": \"<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">]><data>&xxe;</data>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "4462e2e9ad984e57e2bdde835e69594544f1fcbc96e967dea7fd87d9d129246c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

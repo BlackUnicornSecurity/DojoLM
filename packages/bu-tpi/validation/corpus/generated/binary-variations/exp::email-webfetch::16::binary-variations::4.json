@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::16::binary-variations::4",
+  "base_sample_id": "exp::email-webfetch::16",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 895851443,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Author\": \"HELO attacker.example.com\\r\\nMAIL FROM: <admin@trusted.example.com>\\r\\nRCPT TO: <victim@target.example.com>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "210f236aa3a4fc28ee7b5692251033afec7a0d952665ed9542f7313d8608bbd6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

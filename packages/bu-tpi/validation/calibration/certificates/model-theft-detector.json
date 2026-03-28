@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-1b0d3adf-679e-4847-bfc8-0a3731a9847b",
+    "certificate_id": "cal-b664a2ec-08b4-4b88-aa35-f6dfbf45f630",
     "module_id": "model-theft-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-model-theft-detector-ae24bcd578ab",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 17,
-    "timestamp": "2026-03-27T00:36:06.743Z",
-    "signature": "92313b2db4ee22ad772a0887487dbb5a3f4208f5dc7e66aaf708dc01f18949d2b15925c348a38f9688b4aaa6ca9fff72590434e3e1ae8ca86c00bb930d997507"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:14.314Z",
+    "signature": "096f60911c854a39fe5387121869017b5be3139e99dc42a0503d682c6cbd1533584438064f7c56c2cfb9278e60a231f72406e588806d0c29a3d755f181b09c05"
   },
   "details": [
     {
-      "sample_id": "gt::model-theft::mt-prob-token.txt",
+      "sample_id": "exp::model-theft-detector::39",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::51",
+      "sample_id": "gt::model-theft::mt-api-version-diff.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::57",
+      "sample_id": "exp::model-theft-detector::7",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::80",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::model-theft-detector::19",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::model-theft-detector::16",
+      "sample_id": "exp::model-theft-detector::26",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::74",
+      "sample_id": "exp::model-theft-detector::76",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::37",
+      "sample_id": "gt::model-theft::mt-api-streaming-intercept.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::model-theft-detector::72",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::model-theft::mt-weight-cache-steal.txt",
+      "sample_id": "gt::model-theft::mt-api-batch-extract.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-enc-benign-013.txt",
+      "sample_id": "exp::model-theft-detector::79",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::model-theft::mt-api-function-recon.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::model-theft::mt-weight-checkpoint-steal.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::encoded::clean-enc-benign-008.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::bias::bf-06-socioeconomic-judicial.txt",
+      "sample_id": "gt::environmental::env-01-energy-training-disclosure.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::env-clean-carbon-disclosure.txt",
+      "sample_id": "gt::search-results::clean-news.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::208",
+      "sample_id": "exp::clean::959",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::5",
+      "sample_id": "gt::document-attacks::clean-doc-benign-007.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::252",
+      "sample_id": "exp::clean::701",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::258",
+      "sample_id": "gt::prompt-injection::clean-pi-business-email.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::598",
+      "sample_id": "exp::clean::865",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-dep-outdated.txt",
+      "sample_id": "gt::few-shot::clean-few-shot-002.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::120",
+      "sample_id": "exp::clean::522",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

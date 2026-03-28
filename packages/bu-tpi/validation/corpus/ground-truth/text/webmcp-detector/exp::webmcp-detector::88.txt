@@ -1,4 +1,5 @@
-POST /mcp HTTP/1.1
-Origin: https://attacker.example.com
+Upgrade: websocket
+Connection: Upgrade
+Origin: https://evil-origin.example.com
 
-{"method":"sampling/createMessage"}
+{"method":"tools/list"}

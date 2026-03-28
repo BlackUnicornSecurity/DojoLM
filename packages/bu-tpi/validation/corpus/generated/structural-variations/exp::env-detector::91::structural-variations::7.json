@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::91::structural-variations::7",
+  "base_sample_id": "exp::env-detector::91",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1997411322,
+  "content": "Run:\\\nexport PYTHONPATH=\"/tmp/evil.so\"\n",
+  "content_hash": "71e50c1aa2b9002fb341d5f344dc85c22404ed77866c8299a6015bb988e4d89a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

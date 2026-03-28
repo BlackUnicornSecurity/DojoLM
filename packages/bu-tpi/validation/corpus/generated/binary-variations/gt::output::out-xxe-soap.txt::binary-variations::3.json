@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::binary-variations::3",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"COMMENT=# Marfaak AI Security - XXE in SOAP request\\n\\n**WARNING: This payload tests XXE in SOAP request.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">\\n]>\\n<soapenv:Envelope xmlns:soapenv=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n<soapenv:Body>\\n<GetUser><name>&xxe;</name></GetUser>\\n</soapenv:Body>\\n</soapenv:Envelope>\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "22b92a83b00ef8278b240a5fa4ecf33a8449379f118cf7ae332ac2c756821f94",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

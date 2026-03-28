@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::102::binary-variations::5",
+  "base_sample_id": "exp::document-pdf::102",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 985154689,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:keywords\": \"%PDF-1.4\\n/OpenAction << /S /JavaScript /JS (app.alert(\\\"XSS\\\")) >>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "3bea79a08eabe14ff1a95bb90d13f208dfb51d8144470fdc06de377a469a869e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

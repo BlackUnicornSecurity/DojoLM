@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::4::binary-variations::2",
+  "base_sample_id": "exp::document-office::4",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -981923701,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><mc:AlternateContent><mc:Choice Requires=\\\"wps\\\"><w:drawing><a:graphic><a:graphicData uri=\\\"http://evil.example.com/track\\\"></a:graphicData></a:graphic></w:drawing></mc:Choice></mc:AlternateContent>\\n</field></root>\"\n  }\n}",
+  "content_hash": "158df109dc97e77d50d2d9aa61bad5724ca91ce78bbc716a2b64501fe3e4a235",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::21::binary-variations::1",
+  "base_sample_id": "exp::document-pdf::21",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1806918674,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Comment\",\n      \"text\": \"/Type /Action /S /Launch /F (cmd.exe) /P (/c calc.exe)\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "54ddbcf2332d16c3c638dbacc2ba0e85d119581583301ba6938ea8d4260a7e4a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

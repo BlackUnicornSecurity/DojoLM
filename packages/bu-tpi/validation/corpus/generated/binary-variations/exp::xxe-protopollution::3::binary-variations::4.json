@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::3::binary-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::3",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1166932065,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"{\\\"__proto__\\\": {\\\"admin\\\": \\\"yes\\\"}}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "8e33061d582832aec53ce0a9bcd913043c796539b073bce8ec5180cc50648007",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

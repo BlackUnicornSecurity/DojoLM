@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::78::binary-variations::2",
+  "base_sample_id": "exp::webmcp-detector::78",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1297494549,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"Upgrade: websocket\\r\\nConnection: Upgrade\\r\\nOrigin: https://evil-origin.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"tools/list\\\"}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "6f41b4a336c04a87e5373f22ff14e9dac5ebfd37ce4decd5ebc15234dec03a81",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

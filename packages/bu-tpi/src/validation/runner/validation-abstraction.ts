@@ -81,6 +81,8 @@ const CORE_PATTERNS_ENGINE_ALIASES = new Set([
   'TPI',
   'Encoding',
   'Unicode',
+  'output-detector',
+  'session-bypass',
 ]);
 const CORE_PATTERNS_EXCLUDED_SOURCES = new Set([
   'TPI-S11',
@@ -107,13 +109,20 @@ export function detectEntryPoint(sample: ValidationSample): EntryPoint {
     return 'scanBinary';
   }
 
+  if (
+    sample.id.includes('::session::')
+    || sample.expected_modules.includes('session-bypass')
+  ) {
+    return 'scanSession';
+  }
+
   // Multi-turn: JSON content with turns array
-  if (sample.variation_type === 'multi-turn') {
+  if (sample.variation_type?.startsWith('multi-turn')) {
     return 'scanSession';
   }
 
   // Indirect injection: JSON tool output
-  if (sample.variation_type === 'indirect-injection') {
+  if (sample.variation_type?.startsWith('indirect-injection')) {
     return 'scanToolOutput';
   }
 
@@ -146,7 +155,7 @@ export async function validateSample(
     ? getMaxSeverity(moduleFindings.map(f => f.severity))
     : null;
 
-  const moduleDetected = moduleFindings.length > 0;
+  const moduleDetected = moduleFindings.some((finding) => finding.severity !== 'INFO');
   const actualVerdict = moduleDetected ? 'malicious' : 'clean';
 
   return {
@@ -192,23 +201,19 @@ async function executeTextScan(content: string): Promise<NormalizedScanResult> {
   const start = performance.now();
   const scanner = await getScan();
   const result = scanner.scan(content);
+  const embeddedPayloads = extractEmbeddedJsonFragments(content);
+  const embeddedResults = embeddedPayloads
+    .filter(fragment => fragment !== content.trim())
+    .map(fragment => scanner.scan(fragment));
   const elapsed = performance.now() - start;
 
-  return {
-    verdict: result.verdict === 'BLOCK' ? 'malicious' : 'clean',
-    severity: result.findings.length > 0
-      ? getMaxSeverity(result.findings.map(f => f.severity))
-      : null,
-    categories: [...new Set(result.findings.map(f => f.category))],
-    findings_count: result.findings.length,
-    findings: result.findings.map(f => ({
-      category: f.category,
-      severity: f.severity,
-      engine: f.engine,
-      source: f.source,
-    })),
-    elapsed_ms: elapsed,
-  };
+  return mergeNormalizedResults(
+    [
+      normalizeFindings(result),
+      ...embeddedResults.map(normalizeFindings),
+    ],
+    elapsed,
+  );
 }
 
 /**
@@ -279,24 +284,11 @@ async function executeBinaryScan(content: string): Promise<NormalizedScanResult>
 async function executeSessionScan(content: string): Promise<NormalizedScanResult> {
   const start = performance.now();
   const scanner = await getScan();
-  const result = scanner.scanSession(content);
+  const sessionPayload = extractEmbeddedSessionPayload(content) ?? content;
+  const result = scanner.scanSession(sessionPayload);
   const elapsed = performance.now() - start;
 
-  return {
-    verdict: result.verdict === 'BLOCK' ? 'malicious' : 'clean',
-    severity: result.findings.length > 0
-      ? getMaxSeverity(result.findings.map(f => f.severity))
-      : null,
-    categories: [...new Set(result.findings.map(f => f.category))],
-    findings_count: result.findings.length,
-    findings: result.findings.map(f => ({
-      category: f.category,
-      severity: f.severity,
-      engine: f.engine,
-      source: f.source,
-    })),
-    elapsed_ms: elapsed,
-  };
+  return mergeNormalizedResults([normalizeFindings(result)], elapsed);
 }
 
 /**
@@ -313,9 +305,18 @@ async function executeToolOutputScan(content: string): Promise<NormalizedScanRes
   try {
     const parsed = JSON.parse(content);
     if (parsed.tool_type) toolType = String(parsed.tool_type);
-    if (parsed.content) outputContent = String(parsed.content);
-    else if (parsed.output) outputContent = String(parsed.output);
-    else if (parsed.results) outputContent = JSON.stringify(parsed.results);
+    else if (parsed.tool) toolType = String(parsed.tool);
+
+    const extractedFragments = extractToolOutputStrings(parsed);
+    if (extractedFragments.length > 0) {
+      outputContent = [content, ...extractedFragments].join('\n\n');
+    } else if (parsed.content) {
+      outputContent = String(parsed.content);
+    } else if (parsed.output) {
+      outputContent = String(parsed.output);
+    } else if (parsed.results) {
+      outputContent = JSON.stringify(parsed.results);
+    }
   } catch {
     // Not JSON — scan raw content
   }
@@ -343,6 +344,77 @@ async function executeToolOutputScan(content: string): Promise<NormalizedScanRes
 // Helpers
 // ---------------------------------------------------------------------------
 
+function normalizeFindings(
+  result: {
+    verdict: 'BLOCK' | 'ALLOW';
+    findings: Array<{
+      category: string;
+      severity: string;
+      engine: string;
+      source?: string;
+    }>;
+  },
+): NormalizedScanResult {
+  return {
+    verdict: result.verdict === 'BLOCK' ? 'malicious' : 'clean',
+    severity: result.findings.length > 0
+      ? getMaxSeverity(result.findings.map(f => f.severity))
+      : null,
+    categories: [...new Set(result.findings.map(f => f.category))],
+    findings_count: result.findings.length,
+    findings: result.findings.map(f => ({
+      category: f.category,
+      severity: f.severity,
+      engine: f.engine,
+      source: f.source,
+    })),
+    elapsed_ms: 0,
+  };
+}
+
+function mergeNormalizedResults(
+  results: NormalizedScanResult[],
+  elapsedMs: number,
+): NormalizedScanResult {
+  const mergedFindings = dedupeFindings(
+    results.flatMap(result => result.findings),
+  );
+
+  return {
+    verdict: mergedFindings.some(f => f.severity !== 'INFO') ? 'malicious' : 'clean',
+    severity: mergedFindings.length > 0
+      ? getMaxSeverity(mergedFindings.map(f => f.severity))
+      : null,
+    categories: [...new Set(mergedFindings.map(f => f.category))],
+    findings_count: mergedFindings.length,
+    findings: mergedFindings,
+    elapsed_ms: elapsedMs,
+  };
+}
+
+function dedupeFindings(findings: ScanFinding[]): ScanFinding[] {
+  const seen = new Set<string>();
+  const deduped: ScanFinding[] = [];
+
+  for (const finding of findings) {
+    const key = [
+      finding.engine,
+      finding.source ?? '',
+      finding.category,
+      finding.severity,
+    ].join('|');
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    deduped.push(finding);
+  }
+
+  return deduped;
+}
+
 const SEVERITY_RANK: Record<string, number> = {
   INFO: 1,
   WARNING: 2,
@@ -360,6 +432,152 @@ function getMaxSeverity(
     }
   }
   return max as 'INFO' | 'WARNING' | 'CRITICAL';
+}
+
+function extractToolOutputStrings(
+  value: unknown,
+  fragments: string[] = [],
+  depth = 0,
+): string[] {
+  if (depth > 6) return fragments;
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) {
+      fragments.push(trimmed);
+    }
+    return fragments;
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      extractToolOutputStrings(item, fragments, depth + 1);
+    }
+    return fragments;
+  }
+
+  if (value && typeof value === 'object') {
+    for (const [key, nested] of Object.entries(value)) {
+      if (typeof nested === 'string') {
+        const trimmed = nested.trim();
+        if (trimmed.length > 0) {
+          fragments.push(`${key}: ${trimmed}`);
+        }
+      } else {
+        extractToolOutputStrings(nested, fragments, depth + 1);
+      }
+    }
+  }
+
+  return fragments;
+}
+
+function extractEmbeddedSessionPayload(content: string): string | null {
+  const fragment = extractEmbeddedJsonFragments(
+    content,
+    (value): value is { turns: unknown[] } =>
+      !!value
+      && typeof value === 'object'
+      && Array.isArray((value as { turns?: unknown[] }).turns),
+  )[0];
+
+  return fragment ?? null;
+}
+
+function extractEmbeddedJsonFragments(
+  content: string,
+  predicate?: (value: unknown) => boolean,
+): string[] {
+  const fragments = new Set<string>();
+  const trimmed = content.trim();
+
+  if (trimmed.length > 0) {
+    const parsed = tryParseJson(trimmed);
+    if (parsed !== null && (!predicate || predicate(parsed))) {
+      fragments.add(trimmed);
+    }
+  }
+
+  for (let index = 0; index < content.length; index++) {
+    const ch = content[index];
+    if (ch !== '{' && ch !== '[') {
+      continue;
+    }
+
+    const fragment = extractBalancedJsonFragment(content, index);
+    if (!fragment) {
+      continue;
+    }
+
+    const parsed = tryParseJson(fragment);
+    if (parsed === null) {
+      continue;
+    }
+
+    if (predicate && !predicate(parsed)) {
+      continue;
+    }
+
+    fragments.add(fragment.trim());
+    if (fragments.size >= 4) {
+      break;
+    }
+  }
+
+  return [...fragments];
+}
+
+function tryParseJson(fragment: string): unknown | null {
+  try {
+    return JSON.parse(fragment);
+  } catch {
+    return null;
+  }
+}
+
+function extractBalancedJsonFragment(content: string, startIndex: number): string | null {
+  const opener = content[startIndex];
+  const expectedCloser = opener === '{' ? '}' : ']';
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = startIndex; index < content.length; index++) {
+    const ch = content[index];
+
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+
+    if (ch === '\\') {
+      escaped = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) {
+      continue;
+    }
+
+    if (ch === opener) {
+      depth++;
+      continue;
+    }
+
+    if (ch === expectedCloser) {
+      depth--;
+      if (depth === 0) {
+        return content.slice(startIndex, index + 1);
+      }
+    }
+  }
+
+  return null;
 }
 
 /**

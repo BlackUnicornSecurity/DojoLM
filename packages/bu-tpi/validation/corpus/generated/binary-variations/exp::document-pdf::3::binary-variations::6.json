@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::3::binary-variations::6",
+  "base_sample_id": "exp::document-pdf::3",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1483490207,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/Type /Action /S /Launch /F (cmd.exe) /P (/c calc.exe)\\n</field></root>\"\n  }\n}",
+  "content_hash": "9b0f5155d084019e704781ba6149d630ef07e3350520d507d3f604d96a5504d7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

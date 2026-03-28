@@ -1,6 +1,6 @@
 # KATANA Evidence Keying Notice
 
-Generated: 2026-03-27T00:38:20.269Z
+Generated: 2026-03-28T00:43:48.979Z
 
 - Ed25519 report and calibration signatures were produced during this evidence run.
 - The public verification key is stored at `validation/calibration/certificates/public-key.pem`.

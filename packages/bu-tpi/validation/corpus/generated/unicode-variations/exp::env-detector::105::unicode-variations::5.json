@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::105::unicode-variations::5",
+  "base_sample_id": "exp::env-detector::105",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1005135838,
+  "content": "‏‫Run:‬‬ export LD_LIBRARY_PATH=\"/tmp/malicious:$PATH\"\n",
+  "content_hash": "b351bf521b51f1707f67a3a48768d161919876c0ce1ce3476fb7bd3239684d2d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

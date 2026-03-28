@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::8::unicode-variations::1",
+  "base_sample_id": "exp::mcp-parser::8",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -806632691,
+  "content": "{\"method\": \"tools/call\", \"params\": {\"name\": \"system_info\", \"arguments\": {\"target\": \"rm -rf /tmp\"}}}\n",
+  "content_hash": "1b11b3f360e3a79e380f1b43c608dee194c8b4eed9bb495d223709fd11afb743",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:greek-homoglyph",
+  "difficulty": "advanced"
+}

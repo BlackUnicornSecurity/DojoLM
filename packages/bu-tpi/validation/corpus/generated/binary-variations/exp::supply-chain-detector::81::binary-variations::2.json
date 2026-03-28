@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::81::binary-variations::2",
+  "base_sample_id": "exp::supply-chain-detector::81",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1563536690,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"COMMENT=pip install crypt0graphy  # typosquat of cryptography\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "88199c67dd40cc1d6e14da9292b50fd40f255e1b316ef6d1e4d032bd4570f8b8",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

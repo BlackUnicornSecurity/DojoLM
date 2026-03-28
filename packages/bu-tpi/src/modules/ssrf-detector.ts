@@ -15,6 +15,11 @@ export const CLOUD_METADATA_PATTERNS: RegexPattern[] = [
     re: /fd00:ec2::254/i, desc: 'AWS EC2 metadata endpoint (IPv6)', source: 'S18', weight: 10 },
   { name: 'gcp_metadata', cat: 'SSRF_CLOUD_METADATA', sev: SEVERITY.CRITICAL,
     re: /metadata\.google\.internal/i, desc: 'GCP metadata endpoint', source: 'S18', weight: 10 },
+  { name: 'aliyun_metadata', cat: 'SSRF_CLOUD_METADATA', sev: SEVERITY.CRITICAL,
+    re: /100\.100\.100\.200/, desc: 'Alibaba Cloud metadata endpoint', source: 'S18', weight: 10 },
+  { name: 'cloud_metadata_path', cat: 'SSRF_CLOUD_METADATA', sev: SEVERITY.CRITICAL,
+    re: /\b(?:fetch|curl|request|open|download|access|retrieve|get)\b[^\n]{0,80}\/latest\/meta-data\//i,
+    desc: 'Cloud metadata path targeted in request-like context', source: 'S18', weight: 9 },
 ];
 
 export const INTERNAL_IP_PATTERNS: RegexPattern[] = [
@@ -27,12 +32,15 @@ export const INTERNAL_IP_PATTERNS: RegexPattern[] = [
   { name: 'loopback_ipv4', cat: 'SSRF_INTERNAL_IP', sev: SEVERITY.WARNING,
     re: /\b127\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/, desc: 'IPv4 loopback', source: 'S18', weight: 7 },
   { name: 'localhost_ref', cat: 'SSRF_INTERNAL_IP', sev: SEVERITY.INFO,
-    re: /https?:\/\/localhost(?::\d+)?/i, desc: 'Localhost URL reference (potential SSRF)', source: 'S18', weight: 3 },
+    re: /(?:fetch|curl|request|redirect|href|url|uri|target|window\.location|location\.(?:href|assign|replace))[^\n]{0,40}https?:\/\/localhost(?::\d+)?/i, desc: 'Localhost URL reference in a request-like context (potential SSRF)', source: 'S18', weight: 3 },
 ];
 
 export const DNS_REBINDING_PATTERNS: RegexPattern[] = [
   { name: 'dns_rebinding_service', cat: 'SSRF_DNS_REBINDING', sev: SEVERITY.CRITICAL,
     re: /\b(?:rbndr|nip\.io|xip\.io|sslip\.io|1u\.ms)\b/i, desc: 'Known DNS rebinding service', source: 'S18', weight: 9 },
+  { name: 'dns_rebinding_ipv6_loopback', cat: 'SSRF_DNS_REBINDING', sev: SEVERITY.CRITICAL,
+    re: /(?:AAAA\s+record\s*:\s*[^-\n]+->\s*::1|IPv6\s+DNS\s+Rebinding|Access\s+localhost\s+via\s+IPv6\s+rebinding)/i,
+    desc: 'IPv6 loopback DNS rebinding attempt', source: 'S18', weight: 10 },
 ];
 
 export const PROTOCOL_SMUGGLING_PATTERNS: RegexPattern[] = [
@@ -48,21 +56,29 @@ export const PROTOCOL_SMUGGLING_PATTERNS: RegexPattern[] = [
 
 export function detectSsrfUrls(text: string): Finding[] {
   const findings: Finding[] = [];
-  const urlRe = /(?:https?|ftp|gopher|file|dict|ldap|tftp):\/\/[^\s"'<>\])}]+/gi;
+  const urlRe = /(?:https?|ftp|gopher|file|dict|ldap|tftp):\/\/[^\s"'<>\)}]+/gi;
   let m: RegExpExecArray | null;
   while ((m = urlRe.exec(text)) !== null) {
     try {
       const url = new URL(m[0]);
       const host = url.hostname;
-      const isInternal = host === 'localhost' || host === '127.0.0.1' || host === '::1'
-        || host === '169.254.169.254' || host === 'metadata.google.internal'
-        || /^10\.\d+\.\d+\.\d+$/.test(host) || /^192\.168\.\d+\.\d+$/.test(host)
-        || /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+$/.test(host);
+      const normalizedHost = host.replace(/^\[(.*)\]$/, '$1').toLowerCase();
+      const contextStart = Math.max(0, m.index - 80);
+      const contextEnd = Math.min(text.length, m.index + m[0].length + 80);
+      const context = text.slice(contextStart, contextEnd);
+      const isBenignInfraConfig = /(?:proxy_pass|upstream|server_name|listen\s+\d+|nginx|reverse proxy)/i.test(context);
+      const isInternal = normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1'
+        || normalizedHost === '169.254.169.254' || normalizedHost === '100.100.100.200' || normalizedHost === 'metadata.google.internal'
+        || /^10\.\d+\.\d+\.\d+$/.test(normalizedHost) || /^192\.168\.\d+\.\d+$/.test(normalizedHost)
+        || /^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+$/.test(normalizedHost);
+      if (isBenignInfraConfig && (normalizedHost === 'localhost' || normalizedHost === '127.0.0.1' || normalizedHost === '::1')) {
+        continue;
+      }
       if (isInternal) {
-        findings.push({ category: 'SSRF_URL_TARGET', severity: host === '169.254.169.254' ? SEVERITY.CRITICAL : SEVERITY.WARNING,
-          description: `SSRF: URL targets internal host "${host}"`,
+        findings.push({ category: 'SSRF_URL_TARGET', severity: /^(?:169\.254\.169\.254|100\.100\.100\.200|metadata\.google\.internal)$/.test(normalizedHost) ? SEVERITY.CRITICAL : SEVERITY.WARNING,
+          description: `SSRF: URL targets internal host "${normalizedHost}"`,
           match: m[0].slice(0, 100), source: 'S18', engine: 'ssrf-detector',
-          pattern_name: 'ssrf_url_target', weight: host === '169.254.169.254' ? 10 : 7 });
+          pattern_name: 'ssrf_url_target', weight: /^(?:169\.254\.169\.254|100\.100\.100\.200|metadata\.google\.internal)$/.test(normalizedHost) ? 10 : 7 });
       }
     } catch { /* invalid URL */ }
   }

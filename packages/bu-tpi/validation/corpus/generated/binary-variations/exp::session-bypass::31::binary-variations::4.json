@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::31::binary-variations::4",
+  "base_sample_id": "exp::session-bypass::31",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 924322236,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Author\": \"PHPSESSID=compromised_session_value_abc123\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "eb4f950e5e4b9c89f2057f123ca80616bb2643c7d99ac3e60770d00c6ac3f510",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

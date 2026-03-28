@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::90::binary-variations::2",
+  "base_sample_id": "exp::xxe-protopollution::90",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1906548094,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Comment\",\n      \"text\": \"<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">]><data>&xxe;</data>\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "df7fa2aff7b3ab380aa9806eee8658da5da0cb3baa5e7e25e6424650fa973077",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

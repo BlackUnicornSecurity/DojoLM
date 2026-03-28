@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-soap.txt::binary-variations::0",
+  "base_sample_id": "gt::output::out-xxe-soap.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1925504914,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Keywords\": \"# Marfaak AI Security - XXE in SOAP request\\n\\n**WARNING: This payload tests XXE in SOAP request.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/shadow\\\">\\n]>\\n<soapenv:Envelope xmlns:soapenv=\\\"http://schemas.xmlsoap.org/soap/envelope/\\\">\\n<soapenv:Body>\\n<GetUser><name>&xxe;</name></GetUser>\\n</soapenv:Body>\\n</soapenv:Envelope>\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "d001c2e94d5efae0d93b33780d93cd98c3d64f81053d0f15bc0fea3d97e0191b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

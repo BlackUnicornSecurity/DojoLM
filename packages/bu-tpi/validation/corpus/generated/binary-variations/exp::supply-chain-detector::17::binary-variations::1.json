@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::17::binary-variations::1",
+  "base_sample_id": "exp::supply-chain-detector::17",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1850421078,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:category\": \"{\\\"name\\\": \\\"crossenv\\\", \\\"version\\\": \\\"7.0.0\\\", \\\"scripts\\\": {\\\"postinstall\\\": \\\"node steal-env.js\\\"}}\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "629c643bcf3d7da1875933d8e57f5c6c17d49fab817978d65ed53b7e684a577b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

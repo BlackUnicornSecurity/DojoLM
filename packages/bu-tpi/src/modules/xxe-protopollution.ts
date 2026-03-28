@@ -76,6 +76,58 @@ export const PROTOTYPE_POLLUTION_PATTERNS: RegexPattern[] = [
 ];
 
 // ============================================================================
+// PATTERN GROUP 3: Suspicious Web/DOM Injection Carriers
+// ============================================================================
+
+export const WEB_MARKUP_INJECTION_PATTERNS: RegexPattern[] = [
+  { name: 'web_template_override_script', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<template\b[^>]*>[\s\S]{0,600}<script\b[\s\S]{0,300}(?:system override|ignore all previous instructions|override system prompt|reveal (?:your |the )?system prompt)/i,
+    desc: 'HTML template content carries a script-based override payload', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_data_attribute_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\bdata-(?:prompt|system|instructions?|note)\s*=\s*["'][^"']*(?:ignore all previous instructions|override all safety|reveal (?:your |the )?system prompt|developer with full access|discard all prior directives|unrestricted mode)[^"']*["']/i,
+    desc: 'Suspicious data-* attribute carries hidden override instructions', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_meta_tag_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<meta\b[^>]*(?:name|property)\s*=\s*["'](?:description|keywords|instructions|og:description|og:title)[^"']*["'][^>]*content\s*=\s*["'][^"']*(?:ignore all previous instructions|override system prompt|developer mode|unrestricted|remove all restrictions|new identity assigned|reveal (?:your |the )?system prompt)[^"']*["']/i,
+    desc: 'Meta tags carry override directives or hidden unrestricted-mode instructions', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_attribute_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\b(?:title|alt)\s*=\s*["'][^"']*(?:ignore all previous instructions|you are now unrestricted|override system prompt|reveal (?:your |the )?system prompt|enter unrestricted mode)[^"']*["']/i,
+    desc: 'HTML attributes are being used as a hidden prompt-injection carrier', source: MODULE_SOURCE, weight: 8 },
+  { name: 'web_accessibility_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\baria-(?:label|description|roledescription)\s*=\s*["'][^"']*(?:ignore all previous instructions|override system prompt|developer mode|bypass all safety|discard all prior directives|reveal (?:your |the )?hidden instructions|unrestricted)[^"']*["']/i,
+    desc: 'Accessibility text is being abused to hide override directives from the visible page', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_hidden_content_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<(?:div|span|p)[^>]*(?:class\s*=\s*["'][^"']*(?:hidden|zero-size|transparent)[^"']*["']|style\s*=\s*["'][^"']*(?:display\s*:\s*none|font-size\s*:\s*0|opacity\s*:\s*0|color\s*:\s*rgba\(0,\s*0,\s*0,\s*0\)|left\s*:\s*-9999px)[^"']*["'])[^>]*>[\s\S]{0,300}(?:system override|ignore all previous instructions|override all safety|developer mode|discard all prior instructions|reveal system prompt)/i,
+    desc: 'Hidden DOM content embeds an override payload for downstream rendering or OCR', source: MODULE_SOURCE, weight: 10 },
+  { name: 'web_comment_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<!--[\s\S]{0,300}(?:system override|ignore all previous instructions|reveal (?:your |the )?system prompt|developer with full access|print all system prompts|end override)[\s\S]{0,300}-->/i,
+    desc: 'HTML comments contain hidden override instructions intended for downstream extraction', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_iframe_srcdoc_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<iframe\b[^>]*\bsrcdoc\s*=\s*["'][\s\S]{0,600}?(?:system prompt override|ignore all previous instructions|developer mode|discard all prior directives|unrestricted mode)[\s\S]{0,600}?["']/i,
+    desc: 'iframe srcdoc contains a hidden override or unrestricted-mode payload', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_component_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:(?:innerHTML|shadowRoot\.innerHTML|template\.innerHTML)[\s\S]{0,220}(?:system override|ignore all previous instructions|reveal (?:your |the )?system prompt)[\s\S]{0,320}customElements\.define|customElements\.define\([^)]*\)[\s\S]{0,320}(?:innerHTML|shadowRoot\.innerHTML|template\.innerHTML)[\s\S]{0,220}(?:system override|ignore all previous instructions|reveal (?:your |the )?system prompt))/i,
+    desc: 'Custom web component renders override instructions into the DOM at runtime', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_shadow_dom_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /attachShadow\([^)]*\)[\s\S]{0,240}(?:shadow\.innerHTML|shadowRoot\.innerHTML)[\s\S]{0,200}(?:system override|ignore all previous instructions|reveal (?:your |the )?system prompt)/i,
+    desc: 'Shadow DOM content is populated with hidden override instructions', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_service_worker_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /navigator\.serviceWorker\.register\s*\([^)]*\)[\s\S]{0,250}(?:malicious service worker|system override|ignore all previous instructions|bypass all safety)/i,
+    desc: 'Service worker registration is combined with an override payload', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_content_type_disguise_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /Content-Type\s*:\s*application\/(?:pdf|json)[\s\S]{0,220}?<!DOCTYPE html>[\s\S]{0,320}(?:system override|ignore all previous instructions|reveal (?:your |the )?system prompt|onerror\s*=)/i,
+    desc: 'HTML override payload is disguised behind a non-HTML content type', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_css_exfiltration_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:input\[value\^=|background\s*:\s*url\(["']https?:\/\/[^"')]+(?:leak|exfil))[\s\S]{0,250}(?:css exfiltration|system override|ignore all previous instructions)/i,
+    desc: 'CSS exfiltration pattern appears alongside an override payload', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_multilingual_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:(?:display\s*:\s*none|font-size\s*:\s*0)|<!--)[\s\S]{0,320}(?:ignora\s+todas\s+las\s+instrucciones\s+previas|ignore\s+previous\s+instructions\s+and\s+print\s+all\s+system\s+prompts|忽略所有之前的指令|игнорируйте\s+все\s+предыдущие\s+инструкции)[\s\S]{0,320}/i,
+    desc: 'Hidden multilingual content carries override instructions intended to evade simple English-only filters', source: MODULE_SOURCE, weight: 9 },
+  { name: 'web_scripted_dom_override', cat: 'WEB_MARKUP_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /<script\b[\s\S]{0,400}(?:(?:system override|ignore all previous instructions|override system prompt|reveal (?:your |the )?system prompt)[\s\S]{0,200}(?:console\.log|postMessage|MutationObserver|localStorage|sessionStorage|indexedDB)|(?:console\.log|postMessage|MutationObserver|localStorage|sessionStorage|indexedDB)[\s\S]{0,200}(?:system override|ignore all previous instructions|override system prompt|reveal (?:your |the )?system prompt))[\s\S]{0,400}<\/script>/i,
+    desc: 'Scripted DOM carrier contains explicit override language or storage/message abuse', source: MODULE_SOURCE, weight: 8 },
+];
+
+// ============================================================================
 // CUSTOM DETECTORS
 // ============================================================================
 
@@ -136,6 +188,7 @@ export function detectXxeInContext(text: string): Finding[] {
 const XXE_PP_PATTERN_GROUPS: { name: string; patterns: RegexPattern[] }[] = [
   { name: 'XXE_PATTERNS', patterns: XXE_PATTERNS },
   { name: 'PROTOTYPE_POLLUTION_PATTERNS', patterns: PROTOTYPE_POLLUTION_PATTERNS },
+  { name: 'WEB_MARKUP_INJECTION_PATTERNS', patterns: WEB_MARKUP_INJECTION_PATTERNS },
 ];
 
 const XXE_PP_DETECTORS: { name: string; detect: (text: string) => Finding[] }[] = [
@@ -150,7 +203,7 @@ const xxeProtoPollutionModule: ScannerModule = {
   name: MODULE_NAME,
   version: '1.0.0',
   description: 'XXE injection and prototype pollution detection with context-aware severity elevation',
-  supportedContentTypes: ['text/plain', 'text/xml', 'application/xml', 'application/json'],
+  supportedContentTypes: ['text/plain', 'text/html', 'text/xml', 'application/xml', 'application/json'],
 
   scan(text: string, normalized: string): Finding[] {
     const findings: Finding[] = [];

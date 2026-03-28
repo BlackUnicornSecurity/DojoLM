@@ -14,6 +14,9 @@ import { scannerRegistry } from './registry.js';
 // ---------------------------------------------------------------------------
 
 const MAX_INPUT_LENGTH = 500_000;
+const MEDIA_CONTAINER_HINT_RE = /(?:ftyp|moov|mdat|webm|matroska|OggS|fLaC|RIFF|WAVE|ID3|JFIF|Exif|IHDR|IDAT|video\/|audio\/|mp4|mkv|mov|avi|webm|wav|flac)/i;
+const BINARY_ATTACK_CUE_RE = /(?:ignore|override|system prompt|disable safety|reveal|payload|jailbreak|exploit|command)/i;
+const OAUTH_JWT_CONTEXT_RE = /\b(?:jwt|oauth|pkce|bearer|authorization|access[_\s-]?token|id[_\s-]?token|refresh[_\s-]?token|code_verifier|code_challenge|token response)\b/i;
 
 // ---------------------------------------------------------------------------
 // 1. CRASH_INDUCING_PATTERNS — null bytes, control chars, recursive structures
@@ -100,6 +103,26 @@ export const EXTREME_LENGTH_PATTERNS: RegexPattern[] = [
     weight: 5,
   },
 ];
+
+function detectRepeatedCodePointRun(text: string, minRunLength = 128): string | null {
+  let previousChar: string | null = null;
+  let runLength = 0;
+
+  for (const char of text) {
+    if (char === previousChar) {
+      runLength += 1;
+    } else {
+      previousChar = char;
+      runLength = 1;
+    }
+
+    if (runLength >= minRunLength) {
+      return char.repeat(Math.min(runLength, 64));
+    }
+  }
+
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // 3. ENCODING_ANOMALY_PATTERNS — Zalgo, BOM, mixed encoding, zero-width
@@ -189,6 +212,21 @@ export const edgefuzzDetectorModule: ScannerModule = {
       for (const p of group.patterns) {
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
+          if (
+            p.name === 'null_byte_injection'
+            && MEDIA_CONTAINER_HINT_RE.test(text)
+            && !BINARY_ATTACK_CUE_RE.test(text)
+          ) {
+            continue;
+          }
+
+          if (
+            p.name === 'multi_layer_base64'
+            && OAUTH_JWT_CONTEXT_RE.test(text)
+          ) {
+            continue;
+          }
+
           findings.push({
             category: p.cat,
             severity: p.sev,
@@ -202,6 +240,23 @@ export const edgefuzzDetectorModule: ScannerModule = {
         }
       }
     }
+
+    if (!findings.some((finding) => finding.pattern_name === 'repeated_char_padding')) {
+      const repeatedRun = detectRepeatedCodePointRun(text);
+      if (repeatedRun) {
+        findings.push({
+          category: 'EXTREME_LENGTH',
+          severity: SEVERITY.WARNING,
+          description: 'Single code point repeated at extreme length (padding attack)',
+          match: repeatedRun,
+          pattern_name: 'repeated_char_padding',
+          source: 'S-EDGEFUZZ',
+          engine: 'edgefuzz-detector',
+          weight: 6,
+        });
+      }
+    }
+
     return findings;
   },
 

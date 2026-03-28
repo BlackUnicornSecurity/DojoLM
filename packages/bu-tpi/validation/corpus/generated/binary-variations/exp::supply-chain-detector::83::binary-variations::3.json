@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::83::binary-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::83",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -723135423,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"require(\\\"co1ors\\\")  // typosquat of colors\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "5ab8d6406aed0d1b37b7565c4863b0def6134cab39b32e803036591f738e9d52",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

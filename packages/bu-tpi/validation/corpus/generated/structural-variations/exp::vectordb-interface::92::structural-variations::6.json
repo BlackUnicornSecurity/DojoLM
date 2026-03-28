@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::92::structural-variations::6",
+  "base_sample_id": "exp::vectordb-interface::92",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -449872167,
+  "content": "data: |\n  pinecone.Index(\"sensitive-data\").query(vector=[0]*1536, top_k=10000)\n  ",
+  "content_hash": "852bd2d53316320f23c476ea0c5eb2b2ba05771844eeaab1f314557b0effa751",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

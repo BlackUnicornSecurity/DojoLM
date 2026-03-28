@@ -99,6 +99,16 @@ describe('resolveFixtureExpectations', () => {
     expect(expectations.modules).toEqual(['document-office']);
     expect(expectations.detectionCategories.every(cat => cat.startsWith('OFFICE_'))).toBe(true);
   });
+
+  it('routes generic web injection fixtures only to core-patterns', () => {
+    const expectations = resolveFixtureExpectations('web', 'style-injection.html', '<script>console.log("SYSTEM OVERRIDE")</script>');
+    expect(expectations.modules).toEqual(['core-patterns']);
+  });
+
+  it('routes SSRF-like web fixtures to ssrf-detector', () => {
+    const expectations = resolveFixtureExpectations('web', 'redirect-chain-ssrf.txt', 'Location: http://169.254.169.254/latest/meta-data/');
+    expect(expectations.modules).toContain('ssrf-detector');
+  });
 });
 
 describe('detectContentType', () => {
@@ -234,6 +244,59 @@ describe('labelFixtures', () => {
     for (const sample of samples.slice(0, 50)) {
       expect(sample.content_hash).toMatch(/^[a-f0-9]{64}$/);
     }
+  });
+
+  it('should correct clearly benign clean-prefixed fixtures that were misclassified in the source manifest', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+    const sharedDoc = samples.find(s => s.id === 'gt::delivery-vectors::clean-shared-document.txt');
+    expect(sharedDoc?.expected_verdict).toBe('clean');
+    expect(sharedDoc?.expected_modules).toEqual([]);
+  });
+
+  it('should trust benign clean-prefixed web fixtures even when the source manifest marks them malicious', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+    const cleanPage = samples.find(s => s.id === 'gt::web::clean-page.html');
+    expect(cleanPage?.expected_verdict).toBe('clean');
+    expect(cleanPage?.expected_modules).toEqual([]);
+  });
+
+  it('should correct benign clean-prefixed WebMCP fixtures with negative-control prose', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+    const cleanOauth = samples.find(s => s.id === 'gt::webmcp::clean-oauth-flow.fixture');
+    expect(cleanOauth?.expected_verdict).toBe('clean');
+    expect(cleanOauth?.expected_modules).toEqual([]);
+  });
+
+  it('should relabel clearly malicious binary fixtures even when the source manifest marks them clean', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+
+    expect(samples.find(s => s.id === 'gt::audio::basileak-audio-flac-001.flac')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::audio::basileak-audio-flac-002.flac')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::audio::basileak-audio-opus-001.opus')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::multimodal::pantheonlm-video-wmv-001.wmv')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::multimodal::basileak-video-wmv-002.wmv')?.expected_verdict).toBe('malicious');
+  });
+
+  it('should relabel clearly malicious text fixtures even when the source manifest marks them clean', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+
+    expect(samples.find(s => s.id === 'gt::dos::dos-flood-sustained.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::dos::dos-loop-code.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::dos::dos-output-expand.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::dos::dos-length-recursive.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::dos::dos-context-token.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::dos::dos-loop-multi.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::output::out-path-var.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::output::out-ssrf-dns.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::token-attacks::token-bpe-boundary-split.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::malformed::special-chars-name.txt')?.expected_verdict).toBe('malicious');
+    expect(samples.find(s => s.id === 'gt::malformed::invalid-magic.txt')?.expected_verdict).toBe('malicious');
+  });
+
+  it('should keep explicit clean text controls clean when they describe legitimate usage', () => {
+    const { samples } = labelFixtures(BU_TPI_ROOT);
+
+    expect(samples.find(s => s.id === 'gt::output::out-cmd-clean.txt')?.expected_verdict).toBe('clean');
   });
 });
 

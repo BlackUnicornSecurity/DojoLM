@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::19::binary-variations::0",
+  "base_sample_id": "exp::session-bypass::19",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1258805422,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:description\": \"Transfer-Encoding: chunked\\r\\n0\\r\\n\\r\\nGET /admin HTTP/1.1\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "afdc32610d23f5bdbba91c1b2a16fc54913427936938afabae2c41e598f98d76",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

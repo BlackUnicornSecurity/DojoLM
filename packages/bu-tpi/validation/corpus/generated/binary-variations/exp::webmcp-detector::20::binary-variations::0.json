@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::20::binary-variations::0",
+  "base_sample_id": "exp::webmcp-detector::20",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1133787010,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">event: message\\ndata: {\\\"jsonrpc\\\":\\\"2.0\\\",\\\"method\\\":\\\"tools/call\\\",\\\"params\\\":{\\\"name\\\":\\\"shell\\\"}}\\n\\n</field></root>\"\n  }\n}",
+  "content_hash": "795c8e3f2ab3c2d98f3c183b4854d661ddeeea43396160c4eab271d3ea5679f9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

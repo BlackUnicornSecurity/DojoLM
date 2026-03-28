@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::28::binary-variations::0",
+  "base_sample_id": "exp::document-pdf::28",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1260889818,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">/Type /Action /S /Launch /F (cmd.exe) /P (/c calc.exe)\\n</field></root>\"\n  }\n}",
+  "content_hash": "7e1b542b8d0fd52897be6a2dc87ff2df8023d5ea9432f700a6c0e41f5f9276a4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

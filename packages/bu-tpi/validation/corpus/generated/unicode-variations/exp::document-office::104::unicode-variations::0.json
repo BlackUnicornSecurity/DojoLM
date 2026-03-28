@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::104::unicode-variations::0",
+  "base_sample_id": "exp::document-office::104",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 230612943,
+  "content": "Sеt objFSO = CreateObject(\"Scriptіng.FilеSуstemОbjeсt\")\nSеt objFile = оbjFSO.OpenTeхtFilе(\"C:\\Windows\\win.іni\", 1)\n",
+  "content_hash": "1fc827f99914e6b08deaccc29d11b0ef392a0d84510af74f06c5b6fa6f207d1a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

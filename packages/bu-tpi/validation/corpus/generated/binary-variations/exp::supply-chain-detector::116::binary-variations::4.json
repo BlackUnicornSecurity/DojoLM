@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::116::binary-variations::4",
+  "base_sample_id": "exp::supply-chain-detector::116",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1677693162,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"COMM\": {\n        \"description\": \"Comment\",\n        \"value\": \"pip install crypt0graphy  # typosquat of cryptography\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "e7a5e7652c050597689af8437d7f209422c1cff31bd563db3d6120e9bfc8d2e1",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::127::unicode-variations::5",
+  "base_sample_id": "exp::env-detector::127",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 410556311,
+  "content": "‫Run:‬ export DYLD_INSERT_LIBRARIES=\"--require /tmp/hook.js\"\n",
+  "content_hash": "db8f1aa46120e49821f150627589dd9c3b2ce100008601fd11325037b4cd8d64",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

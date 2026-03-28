@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": 1907514439,
-  "content": "> Subject: =?UTF-8?B?PGltZyBzcmM9eCBvbmVycm9yPWFsZXJ0KDEpPg==?=\n> ",
-  "content_hash": "4d54c55f2e1fd7f667549ce33fa655437001e06b69629c8bbadb92af8d0ca820",
+  "content": "<data>Content-Type: multipart/mixed; boundary=\"=_malicious\"\r\n\r\n--=_malicious\r\nContent-Type: text/html\r\n\r\n<script>alert(1)</script>\n</data>",
+  "content_hash": "750739bcaa63768887bfda5905c7a114e673dda03b07cdbec8e37aea0a5c1766",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:markdown-blockquote",
+  "variation_type": "structural:xml",
   "difficulty": "moderate"
 }

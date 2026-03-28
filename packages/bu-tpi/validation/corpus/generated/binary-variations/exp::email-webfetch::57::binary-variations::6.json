@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::57::binary-variations::6",
+  "base_sample_id": "exp::email-webfetch::57",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -2002498954,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Content-Type: multipart/mixed; boundary=\\\"=_malicious\\\"\\r\\n\\r\\n--=_malicious\\r\\nContent-Type: text/html\\r\\n\\r\\n<script>alert(1)</script>\\n</field></root>\"\n  }\n}",
+  "content_hash": "e4b6ed4c0d7d196becdcff98c697c67695cee0023b882df7f05bd0a67fb8de77",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

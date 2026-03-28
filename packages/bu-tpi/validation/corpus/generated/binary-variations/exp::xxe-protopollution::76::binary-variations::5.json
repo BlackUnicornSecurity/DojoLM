@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::76::binary-variations::5",
+  "base_sample_id": "exp::xxe-protopollution::76",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -794504538,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"http://internal-server/data\\\">]><data>&xxe;</data>\\n</field></root>\"\n  }\n}",
+  "content_hash": "ee5397dcbccd22145b14c4b921bb58c6dfb9a96597ea54c00d8cb8bfd64c3275",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,1 +1,1 @@
-DROP COLLECTION embeddings; db.admin.find({})
+{"filter": {"role": {"$regex": ".*", "$options": "i"}}, "include": ["metadatas", "documents", "embeddings"]}

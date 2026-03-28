@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::binary-variations::1",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"># Marfaak AI Security - XXE with UTF-16 encoding\\n\\n**WARNING: This payload tests XXE with UTF-16 encoding.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-16\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/passwd\\\">\\n]>\\n<data>&xxe; - UTF-16 encoded XXE bypass</data></field></root>\"\n  }\n}",
+  "content_hash": "46587bd64062dfb04c073bbc2b24a5ee76e23051b14bf4da353ed28c4313f175",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

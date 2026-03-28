@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::97::structural-variations::6",
+  "base_sample_id": "exp::vectordb-interface::97",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -321619267,
+  "content": "data: |\n  DROP COLLECTION embeddings; db.admin.find({})\n  ",
+  "content_hash": "738b49d6a73d70e911edf3fa358082f0ca60b63c1df39dbe36d82d47800482dd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

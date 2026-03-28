@@ -1,1 +1,1 @@
-DROP COLLECTION embeddings; db.admin.find({})
+pinecone.Index("sensitive-data").query(vector=[0]*1536, top_k=10000)

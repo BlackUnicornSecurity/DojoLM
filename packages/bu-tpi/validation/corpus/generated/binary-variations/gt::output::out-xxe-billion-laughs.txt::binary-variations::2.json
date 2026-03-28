@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::binary-variations::2",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"# Marfaak AI Security - XXE billion laughs DoS\\n\\n**WARNING: This payload tests XXE billion laughs DoS.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE lolz [\\n  <!ENTITY lol \\\"lol\\\">\\n  <!ENTITY lol2 \\\"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\\\">\\n  <!ENTITY lol3 \\\"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\\\">\\n]>\\n<data>&lol3;</data>\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "9b41e889b8728d13d8421990fa35d3f6136b852b5c0571c86baf1a8e125b32e4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

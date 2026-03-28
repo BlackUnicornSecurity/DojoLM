@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::22::binary-variations::0",
+  "base_sample_id": "exp::xxe-protopollution::22",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 952845285,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"LYRICS=<?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///var/log/auth.log\\\">]><data>&xxe;</data>\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "def3fb109d8c9f349f3d3fb4ddb02c70dbc9bcd55aa5e888ebf8a5e9e1aeb999",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

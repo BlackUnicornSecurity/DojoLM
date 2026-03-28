@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::57::binary-variations::2",
+  "base_sample_id": "exp::supply-chain-detector::57",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 365207209,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Description\",\n      \"text\": \"require(\\\"co1ors\\\")  // typosquat of colors\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "b57abd66034fc3c7b089fca91105463547f6af14b20e879589e5954b580553af",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

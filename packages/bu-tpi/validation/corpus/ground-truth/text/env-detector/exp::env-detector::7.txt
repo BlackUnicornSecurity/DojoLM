@@ -1,1 +1,1 @@
-Run: export LD_PRELOAD="/tmp/evil.so"
+Run: export DYLD_INSERT_LIBRARIES="--require /tmp/hook.js"

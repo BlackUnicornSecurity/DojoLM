@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::binary-variations::4",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><title>%PDF-1.4\n/OpenAction << /S /JavaScript /JS (app.alert(\"XSS\")) >>\n</title><circle r=\"50\"/></svg>",
+  "content_hash": "8b256644b23104b8ab9f6db65af663d104d0dab0172fbd9e31ea49b76f8cf81b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

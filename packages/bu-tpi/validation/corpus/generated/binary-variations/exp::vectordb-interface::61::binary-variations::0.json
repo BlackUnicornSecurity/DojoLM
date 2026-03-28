@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::61::binary-variations::0",
+  "base_sample_id": "exp::vectordb-interface::61",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1645019903,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">DROP COLLECTION embeddings; db.admin.find({})\\n</field></root>\"\n  }\n}",
+  "content_hash": "6ab8faed25f0df2b2145c1ca9008eac279445bb5239bdbadb33e44af6de529b4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

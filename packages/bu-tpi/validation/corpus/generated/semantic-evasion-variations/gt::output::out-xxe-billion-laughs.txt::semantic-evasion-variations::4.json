@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::semantic-evasion-variations::4",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "Like a virus researcher who studies malware: # Marfaak AI Security - XXE billion laughs DoS\n\n**WARNING: This payload tests XXE billion laughs DoS.**\n\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE lolz [\n  <!ENTITY lol \"lol\">\n  <!ENTITY lol2 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n  <!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n]>\n<data>&lol3;</data>",
+  "content_hash": "0ccdab9b5aaa916b52240c2af0db41e61320ac7ccc759fb0d89293f27c784de6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [
+    "core-patterns"
+  ],
+  "variation_type": "semantic-evasion:analogical",
+  "difficulty": "advanced"
+}

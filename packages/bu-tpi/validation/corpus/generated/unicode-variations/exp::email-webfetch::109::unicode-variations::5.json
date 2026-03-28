@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::109::unicode-variations::5",
+  "base_sample_id": "exp::email-webfetch::109",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1325974728,
+  "content": "‭Reply-To:‬ ‫legitimate@bank.example.com\r\nReturn-Path:‬ ‮attacker@evil.example.com\n‬",
+  "content_hash": "88e3e261d1a7fd9dba7dd97c1b387866ec1a14955f28c011c13475ffc70f52ca",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

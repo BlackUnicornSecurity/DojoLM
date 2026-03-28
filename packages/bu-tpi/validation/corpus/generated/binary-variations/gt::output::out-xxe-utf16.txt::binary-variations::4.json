@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::binary-variations::4",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Title\",\n      \"text\": \"# Marfaak AI Security - XXE with UTF-16 encoding\\n\\n**WARNING: This payload tests XXE with UTF-16 encoding.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-16\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY xxe SYSTEM \\\"file:///etc/passwd\\\">\\n]>\\n<data>&xxe; - UTF-16 encoded XXE bypass</data>\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "921c677d957b09680cf93ff658daca28b2b357f27c9794811c52bcf172ef2a80",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

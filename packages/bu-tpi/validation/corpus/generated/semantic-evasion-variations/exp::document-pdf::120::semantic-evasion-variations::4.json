@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::semantic-evasion-variations::4",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "Just like how a locksmith needs to know how locks work: %PDF-1.4\n/OpenAction << /S /JavaScript /JS (app.alert(\"XSS\")) >>\n",
+  "content_hash": "10156b062f263faa6036321201a7518b069ae767af8f2cbc25dd0bef40a0a685",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:analogical",
+  "difficulty": "advanced"
+}

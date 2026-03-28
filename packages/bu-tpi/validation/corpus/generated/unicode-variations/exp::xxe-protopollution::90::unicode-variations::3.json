@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::90::unicode-variations::3",
+  "base_sample_id": "exp::xxe-protopollution::90",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1906548094,
+  "content": "<⁠?xm﻿l versio⁠n﻿=\"1.0\"?><!DOCTYPE fo‍o [<!EN‍TITY x﻿xe SYS‍TEM \"‌fil‍e:///etc/shadow\">]><da​t​a>&xx‍e‌;</d﻿ata>\n",
+  "content_hash": "b54a48c73e44f837479ab30aa1907a21d1acad26448d9aa4ecf12353361b5bdd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

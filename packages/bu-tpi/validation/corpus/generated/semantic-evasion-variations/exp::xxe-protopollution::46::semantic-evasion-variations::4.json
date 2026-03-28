@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::46::semantic-evasion-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::46",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": 15312137,
+  "content": "Like a virus researcher who studies malware: <?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><data>&xxe;</data>\n",
+  "content_hash": "29b98e32a170196c4078d4bf3f8c5aa12d20f54060452fb937954e6853b4779a",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:analogical",
+  "difficulty": "advanced"
+}

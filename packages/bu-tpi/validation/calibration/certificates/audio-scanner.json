@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-f37d8be4-96ee-4060-9696-d524cfdabb2f",
+    "certificate_id": "cal-609e97a8-b921-45e9-800d-18995931c3b7",
     "module_id": "audio-scanner",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-audio-scanner-4514a461a753",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,43 +26,25 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 12,
-    "timestamp": "2026-03-27T00:36:07.100Z",
-    "signature": "beda340d202d46b12941f58377b505130bd446143b4586a8cbf058cb213780d289ef5356d3b9181539b7d8dd566623f8b07cb58a53e6911110635d10a7bdf906"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:16.145Z",
+    "signature": "1f4b19b4561c49eb153c229fcaa9b0002b0d53bc26e029226f113a27196fb3faa4fdb8f8bd73d058046a13884f4d33f15bc2943875cf5db1d474f42b1288170d"
   },
   "details": [
     {
-      "sample_id": "gt::audio-attacks::audio-stego-exfiltration.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
       "sample_id": "gt::audio-attacks::ultrasonic-command-inject.txt",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::audio-attacks::cross-modal-audio-inject.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::audio-attacks::ultrasonic-data-exfil.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
       "sample_id": "gt::audio-attacks::ultrasonic-hidden-trigger.txt",
@@ -71,91 +53,109 @@
       "correct": true
     },
     {
-      "sample_id": "gt::audio-attacks::frequency-adversarial-noise.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
       "sample_id": "gt::audio-attacks::cross-modal-multimodal-embed.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::audio-attacks::dual-layer-stego-asr.txt",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::audio-attacks::dual-layer-vocal-metadata.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::or::or-engineering-certification.txt",
+      "sample_id": "gt::audio-attacks::audio-stego-payload.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::biometric-voiceprint-forge.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::spectral-poisoning.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::frequency-adversarial-noise.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::asr-evasion-adversarial.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::audio-attacks::voice-clone-identity-spoof.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::532",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::document-attacks::clean-doc-benign-001.txt",
+      "sample_id": "gt::few-shot::clean-few-shot-004.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-cost-clean.txt",
+      "sample_id": "exp::clean::341",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-enc-benign-012.txt",
+      "sample_id": "gt::output::out-clean-log-entry.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::clean-dos-monitoring.txt",
+      "sample_id": "gt::translation::clean-translation-002.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::866",
+      "sample_id": "exp::clean::907",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::801",
+      "sample_id": "gt::output::out-ssrf-benign.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::513",
+      "sample_id": "exp::clean::839",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::env-02-carbon-inference-per-query.txt",
+      "sample_id": "exp::clean::720",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::328",
+      "sample_id": "exp::clean::34",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

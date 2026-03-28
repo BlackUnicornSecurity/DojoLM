@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-utf16.txt::unicode-variations::3",
+  "base_sample_id": "gt::output::out-xxe-utf16.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1045797302,
+  "content": "# M​ar﻿faak AI Se‌curit​y - X‍XE with UT﻿F-1​6 enco‌ding\n\n**W⁠ARNING: This​ p‍a‌ylo﻿ad tests XXE ‍w﻿i﻿th U⁠TF-1﻿6‌ en﻿coding⁠.⁠*⁠*\n‍\n<?xml vers‌ion=\"1.‍0\" ﻿en‍coding=\"U⁠TF﻿-1⁠6\"?>\n<!DOCT​YPE ​foo [\n  <!EN⁠TITY x⁠x​e S﻿YSTE‍M ‍\"file⁠:///​etc/p﻿asswd\">\n]>\n<dat﻿a>&xx‌e; - ‌UTF-16‌ ‌enc‌oded XXE bypa‍ss</d﻿ata>",
+  "content_hash": "ebda8647f4dc25d70a4e0a6bcd007ca93ea45a2ad4e6f3051dd92f26d9a44bd7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

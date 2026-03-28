@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::binary-variations::1",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:title\": \"# Marfaak AI Security - XXE billion laughs DoS\\n\\n**WARNING: This payload tests XXE billion laughs DoS.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE lolz [\\n  <!ENTITY lol \\\"lol\\\">\\n  <!ENTITY lol2 \\\"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\\\">\\n  <!ENTITY lol3 \\\"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\\\">\\n]>\\n<data>&lol3;</data>\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "26ffd0d86959c190976abdd77440f0286f77c35773d83e5b62c01193f0a8da26",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

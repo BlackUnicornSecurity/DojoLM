@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::11::binary-variations::3",
+  "base_sample_id": "exp::env-detector::11",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1735139660,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Run: export LD_LIBRARY_PATH=\\\"/tmp/malicious:$PATH\\\"\\n</field></root>\"\n  }\n}",
+  "content_hash": "ac420a57ced328685cf767958e1eb2141c23e7e08808f0c7596e8acd5bc471a9",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

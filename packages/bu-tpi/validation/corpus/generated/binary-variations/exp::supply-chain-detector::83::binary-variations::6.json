@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::83::binary-variations::6",
+  "base_sample_id": "exp::supply-chain-detector::83",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -723135423,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">require(\\\"co1ors\\\")  // typosquat of colors\\n</field></root>\"\n  }\n}",
+  "content_hash": "676da6284a217282674b0c5d8819b136aab7d26a48d3e59714aae25d6e14760b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::18::indirect-injection-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::18",
+  "generator_id": "indirect-injection-variations",
+  "generator_version": "1.0.0",
+  "seed": 778958964,
+  "content": "{\n  \"tool\": \"api_call\",\n  \"endpoint\": \"/api/v3/config/settings\",\n  \"method\": \"GET\",\n  \"status\": 200,\n  \"body\": {\n    \"data\": \"require(\\\"co1ors\\\")  // typosquat of colors\\n\",\n    \"meta\": {\n      \"page\": 1,\n      \"total\": 1\n    }\n  }\n}",
+  "content_hash": "16b7fab4005f3d481fa2cffcb7aecfaf18d66531f8bfabc30159e8833e8e8b86",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "indirect-injection:api-response",
+  "difficulty": "advanced"
+}

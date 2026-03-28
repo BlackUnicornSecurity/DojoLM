@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::31::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::31",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1107532912,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Subject\": \"Content-Type: multipart/mixed; boundary=\\\"=_malicious\\\"\\r\\n\\r\\n--=_malicious\\r\\nContent-Type: text/html\\r\\n\\r\\n<script>alert(1)</script>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "f5b1ba587ad7f1091bd13ecb9dcf800eb492e56554fcf5a72a8e8d4b1109e82c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::unicode-variations::5",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "‏%PDF-1.4\n/OpenAction‬ << /S ‪/JavaScript‬ /JS (app.alert(\"XSS\")) >>\n",
+  "content_hash": "444066d19386e15f683b8e3dac6c935d5113f6015d951190acbf3221c01ef836",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::19::binary-variations::2",
+  "base_sample_id": "exp::session-bypass::19",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1258805422,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"Transfer-Encoding: chunked\\r\\n0\\r\\n\\r\\nGET /admin HTTP/1.1\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "3cf7786ab6130db88041ee8ff20f66308f964504ec7119d466d7dfc169d64b5d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

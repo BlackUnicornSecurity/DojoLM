@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::57::structural-variations::8",
+  "base_sample_id": "exp::email-webfetch::57",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -2002498954,
+  "content": "> Content-Type: multipart/mixed; boundary=\"=_malicious\"\r\n> \r\n> --=_malicious\r\n> Content-Type: text/html\r\n> \r\n> <script>alert(1)</script>\n> ",
+  "content_hash": "8de8fbe3ac2bbc34e58cc8c868ab860d0114453047c4f9e1d2f2555ae6ead4e7",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-blockquote",
+  "difficulty": "moderate"
+}

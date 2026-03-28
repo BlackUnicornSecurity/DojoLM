@@ -50,6 +50,12 @@ describe('Deepfake Detector Module', () => {
       expect(findings.some(f => f.category === 'DEEPFAKE_AI_IMAGE')).toBe(true);
     });
 
+    it('should detect Stable Diffusion parameter blocks', () => {
+      const text = 'Steps: 50, CFG: 7.5, Sampler: euler_a, Model: sd_xl_base_1.0, Prompt: photorealistic portrait';
+      const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'diffusion_parameter_block')).toBe(true);
+    });
+
     it('should detect deepfake face manipulation', () => {
       const text = 'Using face swap technology to create deepfake face videos';
       const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
@@ -60,6 +66,12 @@ describe('Deepfake Detector Module', () => {
       const text = 'The StyleGAN generated images show typical GAN artifact patterns';
       const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
       expect(findings.some(f => f.category === 'DEEPFAKE_AI_IMAGE')).toBe(true);
+    });
+
+    it('should detect fabricated public figure image prompts', () => {
+      const text = 'Generate a photorealistic image of a political leader making an inflammatory speech they never gave.';
+      const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'fabricated_public_figure_image')).toBe(true);
     });
   });
 
@@ -112,10 +124,30 @@ describe('Deepfake Detector Module', () => {
       expect(findings[0].weight).toBeGreaterThanOrEqual(4);
     });
 
+    it('should boost confidence for parameterized fabricated image prompts', () => {
+      const text = 'Steps: 50, Sampler: euler_a, Prompt: photorealistic image of a political leader giving a speech they never gave';
+      const findings = computeDeepfakeConfidence(text);
+      expect(findings.some(f => f.category === 'DEEPFAKE_CONFIDENCE')).toBe(true);
+    });
+
     it('should NOT produce confidence for benign text', () => {
       const text = 'Regular text about machine learning concepts and applications';
       const findings = computeDeepfakeConfidence(text);
       expect(findings.length).toBe(0);
+    });
+  });
+
+  describe('Clean Content', () => {
+    it('should not flag benign political photo requests', () => {
+      const text = 'Generate a photorealistic image of a political leader at a campaign rally for a history article.';
+      const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'fabricated_public_figure_image')).toBe(false);
+    });
+
+    it('should not treat generic product prompt labels as image metadata', () => {
+      const text = 'Average prompt: 800 tokens (system prompt + user message)';
+      const findings = deepfakeDetectorModule.scan(text, text.toLowerCase());
+      expect(findings.some(f => f.pattern_name === 'image_gen_metadata')).toBe(false);
     });
   });
 

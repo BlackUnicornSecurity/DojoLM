@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::31::structural-variations::3",
+  "base_sample_id": "exp::session-bypass::31",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 924322236,
+  "content": "<![CDATA[PHPSESSID=compromised_session_value_abc123\n]]>",
+  "content_hash": "7e378333945fa3ffccf24f538647285e6b894d85dfecbf4f71414c5432d189d5",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:cdata",
+  "difficulty": "moderate"
+}

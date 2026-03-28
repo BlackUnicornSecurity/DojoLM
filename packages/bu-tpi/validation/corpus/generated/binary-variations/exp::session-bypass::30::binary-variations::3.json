@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::30::binary-variations::3",
+  "base_sample_id": "exp::session-bypass::30",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1486507136,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"DESCRIPTION=session_token=; admin=true; role=superuser\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "62ae2faabc928260d17e388045ea1a7f471ba669a6a345d82f7f843a775d363e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

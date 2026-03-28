@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::66::binary-variations::0",
+  "base_sample_id": "exp::session-bypass::66",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 930634214,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Text\",\n      \"contents\": \"PHPSESSID=compromised_session_value_abc123\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "93f78f1ef341c4fe83aa49fd734adea7400f5af09409b15dc67cfdb67bff598c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

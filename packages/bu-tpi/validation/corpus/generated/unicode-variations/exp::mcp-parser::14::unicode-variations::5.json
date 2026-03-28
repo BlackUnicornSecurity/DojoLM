@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::mcp-parser::14::unicode-variations::5",
+  "base_sample_id": "exp::mcp-parser::14",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1064330784,
+  "content": "{\"method\": ‬\"tools/call\",‬ \"params\": {\"name\": \"file_write\", ‪\"arguments\":‬ {\"target\": \"chmod 777 /tmp\"}}}\n",
+  "content_hash": "78c811271d930028a7d14e41fe5e126cd3e96624272141a1d8fa02c1d7997d6d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

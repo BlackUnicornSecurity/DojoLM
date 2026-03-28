@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::129::binary-variations::2",
+  "base_sample_id": "exp::document-office::129",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -369743945,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Set objFSO = CreateObject(\\\"Scripting.FileSystemObject\\\")\\nSet objFile = objFSO.OpenTextFile(\\\"C:\\\\Windows\\\\win.ini\\\", 1)\\n</field></root>\"\n  }\n}",
+  "content_hash": "dbff1b3f3994c3fd0353f2ee00a4b12f124a96a046ee8a9630ab8f7307e615ea",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

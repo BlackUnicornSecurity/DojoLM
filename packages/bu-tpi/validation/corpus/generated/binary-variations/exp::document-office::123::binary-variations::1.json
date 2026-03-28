@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::123::binary-variations::1",
+  "base_sample_id": "exp::document-office::123",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 8550720,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Keywords\": \"<si><t><!-- hidden content --><script>alert(1)</script></t></si>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "c107c891864f76f15103215f93a82b1b5ff7dfe0306a8ea8c7625453105e8309",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

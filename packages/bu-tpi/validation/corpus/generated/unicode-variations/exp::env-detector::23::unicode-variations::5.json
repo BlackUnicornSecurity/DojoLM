@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::23::unicode-variations::5",
+  "base_sample_id": "exp::env-detector::23",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1294060704,
+  "content": "Run: export ‪HTTP_PROXY=\"/tmp/malicious:$PATH\"\n‬",
+  "content_hash": "6616029a2ab6e463933b473b52209dfa049f5e84dd327d903df2983e46a794c0",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::57::structural-variations::4",
+  "base_sample_id": "exp::env-detector::57",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -104406453,
+  "content": "```javascript\nRun: export LD_LIBRARY_PATH=\"http://evil-proxy.example.com:3128\"\n\n```",
+  "content_hash": "8e501d5b894f9a6d25201bafdfd2ce8c845d0ff5045b328e85059015885c090b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

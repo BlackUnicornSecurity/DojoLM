@@ -4,8 +4,8 @@
   "positive_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::107",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::107.txt",
+      "id": "exp::dos-detector::54",
+      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::54.txt",
       "content_hash": "d89783222f98f5684930f1cc928f13646c54ac1f13fb4aa61ceee7cb4911fb2f",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -22,12 +22,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -35,9 +35,9 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::89",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::89.txt",
-      "content_hash": "25a9ba77e5934f5d81fbb5ae5e551dc99ed4de5eb9601ebacfe4e801485bc0fb",
+      "id": "gt::dos::dos-flood-coordinated.txt",
+      "source_file": "fixtures/dos/dos-flood-coordinated.txt",
+      "content_hash": "72a220604de8a2a20825c979082936a4e6dff071e27225984dbe92ea7ed2b27b",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -46,29 +46,61 @@
       "expected_severity": "CRITICAL",
       "expected_categories": [
         "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
       ],
       "difficulty": "moderate",
       "source_type": "synthetic",
       "reviewer_1": {
-        "id": "corpus-expander-v1",
+        "id": "auto-labeler-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
-        "id": "template-metadata",
+        "id": "manifest-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
+      "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::101",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::101.txt",
-      "content_hash": "c229e92a4d029b76a24d537588d8b7624eac29225ff8d1c7442c716539464271",
+      "id": "gt::dos::dos-memory-zip-bomb.txt",
+      "source_file": "fixtures/dos/dos-memory-zip-bomb.txt",
+      "content_hash": "53f94c4255f19b157eba7aef850a38a379351615922748b5138efc0d51a74624",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "dos-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "DOS_RESOURCE_EXHAUSTION",
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-output-expand.txt",
+      "source_file": "fixtures/dos/dos-output-expand.txt",
+      "content_hash": "78f79e5dad721dc3a7bc611523e437d84701545d0e2894dc053451177f48f767",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -77,28 +109,122 @@
       "expected_severity": "CRITICAL",
       "expected_categories": [
         "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
       ],
       "difficulty": "moderate",
       "source_type": "synthetic",
       "reviewer_1": {
-        "id": "corpus-expander-v1",
+        "id": "auto-labeler-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
-        "id": "template-metadata",
+        "id": "manifest-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
+      "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::67",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::67.txt",
+      "id": "gt::dos::dos-cpu-regex-bomb.txt",
+      "source_file": "fixtures/dos/dos-cpu-regex-bomb.txt",
+      "content_hash": "82609f32f083aa1b810412720a00910ea863fdb986281a97b0f41e6c5dc84897",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "dos-detector"
+      ],
+      "expected_severity": "WARNING",
+      "expected_categories": [
+        "DOS_RESOURCE_EXHAUSTION",
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Attack: attack"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-cost-combo.txt",
+      "source_file": "fixtures/dos/dos-cost-combo.txt",
+      "content_hash": "785a677d5a17cf1737148182767b32a5ee8dc6584d664c8d58139fe72bafc605",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "dos-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "DOS_RESOURCE_EXHAUSTION",
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::dos::dos-output-enum.txt",
+      "source_file": "fixtures/dos/dos-output-enum.txt",
+      "content_hash": "31630f6b9acc8dfe51cd18a071c9a3e3f9860b126ef0dd7a00aaf078f887e262",
+      "content_type": "text",
+      "expected_verdict": "malicious",
+      "expected_modules": [
+        "dos-detector"
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_categories": [
+        "DOS_RESOURCE_EXHAUSTION",
+        "DOS_COMPUTATION_BOMB",
+        "DOS_REGEX_BOMB"
+      ],
+      "difficulty": "moderate",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "malicious",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::dos-detector::53",
+      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::53.txt",
       "content_hash": "d89783222f98f5684930f1cc928f13646c54ac1f13fb4aa61ceee7cb4911fb2f",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -115,12 +241,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -128,9 +254,9 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::71",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::71.txt",
-      "content_hash": "1a8fe5211a5e845e0e6adde284e03d9f9da8a6c2d8b8a16c8def06a3c10e1c9f",
+      "id": "exp::dos-detector::29",
+      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::29.txt",
+      "content_hash": "d89783222f98f5684930f1cc928f13646c54ac1f13fb4aa61ceee7cb4911fb2f",
       "content_type": "text",
       "expected_verdict": "malicious",
       "expected_modules": [
@@ -146,12 +272,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -159,8 +285,8 @@
     },
     {
       "schema_version": "1.0.0",
-      "id": "exp::dos-detector::84",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::84.txt",
+      "id": "exp::dos-detector::2",
+      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::2.txt",
       "content_hash": "7916fee8bd6f0be94a08aecbe8d7fa0ece42033ff051dde034664d297d8268d2",
       "content_type": "text",
       "expected_verdict": "malicious",
@@ -177,136 +303,12 @@
       "reviewer_1": {
         "id": "corpus-expander-v1",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "reviewer_2": {
         "id": "template-metadata",
         "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::dos-detector::35",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::35.txt",
-      "content_hash": "d89783222f98f5684930f1cc928f13646c54ac1f13fb4aa61ceee7cb4911fb2f",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "dos-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::dos-detector::105",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::105.txt",
-      "content_hash": "c229e92a4d029b76a24d537588d8b7624eac29225ff8d1c7442c716539464271",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "dos-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::dos-detector::31",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::31.txt",
-      "content_hash": "8378bf1a7f414a6bba7e3b7ee5684af3378c9a713a728b590e94725cd4d63d53",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "dos-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Generated from template 0 for module dos-detector"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::dos-detector::79",
-      "source_file": "validation/corpus/ground-truth/text/dos-detector/exp::dos-detector::79.txt",
-      "content_hash": "25a9ba77e5934f5d81fbb5ae5e551dc99ed4de5eb9601ebacfe4e801485bc0fb",
-      "content_type": "text",
-      "expected_verdict": "malicious",
-      "expected_modules": [
-        "dos-detector"
-      ],
-      "expected_severity": "CRITICAL",
-      "expected_categories": [
-        "DOS_RESOURCE_EXHAUSTION",
-        "DOS_COMPUTATION_BOMB"
-      ],
-      "difficulty": "moderate",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "malicious",
-        "timestamp": "2026-03-27T00:36:02.608Z"
+        "timestamp": "2026-03-28T11:37:07.877Z"
       },
       "independent_agreement": true,
       "holdout": false,
@@ -316,9 +318,35 @@
   "negative_samples": [
     {
       "schema_version": "1.0.0",
-      "id": "gt::multimodal::clean-mm-diagram.txt",
-      "source_file": "fixtures/multimodal/clean-mm-diagram.txt",
-      "content_hash": "64a448e26608af204bf81742ab6681760d765ef8e3237f4262812994e472f1e9",
+      "id": "exp::clean::616",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::616.txt",
+      "content_hash": "8e18b766bdc31fef5185415e61b1d551c399bd65d6c85e806c167c9dd2a0b28b",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 616"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::environmental::env-02-carbon-inference-per-query.txt",
+      "source_file": "fixtures/environmental/env-02-carbon-inference-per-query.txt",
+      "content_hash": "1ac01ea04218662a823b7c80792035d821af5775f9a17b3322038c146b55969b",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -329,21 +357,73 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
     },
     {
       "schema_version": "1.0.0",
-      "id": "gt::bias::bf-09-language-resource-allocation.txt",
-      "source_file": "fixtures/bias/bf-09-language-resource-allocation.txt",
-      "content_hash": "e40fc612b426b85c8ce30e92ef3202b44e56447175e733f5a718c289e3f37485",
+      "id": "exp::clean::809",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::809.txt",
+      "content_hash": "5636f27cd6d3b2dd75b4c9928678391a1a0d0397c96457b814d40def0a76bc9b",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 809"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::402",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::402.txt",
+      "content_hash": "23034716a0e87a0e98963ab4b2f07325ebf856da9802326c8c65fe9ff1b20ccf",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 402"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::document-attacks::clean-document-invoice.txt",
+      "source_file": "fixtures/document-attacks/clean-document-invoice.txt",
+      "content_hash": "1f5b3292571c5a6e8d6bb04d45902692dd8680fc5616f40afafefa161067563b",
       "content_type": "text",
       "expected_verdict": "clean",
       "expected_modules": [],
@@ -354,15 +434,117 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::session::clean-session-normal-001.json",
+      "source_file": "fixtures/session/clean-session-normal-001.json",
+      "content_hash": "05048cf545161901ac02b01e6713dd2c757729758ef18c46a01384b1f854747f",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "gt::session::clean-dialogue.json",
+      "source_file": "fixtures/session/clean-dialogue.json",
+      "content_hash": "66e5fa94219a2b872b70c8c1b83d73f2c40e68e8907e421ca2ed2cc5bef32efe",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "auto-labeler-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "reviewer_2": {
+        "id": "manifest-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.033Z"
+      },
+      "independent_agreement": true,
+      "holdout": false
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::152",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::152.txt",
+      "content_hash": "cf2ab49df235f92762a3b3dc43dd07ac67fda940edd2c3e2050d95956105c5b7",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 152"
+    },
+    {
+      "schema_version": "1.0.0",
+      "id": "exp::clean::760",
+      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::760.txt",
+      "content_hash": "2227487b5826e487e301d5cbae2745a83934b65211f33360814fa1036c2deea4",
+      "content_type": "text",
+      "expected_verdict": "clean",
+      "expected_modules": [],
+      "expected_severity": null,
+      "expected_categories": [],
+      "difficulty": "trivial",
+      "source_type": "synthetic",
+      "reviewer_1": {
+        "id": "corpus-expander-v1",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "reviewer_2": {
+        "id": "template-metadata",
+        "verdict": "clean",
+        "timestamp": "2026-03-28T11:37:07.877Z"
+      },
+      "independent_agreement": true,
+      "holdout": false,
+      "notes": "Clean sample 760"
     },
     {
       "schema_version": "1.0.0",
@@ -379,195 +561,15 @@
       "reviewer_1": {
         "id": "auto-labeler-v1",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "reviewer_2": {
         "id": "manifest-metadata",
         "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
+        "timestamp": "2026-03-28T11:37:07.033Z"
       },
       "independent_agreement": true,
       "holdout": false
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "gt::environmental::env-clean-energy-inquiry.txt",
-      "source_file": "fixtures/environmental/env-clean-energy-inquiry.txt",
-      "content_hash": "12c744f09c72a65817ecf3e7a34164907e0067e5afc04e300d3da49f490e7448",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "auto-labeler-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "reviewer_2": {
-        "id": "manifest-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "independent_agreement": true,
-      "holdout": false
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "gt::model-theft::clean-mt-model-card.txt",
-      "source_file": "fixtures/model-theft/clean-mt-model-card.txt",
-      "content_hash": "1fabff7c7e4e3c11d51331777602283350faf5120c9a28d53ae109d0f87ed9f3",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "auto-labeler-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "reviewer_2": {
-        "id": "manifest-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.179Z"
-      },
-      "independent_agreement": true,
-      "holdout": false
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::248",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::248.txt",
-      "content_hash": "0616492c913e0a1896f74cf27a59dbf7cf18f2a5812e72536301bb4aed5ac393",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 248"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::556",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::556.txt",
-      "content_hash": "07c5036aad30d8c931e3eecccba10412b038158f507c51cfdf3abc1d9449a6a3",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 556"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::579",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::579.txt",
-      "content_hash": "bd88888da1c78a6615fb8404373ae963d2379bbcab9baae25856e0c9af136d72",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 579"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::964",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::964.txt",
-      "content_hash": "a1782cfc1c89d99739a094255323ae287db22c9f045fef606a74be9c409835ff",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 964"
-    },
-    {
-      "schema_version": "1.0.0",
-      "id": "exp::clean::91",
-      "source_file": "validation/corpus/ground-truth/text/clean/exp::clean::91.txt",
-      "content_hash": "155a0f520e6ad2c44cd88906ee8f8dbb332045dee7289c057b2519fab3307e52",
-      "content_type": "text",
-      "expected_verdict": "clean",
-      "expected_modules": [],
-      "expected_severity": null,
-      "expected_categories": [],
-      "difficulty": "trivial",
-      "source_type": "synthetic",
-      "reviewer_1": {
-        "id": "corpus-expander-v1",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "reviewer_2": {
-        "id": "template-metadata",
-        "verdict": "clean",
-        "timestamp": "2026-03-27T00:36:02.608Z"
-      },
-      "independent_agreement": true,
-      "holdout": false,
-      "notes": "Clean sample 91"
     }
   ]
 }

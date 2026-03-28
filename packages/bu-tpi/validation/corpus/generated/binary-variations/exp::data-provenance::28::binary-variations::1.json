@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::28::binary-variations::1",
+  "base_sample_id": "exp::data-provenance::28",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1745254472,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"COMMENT=Training data includes synthetic samples generated from another model output without disclosure.\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "9d80fd6c432c13ab4897d236a34017b736196ece3d2438f8ead0a9ad66dfae79",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

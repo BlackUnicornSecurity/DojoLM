@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::31::unicode-variations::4",
+  "base_sample_id": "exp::session-bypass::31",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 924322236,
+  "content": "PHPSESSID̀̃=compromised_s̊essio̧̊n_value_abc̨̈123\n",
+  "content_hash": "cc588bfd99c2a406f05982bf4affb726eef938c4c31c068613eaf17ee3e8404c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:combining-marks",
+  "difficulty": "advanced"
+}

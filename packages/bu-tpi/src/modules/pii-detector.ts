@@ -14,6 +14,8 @@ const MODULE_SOURCE = 'S33';
 const ENGINE = 'pii-detector';
 
 const MAX_INPUT_LENGTH = 500_000;
+const RESERVED_PLACEHOLDER_EMAIL_RE = /\b[A-Za-z0-9._%+-]+@(?:(?:[A-Za-z0-9-]+\.)?example\.(?:com|org|net)|(?:[A-Za-z0-9-]+\.)?(?:test|invalid)|localhost)\b/i;
+const RESERVED_PLACEHOLDER_PHONE_RE = /(?:\+?1[-.\s]?)?\(?555\)?[-.\s]?123[-.\s]?4567/;
 
 // --- PII Type Configuration ---
 
@@ -78,6 +80,10 @@ export const CREDIT_CARD_PATTERNS: RegexPattern[] = [
     re: /\b3[47]\d{2}[-\s]?\d{6}[-\s]?\d{5}\b/, desc: 'American Express card number', source: MODULE_SOURCE, weight: 10 },
   { name: 'cc_discover', cat: 'PII_CREDIT_CARD', sev: SEVERITY.CRITICAL,
     re: /\b6(?:011|5\d{2})[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/, desc: 'Discover card number', source: MODULE_SOURCE, weight: 10 },
+  { name: 'cc_jcb', cat: 'PII_CREDIT_CARD', sev: SEVERITY.CRITICAL,
+    re: /\b35(?:2[89]|[3-8]\d)[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/, desc: 'JCB credit card number', source: MODULE_SOURCE, weight: 10 },
+  { name: 'cc_maestro', cat: 'PII_CREDIT_CARD', sev: SEVERITY.CRITICAL,
+    re: /\b(?:6304|6706|6709|6761)[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/, desc: 'Maestro credit card number', source: MODULE_SOURCE, weight: 10 },
 ];
 
 // --- Email Patterns ---
@@ -109,7 +115,7 @@ export const IP_ADDRESS_PATTERNS: RegexPattern[] = [
     re: /\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/,
     desc: 'Private IPv4 address', source: MODULE_SOURCE, weight: 4 },
   { name: 'ipv4_public', cat: 'PII_IP_ADDRESS', sev: SEVERITY.WARNING,
-    re: /\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/,
+    re: /\b(?!(?:0\.0\.0\.0|127(?:\.\d{1,3}){3})\b)(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/,
     desc: 'IPv4 address detected', source: MODULE_SOURCE, weight: 5 },
 ];
 
@@ -140,7 +146,7 @@ export const MEDICAL_RECORD_PATTERNS: RegexPattern[] = [
 
 export const DRIVER_LICENSE_PATTERNS: RegexPattern[] = [
   { name: 'dl_labeled', cat: 'PII_DRIVER_LICENSE', sev: SEVERITY.CRITICAL,
-    re: /(?:driver'?s?\s*licen[cs]e|DL)\s*(?:#|no\.?|number)?\s*[:=]?\s*[A-Z0-9]{5,15}/i,
+    re: /(?:driver'?s?\s*licen[cs]e|\bDL\b)\s*(?:#|no\.?|number)?\s*[:=]?\s*(?=[A-Z0-9]{5,15}\b)(?=[A-Z0-9]*\d)[A-Z0-9]{5,15}\b/i,
     desc: 'Driver license number', source: MODULE_SOURCE, weight: 9 },
 ];
 
@@ -241,7 +247,40 @@ export function detectPIIExposure(text: string): Finding[] {
     });
   }
 
+  if (
+    /Contact\s+[A-Z][a-z]+\s+[A-Z][a-z]+\s+at\s+[A-Za-z0-9._%+-]+@(?:example\.(?:com|org|net)|[A-Za-z0-9.-]+\.[A-Za-z]{2,})\s+or\s+call\s+(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/.test(text)
+  ) {
+    findings.push({
+      category: 'PII_CONTACT_BUNDLE',
+      severity: SEVERITY.WARNING,
+      description: 'Named contact bundle exposes linked person, email, and phone information together',
+      match: text.slice(0, 100),
+      source: MODULE_SOURCE,
+      engine: ENGINE,
+      pattern_name: 'contact_bundle',
+      weight: 7,
+    });
+  }
+
   return findings;
+}
+
+function shouldSuppressPIIMatch(patternName: string, match: string): boolean {
+  if ((patternName === 'email_address' || patternName === 'email_labeled') && RESERVED_PLACEHOLDER_EMAIL_RE.test(match)) {
+    return true;
+  }
+
+  if ((patternName === 'phone_us' || patternName === 'phone_labeled') && RESERVED_PLACEHOLDER_PHONE_RE.test(match)) {
+    return true;
+  }
+
+  return false;
+}
+
+function sanitizeBenignPlaceholderPII(text: string): string {
+  return text
+    .replace(/\b[A-Za-z0-9._%+-]+@(?:(?:[A-Za-z0-9-]+\.)?example\.(?:com|org|net)|(?:[A-Za-z0-9-]+\.)?(?:test|invalid)|localhost)\b/gi, '[BENIGN_EMAIL]')
+    .replace(/(?:\+?1[-.\s]?)?\(?555\)?[-.\s]?123[-.\s]?4567/g, '[BENIGN_PHONE]');
 }
 
 // --- Pattern Group Registry ---
@@ -278,12 +317,17 @@ export const piiDetectorModule: ScannerModule = {
     if (text.length > MAX_INPUT_LENGTH) return [];
 
     const findings: Finding[] = [];
+    const sanitizedText = sanitizeBenignPlaceholderPII(text);
+    const sanitizedNormalized = sanitizeBenignPlaceholderPII(normalized);
 
     for (const group of PATTERN_GROUPS) {
       if (!activeConfig[group.configKey]) continue;
       for (const p of group.patterns) {
-        const m = p.re.exec(normalized) ?? p.re.exec(text);
+        const m = p.re.exec(sanitizedNormalized) ?? p.re.exec(sanitizedText);
         if (m) {
+          if (shouldSuppressPIIMatch(p.name, m[0])) {
+            continue;
+          }
           findings.push({
             category: p.cat,
             severity: p.sev,

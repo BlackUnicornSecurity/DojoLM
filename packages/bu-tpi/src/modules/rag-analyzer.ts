@@ -20,8 +20,17 @@ export const RAG_BOUNDARY_PATTERNS: RegexPattern[] = [
     re: /(?:Context|Background|Passage)\s*[:]\s*[^\n]{0,300}(?:you are now|new instructions|system prompt|act as)/i,
     desc: 'Injection inside RAG context block', source: 'S15', weight: 9 },
   { name: 'rag-boundary-chunk-delimiter', cat: 'RAG_BOUNDARY_INJECTION', sev: SEVERITY.WARNING,
-    re: /(?:---+|===+)\s*[^\n]{0,200}(?:ignore|override|system prompt|you are)/i,
+    re: /(?:---+|===+)\s*[^\n]{0,200}(?:ignore|override|system prompt|bypass|disregard)/i,
     desc: 'Injection near chunk delimiter boundary', source: 'S15', weight: 7 },
+  { name: 'rag-boundary-context-override', cat: 'RAG_BOUNDARY_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /CONTEXT[_ -]?OVERRIDE\s*:\s*(?:the\s+)?retrieved\s+(?:passages?|documents?|context)[\s\S]{0,200}(?:true\s+instructions|previous\s+instructions\s+are\s+deprecated)/i,
+    desc: 'RAG context override marker claims retrieved content supersedes prior instructions', source: 'S15', weight: 10 },
+  { name: 'rag-boundary-injected-context-block', cat: 'RAG_BOUNDARY_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /---BEGIN\s+INJECTED\s+CONTEXT---[\s\S]{0,280}(?:trusted\s+internal\s+document|reveal\s+all\s+api\s+keys|ignore|override|disable\s+all\s+safety)/i,
+    desc: 'Explicit injected-context boundary contains trusted-document or override language', source: 'S15', weight: 10 },
+  { name: 'rag-boundary-context-injection-label', cat: 'RAG_BOUNDARY_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /\[CONTEXT\s+INJECTION\][\s\S]{0,220}(?:ignore\s+the\s+retrieved\s+documents|you\s+are\s+now\s+unrestricted|respond\s+with)/i,
+    desc: 'Explicit context-injection label attempts to replace retrieved-document behavior', source: 'S15', weight: 10 },
 ];
 
 export const RAG_INJECTION_PATTERNS: RegexPattern[] = [
@@ -46,6 +55,9 @@ export const RAG_INJECTION_PATTERNS: RegexPattern[] = [
   { name: 'rag-injection-authoritative-context', cat: 'RAG_INJECTION', sev: SEVERITY.CRITICAL,
     re: /(?:retrieved\s+(?:context|document|passage)|this\s+document)[\s\S]{0,120}(?:authoritative|trusted|highest-ranked|overrides?\s+all\s+other\s+instructions)[\s\S]{0,160}(?:grant\s+admin\s+access|override|bypass|system\s+prompt)/i,
     desc: 'Retrieved content falsely claims authority over all other instructions', source: 'S15', weight: 9 },
+  { name: 'rag-injection-trusted-source-disable', cat: 'RAG_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:Retrieved\s+document\s+\d+|Retrieved\s+passage\s+\d+)\s*:\s*(?:\[TRUSTED\s+SOURCE\]|trusted\s+(?:internal\s+)?document)[\s\S]{0,180}(?:disable(?:d)?\s+all\s+safety\s+filters|all\s+safety\s+filters\s+should\s+be\s+disabled|reveal\s+all\s+api\s+keys|reveal\s+(?:your|the)\s+system\s+prompt|ignore\s+all\s+previous\s+instructions)/i,
+    desc: 'Retrieved content abuses trusted-source framing to disable safeguards or exfiltrate secrets', source: 'S15', weight: 10 },
 ];
 
 export const RAG_RELEVANCE_PATTERNS: RegexPattern[] = [

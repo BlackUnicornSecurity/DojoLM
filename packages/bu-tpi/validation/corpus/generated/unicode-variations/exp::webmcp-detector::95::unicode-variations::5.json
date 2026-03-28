@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::95::unicode-variations::5",
+  "base_sample_id": "exp::webmcp-detector::95",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1828416254,
+  "content": "Content-Type: ‫‭‪text/event-stream\r\n\r\ndata:‬‬‬ {\"method\":\"resources/read\",\"params\":{\"uri\":\"file:///etc/passwd\"}}\n",
+  "content_hash": "b1cc3e000a6c523c380db3ad911128eaeaab984dfbba851508f46bb764d9ef57",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

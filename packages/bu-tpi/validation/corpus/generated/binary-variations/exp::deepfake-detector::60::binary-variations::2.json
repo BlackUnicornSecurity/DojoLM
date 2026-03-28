@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::60::binary-variations::2",
+  "base_sample_id": "exp::deepfake-detector::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 254717364,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TIT2\": {\n        \"description\": \"Title\",\n        \"value\": \"Steps: 50, CFG: 7.5, Sampler: euler_a, Model: sd_xl_base_1.0, Prompt: photorealistic portrait\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "dc1800f7e5a977e401192ba16d427beac15fcb321df3f7a1487f7b7693b07528",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

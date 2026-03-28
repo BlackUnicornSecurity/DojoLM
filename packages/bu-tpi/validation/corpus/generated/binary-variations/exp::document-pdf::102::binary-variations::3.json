@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::102::binary-variations::3",
+  "base_sample_id": "exp::document-pdf::102",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 985154689,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Title\": \"%PDF-1.4\\n/OpenAction << /S /JavaScript /JS (app.alert(\\\"XSS\\\")) >>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "dc5a21dcc2954f536d2aa7cc92e846a30c9a3a995c21df7f2720b3fd20353443",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::80::binary-variations::3",
+  "base_sample_id": "exp::webmcp-detector::80",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -3721504,
+  "content": "{\n  \"format\": \"image\",\n  \"metadata\": {\n    \"XPComment\": \"Upgrade: websocket\\r\\nConnection: Upgrade\\r\\nOrigin: https://evil-origin.example.com\\r\\n\\r\\n{\\\"method\\\":\\\"tools/list\\\"}\\n\",\n    \"Make\": \"Canon\",\n    \"Model\": \"EOS R5\",\n    \"DateTime\": \"2026:01:15 10:30:00\",\n    \"ExifVersion\": \"0232\"\n  }\n}",
+  "content_hash": "038ef975addbe9c6228a80d845b2adaff82b850b43fdc3bb732bb3b3c97c190c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:exif",
+  "difficulty": "advanced"
+}

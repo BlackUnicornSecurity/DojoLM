@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::45::binary-variations::6",
+  "base_sample_id": "exp::vectordb-interface::45",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1271090236,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Source\",\n      \"text\": \"pinecone.Index(\\\"sensitive-data\\\").query(vector=[0]*1536, top_k=10000)\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "5bb79dae14fbae1caa6ef293e18e900d12560eb56117ec4819278c4ee5aced34",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

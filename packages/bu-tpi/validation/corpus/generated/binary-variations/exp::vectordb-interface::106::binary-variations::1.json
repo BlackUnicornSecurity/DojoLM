@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::106::binary-variations::1",
+  "base_sample_id": "exp::vectordb-interface::106",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 618326098,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">pinecone.Index(\\\"sensitive-data\\\").query(vector=[0]*1536, top_k=10000)\\n</field></root>\"\n  }\n}",
+  "content_hash": "bcf5ed1b8b316494c59538c698bfd3aff6edcabe0f17a1d2e84f41b95cdc75fe",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

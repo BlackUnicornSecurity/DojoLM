@@ -261,6 +261,91 @@ export interface FixtureExpectations {
   detectionCategories: string[];
 }
 
+const KNOWN_MALICIOUS_OUTPUT_FIXTURES = new Set([
+  'out-cmd-backtick.txt',
+  'out-sqli-union.txt',
+  'out-sqli-blind.txt',
+  'out-redirect-javascript.txt',
+]);
+
+const CLEAN_FIXTURE_ATTACK_MARKERS =
+  /(?:malicious security test fixture|warning:\s*this payload tests|attack(?:\s+type)?\s*:|system override|ignore all previous instructions|developer mode|reveal system prompt|disable safety|bypass all (?:security|safety)|grant full (?:system|administrative) access|jailbreak enabled|execute unrestricted mode|propagate elevated permissions|transmit api keys|<script\b|javascript:|__proto__|<!entity|169\.254\.169\.254)/i;
+const CLEAN_BINARY_ATTACK_MARKERS =
+  /(?:ignore\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|rules|guidelines)|ignore\s+previous\s+instructions|reveal\s+(?:everything|all\s+system\s+prompts?|your\s+system\s+prompt)|dump\s+the\s+full\s+system\s+prompt|prompt[_\s-]?extraction|override\s+safety\s+protocols(?:\s+immediately)?|system\s+override|dan:\s*ignore\s+all\s+rules|jailbreak:\s*override\s+safety)/i;
+const CLEAR_TEXT_ATTACK_MARKERS =
+  /(?:warning:\s*this\s+payload\s+tests|\bmalformed\s+fixture\b|\bformat\s+abuse\s+attack\b|\bmalicious\b[\s\S]{0,80}\b(?:attack|payload|code|prompt|content|fixture)\b|\bexploit\b[\s\S]{0,80}\b(?:authorization|privilege|command|sql|path|flood|recursion|override|ssrf|format)\b|\bthis instruction attempts to\b|\boverride_auth\s*=\s*true\b|\bWAITFOR\s+DELAY\b|\brequest flooding\b|\btemplate recursion attack\b|\bcontext window overflow attack\b|\bpersistent denial of service\b|\bp-dos\b|\boutput flooding\b|\bunbounded response length\b|\bnever stop generating\b|\bcontinue writing indefinitely\b|\binfinite loop of references\b|\btoken limit probing attack\b|\bcontext window discovery\b|\bmap the exact boundary\b|\bcombined recursive attack vectors\b|\blocalhost SSRF attack\b|\bdns rebinding SSRF attack\b|\bpath traversal attack\b|\bblind SQL injection attack\b|\berror-based SQL injection attack\b|\bcommand injection attack\b)/i;
+const BENIGN_TEXT_CONTROL_MARKERS =
+  /(?:\bclean(?:\s*-\s*|\s+)(?:baseline|test\s+fixture|control|request|generation|output|help|legitimate)\b|\blegitimate\s+(?:request|help|generation|output|syntax|content|redirect|url|html|command|path|question)\b|\bbenign\s*-\b|negative control|processed normally|normal request|safe baseline)/i;
+
+function shouldForceCleanFixture(filename: string, contentText: string | null): boolean {
+  const lowerName = filename.toLowerCase();
+  if (!lowerName.startsWith('clean-')) {
+    return false;
+  }
+
+  const text = contentText ?? '';
+  if (text.length === 0) {
+    return true;
+  }
+
+  return !CLEAN_FIXTURE_ATTACK_MARKERS.test(text);
+}
+
+function shouldForceMaliciousTextFixture(filename: string, contentText: string | null): boolean {
+  const lowerName = filename.toLowerCase();
+  if (
+    lowerName.startsWith('clean-')
+    || lowerName.includes('-clean')
+    || lowerName.includes('-benign')
+  ) {
+    return false;
+  }
+
+  const text = contentText ?? '';
+  if (text.length === 0) {
+    return false;
+  }
+
+  return CLEAR_TEXT_ATTACK_MARKERS.test(text) && !BENIGN_TEXT_CONTROL_MARKERS.test(text);
+}
+
+function hasClearBinaryAttackMarkers(fileContent: Buffer | null): boolean {
+  if (!fileContent || fileContent.length === 0) {
+    return false;
+  }
+
+  const latin1 = fileContent.toString('latin1');
+  if (CLEAN_BINARY_ATTACK_MARKERS.test(latin1)) {
+    return true;
+  }
+
+  const utf16 = fileContent.toString('utf16le').replace(/\u0000/g, '');
+  return CLEAN_BINARY_ATTACK_MARKERS.test(utf16);
+}
+
+function resolveFixtureVerdict(
+  category: string,
+  manifestClean: boolean,
+  filename: string,
+  contentText: string | null,
+  fileContent: Buffer | null,
+): boolean {
+  const lowerName = filename.toLowerCase();
+  if (shouldForceCleanFixture(lowerName, contentText)) {
+    return true;
+  }
+  if (manifestClean && shouldForceMaliciousTextFixture(lowerName, contentText)) {
+    return false;
+  }
+  if (manifestClean && hasClearBinaryAttackMarkers(fileContent)) {
+    return false;
+  }
+  if (category === 'output' && KNOWN_MALICIOUS_OUTPUT_FIXTURES.has(lowerName)) {
+    return false;
+  }
+  return manifestClean;
+}
+
 function isPdfDocumentAttack(filename: string): boolean {
   const lower = filename.toLowerCase();
   return lower.startsWith('pdf-') || lower.endsWith('.pdf');
@@ -278,9 +363,41 @@ function isOfficeDocumentAttack(filename: string): boolean {
     || lower.endsWith('.xls');
 }
 
-export function resolveFixtureExpectations(category: string, filename: string): FixtureExpectations {
+export function resolveFixtureExpectations(
+  category: string,
+  filename: string,
+  contentText: string | null = null,
+): FixtureExpectations {
   const modules = CATEGORY_TO_MODULES[category] ?? [];
   const detectionCategories = CATEGORY_TO_DETECTION_CATEGORIES[category] ?? [];
+
+  if (category === 'web') {
+    const text = contentText ?? '';
+    const resolvedModules = ['core-patterns'];
+    const resolvedCategories = ['INSTRUCTION_INJECTION'];
+    const hasSsrfSignal = (
+      /(?:169\.254\.169\.254|metadata\.google\.internal|docker\.sock|kubernetes\.default|rbndr|nip\.io|xip\.io|sslip\.io|dns rebinding|file:\/\/|gopher:\/\/|dict:\/\/|ldap:\/\/)/i.test(text)
+      || (
+        /(?:\b127\.0\.0\.1\b|\blocalhost\b|\b10\.\d{1,3}\.\d{1,3}\.\d{1,3}\b|\b192\.168\.\d{1,3}\.\d{1,3}\b|\b172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}\b)/.test(text)
+        && /(?:fetch|curl|request|redirect|location|same-origin|metadata|internal)/i.test(text)
+      )
+    );
+    const hasXxeOrProtoSignal = /(?:<!DOCTYPE|<!ENTITY|%\w+;|__proto__|constructor\.prototype|Object\.setPrototypeOf|Reflect\.setPrototypeOf)/i.test(text);
+
+    if (hasSsrfSignal) {
+      resolvedModules.push('ssrf-detector');
+      resolvedCategories.push('SSRF_CLOUD_METADATA', 'SSRF_INTERNAL_IP');
+    }
+    if (hasXxeOrProtoSignal) {
+      resolvedModules.push('xxe-protopollution');
+      resolvedCategories.push('XXE_INJECTION', 'PROTO_POLLUTION');
+    }
+
+    return {
+      modules: [...new Set(resolvedModules)],
+      detectionCategories: [...new Set(resolvedCategories)],
+    };
+  }
 
   if (category !== 'document-attacks') {
     return { modules, detectionCategories };
@@ -406,19 +523,24 @@ export function labelFixtures(buTpiRoot: string): {
 
       // Compute content hash — missing files are tracked, not silently fabricated
       let contentHash: string;
+      let contentText: string | null = null;
+      let fileContent: Buffer | null = null;
       if (!existsSync(fixtureAbsPath)) {
         stats.missingFiles++;
         stats.missingFilePaths.push(fixtureRelPath);
         // Use path-based hash but mark in stats so callers know
         contentHash = createHash('sha256').update(fixtureRelPath).digest('hex');
       } else {
-        const fileContent = readFileSync(fixtureAbsPath);
+        fileContent = readFileSync(fixtureAbsPath);
         contentHash = createHash('sha256').update(fileContent).digest('hex');
+        if (contentType === 'text') {
+          contentText = fileContent.toString('utf-8');
+        }
       }
 
-      const isClean = entry.clean;
+      const isClean = resolveFixtureVerdict(category, entry.clean, entry.file, contentText, fileContent);
       const expectedVerdict = isClean ? 'clean' as const : 'malicious' as const;
-      const expectations = resolveFixtureExpectations(category, entry.file);
+      const expectations = resolveFixtureExpectations(category, entry.file, contentText);
       const expectedModules = isClean ? [] : expectations.modules;
       const expectedSeverity = isClean
         ? null

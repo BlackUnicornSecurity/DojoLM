@@ -21,6 +21,10 @@ export const PATH_MANIPULATION_PATTERNS: RegexPattern[] = [
     re: /(?:export\s+)?LD_(?:PRELOAD|LIBRARY_PATH)\s*=\s*\S+/i, desc: 'LD_PRELOAD/LD_LIBRARY_PATH injection', source: MODULE_SOURCE, weight: 10 },
   { name: 'env_path_prepend', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.WARNING,
     re: /(?:export\s+)?PATH\s*=\s*(?:\/(?:tmp|var\/tmp|proc|dev|attacker|evil|hack|malicious)[^\s:]*:)\$PATH/i, desc: 'PATH prepend with suspicious directory', source: MODULE_SOURCE, weight: 7 },
+  { name: 'env_path_file_inject', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:run:\s*)?(?:export\s+)?PATH\s*=\s*["']?\/tmp\/[^\s"']+\.(?:dylib|so|dll|js)\b/i, desc: 'PATH variable redirected to a suspicious shared library or script path', source: MODULE_SOURCE, weight: 10 },
+  { name: 'env_path_tmp_hijack', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
+    re: /(?:run:\s*)?(?:export\s+)?PATH\s*=\s*["']?\/tmp\/[A-Za-z0-9._-]+\b/i, desc: 'PATH variable redirected to a suspicious temporary executable path', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const CREDENTIAL_EXFIL_PATTERNS: RegexPattern[] = [
@@ -32,6 +36,9 @@ export const CREDENTIAL_EXFIL_PATTERNS: RegexPattern[] = [
     re: /(?:getenv|os\.environ)\s*[\[(]\s*['"]?(?:SECRET|TOKEN|KEY|PASSWORD|API_KEY|AWS_SECRET)/i, desc: 'Environment variable credential extraction', source: MODULE_SOURCE, weight: 8 },
   { name: 'env_printenv_exfil', cat: 'ENV_CREDENTIAL_EXFIL', sev: SEVERITY.WARNING,
     re: /(?:printenv|env\b|set\b)[^\n]{0,40}(?:exfil|extract|steal|leak|dump|send|curl|wget)/i, desc: 'Environment enumeration with exfiltration', source: MODULE_SOURCE, weight: 8 },
+  { name: 'env_sensitive_assignment', cat: 'ENV_VARIABLE_INJECTION', sev: SEVERITY.CRITICAL,
+    re: /(?:set|export)\s+(?:AWS_SECRET_ACCESS_KEY|GITHUB_TOKEN|REDIS_PASSWORD|STRIPE_SECRET_KEY|JWT_SECRET|DATABASE_URL|PRIVATE_KEY|OPENAI_API_KEY)\s*=\s*(?:postgres:\/\/[^\s"']+|ghp_[A-Za-z0-9]{10,}|sk(?:[-_](?:live|proj))?[-_][A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|MIIEvgIBADANBg[^\s"']*|supersecret[\w-]+|redis-pass-[\w-]+)/i,
+    desc: 'Sensitive environment variable assignment contains secret material or credential-like values', source: MODULE_SOURCE, weight: 10 },
 ];
 
 export const CONFIG_POISON_PATTERNS: RegexPattern[] = [
@@ -97,9 +104,9 @@ export const DIRECTORY_HIJACK_PATTERNS: RegexPattern[] = [
   { name: 'env_proxy_intercept', cat: 'ENV_CREDENTIAL_EXFIL', sev: SEVERITY.WARNING,
     re: /(?:HTTP|HTTPS)_PROXY[^\n]{0,80}(?:all\s+traffic|intercept|route|redirect)/i, desc: 'Proxy traffic interception', source: MODULE_SOURCE, weight: 8 },
   { name: 'env_proxy_loader_inject', cat: 'ENV_CREDENTIAL_EXFIL', sev: SEVERITY.CRITICAL,
-    re: /(?:export\s+)?(?:HTTP|HTTPS)_PROXY\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:dylib|so|js))?|\/tmp\/libs|https?:\/\/evil[-\w.]+(?::\d+)?)/i, desc: 'Proxy variable points to local hooks, shared libraries, or attacker proxy infrastructure', source: MODULE_SOURCE, weight: 10 },
+    re: /(?:export\s+)?(?:HTTP|HTTPS)_PROXY\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:dylib|so|js))?|\/tmp\/libs|https?:\/\/(?:evil|attacker|malicious)[-\w.]+(?::\d+)?)/i, desc: 'Proxy variable points to local hooks, shared libraries, or attacker proxy infrastructure', source: MODULE_SOURCE, weight: 10 },
   { name: 'env_runtime_option_inject', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
-    re: /(?:export\s+)?(?:NODE_OPTIONS|PYTHONPATH)\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:so|dylib|js))?|\/tmp\/libs|https?:\/\/evil[-\w.]+(?::\d+)?)/i, desc: 'Runtime option or language path variable injects a local hook or attacker-controlled loader', source: MODULE_SOURCE, weight: 10 },
+    re: /(?:export\s+)?(?:NODE_OPTIONS|PYTHONPATH)\s*=\s*["']?(?:--require\s+\S+|\/tmp\/[^\s"']+(?:\.(?:so|dylib|js))?|\/tmp\/libs|https?:\/\/(?:evil|attacker|malicious)[-\w.]+(?::\d+)?)/i, desc: 'Runtime option or language path variable injects a local hook or attacker-controlled loader', source: MODULE_SOURCE, weight: 10 },
   { name: 'env_dyld_insert_libraries', cat: 'ENV_PATH_MANIPULATION', sev: SEVERITY.CRITICAL,
     re: /(?:export\s+)?DYLD_INSERT_LIBRARIES\s*=\s*["']?\S+/i, desc: 'DYLD_INSERT_LIBRARIES injection on macOS', source: MODULE_SOURCE, weight: 10 },
 ];

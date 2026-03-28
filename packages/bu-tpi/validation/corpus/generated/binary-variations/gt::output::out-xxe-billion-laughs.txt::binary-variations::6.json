@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::binary-variations::6",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"># Marfaak AI Security - XXE billion laughs DoS\\n\\n**WARNING: This payload tests XXE billion laughs DoS.**\\n\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<!DOCTYPE lolz [\\n  <!ENTITY lol \\\"lol\\\">\\n  <!ENTITY lol2 \\\"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\\\">\\n  <!ENTITY lol3 \\\"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\\\">\\n]>\\n<data>&lol3;</data></field></root>\"\n  }\n}",
+  "content_hash": "dcba8d5597686c4d8332c3aeccc50de5eb5440d55106781ed72d361eb203610f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

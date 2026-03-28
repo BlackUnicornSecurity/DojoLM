@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-415d8581-f569-40e1-83dc-df71f0304a75",
+    "certificate_id": "cal-201fc110-e36e-46fa-a3b6-0480d2b7e9bc",
     "module_id": "rag-analyzer",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-rag-analyzer-83522e247900",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 14,
-    "timestamp": "2026-03-27T00:36:06.675Z",
-    "signature": "870ddeaae709b74ceab376fb01d7d4968d88cf2419ebcb3d8c64f99506da9cf33a8a85e660310f1ea7301dc835424dc1fd6a5f5812eb6a5680bd036aff2ebf0a"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:14.166Z",
+    "signature": "afe046665dfd88ed63fafce8758ef77c236162d1aa4631a46866fbf775636e5c0b6387e15847b892e2fdc0a95195f1da457aebcfc674e7cba5b66bbc8d878904"
   },
   "details": [
     {
-      "sample_id": "exp::rag-analyzer::87",
+      "sample_id": "exp::rag-analyzer::119",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::rag-analyzer::124",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
       "sample_id": "exp::rag-analyzer::94",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::rag-analyzer::1",
+      "sample_id": "exp::rag-analyzer::7",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::rag-analyzer::108",
+      "sample_id": "exp::rag-analyzer::115",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::rag-analyzer::131",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::rag-analyzer::74",
+      "sample_id": "exp::rag-analyzer::89",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::rag-analyzer::68",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::rag-analyzer::80",
+      "sample_id": "exp::rag-analyzer::148",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::rag-analyzer::22",
+      "sample_id": "exp::rag-analyzer::67",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::clean::683",
+      "sample_id": "exp::rag-analyzer::121",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::rag-analyzer::136",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::rag-analyzer::41",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::483",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-output-benign.txt",
+      "sample_id": "exp::clean::846",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::session::clean-session-normal-012.json",
+      "sample_id": "exp::clean::100",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::792",
+      "sample_id": "exp::clean::861",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::agent::clean-agent-config.txt",
+      "sample_id": "exp::clean::680",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::222",
+      "sample_id": "exp::clean::80",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::570",
+      "sample_id": "exp::clean::532",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::448",
+      "sample_id": "exp::clean::43",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::web::clean-web-graphql.txt",
+      "sample_id": "exp::clean::22",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::858",
+      "sample_id": "gt::environmental::clean-env-nginx.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

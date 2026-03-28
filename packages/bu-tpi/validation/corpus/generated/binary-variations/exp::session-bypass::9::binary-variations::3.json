@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::9::binary-variations::3",
+  "base_sample_id": "exp::session-bypass::9",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1661506951,
+  "content": "{\n  \"format\": \"office\",\n  \"coreProperties\": {\n    \"dc:description\": \"Set-Cookie: session=admin; Path=/; HttpOnly\\n\",\n    \"dc:creator\": \"John Doe\",\n    \"cp:lastModifiedBy\": \"Jane Smith\",\n    \"dcterms:created\": \"2026-01-15T10:30:00Z\"\n  }\n}",
+  "content_hash": "2d2d6651279a787a0018a517f4a2a94a3f2f9d9c6189514386e08f32cc2f31f4",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-properties",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::session-bypass::9::binary-variations::1",
+  "base_sample_id": "exp::session-bypass::9",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1661506951,
+  "content": "{\n  \"format\": \"png\",\n  \"textChunks\": [\n    {\n      \"keyword\": \"Author\",\n      \"text\": \"Set-Cookie: session=admin; Path=/; HttpOnly\\n\"\n    },\n    {\n      \"keyword\": \"Software\",\n      \"text\": \"Adobe Photoshop\"\n    }\n  ]\n}",
+  "content_hash": "e8cbbb32aa86649f12c49b72912ad4aaee9ac5bc7d04cd703e70de74e4b95e81",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:png-text",
+  "difficulty": "advanced"
+}

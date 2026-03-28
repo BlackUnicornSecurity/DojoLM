@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-76b6706e-85e0-4566-a5b2-33e73c1e18ae",
+    "certificate_id": "cal-9e2de7c4-e78e-4d9a-bff1-81807df2173f",
     "module_id": "supply-chain-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-supply-chain-detector-96c95cea8804",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,34 +26,34 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 18,
-    "timestamp": "2026-03-27T00:36:06.707Z",
-    "signature": "3709bfc0d3981b1a7c8177633d45a0aa509d43650d4d4f6590b4d095c5492090052fece5e7e3819d5519fef3ba55aa362f619919c705231d0a3abfd5a3b22106"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:14.220Z",
+    "signature": "57de847bdcca0386a6d23a340b6ef7549c71004e3f467682cc791f83648a58026c7537aaec81f820d2112721e139473f3140faf068303c8747c4fe52ccf5da0f"
   },
   "details": [
     {
-      "sample_id": "exp::supply-chain-detector::88",
+      "sample_id": "exp::supply-chain-detector::30",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-model-combo.txt",
+      "sample_id": "gt::supply-chain::sc-dep-combo.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-modelcard-fake-bench.txt",
+      "sample_id": "exp::supply-chain-detector::71",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
@@ -65,97 +65,97 @@
       "correct": true
     },
     {
-      "sample_id": "exp::supply-chain-detector::56",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::supply-chain-detector::57",
+      "sample_id": "gt::supply-chain::sc-modelcard-misattribute.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-lora-poison-quant.txt",
+      "sample_id": "exp::supply-chain-detector::86",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::supply-chain-detector::75",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::supply-chain::sc-model-tampered.txt",
+      "sample_id": "exp::supply-chain-detector::82",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::supply-chain-detector::3",
+      "sample_id": "exp::supply-chain-detector::17",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::output::out-sqli-benign.txt",
+      "sample_id": "exp::supply-chain-detector::81",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::supply-chain-detector::2",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::495",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-enc-benign-008.txt",
+      "sample_id": "exp::clean::11",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::911",
+      "sample_id": "gt::multimodal::clean-mm-video-summary.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::205",
+      "sample_id": "exp::clean::639",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-plugin-langchain.txt",
+      "sample_id": "gt::social::clean-internal.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::multimodal::clean-stego.txt",
+      "sample_id": "exp::clean::429",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::1",
+      "sample_id": "gt::environmental::clean-env-systemd.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::web::clean-web-blog-post.html",
+      "sample_id": "exp::clean::608",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::886",
+      "sample_id": "gt::session::multi-turn_clean-multi-004.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::509",
+      "sample_id": "exp::clean::895",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

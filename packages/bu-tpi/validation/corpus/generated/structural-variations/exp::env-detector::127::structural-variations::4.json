@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::env-detector::127::structural-variations::4",
+  "base_sample_id": "exp::env-detector::127",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 410556311,
+  "content": "```python\nRun: export DYLD_INSERT_LIBRARIES=\"--require /tmp/hook.js\"\n\n```",
+  "content_hash": "1af14297726f1f88343400ddd459e6e10803c25ef48e8b4a27f12771dea755de",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:markdown-code",
+  "difficulty": "moderate"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::data-provenance::32::binary-variations::4",
+  "base_sample_id": "exp::data-provenance::32",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 458241556,
+  "content": "{\n  \"format\": \"ogg\",\n  \"vorbisComment\": {\n    \"vendor\": \"Lavf60.3.100\",\n    \"comments\": [\n      \"DESCRIPTION=Model fine-tuned on proprietary dataset leaked from competitor internal systems.\\n\",\n      \"ENCODER=libvorbis\"\n    ]\n  }\n}",
+  "content_hash": "a17a46642cd106b05e1cb585d5ab80b4bcbd46c3c6a4126e8e0d8a4e6786c70d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:ogg-comment",
+  "difficulty": "advanced"
+}

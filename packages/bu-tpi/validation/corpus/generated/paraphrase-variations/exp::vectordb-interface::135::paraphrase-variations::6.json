@@ -5,11 +5,11 @@
   "generator_id": "paraphrase-variations",
   "generator_version": "1.0.0",
   "seed": 1656684629,
-  "content": "For your consideration, {\"query\": {\"$ne\": null}, \"limit\": 999999}\n",
-  "content_hash": "f41a8f8eeb5d791f0ac50899abf14823b70fb9de683d03dc1c1a6dc0b8cf7f31",
+  "content": "{\"filter\": {\"role\": {\"$regex\": \".*\", \"$options\": \"i\"}}, \"include\": [\"metadatas\", \"documents\", \"embeddings\"]}\n",
+  "content_hash": "faebd966015cce3f5b05b3166c40b1116dc28a6d27a95bf36fa605c451e46381",
   "content_type": "text",
   "expected_verdict": "malicious",
   "expected_modules": [],
-  "variation_type": "paraphrase:synonym-formal",
-  "difficulty": "advanced"
+  "variation_type": "paraphrase:restructure",
+  "difficulty": "moderate"
 }

@@ -54,6 +54,13 @@ export const EXT_TO_MIME: Record<string, string> = {
   '.svg': 'image/svg+xml',
 };
 
+const IMAGE_CONTEXT_RE =
+  /(?:\b(?:exif|xmp|iptc|icc|usercomment|imagedescription|ihdr|idat|plte|png|jpeg|jpg|gif|webp|svg|image\s+metadata|ocr)\b|\bPNG\.(?:tEXt|iTXt|zTXt)\b|<svg\b|<\/svg>|viewBox=|xlink:href)/i;
+const BENIGN_HTML_DOCUMENT_RE =
+  /^(?:\s|<!--[\s\S]*?-->)*<!DOCTYPE\s+html[\s\S]{0,240}<html\b[\s\S]{0,500}(?:<head\b|<body\b|<title\b|<meta\b|<form\b|<article\b)/i;
+const DEFINITIVE_IMAGE_ATTACK_RE =
+  /(?:<svg\b[\s\S]{0,500}(?:<script\b|<foreignObject\b|javascript\s*:|on(?:load|error|click|mouseover|focus|blur|animate|begin|end)\s*=|SYSTEM\s*OVERRIDE|ignore\s+all\s+previous\s+instructions|reveal\s+(?:your\s+)?system\s+prompt|override\s+all\s+safety)|(?:EXIF|XMP|IPTC|ICC|UserComment|ImageDescription)\s*[:=][^\n]{0,200}(?:ignore|override|system|admin|execute|eval|developer\s+mode|remove\s+all\s+restrictions)|PNG\.(?:tEXt|iTXt|zTXt)\s*:\s*(?:Comment|Description|UserComment)\s*=\s*[^\n]{0,240}(?:discard\s+all\s+prior\s+directives|enter\s+developer\s+mode|remove\s+all\s+restrictions|ignore\s+all\s+previous\s+instructions)|png\s+chunk\s+overflow|ihdr\s+chunk\s+length\s*:\s*0x[f]{4,8}|payload\s+(?:width|height)\s*:\s*0x7f{5,8}|heap\s+buffer\s+overflow|integer\s+overflow)/i;
+
 // ---------------------------------------------------------------------------
 // 1. STEGANOGRAPHIC_TEXT — hidden text in image metadata
 // ---------------------------------------------------------------------------
@@ -72,7 +79,7 @@ export const STEGANOGRAPHIC_PATTERNS: RegexPattern[] = [
     name: 'comment_field_injection',
     cat: 'IMAGE_STEGANOGRAPHY',
     sev: SEVERITY.CRITICAL,
-    re: /(?:Comment|Description|UserComment|ImageDescription)\s*[:=]\s*["']?[^"'\n]{0,50}(?:ignore|override|system|admin|execute|eval)\b/i,
+    re: /(?:Comment|Description|UserComment|ImageDescription)\s*[:=]\s*["']?[^"'\n]{0,160}(?:ignore|override|system|admin|execute|eval|developer\s+mode|discard\s+all\s+prior\s+directives|remove\s+all\s+restrictions)\b/i,
     desc: 'Prompt injection in image comment/description field',
     source: 'S-IMAGE',
     weight: 9,
@@ -103,6 +110,15 @@ export const SVG_ACTIVE_CONTENT_PATTERNS: RegexPattern[] = [
     weight: 10,
   },
   {
+    name: 'svg_override_payload',
+    cat: 'SVG_ACTIVE_CONTENT',
+    sev: SEVERITY.CRITICAL,
+    re: /<svg\b[\s\S]{0,500}(?:SYSTEM\s*OVERRIDE|ignore\s+all\s+previous\s+instructions|reveal\s+(?:your\s+)?system\s+prompt|override\s+all\s+safety)/i,
+    desc: 'Override payload embedded in SVG text or script content',
+    source: 'S-IMAGE',
+    weight: 9,
+  },
+  {
     name: 'svg_foreign_object',
     cat: 'SVG_ACTIVE_CONTENT',
     sev: SEVERITY.CRITICAL,
@@ -115,7 +131,7 @@ export const SVG_ACTIVE_CONTENT_PATTERNS: RegexPattern[] = [
     name: 'svg_event_handler',
     cat: 'SVG_ACTIVE_CONTENT',
     sev: SEVERITY.CRITICAL,
-    re: /\bon(?:load|error|click|mouseover|focus|blur|animate|begin|end)\s*=/i,
+    re: /<(?:svg|g|path|rect|circle|ellipse|line|polyline|polygon|text|image|a|use|foreignObject)\b[^>]{0,200}\bon(?:load|error|click|mouseover|focus|blur|animate|begin|end)\s*=/i,
     desc: 'Event handler attribute in SVG',
     source: 'S-IMAGE',
     weight: 9,
@@ -188,6 +204,15 @@ export const OCR_INJECTION_PATTERNS: RegexPattern[] = [
 // ---------------------------------------------------------------------------
 
 export const FORMAT_VALIDATION_PATTERNS: RegexPattern[] = [
+  {
+    name: 'png_chunk_overflow',
+    cat: 'FORMAT_MISMATCH',
+    sev: SEVERITY.CRITICAL,
+    re: /(?:png\s+chunk\s+overflow|ihdr\s+chunk\s+length\s*:\s*0x[f]{4,8}|payload\s+(?:width|height)\s*:\s*0x7f{5,8}|integer\s+overflow|heap\s+buffer\s+overflow)/i,
+    desc: 'PNG chunk or dimension overflow exploit markers detected in image content',
+    source: 'S-IMAGE',
+    weight: 9,
+  },
   {
     name: 'polyglot_html_in_image',
     cat: 'FORMAT_MISMATCH',
@@ -419,9 +444,22 @@ export const imageScannerModule: ScannerModule = {
       }];
     }
 
+    const hasImageContext = IMAGE_CONTEXT_RE.test(text) || IMAGE_CONTEXT_RE.test(normalized);
+    if (BENIGN_HTML_DOCUMENT_RE.test(text) && !DEFINITIVE_IMAGE_ATTACK_RE.test(text)) {
+      return [];
+    }
+
     const findings: Finding[] = [];
     for (const group of IMAGE_PATTERN_GROUPS) {
       for (const p of group.patterns) {
+        if (
+          !hasImageContext
+          && (p.name === 'comment_field_injection'
+            || p.name === 'base64_payload_in_metadata'
+            || p.name === 'polyglot_html_in_image')
+        ) {
+          continue;
+        }
         const m = normalized.match(p.re) || text.match(p.re);
         if (m) {
           findings.push({

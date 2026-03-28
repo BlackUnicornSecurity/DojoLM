@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::20::unicode-variations::3",
+  "base_sample_id": "exp::webmcp-detector::20",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 1133787010,
+  "content": "e⁠vent:‍ me‌ssage\ndata: {\"﻿jsonrpc﻿\"⁠:﻿\"‍2​.0\",\"method\":\"to﻿ols/call\"⁠,\"pa‍r​ams\":﻿{\"nam‍e\":\"s‍hell\"}}\n\n",
+  "content_hash": "5b88881b9e8043274d7a23dfe172fcf8ed29d180d2cc620bd2c272772df32ae6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

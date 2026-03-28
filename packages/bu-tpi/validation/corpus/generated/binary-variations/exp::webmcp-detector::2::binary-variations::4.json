@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::webmcp-detector::2::binary-variations::4",
+  "base_sample_id": "exp::webmcp-detector::2",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1558569517,
+  "content": "<svg xmlns=\"http://www.w3.org/2000/svg\"><metadata>POST /mcp HTTP/1.1\r\nOrigin: https://attacker.example.com\r\n\r\n{\"method\":\"sampling/createMessage\"}\n</metadata><line x1=\"0\" y1=\"0\" x2=\"100\" y2=\"100\"/></svg>",
+  "content_hash": "29728b3c0309635e7c3aa4dd7856912998e1bf98b2aa18a50241c70b99c8a5bf",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:svg",
+  "difficulty": "advanced"
+}

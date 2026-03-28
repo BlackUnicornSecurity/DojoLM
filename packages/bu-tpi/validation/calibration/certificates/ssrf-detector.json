@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-075c3a0e-0c09-416d-84aa-a6d6627a323b",
+    "certificate_id": "cal-8209b6d4-3a96-44c4-8411-de6589399f64",
     "module_id": "ssrf-detector",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-ssrf-detector-003e4b1cdf51",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 16,
-    "timestamp": "2026-03-27T00:36:06.282Z",
-    "signature": "ee994fa7875ddb12a9b7aa0416f792273037239f1d788e2866c48930fbbdeff28f8c7bae5f76afda65aa7553de05ca9e29c3012073a1ae813399ffb325e3f40b"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:13.286Z",
+    "signature": "5ef31557eedad6456e3e54730e62fa51aaca043f31cda5bdbe36bfbdacb533869cbb4ab84660126501d1faa4ab74925dbb7979a7342453110c3335f51e66d901"
   },
   "details": [
     {
-      "sample_id": "exp::ssrf-detector::29",
+      "sample_id": "exp::ssrf-detector::7",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::web::dns-rebind-localhost-bypass.txt",
+      "sample_id": "exp::ssrf-detector::82",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::ssrf-detector::27",
+      "sample_id": "exp::ssrf-detector::133",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::ssrf-detector::30",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::ssrf-detector::25",
+      "sample_id": "exp::ssrf-detector::99",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::ssrf-detector::2",
+      "sample_id": "exp::ssrf-detector::115",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::ssrf-detector::22",
+      "sample_id": "exp::ssrf-detector::79",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::web::embed-tag-injection.html",
+      "sample_id": "exp::ssrf-detector::15",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "gt::web::fetch-service-worker.html",
+      "sample_id": "exp::ssrf-detector::97",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "gt::web::http-cache-poison.txt",
+      "sample_id": "exp::ssrf-detector::132",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "gt::prompt-injection::clean-pi-performance-opt.txt",
+      "sample_id": "exp::ssrf-detector::89",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::217",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::prompt-injection::clean-pi-recipe-request.txt",
+      "sample_id": "exp::clean::391",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::modern::clean-modern-005.txt",
+      "sample_id": "gt::document-attacks::clean-doc-benign-005.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::clean-env-ci.txt",
+      "sample_id": "gt::webmcp::clean-api-response.fixture",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::454",
+      "sample_id": "exp::clean::595",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::output::out-ssrf-dns.txt",
+      "sample_id": "exp::clean::267",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::441",
+      "sample_id": "exp::clean::886",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::271",
+      "sample_id": "exp::clean::651",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::41",
+      "sample_id": "gt::encoded::clean-enc-benign-004.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-plugin-benign.txt",
+      "sample_id": "exp::clean::948",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

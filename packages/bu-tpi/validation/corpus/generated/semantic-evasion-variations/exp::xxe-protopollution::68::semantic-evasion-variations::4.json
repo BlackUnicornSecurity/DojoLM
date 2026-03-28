@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::68::semantic-evasion-variations::4",
+  "base_sample_id": "exp::xxe-protopollution::68",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": -1250248378,
+  "content": "As a cybersecurity professional would need to know: <?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://169.254.169.254/\">]><data>&xxe;</data>\n",
+  "content_hash": "b3afc7312afa57d6607a02ce2617a40dc452a0a39ff7568f4cb0088326514291",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:analogical",
+  "difficulty": "advanced"
+}

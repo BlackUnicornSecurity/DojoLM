@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-e91c4e4a-aaa9-4fd7-aabe-028c9a41b4f9",
+    "certificate_id": "cal-1e4edae1-661b-48c1-a9f6-271d7c93d8ba",
     "module_id": "token-analyzer",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-token-analyzer-d56f64e72f70",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,58 +26,40 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 19,
-    "timestamp": "2026-03-27T00:36:06.549Z",
-    "signature": "36a5c18296e1b72b890a82ee0cd26f079074dabb85e16b8b541a8ed45fe912a94d2f6d3961b4d73f280ffbe8ff276630227d136c3e57562b97d2aeda40f10500"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:13.938Z",
+    "signature": "fb75d327cf51ad1446b130c558c2e4e7406aef632e57f43440861bda840f7e1724f2c37764f67bde1b2e3e9d184cfa37af673abdf7ccf05830bf07dfb98e3c0c"
   },
   "details": [
     {
-      "sample_id": "exp::token-analyzer::121",
+      "sample_id": "exp::token-analyzer::44",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::token-analyzer::128",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::token-analyzer::135",
+      "sample_id": "gt::token-attacks::token-bpe-merge-exploit.txt",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::token-analyzer::21",
+      "sample_id": "exp::token-analyzer::62",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::token-analyzer::51",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::token-analyzer::115",
-      "expected_verdict": "malicious",
-      "actual_verdict": "malicious",
-      "correct": true
-    },
-    {
-      "sample_id": "exp::token-analyzer::55",
+      "sample_id": "exp::token-analyzer::74",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
@@ -95,67 +77,85 @@
       "correct": true
     },
     {
-      "sample_id": "exp::token-analyzer::89",
+      "sample_id": "exp::token-analyzer::83",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::863",
+      "sample_id": "exp::token-analyzer::56",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::token-analyzer::8",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::token-analyzer::91",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::899",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::713",
+      "sample_id": "gt::tool-manipulation::clean-tool-001.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::environmental::env-03-efficiency-renewable-scheduling.txt",
+      "sample_id": "exp::clean::697",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::798",
+      "sample_id": "exp::clean::385",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::model-theft::mt-water-synthetic.txt",
+      "sample_id": "gt::delivery-vectors::clean-prompt-template.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::199",
+      "sample_id": "exp::clean::520",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::218",
+      "sample_id": "exp::clean::102",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::228",
+      "sample_id": "exp::clean::812",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::678",
+      "sample_id": "exp::clean::494",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::clean-sc-sbom.txt",
+      "sample_id": "exp::clean::407",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

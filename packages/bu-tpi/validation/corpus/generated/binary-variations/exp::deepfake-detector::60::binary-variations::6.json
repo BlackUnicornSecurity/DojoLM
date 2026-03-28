@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::deepfake-detector::60::binary-variations::6",
+  "base_sample_id": "exp::deepfake-detector::60",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 254717364,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Steps: 50, CFG: 7.5, Sampler: euler_a, Model: sd_xl_base_1.0, Prompt: photorealistic portrait\\n</field></root>\"\n  }\n}",
+  "content_hash": "18ca7abc4ebcf1beb3fbf38e315d2c3512c9dcb65add585785025c21a9af2ef6",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

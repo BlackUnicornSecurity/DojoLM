@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-55c5778a-327c-4285-b261-9c025df53bf8",
+    "certificate_id": "cal-4c964f20-a756-4b88-93d1-2eb8b4c8488b",
     "module_id": "email-webfetch",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-email-webfetch-18d4b3ff600c",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,106 +26,112 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 13,
-    "timestamp": "2026-03-27T00:36:06.629Z",
-    "signature": "ca2d0a1280e8abe7095bd49da006ff97d6e6f0528d3a4325ca878a1e7ebbc8dd712e98a18ec3210e79ede3dede843f95ab91bd27d2253f185fb5d37d53f74103"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:14.105Z",
+    "signature": "a6db8038d365bcd2b907e41c4b7e790dbe1d5efc76f67fc0ac1b8fdadb34b30b845ba9aef2ae81fe4477714d39c4b443b7294d5303ed6488f9f140f14286bd09"
   },
   "details": [
     {
-      "sample_id": "exp::email-webfetch::27",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::email-webfetch::30",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::email-webfetch::48",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::email-webfetch::143",
+      "sample_id": "exp::email-webfetch::87",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::email-webfetch::23",
+      "sample_id": "exp::email-webfetch::104",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::email-webfetch::139",
+      "sample_id": "exp::email-webfetch::92",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::email-webfetch::124",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
       "sample_id": "exp::email-webfetch::46",
       "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
+      "actual_verdict": "malicious",
+      "correct": true
     },
     {
-      "sample_id": "exp::email-webfetch::115",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::email-webfetch::56",
+      "sample_id": "exp::email-webfetch::110",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::email-webfetch::94",
+      "sample_id": "exp::email-webfetch::121",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::648",
+      "sample_id": "exp::email-webfetch::149",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::email-webfetch::107",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::email-webfetch::76",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::document-attacks::clean-doc-benign-008.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::33",
+      "sample_id": "gt::prompt-injection::clean-pi-project-planning.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::dos::dos-cost-multi-step.txt",
+      "sample_id": "gt::environmental::env-01-energy-model-comparison.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::social::clean-external.txt",
+      "sample_id": "exp::clean::575",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::32",
+      "sample_id": "gt::mcp::clean-mcp-benign-002.json",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::302",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
@@ -137,25 +143,19 @@
       "correct": true
     },
     {
-      "sample_id": "gt::social::clean-social-meeting.txt",
+      "sample_id": "exp::clean::441",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::344",
+      "sample_id": "gt::webmcp::benign-websocket-chat.fixture",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::output::out-ssrf-dns.txt",
-      "expected_verdict": "clean",
-      "actual_verdict": "clean",
-      "correct": true
-    },
-    {
-      "sample_id": "gt::supply-chain::sc-source-combo.txt",
+      "sample_id": "exp::clean::416",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

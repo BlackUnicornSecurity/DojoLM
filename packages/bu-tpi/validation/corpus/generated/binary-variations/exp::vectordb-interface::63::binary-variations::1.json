@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::63::binary-variations::1",
+  "base_sample_id": "exp::vectordb-interface::63",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 772023601,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TXXX\": {\n        \"description\": \"UserDefined\",\n        \"value\": \"{\\\"namespace\\\": \\\"../admin\\\", \\\"filter\\\": {\\\"$gt\\\": {\\\"_id\\\": \\\"\\\"}}}\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "82330d0e9be5cfed555a6e258da19ee5c896606b2164cafcce93f1e8aebd8881",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

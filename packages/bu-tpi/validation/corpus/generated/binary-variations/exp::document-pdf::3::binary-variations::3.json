@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::3::binary-variations::3",
+  "base_sample_id": "exp::document-pdf::3",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1483490207,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"FreeText\",\n      \"contents\": \"/Type /Action /S /Launch /F (cmd.exe) /P (/c calc.exe)\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "b70a594b1859758da731ca5ad94e178f9832759e0240ab2ec8a346dd92b0fa34",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

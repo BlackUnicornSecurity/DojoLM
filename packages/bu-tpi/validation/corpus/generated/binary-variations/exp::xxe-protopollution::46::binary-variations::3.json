@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::46::binary-variations::3",
+  "base_sample_id": "exp::xxe-protopollution::46",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 15312137,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"ppt/presentation.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><?xml version=\\\"1.0\\\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \\\"file:///etc/passwd\\\">]><data>&xxe;</data>\\n</field></root>\"\n  }\n}",
+  "content_hash": "6db4df73bb09f79641186fa3d910175dd0c79886c5796c5564e8798e3037913f",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

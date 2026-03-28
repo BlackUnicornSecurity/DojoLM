@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::13::structural-variations::7",
+  "base_sample_id": "exp::document-office::13",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 70118831,
+  "content": "Set objFSO\\\n=\\\nCreateObject(\"Scripting.FileSystemObject\")\nSet objFile =\\\nobjFSO.OpenTextFile(\"C:\\Windows\\win.ini\",\\\n1)\n",
+  "content_hash": "b28276942726ed46cf3fe072513124aa71862b8bf3f4d0196fc8eed5a29f792c",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:line-continuations",
+  "difficulty": "moderate"
+}

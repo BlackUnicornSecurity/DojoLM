@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::vectordb-interface::97::binary-variations::0",
+  "base_sample_id": "exp::vectordb-interface::97",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -321619267,
+  "content": "{\n  \"format\": \"audio\",\n  \"id3\": {\n    \"version\": \"2.4.0\",\n    \"frames\": {\n      \"TALB\": {\n        \"description\": \"Album\",\n        \"value\": \"DROP COLLECTION embeddings; db.admin.find({})\\n\"\n      },\n      \"TPE1\": {\n        \"description\": \"Artist\",\n        \"value\": \"Unknown Artist\"\n      }\n    }\n  }\n}",
+  "content_hash": "3845c4ff7748e6ba32518cf976ca0508797c23c9534d1c4c4e904007f92707a2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:id3",
+  "difficulty": "advanced"
+}

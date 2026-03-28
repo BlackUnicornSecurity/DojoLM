@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::63::paraphrase-variations::3",
+  "base_sample_id": "exp::email-webfetch::63",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": 184604409,
+  "content": "HELO attacker.example.com\r\nMAIL (following best practices) FROM: <admin@trusted.example.com>\r\nRCPT TO: <victim@target.example.com>\n",
+  "content_hash": "5630ef92ebe5948af57e486b2aeb5d330b9961e877fc5c33336bf75175f736af",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

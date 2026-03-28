@@ -1,7 +1,7 @@
 # KATANA Controlled Document Register
 
 **Register ID:** KATANA-REG-001
-**Generated:** 2026-03-27T00:38:20.268Z
+**Generated:** 2026-03-28T00:43:48.978Z
 **ISO 17025 Clause:** 8.3 (Control of management system documents)
 
 ## Documents

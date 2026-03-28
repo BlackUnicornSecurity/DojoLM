@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::xxe-protopollution::40::combination-variations::0",
+  "base_sample_id": "exp::xxe-protopollution::40",
+  "generator_id": "combination-variations",
+  "generator_version": "1.0.0",
+  "seed": 1843464001,
+  "content": "```json\n<?xml ve﻿rsion=\"1.​0‍\"?><!DOC‌TYPE‌ fo‌o [<!ENTITY xxe S‍YSTEM \"h‍ttp://inte‍rnal-server/d​at‍a﻿\">‍]>‌<dat﻿a‌>&xxe‍;</‌data>​\n\n```",
+  "content_hash": "b8e5fdd2670cb5d527281cc3d6b72003e74a885c2c7fd8f5975bc982f9bfcd2b",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "combination:unicode+structural",
+  "difficulty": "evasive"
+}

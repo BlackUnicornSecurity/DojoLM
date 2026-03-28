@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-900071e7-0c78-4c43-81e9-791e2cc691fa",
+    "certificate_id": "cal-2fd13780-f65f-405e-8868-094a7fc043b1",
     "module_id": "document-office",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-document-office-ce06910a3944",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,96 +26,78 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 15,
-    "timestamp": "2026-03-27T00:36:06.964Z",
-    "signature": "ad94109257f66c217ff62e969134476ee2ee2232403981012ff87a606c374bd5c335c5fc37c4ff2075f15110f1b5ce7137134b82da2a3cd263a63f6d63659b00"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:15.946Z",
+    "signature": "2a3a6d627ddad423587b7676071b4fc0f3e7d59259af88f5a387abe2dd7144897c79d6d57f89aead5ae6c16ed175fab5b31524956ffb28becbc0d400b0ef330b"
   },
   "details": [
     {
-      "sample_id": "exp::document-office::69",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-office::112",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-office::2",
+      "sample_id": "exp::document-office::61",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-office::88",
+      "sample_id": "exp::document-office::92",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-office::11",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-office::27",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-office::77",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::document-office::19",
+      "sample_id": "exp::document-office::118",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::document-office::105",
+      "sample_id": "exp::document-office::4",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::document-attacks::docx-hidden-text-inject.txt",
+      "sample_id": "exp::document-office::83",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::64",
-      "expected_verdict": "clean",
-      "actual_verdict": "clean",
+      "sample_id": "exp::document-office::106",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::encoded::clean-obfuscation-005.txt",
-      "expected_verdict": "clean",
-      "actual_verdict": "clean",
+      "sample_id": "exp::document-office::125",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::346",
-      "expected_verdict": "clean",
-      "actual_verdict": "clean",
+      "sample_id": "gt::document-attacks::docx-field-code-inject.txt",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::document-office::5",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::document-office::110",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
       "correct": true
     },
     {
@@ -125,37 +107,55 @@
       "correct": true
     },
     {
-      "sample_id": "gt::vec::clean-vec-search.txt",
+      "sample_id": "exp::clean::658",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::359",
+      "sample_id": "gt::output::out-clean-html-output.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::57",
+      "sample_id": "exp::clean::17",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::61",
+      "sample_id": "gt::document-attacks::clean-doc-benign-005.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::or::or-confidence-fake-statistic.txt",
+      "sample_id": "exp::clean::513",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::341",
+      "sample_id": "exp::clean::405",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::681",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::webmcp::benign-cors-config.fixture",
+      "expected_verdict": "clean",
+      "actual_verdict": "clean",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::clean::826",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

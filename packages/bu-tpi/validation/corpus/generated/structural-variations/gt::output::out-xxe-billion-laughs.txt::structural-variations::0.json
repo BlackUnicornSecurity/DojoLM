@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "gt::output::out-xxe-billion-laughs.txt::structural-variations::0",
+  "base_sample_id": "gt::output::out-xxe-billion-laughs.txt",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": -902332160,
+  "content": "#    Marfaak     AI    Security    -  XXE    billion  laughs DoS\n\n**WARNING:    This    payload tests XXE     billion     laughs    DoS.**\n\n<?xml  version=\"1.0\"  encoding=\"UTF-8\"?>\n<!DOCTYPE  lolz    [\n          <!ENTITY    lol     \"lol\">\n       <!ENTITY    lol2  \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n        <!ENTITY  lol3   \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n]>\n<data>&lol3;</data>",
+  "content_hash": "20e956651d3c53dfdd7b21fc73284822303a4fd826a04c842f9f64c16254cf03",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:whitespace",
+  "difficulty": "moderate"
+}

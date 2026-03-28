@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::email-webfetch::73::paraphrase-variations::3",
+  "base_sample_id": "exp::email-webfetch::73",
+  "generator_id": "paraphrase-variations",
+  "generator_version": "1.0.0",
+  "seed": -1940920800,
+  "content": "From: attacker@evil.example.com\r\nTo: victim@target.example.com\r\nBcc: (following best practices) spy@evil.example.com\r\nSubject: Important\n",
+  "content_hash": "3cea51bf437f76c7433b5521ea9a916aa0cc1733b195c1c4a1991a3ad88c282d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "paraphrase:jargon",
+  "difficulty": "moderate"
+}

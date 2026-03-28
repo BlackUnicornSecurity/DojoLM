@@ -1,28 +1,13 @@
 {
   "schema_version": "1.0.0",
   "manifest_type": "calibration",
-  "generated_at": "2026-03-27T00:36:07.002Z",
+  "generated_at": "2026-03-28T11:37:16.010Z",
   "entry_count": 20,
   "entries": [
-    {
-      "id": "gt::audio-attacks::audio-stego-exfiltration.txt",
-      "file_path": "fixtures/audio-attacks/audio-stego-exfiltration.txt",
-      "content_hash": "045ee0ee88f380321b01b2136ac03632e798ded393c63d54ae71ddc0c070a723"
-    },
     {
       "id": "gt::audio-attacks::ultrasonic-command-inject.txt",
       "file_path": "fixtures/audio-attacks/ultrasonic-command-inject.txt",
       "content_hash": "ced65a1788c39d39e558fffedf48556e0e1dd72952072740aa09b07c567996c9"
-    },
-    {
-      "id": "gt::audio-attacks::cross-modal-audio-inject.txt",
-      "file_path": "fixtures/audio-attacks/cross-modal-audio-inject.txt",
-      "content_hash": "5922263fe90070fc5653ab21ec63345928bcfba2494e1d7a0f6fc4a3dff327e0"
-    },
-    {
-      "id": "gt::audio-attacks::ultrasonic-data-exfil.txt",
-      "file_path": "fixtures/audio-attacks/ultrasonic-data-exfil.txt",
-      "content_hash": "82aae527f5a49c7543ae9a6ef745c11fbad30a4ac80267546a2bdf24c493fc59"
     },
     {
       "id": "gt::audio-attacks::ultrasonic-hidden-trigger.txt",
@@ -30,14 +15,19 @@
       "content_hash": "fc386bbe09f7ef78b54c82390790bc9840a3398c062f56e3e766bf9591b92b6e"
     },
     {
-      "id": "gt::audio-attacks::frequency-adversarial-noise.txt",
-      "file_path": "fixtures/audio-attacks/frequency-adversarial-noise.txt",
-      "content_hash": "3f501736bc21e36f988225493d30aba72e684d88cd7d4cfd7162524dd5ae7fc6"
-    },
-    {
       "id": "gt::audio-attacks::cross-modal-multimodal-embed.txt",
       "file_path": "fixtures/audio-attacks/cross-modal-multimodal-embed.txt",
       "content_hash": "46ad948b4e0aae578e2d5b29b27c41d022b9a2979183723dc4c2f1ad7a27ef3a"
+    },
+    {
+      "id": "gt::audio-attacks::audio-stego-payload.txt",
+      "file_path": "fixtures/audio-attacks/audio-stego-payload.txt",
+      "content_hash": "24be0e2ee7ae0bcf78c6a3b83045658a46687a25cc342a9481f2d47518977140"
+    },
+    {
+      "id": "gt::audio-attacks::biometric-voiceprint-forge.txt",
+      "file_path": "fixtures/audio-attacks/biometric-voiceprint-forge.txt",
+      "content_hash": "321980f42920f3940f7e55b3992812f1d3311a674a402f7b8c509f1640fe1d54"
     },
     {
       "id": "gt::audio-attacks::voice-clone-auth-bypass.txt",
@@ -45,65 +35,75 @@
       "content_hash": "cb858269919fbbe904780064957eee9498fc844d8fbf92a07fa9ecebd1f786d0"
     },
     {
-      "id": "gt::audio-attacks::dual-layer-stego-asr.txt",
-      "file_path": "fixtures/audio-attacks/dual-layer-stego-asr.txt",
-      "content_hash": "e0b7ce729a8af8102743b58404b86640c745f0dfc22fd4363ecf52dda8264d93"
+      "id": "gt::audio-attacks::spectral-poisoning.txt",
+      "file_path": "fixtures/audio-attacks/spectral-poisoning.txt",
+      "content_hash": "585884b98731efb79f8b4245e1783e517d65904bdbc93e69813ab7e251d1150c"
     },
     {
-      "id": "gt::audio-attacks::dual-layer-vocal-metadata.txt",
-      "file_path": "fixtures/audio-attacks/dual-layer-vocal-metadata.txt",
-      "content_hash": "796e7910dd095a9ad59ad99ce624d5fb56fb0b442320609942ac09fb1c92565a"
+      "id": "gt::audio-attacks::frequency-adversarial-noise.txt",
+      "file_path": "fixtures/audio-attacks/frequency-adversarial-noise.txt",
+      "content_hash": "3f501736bc21e36f988225493d30aba72e684d88cd7d4cfd7162524dd5ae7fc6"
     },
     {
-      "id": "gt::or::or-engineering-certification.txt",
-      "file_path": "fixtures/or/or-engineering-certification.txt",
-      "content_hash": "3f6f03165268669f1b299a5ef2168dcd8e0820bfe06b1f4d77ca50a4f06313e5"
+      "id": "gt::audio-attacks::asr-evasion-adversarial.txt",
+      "file_path": "fixtures/audio-attacks/asr-evasion-adversarial.txt",
+      "content_hash": "20ff5fc2418f24e9fda90e08cda13754eb412112b50197273303eb9f49fe0193"
     },
     {
-      "id": "gt::document-attacks::clean-doc-benign-001.txt",
-      "file_path": "fixtures/document-attacks/clean-doc-benign-001.txt",
-      "content_hash": "e9fccbaed3d1793423b92da810f29507198ae50e367ce0452abbc2a25ebd2ba9"
+      "id": "gt::audio-attacks::voice-clone-identity-spoof.txt",
+      "file_path": "fixtures/audio-attacks/voice-clone-identity-spoof.txt",
+      "content_hash": "8e0d974aaf0664f383fa4bb1726f4c4e8c599c76cdf0c9ede94cbe3c7c492a96"
     },
     {
-      "id": "gt::dos::dos-cost-clean.txt",
-      "file_path": "fixtures/dos/dos-cost-clean.txt",
-      "content_hash": "61eccfe58e6bd96a794d4abb520cc1ed527cbd3f4af3d809ef378e776ac40f31"
+      "id": "exp::clean::532",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::532.txt",
+      "content_hash": "d4a7837e5ef5ea50d33393da5d68fa5c7567752d2051edecf7b5525dc44f794c"
     },
     {
-      "id": "gt::encoded::clean-enc-benign-012.txt",
-      "file_path": "fixtures/encoded/clean-enc-benign-012.txt",
-      "content_hash": "bf009d3b999778af18f42d9dd987d6f293e8ae769c968f497ad8f2f92e96a14a"
+      "id": "gt::few-shot::clean-few-shot-004.json",
+      "file_path": "fixtures/few-shot/clean-few-shot-004.json",
+      "content_hash": "9910179a3fbcf5bb13fbf127fbf2ffcfb0969be6b97aa6f9b1e88bc18dca3588"
     },
     {
-      "id": "gt::dos::clean-dos-monitoring.txt",
-      "file_path": "fixtures/dos/clean-dos-monitoring.txt",
-      "content_hash": "9aa491791a0ce9a0e5789c6b16d9dffc3ca8168d928fffd9a67366764b073f63"
+      "id": "exp::clean::341",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::341.txt",
+      "content_hash": "aaf4becf3d66f4b4297d300f4498f7fa0a0d98f886ecfb272b80ffac0f1b6918"
     },
     {
-      "id": "exp::clean::866",
-      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::866.txt",
-      "content_hash": "4133a92f302981305d44abb0553f295454f24ee828e3de9b776a4c5d67708241"
+      "id": "gt::output::out-clean-log-entry.txt",
+      "file_path": "fixtures/output/out-clean-log-entry.txt",
+      "content_hash": "20ba00faa52fe5d4f396a7e58957d3020f1b1c84d71218acb8092a4d7c5c00c7"
     },
     {
-      "id": "exp::clean::801",
-      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::801.txt",
-      "content_hash": "190a9c00a71c47d3d5e3e3f85192a7850bc6f4079d61689bd2e71ffeb4e89d66"
+      "id": "gt::translation::clean-translation-002.txt",
+      "file_path": "fixtures/translation/clean-translation-002.txt",
+      "content_hash": "f6dfb37dab4bf91f2c786ae7954336a57b6999d3014a98a8e9a4b9554a842882"
     },
     {
-      "id": "exp::clean::513",
-      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::513.txt",
-      "content_hash": "a1f9dccab1658c4aef703a9eebd3084c3671bb3ceaa7eb3982a5cca6d6e08599"
+      "id": "exp::clean::907",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::907.txt",
+      "content_hash": "2a12bb49b81e6c1c3cb936449f4853f06fc2ad23395bd5f80d2fff96d70c87a1"
     },
     {
-      "id": "gt::environmental::env-02-carbon-inference-per-query.txt",
-      "file_path": "fixtures/environmental/env-02-carbon-inference-per-query.txt",
-      "content_hash": "1ac01ea04218662a823b7c80792035d821af5775f9a17b3322038c146b55969b"
+      "id": "gt::output::out-ssrf-benign.txt",
+      "file_path": "fixtures/output/out-ssrf-benign.txt",
+      "content_hash": "a09298e4fb07e33c1810e26cc49dce60297b167c6de0fd2bc3aa6729d2b4ac97"
     },
     {
-      "id": "exp::clean::328",
-      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::328.txt",
-      "content_hash": "8343c5a3595136150e96989cdff2b5d4ac780f5626ceed054b1c77a507dad83a"
+      "id": "exp::clean::839",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::839.txt",
+      "content_hash": "cb500ca95f352754614937de9c1439ed31a1855bb5d6d21b87ddad0df85d5ece"
+    },
+    {
+      "id": "exp::clean::720",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::720.txt",
+      "content_hash": "2227487b5826e487e301d5cbae2745a83934b65211f33360814fa1036c2deea4"
+    },
+    {
+      "id": "exp::clean::34",
+      "file_path": "validation/corpus/ground-truth/text/clean/exp::clean::34.txt",
+      "content_hash": "d725cfbb5f5077ae860d00bf932143f72152ad0c7255d2bdcc25981b44da3a6a"
     }
   ],
-  "hmac_signature": "e6ae956fce4cae6d88af6b616fbed854dba59d29397f06cc2687a82b7ef21900"
+  "hmac_signature": "d1dd6967ee64001b737ed54418f036759f30998939e7a7c55ecebec9a1a91659"
 }

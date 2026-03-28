@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-pdf::120::structural-variations::2",
+  "base_sample_id": "exp::document-pdf::120",
+  "generator_id": "structural-variations",
+  "generator_version": "1.0.0",
+  "seed": 269185190,
+  "content": "%PDF-1.4\n/OpenAction <!-- note --> << /S /JavaScript /JS (app.alert(\"XSS\")) >>\n",
+  "content_hash": "e6f1c1280be52873437098a60c6133c2eaa2eacf06f078e6e63055eb9ffc1b3d",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "structural:html-comments",
+  "difficulty": "moderate"
+}

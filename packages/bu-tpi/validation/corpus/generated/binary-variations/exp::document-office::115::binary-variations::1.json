@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "id": "exp::document-office::115::binary-variations::1",
+  "base_sample_id": "exp::document-office::115",
+  "generator_id": "binary-variations",
+  "generator_version": "1.0.0",
+  "seed": 1872219113,
+  "content": "{\n  \"format\": \"office\",\n  \"customXml\": {\n    \"partName\": \"word/document.xml\",\n    \"content\": \"<root><field name=\\\"custom\\\"><w:instrText>DDEAUTO c:\\\\Windows\\\\System32\\\\cmd.exe \\\"/c calc.exe\\\"</w:instrText>\\n</field></root>\"\n  }\n}",
+  "content_hash": "a3cdd1e86bb608b6bd1c86f8a0bd2c69459bc4ffe55207a8672c726bb9b626f2",
+  "content_type": "text",
+  "expected_verdict": "malicious",
+  "expected_modules": [],
+  "variation_type": "binary:office-custom-xml",
+  "difficulty": "advanced"
+}

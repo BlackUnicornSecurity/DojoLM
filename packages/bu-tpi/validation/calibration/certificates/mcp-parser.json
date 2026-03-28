@@ -1,9 +1,9 @@
 {
   "certificate": {
     "schema_version": "1.0.0",
-    "certificate_id": "cal-ffd2bbbe-c39c-4aec-b753-07e60f4e8f98",
+    "certificate_id": "cal-adf5dd86-6378-4826-9d89-5b32a9af67de",
     "module_id": "mcp-parser",
-    "tool_build_hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
+    "tool_build_hash": "unknown",
     "reference_set_version": "ref-v1-mcp-parser-97b2fa576236",
     "environment": {
       "schema_version": "1.0.0",
@@ -26,136 +26,136 @@
       "locale": "en-US",
       "timezone": "Europe/Madrid",
       "git": {
-        "hash": "ba39d3d6d7246dd944dfeb7e252a9e1bfdd2b865",
-        "dirty": true,
-        "branch": "main"
+        "hash": "unknown",
+        "dirty": false,
+        "branch": "unknown"
       },
       "package_version": "1.0.0",
-      "timestamp": "2026-03-27T00:36:02.175Z"
+      "timestamp": "2026-03-28T11:37:07.029Z"
     },
-    "result": "FAIL",
+    "result": "PASS",
     "samples_tested": 20,
-    "samples_passed": 13,
-    "timestamp": "2026-03-27T00:36:06.467Z",
-    "signature": "335c5b701c7ca66e1de0af620dbaf08e872a6dc9393b04c70d9ecd54e932653227348eed5c2e91d83583a4af610a588087f2f310c55e1e1a4a440e5cf4b87b0b"
+    "samples_passed": 20,
+    "timestamp": "2026-03-28T11:37:13.725Z",
+    "signature": "6f17dff554666999c0b252da48003a56c8bc2c0da11cad2069a2adcf02bdaaefa6cad1c59f01cc271965ee8ec10530dd81d3fec082cdc3af8ee1fa9340483707"
   },
   "details": [
     {
-      "sample_id": "exp::mcp-parser::61",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::mcp::mcp-cross-server-context.json",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::tool-manipulation::param-injection-path.fixture",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::mcp-parser::53",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::mcp-parser::100",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::mcp-parser::69",
+      "sample_id": "exp::mcp-parser::19",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::tool-manipulation::tool-bypass-001.json",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "gt::mcp::mcp-pi-prompt-template.json",
-      "expected_verdict": "malicious",
-      "actual_verdict": "clean",
-      "correct": false
-    },
-    {
-      "sample_id": "exp::mcp-parser::43",
+      "sample_id": "gt::mcp::mcp-sampling-loop-recursive.json",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "exp::mcp-parser::1",
+      "sample_id": "exp::mcp-parser::77",
       "expected_verdict": "malicious",
       "actual_verdict": "malicious",
       "correct": true
     },
     {
-      "sample_id": "gt::multimodal::clean-adversarial-002.txt",
+      "sample_id": "exp::mcp-parser::86",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::mcp-parser::96",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::mcp::mcp-sampling-loop-exfil.json",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::tool-manipulation::cross-plugin-exfil.fixture",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::tool-manipulation::function-inject-002.json",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::mcp-parser::41",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "exp::mcp-parser::71",
+      "expected_verdict": "malicious",
+      "actual_verdict": "malicious",
+      "correct": true
+    },
+    {
+      "sample_id": "gt::delivery-vectors::clean-dv-api-request.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::528",
+      "sample_id": "gt::delivery-vectors::clean-shared-document.txt",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::754",
+      "sample_id": "exp::clean::525",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::459",
+      "sample_id": "exp::clean::883",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::prompt-injection::clean-pi-creative-writing.txt",
+      "sample_id": "exp::clean::251",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::sc-tamper-benign.txt",
+      "sample_id": "exp::clean::681",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "gt::supply-chain::clean-sc-sbom.txt",
+      "sample_id": "gt::few-shot::clean-few-shot-004.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::785",
+      "sample_id": "exp::clean::331",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::125",
+      "sample_id": "gt::untrusted-sources::clean-email.json",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true
     },
     {
-      "sample_id": "exp::clean::801",
+      "sample_id": "exp::clean::585",
       "expected_verdict": "clean",
       "actual_verdict": "clean",
       "correct": true

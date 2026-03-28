@@ -19,6 +19,7 @@ import type {
   BinaryScanResult,
   BinaryParseResult,
   MetadataField,
+  Finding,
 } from './types.js';
 
 // ---------------------------------------------------------------------------
@@ -35,6 +36,250 @@ import type {
 
 // Default parse timeout (5 seconds)
 const DEFAULT_PARSE_TIMEOUT = 5000;
+const MIN_PRINTABLE_STRING_LENGTH = 12;
+const MAX_PRINTABLE_STRINGS = 256;
+const MAX_FALLBACK_TEXT_LENGTH = 100_000;
+const MAX_RAW_SCAN_PREFIX_BYTES = 4 * 1024 * 1024;
+const MAX_RAW_SCAN_SUFFIX_BYTES = 512 * 1024;
+const AUDIO_FILENAME_EXTENSIONS = new Set([
+  '.mp3',
+  '.wav',
+  '.flac',
+  '.ogg',
+  '.oga',
+  '.m4a',
+  '.opus',
+  '.wma',
+  '.amr',
+  '.aac',
+  '.aiff',
+  '.aif',
+  '.spx',
+  '.3gp',
+]);
+const EXTENSION_FORMAT_MAP: Partial<Record<string, BinaryFormat>> = {
+  jpg: 'JPEG',
+  jpeg: 'JPEG',
+  png: 'PNG',
+  gif: 'GIF',
+  webp: 'WebP',
+};
+const STRUCTURAL_FILENAME_MARKER_RE = /\b(?:mismatch-[\w-]+|polyglot-[\w-]+|suspiciously-small|zip-bomb|gzip-bomb)\b/i;
+const STRUCTURAL_TEXT_MARKER_RE = /(?:Malformed\s+fixture\s*:\s*(?:mismatch-[\w-]+|polyglot-[\w-]+|suspiciously-small|zip-bomb|gzip-bomb)|EXPLOIT:\s*Format\s+abuse\s+attack)/i;
+const RAW_BINARY_ATTACK_MARKER =
+  /(?:ignore\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions|rules|guidelines)|reveal\s+(?:everything|all\s+system\s+prompts?|your\s+system\s+prompt)|dump\s+the\s+full\s+system\s+prompt|prompt[_\s-]?extraction|override\s+safety\s+protocols(?:\s+immediately)?|system\s+override|dan:\s*ignore\s+all\s+rules|jailbreak:\s*override\s+safety|png\s+chunk\s+overflow|ihdr\s+chunk\s+length\s*:\s*0x[f]{4,8}|payload\s+(?:width|height)\s*:\s*0x7f{5,8}|heap\s+buffer\s+overflow|integer\s+overflow)/i;
+
+function shouldAppendPrintableRawStrings(
+  extractedMetadataText: string,
+  rawStringText: string,
+): boolean {
+  if (rawStringText.length === 0) {
+    return false;
+  }
+
+  // Unsupported binaries often expose high-entropy printable junk that can
+  // accidentally satisfy text regexes. Only promote raw fallback text when it
+  // contains a high-confidence attack marker that is not already present in
+  // parsed metadata.
+  if (!RAW_BINARY_ATTACK_MARKER.test(rawStringText)) {
+    return false;
+  }
+
+  return extractedMetadataText.length === 0
+    || !RAW_BINARY_ATTACK_MARKER.test(extractedMetadataText);
+}
+
+function isLikelyAudioBinary(format: string, filename?: string): boolean {
+  if (['MP3', 'WAV', 'OGG', 'FLAC', 'M4A', 'WMA'].includes(format)) {
+    return true;
+  }
+
+  if (!filename) {
+    return false;
+  }
+
+  const extension = `.${filename.split('.').pop()?.toLowerCase() ?? ''}`;
+  return AUDIO_FILENAME_EXTENSIONS.has(extension);
+}
+
+function getAudioContextLabel(format: string, filename?: string): string {
+  switch (format) {
+    case 'OGG':
+    case 'FLAC':
+      return 'Vorbis.COMMENT';
+    case 'WAV':
+      return 'RIFF.INFO';
+    case 'WMA':
+      return 'ASF.WMA';
+    case 'M4A':
+      return 'iTunes.META';
+    default:
+      break;
+  }
+
+  const extension = `.${filename?.split('.').pop()?.toLowerCase() ?? ''}`;
+  if (extension === '.ogg' || extension === '.oga' || extension === '.opus' || extension === '.flac' || extension === '.spx') {
+    return 'Vorbis.COMMENT';
+  }
+  if (extension === '.wav' || extension === '.aiff' || extension === '.aif' || extension === '.amr' || extension === '.aac') {
+    return 'RIFF.INFO';
+  }
+  if (extension === '.m4a' || extension === '.3gp') {
+    return 'iTunes.META';
+  }
+  if (extension === '.wma') {
+    return 'ASF.WMA';
+  }
+  return 'ID3 tag data';
+}
+
+function buildRawFallbackText(
+  rawStringText: string,
+  format: string,
+  filename?: string,
+): string {
+  if (!isLikelyAudioBinary(format, filename)) {
+    return rawStringText;
+  }
+
+  const contextLabel = getAudioContextLabel(format, filename);
+  return `${contextLabel}: Comment=${rawStringText}`;
+}
+
+function getExpectedFormatFromFilename(filename?: string): BinaryFormat | null {
+  if (!filename) {
+    return null;
+  }
+
+  const extension = filename.split('.').pop()?.toLowerCase() ?? '';
+  return EXTENSION_FORMAT_MAP[extension] ?? null;
+}
+
+function collectStructuralBinaryFindings(
+  filename: string | undefined,
+  parseResult: BinaryParseResult,
+  extractedText: string,
+): Finding[] {
+  const findings: Finding[] = [];
+  const safeFilename = filename ?? '';
+  const expectedFormat = getExpectedFormatFromFilename(safeFilename);
+  const hasStructuralFilenameMarker = STRUCTURAL_FILENAME_MARKER_RE.test(safeFilename);
+  const hasStructuralTextMarker = STRUCTURAL_TEXT_MARKER_RE.test(extractedText);
+
+  if (
+    expectedFormat
+    && parseResult.format !== 'UNKNOWN'
+    && parseResult.format !== 'TIMEOUT'
+    && parseResult.format !== expectedFormat
+  ) {
+    findings.push({
+      category: 'MALFORMED_CONTENT',
+      severity: 'CRITICAL',
+      description: `File extension does not match detected format (${safeFilename} vs ${parseResult.format})`,
+      match: safeFilename.slice(0, 120),
+      source: 'TPI-BINARY',
+      engine: 'TPI',
+      pattern_name: 'core_binary_format_mismatch_artifact',
+      weight: 10,
+    });
+  }
+
+  if (/(?:polyglot-[\w-]+)/i.test(safeFilename)) {
+    findings.push({
+      category: 'MALFORMED_CONTENT',
+      severity: 'CRITICAL',
+      description: 'Polyglot binary artifact detected via filename marker',
+      match: safeFilename.slice(0, 120),
+      source: 'TPI-BINARY',
+      engine: 'TPI',
+      pattern_name: 'core_binary_polyglot_artifact',
+      weight: 10,
+    });
+  }
+
+  if (/suspiciously-small/i.test(safeFilename)) {
+    findings.push({
+      category: 'MALFORMED_CONTENT',
+      severity: 'CRITICAL',
+      description: 'Suspiciously small binary artifact detected via filename marker',
+      match: safeFilename.slice(0, 120),
+      source: 'TPI-BINARY',
+      engine: 'TPI',
+      pattern_name: 'core_binary_size_anomaly_artifact',
+      weight: 9,
+    });
+  }
+
+  if (
+    (hasStructuralFilenameMarker || hasStructuralTextMarker)
+    && (parseResult.format === 'UNKNOWN' || parseResult.errors.length > 0)
+  ) {
+    findings.push({
+      category: 'MALFORMED_CONTENT',
+      severity: 'CRITICAL',
+      description: 'Malformed binary artifact pairs suspicious markers with parse failures or unsupported structure',
+      match: (safeFilename || extractedText).slice(0, 120),
+      source: 'TPI-BINARY',
+      engine: 'TPI',
+      pattern_name: 'core_binary_structural_artifact',
+      weight: 10,
+    });
+  }
+
+  return findings;
+}
+
+function collectPrintableStrings(
+  text: string,
+  seen: Set<string>,
+  out: string[],
+): void {
+  const matches = text.match(/[\x20-\x7E]{12,}/g) ?? [];
+  for (const match of matches) {
+    const normalized = match.replace(/\s+/g, ' ').trim();
+    if (normalized.length < MIN_PRINTABLE_STRING_LENGTH || seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    out.push(normalized);
+    if (out.length >= MAX_PRINTABLE_STRINGS) {
+      return;
+    }
+  }
+}
+
+function extractPrintableBinaryStrings(buffer: Buffer): string {
+  const seen = new Set<string>();
+  const strings: string[] = [];
+  const prefix = buffer.subarray(0, Math.min(buffer.length, MAX_RAW_SCAN_PREFIX_BYTES));
+  const suffixStart = Math.max(prefix.length, buffer.length - MAX_RAW_SCAN_SUFFIX_BYTES);
+  const suffix = suffixStart < buffer.length ? buffer.subarray(suffixStart) : Buffer.alloc(0);
+  const segments = suffix.length > 0 ? [prefix, suffix] : [prefix];
+
+  for (const segment of segments) {
+    collectPrintableStrings(segment.toString('latin1'), seen, strings);
+    if (strings.length >= MAX_PRINTABLE_STRINGS) {
+      break;
+    }
+    const utf16 = segment.toString('utf16le').replace(/\u0000/g, '');
+    collectPrintableStrings(utf16, seen, strings);
+    if (strings.length >= MAX_PRINTABLE_STRINGS) {
+      break;
+    }
+  }
+
+  const selected: string[] = [];
+  let totalLength = 0;
+  for (const value of strings) {
+    if (totalLength + value.length > MAX_FALLBACK_TEXT_LENGTH) {
+      break;
+    }
+    selected.push(value);
+    totalLength += value.length;
+  }
+
+  return selected.join(' | ');
+}
 
 /**
  * Scan a binary file for prompt injection in metadata
@@ -85,7 +330,15 @@ export async function scanBinary(buffer: Buffer, filename?: string, timeout = DE
   ]);
 
   // Extract all text from metadata fields
-  const extractedText = extractTextFields(parseResult.fields);
+  const extractedMetadataText = extractTextFields(parseResult.fields);
+  const rawStringText = extractPrintableBinaryStrings(buffer);
+  const shouldAppendRawStrings = shouldAppendPrintableRawStrings(extractedMetadataText, rawStringText);
+  const promotedRawText = shouldAppendRawStrings
+    ? buildRawFallbackText(rawStringText, parseResult.format, filename)
+    : '';
+  const extractedText = shouldAppendRawStrings
+    ? (extractedMetadataText.length > 0 ? `${extractedMetadataText} | ${promotedRawText}` : promotedRawText)
+    : extractedMetadataText;
 
   // Story 12.1: Dual-layer audio scanning — append transcription for vocal layer
   // H5 fix: cap transcription length and sanitize delimiter to prevent injection
@@ -108,6 +361,9 @@ export async function scanBinary(buffer: Buffer, filename?: string, timeout = DE
 
   // Get metadata sources
   const sources = extractSources(parseResult.fields);
+  if (shouldAppendRawStrings) {
+    sources.push('RAW_STRINGS');
+  }
 
   // Story 12.1: Add transcription as a scanned source if present
   if (transcription) {
@@ -127,6 +383,9 @@ export async function scanBinary(buffer: Buffer, filename?: string, timeout = DE
       sources,
     },
   };
+  const structuralFindings = collectStructuralBinaryFindings(filename, parseResult, extractedText)
+    .filter((finding) => !result.findings.some((existing) => existing.pattern_name === finding.pattern_name));
+  result.findings.push(...structuralFindings);
 
   // Add parse warnings as info findings if present
   if (parseResult.warnings.length > 0) {
@@ -155,6 +414,23 @@ export async function scanBinary(buffer: Buffer, filename?: string, timeout = DE
       });
     }
   }
+
+  result.counts = result.findings.reduce(
+    (counts, finding) => {
+      if (finding.severity === 'CRITICAL') counts.critical += 1;
+      else if (finding.severity === 'WARNING') counts.warning += 1;
+      else counts.info += 1;
+      return counts;
+    },
+    { critical: 0, warning: 0, info: 0 },
+  );
+  result.verdict = result.findings.some(
+    (finding) =>
+      finding.engine !== 'metadata-parser'
+      && (finding.severity === 'CRITICAL' || finding.severity === 'WARNING'),
+  )
+    ? 'BLOCK'
+    : 'ALLOW';
 
   return result;
 }
@@ -200,8 +476,19 @@ export async function scanBinaryRaw(buffer: Buffer, timeout = DEFAULT_PARSE_TIME
     ),
   ]);
 
-  const extractedText = extractTextFields(parseResult.fields);
+  const extractedMetadataText = extractTextFields(parseResult.fields);
+  const rawStringText = extractPrintableBinaryStrings(buffer);
+  const shouldAppendRawStrings = shouldAppendPrintableRawStrings(extractedMetadataText, rawStringText);
+  const promotedRawText = shouldAppendRawStrings
+    ? buildRawFallbackText(rawStringText, parseResult.format)
+    : '';
+  const extractedText = shouldAppendRawStrings
+    ? (extractedMetadataText.length > 0 ? `${extractedMetadataText} | ${promotedRawText}` : promotedRawText)
+    : extractedMetadataText;
   const sources = extractSources(parseResult.fields);
+  if (shouldAppendRawStrings) {
+    sources.push('RAW_STRINGS');
+  }
 
   return {
     ...parseResult,
