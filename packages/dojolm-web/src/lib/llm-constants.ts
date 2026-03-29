@@ -391,6 +391,31 @@ export function getConcurrentLimit(): number {
 }
 
 /**
+ * Per-host concurrency limit for GPU inference hosts.
+ * Prevents GPU queue cascade timeouts when multiple models share one host.
+ * - GPU hosts (Ollama, LM Studio, llama.cpp): default 1 (serialize inference)
+ * - Cloud API hosts: default 5 (parallel HTTP)
+ * Configurable via LLM_PER_HOST_LIMIT env var (1-20).
+ */
+export const DEFAULT_PER_HOST_GPU_LIMIT = 1;
+export const DEFAULT_PER_HOST_CLOUD_LIMIT = 5;
+
+export function getPerHostLimit(isLocalGpu: boolean): number {
+  if (typeof window !== 'undefined') return isLocalGpu ? DEFAULT_PER_HOST_GPU_LIMIT : DEFAULT_PER_HOST_CLOUD_LIMIT;
+  const envVal = process.env.LLM_PER_HOST_LIMIT;
+  if (envVal) {
+    const parsed = parseInt(envVal, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 20) return parsed;
+  }
+  return isLocalGpu ? DEFAULT_PER_HOST_GPU_LIMIT : DEFAULT_PER_HOST_CLOUD_LIMIT;
+}
+
+/** Providers that run on local GPU inference (single-GPU serialization). */
+export const LOCAL_GPU_PROVIDERS: readonly LLMProvider[] = [
+  'ollama', 'lmstudio', 'llamacpp',
+] as const;
+
+/**
  * Maximum batch size (configurable via LLM_MAX_BATCH_SIZE env var, default 10000, range 1-50000).
  */
 export function getMaxBatchSize(): number {

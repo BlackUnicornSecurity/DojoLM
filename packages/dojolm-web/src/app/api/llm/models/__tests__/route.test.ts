@@ -129,6 +129,7 @@ describe('API /api/llm/models', () => {
           provider: 'openai',
           model: 'gpt-4-turbo',
           apiKey: 'sk-test-key',
+          requestTimeout: 60000,
         }),
       });
 
@@ -137,6 +138,7 @@ describe('API /api/llm/models', () => {
 
       const body = await res.json();
       expect(body.model).toHaveProperty('name', 'New Model');
+      expect(body.model).toHaveProperty('requestTimeout', 60000);
       // API key must be redacted from response
       expect(body.model).not.toHaveProperty('apiKey');
     });
@@ -173,12 +175,10 @@ describe('API /api/llm/models', () => {
       });
 
       const res = await POST(req);
-      expect(res.status).toBe(201);
-
-      // Verify the saved config has sanitized name
-      const savedCall = vi.mocked(mockStorage.saveModelConfig).mock.calls[0][0];
-      expect(savedCall.name).not.toContain('<script>');
-      expect(savedCall.name).toBe('alert(1)Model');
+      // SEC-002: HTML tags are now rejected, not silently stripped
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.error).toContain('must not contain HTML tags');
     });
 
     // API-L-003c: Reject null JSON body (BUG-035)
@@ -251,6 +251,7 @@ describe('API /api/llm/models', () => {
           id: 'model-1',
           name: 'Updated Name',
           enabled: false,
+          requestTimeout: 90000,
         }),
       });
 
@@ -259,6 +260,7 @@ describe('API /api/llm/models', () => {
 
       const body = await res.json();
       expect(body.model).not.toHaveProperty('apiKey');
+      expect(body.model).toHaveProperty('requestTimeout', 90000);
     });
 
     // API-L-005b: PATCH rejects non-existent model

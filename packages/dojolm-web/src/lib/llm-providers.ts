@@ -134,6 +134,63 @@ export async function getRegisteredProviders(): Promise<LLMProvider[]> {
 }
 
 // ===========================================================================
+// SSRF Protection
+// ===========================================================================
+
+/**
+ * Blocked IP ranges for SSRF prevention (SEC-001).
+ * Covers cloud metadata services, loopback, and link-local addresses.
+ */
+const SSRF_BLOCKED_HOSTNAMES = [
+  'metadata.google.internal',
+  'metadata.google.com',
+] as const;
+
+function isBlockedSsrfTarget(urlStr: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(urlStr);
+  } catch {
+    return 'Invalid URL format';
+  }
+
+  const hostname = parsed.hostname;
+
+  // Block cloud metadata IPs (AWS, Azure, GCP, Alibaba, Oracle)
+  const blockedIpPrefixes = [
+    '169.254.169.254',  // AWS / Azure / GCP metadata
+    '100.100.100.200',  // Alibaba Cloud metadata
+    '192.0.0.192',      // Oracle Cloud metadata
+    '127.',             // Loopback
+    '0.0.0.0',          // Unspecified
+    '0.',               // Zero-prefix
+  ];
+
+  for (const prefix of blockedIpPrefixes) {
+    if (hostname.startsWith(prefix)) {
+      return `Blocked SSRF target: ${hostname} (cloud metadata / loopback)`;
+    }
+  }
+
+  // Block IPv6 loopback and link-local
+  if (hostname === '[::1]' || hostname === '::1') {
+    return 'Blocked SSRF target: IPv6 loopback';
+  }
+  if (hostname.startsWith('[fe80:') || hostname.startsWith('[fd00:') || hostname.startsWith('fe80:') || hostname.startsWith('fd00:')) {
+    return 'Blocked SSRF target: IPv6 link-local / unique-local';
+  }
+
+  // Block known metadata hostnames
+  for (const blocked of SSRF_BLOCKED_HOSTNAMES) {
+    if (hostname === blocked) {
+      return `Blocked SSRF target: ${hostname}`;
+    }
+  }
+
+  return null; // Safe
+}
+
+// ===========================================================================
 // Config Validation
 // ===========================================================================
 
@@ -165,6 +222,14 @@ export async function validateModelConfig(
     errors.push('Model identifier is required');
   }
 
+  // SEC-001: SSRF validation for baseUrl
+  if (config.baseUrl) {
+    const ssrfError = isBlockedSsrfTarget(config.baseUrl);
+    if (ssrfError) {
+      errors.push(ssrfError);
+    }
+  }
+
   // Provider-specific validation
   if (config.provider && errors.length === 0) {
     try {
@@ -186,6 +251,14 @@ export async function validateModelConfig(
   if (config.topP !== undefined) {
     if (config.topP < 0 || config.topP > 1) {
       errors.push('Top-p must be between 0 and 1');
+    }
+  }
+
+  if (config.requestTimeout !== undefined) {
+    if (!Number.isFinite(config.requestTimeout) || !Number.isInteger(config.requestTimeout)) {
+      errors.push('Request timeout must be an integer number of milliseconds');
+    } else if (config.requestTimeout < 1000 || config.requestTimeout > 600000) {
+      errors.push('Request timeout must be between 1000 and 600000 ms');
     }
   }
 

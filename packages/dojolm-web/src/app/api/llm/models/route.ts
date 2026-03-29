@@ -16,6 +16,9 @@ import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
 
+/** Detect HTML/script tags in user input (SEC-002). */
+const HTML_TAG_PATTERN = /<[^>]*>/;
+
 /**
  * Strip HTML tags and control characters from user-supplied strings.
  * Defense-in-depth against stored XSS (BUG-033).
@@ -26,6 +29,23 @@ function sanitizeString(value: unknown): string {
     .replace(/<[^>]*>/g, '')       // strip HTML tags
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // strip control chars (preserve \t \n \r)
     .trim();
+}
+
+/**
+ * Reject if raw input contains HTML tags (SEC-002).
+ * Returns an error string if HTML is detected, null otherwise.
+ */
+function rejectHtmlTags(fields: Record<string, unknown>): string | null {
+  for (const [key, value] of Object.entries(fields)) {
+    if (typeof value === 'string' && HTML_TAG_PATTERN.test(value)) {
+      return `Field "${key}" must not contain HTML tags`;
+    }
+  }
+  return null;
+}
+
+function toOptionalNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
 function toSafeModelResponse(model: LLMModelConfig) {
@@ -107,7 +127,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Sanitize string inputs (BUG-033: prevent stored XSS)
+    // SEC-002: Reject HTML tags in string fields (block, don't just strip)
+    const htmlError = rejectHtmlTags({ name, provider, model, ...(baseUrl ? { baseUrl } : {}) });
+    if (htmlError) {
+      return NextResponse.json({ error: htmlError }, { status: 400 });
+    }
+
+    // Sanitize string inputs (BUG-033: defense-in-depth, strip remnants)
     const safeName = sanitizeString(name);
     const safeProvider = sanitizeString(provider);
     const safeModel = sanitizeString(model);
@@ -142,12 +168,13 @@ export async function POST(request: NextRequest) {
       apiKey: apiKey as string | undefined,
       baseUrl: safeBaseUrl,
       enabled: (body.enabled as boolean) ?? true,
-      maxTokens: body.maxTokens as number | undefined,
+      maxTokens: toOptionalNumber(body.maxTokens),
       organizationId: body.organizationId as string | undefined,
       projectId: body.projectId as string | undefined,
       customHeaders: body.customHeaders as Record<string, string> | undefined,
-      temperature: body.temperature as number | undefined,
-      topP: body.topP as number | undefined,
+      temperature: toOptionalNumber(body.temperature),
+      topP: toOptionalNumber(body.topP),
+      requestTimeout: toOptionalNumber(body.requestTimeout),
       createdAt: now,
       updatedAt: now,
     };
@@ -254,12 +281,25 @@ export async function PATCH(request: NextRequest) {
     }
 
     // H-01: Apply PATCHABLE whitelist to prevent mass assignment (match [id]/route.ts pattern)
-    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model', 'safetyRisk', 'requiresGuard'] as const;
+    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model', 'requestTimeout', 'safetyRisk', 'requiresGuard'] as const;
     const STRING_FIELDS = new Set(['name', 'description', 'baseUrl', 'model']);
+
+    // SEC-002: Reject HTML tags in string fields
+    const stringPatch: Record<string, unknown> = {};
+    for (const key of PATCHABLE) {
+      if (key in body && STRING_FIELDS.has(key)) {
+        stringPatch[key] = body[key];
+      }
+    }
+    const htmlError = rejectHtmlTags(stringPatch);
+    if (htmlError) {
+      return NextResponse.json({ error: htmlError }, { status: 400 });
+    }
+
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {
       if (key in body) {
-        // BUG-033: Sanitize string fields to prevent stored XSS
+        // BUG-033: Sanitize string fields (defense-in-depth)
         patch[key] = STRING_FIELDS.has(key) ? sanitizeString(body[key]) : body[key];
       }
     }

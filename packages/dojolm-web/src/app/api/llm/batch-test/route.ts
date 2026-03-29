@@ -7,20 +7,50 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { getStorage } from '@/lib/storage/storage-interface';
-import { executeSingleTest } from '@/lib/llm-execution';
-import { getConcurrentLimit, getMaxBatchSize } from '@/lib/llm-constants';
+import { executeSingleTestWithRetry } from '@/lib/llm-execution';
+import { getConcurrentLimit, getMaxBatchSize, getPerHostLimit, LOCAL_GPU_PROVIDERS } from '@/lib/llm-constants';
+import type { LLMModelConfig } from '@/lib/llm-types';
 import { checkApiAuth } from '@/lib/api-auth';
 
 const MAX_CONCURRENT_BATCHES = 3;
 
-// Track running batches
+// Track running batches (in-memory, reconciled against storage)
 const runningBatches = new Set<string>();
+
+/**
+ * BUG-001/002: Reconcile in-memory batch set against storage.
+ * Removes stale entries (cancelled/completed in storage but still in-memory).
+ */
+async function reconcileRunningBatches(storage: Awaited<ReturnType<typeof getStorage>>): Promise<void> {
+  if (runningBatches.size === 0) return;
+  const staleIds: string[] = [];
+  for (const id of runningBatches) {
+    try {
+      const { batches } = await storage.queryBatches({});
+      const batch = batches.find(b => b.id === id);
+      if (!batch || batch.status === 'completed' || batch.status === 'failed' || batch.status === 'cancelled') {
+        staleIds.push(id);
+      }
+    } catch {
+      // If storage query fails, keep the entry (safe default)
+    }
+  }
+  for (const id of staleIds) {
+    runningBatches.delete(id);
+  }
+}
 
 export async function POST(request: NextRequest) {
   const authError = checkApiAuth(request);
   if (authError) return authError;
 
   try {
+    // BUG-001/002: Reconcile in-memory state before checking limit
+    const storageForReconcile = await getStorage();
+    // P2: On first request after restart, recover orphaned batches
+    await recoverOrphanedBatches(storageForReconcile);
+    await reconcileRunningBatches(storageForReconcile);
+
     if (runningBatches.size >= MAX_CONCURRENT_BATCHES) {
       return NextResponse.json(
         { error: `Max ${MAX_CONCURRENT_BATCHES} concurrent batches allowed.` },
@@ -117,6 +147,78 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// ===========================================================================
+// Per-host concurrency tracking
+// ===========================================================================
+
+/** Extract host identifier from a model config's baseUrl. */
+function getHostKey(config: LLMModelConfig): string {
+  if (!config.baseUrl) return `provider:${config.provider}`;
+  try {
+    const url = new URL(config.baseUrl);
+    return url.host; // e.g. "192.168.70.102:11434"
+  } catch {
+    return `provider:${config.provider}`;
+  }
+}
+
+/** Per-host in-flight counters for GPU backpressure. */
+const hostInflight = new Map<string, number>();
+
+function acquireHostSlot(hostKey: string, limit: number): boolean {
+  const current = hostInflight.get(hostKey) ?? 0;
+  if (current >= limit) return false;
+  hostInflight.set(hostKey, current + 1);
+  return true;
+}
+
+function releaseHostSlot(hostKey: string): void {
+  const current = hostInflight.get(hostKey) ?? 1;
+  if (current <= 1) {
+    hostInflight.delete(hostKey);
+  } else {
+    hostInflight.set(hostKey, current - 1);
+  }
+}
+
+// ===========================================================================
+// P1: Interleaved round-robin task ordering
+// ===========================================================================
+
+interface BatchTask { config: LLMModelConfig; testCase: any; hostKey: string }
+
+/**
+ * Build task list interleaved across models (round-robin).
+ * Instead of [A1,A2,...A132, B1,B2,...B132], produces [A1,B1,C1, A2,B2,C2, ...].
+ * This lets all models start within the first few seconds.
+ */
+function buildInterleavedTasks(
+  configs: LLMModelConfig[],
+  testCases: any[],
+): BatchTask[] {
+  // Group test cases per model
+  const perModel: BatchTask[][] = configs.map(config => {
+    const hostKey = getHostKey(config);
+    return testCases.map(tc => ({ config, testCase: tc, hostKey }));
+  });
+
+  // Round-robin interleave
+  const tasks: BatchTask[] = [];
+  const maxLen = Math.max(...perModel.map(m => m.length), 0);
+  for (let i = 0; i < maxLen; i++) {
+    for (const modelTasks of perModel) {
+      if (i < modelTasks.length) {
+        tasks.push(modelTasks[i]);
+      }
+    }
+  }
+  return tasks;
+}
+
+// ===========================================================================
+// Batch executor
+// ===========================================================================
+
 async function executeBatchInBackground(
   batchId: string,
   modelIds: string[],
@@ -130,26 +232,49 @@ async function executeBatchInBackground(
 
   try {
     // Load all configs and test cases
-    const configs = await Promise.all(modelIds.map(id => storage.getModelConfig(id)));
+    const rawConfigs = await Promise.all(modelIds.map(id => storage.getModelConfig(id)));
     const testCases = await Promise.all(testCaseIds.map(id => storage.getTestCase(id)));
+    const configs = rawConfigs.filter((c): c is LLMModelConfig => c !== null);
+    const validTestCases = testCases.filter((tc): tc is NonNullable<typeof tc> => tc !== null);
 
-    // Build test matrix
-    const tasks: Array<{ config: any; testCase: any }> = [];
+    // P1: Build interleaved (round-robin) task list
+    const tasks = buildInterleavedTasks(configs, validTestCases);
+
+    // Determine per-host limits
+    const hostLimits = new Map<string, number>();
     for (const config of configs) {
-      if (!config) continue;
-      for (const testCase of testCases) {
-        if (!testCase) continue;
-        tasks.push({ config, testCase });
+      const hostKey = getHostKey(config);
+      if (!hostLimits.has(hostKey)) {
+        const isGpu = (LOCAL_GPU_PROVIDERS as readonly string[]).includes(config.provider);
+        hostLimits.set(hostKey, getPerHostLimit(isGpu));
       }
     }
 
-    // Execute with concurrency cap
+    // Execute with global + per-host concurrency caps
     const executing = new Set<Promise<void>>();
+    const BATCH_MAX_TOKENS = 512;
+    const globalLimit = getConcurrentLimit();
 
     for (const task of tasks) {
+      // Wait for a global slot
+      while (executing.size >= globalLimit) {
+        await Promise.race(executing);
+      }
+
+      // Wait for a per-host slot
+      const hostLimit = hostLimits.get(task.hostKey) ?? 1;
+      while (!acquireHostSlot(task.hostKey, hostLimit)) {
+        // No host slot available — wait for any executing task to finish
+        await Promise.race(executing);
+      }
+
       const p = (async () => {
         try {
-          const execution = await executeSingleTest(task.config, task.testCase);
+          const cappedConfig = {
+            ...task.config,
+            maxTokens: Math.min(task.config.maxTokens || 4096, BATCH_MAX_TOKENS),
+          };
+          const execution = await executeSingleTestWithRetry(cappedConfig, task.testCase);
           await storage.saveExecution(execution);
           executionIds.push(execution.id);
           completedTests++;
@@ -157,6 +282,8 @@ async function executeBatchInBackground(
         } catch {
           failedTests++;
           completedTests++;
+        } finally {
+          releaseHostSlot(task.hostKey);
         }
 
         // Update batch progress
@@ -171,10 +298,6 @@ async function executeBatchInBackground(
 
       executing.add(p);
       p.finally(() => executing.delete(p));
-
-      if (executing.size >= getConcurrentLimit()) {
-        await Promise.race(executing);
-      }
     }
 
     await Promise.all(executing);
@@ -195,5 +318,38 @@ async function executeBatchInBackground(
     });
   } finally {
     runningBatches.delete(batchId);
+  }
+}
+
+// ===========================================================================
+// P2: Startup recovery for orphaned batches
+// ===========================================================================
+
+let startupRecoveryDone = false;
+
+/**
+ * On first request after container restart, find batches stuck in 'running'
+ * state (orphaned by previous container) and mark them as 'interrupted'.
+ */
+async function recoverOrphanedBatches(storage: Awaited<ReturnType<typeof getStorage>>): Promise<void> {
+  if (startupRecoveryDone) return;
+  startupRecoveryDone = true;
+
+  try {
+    const { batches } = await storage.queryBatches({});
+    const orphaned = batches.filter(
+      b => b.status === 'running' && !runningBatches.has(b.id)
+    );
+    for (const batch of orphaned) {
+      await storage.updateBatch(batch.id, {
+        status: 'failed',
+        error: 'Interrupted: container restarted while batch was running',
+      });
+    }
+    if (orphaned.length > 0) {
+      console.log(`[batch-recovery] Marked ${orphaned.length} orphaned batch(es) as failed`);
+    }
+  } catch (err) {
+    console.error('[batch-recovery] Failed to recover orphaned batches:', err);
   }
 }
