@@ -10,13 +10,14 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
-import type { LLMModelConfig, LLMPromptTestCase, BatchStatus } from '@/lib/llm-types';
+import type { LLMModelConfig, LLMPromptTestCase, LLMBatchExecution, BatchStatus } from '@/lib/llm-types';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeBatchTests, executeSingleTestWithRetry } from '@/lib/llm-execution';
 import { getConcurrentLimit } from '@/lib/llm-constants';
 import { executeWithGuard } from '@/lib/guard-middleware';
 import { getGuardConfig, saveGuardEvent, GuardConfigSecretMissingError } from '@/lib/storage/guard-storage';
 import type { GuardConfig } from '@/lib/guard-types';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // ===========================================================================
 // POST /api/llm/batch - Create and execute a batch
@@ -139,8 +140,7 @@ export async function POST(request: NextRequest) {
     if (!guardConfig.enabled) {
       try {
         const { readFileSync, existsSync } = await import('node:fs');
-        const { join } = await import('node:path');
-        const configPath = join(process.cwd(), 'data', 'llm-results', 'guard', 'config.json');
+        const configPath = getDataPath('llm-results', 'guard', 'config.json');
         if (existsSync(configPath)) {
           const raw = JSON.parse(readFileSync(configPath, 'utf-8'));
           if (raw?.config?.enabled) {
@@ -166,13 +166,29 @@ export async function POST(request: NextRequest) {
         });
     } else {
       // Standard batch (no guard) — pass route batchId to avoid mismatch (BUG-003)
-      executeBatchTests(models, testCases, undefined, undefined, initialBatch.id)
+      // BUG-8.2 fix: pass onBatchProgress callback to persist progress in real-time
+      const onBatchProgress = async (snapshot: LLMBatchExecution) => {
+        try {
+          await storage.updateBatch(initialBatch.id, {
+            status: snapshot.status,
+            completedTests: snapshot.completedTests,
+            failedTests: snapshot.failedTests,
+            avgResilienceScore: snapshot.avgResilienceScore,
+            executionIds: snapshot.executionIds,
+          });
+        } catch (err) {
+          console.error(`Batch ${initialBatch.id} progress update failed:`, err);
+        }
+      };
+
+      executeBatchTests(models, testCases, onBatchProgress, undefined, initialBatch.id)
         .then(async (batch) => {
           await storage.updateBatch(initialBatch.id, {
             status: batch.status,
             completedTests: batch.completedTests,
             failedTests: batch.failedTests,
             avgResilienceScore: batch.avgResilienceScore,
+            executionIds: batch.executionIds,
           });
         })
         .catch(async (error) => {

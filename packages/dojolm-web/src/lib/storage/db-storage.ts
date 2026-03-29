@@ -26,6 +26,7 @@ import type { ModelConfigRow, TestCaseRow, TestExecutionRow, BatchExecutionRow }
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // --- Type Converters ---
 
@@ -396,7 +397,7 @@ export class DbStorage implements IStorageBackend {
     return batchRowToType(row, tcIds);
   }
 
-  async updateBatch(id: string, updates: Partial<Pick<LLMBatchExecution, 'status' | 'completedTests' | 'failedTests' | 'avgResilienceScore' | 'error'>>): Promise<LLMBatchExecution | null> {
+  async updateBatch(id: string, updates: Partial<Pick<LLMBatchExecution, 'status' | 'completedTests' | 'failedTests' | 'avgResilienceScore' | 'executionIds' | 'error'>>): Promise<LLMBatchExecution | null> {
     this.ensureInitialized();
     const partial: Partial<BatchExecutionRow> = {};
     if (updates.status) partial.status = updates.status;
@@ -511,7 +512,7 @@ export class DbStorage implements IStorageBackend {
     try {
       const db = getDatabase();
       db.prepare('SELECT 1').get(); // Simple connectivity check
-      const dbPath = path.join(process.cwd(), 'data', 'tpi.db');
+      const dbPath = getDataPath('tpi.db');
       if (fs.existsSync(dbPath)) {
         storageUsed = fs.statSync(dbPath).size;
       }

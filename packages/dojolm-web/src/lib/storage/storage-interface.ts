@@ -139,6 +139,7 @@ export interface IStorageBackend {
       | 'completedTests'
       | 'failedTests'
       | 'avgResilienceScore'
+      | 'executionIds'
       | 'error'
     >>
   ): Promise<LLMBatchExecution | null>;
@@ -373,8 +374,17 @@ export async function getStorage(): Promise<IStorageBackend> {
 
   const backendType = getStorageBackendType();
   if (backendType === 'db') {
-    const { dbStorage } = await import('./db-storage');
-    _cachedStorage = dbStorage;
+    try {
+      const { dbStorage } = await import('./db-storage');
+      _cachedStorage = dbStorage;
+    } catch (error) {
+      console.warn(
+        '[storage] Failed to initialize db backend, falling back to json storage:',
+        error instanceof Error ? error.message : error
+      );
+      const { fileStorage } = await import('./file-storage');
+      _cachedStorage = fileStorage;
+    }
   } else {
     const { fileStorage } = await import('./file-storage');
     _cachedStorage = fileStorage;

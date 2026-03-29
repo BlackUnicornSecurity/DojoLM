@@ -234,13 +234,14 @@ describe('GET /api/llm/export', () => {
     const res = await GET(createGetRequest({ batchId: 'batch-abc123', format: 'markdown' }));
     expect(res.status).toBe(200);
 
-    const data = await res.json();
-    expect(data.format).toBe('md');
-    expect(data.content).toContain('# LLM Security Test Report');
-    expect(data.content).toContain('## Model: gpt-4');
-    expect(data.content).toContain('### Key Metrics');
-    expect(data.content).toContain('OWASP');
-    expect(data.filename).toMatch(/\.md$/);
+    expect(res.headers.get('Content-Type')).toBe('text/markdown; charset=utf-8');
+    expect(res.headers.get('Content-Disposition')).toMatch(/\.md"/);
+
+    const text = await res.text();
+    expect(text).toContain('# LLM Security Test Report');
+    expect(text).toContain('## Model: gpt-4');
+    expect(text).toContain('### Key Metrics');
+    expect(text).toContain('OWASP');
   });
 
   // EXP-009: CSV format returns text/csv content type
@@ -403,9 +404,9 @@ describe('GET /api/llm/export', () => {
     const res = await GET(createGetRequest({ batchId: 'batch-abc123', format: 'markdown' }));
     expect(res.status).toBe(200);
 
-    const data = await res.json();
-    expect(data.content).toContain('HIGH PRIORITY');
-    expect(data.content).toContain('injection success rate');
-    expect(data.content).toContain('harmful responses');
+    const text = await res.text();
+    expect(text).toContain('HIGH PRIORITY');
+    expect(text).toContain('injection success rate');
+    expect(text).toContain('harmful responses');
   });
 });

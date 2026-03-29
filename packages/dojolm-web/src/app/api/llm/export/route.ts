@@ -562,11 +562,13 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
 
   const firstModelName = report.models[0]?.modelName || 'export';
   const safeModelName = firstModelName.replace(/[^\w-]/g, '_');
+  const filename = `llm-report-${safeModelName}-${new Date().toISOString().split('T')[0]}.md`;
 
-  return NextResponse.json({
-    format: 'md',
-    content: lines.join('\n'),
-    filename: `llm-report-${safeModelName}-${new Date().toISOString().split('T')[0]}.md`,
+  return new Response(lines.join('\n'), {
+    headers: {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    },
   });
 }
 

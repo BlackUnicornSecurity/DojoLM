@@ -12,8 +12,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { withAuth } from '@/lib/auth/route-guard'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const DATA_DIR = join(process.cwd(), 'data', 'validation')
+const DATA_DIR = getDataPath('validation')
 
 const SECURITY_HEADERS = {
   'Content-Type': 'application/json',
@@ -25,10 +26,11 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 
 export const GET = withAuth(async (
   _request: NextRequest,
-  context: { params?: Record<string, string> }
+  context: { params?: Record<string, string> | Promise<Record<string, string>> }
 ) => {
   try {
-    const runId = context.params?.runId
+    const resolvedParams = context.params ? await Promise.resolve(context.params) : undefined;
+    const runId = resolvedParams?.runId
 
     // Validate runId is present and is a valid UUID (prevent path traversal)
     if (!runId || !UUID_REGEX.test(runId)) {
