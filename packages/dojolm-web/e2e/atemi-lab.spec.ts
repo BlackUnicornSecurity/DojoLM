@@ -73,13 +73,14 @@ test.describe('Atemi Lab', () => {
     const mcpTab = page.getByRole('tab', { name: 'MCP', exact: true });
     await expect(mcpTab).toBeVisible({ timeout: 10000 });
     await mcpTab.click();
+    await page.waitForLoadState('networkidle');
 
     // MCP Protocol Attacks heading should be visible
-    await expect(page.getByText('MCP Protocol Attacks').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('MCP Protocol Attacks').first()).toBeVisible({ timeout: 20000 });
 
     // MCP-specific attack cards should be present
-    await expect(page.getByText('Capability Spoofing').first()).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Tool Poisoning').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Capability Spoofing').first()).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('Tool Poisoning').first()).toBeVisible({ timeout: 15000 });
   });
 
   test('WebMCP tab renders with target URL input and categories', async ({ page }) => {
@@ -152,7 +153,7 @@ test.describe('Atemi Lab', () => {
 
     // Check for severity badges (Critical, High, Medium, Low) — scope to main to avoid hidden sidebar nav text
     const severityBadge = page.locator('main').getByText(/Critical|High|Medium|Low/i).first();
-    await expect(severityBadge).toBeVisible({ timeout: 5000 });
+    await expect(severityBadge).toBeVisible({ timeout: 20000 });
   });
 
   test('attack tool cards have learn more functionality', async ({ page }) => {

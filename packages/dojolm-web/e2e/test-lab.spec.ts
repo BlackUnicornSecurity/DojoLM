@@ -52,6 +52,8 @@ test.describe('Armory', () => {
   });
 
   test('can scan a fixture from Armory', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     const viewFilesButton = page.getByRole('button', { name: /^View files in / }).first();
     await expect(viewFilesButton).toBeVisible({ timeout: 10000 });
     await viewFilesButton.click();
@@ -64,6 +66,6 @@ test.describe('Armory', () => {
     // (error occurs when API key is missing). Accept either outcome.
     await expect(
       page.locator('main').getByText(/Scan Results|Unable to scan fixture|Check connection/i).first()
-    ).toBeVisible({ timeout: 30000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 });

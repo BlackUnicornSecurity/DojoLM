@@ -77,7 +77,6 @@ const MOCK_SUMMARIES: Record<string, string> = {
 /** Mock audit log function for execution attempts */
 function logExecutionAudit(toolName: string, action: 'request' | 'confirm' | 'cancel' | 'complete', result?: ExecutionResult) {
   // In production, this would call an API endpoint
-  // eslint-disable-next-line no-console
   console.log(`[AUDIT] AttackTool: ${toolName} | Action: ${action}${result ? ` | Severity: ${result.severity}` : ''}`)
 }
 

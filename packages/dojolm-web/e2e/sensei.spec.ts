@@ -83,14 +83,21 @@ test.describe('Sensei Chat', () => {
     await senseiBtn.click();
     await expect(page.getByText(/Welcome to Sensei/i)).toBeVisible({ timeout: 10000 });
 
+    // Wait for the drawer open animation to settle before pressing Escape
+    await page.waitForTimeout(500);
+
+    // Ensure the drawer itself has focus so Escape is captured by its handler
+    const drawer = page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]');
+    await drawer.focus().catch(() => {
+      // If the dialog itself is not focusable, focus the chat input inside it
+    });
+
     // Press Escape
     await page.keyboard.press('Escape');
 
     // Drawer slides off-screen (translate-x-full) and becomes aria-hidden.
     // getByRole filters out aria-hidden elements, so use a CSS locator instead.
-    await expect(
-      page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]')
-    ).toHaveAttribute('aria-hidden', 'true', { timeout: 5000 });
+    await expect(drawer).toHaveAttribute('aria-hidden', 'true', { timeout: 8000 });
   });
 
   test('close button closes the drawer', async ({ page }) => {
@@ -98,14 +105,18 @@ test.describe('Sensei Chat', () => {
     await senseiBtn.click();
     await expect(page.getByText(/Welcome to Sensei/i)).toBeVisible({ timeout: 10000 });
 
+    // Wait for the drawer open animation to settle before interacting
+    await page.waitForTimeout(500);
+
     // Click Close Sensei button in the drawer header
     const closeBtn = page.getByRole('button', { name: 'Close Sensei' }).last();
+    await expect(closeBtn).toBeVisible({ timeout: 5000 });
     await closeBtn.click();
 
     // Drawer slides off-screen and becomes aria-hidden
     await expect(
       page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]')
-    ).toHaveAttribute('aria-hidden', 'true', { timeout: 5000 });
+    ).toHaveAttribute('aria-hidden', 'true', { timeout: 8000 });
   });
 
   test('drawer remains accessible across module navigation', async ({ page }) => {

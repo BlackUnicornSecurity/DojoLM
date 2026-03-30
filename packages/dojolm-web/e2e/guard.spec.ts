@@ -59,26 +59,35 @@ test.describe('Hattori Guard', () => {
 
   test('block threshold selector is visible when guard enabled', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Guard Mode' })).toBeVisible({ timeout: 10000 });
-    // Enable guard if not already active
+    // Ensure guard is enabled — only click toggle if currently disabled
     const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
-    // Look for block threshold controls
+    const isDisabled = await toggleBtn.getAttribute('aria-label').then(
+      (label) => label?.toLowerCase().includes('disabled') ?? false
+    ).catch(() => false);
+    if (isDisabled) {
+      await toggleBtn.click();
+      await page.waitForTimeout(500);
+    }
+    // Look for block threshold controls (only rendered when guard is enabled)
     const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
     const criticalBtn = page.getByRole('button', { name: /CRITICAL only/i });
-    // At least one should be visible if guard is enabled, or both after enabling
-    if (await warningBtn.isVisible().catch(() => false)) {
-      await expect(warningBtn).toBeVisible();
-      await expect(criticalBtn).toBeVisible();
-    }
+    await expect(warningBtn).toBeVisible({ timeout: 10000 });
+    await expect(criticalBtn).toBeVisible({ timeout: 5000 });
   });
 
   test('switching mode updates active mode metric card', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Guard Mode' })).toBeVisible({ timeout: 10000 });
-    // Enable guard first
+    // Ensure guard is enabled — only click toggle if currently disabled
     const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
-    await toggleBtn.click();
-    await page.waitForTimeout(500);
+    const isDisabled = await toggleBtn.getAttribute('aria-label').then(
+      (label) => label?.toLowerCase().includes('disabled') ?? false
+    ).catch(() => false);
+    if (isDisabled) {
+      await toggleBtn.click();
+      await page.waitForTimeout(500);
+    }
 
     // Select Samurai mode
     const samuraiRadio = page.getByRole('radio', { name: /Select Samurai mode/i });

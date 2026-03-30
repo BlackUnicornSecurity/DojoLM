@@ -287,7 +287,7 @@ interface PerformanceInfoProps {
 
 const PerformanceInfo = memo(function PerformanceInfo({ result }: PerformanceInfoProps) {
   // Capture timestamp once when result changes (stable under memo)
-  const scanTime = useMemo(() => new Date().toLocaleTimeString(), [result])
+  const scanTime = useMemo(() => new Date().toLocaleTimeString(), [])
 
   return (
     <div className="flex items-center gap-4 text-xs text-muted-foreground">

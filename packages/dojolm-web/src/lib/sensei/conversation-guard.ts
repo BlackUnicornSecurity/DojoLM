@@ -381,7 +381,6 @@ let guardMiddleware: {
 
 function requireGuardMiddleware() {
   if (!guardMiddleware) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mod = require('../guard-middleware') as typeof import('../guard-middleware');
     guardMiddleware = {
       guardScanInput: mod.guardScanInput,

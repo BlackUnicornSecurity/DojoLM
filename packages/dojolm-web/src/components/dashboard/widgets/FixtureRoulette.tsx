@@ -7,6 +7,7 @@
  */
 
 import { useState, useCallback } from 'react'
+import Image from 'next/image'
 import { WidgetCard } from '../WidgetCard'
 import { SeverityBadge } from '@/components/ui/SeverityBadge'
 import { Button } from '@/components/ui/button'
@@ -149,10 +150,13 @@ export function FixtureRoulette() {
             {fixture.isBinary && fixture.mimeType ? (
               <div className="rounded-xl border border-[var(--border-subtle)] surface-base overflow-hidden">
                 {fixture.mimeType.startsWith('image/') && (
-                  // SVG via <img> only — XSS safety
-                  <img
+                  // SVG via Image with unoptimized — XSS safety (local API route)
+                  <Image
                     src={`/api/read-fixture?path=${encodeURIComponent(`${fixture.category}/${fixture.file}`)}&raw=true`}
                     alt={fixture.file}
+                    width={320}
+                    height={160}
+                    unoptimized
                     className="max-h-40 w-full object-contain bg-muted"
                   />
                 )}

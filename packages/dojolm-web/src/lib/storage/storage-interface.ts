@@ -399,7 +399,6 @@ export async function getStorage(): Promise<IStorageBackend> {
 export function getStorageSync(): IStorageBackend {
   if (_cachedStorage) return _cachedStorage;
   // Fallback: import file-storage synchronously (always available)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { fileStorage } = require('./file-storage') as { fileStorage: IStorageBackend };
   _cachedStorage = fileStorage;
   return _cachedStorage;

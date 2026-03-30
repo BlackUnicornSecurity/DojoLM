@@ -72,6 +72,8 @@ test.describe('Shingan Scanner', () => {
   });
 
   test('can enter text and trigger scan for safe content', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     await expect(
       page.getByText(/Shingan Scanner|trust risks/i).first()
     ).toBeVisible({ timeout: 15000 });
@@ -85,10 +87,12 @@ test.describe('Shingan Scanner', () => {
     // Scope to main to avoid hidden sidebar nav descriptions matching the regex
     await expect(
       page.locator('main').getByText(/Trust Score|Score|Safe|Layer/i).first()
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 
   test('scan results show trust gauge with numeric score', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     await expect(
       page.getByText(/Shingan Scanner|trust risks/i).first()
     ).toBeVisible({ timeout: 15000 });
@@ -101,10 +105,12 @@ test.describe('Shingan Scanner', () => {
 
     await expect(
       page.getByText(/Trust Score|\d+|Score/i).first()
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 
   test('scan results show 6-layer breakdown sections', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     await expect(
       page.getByText(/Shingan Scanner|trust risks/i).first()
     ).toBeVisible({ timeout: 15000 });
@@ -118,10 +124,12 @@ test.describe('Shingan Scanner', () => {
     // Scope to main to avoid hidden sidebar nav descriptions containing these layer names
     await expect(
       page.locator('main').getByText(/Metadata|Exfiltration|Social|Supply Chain|Context/i).first()
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 
   test('scan results show findings table with severity badges', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     await expect(
       page.getByText(/Shingan Scanner|trust risks/i).first()
     ).toBeVisible({ timeout: 15000 });
@@ -134,7 +142,7 @@ test.describe('Shingan Scanner', () => {
 
     await expect(
       page.getByText(/Critical|Warning|Finding|Severity/i).first()
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 
   test('return to Kumite overview from Shingan', async ({ page }) => {

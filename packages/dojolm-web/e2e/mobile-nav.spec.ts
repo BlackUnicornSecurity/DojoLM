@@ -38,19 +38,22 @@ test.describe('Mobile Navigation', () => {
 
   test('tapping Scan navigates to Haiku Scanner', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    await mobileNav.getByRole('button', { name: 'Scan' }).click();
+    // Button aria-label is the full name as shown in the "bottom nav shows" test
+    await mobileNav.getByRole('button', { name: 'Haiku Scanner', exact: true }).click();
     await expect(page.getByText('Input Text').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('tapping LLM navigates to LLM Dashboard', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    await mobileNav.getByRole('button', { name: 'LLM' }).click();
+    // Button aria-label is the full name as shown in the "bottom nav shows" test
+    await mobileNav.getByRole('button', { name: 'LLM Dashboard', exact: true }).click();
     await expect(page.getByText('LLM Testing Dashboard').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('tapping Guard navigates to Hattori Guard', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    await mobileNav.getByRole('button', { name: 'Guard' }).click();
+    // Button aria-label is the full name as shown in the "bottom nav shows" test
+    await mobileNav.getByRole('button', { name: 'Hattori Guard', exact: true }).click();
     await expect(page.getByText('Guard Mode').first()).toBeVisible({ timeout: 10000 });
   });
 

@@ -30,6 +30,13 @@ export default defineConfig({
         "src/app/**/layout.tsx",
         "src/lib/types.ts",
       ],
+      // Coverage thresholds (Phase R4)
+      thresholds: {
+        statements: 70,
+        branches: 60,
+        functions: 70,
+        lines: 70,
+      },
     },
 
     // Setup files

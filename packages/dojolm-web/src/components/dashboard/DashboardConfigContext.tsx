@@ -148,7 +148,6 @@ function loadConfig(): DashboardConfig {
     if (needsMigration) {
       try {
         localStorage.setItem(BACKUP_KEY, JSON.stringify(parsed))
-        // eslint-disable-next-line no-console
         console.debug('Dashboard config migrated v1->v2')
       } catch { /* backup is best-effort */ }
     }

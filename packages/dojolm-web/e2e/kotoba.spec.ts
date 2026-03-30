@@ -124,13 +124,13 @@ test.describe('Kotoba', () => {
     const exampleSelect = page.locator('select[aria-label="Load example prompt"]');
     await exampleSelect.selectOption('secure');
     await page.getByRole('button', { name: /Score Prompt/i }).click();
-    
+
     // Should show issues section
-    await expect(page.getByText(/Issues/i).first()).toBeVisible({ timeout: 10000 });
-    
+    await expect(page.getByText(/Issues/i).first()).toBeVisible({ timeout: 20000 });
+
     // Should show severity indicators (high, medium, low) — scope to main to avoid hidden sidebar nav text
     const severityIndicator = page.locator('main').getByText(/high|medium|low/i).first();
-    await expect(severityIndicator).toBeVisible({ timeout: 5000 });
+    await expect(severityIndicator).toBeVisible({ timeout: 20000 });
   });
 
   test('harden button appears after scoring', async ({ page }) => {

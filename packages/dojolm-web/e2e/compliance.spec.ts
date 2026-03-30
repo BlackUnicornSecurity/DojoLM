@@ -20,18 +20,18 @@ test.describe('Bushido Book', () => {
     const complianceNav = sidebar.getByRole('button', { name: 'Bushido Book' });
     await expect(complianceNav).toBeVisible({ timeout: 5000 });
     await complianceNav.click();
-    // Wait for the Bushido Book page to fully render
+    // Wait for the Bushido Book page to fully render (API may be slow on prod)
     await expect(
       page.locator('main').getByText(/Framework Coverage|Loading compliance|Error loading compliance/i).first()
-    ).toBeVisible({ timeout: 20000 });
+    ).toBeVisible({ timeout: 40000 });
   });
 
   test('shows compliance frameworks with coverage data', async ({ page }) => {
-    await expect(page.locator('main').getByText(/OWASP LLM Top 10|MITRE ATLAS|NIST AI RMF/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('main').getByText(/OWASP LLM Top 10|MITRE ATLAS|NIST AI RMF/i).first()).toBeVisible({ timeout: 30000 });
   });
 
   test('shows coverage percentages for frameworks', async ({ page }) => {
-    await expect(page.locator('main').getByText(/\d+%/).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('main').getByText(/\d+%/).first()).toBeVisible({ timeout: 30000 });
   });
 
   test('displays overall score meter', async ({ page }) => {
@@ -77,9 +77,9 @@ test.describe('Bushido Book', () => {
     await gapTab.click();
 
     // Gap matrix should load with controls — scope to main to avoid hidden sidebar nav text
-    await expect(page.locator('main').getByText(/BAISS|Control|Gap/i).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('main').getByText(/BAISS|Control|Gap/i).first()).toBeVisible({ timeout: 30000 });
     // Show All toggle or column picker should be present
-    await expect(page.locator('main').getByText(/Show All|Column|Frameworks/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('main').getByText(/Show All|Column|Frameworks/i).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Audit Trail tab shows filter controls and event list', async ({ page }) => {
@@ -90,7 +90,7 @@ test.describe('Bushido Book', () => {
     // Filter bar should have action type and date inputs; scope to main to avoid sidebar matches
     await expect(
       page.locator('main').getByText(/Action Type|Filter|Showing|entries|No audit/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 30000 });
   });
 
   test('Checklists tab shows framework-specific review checklist', async ({ page }) => {

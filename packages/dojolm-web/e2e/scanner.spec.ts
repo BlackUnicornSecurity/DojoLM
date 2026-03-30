@@ -34,6 +34,8 @@ test.describe('Scanner', () => {
   });
 
   test('can submit a scan', async ({ page }) => {
+    // Scan API can take 30-60s on prod; extend this test's timeout to 90s
+    test.setTimeout(90000);
     const scannerMain = page.locator('main');
     const textarea = scannerMain.getByRole('textbox', { name: 'Enter text to scan for prompt injection' });
     await expect(textarea).toBeVisible({ timeout: 10000 });
@@ -45,6 +47,6 @@ test.describe('Scanner', () => {
     // Wait for verdict text — "Threat Detected" for BLOCK, "Safe" for ALLOW
     await expect(
       scannerMain.getByText(/Threat Detected|Safe|Verdict|BLOCK|ALLOW/i).first()
-    ).toBeVisible({ timeout: 45000 });
+    ).toBeVisible({ timeout: 70000 });
   });
 });

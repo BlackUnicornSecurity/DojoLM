@@ -318,6 +318,7 @@ function TreeBranch({
     <div
       className={cn('space-y-1', depth > 0 && 'ml-6 border-l border-[var(--border)] pl-3')}
       role="treeitem"
+      aria-selected={false}
       aria-expanded={node.children.length > 0 ? true : undefined}
       aria-label={`${node.category} node ${node.id}`}
       onKeyDown={handleKeyDown}
@@ -527,7 +528,7 @@ export function FamilyTreeView({ className, families: familiesProp, searchQuery 
     }
     visit(family.rootId)
     return order
-  }, [family?.rootId, nodeRefs])
+  }, [family, nodeRefs])
 
   const handleKeyNav = useCallback(
     (currentId: string, direction: 'up' | 'down' | 'left' | 'right') => {

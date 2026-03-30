@@ -341,7 +341,7 @@ export function LLMExecutionProvider({ children, refreshInterval = 5000 }: LLMEx
         setReconnectingBatchId(null);
       }
     })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- hydration runs once
+  }, []); // hydration runs once
 
   // Cleanup all active polling intervals on unmount
   useEffect(() => {

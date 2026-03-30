@@ -46,11 +46,12 @@ export function useMatchAnimations() {
 
   // Clean up all pending timers on unmount
   useEffect(() => {
+    const timers = timersRef.current
     return () => {
-      for (const timer of timersRef.current) {
+      for (const timer of timers) {
         clearTimeout(timer)
       }
-      timersRef.current.clear()
+      timers.clear()
     }
   }, [])
 

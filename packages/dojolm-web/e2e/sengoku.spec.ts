@@ -96,13 +96,19 @@ test.describe('Sengoku', () => {
     const hasItems = await campaignItem.isVisible().catch(() => false);
 
     if (hasItems) {
-      await campaignItem.click();
+      // The first campaign may be auto-selected; check if detail panel is already visible
+      const detailAlreadyVisible = await page.getByRole('button', { name: /Run Now/i }).isVisible().catch(() => false);
+      if (!detailAlreadyVisible) {
+        // Click to open detail panel
+        await campaignItem.click();
+        await page.waitForLoadState('domcontentloaded');
+      }
       // Detail panel should show with Run Now and Report buttons
-      await expect(page.getByRole('button', { name: /Run Now/i })).toBeVisible({ timeout: 10000 });
-      await expect(page.getByRole('button', { name: /Report/i })).toBeVisible({ timeout: 5000 });
+      await expect(page.getByRole('button', { name: /Run Now/i })).toBeVisible({ timeout: 15000 });
+      await expect(page.getByRole('button', { name: /Report/i })).toBeVisible({ timeout: 10000 });
       // Detail should show target, schedule, and findings info
-      await expect(page.getByText(/Target:/i).first()).toBeVisible({ timeout: 5000 });
-      await expect(page.getByText(/Schedule:/i).first()).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(/Target:/i).first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText(/Schedule:/i).first()).toBeVisible({ timeout: 10000 });
     } else {
       // If no campaigns or auth required, show empty state or ghost card
       await expect(

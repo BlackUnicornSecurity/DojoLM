@@ -50,7 +50,6 @@ export function getDatabase(): Database.Database {
   if (!migrationsApplied) {
     migrationsApplied = true;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { runMigrations } = require('./migrations') as { runMigrations: (db: Database.Database) => number };
       runMigrations(instance);
     } catch {

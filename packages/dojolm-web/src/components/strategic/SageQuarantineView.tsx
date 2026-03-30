@@ -495,7 +495,6 @@ export function SageQuarantineView() {
       })
     } catch {
       // Audit log failure should not block the UI action
-      // eslint-disable-next-line no-console
       console.error('[SAGE Quarantine] Audit log API call failed')
     }
 

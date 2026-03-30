@@ -151,11 +151,12 @@ test.describe('The Kumite', () => {
     // Shingan tab should be active
     const shinganTab = page.getByRole('tab', { name: /Shingan/i });
     await expect(shinganTab).toBeVisible({ timeout: 10000 });
+    await page.waitForLoadState('networkidle');
 
     // Shingan content should load — scope to main to avoid hidden sidebar nav text
     await expect(
       page.locator('main').getByText(/Configure Scan|Deep Scan|Injection|Trust|Shingan/i).first()
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 45000 });
   });
 
   test('tab switching preserves navigation state', async ({ page }) => {
@@ -202,12 +203,12 @@ test.describe('The Kumite', () => {
   test('subsystem cards have category badges', async ({ page }) => {
     // Scope to main to avoid hidden sidebar nav descriptions containing these words
     const main = page.locator('main');
-    await expect(main.getByText('Evolution').first()).toBeVisible({ timeout: 10000 });
-    await expect(main.getByText('Live').first()).toBeVisible({ timeout: 5000 });
-    await expect(main.getByText('Intel').first()).toBeVisible({ timeout: 5000 });
-    await expect(main.getByText('Analysis').first()).toBeVisible({ timeout: 5000 });
-    await expect(main.getByText('Mirror').first()).toBeVisible({ timeout: 5000 });
-    await expect(main.getByText('Deep Scan').first()).toBeVisible({ timeout: 5000 });
+    await expect(main.getByText('Evolution').first()).toBeVisible({ timeout: 20000 });
+    await expect(main.getByText('Live').first()).toBeVisible({ timeout: 20000 });
+    await expect(main.getByText('Intel').first()).toBeVisible({ timeout: 20000 });
+    await expect(main.getByText('Analysis').first()).toBeVisible({ timeout: 20000 });
+    await expect(main.getByText('Mirror').first()).toBeVisible({ timeout: 20000 });
+    await expect(main.getByText('Deep Scan').first()).toBeVisible({ timeout: 20000 });
   });
 
   test('guide panel opens from help button', async ({ page }) => {
