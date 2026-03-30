@@ -174,7 +174,7 @@ export class OllamaProvider implements LLMProviderAdapter {
 
       // Check if Ollama is running
       const response = await fetch(`${baseUrl}/api/tags`, {
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(config.requestTimeout ?? 5000),
       });
 
       return response.ok;

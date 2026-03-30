@@ -9,6 +9,13 @@ import { checkApiAuth } from '@/lib/api-auth';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  });
+}
+
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const authError = checkApiAuth(request);
   if (authError) return authError;

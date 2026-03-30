@@ -54,6 +54,17 @@ function toSafeModelResponse(model: LLMModelConfig) {
 }
 
 // ===========================================================================
+// OPTIONS /api/llm/models - CORS preflight
+// ===========================================================================
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, POST, PATCH, DELETE, OPTIONS' },
+  })
+}
+
+// ===========================================================================
 // GET /api/llm/models - List all models
 // ===========================================================================
 

@@ -7,6 +7,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
+}));
+
 // Mock storage
 const mockGetModelConfig = vi.fn();
 vi.mock('@/lib/storage/storage-interface', () => ({
@@ -31,7 +35,8 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 describe('POST /api/llm/chat', () => {
-  let POST: (req: NextRequest) => Promise<Response>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let POST: any;
 
   beforeEach(async () => {
     vi.clearAllMocks();

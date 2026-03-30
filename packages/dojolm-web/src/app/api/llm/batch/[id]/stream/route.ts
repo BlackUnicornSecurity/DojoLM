@@ -7,7 +7,7 @@
 
 import { NextRequest } from 'next/server';
 import { fileStorage } from '@/lib/storage/file-storage';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 
 const SAFE_ID = /^[\w-]{1,128}$/;
 const MAX_POLL_DURATION_MS = 10 * 60 * 1000; // 10 minutes
@@ -18,14 +18,11 @@ const MAX_POLL_DURATION_MS = 10 * 60 * 1000; // 10 minutes
  * Server-Sent Events endpoint for real-time batch progress.
  * Emits: progress, model_complete, batch_complete, error
  */
-export async function GET(
+export const GET = withAuth(async (
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const authError = checkApiAuth(request);
-  if (authError) return authError;
-
-  const { id: batchId } = await params;
+  { params }: { params: Record<string, string> }
+) => {
+  const { id: batchId } = await Promise.resolve(params);
 
   // Validate batchId format to prevent path traversal
   if (!batchId || !SAFE_ID.test(batchId)) {
@@ -211,4 +208,4 @@ export async function GET(
       'X-Content-Type-Options': 'nosniff',
     },
   });
-}
+}, { resource: 'batches', action: 'read' });

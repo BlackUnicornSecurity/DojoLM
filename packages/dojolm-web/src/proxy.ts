@@ -25,7 +25,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { auditLog } from '@/lib/audit-logger';
-import { isPublicApiRoute, isPublicReadApiRoute } from '@/lib/api-route-access';
+import { isPublicApiRoute, isPublicBrowserActionRoute, isPublicReadApiRoute } from '@/lib/api-route-access';
 import {
   getConfiguredAppOrigin,
   isAllowedCorsOrigin,
@@ -226,8 +226,9 @@ export async function proxy(request: NextRequest) {
   const isTrustedBrowserSession = isTrustedBrowserSessionRequest(request);
   const isPublicReadRoute = isPublicReadApiRoute(pathname, request.method);
   const isBrowserPublicRead = isPublicReadRoute && isTrustedBrowserOriginRequest(request);
+  const isBrowserPublicAction = isPublicBrowserActionRoute(pathname, request.method) && isTrustedBrowserOriginRequest(request);
   const isDevelopmentBrowserRead = isDevelopmentBrowserReadRequest(request);
-  const isTrustedBrowser = isTrustedBrowserSession || isBrowserPublicRead || isDevelopmentBrowserRead;
+  const isTrustedBrowser = isTrustedBrowserSession || isBrowserPublicRead || isBrowserPublicAction || isDevelopmentBrowserRead;
   const isPublicRoute = isPublicApiRoute(pathname, request.method);
 
   // Rate limiting (R2-S3)
@@ -259,16 +260,16 @@ export async function proxy(request: NextRequest) {
     'X-RateLimit-Reset': String(Math.ceil((Date.now() + RATE_LIMIT_WINDOW_MS) / 1000)),
   };
 
-  // Allow CORS preflight requests without auth (BUG-034)
-  // Origin validation: only reflect known origins, deny unknown in production
+  // Allow CORS preflight requests without auth (BUG-034, SEC-R3-001)
+  // If appOrigin is not configured, respond 204 without CORS headers
+  // (non-cross-origin callers don't need them; blocking with 503 is incorrect)
   if (request.method === 'OPTIONS') {
     const requestOrigin = request.headers.get('origin') ?? '';
     const appOrigin = getConfiguredAppOrigin();
+
     if (!appOrigin) {
-      return NextResponse.json(
-        { error: 'Server misconfiguration' },
-        { status: 503 }
-      );
+      // No configured origin — allow preflight with no CORS headers
+      return new NextResponse(null, { status: 204, headers: { Allow: 'GET, POST, OPTIONS' } });
     }
 
     const corsOrigin = isAllowedCorsOrigin(requestOrigin) ? requestOrigin : appOrigin;
@@ -301,6 +302,12 @@ export async function proxy(request: NextRequest) {
 
   // Allow public routes (with rate limit headers — R3-006)
   if (isPublicRoute) {
+    const response = NextResponse.next();
+    for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+    return response;
+  }
+
+  if (isBrowserPublicAction) {
     const response = NextResponse.next();
     for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
     return response;

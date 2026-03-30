@@ -163,7 +163,7 @@ describe('API /api/llm/models/[id]', () => {
       mockStorage.getModelConfig.mockResolvedValue({ ...SAMPLE_MODEL });
       mockStorage.saveModelConfig.mockImplementation(async (m) => m);
 
-      const body = { name: 'GPT-4 Turbo', description: 'Updated', maxTokens: 8192 };
+      const body = { name: 'GPT-4 Turbo', description: 'Updated', maxTokens: 8192, requestTimeout: 120000 };
       const res = await PATCH(makeRequest('PATCH', body), createParams('test-id'));
       const data = await res.json();
 
@@ -171,6 +171,7 @@ describe('API /api/llm/models/[id]', () => {
       expect(data.model.name).toBe('GPT-4 Turbo');
       expect(data.model.description).toBe('Updated');
       expect(data.model.maxTokens).toBe(8192);
+      expect(data.model.requestTimeout).toBe(120000);
     });
 
     it('MID-006: rejects non-allowlisted fields (mass-assignment prevention)', async () => {

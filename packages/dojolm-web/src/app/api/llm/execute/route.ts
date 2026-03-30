@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTest } from '@/lib/llm-execution';
 import { executeWithGuard } from '@/lib/guard-middleware';
@@ -18,11 +18,8 @@ import { emitExecutionFinding } from '@/lib/ecosystem-emitters';
 // POST /api/llm/execute - Execute a single test
 // ===========================================================================
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -159,4 +156,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return apiError('Failed to execute test', 500, error);
   }
-}
+}, { resource: 'executions', action: 'execute' });

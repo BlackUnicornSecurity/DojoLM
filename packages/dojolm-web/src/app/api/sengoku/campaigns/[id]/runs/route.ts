@@ -7,8 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkApiAuth } from '@/lib/api-auth';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
 const SAFE_ID = /^[\w-]{1,128}$/;
 
 export async function GET(

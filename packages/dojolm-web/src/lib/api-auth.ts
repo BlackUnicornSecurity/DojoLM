@@ -11,8 +11,8 @@
 
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { isPublicApiRoute } from '@/lib/api-route-access';
-import { isTrustedBrowserSessionRequest } from '@/lib/request-origin';
+import { isPublicApiRoute, isPublicBrowserActionRoute } from '@/lib/api-route-access';
+import { isTrustedBrowserOriginRequest, isTrustedBrowserSessionRequest } from '@/lib/request-origin';
 
 /**
  * Check API authentication via X-API-Key header.
@@ -22,7 +22,18 @@ import { isTrustedBrowserSessionRequest } from '@/lib/request-origin';
  * breaking development workflows. A console warning is emitted in production.
  */
 export function checkApiAuth(request: NextRequest): NextResponse | null {
+  // OPTIONS preflight requests must always be allowed through so route
+  // handlers can respond with the correct 204 + Allow header (SEC-R3-001).
+  if (request.method === 'OPTIONS') {
+    return null;
+  }
+
   if (isPublicApiRoute(request.nextUrl.pathname, request.method)) {
+    return null;
+  }
+
+  // Allow specific public UI actions for verified same-origin browser traffic.
+  if (isPublicBrowserActionRoute(request.nextUrl.pathname, request.method) && isTrustedBrowserOriginRequest(request)) {
     return null;
   }
 

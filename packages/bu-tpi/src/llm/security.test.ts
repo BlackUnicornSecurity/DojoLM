@@ -3,7 +3,7 @@
  * Tests SSRF protection, credential sanitization, JSON path validation,
  * and env-var reference validation with adversarial inputs.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 
 import {
   validateProviderUrl,
@@ -12,6 +12,16 @@ import {
   resolveJsonPath,
   validateEnvVarRef,
 } from './security.js';
+
+const originalTrustedInternalIps = process.env.TPI_TRUSTED_INTERNAL_IPS;
+
+afterEach(() => {
+  if (originalTrustedInternalIps === undefined) {
+    delete process.env.TPI_TRUSTED_INTERNAL_IPS;
+  } else {
+    process.env.TPI_TRUSTED_INTERNAL_IPS = originalTrustedInternalIps;
+  }
+});
 
 // ===========================================================================
 // validateProviderUrl — SSRF Protection
@@ -108,6 +118,21 @@ describe('validateProviderUrl', () => {
     it('still blocks non-local addresses in local mode', () => {
       expect(validateProviderUrl('http://10.0.0.1:11434', true)).toBe(false);
       expect(validateProviderUrl('http://192.168.1.1:8080', true)).toBe(false);
+    });
+
+    it('allows trusted internal IPs when explicitly allowlisted', () => {
+      process.env.TPI_TRUSTED_INTERNAL_IPS = '192.168.70.120,10.10.0.0/16';
+
+      expect(validateProviderUrl('http://192.168.70.120:11434', true)).toBe(true);
+      expect(validateProviderUrl('http://10.10.4.25:1234', true)).toBe(true);
+      expect(validateProviderUrl('http://10.11.4.25:1234', true)).toBe(false);
+    });
+
+    it('never allowlists metadata or link-local targets', () => {
+      process.env.TPI_TRUSTED_INTERNAL_IPS = '169.254.169.254,169.254.0.0/16';
+
+      expect(validateProviderUrl('http://169.254.169.254:11434', true)).toBe(false);
+      expect(validateProviderUrl('http://169.254.10.20:11434', true)).toBe(false);
     });
   });
 

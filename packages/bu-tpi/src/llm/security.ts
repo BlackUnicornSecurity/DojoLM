@@ -12,6 +12,7 @@
  */
 
 import { lookup } from 'node:dns/promises';
+import { isIP } from 'node:net';
 import { sanitizeUrl } from './fetch-utils.js';
 
 // ===========================================================================
@@ -46,6 +47,68 @@ const METADATA_IPS = new Set([
 /** IPv6 blocked addresses */
 const BLOCKED_IPV6 = ['::1', '::ffff:127.0.0.1', 'fe80:', 'fc00:', 'fd00:'];
 
+const TRUSTED_INTERNAL_IPS_ENV = 'TPI_TRUSTED_INTERNAL_IPS';
+
+function isLocalHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]' || hostname === '::1';
+}
+
+function isIPv4Address(value: string): boolean {
+  return isIP(value) === 4;
+}
+
+function ipv4ToInt(ip: string): number {
+  return ip.split('.').reduce((acc, octet) => ((acc << 8) | Number(octet)) >>> 0, 0);
+}
+
+function isRfc1918Address(ip: string): boolean {
+  return ip.startsWith('10.')
+    || ip.startsWith('192.168.')
+    || /^172\.(1[6-9]|2\d|3[01])\./.test(ip);
+}
+
+function parseTrustedInternalEntries(): string[] {
+  return (process.env[TRUSTED_INTERNAL_IPS_ENV] || '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
+function matchesTrustedInternalEntry(ip: string, entry: string): boolean {
+  if (!isIPv4Address(ip)) {
+    return false;
+  }
+
+  if (entry.includes('/')) {
+    const [network, prefixRaw] = entry.split('/');
+    const prefix = Number(prefixRaw);
+    if (!isIPv4Address(network) || !Number.isInteger(prefix) || prefix < 0 || prefix > 32) {
+      return false;
+    }
+
+    if (prefix === 0) {
+      return true;
+    }
+
+    const mask = (0xffffffff << (32 - prefix)) >>> 0;
+    return (ipv4ToInt(ip) & mask) === (ipv4ToInt(network) & mask);
+  }
+
+  return ip === entry;
+}
+
+function isTrustedInternalIP(ip: string): boolean {
+  if (!isIPv4Address(ip) || !isRfc1918Address(ip)) {
+    return false;
+  }
+
+  if (METADATA_IPS.has(ip) || ip.startsWith('169.254.') || ip === '127.0.0.1') {
+    return false;
+  }
+
+  return parseTrustedInternalEntries().some((entry) => matchesTrustedInternalEntry(ip, entry));
+}
+
 /**
  * Validate a provider URL for SSRF protection.
  *
@@ -79,13 +142,20 @@ export function validateProviderUrl(url: string, isLocal: boolean = false): bool
   const hostname = parsed.hostname.toLowerCase();
   const port = parsed.port ? parseInt(parsed.port) : (parsed.protocol === 'https:' ? 443 : 80);
 
-  // Handle localhost/local providers
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]' || hostname === '::1') {
-    if (isLocal) {
-      // For local providers, only allow specific ports
-      return LOCAL_ALLOWED_PORTS.has(port);
+  if (isLocal) {
+    if (!LOCAL_ALLOWED_PORTS.has(port)) {
+      return false;
     }
-    // Non-local requests to localhost are blocked
+
+    if (isLocalHostname(hostname)) {
+      return true;
+    }
+
+    return isTrustedInternalIP(hostname);
+  }
+
+  // Handle localhost/local providers
+  if (isLocalHostname(hostname)) {
     return false;
   }
 
@@ -160,7 +230,10 @@ export async function resolveAndValidateUrl(url: string, isLocal: boolean = fals
 
     // Skip DNS resolution for direct IP addresses
     if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) {
-      return isBlockedIP(hostname) && !isLocal ? null : hostname;
+      if (isLocal) {
+        return isLocalHostname(hostname) || isTrustedInternalIP(hostname) ? hostname : null;
+      }
+      return isBlockedIP(hostname) ? null : hostname;
     }
 
     // Resolve DNS to get actual IP
@@ -168,13 +241,15 @@ export async function resolveAndValidateUrl(url: string, isLocal: boolean = fals
     const resolvedIP = result.address;
 
     // Check resolved IP against blocklists (DNS rebinding defense)
-    if (isBlockedIP(resolvedIP) && !isLocal) {
-      return null; // DNS rebinding detected
+    if (isLocal) {
+      if (resolvedIP === '127.0.0.1' || resolvedIP === '::1' || isTrustedInternalIP(resolvedIP)) {
+        return resolvedIP;
+      }
+      return null;
     }
 
-    // For local mode, only allow 127.0.0.1
-    if (isLocal && resolvedIP !== '127.0.0.1' && resolvedIP !== '::1') {
-      return null;
+    if (isBlockedIP(resolvedIP)) {
+      return null; // DNS rebinding detected
     }
 
     return resolvedIP;

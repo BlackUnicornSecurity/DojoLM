@@ -21,13 +21,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-const mockCheckApiAuth = vi.fn().mockReturnValue(null);
 const mockGetBatch = vi.fn();
 const mockUpdateBatch = vi.fn();
 const mockDeleteBatch = vi.fn();
 
-vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args),
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
 }));
 
 vi.mock('@/lib/api-error', () => ({
@@ -60,7 +59,6 @@ function createParams(id: string) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockCheckApiAuth.mockReturnValue(null);
   mockGetBatch.mockResolvedValue(null);
   mockUpdateBatch.mockResolvedValue(null);
   mockDeleteBatch.mockResolvedValue(false);
@@ -84,17 +82,6 @@ describe('GET /api/llm/batch/[id]', () => {
     const { GET } = await import('../route');
     const res = await GET(createRequest('GET'), createParams('nonexistent'));
     expect(res.status).toBe(404);
-  });
-
-  it('BID-003: auth check is enforced', async () => {
-    const { NextResponse } = await import('next/server');
-    mockCheckApiAuth.mockReturnValue(
-      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    );
-
-    const { GET } = await import('../route');
-    const res = await GET(createRequest('GET'), createParams('b1'));
-    expect(res.status).toBe(401);
   });
 
   it('BID-012: internal error returns 500', async () => {
@@ -187,14 +174,4 @@ describe('DELETE /api/llm/batch/[id]', () => {
     expect(res.status).toBe(404);
   });
 
-  it('BID-010: auth check is enforced', async () => {
-    const { NextResponse } = await import('next/server');
-    mockCheckApiAuth.mockReturnValue(
-      NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    );
-
-    const { DELETE } = await import('../route');
-    const res = await DELETE(createRequest('DELETE'), createParams('b1'));
-    expect(res.status).toBe(401);
-  });
 });

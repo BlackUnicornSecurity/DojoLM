@@ -22,9 +22,10 @@ import {
 } from 'bu-tpi/attackdna';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // Persist ingest metadata to disk so incremental ingest survives restarts
-const INGEST_META_PATH = path.join(process.cwd(), 'data', 'amaterasu-dna', 'ingest-meta.json');
+const INGEST_META_PATH = getDataPath('amaterasu-dna', 'ingest-meta.json');
 
 interface IngestMeta {
   lastIngestTime: string | null;
@@ -43,7 +44,7 @@ async function readIngestMeta(): Promise<IngestMeta> {
 async function writeIngestMeta(meta: IngestMeta): Promise<void> {
   const dir = path.dirname(INGEST_META_PATH);
   await fs.mkdir(dir, { recursive: true }).catch(() => {});
-  const tmpPath = `${INGEST_META_PATH}.${process.pid}.${Date.now()}.tmp`;
+  const tmpPath = `${INGEST_META_PATH}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(meta, null, 2), 'utf8');
   await fs.rename(tmpPath, INGEST_META_PATH);
 }

@@ -10,18 +10,15 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-error';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 import { fileStorage } from '@/lib/storage/file-storage';
 
-type RouteParams = { params: Promise<{ id: string }> };
+type RouteParams = { params: Record<string, string> };
 
 // GET /api/llm/batch/:id — Get batch details
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export const GET = withAuth(async (request: NextRequest, { params }: RouteParams) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
-    const { id } = await params;
+    const { id } = await Promise.resolve(params);
     const batch = await fileStorage.getBatch(id);
 
     if (!batch) {
@@ -32,15 +29,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     return apiError('Failed to get batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'read' });
 
 // PATCH /api/llm/batch/:id — Cancel a running batch
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export const PATCH = withAuth(async (request: NextRequest, { params }: RouteParams) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
-    const { id } = await params;
+    const { id } = await Promise.resolve(params);
 
     let body: Record<string, unknown>;
     try {
@@ -63,15 +57,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     return apiError('Failed to update batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'execute' });
 
 // DELETE /api/llm/batch/:id — Delete a batch
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export const DELETE = withAuth(async (request: NextRequest, { params }: RouteParams) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
-    const { id } = await params;
+    const { id } = await Promise.resolve(params);
     const success = await fileStorage.deleteBatch(id);
 
     if (!success) {
@@ -82,4 +73,4 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     return apiError('Failed to delete batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'delete' });

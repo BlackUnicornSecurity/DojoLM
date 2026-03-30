@@ -19,6 +19,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { AttackNode, AttackEdge, AttackFamily, AttackCluster } from 'bu-tpi/attackdna';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // ===========================================================================
 // Constants & Paths
@@ -26,7 +27,7 @@ import type { AttackNode, AttackEdge, AttackFamily, AttackCluster } from 'bu-tpi
 
 const DNA_MAX_NODES = 100_000;
 const DNA_MAX_QUERY_LIMIT = 500;
-const DATA_BASE_DIR = path.join(process.cwd(), 'data', 'amaterasu-dna');
+const DATA_BASE_DIR = getDataPath('amaterasu-dna');
 
 const PATHS = {
   nodes: path.join(DATA_BASE_DIR, 'nodes'),
@@ -63,7 +64,7 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
     if (errno.code !== 'EEXIST') throw error;
   }
 
-  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmpPath, filePath);
 }

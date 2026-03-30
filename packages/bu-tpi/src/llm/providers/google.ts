@@ -111,7 +111,7 @@ export class GoogleProvider implements LLMProviderAdapter {
     try {
       const url = `${config.baseUrl || BASE_URL}/models?key=${config.apiKey}`;
       const response = await fetchWithTimeout(url, {
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
       });
       return response.ok;

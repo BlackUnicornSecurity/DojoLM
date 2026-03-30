@@ -14,8 +14,9 @@ import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import crypto from 'node:crypto'
 import { withAuth } from '@/lib/auth/route-guard'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const SETTINGS_PATH = join(process.cwd(), 'data', 'admin-settings.json')
+const SETTINGS_PATH = getDataPath('admin-settings.json')
 
 interface AdminSettings {
   sessionTtlMinutes: number

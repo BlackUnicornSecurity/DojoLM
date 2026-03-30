@@ -11,9 +11,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, UpdateCampaignRequest, CampaignStatus } from '@/lib/sengoku-types';
 import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const CAMPAIGNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'campaigns');
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
+const CAMPAIGNS_DIR = getDataPath('sengoku', 'campaigns');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
 const SAFE_ID = /^[\w-]{1,128}$/;
 const VALID_STATUSES: readonly CampaignStatus[] = ['draft', 'active', 'paused', 'completed', 'archived'];
 const SAFE_NAME = /^[\w \-().]{1,200}$/;
@@ -30,7 +31,7 @@ async function loadCampaign(id: string): Promise<Campaign | null> {
 
 async function saveCampaign(campaign: Campaign): Promise<void> {
   const filePath = path.join(CAMPAIGNS_DIR, `${campaign.id}.json`);
-  const tmpFile = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.promises.writeFile(tmpFile, JSON.stringify(campaign, null, 2));
   await fs.promises.rename(tmpFile, filePath);
 }

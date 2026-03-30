@@ -4,7 +4,7 @@
  * Phase 6: Testing Framework Setup
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
 // Mock fetchWithAuth to pass through to global fetch (Story 13.9)
 vi.mock('@/lib/fetch-with-auth', () => ({
@@ -22,6 +22,11 @@ global.fetch = vi.fn()
 describe("API functions", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    window.__NODA_RUNTIME_ENV = undefined
+  })
+
+  afterEach(() => {
+    window.__NODA_RUNTIME_ENV = undefined
   })
 
   describe("scanText", () => {
@@ -58,6 +63,28 @@ describe("API functions", () => {
       } as Response)
 
       await expect(scanText("test")).rejects.toThrow("API error: 500 Internal Server Error")
+    })
+
+    it("keeps browser scans same-origin when runtime API URL points elsewhere", async () => {
+      window.__NODA_RUNTIME_ENV = {
+        NEXT_PUBLIC_API_URL: "http://localhost:3001",
+      }
+
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          verdict: "ALLOW" as const,
+          findings: [],
+          counts: { critical: 0, warning: 0, info: 0 },
+          textLength: 4,
+          normalizedLength: 4,
+          elapsed: 1,
+        }),
+      } as Response)
+
+      await scanText("test")
+
+      expect(fetch).toHaveBeenCalledWith("/api/scan", expect.any(Object))
     })
   })
 

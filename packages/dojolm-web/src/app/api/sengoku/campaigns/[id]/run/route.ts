@@ -9,9 +9,10 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, CampaignRun } from '@/lib/sengoku-types';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const CAMPAIGNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'campaigns');
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
+const CAMPAIGNS_DIR = getDataPath('sengoku', 'campaigns');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
 const SAFE_ID = /^[\w-]{1,128}$/;
 
 export async function POST(
@@ -63,7 +64,7 @@ export async function POST(
     const runDir = path.join(RUNS_DIR, id);
     await fs.promises.mkdir(runDir, { recursive: true });
     const runFile = path.join(runDir, `${runId}.json`);
-    const tmpFile = `${runFile}.${process.pid}.${Date.now()}.tmp`;
+    const tmpFile = `${runFile}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
     await fs.promises.writeFile(tmpFile, JSON.stringify(run, null, 2));
     await fs.promises.rename(tmpFile, runFile);
 

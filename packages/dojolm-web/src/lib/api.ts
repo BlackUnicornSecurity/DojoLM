@@ -20,8 +20,35 @@ import type {
   ScanOptions
 } from './types'
 import { fetchWithAuth } from './fetch-with-auth'
+import { getClientRuntimeEnv } from './runtime-env'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+function normalizeBaseUrl(value: string): string {
+  return value.trim().replace(/\/+$/, '')
+}
+
+function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const runtimeBaseUrl = getClientRuntimeEnv('NEXT_PUBLIC_API_URL')
+    if (runtimeBaseUrl) {
+      try {
+        const normalized = normalizeBaseUrl(runtimeBaseUrl)
+        const runtimeOrigin = new URL(normalized, window.location.origin).origin
+        if (runtimeOrigin === window.location.origin) {
+          return ''
+        }
+      } catch {
+        // Ignore malformed runtime values and fall back to same-origin.
+      }
+    }
+
+    // Browser requests should stay same-origin by default so runtime or
+    // build-time NEXT_PUBLIC_API_URL values cannot silently pin the UI to a
+    // stale host or cross-origin backend.
+    return ''
+  }
+
+  return normalizeBaseUrl(process.env.NEXT_PUBLIC_API_URL || '')
+}
 
 /**
  * Generic fetch wrapper with error handling and auth (Story 13.9)
@@ -31,7 +58,7 @@ async function fetchAPI<T>(
   options?: RequestInit
 ): Promise<T> {
   try {
-    const url = `${API_BASE_URL}/api${endpoint}`
+    const url = `${getApiBaseUrl()}/api${endpoint}`
     const response = await fetchWithAuth(url, {
       ...options,
       headers: {

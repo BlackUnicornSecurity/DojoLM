@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         const { validateProviderUrl } = await import('bu-tpi/llm');
         if (!validateProviderUrl(baseUrl, true)) {
           return NextResponse.json(
-            { error: 'Only localhost URLs on allowed ports are permitted for local model discovery', models: [] },
+            { error: 'Only localhost or TPI_TRUSTED_INTERNAL_IPS allowlisted URLs on approved ports are permitted for local model discovery', models: [] },
             { status: 400 }
           );
         }

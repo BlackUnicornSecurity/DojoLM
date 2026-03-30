@@ -9,6 +9,9 @@
 
 import type { UserRole } from '../db/types';
 
+/** Valid user roles for RBAC validation */
+export const VALID_ROLES: UserRole[] = ['admin', 'analyst', 'viewer'];
+
 export type Resource =
   | 'models'
   | 'test-cases'
@@ -20,7 +23,8 @@ export type Resource =
   | 'audit-log'
   | 'users'
   | 'admin-settings'
-  | 'retention';
+  | 'retention'
+  | 'chat';
 
 export type Action = 'read' | 'create' | 'update' | 'delete' | 'execute';
 
@@ -40,6 +44,7 @@ const PERMISSIONS: Record<UserRole, Record<Resource, Action[]>> = {
     'users': ['read', 'create', 'update', 'delete'],
     'admin-settings': ['read', 'update'],
     'retention': ['read', 'execute'],
+    'chat': ['read', 'create', 'update', 'delete', 'execute'],
   },
   analyst: {
     'models': ['read', 'create', 'update'],
@@ -53,6 +58,7 @@ const PERMISSIONS: Record<UserRole, Record<Resource, Action[]>> = {
     'users': [],
     'admin-settings': [],
     'retention': [],
+    'chat': ['read', 'create', 'execute'],
   },
   viewer: {
     'models': ['read'],
@@ -66,6 +72,7 @@ const PERMISSIONS: Record<UserRole, Record<Resource, Action[]>> = {
     'users': [],
     'admin-settings': [],
     'retention': [],
+    'chat': ['read'],
   },
 };
 

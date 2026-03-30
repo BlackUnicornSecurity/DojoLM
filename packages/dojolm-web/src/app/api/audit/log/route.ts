@@ -12,10 +12,18 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { checkApiAuth } from '@/lib/api-auth';
 import type { AuditLogEntry } from '@/lib/audit-logger';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const AUDIT_DIR = path.resolve(process.cwd(), 'data', 'audit');
+const AUDIT_DIR = getDataPath('audit');
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  });
+}
 
 export async function GET(request: NextRequest) {
   const authResult = checkApiAuth(request);

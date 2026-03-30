@@ -144,7 +144,7 @@ export class OpenAICompatibleProvider implements LLMProviderAdapter {
       const response = await fetchWithTimeout(url, {
         method: 'GET',
         headers: this.buildHeaders(config),
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
         isLocal,
       });

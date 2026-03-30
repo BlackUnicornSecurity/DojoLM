@@ -169,6 +169,22 @@ describe('validateModelConfig', () => {
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes('Top-p'))).toBe(true);
   });
+
+  it('PRV-010b: requestTimeout out of range fails', async () => {
+    const { validateModelConfig } = await import('../llm-providers');
+    const result = await validateModelConfig({
+      id: 'test',
+      name: 'Test',
+      provider: 'openai' as any,
+      model: 'gpt-4',
+      requestTimeout: 999,
+      enabled: true,
+      createdAt: '',
+      updatedAt: '',
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => e.includes('Request timeout'))).toBe(true);
+  });
 });
 
 describe('testModelConfig', () => {

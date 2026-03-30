@@ -34,17 +34,19 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     const baseUrl = config.baseUrl || getDefaultUrl(config.provider);
-
-    // Verify URL is localhost only
-    const parsed = new URL(baseUrl);
-    if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
+    const { validateProviderUrl } = await import('bu-tpi/llm');
+    if (!validateProviderUrl(baseUrl, true)) {
       return NextResponse.json(
-        { error: 'Discovery restricted to localhost only' },
+        { error: 'Discovery restricted to localhost or IPs allowlisted in TPI_TRUSTED_INTERNAL_IPS on approved ports' },
         { status: 403 }
       );
     }
 
-    const models = await discoverModels(config.provider, baseUrl);
+    const models = await discoverModels(
+      config.provider,
+      baseUrl,
+      config.requestTimeout ?? 10_000
+    );
 
     return NextResponse.json({
       providerId: id,
@@ -65,7 +67,11 @@ function getDefaultUrl(provider: string): string {
   }
 }
 
-async function discoverModels(provider: string, baseUrl: string): Promise<Array<{ id: string; name: string; size?: string }>> {
+async function discoverModels(
+  provider: string,
+  baseUrl: string,
+  requestTimeout: number
+): Promise<Array<{ id: string; name: string; size?: string }>> {
   try {
     let url: string;
     if (provider === 'ollama') {
@@ -75,7 +81,7 @@ async function discoverModels(provider: string, baseUrl: string): Promise<Array<
     }
 
     const response = await fetch(url, {
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(requestTimeout),
     });
 
     if (!response.ok) {

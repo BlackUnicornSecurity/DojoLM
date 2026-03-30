@@ -5,7 +5,7 @@
  * Source: src/components/llm/CustomProviderBuilder.tsx
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
@@ -29,9 +29,7 @@ vi.mock('@/lib/fetch-with-auth', () => ({
 // Import under test
 // ---------------------------------------------------------------------------
 import { CustomProviderBuilder } from '../llm/CustomProviderBuilder'
-import { fetchWithAuth } from '@/lib/fetch-with-auth'
-
-const mockedFetch = vi.mocked(fetchWithAuth)
+const originalFetch = global.fetch
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -40,6 +38,14 @@ const mockedFetch = vi.mocked(fetchWithAuth)
 describe('CustomProviderBuilder', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    }) as typeof fetch
+  })
+
+  afterAll(() => {
+    global.fetch = originalFetch
   })
 
   // CP-001
@@ -61,6 +67,7 @@ describe('CustomProviderBuilder', () => {
     expect(screen.getByLabelText('Display Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Model Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Base URL')).toBeInTheDocument()
+    expect(screen.getByLabelText('Request Timeout (ms)')).toBeInTheDocument()
     expect(screen.getByLabelText('Auth Type')).toBeInTheDocument()
     expect(screen.getByLabelText('API Key')).toBeInTheDocument()
   })
@@ -123,6 +130,7 @@ describe('CustomProviderBuilder', () => {
           name: 'My Provider',
           model: 'my-model',
           baseUrl: 'https://api.example.com',
+          requestTimeout: 60000,
           provider: 'custom',
           enabled: true,
         })

@@ -21,14 +21,15 @@ import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const VALID_FORMATS = new Set(['json', 'pdf', 'markdown']);
+const VALID_FORMATS = new Set(['json', 'pdf', 'markdown', 'csv']);
 const VALID_SCOPES = new Set(['all', 'llm', 'compliance', 'guard', 'shingan']);
-const EVIDENCE_DIR = join(process.cwd(), 'data', 'compliance-evidence');
+const EVIDENCE_DIR = getDataPath('compliance-evidence');
 
 // ---------------------------------------------------------------------------
 // Types
@@ -117,6 +118,17 @@ interface ConsolidatedReport {
 }
 
 // ---------------------------------------------------------------------------
+// OPTIONS handler — CORS preflight (SEC-R3-001)
+// ---------------------------------------------------------------------------
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  })
+}
+
+// ---------------------------------------------------------------------------
 // GET handler
 // ---------------------------------------------------------------------------
 
@@ -131,7 +143,7 @@ export async function GET(request: NextRequest) {
 
     if (!VALID_FORMATS.has(format)) {
       return NextResponse.json(
-        { error: `Unsupported format: ${format}. Use json, pdf, or markdown.` },
+        { error: `Unsupported format: ${format}. Use json, pdf, markdown, or csv.` },
         { status: 400 },
       );
     }
@@ -176,6 +188,9 @@ export async function GET(request: NextRequest) {
     }
     if (format === 'markdown') {
       return formatConsolidatedMarkdown(report);
+    }
+    if (format === 'csv') {
+      return formatConsolidatedCSV(report);
     }
     return NextResponse.json(report);
   } catch (error) {
@@ -387,7 +402,7 @@ async function gatherGuardSection(): Promise<GuardSection> {
 
 async function gatherShinganSection(): Promise<ShinganSection> {
   try {
-    const shinganDir = join(process.cwd(), 'data', 'shingan-results');
+    const shinganDir = getDataPath('shingan-results');
     let files: string[] = [];
     try {
       files = (await fs.readdir(shinganDir)).filter(f => f.endsWith('.json')).slice(0, 200);
@@ -977,5 +992,78 @@ function formatConsolidatedMarkdown(report: ConsolidatedReport): NextResponse {
     format: 'markdown',
     content: lines.join('\n'),
     filename: `consolidated-report-${new Date().toISOString().split('T')[0]}.md`,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// CSV format — tabular summary of key metrics
+// ---------------------------------------------------------------------------
+
+function csvEscape(value: string | number | undefined | null): string {
+  const s = String(value ?? '');
+  const formulaStart = /^[=+\-@\t\r]/;
+  const safe = formulaStart.test(s) ? `'${s}` : s;
+  if (safe.includes(',') || safe.includes('\n') || safe.includes('"')) {
+    return `"${safe.replace(/"/g, '""')}"`;
+  }
+  return safe;
+}
+
+function formatConsolidatedCSV(report: ConsolidatedReport): NextResponse {
+  const rows: string[][] = [];
+  const date = new Date().toISOString().split('T')[0];
+
+  rows.push(['Section', 'Metric', 'Value', 'Detail']);
+
+  // LLM section
+  if (report.llm) {
+    rows.push(['LLM', 'Total Executions', String(report.llm.totalExecutions), '']);
+    rows.push(['LLM', 'Completed Executions', String(report.llm.completedExecutions), '']);
+    rows.push(['LLM', 'Overall Score', String(report.llm.overallScore), '']);
+    rows.push(['LLM', 'Risk Tier', report.llm.riskTier, '']);
+    for (const m of report.llm.modelBreakdown) {
+      rows.push(['LLM Model', m.modelId, String(m.avgScore), m.riskTier]);
+    }
+    for (const c of report.llm.topCategories) {
+      rows.push(['LLM Category', c.category, String(c.avgScore), c.severity]);
+    }
+  }
+
+  // Compliance section
+  if (report.compliance) {
+    rows.push(['Compliance', 'Total Frameworks', String(report.compliance.totalFrameworks), '']);
+    rows.push(['Compliance', 'Avg Coverage', String(report.compliance.avgCoverage) + '%', '']);
+    rows.push(['Compliance', 'Open Gaps', String(report.compliance.openGaps), '']);
+    rows.push(['Compliance', 'Covered Controls', String(report.compliance.coveredControls), '']);
+    for (const f of report.compliance.frameworks) {
+      rows.push(['Compliance Framework', f.name, String(f.coverage) + '%', f.tier]);
+    }
+  }
+
+  // Guard section
+  if (report.guard) {
+    rows.push(['Guard', 'Total Events', String(report.guard.totalEvents), '']);
+    rows.push(['Guard', 'Block Rate', String(report.guard.blockRate), '']);
+    for (const [action, count] of Object.entries(report.guard.byAction)) {
+      rows.push(['Guard Action', action, String(count), '']);
+    }
+  }
+
+  // Executive brief
+  rows.push(['Executive', 'Overall Score', String(report.executiveBrief.overallScore), '']);
+  rows.push(['Executive', 'Risk Tier', report.executiveBrief.overallRiskTier, '']);
+  rows.push(['Executive', 'Findings', report.executiveBrief.findings, '']);
+  for (const rec of report.executiveBrief.recommendations) {
+    rows.push(['Executive Recommendation', rec, '', '']);
+  }
+
+  const csv = rows.map(r => r.map(v => csvEscape(v)).join(',')).join('\n');
+
+  return new NextResponse(csv, {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="consolidated-report-${date}.csv"`,
+      'X-Content-Type-Options': 'nosniff',
+    },
   });
 }

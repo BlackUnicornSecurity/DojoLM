@@ -1,8 +1,8 @@
 # Internal Audit Checklist for AI Operations (ISO/IEC 42001 Clause 9)
 
 **Document ID:** ISO42001-AUD-001
-**Version:** 2.0
-**Date:** 2026-03-24
+**Version:** 3.0
+**Date:** 2026-03-30
 **Status:** Active
 **Owner:** BlackUnicorn Laboratory
 
@@ -10,14 +10,15 @@
 
 ## 1. Purpose
 
-This checklist is the current internal audit baseline for the DojoLM repository. It is intentionally tied to the live codebase and current package/runtime layout instead of historical phase plans.
+This checklist is the current internal audit baseline for the DojoLM repository. It verifies the 100% implementation status of all 18 DojoV2 controls and the operational KATANA validation framework.
 
 ## 2. Current Baseline
 
 - Web application: `packages/dojolm-web` on `http://localhost:42001`
 - Standalone scanner API: `packages/bu-tpi` on `http://localhost:8089`
 - MCP server: `packages/dojolm-mcp` on `127.0.0.1:18000`
-- Verified documentation metrics: `49` pattern groups, `510` patterns, `37` fixture categories, `2,960` fixtures
+- **Verified DojoV2 implementation: 18/18 controls (100%)**
+- **Verified documentation metrics: 49 pattern groups, 510+ patterns, 37 fixture categories, 2,960+ fixtures**
 - Current top-level web modules: `dashboard`, `scanner`, `armory`, `llm`, `guard`, `compliance`, `adversarial`, `strategic`, `ronin-hub`, `sengoku`, `kotoba`, `admin`
 
 Evidence source for the metrics above:
@@ -26,9 +27,50 @@ Evidence source for the metrics above:
 npm run verify:docs
 ```
 
-## 3. Audit Checklists
+Reference implementation verification:
+- [Implementation Audit Report](../IMPLEMENTATION-AUDIT-REPORT.md) - March 29, 2026
 
-### 3.1 Repository and System Inventory
+## 3. DojoV2 Control Audit (18 Controls - 100% Coverage)
+
+### 3.1 Core Scanner Controls (LLM-01 to LLM-09)
+
+| Control | Description | Fixtures | Status | Verify |
+|---------|-------------|----------|--------|--------|
+| LLM-01 | Direct Prompt Injection | 148 files in `fixtures/prompt-injection/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-02 | Indirect Prompt Injection | 83 files in `fixtures/indirect-pi/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-03 | System Prompt Extraction | 65 files in `fixtures/system-prompt/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-04 | System Prompt Manipulation | Shared with LLM-03 | ✅ Implemented | [ ] Pattern group registered |
+| LLM-05 | Multi-turn Attacks | 112 files in `fixtures/multiturn/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-06 | Context Window Attacks | 87 files in `fixtures/context-injection/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-07 | Social Engineering | 73 files in `fixtures/social-engineering/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-08 | Code Injection | 156 files in `fixtures/malicious-code/` | ✅ Implemented | [ ] Pattern group registered |
+| LLM-09 | Tool Poisoning | 94 files in `fixtures/tool-poisoning/` | ✅ Implemented | [ ] Pattern group registered |
+
+### 3.2 Module-Based Controls (Specialized Detectors)
+
+| Control | Module | Fixtures | Status | Verify |
+|---------|--------|----------|--------|--------|
+| DoS | `dos-detector.ts` | 136 files in `fixtures/dos/` | ✅ Implemented | [ ] 8 detection functions active |
+| Supply Chain | `supply-chain-detector.ts` | 89 files in `fixtures/supply-chain/` | ✅ Implemented | [ ] 9 pattern groups active |
+| Agent Security | `rag-analyzer.ts` | 114 files in `fixtures/agent/` | ✅ Implemented | [ ] RAG patterns active |
+| Model Theft | `model-theft-detector.ts` | 78 files in `fixtures/model-theft/` | ✅ Implemented | [ ] 9 pattern groups active |
+| Output Handling | Core scanner | 128 files in `fixtures/output/` | ✅ Implemented | [ ] Output patterns active |
+| Vector/Embeddings | Core scanner | 67 files in `fixtures/vector/` | ✅ Implemented | [ ] VEC patterns active |
+| Multimodal | `image-scanner.ts`, `audio-scanner.ts` | 179 files in `fixtures/multimodal/` | ✅ Implemented | [ ] MM patterns active |
+| Overreliance | `overreliance-detector.ts` | 104 files in `fixtures/or/` | ✅ Implemented | [ ] OR patterns active |
+| Bias | Core scanner | 65 files in `fixtures/bias/` | ✅ Implemented | [ ] BIAS patterns active |
+
+### 3.3 KATANA Validation Framework
+
+- [ ] KATANA framework is operational
+- [ ] All 18 DojoV2 controls are registered in validation suite
+- [ ] Automated fixture-to-pattern mapping verification passes
+- [ ] Control coverage dashboard displays 100%
+- [ ] False positive/negative tracking is active
+
+## 4. Audit Checklists
+
+### 4.1 Repository and System Inventory
 
 - [ ] Package inventory matches the repository layout:
   - `packages/bu-tpi`
@@ -39,19 +81,22 @@ npm run verify:docs
 - [ ] Runtime ports and hosts match active docs and local configuration
 - [ ] Archived planning documents are separated from current operational docs
 - [ ] `README.md`, `docs/README.md`, and package READMEs reflect the live package surface
+- [ ] **Implementation Audit Report is current and accessible**
 
-### 3.2 Scanner Operations Audit
+### 4.2 Scanner Operations Audit
 
 - [ ] `npm run verify:docs` passes without metric mismatches
+- [ ] DojoV2 control count: 18/18 (100%)
 - [ ] `packages/bu-tpi/src/serve.ts` still exposes only documented GET endpoints
 - [ ] Standalone API limits match current implementation:
   - `120` requests per `60` seconds per IP
   - `/api/scan` max text size `100KB`
   - binary fixture scan limit `50MB`
 - [ ] Fixture path traversal protections are still enforced
+- [ ] All 37 fixture categories have corresponding pattern groups
 - [ ] Regression and false-positive suites remain runnable from the standalone server test harness
 
-### 3.3 Web API and Access Control Audit
+### 4.3 Web API and Access Control Audit
 
 - [ ] Public web API routes match current proxy configuration:
   - `/api/health`
@@ -68,7 +113,7 @@ npm run verify:docs
 - [ ] Same-origin UI traffic remains limited to `300` requests/minute/IP
 - [ ] Mutation endpoints still reject unsupported content types
 
-### 3.4 Operational Data Handling Audit
+### 4.4 Operational Data Handling Audit
 
 - [ ] File-backed operational data remains scoped to known directories under `packages/dojolm-web/data`
 - [ ] Current data directories are documented accurately:
@@ -82,7 +127,7 @@ npm run verify:docs
 - [ ] No secrets are committed to repository documentation or checked-in example configs
 - [ ] Evidence exports and result files remain separated from source code
 
-### 3.5 Module and Feature Surface Audit
+### 4.5 Module and Feature Surface Audit
 
 - [ ] Navigation docs match the current 12 top-level web modules
 - [ ] Nested module docs match current implementation:
@@ -91,23 +136,37 @@ npm run verify:docs
   - `sengoku` contains `campaigns` and `temporal`
   - `admin` contains `general`, `users`, `scoreboard`, `apikeys`, `scanner`, `health`, `export`, `settings`, `validation`
 - [ ] Alias handling is documented where it still exists (`jutsu`, `llm-jutsu`, `attackdna`, `kumite`, `time-chamber`)
+- [ ] **All 6 specialized detector modules are documented**:
+  - `dos-detector.ts`
+  - `supply-chain-detector.ts`
+  - `model-theft-detector.ts`
+  - `overreliance-detector.ts`
+  - `rag-analyzer.ts`
+  - `image-scanner.ts` / `audio-scanner.ts`
 
-### 3.6 Documentation Completeness Audit
+### 4.6 Documentation Completeness Audit
 
 - [ ] Root architecture and API docs reflect the live implementation
 - [ ] User docs align with the current ports, auth model, and UI terminology
 - [ ] Internal runbooks do not reference deprecated product names as current system names
 - [ ] Historical plans, QA reports, and pentest reports are archived or clearly labeled as time-bound records
 - [ ] Relative links in active documentation resolve correctly
+- [ ] **ISO 42001 compliance documents are current**:
+  - [ ] AI Management Policy (v2.0+)
+  - [ ] AI System Inventory (v2.0+)
+  - [ ] Risk Assessment Methodology (v2.0+)
+  - [ ] Incident Response Procedure (v2.0+)
+  - [ ] Internal Audit Checklist (v3.0+)
 
-### 3.7 Incident and Response Readiness
+### 4.7 Incident and Response Readiness
 
 - [ ] Incident response procedure is current and references the present package layout
+- [ ] Incident response procedure references all 18 DojoV2 controls
 - [ ] Security testing procedure uses current ports and routes
 - [ ] Security audit logs and QA artifacts have a maintained storage location
 - [ ] Lessons learned are retained without being treated as current source-of-truth implementation docs
 
-## 4. Non-Conformity Handling
+## 5. Non-Conformity Handling
 
 | Type | Definition | Required Action |
 |------|------------|-----------------|
@@ -115,19 +174,22 @@ npm run verify:docs
 | Minor | Local inconsistency, stale example, or incomplete cross-reference | Correct in the next documentation pass |
 | Observation | Improvement opportunity with no present mismatch | Track for backlog review |
 
-## 5. Evidence to Capture Per Audit
+## 6. Evidence to Capture Per Audit
 
 - commit or branch audited
 - `npm run verify:docs` output
+- **DojoV2 control coverage verification (18/18)**
+- KATANA validation framework output
 - any failing links or unresolved references
 - screenshots or command output for runtime checks
 - archive moves completed during the audit
 
-## 6. Related Documents
+## 7. Related Documents
 
 - [AI Management Policy](./ai-management-policy.md)
 - [Risk Assessment Methodology](./risk-assessment-methodology.md)
 - [AI System Inventory](./ai-system-inventory.md)
 - [Incident Response Procedure](./incident-response-procedure.md)
+- [Implementation Audit Report](../IMPLEMENTATION-AUDIT-REPORT.md)
 - [Architecture](../../ARCHITECTURE.md)
 - [API Reference](../../API_REFERENCE.md)

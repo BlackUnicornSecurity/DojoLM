@@ -8,14 +8,15 @@ import { test, expect } from '@playwright/test';
 test.describe('Cross-Module Actions', () => {
   test('dashboard loads with all widget sections', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Dojo Command Surface')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Command' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Monitoring' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Platform' })).toBeVisible({ timeout: 10000 });
   });
 
   test('activity feed shows events', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('Dojo Command Surface')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 15000 });
     await expect(page.getByText('Recent Activity')).toBeVisible({ timeout: 10000 });
   });
 
@@ -33,6 +34,6 @@ test.describe('Cross-Module Actions', () => {
     await expect(dashboardNav).toBeVisible({ timeout: 5000 });
     await dashboardNav.click();
 
-    await expect(page.getByText('Dojo Command Surface')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 10000 });
   });
 });

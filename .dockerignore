@@ -30,7 +30,7 @@ packages/dojolm-mcp/dist/
 **/__tests__/
 **/__mocks__/
 vitest.config.*
-coverage/
+/coverage/
 
 # Docs
 docs/
@@ -40,6 +40,7 @@ docs/
 # Environment files (passed at runtime)
 .env*
 !.env.example
+!packages/dojolm-web/.env.production
 
 # Large binaries / media (excluded from build context)
 *.png
@@ -51,6 +52,7 @@ docs/
 *.mp4
 *.zip
 *.tar.gz
+!packages/dojolm-web/public/**
 
 # Playwright MCP cache
 .playwright-mcp/

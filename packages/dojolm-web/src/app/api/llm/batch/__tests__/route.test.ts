@@ -11,8 +11,8 @@ import { NextRequest } from 'next/server';
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: vi.fn().mockReturnValue(null),
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
 }));
 
 vi.mock('@/lib/api-error', () => ({

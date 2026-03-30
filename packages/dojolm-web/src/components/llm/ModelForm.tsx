@@ -8,7 +8,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useModelContext } from '@/lib/contexts';
 import type { LLMModelConfig, LLMProvider } from '@/lib/llm-types';
 import { PROVIDER_INFO, DEFAULT_MODELS, PROVIDER_BASE_URLS, validateApiKey, TEMPERATURE_RANGE, TOP_P_RANGE } from '@/lib/llm-constants';
 import { Button } from '@/components/ui/button';
@@ -19,6 +18,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { LocalModelSelector } from './LocalModelSelector';
+
+const DEFAULT_FORM_REQUEST_TIMEOUT_MS = 60000;
 
 export interface ModelFormProps {
   /** Existing model to edit (null for new model) */
@@ -44,6 +45,7 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
     enabled: model?.enabled ?? true,
     temperature: model?.temperature ?? 0.7,
     topP: model?.topP ?? 1.0,
+    requestTimeout: model?.requestTimeout ?? DEFAULT_FORM_REQUEST_TIMEOUT_MS,
   });
 
   const [showApiKey, setShowApiKey] = useState(false);
@@ -68,6 +70,7 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
         enabled: model.enabled,
         temperature: model.temperature ?? 0.7,
         topP: model.topP ?? 1.0,
+        requestTimeout: model.requestTimeout ?? DEFAULT_FORM_REQUEST_TIMEOUT_MS,
       });
     }
   }, [model]);
@@ -104,6 +107,10 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
 
     if (formData.topP < TOP_P_RANGE.min || formData.topP > TOP_P_RANGE.max) {
       newErrors.topP = `Top-p must be between ${TOP_P_RANGE.min} and ${TOP_P_RANGE.max}`;
+    }
+
+    if (!Number.isInteger(formData.requestTimeout) || formData.requestTimeout < 1000 || formData.requestTimeout > 600000) {
+      newErrors.requestTimeout = 'Request timeout must be an integer between 1000 and 600000 ms';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -322,6 +329,27 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
               className="w-full"
             />
             {errors.topP && <p className="text-xs text-red-500">{errors.topP}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="requestTimeout">Request Timeout (ms)</Label>
+            <Input
+              id="requestTimeout"
+              type="number"
+              min={1000}
+              max={600000}
+              step={1000}
+              value={formData.requestTimeout}
+              onChange={e => setFormData(prev => ({
+                ...prev,
+                requestTimeout: Number.parseInt(e.target.value || String(DEFAULT_FORM_REQUEST_TIMEOUT_MS), 10),
+              }))}
+              className={errors.requestTimeout ? 'border-red-500' : ''}
+            />
+            {errors.requestTimeout && <p className="text-xs text-red-500">{errors.requestTimeout}</p>}
+            <p className="text-xs text-muted-foreground">
+              Increase this for slower inference targets such as local or high-latency models
+            </p>
           </div>
 
           {/* Enabled checkbox */}

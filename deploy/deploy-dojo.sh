@@ -116,13 +116,14 @@ rsync -az --delete \
     --exclude '.git' \
     --exclude 'team' \
     --exclude '.env' \
+    --exclude '.env.*' \
     --exclude '*.db' \
     --exclude '*.png' \
     --exclude '*.jpg' \
     --exclude '*.pptx' \
     --exclude '.playwright-mcp' \
     --exclude '.claude' \
-    --exclude 'coverage' \
+    --exclude '/coverage' \
     --exclude 'packages/bmad-cybersec' \
     "${PROJECT_ROOT}/" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/app/" && \
     pass "Files synced to Voyager" || \
@@ -132,6 +133,18 @@ rsync -az --delete \
 scp "${SCRIPT_DIR}/docker-compose.yml" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/" && \
     pass "docker-compose.yml deployed" || \
     fail "docker-compose.yml copy failed"
+
+# Seed validation module corpus into running container (OI-R3-001)
+if [ -d "${SCRIPT_DIR}/validation-seed" ]; then
+    info "Seeding validation module corpus into container..."
+    # Copy seed files to remote /tmp first, then docker cp into container
+    rsync -az "${SCRIPT_DIR}/validation-seed/" \
+        "${VOYAGER_USER}@${VOYAGER_IP}:/tmp/dojolm-validation-seed/" && \
+    ssh "${VOYAGER_USER}@${VOYAGER_IP}" \
+        'for dir in /tmp/dojolm-validation-seed/*/; do module=$(basename "$dir"); docker cp "$dir" dojolm-web:/app/data/validation/modules/"$module" 2>/dev/null; done' && \
+    pass "Validation corpus seeded (29 modules → /app/data/validation/modules/)" || \
+    warn "Validation corpus seed failed — check container status"
+fi
 
 # ── Phase 5: Build & Start ────────────────────────────────────────────────────
 
@@ -149,6 +162,8 @@ info "Building Docker image on Voyager (SHA: ${BUILD_SHA})..."
 ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR}/app && docker build \
     --build-arg BUILD_SHA=${BUILD_SHA} \
     --build-arg BUILD_DATE=${BUILD_DATE} \
+    --build-arg NEXT_PUBLIC_APP_URL=https://dojo.bucc.internal \
+    --build-arg NEXT_PUBLIC_API_URL=https://dojo.bucc.internal \
     -t dojolm-web:latest \
     -t dojolm-web:${BUILD_SHA} \
     -f Dockerfile ." && \
@@ -179,6 +194,7 @@ fi
 
 # Check API health
 API_RESPONSE=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -s -m 5 http://localhost:3001/api/stats 2>/dev/null || echo FAIL")
+# Note: Caddy proxies dojo.bucc.internal -> localhost:3001 -> container:42001
 if [[ "${API_RESPONSE}" != "FAIL" ]] && [[ "${API_RESPONSE}" == *"{"* ]]; then
     pass "API responding on :3001"
 else
@@ -186,7 +202,8 @@ else
 fi
 
 # Check Caddy proxy
-CADDY_CHECK=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -sk -m 5 -o /dev/null -w '%{http_code}' https://dojo.bucc.internal/ 2>/dev/null || echo 000")
+# Use '; true' so curl exit code never contaminates the output with a second echo
+CADDY_CHECK=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -sk -m 5 -o /dev/null -w '%{http_code}' https://dojo.bucc.internal/ 2>/dev/null; true")
 if [[ "${CADDY_CHECK}" == "200" ]] || [[ "${CADDY_CHECK}" == "302" ]]; then
     pass "Caddy reverse proxy working (dojo.bucc.internal -> :3001)"
 else
@@ -194,7 +211,9 @@ else
 fi
 
 # Check container logs for errors
-ERRORS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker logs dojolm-web 2>&1 | grep -ci 'error\|fatal\|panic' || echo 0")
+# grep -c exits 1 when no matches; '; true' prevents || echo from doubling the output
+ERRORS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker logs dojolm-web 2>&1 | grep -ci 'error\|fatal\|panic'; true")
+ERRORS="${ERRORS:-0}"
 if [ "${ERRORS}" -eq 0 ]; then
     pass "No errors in container logs"
 else

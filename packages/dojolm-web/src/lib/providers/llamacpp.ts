@@ -172,7 +172,7 @@ export class LlamacppProvider implements LLMProviderAdapter {
 
       // Check if llama.cpp server is running via /v1/models endpoint
       const response = await fetch(`${baseUrl}/v1/models`, {
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(config.requestTimeout ?? 5000),
       });
 
       return response.ok;

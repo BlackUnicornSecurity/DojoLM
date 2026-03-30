@@ -159,10 +159,16 @@ describe('POST /api/llm/batch-test', () => {
   // BT-008
   it('BT-008: POST returns 429 when concurrent batch limit reached', async () => {
     let batchCount = 0;
+    const createdBatches: Array<{ id: string; name: string; status: string }> = [];
     mockCreateBatch.mockImplementation(async () => {
       batchCount++;
-      return { id: `batch-${batchCount}`, name: `Batch ${batchCount}`, status: 'running' };
+      const batch = { id: `batch-${batchCount}`, name: `Batch ${batchCount}`, status: 'running' };
+      createdBatches.push(batch);
+      return batch;
     });
+
+    // queryBatches returns all created batches as 'running' so reconcile keeps them in-memory
+    mockQueryBatches.mockImplementation(async () => ({ batches: [...createdBatches] }));
 
     // Make background execution hang so batches stay in runningBatches
     mockGetModelConfig.mockImplementation(() => new Promise(() => { /* never resolves */ }));
@@ -218,19 +224,43 @@ describe('GET /api/llm/batch-test', () => {
           completedAt: '2026-01-01T00:01:00Z',
         },
       ],
+      total: 1,
     });
   });
 
   // BT-011
-  it('BT-011: GET returns list of batches', async () => {
+  it('BT-011: GET returns paginated list of batches', async () => {
     const req = new NextRequest('http://localhost:42001/api/llm/batch-test', { method: 'GET' });
     const res = await GET(req);
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(Array.isArray(body)).toBe(true);
-    expect(body).toHaveLength(1);
-    expect(body[0].id).toBe('b1');
-    expect(body[0].status).toBe('completed');
+    expect(body).toHaveProperty('batches');
+    expect(Array.isArray(body.batches)).toBe(true);
+    expect(body.batches).toHaveLength(1);
+    expect(body.batches[0].id).toBe('b1');
+    expect(body.batches[0].status).toBe('completed');
+    expect(body).toHaveProperty('total', 1);
+    expect(body).toHaveProperty('limit');
+    expect(body).toHaveProperty('offset', 0);
+  });
+
+  // BT-011b
+  it('BT-011b: GET supports ?limit and ?offset query params', async () => {
+    const req = new NextRequest('http://localhost:42001/api/llm/batch-test?limit=10&offset=0', { method: 'GET' });
+    const res = await GET(req);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.limit).toBe(10);
+    expect(body.offset).toBe(0);
+  });
+
+  // BT-011c
+  it('BT-011c: GET clamps limit to max 200', async () => {
+    const req = new NextRequest('http://localhost:42001/api/llm/batch-test?limit=9999', { method: 'GET' });
+    const res = await GET(req);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.limit).toBe(200);
   });
 
   // BT-012

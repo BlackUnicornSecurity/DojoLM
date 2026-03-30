@@ -104,7 +104,7 @@ export class CustomProvider implements LLMProviderAdapter {
       const url = `${baseUrl}/models`;
       const response = await fetchWithTimeout(url, {
         headers: this.buildHeaders(config),
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
         isLocal,
       });

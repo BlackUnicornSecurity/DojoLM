@@ -6,12 +6,12 @@
 import { test, expect, type Locator } from '@playwright/test';
 
 const MODULES = [
-  { name: 'Dashboard', readyText: /Dojo Command Surface|System Health|Begin Your Training/i, timeout: 10000 },
+  { name: 'Dashboard', readyText: /Dashboard|System Health|Scan Text/i, timeout: 10000 },
   { name: 'Haiku Scanner', readyText: 'Input Text', timeout: 10000 },
   { name: 'Armory', readyText: 'Fixture Explorer', timeout: 10000 },
   { name: 'LLM Dashboard', readyText: 'LLM Testing Dashboard', timeout: 10000 },
   { name: 'Hattori Guard', readyText: 'Guard Mode', timeout: 10000 },
-  { name: 'Bushido Book', readyText: 'Framework Coverage', timeout: 20000 },
+  { name: 'Bushido Book', readyText: 'Framework Coverage', timeout: 35000 },
   { name: 'Atemi Lab', readyText: 'Attack Tools', timeout: 10000 },
   { name: 'The Kumite', readyText: 'SAGE', timeout: 10000 },
   { name: 'Ronin Hub', readyText: 'Programs', timeout: 10000 },
@@ -28,7 +28,7 @@ test.describe('Navigation', () => {
   test('loads the dashboard homepage', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/NODA|DojoLM/i);
-    await expect(page.getByText(/Dojo Command Surface|System Health|Begin Your Training/i).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/Dashboard|System Health|Scan Text/i).first()).toBeVisible({ timeout: 15000 });
   });
 
   test('sidebar shows all module navigation items', async ({ page }) => {

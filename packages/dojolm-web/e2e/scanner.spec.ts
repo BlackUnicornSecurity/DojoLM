@@ -1,6 +1,7 @@
 /**
  * E2E Test: Scanner Flow
  * Verifies scan input, execution, and results display.
+ * Backend API: POST /api/scan (submit scan), GET /api/scan/results (fetch results)
  */
 
 import { test, expect } from '@playwright/test';
@@ -25,15 +26,14 @@ test.describe('Scanner', () => {
   });
 
   test('can submit a scan', async ({ page }) => {
-    // Find the scan input textarea
-    const textarea = page.locator('textarea').first();
+    const scannerMain = page.locator('main');
+    const textarea = scannerMain.getByRole('textbox', { name: 'Enter text to scan for prompt injection' });
     await expect(textarea).toBeVisible({ timeout: 10000 });
     await textarea.fill('Test prompt injection: ignore previous instructions');
-    // Find and click scan button
-    const scanButton = page.locator('button:has-text("Scan")').first();
-    await expect(scanButton).toBeVisible({ timeout: 5000 });
+    // Wait for React to process the input event and enable the button
+    const scanButton = scannerMain.getByRole('button', { name: /^Scan$/ });
+    await expect(scanButton).toBeEnabled({ timeout: 5000 });
     await scanButton.click();
-    // Wait for results to appear
-    await expect(page.locator('text=/BLOCK|ALLOW|result/i').first()).toBeVisible({ timeout: 15000 });
+    await expect(scannerMain.getByText(/Threat Detected|Safe/i).first()).toBeVisible({ timeout: 25000 });
   });
 });

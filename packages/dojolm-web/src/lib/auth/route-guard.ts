@@ -11,8 +11,61 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { validateSession, type SessionUser } from './session';
-import { hasPermission, isAtLeastRole, type Resource, type Action } from './rbac';
+import { hasPermission, isAtLeastRole, type Resource, type Action, VALID_ROLES } from './rbac';
 import type { UserRole } from '../db/types';
+
+/** Valid API key permission entry for JSON mapping */
+interface ApiKeyPermission {
+  keyHash: string;
+  role: UserRole;
+}
+
+/** Parse and validate API_KEY_PERMISSIONS JSON env var */
+function getApiKeyPermissions(): Map<string, UserRole> {
+  const permissionsMap = new Map<string, UserRole>();
+  const permissionsJson = process.env.API_KEY_PERMISSIONS;
+  
+  if (!permissionsJson) {
+    return permissionsMap;
+  }
+  
+  try {
+    const permissions = JSON.parse(permissionsJson) as ApiKeyPermission[];
+    for (const entry of permissions) {
+      if (entry.keyHash && VALID_ROLES.includes(entry.role)) {
+        permissionsMap.set(entry.keyHash, entry.role);
+      }
+    }
+  } catch {
+    // Invalid JSON - ignore and return empty map
+  }
+  
+  return permissionsMap;
+}
+
+/** Get role for API key: check specific mapping first, then fall back to API_KEY_ROLE env var */
+function getApiKeyRole(apiKey: string): UserRole {
+  // Check for key-specific role mapping
+  const permissionsMap = getApiKeyPermissions();
+  if (permissionsMap.size > 0) {
+    // Hash the provided API key for lookup
+    const keyHash = crypto.createHash('sha256').update(apiKey).digest('hex').slice(0, 16);
+    const specificRole = permissionsMap.get(keyHash);
+    if (specificRole) {
+      return specificRole;
+    }
+  }
+  
+  // Fall back to default NODA_API_KEY_ROLE env var with validation
+  // This allows scoped API key permissions via environment configuration
+  const configuredRole = process.env.NODA_API_KEY_ROLE as UserRole;
+  if (VALID_ROLES.includes(configuredRole)) {
+    return configuredRole;
+  }
+  
+  // Safe default - analyst has limited privileges
+  return 'analyst';
+}
 
 const SESSION_COOKIE_NAME = 'tpi_session';
 const CSRF_COOKIE_NAME = 'tpi_csrf';
@@ -65,13 +118,15 @@ export function withAuth(
 
     // R8-007: Fall back to API key auth — middleware already validated the key,
     // so if X-API-Key header is present and we reached this handler, the key is valid.
-    // API key holders get admin-level access.
-    if (!user && req.headers.get('x-api-key')) {
+    // API key role is configurable via API_KEY_ROLE env var (defaults to 'analyst').
+    // Supports per-key role mapping via API_KEY_PERMISSIONS JSON env var.
+    const apiKey = req.headers.get('x-api-key');
+    if (!user && apiKey) {
       user = {
         id: 'api-key-user',
         username: 'api-key',
         email: '',
-        role: 'admin',
+        role: getApiKeyRole(apiKey),
         displayName: 'API Key User',
       };
     }

@@ -2,9 +2,9 @@ import { NextRequest } from 'next/server';
 import { validateSession } from '@/lib/auth/session';
 import { SESSION_COOKIE_NAME } from '@/lib/auth/route-guard';
 
-const DEV_FALLBACK_APP_ORIGIN = 'http://localhost:42001';
+const DEV_FALLBACK_APP_ORIGIN = 'http://127.0.0.1:42001';
 const DEV_EXTRA_ALLOWED_ORIGINS = new Set([
-  DEV_FALLBACK_APP_ORIGIN,
+  'http://localhost:42001',
   'http://localhost:3001',
 ]);
 const VALID_SEC_FETCH_MODES = new Set(['cors', 'same-origin', 'navigate']);
@@ -87,6 +87,17 @@ export function isTrustedBrowserOriginRequest(request: NextRequest): boolean {
 
   const origin = normalizeOrigin(request.headers.get('origin') ?? '');
   const refererOrigin = normalizeOrigin(request.headers.get('referer') ?? '');
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (origin === appOrigin || refererOrigin === appOrigin) {
+      return true;
+    }
+
+    return (
+      (!!origin && DEV_EXTRA_ALLOWED_ORIGINS.has(origin)) ||
+      (!!refererOrigin && DEV_EXTRA_ALLOWED_ORIGINS.has(refererOrigin))
+    );
+  }
 
   if (origin !== appOrigin && refererOrigin !== appOrigin) {
     return false;

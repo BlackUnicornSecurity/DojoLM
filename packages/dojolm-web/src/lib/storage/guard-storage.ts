@@ -30,6 +30,7 @@ import type {
   GuardMode,
 } from '../guard-types';
 import { DEFAULT_GUARD_CONFIG, GUARD_MAX_EVENTS } from '../guard-constants';
+import { getDataPath } from '@/lib/runtime-paths';
 // ===========================================================================
 // Mode Migration (backward compat: old→new mode names)
 // Only truly obsolete names are mapped — current valid names must NOT appear as keys.
@@ -56,7 +57,7 @@ function normalizeMode(mode: string): GuardMode {
 // Paths
 // ===========================================================================
 
-const DATA_BASE_DIR = path.join(process.cwd(), 'data', 'llm-results', 'guard');
+const DATA_BASE_DIR = getDataPath('llm-results', 'guard');
 
 const PATHS = {
   config: path.join(DATA_BASE_DIR, 'config.json'),
@@ -154,7 +155,7 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
     if (errno.code !== 'EEXIST') throw error;
   }
 
-  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmpPath, filePath);
 }

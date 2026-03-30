@@ -16,6 +16,7 @@ vi.mock('../session', () => ({
 vi.mock('../rbac', () => ({
   hasPermission: vi.fn(),
   isAtLeastRole: vi.fn(),
+  VALID_ROLES: ['admin', 'analyst', 'viewer'],
 }));
 
 import {
@@ -285,5 +286,126 @@ describe('route-guard', () => {
       const resOk = await handler(reqOk);
       expect(resOk.status).toBe(200);
     }
+  });
+
+  // RG-015: API key auth - defaults to analyst role
+  it('RG-015: withAuth authenticates with API key and defaults to analyst role', async () => {
+    // No session, but API key present
+    mockValidateSession.mockReturnValue(null);
+    delete process.env.API_KEY_ROLE;
+    delete process.env.API_KEY_PERMISSIONS;
+
+    const handler = withAuth(dummyHandler);
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'GET',
+      headers: { 'x-api-key': 'test-api-key' },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    expect(dummyHandler).toHaveBeenCalled();
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('analyst');
+  });
+
+  // RG-016: API key auth - respects API_KEY_ROLE env var
+  it('RG-016: withAuth respects API_KEY_ROLE environment variable', async () => {
+    mockValidateSession.mockReturnValue(null);
+    process.env.API_KEY_ROLE = 'viewer';
+    delete process.env.API_KEY_PERMISSIONS;
+
+    const handler = withAuth(dummyHandler);
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'GET',
+      headers: { 'x-api-key': 'test-api-key' },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('viewer');
+  });
+
+  // RG-017: API key auth - invalid API_KEY_ROLE falls back to analyst
+  it('RG-017: withAuth falls back to analyst for invalid API_KEY_ROLE', async () => {
+    mockValidateSession.mockReturnValue(null);
+    process.env.API_KEY_ROLE = 'invalid-role';
+    delete process.env.API_KEY_PERMISSIONS;
+
+    const handler = withAuth(dummyHandler);
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'GET',
+      headers: { 'x-api-key': 'test-api-key' },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('analyst');
+  });
+
+  // RG-018: API key auth - API_KEY_PERMISSIONS mapping
+  it('RG-018: withAuth uses API_KEY_PERMISSIONS for per-key role mapping', async () => {
+    mockValidateSession.mockReturnValue(null);
+    delete process.env.API_KEY_ROLE;
+    
+    // Create a SHA-256 hash of the test key (first 16 chars)
+    const crypto = await import('node:crypto');
+    const testKey = 'my-special-key';
+    const keyHash = crypto.createHash('sha256').update(testKey).digest('hex').slice(0, 16);
+    
+    process.env.API_KEY_PERMISSIONS = JSON.stringify([
+      { keyHash, role: 'admin' },
+    ]);
+
+    const handler = withAuth(dummyHandler);
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'GET',
+      headers: { 'x-api-key': testKey },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('admin');
+  });
+
+  // RG-019: API key auth - unknown key falls back to default role
+  it('RG-019: withAuth falls back to default role for unmapped API key', async () => {
+    mockValidateSession.mockReturnValue(null);
+    process.env.API_KEY_ROLE = 'viewer';
+    
+    // Set up permissions for a different key
+    process.env.API_KEY_PERMISSIONS = JSON.stringify([
+      { keyHash: 'someotherhash', role: 'admin' },
+    ]);
+
+    const handler = withAuth(dummyHandler);
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'GET',
+      headers: { 'x-api-key': 'unknown-key' },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('viewer');
+  });
+
+  // RG-020: API key auth - CSRF is skipped for API key requests
+  it('RG-020: withAuth skips CSRF check for API key authenticated requests', async () => {
+    mockValidateSession.mockReturnValue(null);
+    delete process.env.API_KEY_ROLE;
+
+    const handler = withAuth(dummyHandler);
+    // POST without CSRF tokens - should work with API key
+    const req = new NextRequest('http://localhost:42001/api/test', {
+      method: 'POST',
+      headers: { 'x-api-key': 'test-api-key' },
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    expect(dummyHandler).toHaveBeenCalled();
   });
 });

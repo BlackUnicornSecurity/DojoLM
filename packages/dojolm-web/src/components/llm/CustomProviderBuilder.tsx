@@ -16,6 +16,7 @@ interface CustomConfig {
   name: string;
   baseUrl: string;
   model: string;
+  requestTimeout: number;
   authType: 'bearer' | 'api-key-header' | 'none';
   authHeaderName: string;
   apiKey: string;
@@ -60,6 +61,7 @@ export function CustomProviderBuilder() {
     name: '',
     baseUrl: '',
     model: '',
+    requestTimeout: 60000,
     authType: 'bearer',
     authHeaderName: 'Authorization',
     apiKey: '',
@@ -127,6 +129,7 @@ export function CustomProviderBuilder() {
           model: config.model,
           apiKey: config.authType === 'none' ? undefined : config.apiKey,
           baseUrl: config.baseUrl,
+          requestTimeout: config.requestTimeout,
           customHeaders: config.authType === 'api-key-header' && config.authHeaderName !== 'Authorization'
             ? { [config.authHeaderName]: config.apiKey }
             : undefined,
@@ -169,6 +172,7 @@ export function CustomProviderBuilder() {
         apiKey: config.authType === 'none' ? undefined : config.apiKey || undefined,
         baseUrl: config.baseUrl,
         enabled: true,
+        requestTimeout: config.requestTimeout,
         customHeaders: config.authType === 'api-key-header' && config.authHeaderName !== 'Authorization'
           ? { [config.authHeaderName]: config.apiKey }
           : undefined,
@@ -198,6 +202,7 @@ export function CustomProviderBuilder() {
       name: preset.name,
       baseUrl: preset.baseUrl,
       model: preset.defaultModels[0] ?? prev.model,
+      requestTimeout: prev.requestTimeout,
       authType: preset.authType === 'api-key-header' ? 'api-key-header' : preset.authType === 'none' ? 'none' : 'bearer',
       authHeaderName: preset.authType === 'api-key-header' ? 'x-api-key' : 'Authorization',
       responsePath: 'choices[0].message.content',
@@ -282,6 +287,22 @@ export function CustomProviderBuilder() {
             onChange={(e) => setConfig((prev) => ({ ...prev, baseUrl: e.target.value }))}
             className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
             placeholder="https://api.example.com/v1"
+          />
+        </div>
+        <div>
+          <label htmlFor="cp-timeout" className="block text-xs text-muted-foreground mb-1">Request Timeout (ms)</label>
+          <input
+            id="cp-timeout"
+            type="number"
+            min={1000}
+            max={600000}
+            step={1000}
+            value={config.requestTimeout}
+            onChange={(e) => setConfig((prev) => ({
+              ...prev,
+              requestTimeout: Number.parseInt(e.target.value || '60000', 10),
+            }))}
+            className="w-full px-3 py-1.5 text-xs rounded border border-[var(--border-primary)] bg-[var(--bg-primary)]"
           />
         </div>
         <div>

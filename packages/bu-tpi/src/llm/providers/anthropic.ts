@@ -116,7 +116,7 @@ export class AnthropicProvider implements LLMProviderAdapter {
           max_tokens: 1,
           messages: [{ role: 'user', content: 'Hi' }],
         }),
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
       });
       return response.ok;

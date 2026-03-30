@@ -9,8 +9,9 @@ import { checkApiAuth } from '@/lib/api-auth';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { CampaignRun } from '@/lib/sengoku-types';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
 const SAFE_ID = /^[\w-]{1,128}$/;
 
 export async function GET(
@@ -60,7 +61,7 @@ export async function PATCH(
       endedAt: new Date().toISOString(),
     };
 
-    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
     await fs.promises.writeFile(tmpFile, JSON.stringify(cancelled, null, 2));
     await fs.promises.rename(tmpFile, filePath);
 

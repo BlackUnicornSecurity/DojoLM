@@ -44,6 +44,8 @@ The main execution surface for model testing. Current tabs are:
 - `Custom Models`
 - `Jutsu`
 
+> **Note:** The `Leaderboard` tab label is truncated to `Board` in the live UI tab bar.
+
 Guide: [LLM Dashboard](modules/LLM_DASHBOARD.md)
 
 ### Hattori Guard
@@ -79,6 +81,8 @@ The strategic analysis hub. It currently contains:
 - `Amaterasu DNA`
 - `Kagami`
 - `Shingan`
+
+> **Note:** Subsystem tabs `Battle Arena` and `Amaterasu DNA` are truncated to `Arena` and `DNA` in the live UI.
 
 Guide: [The Kumite](modules/THE_KUMITE.md)
 

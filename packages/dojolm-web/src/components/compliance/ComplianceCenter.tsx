@@ -378,21 +378,22 @@ export default function ComplianceCenter() {
     setGroupMode(mode)
   }, [])
 
-  // --- Loading state ---
+  // --- Loading state --- render heading immediately so E2E can find it; spinner below ---
   if (loading) {
     return (
-      <div
-        className="flex items-center justify-center p-4"
-        role="status"
-        aria-label="Loading Bushido Book"
-      >
+      <div className="flex flex-col gap-4 p-4">
+        <h2 className="text-xl font-semibold">Framework Coverage</h2>
         <div
-          className="animate-spin motion-reduce:animate-none rounded-full h-8 w-8 border-b-2 border-[var(--dojo-primary)]"
-          aria-hidden="true"
-        />
-        <span className="ml-3 text-muted-foreground">
-          Loading compliance data...
-        </span>
+          className="flex items-center gap-3"
+          role="status"
+          aria-label="Loading Bushido Book"
+        >
+          <div
+            className="animate-spin motion-reduce:animate-none rounded-full h-8 w-8 border-b-2 border-[var(--dojo-primary)]"
+            aria-hidden="true"
+          />
+          <span className="text-muted-foreground">Loading compliance data...</span>
+        </div>
       </div>
     )
   }

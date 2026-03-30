@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkApiAuth } from '@/lib/api-auth';
+import { getDataPath } from '@/lib/runtime-paths';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid mode, must be identify or verify' }, { status: 400 });
     }
 
-    const resultsDir = path.join(process.cwd(), 'data', 'llm-results', 'fingerprint');
+    const resultsDir = getDataPath('llm-results', 'fingerprint');
 
     let files: string[] = [];
     try {

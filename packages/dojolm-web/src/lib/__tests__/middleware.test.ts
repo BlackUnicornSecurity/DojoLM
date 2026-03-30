@@ -160,6 +160,27 @@ describe('Proxy', () => {
     expect(res.status).toBe(200);
   });
 
+  it('MW-005c: allows trusted same-origin public scanner actions without authentication', async () => {
+    process.env.NODA_API_KEY = 'test-key';
+    process.env.NODE_ENV = 'production';
+
+    const { proxy } = await import('@/proxy');
+    const req = createApiRequest('/api/scan', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        origin: 'http://localhost:42001',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-dest': 'empty',
+      },
+      body: JSON.stringify({ text: 'scan me' }),
+    });
+
+    const res = await proxy(req);
+    expect(res.status).toBe(200);
+  });
+
   // MW-006: Non-API routes pass through without checks
   it('MW-006: non-API routes pass through without auth checks', async () => {
     process.env.NODA_API_KEY = 'test-key';

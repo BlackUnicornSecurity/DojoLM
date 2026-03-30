@@ -90,7 +90,7 @@ export class AI21Provider implements LLMProviderAdapter {
           'Authorization': `Bearer ${config.apiKey}`,
         },
         body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Hi' }], max_tokens: 1 }),
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
       });
       return response.ok;

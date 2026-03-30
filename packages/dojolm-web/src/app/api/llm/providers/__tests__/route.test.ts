@@ -178,6 +178,21 @@ describe('POST /api/llm/providers', () => {
     );
   });
 
+  it('PROV-013b: persists requestTimeout when provided', async () => {
+    const { POST } = await import('../route');
+    const res = await POST(createPostRequest({
+      provider: 'ollama',
+      model: 'llama3.2',
+      baseUrl: 'http://localhost:11434',
+      requestTimeout: 120000,
+    }));
+
+    expect(res.status).toBe(201);
+    expect(mockSaveModelConfig).toHaveBeenCalledWith(
+      expect.objectContaining({ requestTimeout: 120000 })
+    );
+  });
+
   it('PROV-014: internal error returns 500', async () => {
     mockGetStorage.mockRejectedValue(new Error('Storage unavailable'));
 

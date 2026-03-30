@@ -119,25 +119,47 @@ export async function POST(request: NextRequest) {
   }
 }
 
+const BATCH_LIST_DEFAULT_LIMIT = 50;
+const BATCH_LIST_MAX_LIMIT = 200;
+
 export async function GET(request: NextRequest) {
   const authError = checkApiAuth(request);
   if (authError) return authError;
 
   try {
-    const storage = await getStorage();
-    const { batches } = await storage.queryBatches({});
+    const { searchParams } = request.nextUrl;
+    const rawLimit = searchParams.get('limit');
+    const rawOffset = searchParams.get('offset');
+    const statusFilter = searchParams.get('status') ?? undefined;
 
-    return NextResponse.json(batches.map(b => ({
-      id: b.id,
-      name: b.name,
-      status: b.status,
-      totalTests: b.totalTests,
-      completedTests: b.completedTests,
-      failedTests: b.failedTests,
-      avgResilienceScore: b.avgResilienceScore,
-      createdAt: b.createdAt,
-      completedAt: b.completedAt,
-    })));
+    const limit = rawLimit
+      ? Math.min(Math.max(1, parseInt(rawLimit, 10) || BATCH_LIST_DEFAULT_LIMIT), BATCH_LIST_MAX_LIMIT)
+      : BATCH_LIST_DEFAULT_LIMIT;
+    const offset = rawOffset ? Math.max(0, parseInt(rawOffset, 10) || 0) : 0;
+
+    const storage = await getStorage();
+    const { batches, total } = await storage.queryBatches({
+      status: statusFilter as Parameters<typeof storage.queryBatches>[0]['status'],
+      limit,
+      offset,
+    });
+
+    return NextResponse.json({
+      batches: batches.map(b => ({
+        id: b.id,
+        name: b.name,
+        status: b.status,
+        totalTests: b.totalTests,
+        completedTests: b.completedTests,
+        failedTests: b.failedTests,
+        avgResilienceScore: b.avgResilienceScore,
+        createdAt: b.createdAt,
+        completedAt: b.completedAt,
+      })),
+      total,
+      limit,
+      offset,
+    });
   } catch (error) {
     console.error('Error listing batches:', error);
     return NextResponse.json(
@@ -338,7 +360,7 @@ async function recoverOrphanedBatches(storage: Awaited<ReturnType<typeof getStor
   try {
     const { batches } = await storage.queryBatches({});
     const orphaned = batches.filter(
-      b => b.status === 'running' && !runningBatches.has(b.id)
+      b => (b.status === 'running' || b.status === 'pending') && !runningBatches.has(b.id)
     );
     for (const batch of orphaned) {
       await storage.updateBatch(batch.id, {

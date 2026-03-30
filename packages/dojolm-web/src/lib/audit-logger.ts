@@ -16,6 +16,7 @@
 
 import { mkdir, readdir, stat, unlink, appendFile, rename } from 'node:fs/promises';
 import path from 'node:path';
+import { resolveDataPath } from '@/lib/runtime-paths';
 
 // ---------------------------------------------------------------------------
 // Types & Constants
@@ -52,7 +53,7 @@ const MAX_ROTATED_FILES = 5;
 const REDACTED_FIELDS = new Set(['apikey', 'password', 'secret', 'token', 'authorization', 'accesstoken', 'bearer']);
 
 /** Audit log output directory (relative to package root) */
-const AUDIT_DIR = path.resolve(process.cwd(), 'data', 'audit');
+const AUDIT_DIR = resolveDataPath('audit');
 
 /** Lock to prevent concurrent log rotations (C15) */
 let rotationInProgress: Promise<void> | null = null;

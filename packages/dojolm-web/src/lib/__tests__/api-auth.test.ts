@@ -164,4 +164,26 @@ describe('checkApiAuth', () => {
     const result = checkApiAuth(req);
     expect(result).toBeNull();
   });
+
+  it('AUTH-011: allows trusted same-origin scanner actions without API key or session', async () => {
+    process.env.NODA_API_KEY = 'valid-key-123';
+    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
+    process.env.NODE_ENV = 'production';
+    const { checkApiAuth } = await import('../api-auth');
+
+    const req = new NextRequest('http://localhost:42001/api/scan', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        origin: 'http://localhost:42001',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-dest': 'empty',
+      },
+      body: JSON.stringify({ text: 'scan me' }),
+    });
+
+    const result = checkApiAuth(req);
+    expect(result).toBeNull();
+  });
 });

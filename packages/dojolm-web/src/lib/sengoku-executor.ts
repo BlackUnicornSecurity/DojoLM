@@ -8,8 +8,9 @@ import type { Campaign, CampaignRun, SkillRunResult, FindingsSummary, CampaignNo
 import { validateSengokuWebhookUrl } from './sengoku-webhook';
 import fs from 'node:fs';
 import path from 'node:path';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
 const RUN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 function summarizeFindings(allFindings: readonly Finding[]): FindingsSummary {
@@ -34,7 +35,7 @@ async function persistRun(campaignId: string, run: CampaignRun): Promise<void> {
   const runDir = path.join(RUNS_DIR, campaignId);
   await fs.promises.mkdir(runDir, { recursive: true });
   const filePath = path.join(runDir, `${run.id}.json`);
-  const tmpFile = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.promises.writeFile(tmpFile, JSON.stringify(run, null, 2));
   await fs.promises.rename(tmpFile, filePath);
 }

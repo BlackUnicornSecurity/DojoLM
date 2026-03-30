@@ -11,13 +11,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, CreateCampaignRequest } from '@/lib/sengoku-types';
 import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
+import { getDataPath } from '@/lib/runtime-paths';
 
-const CAMPAIGNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'campaigns');
+const CAMPAIGNS_DIR = getDataPath('sengoku', 'campaigns');
 const SAFE_NAME = /^[\w \-().]{1,200}$/;
 const MAX_SKILLS = 100;
 
 async function ensureDir() {
   await fs.promises.mkdir(CAMPAIGNS_DIR, { recursive: true });
+}
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, POST, OPTIONS' },
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -101,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     await ensureDir();
     const filePath = path.join(CAMPAIGNS_DIR, `${campaign.id}.json`);
-    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
     await fs.promises.writeFile(tmpFile, JSON.stringify(campaign, null, 2));
     await fs.promises.rename(tmpFile, filePath);
 

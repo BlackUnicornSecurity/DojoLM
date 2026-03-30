@@ -19,9 +19,9 @@ vi.mock('@dojolm/scanner', () => ({
   }),
 }));
 
-// Mock api-auth to bypass auth in tests
-vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: vi.fn().mockReturnValue(null),
+// Mock route-guard to bypass auth in tests
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
 }));
 
 function createPostRequest(body: unknown, contentType = 'application/json'): NextRequest {

@@ -114,6 +114,7 @@ export class ZaiProvider implements LLMProviderAdapter {
       const response = await this.execute(config, {
         prompt: 'Hi',
         maxTokens: 1,
+        timeout: config.requestTimeout,
       });
       return response.text !== undefined || response.filtered === true;
     } catch {

@@ -1,10 +1,11 @@
 # DojoLM — Voyager Production Deployment
 # Deploy to: /opt/dojolm/docker-compose.yml
 # Target: Voyager (192.168.70.120)
-# Caddy: dojo.bucc.internal -> localhost:3001
+# Caddy: dojo.bucc.internal -> localhost:3001 -> container:42001
 
 services:
   dojolm-web:
+    image: dojolm-web:latest
     build:
       context: ./app
       dockerfile: Dockerfile
@@ -13,7 +14,7 @@ services:
       - .env
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3001:42001"
+      - "0.0.0.0:3001:42001"
     environment:
       NODE_ENV: production
       PORT: "42001"
@@ -27,6 +28,8 @@ services:
       NODA_API_KEY: "${NODA_API_KEY}"
       TPI_DB_ENCRYPTION_KEY: "${TPI_DB_ENCRYPTION_KEY}"
       TPI_STORAGE_BACKEND: "${TPI_STORAGE_BACKEND:-db}"
+      TPI_DATA_DIR: "${TPI_DATA_DIR:-/app/data}"
+      TPI_TRUSTED_INTERNAL_IPS: "${TPI_TRUSTED_INTERNAL_IPS:-}"
       TPI_ADMIN_USERNAME: "${TPI_ADMIN_USERNAME:-admin}"
       TPI_ADMIN_PASSWORD: "${TPI_ADMIN_PASSWORD}"
       TPI_SESSION_TTL_HOURS: "${TPI_SESSION_TTL_HOURS:-24}"
@@ -37,9 +40,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1024M
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:42001/api/stats >/dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:42001/api/stats').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
       interval: 30s
       timeout: 10s
       retries: 3

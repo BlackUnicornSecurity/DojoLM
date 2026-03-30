@@ -442,6 +442,13 @@ function applyDynamicCoverage(
 
 // --- API Handler ---
 
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  })
+}
+
 export async function GET(request: NextRequest) {
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;

@@ -32,6 +32,13 @@ function toSafeModelResponse(model: LLMModelConfig) {
 // GET /api/llm/models/[id] - Get a specific model
 // ===========================================================================
 
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, PATCH, DELETE, OPTIONS' },
+  });
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -100,7 +107,7 @@ export async function PATCH(
     }
 
     // Apply updates - allowlist only safe fields to prevent mass-assignment
-    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model'] as const;
+    const PATCHABLE = ['name', 'description', 'enabled', 'maxTokens', 'temperature', 'topP', 'customHeaders', 'baseUrl', 'model', 'requestTimeout'] as const;
     const STRING_FIELDS = new Set(['name', 'description', 'baseUrl', 'model']);
     const patch: Record<string, unknown> = {};
     for (const key of PATCHABLE) {

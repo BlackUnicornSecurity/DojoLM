@@ -14,6 +14,12 @@ vi.mock('@/lib/storage/storage-interface', () => ({
   getStorage: () => mockGetStorage(),
 }));
 
+const mockValidateProviderUrl = vi.fn().mockReturnValue(true);
+
+vi.mock('bu-tpi/llm', () => ({
+  validateProviderUrl: (...args: unknown[]) => mockValidateProviderUrl(...args),
+}));
+
 function createParams(id: string) {
   return { params: Promise.resolve({ id }) };
 }
@@ -30,6 +36,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockGetModelConfig.mockResolvedValue(localConfig);
   mockGetStorage.mockResolvedValue({ getModelConfig: mockGetModelConfig });
+  mockValidateProviderUrl.mockReturnValue(true);
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
     ok: true,
     json: () => Promise.resolve({ models: [{ name: 'llama3' }] }),
@@ -63,10 +70,7 @@ describe('GET /api/llm/providers/:id/discover', () => {
   });
 
   it('DISC-004: rejects non-localhost baseUrl', async () => {
-    mockGetModelConfig.mockResolvedValue({
-      ...localConfig,
-      baseUrl: 'http://external.com:11434',
-    });
+    mockValidateProviderUrl.mockReturnValue(false);
     const { GET } = await import('../route');
     const res = await GET(createGetRequest(), createParams('p1'));
     expect(res.status).toBe(403);

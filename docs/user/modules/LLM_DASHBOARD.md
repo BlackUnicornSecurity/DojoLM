@@ -21,6 +21,8 @@ Use `Models` to:
 - inspect saved provider settings
 - verify that your Admin setup is visible to the testing layer
 
+Model detail includes nested tabs for `overview`, `history`, `Reports`, `training`, and `metrics`.
+
 Provider setup starts in [Admin](ADMIN.md) and is documented in the [LLM Provider Guide](../LLM-PROVIDER-GUIDE.md).
 
 ## Tests
@@ -46,6 +48,8 @@ Use `Results` to review:
 ## Leaderboard
 
 Use `Leaderboard` for comparative ranking and broader model performance summaries.
+
+> **UI Note:** The tab appears as "Board" in the live UI due to space constraints.
 
 ## Compare
 

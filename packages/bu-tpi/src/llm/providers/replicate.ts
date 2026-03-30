@@ -78,7 +78,7 @@ export class ReplicateProvider implements LLMProviderAdapter {
     try {
       const r = await fetchWithTimeout(`${config.baseUrl || BASE_URL}/models`, {
         headers: { 'Authorization': `Bearer ${config.apiKey}` },
-        timeoutMs: 10_000, validateUrl: validateProviderUrl,
+        timeoutMs: config.requestTimeout ?? 10_000, validateUrl: validateProviderUrl,
       });
       return r.ok;
     } catch { return false; }

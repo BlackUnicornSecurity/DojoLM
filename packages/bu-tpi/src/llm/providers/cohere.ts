@@ -82,7 +82,7 @@ export class CohereProvider implements LLMProviderAdapter {
     try {
       const response = await fetchWithTimeout(`${config.baseUrl || BASE_URL}/models`, {
         headers: { 'Authorization': `Bearer ${config.apiKey}` },
-        timeoutMs: 10_000,
+        timeoutMs: config.requestTimeout ?? 10_000,
         validateUrl: validateProviderUrl,
       });
       return response.ok;

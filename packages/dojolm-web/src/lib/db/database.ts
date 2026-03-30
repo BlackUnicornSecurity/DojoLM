@@ -9,10 +9,10 @@
 
 import Database from 'better-sqlite3';
 import fs from 'node:fs';
-import path from 'node:path';
+import { getDataPath, getDataRootDir } from '@/lib/runtime-paths';
 
-const DB_DIR = path.join(process.cwd(), 'data');
-const DB_PATH = path.join(DB_DIR, 'tpi.db');
+const DB_DIR = getDataRootDir();
+const DB_PATH = getDataPath('tpi.db');
 
 let instance: Database.Database | null = null;
 let shutdownRegistered = false;

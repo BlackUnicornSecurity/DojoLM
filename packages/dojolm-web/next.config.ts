@@ -50,6 +50,9 @@ const nextConfig: NextConfig = withBundleAnalyzer({
     optimizeCss: true,
   },
 
+  // Keep native SQLite dependency available in standalone server output.
+  serverExternalPackages: ['better-sqlite3'],
+
   // F-12: Turbopack config (Next.js 16 default bundler)
   turbopack: {},
 

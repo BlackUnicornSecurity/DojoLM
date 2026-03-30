@@ -108,5 +108,23 @@ describe('fetch-with-auth', () => {
       expect(res.status).toBe(401);
       warnSpy.mockRestore();
     });
+
+    it('retries transient same-origin GET failures', async () => {
+      mockFetch
+        .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+        .mockResolvedValueOnce(new Response('{}', { status: 200 }));
+
+      const res = await fetchWithAuth('/api/test');
+
+      expect(res.status).toBe(200);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not retry transient POST failures', async () => {
+      mockFetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+      await expect(fetchWithAuth('/api/test', { method: 'POST', body: '{}' })).rejects.toThrow('Failed to fetch');
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -171,7 +171,7 @@ export class LMStudioProvider implements LLMProviderAdapter {
 
       // Check if LM Studio is running via /v1/models endpoint
       const response = await fetch(`${baseUrl}/v1/models`, {
-        signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(config.requestTimeout ?? 5000),
       });
 
       return response.ok;

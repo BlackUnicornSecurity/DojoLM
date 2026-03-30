@@ -6,17 +6,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-error';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 import { fileStorage } from '@/lib/storage/file-storage';
 
-type RouteParams = { params: Promise<{ id: string }> };
+type RouteParams = { params: Record<string, string> };
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export const GET = withAuth(async (request: NextRequest, { params }: RouteParams) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
-    const { id } = await params;
+    const { id } = await Promise.resolve(params);
     const batch = await fileStorage.getBatch(id);
 
     if (!batch) {
@@ -28,4 +25,4 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     return apiError('Failed to get batch executions', 500, error);
   }
-}
+}, { resource: 'batches', action: 'read' });

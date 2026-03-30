@@ -15,9 +15,10 @@ import path from 'node:path'
 import { NextRequest, NextResponse } from 'next/server'
 import { createApiHandler } from '@/lib/api-handler'
 import type { CampaignRun } from '@/lib/sengoku-types'
+import { getDataPath } from '@/lib/runtime-paths'
 
 const SAFE_ID = /^[\w-]{1,128}$/
-const RUNS_DIR = path.join(process.cwd(), 'data', 'sengoku', 'runs')
+const RUNS_DIR = getDataPath('sengoku', 'runs')
 
 async function readJSON<T>(filePath: string): Promise<T | null> {
   try {

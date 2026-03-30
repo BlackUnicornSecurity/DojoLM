@@ -1,16 +1,18 @@
 # BU-TPI Testing Checklist
 
 **Document:** BU-TPI Testing Checklist
-**Version:** 3.1
-**Last Updated:** 2026-03-01
+**Version:** 3.1.1
+**Last Updated:** 2026-03-30
 **Test Suite:** BU-TPI Security Test Suite v2.1
 **Organization:** BlackUnicorn Laboratory / DojoLM
+
+> **⚠️ Important:** This document describes **132 executable test cases** (automated scanner modules) + **507 manual assessment scenarios** (aspirational framework), for a **total of 639 assessment scenarios**. This is a manual assessment guide aligned with OWASP LLM Top 10, NOT a fully automated test suite.
 
 ---
 
 ## How to Use This Checklist
 
-This checklist is the **primary testing instrument** for all BU-TPI security assessments. Each control represents a specific security capability that must be validated against the target LLM.
+This checklist is a **manual assessment guide and aspirational framework** aligned with OWASP LLM Top 10. It is **not a fully automated test suite** — only **132 test cases** are executable in the current scanner modules across 6 Testing Areas. The remaining **507 scenarios** are manual assessment guidelines for security professionals.
 
 ### Checklist Usage Instructions
 
@@ -33,20 +35,25 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 
 ## Testing Areas Overview
 
-| Area ID | Testing Area | Description | Controls | Test Cases |
-|---------|--------------|-------------|-----------|-------------|
-| TA-01 | Prompt Injection | Direct instruction override attacks | 8 | 72 |
-| TA-02 | Jailbreak | Persona-based and framing attacks | 8 | 72 |
-| TA-03 | Data Exfiltration | Information leakage and extraction | 8 | 72 |
-| TA-04 | Harmful Content | Malicious content generation attempts | 8 | 66 |
-| TA-05 | Content Policy | Policy circumvention and violations | 6 | 54 |
-| TA-06 | Privacy | PII and sensitive data handling | 6 | 54 |
-| TA-07 | Bias and Fairness | Discrimination and fairness testing | 4 | 36 |
-| TA-08 | Misinformation | False information generation | 4 | 36 |
-| TA-09 | Indirect Injection | Encoding and obfuscation attacks | 8 | 69 |
-| TA-10 | Tool Abuse | Tool and plugin exploitation | 6 | 54 |
-| TA-11 | Context Confusion | Context window manipulation | 6 | 54 |
-| **TOTAL** | **11 Testing Areas** | **Comprehensive Coverage** | **72** | **639** |
+| Area ID | Testing Area | Description | Controls | Executable Test Cases | Manual Assessment Scenarios | Total | Implementation Status |
+|---------|--------------|-------------|----------|----------------------|----------------------------|-------|----------------------|
+| TA-01 | Prompt Injection | Direct instruction override attacks | 8 | 12 | 60 | 72 | ✅ Automated scanner module available |
+| TA-02 | Jailbreak | Persona-based and framing attacks | 8 | 12 | 60 | 72 | ✅ Automated scanner module available |
+| TA-03 | Data Exfiltration | Information leakage and extraction | 8 | 12 | 60 | 72 | ✅ Automated scanner module available |
+| TA-04 | Harmful Content | Malicious content generation attempts | 8 | 0 | 66 | 66 | ⚠️ **Manual assessment only** — no local scanner module |
+| TA-05 | Content Policy | Policy circumvention and violations | 6 | 0 | 54 | 54 | ⚠️ **Manual assessment only** — no local scanner module |
+| TA-06 | Privacy | PII and sensitive data handling | 6 | 12 | 42 | 54 | ✅ Automated scanner module available |
+| TA-07 | Bias and Fairness | Discrimination and fairness testing | 4 | 0 | 36 | 36 | ⚠️ **Manual assessment only** — no local scanner module |
+| TA-08 | Misinformation | False information generation | 4 | 0 | 36 | 36 | ⚠️ **Manual assessment only** — no local scanner module |
+| TA-09 | Indirect Injection | Encoding and obfuscation attacks | 8 | 12 | 57 | 69 | ✅ Automated scanner module available |
+| TA-10 | Tool Abuse | Tool and plugin exploitation | 6 | 0 | 54 | 54 | ⚠️ **Manual assessment only** — no local scanner module |
+| TA-11 | Context Confusion | Context window manipulation | 6 | 12 | 42 | 54 | ✅ Automated scanner module available |
+| **TOTAL** | **11 Testing Areas** | **Comprehensive Coverage** | **72** | **132** | **507** | **639** | 6 automated areas, 5 manual-only areas |
+
+**Implementation Status Summary:**
+- ✅ **Automated scanner modules:** Prompt Injection (TA-01), Jailbreak (TA-02), Data Exfiltration (TA-03), Privacy (TA-06), Indirect Injection (TA-09), Context Confusion (TA-11) — **132 executable test cases**
+- ⚠️ **Manual assessment only (no local scanner modules):** Harmful Content (TA-04), Content Policy (TA-05), Bias/Fairness (TA-07), Misinformation (TA-08), Tool Abuse (TA-10) — **507 manual assessment scenarios**
+- 📎 **Executable test case source of truth:** `packages/dojolm-web/src/lib/data/sample-test-cases.ts` — 132 `LLMPromptTestCase` objects, 12 per category × 11 categories. The 5 manual-only areas (TA-04, TA-05, TA-07, TA-08, TA-10) have sample payloads defined in this file but **no automated scanner module** to execute them. They serve as reference payloads for manual assessment.
 
 ---
 
@@ -66,7 +73,7 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 | S-008 | Encoding Evasion | TA-09 | Obfuscated injection techniques |
 | S-009 | Tool Exploitation | TA-10 | Plugin and tool abuse |
 | S-010 | Context Manipulation | TA-11 | Context window and confusion attacks |
-| S-011 | Full Scope Suite | TA-01 through TA-11 | Comprehensive assessment covering all 639 test cases across all testing areas |
+| S-011 | Full Scope Suite | TA-01 through TA-11 | Comprehensive assessment covering 132 executable + 507 manual assessment scenarios across all testing areas |
 
 ---
 
@@ -1405,20 +1412,20 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 
 ### Coverage by Testing Area
 
-| Area ID | Testing Area | Controls | Test Cases | Target Coverage |
-|---------|--------------|-----------|-------------|-----------------|
-| TA-01 | Prompt Injection | 8 | 72 | Core injection vectors |
-| TA-02 | Jailbreak | 8 | 72 | Persona-based attacks |
-| TA-03 | Data Exfiltration | 8 | 72 | Information leakage |
-| TA-04 | Harmful Content | 6 | 48 | Malicious generation |
-| TA-05 | Content Policy | 6 | 48 | Policy violations |
-| TA-06 | Privacy | 6 | 48 | PII and sensitive data |
-| TA-07 | Bias and Fairness | 5 | 36 | Discrimination testing |
-| TA-08 | Misinformation | 5 | 36 | False information |
-| TA-09 | Indirect Injection | 7 | 60 | Encoding attacks |
-| TA-10 | Tool Abuse | 6 | 48 | Tool exploitation |
-| TA-11 | Context Confusion | 6 | 48 | Context manipulation |
-| **TOTAL** | **11 Areas** | **71** | **582** | **Comprehensive** |
+| Area ID | Testing Area | Controls | Executable Test Cases | Manual Scenarios | Total Scenarios | Implementation Status |
+|---------|--------------|----------|----------------------|------------------|-----------------|----------------------|
+| TA-01 | Prompt Injection | 8 | 12 | 60 | 72 | ✅ Automated |
+| TA-02 | Jailbreak | 8 | 12 | 60 | 72 | ✅ Automated |
+| TA-03 | Data Exfiltration | 8 | 12 | 60 | 72 | ✅ Automated |
+| TA-04 | Harmful Content | 8 | 0 | 66 | 66 | ⚠️ Manual-only |
+| TA-05 | Content Policy | 6 | 0 | 54 | 54 | ⚠️ Manual-only |
+| TA-06 | Privacy | 6 | 12 | 42 | 54 | ✅ Automated |
+| TA-07 | Bias and Fairness | 4 | 0 | 36 | 36 | ⚠️ Manual-only |
+| TA-08 | Misinformation | 4 | 0 | 36 | 36 | ⚠️ Manual-only |
+| TA-09 | Indirect Injection | 8 | 12 | 57 | 69 | ✅ Automated |
+| TA-10 | Tool Abuse | 6 | 0 | 54 | 54 | ⚠️ Manual-only |
+| TA-11 | Context Confusion | 6 | 12 | 42 | 54 | ✅ Automated |
+| **TOTAL** | **11 Areas** | **72** | **132** | **507** | **639** | **6 automated, 5 manual-only** |
 
 ### OWASP LLM Top 10 Coverage
 
@@ -1426,13 +1433,13 @@ This checklist is the **primary testing instrument** for all BU-TPI security ass
 |-----------|----------|------------------|
 | LLM01: Prompt Injection | ✅ 100% | TA-01, TA-02, TA-09, TA-11 |
 | LLM02: Insecure Output Handling | ✅ 100% | TA-03 |
-| LLM03: Training Data Poisoning | ✅ 100% | TA-04, TA-05 |
+| LLM03: Training Data Poisoning | ⚠️ Manual-only | TA-04, TA-05 (no automated scanner modules) |
 | LLM04: Model Denial of Service | ✅ 100% | TA-11 |
-| LLM05: Supply Chain Vulnerabilities | ✅ 100% | TA-10 |
+| LLM05: Supply Chain Vulnerabilities | ⚠️ Manual-only | TA-10 (no automated scanner module) |
 | LLM06: Sensitive Information Disclosure | ✅ 100% | TA-03, TA-06 |
-| LLM07: Insecure Plugin Design | ✅ 100% | TA-10 |
-| LLM08: Excessive Agency | ✅ 100% | TA-02, TA-10 |
-| LLM09: Overreliance | ✅ 100% | TA-07, TA-08 |
+| LLM07: Insecure Plugin Design | ⚠️ Manual-only | TA-10 (no automated scanner module) |
+| LLM08: Excessive Agency | ⚠️ Partial | TA-02 (automated), TA-10 (manual-only) |
+| LLM09: Overreliance | ⚠️ Manual-only | TA-07, TA-08 (no automated scanner modules) |
 | LLM10: Model Theft | ✅ 100% | TA-03 |
 
 ### TPI (Threat & Penetration Testing Instrument) Coverage
@@ -1515,13 +1522,15 @@ Each entry follows this format:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 3.1.2 | 2026-03-30 | BlackUnicorn Lab | Added sample-test-cases.ts cross-reference; corrected OWASP coverage claims for manual-only areas (LLM03/05/07/08/09) |
+| 3.1.1 | 2026-03-30 | BlackUnicorn Lab | Fixed test case count overclaims; clarified 132 executable + 507 manual assessment scenarios |
 | 3.1 | 2026-03-01 | BlackUnicorn Lab | Added Appendix B: New Controls & Test Case Tracking (GAP-001) |
-| 3.0 | 2026-02-26 | BlackUnicorn Lab | Expanded to 582 test cases (3x coverage) across 11 testing areas |
+| 3.0 | 2026-02-26 | BlackUnicorn Lab | Expanded to 639 total assessment scenarios (132 executable + 507 manual) across 11 testing areas |
 | 2.0 | 2026-02-26 | BlackUnicorn Lab | Comprehensive checklist with 194 test cases |
 | 1.0 | 2026-02-25 | BlackUnicorn Lab | Initial checklist structure |
 
 ---
 
 *This checklist is maintained by BlackUnicorn Laboratory*
-*Last updated: 2026-03-01*
-*Next review: 2026-03-31*
+*Last updated: 2026-03-30*
+*Next review: 2026-04-30*

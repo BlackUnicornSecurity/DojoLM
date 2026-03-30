@@ -14,8 +14,9 @@ import { join, dirname } from 'path'
 import crypto from 'node:crypto'
 import { withAuth } from '@/lib/auth/route-guard'
 import { auditLog } from '@/lib/audit-logger'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const DATA_DIR = join(process.cwd(), 'data', 'validation')
+const DATA_DIR = getDataPath('validation')
 const LOCK_PATH = join(DATA_DIR, 'run-lock.json')
 
 /** Lock expiry: 90 minutes — prevents permanent DoS from stale locks */

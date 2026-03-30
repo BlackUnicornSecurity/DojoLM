@@ -14,8 +14,9 @@ import { join, dirname } from 'path'
 import crypto from 'node:crypto'
 import { withAuth } from '@/lib/auth/route-guard'
 import { auditLog } from '@/lib/audit-logger'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const DATA_DIR = join(process.cwd(), 'data', 'validation')
+const DATA_DIR = getDataPath('validation')
 const CALIBRATE_LOCK_PATH = join(DATA_DIR, 'calibrate-lock.json')
 const MODULES_DIR = join(DATA_DIR, 'modules')
 

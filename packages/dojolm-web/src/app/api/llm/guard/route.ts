@@ -12,6 +12,17 @@ import type { GuardConfig } from '@/lib/guard-types';
 import { checkApiAuth } from '@/lib/api-auth';
 
 // ===========================================================================
+// OPTIONS /api/llm/guard - CORS preflight
+// ===========================================================================
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, PUT, POST, OPTIONS' },
+  });
+}
+
+// ===========================================================================
 // GET /api/llm/guard - Read guard config
 // ===========================================================================
 

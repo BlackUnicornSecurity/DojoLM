@@ -11,14 +11,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scan } from '@dojolm/scanner';
 import type { ScanOptions } from '@dojolm/scanner';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 import { emitScannerFindings } from '@/lib/ecosystem-emitters';
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -107,7 +104,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}, { resource: 'executions', action: 'execute' });
 
 // OPTIONS handler for CORS preflight
 export async function OPTIONS() {

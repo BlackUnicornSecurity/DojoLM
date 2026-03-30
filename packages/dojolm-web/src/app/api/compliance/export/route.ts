@@ -682,6 +682,15 @@ function csvEscape(value: string): string {
   return safe
 }
 
+// --- OPTIONS Handler ---
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  })
+}
+
 // --- GET Handler ---
 
 export async function GET(request: NextRequest) {

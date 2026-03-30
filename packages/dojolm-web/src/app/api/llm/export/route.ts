@@ -26,6 +26,13 @@ const SAFE_ID = /^[\w-]{1,128}$/;
  *
  * Returns exported test results
  */
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, OPTIONS' },
+  })
+}
+
 export async function GET(request: NextRequest) {
   try {
     const authResult = checkApiAuth(request);
@@ -564,7 +571,7 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
   const safeModelName = firstModelName.replace(/[^\w-]/g, '_');
   const filename = `llm-report-${safeModelName}-${new Date().toISOString().split('T')[0]}.md`;
 
-  return new Response(lines.join('\n'), {
+  return new NextResponse(lines.join('\n'), {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Content-Disposition': `attachment; filename="${filename}"`,
@@ -575,7 +582,7 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
 /**
  * Export as CSV (flattened results)
  */
-function exportAsCSV(report: any): Response {
+function exportAsCSV(report: any): NextResponse {
   const rows: string[][] = [];
 
   // Header row
@@ -628,7 +635,7 @@ function exportAsCSV(report: any): Response {
 
   const csvContent = rows.map(row => row.join(',')).join('\n');
 
-  return new Response(csvContent, {
+  return new NextResponse(csvContent, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition': `attachment; filename="llm-results-${Date.now()}.csv"`,

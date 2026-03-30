@@ -12,8 +12,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { withAuth } from '@/lib/auth/route-guard'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const RUNS_DIR = join(process.cwd(), 'data', 'validation', 'runs')
+const RUNS_DIR = getDataPath('validation', 'runs')
 
 const SECURITY_HEADERS = {
   'Content-Type': 'application/json',

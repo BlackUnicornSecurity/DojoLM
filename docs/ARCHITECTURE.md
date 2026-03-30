@@ -27,7 +27,22 @@ The canonical scanner engine.
 - Owns the scanner logic, types, fixtures, heuristics, LLM types, and standalone HTTP API.
 - Exposes subpaths such as `bu-tpi/scanner`, `bu-tpi/types`, `bu-tpi/llm`, `bu-tpi/attackdna`, `bu-tpi/compliance`, `bu-tpi/sengoku`, and more through `package.json`.
 - Runs a hardened GET-only server from `src/serve.ts` on port `8089` by default.
-- Current verified metrics: `510` patterns, `49` pattern groups, `2,960` fixtures, `37` fixture categories.
+- Current verified metrics: **510 patterns**, **49 pattern groups**, **2,960 fixtures**, **37 fixture categories**.
+- **18 DojoV2 controls** fully implemented (100% coverage):
+  - Prompt Injection (LLM-01, LLM-02)
+  - System Prompt Extraction/Manipulation (LLM-03, LLM-04)
+  - Multi-turn/Context Attacks (LLM-05, LLM-06)
+  - Social Engineering (LLM-07)
+  - Code/Tool Security (LLM-08, LLM-09)
+  - Denial of Service (DoS)
+  - Supply Chain
+  - Agent Security
+  - Model Theft
+  - Output Handling
+  - Vector/Embeddings
+  - Multimodal
+  - Overreliance
+  - Bias/Fairness
 
 ### `packages/dojolm-scanner`
 
@@ -45,6 +60,8 @@ The Next.js web application.
 - `npm run dev` and `npm run start` run on port `42001`.
 - Contains both UI modules and API routes under `src/app/api`.
 - Uses file-backed application storage under `packages/dojolm-web/data`.
+- **12 top-level navigation destinations** with 4 group categories (Attack, Defense, Red Team, Analysis).
+- **18 DojoV2 security controls** implemented with 100% coverage.
 
 ### `packages/dojolm-mcp`
 
@@ -87,6 +104,10 @@ Legacy aliases are still accepted for deep links:
 - `attackdna` maps to `strategic`
 - `kumite` maps to `strategic`
 - `time-chamber` maps to `sengoku`
+- `testing` maps to `scanner`
+- `attack` maps to `scanner`
+- `ronin` maps to `ronin-hub`
+- `atemi` maps to `adversarial`
 
 Important nesting:
 

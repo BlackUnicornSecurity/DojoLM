@@ -16,9 +16,54 @@
 'use client';
 
 const API_KEY_STORAGE_KEY = 'noda-api-key';
+const SAFE_RETRY_METHODS = new Set(['GET', 'HEAD']);
+const NETWORK_RETRY_DELAYS_MS = [150, 400];
 
 /** Throttle 401 warnings to at most once per 5 seconds */
 let lastWarningTime = 0;
+
+function isRetryableNetworkError(error: unknown): boolean {
+  return error instanceof TypeError;
+}
+
+function isRelativeOrSameOriginRequest(input: RequestInfo | URL): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const target =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.toString()
+        : input.url;
+
+  if (target.startsWith('/')) {
+    return true;
+  }
+
+  try {
+    return new URL(target, window.location.origin).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
+function shouldRetryRequest(
+  input: RequestInfo | URL,
+  method: string,
+  init?: RequestInit
+): boolean {
+  if (init?.signal?.aborted) {
+    return false;
+  }
+
+  return SAFE_RETRY_METHODS.has(method) && isRelativeOrSameOriginRequest(input);
+}
+
+async function delay(ms: number): Promise<void> {
+  await new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 /**
  * Get API key from localStorage.
@@ -69,6 +114,7 @@ export async function fetchWithAuth(
   init?: RequestInit
 ): Promise<Response> {
   const apiKey = getApiKey();
+  const method = (init?.method ?? (typeof Request !== 'undefined' && input instanceof Request ? input.method : 'GET')).toUpperCase();
 
   const headers = new Headers(init?.headers);
 
@@ -79,7 +125,6 @@ export async function fetchWithAuth(
 
   // Auto-set Content-Type for mutation requests with a string body
   // Skip for FormData, Blob, ArrayBuffer etc. — browser sets correct Content-Type automatically
-  const method = (init?.method ?? 'GET').toUpperCase();
   if (init?.body && typeof init.body === 'string' && !headers.has('Content-Type') && ['POST', 'PUT', 'PATCH'].includes(method)) {
     headers.set('Content-Type', 'application/json');
   }
@@ -92,10 +137,30 @@ export async function fetchWithAuth(
     }
   }
 
-  const response = await fetch(input, {
+  const requestInit: RequestInit = {
     ...init,
     headers,
-  });
+  };
+  const canRetry = shouldRetryRequest(input, method, init);
+  let response: Response | null = null;
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt <= NETWORK_RETRY_DELAYS_MS.length; attempt += 1) {
+    try {
+      response = await fetch(input, requestInit);
+      break;
+    } catch (error) {
+      lastError = error;
+      if (!canRetry || !isRetryableNetworkError(error) || attempt === NETWORK_RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+      await delay(NETWORK_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+
+  if (!response) {
+    throw lastError instanceof Error ? lastError : new Error('Request failed');
+  }
 
   // Handle 401 — API key invalid or missing (throttled to once per 5s)
   if (response.status === 401) {

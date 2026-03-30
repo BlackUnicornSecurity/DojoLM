@@ -10,6 +10,10 @@ import { NextRequest } from 'next/server';
 const mockGetBatch = vi.fn();
 const mockQueryExecutions = vi.fn();
 
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
+}));
+
 vi.mock('@/lib/storage/file-storage', () => ({
   fileStorage: {
     getBatch: (...args: unknown[]) => mockGetBatch(...args),

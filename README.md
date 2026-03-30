@@ -6,10 +6,12 @@ This repository was audited against the codebase on 2026-03-24. Older NODA, KASH
 
 ## Current Snapshot
 
-- 510 patterns across 49 groups
-- 2,960 fixtures across 37 fixture categories
-- `57` built-in LLM provider presets in the core registry
-- `12` top-level web navigation destinations
+- **510 patterns** across **49 pattern groups**
+- **2,960 fixtures** across **37 fixture categories**
+- **18 DojoV2 controls** fully implemented (100% coverage)
+- **57** built-in LLM provider presets in the core registry
+- **12** top-level web navigation destinations
+- Next.js **16.1.6** with React **19.2.3** and Tailwind CSS **4**
 - Standalone scanner API on `:8089`
 - Web app on `:42001`
 
@@ -76,6 +78,7 @@ Important nesting that older docs got wrong:
 
 ## Documentation
 
+- [📚 Documentation Index](docs/DOCUMENTATION-INDEX.md) — Complete navigation guide
 - [Getting Started](docs/user/GETTING_STARTED.md)
 - [Platform Guide](docs/user/PLATFORM_GUIDE.md)
 - [User API Reference](docs/user/API_REFERENCE.md)

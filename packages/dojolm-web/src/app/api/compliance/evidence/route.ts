@@ -11,8 +11,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkApiAuth } from '@/lib/api-auth'
 import { promises as fs } from 'node:fs'
 import { join } from 'node:path'
+import { getDataPath } from '@/lib/runtime-paths'
 
-const EVIDENCE_DIR = join(process.cwd(), 'data', 'compliance-evidence')
+const EVIDENCE_DIR = getDataPath('compliance-evidence')
 const MAX_TITLE_LENGTH = 500
 const MAX_DESCRIPTION_LENGTH = 5000
 const VALID_SEVERITIES = ['critical', 'high', 'medium', 'low', 'info'] as const
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     // Atomic write
     const filePath = join(EVIDENCE_DIR, `${evidenceEntry.id}.json`)
-    const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`
+    const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`
     await fs.writeFile(tmpPath, JSON.stringify(evidenceEntry, null, 2), 'utf-8')
     await fs.rename(tmpPath, filePath)
 

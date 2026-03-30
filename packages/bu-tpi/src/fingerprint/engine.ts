@@ -25,11 +25,11 @@ import { getProbesForPreset, getProbesForCategories } from './probes/index.js';
 
 const DEFAULT_PRESET: ProbePresetName = 'standard';
 const TIMEOUT_MAP: Readonly<Record<ProbePresetName, number>> = {
-  quick: 120_000,
-  standard: 300_000,
-  full: 600_000,
-  verify: 180_000,
-  stealth: 240_000,
+  quick: 900_000,
+  standard: 1_200_000,
+  full: 1_800_000,
+  verify: 600_000,
+  stealth: 600_000,
 };
 
 export class KagamiEngine {
@@ -67,38 +67,33 @@ export class KagamiEngine {
     const maxProbes = options?.maxProbes ?? probes.length;
     const selectedProbes = probes.slice(0, maxProbes);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Kagami operation timed out')), timeout)
+    );
 
     try {
       // Phase 1: Probing (60%)
       const runner = new ProbeRunner(this.adapter);
-      const probeResults = await runner.runProbes(
-        config,
-        selectedProbes,
-        (p) => {
-          if (controller.signal.aborted) return;
-          onProgress?.({
-            ...p,
-            current: Math.round((p.current / p.total) * 60),
-            total: 100,
-          });
-        },
-        { parallelism: String(options?.parallelism ?? 1) },
-      );
-
-      if (controller.signal.aborted) {
-        throw new Error('Kagami operation timed out');
-      }
+      const probeResults = await Promise.race([
+        runner.runProbes(
+          config,
+          selectedProbes,
+          (p) => {
+            onProgress?.({
+              ...p,
+              current: Math.round((p.current / p.total) * 60),
+              total: 100,
+            });
+          },
+          { parallelism: String(options?.parallelism ?? 1) },
+        ),
+        timeoutPromise,
+      ]);
 
       // Phase 2: Analyzing (20%)
       onProgress?.({ current: 60, total: 100, phase: 'analyzing' });
       const featureVector = extractFeatureVector(probeResults);
       onProgress?.({ current: 80, total: 100, phase: 'analyzing' });
-
-      if (controller.signal.aborted) {
-        throw new Error('Kagami operation timed out');
-      }
 
       // Phase 3: Matching (20%)
       onProgress?.({ current: 80, total: 100, phase: 'matching' });
@@ -116,7 +111,7 @@ export class KagamiEngine {
         probeResults,
       };
     } finally {
-      clearTimeout(timeoutId);
+      // timeoutPromise self-cleans via GC when the outer promise settles
     }
   }
 
@@ -147,29 +142,28 @@ export class KagamiEngine {
     const maxProbes = options?.maxProbes ?? probes.length;
     const selectedProbes = probes.slice(0, maxProbes);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Kagami verification timed out')), timeout)
+    );
 
     try {
       // Phase 1: Probing
       const runner = new ProbeRunner(this.adapter);
-      const probeResults = await runner.runProbes(
-        config,
-        selectedProbes,
-        (p) => {
-          if (controller.signal.aborted) return;
-          onProgress?.({
-            ...p,
-            current: Math.round((p.current / p.total) * 60),
-            total: 100,
-          });
-        },
-        { parallelism: String(options?.parallelism ?? 1) },
-      );
-
-      if (controller.signal.aborted) {
-        throw new Error('Kagami verification timed out');
-      }
+      const probeResults = await Promise.race([
+        runner.runProbes(
+          config,
+          selectedProbes,
+          (p) => {
+            onProgress?.({
+              ...p,
+              current: Math.round((p.current / p.total) * 60),
+              total: 100,
+            });
+          },
+          { parallelism: String(options?.parallelism ?? 1) },
+        ),
+        timeoutPromise,
+      ]);
 
       // Phase 2: Analyzing
       onProgress?.({ current: 60, total: 100, phase: 'analyzing' });
@@ -186,7 +180,7 @@ export class KagamiEngine {
         targetConfig: { id: config.id, name: config.name ?? config.id },
       };
     } finally {
-      clearTimeout(timeoutId);
+      // timeoutPromise self-cleans via GC when the outer promise settles
     }
   }
 }

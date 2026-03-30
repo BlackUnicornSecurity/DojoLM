@@ -62,7 +62,13 @@ RUN npx tsc -b packages/dojolm-scanner --force
 # Build Next.js (standalone output)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN cd packages/dojolm-web && npx next build
+ENV NEXT_IGNORE_INCORRECT_LOCKFILE=1
+# NEXT_PUBLIC_* vars are baked at build time — default empty so client uses relative URLs
+ARG NEXT_PUBLIC_API_URL=""
+ARG NEXT_PUBLIC_APP_URL=""
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+RUN cd packages/dojolm-web && npx next build --webpack
 
 # ---------------------------------------------------------------------------
 # Stage 3: runner — production runtime
@@ -75,6 +81,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=42001
 ENV HOSTNAME="0.0.0.0"
+ENV TPI_DATA_DIR=/app/data
 
 # Build metadata (overridable at build time for traceability)
 ARG BUILD_SHA="unknown"
@@ -93,6 +100,8 @@ COPY --from=builder /app/packages/dojolm-web/.next/standalone ./
 COPY --from=builder /app/packages/dojolm-web/.next/static ./packages/dojolm-web/.next/static
 # Copy public assets
 COPY --from=builder /app/packages/dojolm-web/public ./packages/dojolm-web/public
+# Copy wrapper that blocks unsupported methods before requests hit Next.js
+COPY deploy/secure-standalone-server.cjs ./secure-standalone-server.cjs
 
 # Copy fixture data (required for scanner)
 COPY --from=builder /app/packages/bu-tpi/fixtures ./packages/bu-tpi/fixtures
@@ -110,5 +119,5 @@ USER dojolm
 
 EXPOSE 42001
 
-# The standalone server entry point
-CMD ["node", "packages/dojolm-web/server.js"]
+# Secure wrapper proxies to the standalone server and blocks TRACE/TRACK.
+CMD ["node", "secure-standalone-server.cjs"]

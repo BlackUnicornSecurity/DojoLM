@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 import type { LLMModelConfig, LLMPromptTestCase, LLMBatchExecution, BatchStatus } from '@/lib/llm-types';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { executeBatchTests, executeSingleTestWithRetry } from '@/lib/llm-execution';
@@ -23,11 +23,8 @@ import { getDataPath } from '@/lib/runtime-paths';
 // POST /api/llm/batch - Create and execute a batch
 // ===========================================================================
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -207,17 +204,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return apiError('Failed to start batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'execute' });
 
 // ===========================================================================
 // GET /api/llm/batch - Get batch status
 // ===========================================================================
 
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const status = searchParams.get('status');
@@ -278,17 +272,14 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return apiError('Failed to get batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'read' });
 
 // ===========================================================================
 // DELETE /api/llm/batch - Cancel/delete a batch
 // ===========================================================================
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
-    const authResult = checkApiAuth(request);
-    if (authResult) return authResult;
-
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const storage = await getStorage();
@@ -313,7 +304,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     return apiError('Failed to delete batch', 500, error);
   }
-}
+}, { resource: 'batches', action: 'execute' });
 
 // ===========================================================================
 // Guard-Wrapped Batch Execution (A1: API-boundary wrapping)

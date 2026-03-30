@@ -10,6 +10,7 @@ import { getProviderAdapter } from '@/lib/llm-providers';
 import { KagamiEngine, loadKagamiSignatures } from 'bu-tpi/fingerprint';
 import type { KagamiMode, ProbePresetName, ProbeCategory } from 'bu-tpi/fingerprint';
 import { activeFingerprints } from '@/lib/fingerprint-state';
+import { getDataPath } from '@/lib/runtime-paths';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -123,10 +124,10 @@ export async function POST(request: NextRequest) {
     activeFingerprints.complete(runId, result);
 
     // Persist result
-    const resultsDir = path.join(process.cwd(), 'data', 'llm-results', 'fingerprint');
+    const resultsDir = getDataPath('llm-results', 'fingerprint');
     await fs.promises.mkdir(resultsDir, { recursive: true });
     const resultFile = path.join(resultsDir, `${runId}.json`);
-    const tmpFile = `${resultFile}.${process.pid}.${Date.now()}.tmp`;
+    const tmpFile = `${resultFile}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
     await fs.promises.writeFile(tmpFile, JSON.stringify({ id: runId, modelId, mode, preset, result, createdAt: new Date().toISOString() }, null, 2));
     await fs.promises.rename(tmpFile, resultFile);
 

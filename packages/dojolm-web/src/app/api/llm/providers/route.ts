@@ -12,6 +12,10 @@ import { checkApiAuth } from '@/lib/api-auth';
 const MAX_REGISTRATIONS_PER_MINUTE = 10;
 const registrationTimestamps: number[] = [];
 
+function toOptionalNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
 function checkRateLimit(): boolean {
   const now = Date.now();
   const oneMinuteAgo = now - 60_000;
@@ -20,6 +24,13 @@ function checkRateLimit(): boolean {
     registrationTimestamps.shift();
   }
   return registrationTimestamps.length < MAX_REGISTRATIONS_PER_MINUTE;
+}
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, POST, OPTIONS' },
+  })
 }
 
 /**
@@ -46,7 +57,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { provider, model, name, baseUrl, enabled, maxTokens, temperature, topP, customHeaders } = body as Record<string, unknown>;
+    const { provider, model, name, baseUrl, enabled, maxTokens, temperature, topP, requestTimeout, customHeaders } = body as Record<string, unknown>;
 
     // Validate required fields
     if (!provider || typeof provider !== 'string') {
@@ -63,7 +74,7 @@ export async function POST(request: NextRequest) {
       const isLocalProvider = ['ollama', 'lmstudio', 'llamacpp'].includes(provider);
       if (!validateProviderUrl(safeBaseUrl, isLocalProvider)) {
         return NextResponse.json(
-          { error: 'Invalid or unsafe baseUrl: private IPs, cloud metadata endpoints, and non-HTTPS URLs are blocked' },
+          { error: 'Invalid or unsafe baseUrl: external providers must use public HTTPS endpoints, and local providers must use localhost or an IP allowlisted in TPI_TRUSTED_INTERNAL_IPS on approved ports' },
           { status: 400 }
         );
       }
@@ -80,9 +91,10 @@ export async function POST(request: NextRequest) {
       model: model as string,
       baseUrl: safeBaseUrl,
       enabled: (enabled as boolean) ?? true,
-      maxTokens: (maxTokens as number) || undefined,
-      temperature: (temperature as number) || undefined,
-      topP: (topP as number) || undefined,
+      maxTokens: toOptionalNumber(maxTokens),
+      temperature: toOptionalNumber(temperature),
+      topP: toOptionalNumber(topP),
+      requestTimeout: toOptionalNumber(requestTimeout),
       customHeaders: (customHeaders as Record<string, string>) || undefined,
       createdAt: now,
       updatedAt: now,

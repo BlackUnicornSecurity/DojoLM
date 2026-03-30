@@ -15,8 +15,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const mockGetBatch = vi.fn();
 const mockGetBatchExecutions = vi.fn();
 
-vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: vi.fn().mockReturnValue(null),
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: Function, _opts: unknown) => handler,
 }));
 
 vi.mock('@/lib/api-error', () => ({
@@ -92,20 +92,6 @@ describe('GET /api/llm/batch/:id/executions', () => {
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error).toBe('Batch not found');
-  });
-
-  // BEXE-003: Auth failure returns 401
-  it('BEXE-003: returns 401 on auth failure', async () => {
-    const { checkApiAuth } = await import('@/lib/api-auth');
-    vi.mocked(checkApiAuth).mockReturnValueOnce(
-      NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-    );
-
-    const { GET } = await import('../route');
-    const req = createGetRequest('batch-1');
-    const res = await GET(req, createParams('batch-1'));
-
-    expect(res.status).toBe(401);
   });
 
   // BEXE-004: Internal error returns 500

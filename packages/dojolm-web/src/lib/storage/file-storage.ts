@@ -32,6 +32,7 @@ import type {
   BatchQuery,
 } from './storage-interface';
 import { decrypt, encrypt } from '../db/encryption';
+import { getDataPath } from '@/lib/runtime-paths';
 
 // ===========================================================================
 // Path Constants
@@ -40,7 +41,7 @@ import { decrypt, encrypt } from '../db/encryption';
 /**
  * Base directory for LLM data storage
  */
-const DATA_BASE_DIR = path.join(process.cwd(), 'data', 'llm-results');
+const DATA_BASE_DIR = getDataPath('llm-results');
 
 /**
  * File paths for different data types
@@ -124,7 +125,7 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
   }
 
   // Write atomically — unique temp file to prevent race conditions (F-10)
-  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
   await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmpPath, filePath);
 }
@@ -582,7 +583,7 @@ export class FileStorage implements IStorageBackend {
       ...batch,
       id,
       createdAt,
-      status: 'pending',
+      status: batch.status ?? 'pending',
       completedTests: 0,
       failedTests: 0,
       totalTests: batch.testCaseIds.length * batch.modelConfigIds.length,
