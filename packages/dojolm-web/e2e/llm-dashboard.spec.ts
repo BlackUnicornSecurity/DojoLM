@@ -35,7 +35,8 @@ test.describe('LLM Dashboard', () => {
   });
 
   test('Models tab shows Add Model button and provider info', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /Add Model/i });
+    // Two 'Add Model' buttons may exist on the page; use first() to avoid strict mode violation
+    const addBtn = page.getByRole('button', { name: /Add Model/i }).first();
     await expect(addBtn).toBeVisible({ timeout: 10000 });
     // Click Add Model to open form
     await addBtn.click();
@@ -44,7 +45,7 @@ test.describe('LLM Dashboard', () => {
   });
 
   test('Add Model form has required fields and provider dropdown', async ({ page }) => {
-    const addBtn = page.getByRole('button', { name: /Add Model/i });
+    const addBtn = page.getByRole('button', { name: /Add Model/i }).first();
     await expect(addBtn).toBeVisible({ timeout: 10000 });
     await addBtn.click();
 

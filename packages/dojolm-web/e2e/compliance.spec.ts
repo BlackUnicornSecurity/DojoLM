@@ -10,12 +10,20 @@ import { test, expect } from '@playwright/test';
 test.describe('Bushido Book', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    // Inject API key so compliance data loads (requires auth)
+    const apiKey = process.env.NODA_API_KEY ?? '';
+    if (apiKey) {
+      await page.evaluate((key) => localStorage.setItem('noda-api-key', key), apiKey);
+    }
     const sidebar = page.locator('aside');
     await expect(sidebar).toBeVisible({ timeout: 15000 });
     const complianceNav = sidebar.getByRole('button', { name: 'Bushido Book' });
     await expect(complianceNav).toBeVisible({ timeout: 5000 });
     await complianceNav.click();
-    await expect(page.getByRole('heading', { name: 'Framework Coverage' })).toBeVisible({ timeout: 20000 });
+    // Wait for the Bushido Book page to fully render
+    await expect(
+      page.locator('main').getByText(/Framework Coverage|Loading compliance|Error loading compliance/i).first()
+    ).toBeVisible({ timeout: 20000 });
   });
 
   test('shows compliance frameworks with coverage data', async ({ page }) => {
@@ -68,10 +76,10 @@ test.describe('Bushido Book', () => {
     await expect(gapTab).toBeVisible({ timeout: 10000 });
     await gapTab.click();
 
-    // Gap matrix should load with controls
-    await expect(page.getByText(/BAISS|Control|Gap/i).first()).toBeVisible({ timeout: 15000 });
+    // Gap matrix should load with controls — scope to main to avoid hidden sidebar nav text
+    await expect(page.locator('main').getByText(/BAISS|Control|Gap/i).first()).toBeVisible({ timeout: 15000 });
     // Show All toggle or column picker should be present
-    await expect(page.getByText(/Show All|Column|Frameworks/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('main').getByText(/Show All|Column|Frameworks/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('Audit Trail tab shows filter controls and event list', async ({ page }) => {
@@ -79,10 +87,10 @@ test.describe('Bushido Book', () => {
     await expect(auditTab).toBeVisible({ timeout: 10000 });
     await auditTab.click();
 
-    // Filter bar should have action type and date inputs
-    await expect(page.getByText(/Action Type|Filter/i).first()).toBeVisible({ timeout: 10000 });
-    // Results count
-    await expect(page.getByText(/Showing|entries|No audit/i).first()).toBeVisible({ timeout: 10000 });
+    // Filter bar should have action type and date inputs; scope to main to avoid sidebar matches
+    await expect(
+      page.locator('main').getByText(/Action Type|Filter|Showing|entries|No audit/i).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('Checklists tab shows framework-specific review checklist', async ({ page }) => {

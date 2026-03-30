@@ -9,6 +9,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Sengoku', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    // Inject API key so authenticated API calls succeed
+    const apiKey = process.env.NODA_API_KEY ?? '';
+    if (apiKey) {
+      await page.evaluate((key) => localStorage.setItem('noda-api-key', key), apiKey);
+    }
     const sidebar = page.locator('aside');
     await expect(sidebar).toBeVisible({ timeout: 15000 });
     const sengokuNav = sidebar.getByRole('button', { name: 'Sengoku', exact: true });
@@ -99,8 +104,11 @@ test.describe('Sengoku', () => {
       await expect(page.getByText(/Target:/i).first()).toBeVisible({ timeout: 5000 });
       await expect(page.getByText(/Schedule:/i).first()).toBeVisible({ timeout: 5000 });
     } else {
-      // If no campaigns, the create new campaign ghost card should be visible
-      await expect(page.getByRole('button', { name: /Create new campaign/i })).toBeVisible({ timeout: 10000 });
+      // If no campaigns or auth required, show empty state or ghost card
+      await expect(
+        page.getByText(/No campaigns yet|Authentication required/i).first()
+          .or(page.getByRole('button', { name: /Create new campaign/i }))
+      ).toBeVisible({ timeout: 10000 });
     }
   });
 

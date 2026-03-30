@@ -11,7 +11,8 @@ test.use({ viewport: { width: 390, height: 844 } });
 test.describe('Mobile Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText(/Dashboard|System Health|Scan Text/i).first()).toBeVisible({ timeout: 15000 });
+    // Wait for the mobile bottom nav to appear (sidebar text is hidden at mobile widths)
+    await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible({ timeout: 15000 });
   });
 
   test('bottom nav bar is visible on mobile', async ({ page }) => {
@@ -26,10 +27,12 @@ test.describe('Mobile Navigation', () => {
 
   test('bottom nav shows Home, Scan, LLM, Guard, and More buttons', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    await expect(mobileNav.getByRole('button', { name: 'Home' })).toBeVisible();
-    await expect(mobileNav.getByRole('button', { name: 'Scan' })).toBeVisible();
-    await expect(mobileNav.getByRole('button', { name: 'LLM' })).toBeVisible();
-    await expect(mobileNav.getByRole('button', { name: 'Guard' })).toBeVisible();
+    // Buttons use aria-label from the full nav item label; use exact:true to avoid
+    // substring collisions (e.g. "Dashboard" also matches "LLM Dashboard").
+    await expect(mobileNav.getByRole('button', { name: 'Dashboard', exact: true })).toBeVisible();
+    await expect(mobileNav.getByRole('button', { name: 'Haiku Scanner', exact: true })).toBeVisible();
+    await expect(mobileNav.getByRole('button', { name: 'LLM Dashboard', exact: true })).toBeVisible();
+    await expect(mobileNav.getByRole('button', { name: 'Hattori Guard', exact: true })).toBeVisible();
     await expect(mobileNav.getByRole('button', { name: /More navigation options/i })).toBeVisible();
   });
 

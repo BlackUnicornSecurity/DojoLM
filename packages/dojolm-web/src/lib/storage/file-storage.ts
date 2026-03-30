@@ -583,7 +583,7 @@ export class FileStorage implements IStorageBackend {
       ...batch,
       id,
       createdAt,
-      status: batch.status ?? 'pending',
+      status: 'pending',
       completedTests: 0,
       failedTests: 0,
       totalTests: batch.testCaseIds.length * batch.modelConfigIds.length,

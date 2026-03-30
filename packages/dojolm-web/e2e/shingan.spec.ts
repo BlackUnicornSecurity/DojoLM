@@ -82,8 +82,9 @@ test.describe('Shingan Scanner', () => {
     const scanBtn = page.getByRole('button', { name: /Scan|Analyze/i }).first();
     await scanBtn.click();
 
+    // Scope to main to avoid hidden sidebar nav descriptions matching the regex
     await expect(
-      page.getByText(/Trust Score|Score|Safe|Low|Medium|High|Critical|L1|Layer/i).first()
+      page.locator('main').getByText(/Trust Score|Score|Safe|Layer/i).first()
     ).toBeVisible({ timeout: 15000 });
   });
 
@@ -114,8 +115,9 @@ test.describe('Shingan Scanner', () => {
     const scanBtn = page.getByRole('button', { name: /Scan|Analyze/i }).first();
     await scanBtn.click();
 
+    // Scope to main to avoid hidden sidebar nav descriptions containing these layer names
     await expect(
-      page.getByText(/Metadata|Payload|Exfiltration|Social|Supply Chain|Context/i).first()
+      page.locator('main').getByText(/Metadata|Exfiltration|Social|Supply Chain|Context/i).first()
     ).toBeVisible({ timeout: 15000 });
   });
 

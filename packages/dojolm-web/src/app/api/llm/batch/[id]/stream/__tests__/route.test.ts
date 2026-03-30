@@ -22,7 +22,7 @@ vi.mock('@/lib/storage/file-storage', () => ({
 }));
 
 function createParams(id: string) {
-  return { params: Promise.resolve({ id }) };
+  return { params: { id } };
 }
 
 function createGetRequest(): NextRequest {

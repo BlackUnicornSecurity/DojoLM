@@ -69,7 +69,8 @@ test.describe('Atemi Lab', () => {
   });
 
   test('MCP tab shows MCP Protocol Attacks', async ({ page }) => {
-    const mcpTab = page.getByRole('tab', { name: 'MCP' });
+    // Use exact:true to distinguish 'MCP' from 'WebMCP'
+    const mcpTab = page.getByRole('tab', { name: 'MCP', exact: true });
     await expect(mcpTab).toBeVisible({ timeout: 10000 });
     await mcpTab.click();
 
@@ -148,9 +149,9 @@ test.describe('Atemi Lab', () => {
   test('attack tool cards show severity badges', async ({ page }) => {
     // Attack Tools tab should be active
     await expect(page.getByText('Tool Integration Attacks').first()).toBeVisible({ timeout: 10000 });
-    
-    // Check for severity badges (Critical, High, Medium, Low)
-    const severityBadge = page.getByText(/Critical|High|Medium|Low/i).first();
+
+    // Check for severity badges (Critical, High, Medium, Low) — scope to main to avoid hidden sidebar nav text
+    const severityBadge = page.locator('main').getByText(/Critical|High|Medium|Low/i).first();
     await expect(severityBadge).toBeVisible({ timeout: 5000 });
   });
 

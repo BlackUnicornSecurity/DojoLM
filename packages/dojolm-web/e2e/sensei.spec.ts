@@ -79,28 +79,33 @@ test.describe('Sensei Chat', () => {
   });
 
   test('Escape key closes the drawer', async ({ page }) => {
-    const senseiBtn = page.getByRole('button', { name: /Sensei|Open Sensei|Chat/i }).first();
+    const senseiBtn = page.getByRole('button', { name: /Open Sensei/i }).first();
     await senseiBtn.click();
     await expect(page.getByText(/Welcome to Sensei/i)).toBeVisible({ timeout: 10000 });
 
     // Press Escape
     await page.keyboard.press('Escape');
 
-    // Drawer should close — welcome text should no longer be visible
-    await expect(page.getByText(/Welcome to Sensei/i)).toBeHidden({ timeout: 5000 });
+    // Drawer slides off-screen (translate-x-full) and becomes aria-hidden.
+    // getByRole filters out aria-hidden elements, so use a CSS locator instead.
+    await expect(
+      page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]')
+    ).toHaveAttribute('aria-hidden', 'true', { timeout: 5000 });
   });
 
   test('close button closes the drawer', async ({ page }) => {
-    const senseiBtn = page.getByRole('button', { name: /Sensei|Open Sensei|Chat/i }).first();
+    const senseiBtn = page.getByRole('button', { name: /Open Sensei/i }).first();
     await senseiBtn.click();
     await expect(page.getByText(/Welcome to Sensei/i)).toBeVisible({ timeout: 10000 });
 
-    // Click close button
-    const closeBtn = page.getByRole('button', { name: /Close/i }).first();
+    // Click Close Sensei button in the drawer header
+    const closeBtn = page.getByRole('button', { name: 'Close Sensei' }).last();
     await closeBtn.click();
 
-    // Drawer should close
-    await expect(page.getByText(/Welcome to Sensei/i)).toBeHidden({ timeout: 5000 });
+    // Drawer slides off-screen and becomes aria-hidden
+    await expect(
+      page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]')
+    ).toHaveAttribute('aria-hidden', 'true', { timeout: 5000 });
   });
 
   test('drawer remains accessible across module navigation', async ({ page }) => {

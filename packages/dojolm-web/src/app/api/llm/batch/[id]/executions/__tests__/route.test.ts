@@ -43,7 +43,7 @@ function createGetRequest(id: string): NextRequest {
 }
 
 function createParams(id: string) {
-  return { params: Promise.resolve({ id }) };
+  return { params: { id } };
 }
 
 const MOCK_BATCH = {

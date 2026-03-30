@@ -8,6 +8,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Hattori Guard', () => {
+  // Guard tests navigate via the desktop sidebar — skip on mobile-chrome project
+  // where the sidebar is replaced by the bottom nav.
+  test.skip(({ viewport }) => !!(viewport && viewport.width < 768), 'Desktop-only: uses sidebar navigation');
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     const sidebar = page.locator('aside');
@@ -37,12 +41,12 @@ test.describe('Hattori Guard', () => {
 
   test('guard enable/disable toggle works', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Guard Mode' })).toBeVisible({ timeout: 10000 });
-    // Find the power toggle button
-    const toggleBtn = page.getByRole('button', { name: /Guard Off|Guard Active|Toggle guard/i });
+    // The toggle button has aria-label "Guard enabled, click to disable" or "Guard disabled, click to enable"
+    const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
     // Click to toggle state
     await toggleBtn.click();
-    // Button text or aria should change
+    // Button should still be visible after toggle
     await expect(toggleBtn).toBeVisible({ timeout: 5000 });
   });
 
@@ -56,7 +60,7 @@ test.describe('Hattori Guard', () => {
   test('block threshold selector is visible when guard enabled', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Guard Mode' })).toBeVisible({ timeout: 10000 });
     // Enable guard if not already active
-    const toggleBtn = page.getByRole('button', { name: /Guard Off|Guard Active|Toggle guard/i });
+    const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
     // Look for block threshold controls
     const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
@@ -71,7 +75,7 @@ test.describe('Hattori Guard', () => {
   test('switching mode updates active mode metric card', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Guard Mode' })).toBeVisible({ timeout: 10000 });
     // Enable guard first
-    const toggleBtn = page.getByRole('button', { name: /Guard Off|Guard Active|Toggle guard/i });
+    const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
     await toggleBtn.click();
     await page.waitForTimeout(500);

@@ -292,7 +292,7 @@ describe('route-guard', () => {
   it('RG-015: withAuth authenticates with API key and defaults to analyst role', async () => {
     // No session, but API key present
     mockValidateSession.mockReturnValue(null);
-    delete process.env.API_KEY_ROLE;
+    delete process.env.NODA_API_KEY_ROLE;
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
@@ -309,9 +309,9 @@ describe('route-guard', () => {
   });
 
   // RG-016: API key auth - respects API_KEY_ROLE env var
-  it('RG-016: withAuth respects API_KEY_ROLE environment variable', async () => {
+  it('RG-016: withAuth respects NODA_API_KEY_ROLE environment variable', async () => {
     mockValidateSession.mockReturnValue(null);
-    process.env.API_KEY_ROLE = 'viewer';
+    process.env.NODA_API_KEY_ROLE = 'viewer';
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
@@ -329,7 +329,7 @@ describe('route-guard', () => {
   // RG-017: API key auth - invalid API_KEY_ROLE falls back to analyst
   it('RG-017: withAuth falls back to analyst for invalid API_KEY_ROLE', async () => {
     mockValidateSession.mockReturnValue(null);
-    process.env.API_KEY_ROLE = 'invalid-role';
+    process.env.NODA_API_KEY_ROLE = 'invalid-role';
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
@@ -347,7 +347,7 @@ describe('route-guard', () => {
   // RG-018: API key auth - API_KEY_PERMISSIONS mapping
   it('RG-018: withAuth uses API_KEY_PERMISSIONS for per-key role mapping', async () => {
     mockValidateSession.mockReturnValue(null);
-    delete process.env.API_KEY_ROLE;
+    delete process.env.NODA_API_KEY_ROLE;
     
     // Create a SHA-256 hash of the test key (first 16 chars)
     const crypto = await import('node:crypto');
@@ -373,7 +373,7 @@ describe('route-guard', () => {
   // RG-019: API key auth - unknown key falls back to default role
   it('RG-019: withAuth falls back to default role for unmapped API key', async () => {
     mockValidateSession.mockReturnValue(null);
-    process.env.API_KEY_ROLE = 'viewer';
+    process.env.NODA_API_KEY_ROLE = 'viewer';
     
     // Set up permissions for a different key
     process.env.API_KEY_PERMISSIONS = JSON.stringify([
@@ -395,7 +395,7 @@ describe('route-guard', () => {
   // RG-020: API key auth - CSRF is skipped for API key requests
   it('RG-020: withAuth skips CSRF check for API key authenticated requests', async () => {
     mockValidateSession.mockReturnValue(null);
-    delete process.env.API_KEY_ROLE;
+    delete process.env.NODA_API_KEY_ROLE;
 
     const handler = withAuth(dummyHandler);
     // POST without CSRF tokens - should work with API key

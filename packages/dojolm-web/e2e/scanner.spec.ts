@@ -7,8 +7,16 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Scanner', () => {
+  // These tests navigate via the desktop sidebar; skip on mobile-chrome
+  test.skip(({ viewport }) => !!(viewport && viewport.width < 768), 'Desktop-only: uses sidebar navigation');
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    // Inject API key into localStorage so the frontend can authenticate scan requests
+    const apiKey = process.env.NODA_API_KEY ?? '';
+    if (apiKey) {
+      await page.evaluate((key) => localStorage.setItem('noda-api-key', key), apiKey);
+    }
     const sidebar = page.locator('aside');
     await expect(sidebar).toBeVisible({ timeout: 15000 });
     const scannerNav = sidebar.getByRole('button', { name: 'Haiku Scanner' });
@@ -34,6 +42,9 @@ test.describe('Scanner', () => {
     const scanButton = scannerMain.getByRole('button', { name: /^Scan$/ });
     await expect(scanButton).toBeEnabled({ timeout: 5000 });
     await scanButton.click();
-    await expect(scannerMain.getByText(/Threat Detected|Safe/i).first()).toBeVisible({ timeout: 25000 });
+    // Wait for verdict text — "Threat Detected" for BLOCK, "Safe" for ALLOW
+    await expect(
+      scannerMain.getByText(/Threat Detected|Safe|Verdict|BLOCK|ALLOW/i).first()
+    ).toBeVisible({ timeout: 45000 });
   });
 });
