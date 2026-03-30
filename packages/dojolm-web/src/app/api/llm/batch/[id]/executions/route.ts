@@ -9,11 +9,14 @@ import { apiError } from '@/lib/api-error';
 import { withAuth } from '@/lib/auth/route-guard';
 import { fileStorage } from '@/lib/storage/file-storage';
 
-type RouteParams = { params: Record<string, string> };
+type RouteParams = { params?: Record<string, string> };
 
 export const GET = withAuth(async (request: NextRequest, { params }: RouteParams) => {
   try {
-    const { id } = await Promise.resolve(params);
+    const id = params?.['id'];
+    if (!id) {
+      return NextResponse.json({ error: 'Missing batch id' }, { status: 400 });
+    }
     const batch = await fileStorage.getBatch(id);
 
     if (!batch) {

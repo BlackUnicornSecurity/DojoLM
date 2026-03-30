@@ -90,12 +90,12 @@ export interface RouteGuardOptions {
 type RouteHandler = (
   req: NextRequest,
   context?: any
-) => Promise<NextResponse> | NextResponse;
+) => Promise<NextResponse | Response> | NextResponse | Response;
 
 type AuthenticatedHandler = (
   req: NextRequest,
   context: { params?: Record<string, string>; user: SessionUser }
-) => Promise<NextResponse> | NextResponse;
+) => Promise<NextResponse | Response> | NextResponse | Response;
 
 /**
  * Higher-order function wrapping an API route with auth + RBAC + CSRF.

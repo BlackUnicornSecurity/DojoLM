@@ -20,9 +20,9 @@ const MAX_POLL_DURATION_MS = 10 * 60 * 1000; // 10 minutes
  */
 export const GET = withAuth(async (
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params?: Record<string, string> }
 ) => {
-  const { id: batchId } = await Promise.resolve(params);
+  const batchId = params?.['id'];
 
   // Validate batchId format to prevent path traversal
   if (!batchId || !SAFE_ID.test(batchId)) {
