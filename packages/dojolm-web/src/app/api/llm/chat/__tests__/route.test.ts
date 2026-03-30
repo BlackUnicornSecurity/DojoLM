@@ -35,7 +35,6 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 describe('POST /api/llm/chat', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let POST: any;
 
   beforeEach(async () => {

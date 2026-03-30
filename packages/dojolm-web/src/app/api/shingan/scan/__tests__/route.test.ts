@@ -33,7 +33,6 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 describe('POST /api/shingan/scan', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let POST: any;
 
   beforeEach(async () => {

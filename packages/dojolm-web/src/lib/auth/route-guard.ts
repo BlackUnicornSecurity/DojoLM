@@ -86,7 +86,7 @@ export interface RouteGuardOptions {
   skipCsrf?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Next.js 16 uses Promise<Params> for dynamic route params
+// Next.js 16 uses Promise<Params> for dynamic route params
 type RouteHandler = (
   req: NextRequest,
   context?: any

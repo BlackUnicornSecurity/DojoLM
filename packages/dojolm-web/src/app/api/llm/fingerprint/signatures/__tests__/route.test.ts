@@ -57,7 +57,6 @@ const MOCK_SIGNATURES = [
 ];
 
 describe('GET /api/llm/fingerprint/signatures', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let GET: any;
 
   beforeEach(async () => {

@@ -66,7 +66,6 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 describe('/api/sensei/chat', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let POST: any, GET: any, PUT: any, DELETE: any;
 
   beforeEach(async () => {
