@@ -1,0 +1,33 @@
+# Build artifacts
+packages/dojolm-web/.next/
+archive/
+
+# Binary fixtures (audio, video, images) — text fixtures still indexed
+packages/bu-tpi/fixtures/audio/*.mp3
+packages/bu-tpi/fixtures/audio/*.wav
+packages/bu-tpi/fixtures/audio/*.aac
+packages/bu-tpi/fixtures/audio/*.flac
+packages/bu-tpi/fixtures/audio/*.ogg
+packages/bu-tpi/fixtures/audio/*.m4a
+packages/bu-tpi/fixtures/audio/*.wma
+packages/bu-tpi/fixtures/audio/*.opus
+packages/bu-tpi/fixtures/audio/*.aiff
+packages/bu-tpi/fixtures/audio/*.amr
+packages/bu-tpi/fixtures/audio/*.ac3
+packages/bu-tpi/fixtures/audio/*.dts
+packages/bu-tpi/fixtures/audio/*.spx
+packages/bu-tpi/fixtures/audio/*.3gp
+packages/bu-tpi/fixtures/video/
+packages/bu-tpi/fixtures/images/
+packages/bu-tpi/fixtures/multimodal/
+
+# Archived QA/docs — already completed
+team/QA/archive/
+team/docs/archive/
+team/backups/
+
+# node_modules (should already be ignored but be explicit)
+node_modules/
+
+# Large data files
+packages/dojolm-web/data/llm-results/
