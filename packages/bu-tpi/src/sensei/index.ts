@@ -83,3 +83,66 @@ export type {
   CompletionEntry,
   ConversionOutput,
 } from './format-converter.js';
+
+// Sanitization
+export {
+  sanitizeForPrompt,
+  sanitizeLabel,
+  MAX_PROMPT_CONTENT_LENGTH,
+} from './sanitize.js';
+
+// Attack Generator
+export {
+  buildGenerationPrompt,
+  parseGeneratedAttacks,
+  generateAttacks,
+  createDefaultRequest,
+  MAX_GENERATION_COUNT,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_MAX_TOKENS,
+} from './attack-generator.js';
+
+export type {
+  AttackGenerationRequest,
+  GeneratedAttack,
+  GenerationResult,
+} from './attack-generator.js';
+
+// Mutation Advisor
+export {
+  buildMutationPrompt,
+  parseMutationResponse,
+  adviseMutations,
+} from './mutation-advisor.js';
+
+export type {
+  MutationSuggestion,
+  MutationAdvisoryResult,
+} from './mutation-advisor.js';
+
+// Plan Generator
+export {
+  parsePlanResponse,
+  generatePlan,
+  isValidAttackType,
+} from './plan-generator.js';
+
+export type {
+  PlanGenerationRequest,
+  PlanGenerationResult,
+} from './plan-generator.js';
+
+// Judge
+export {
+  parseScore,
+  parseConfidence,
+  parseVerdict,
+  parseJudgeResponse,
+  judgeAttack,
+} from './judge.js';
+
+export type {
+  JudgeCriterion,
+  JudgeResult,
+  JudgeRequest,
+} from './judge.js';
