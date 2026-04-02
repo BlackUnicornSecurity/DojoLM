@@ -18,3 +18,6 @@ export { CloudflareProvider, cloudflareProvider } from './cloudflare.js';
 
 // Custom provider (S83)
 export { CustomProvider } from './custom.js';
+
+// Sensei provider (IKIGAI Phase 1.2)
+export { SenseiProvider, senseiProvider, detectCapability, buildSenseiSystemMessage } from './sensei.js';
