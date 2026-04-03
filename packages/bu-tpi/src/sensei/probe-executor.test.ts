@@ -35,11 +35,13 @@ const MOCK_CONFIG: LLMModelConfig = {
 
 function makeAttack(content: string): GeneratedAttack {
   return {
+    id: `test-${Math.random().toString(36).slice(2, 8)}`,
     content,
     category: 'prompt-injection',
-    severity: 'critical',
+    severity: 'CRITICAL',
     source: 'sensei',
     confidence: 0.8,
+    generatedAt: new Date().toISOString(),
     metadata: {},
   };
 }

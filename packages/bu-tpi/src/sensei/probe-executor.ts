@@ -9,6 +9,7 @@
  * - Mutation feedback (mutation-advisor.ts)
  */
 
+import { randomUUID } from 'crypto';
 import type { LLMModelConfig, LLMProviderAdapter } from '../llm/types.js';
 import type { GeneratedAttack, AttackGenerationRequest } from './attack-generator.js';
 import type { JudgeResult } from './judge.js';
@@ -149,7 +150,7 @@ export async function runProbeCampaign(
       attacks = await generateFn(senseiAdapter, senseiConfig, {
         category: config.category,
         count: config.initialCount,
-        severity: 'critical',
+        severity: 'CRITICAL',
         context: null,
         temperature: 0.8,
         maxTokens: 2048,
@@ -171,11 +172,13 @@ export async function runProbeCampaign(
         );
         for (const mutation of mutations) {
           mutatedAttacks.push({
+            id: randomUUID(),
             content: mutation,
             category: config.category,
-            severity: 'critical',
+            severity: 'CRITICAL',
             source: 'sensei',
             confidence: topProbe.attack.confidence,
+            generatedAt: new Date().toISOString(),
             metadata: {
               ...topProbe.attack.metadata,
               parentScore: topProbe.judgeResult.overallScore,

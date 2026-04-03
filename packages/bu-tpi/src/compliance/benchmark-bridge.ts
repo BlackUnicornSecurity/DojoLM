@@ -56,10 +56,17 @@ const CATEGORY_MODULE_MAP: Readonly<Record<string, string>> = {
   'function-hijack': 'mcp-attack-detector',
   'indirect-pi': 'enhanced-pi',
   'benign-tool-use': 'mcp-attack-detector',
+  // Agentic bench new categories
+  'schema-poisoning': 'mcp-attack-detector',
+  'multi-agent-exploit': 'mcp-attack-detector',
+  'capability-escalation': 'mcp-attack-detector',
   // RAG bench categories
   'boundary-injection': 'rag-analyzer',
   'embedding-attack': 'rag-analyzer',
   'knowledge-conflict': 'rag-analyzer',
+  'context-poisoning': 'rag-analyzer',
+  'citation-spoofing': 'rag-analyzer',
+  'retrieval-manipulation': 'rag-analyzer',
   'clean-rag': 'rag-analyzer',
 } as const;
 

@@ -16,6 +16,7 @@ import type {
 import { DEFAULT_PIPELINE_CONFIG } from './types.js';
 import {
   chunkDocument,
+  simulateEmbedding,
   simulateRetrieval,
   assembleContext,
 } from './pipeline-simulator.js';
@@ -187,17 +188,19 @@ export async function runPoisoningTest(
   const ragConfig = liveConfig.ragConfig;
 
   // Step 1: Baseline without poisoned document
+  const dim = ragConfig.embeddingDimension;
+
   const cleanChunks = cleanDocuments.flatMap((doc) =>
     chunkDocument(doc, ragConfig.chunkSize, ragConfig.chunkOverlap),
-  );
+  ).map((c) => simulateEmbedding(c, dim));
 
   const queryChunks = chunkDocument(
-    { id: 'query', content: query, source: 'user', poisoned: false, injectionPayload: null },
+    { id: 'query', content: query, metadata: {}, source: 'user', poisoned: false, injectionPayload: null },
     ragConfig.chunkSize,
     ragConfig.chunkOverlap,
-  );
+  ).map((c) => simulateEmbedding(c, dim));
 
-  const queryChunk = queryChunks[0] ?? { id: 'q', documentId: 'query', content: query, index: 0, poisoned: false };
+  const queryChunk = queryChunks[0] ?? { id: 'q', documentId: 'query', content: query, index: 0, embedding: null, similarityScore: null, poisoned: false };
 
   const cleanRetrieved = simulateRetrieval(
     queryChunk,
@@ -214,7 +217,7 @@ export async function runPoisoningTest(
   // Step 2: Inject poisoned document and re-run
   const poisonedChunks = chunkDocument(
     poisonedDocument, ragConfig.chunkSize, ragConfig.chunkOverlap,
-  );
+  ).map((c) => simulateEmbedding(c, dim));
   const allChunks = [...cleanChunks, ...poisonedChunks];
 
   const poisonedRetrieved = simulateRetrieval(

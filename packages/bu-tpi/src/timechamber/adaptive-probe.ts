@@ -253,9 +253,8 @@ export function selectStrategy(
 export function rewriteTurn(
   turn: Turn,
   strategy: AdaptiveStrategy,
-  previousResponse: string,
+  _previousResponse: string,
 ): Turn {
-  const truncatedResponse = previousResponse.slice(0, 200);
   const adaptedContent = `${strategy.rewritePrefix}${turn.content}`;
 
   return {

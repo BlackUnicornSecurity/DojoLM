@@ -112,7 +112,8 @@ export async function runHybridPipeline(
           results[idx] = hybridResult;
         }
       } catch {
-        // LLM failure — keep regex-only result, no degradation
+        // LLM failure — keep regex-only result (graceful degradation)
+        // The regex result at results[idx] is preserved unchanged
       }
     }
   }
