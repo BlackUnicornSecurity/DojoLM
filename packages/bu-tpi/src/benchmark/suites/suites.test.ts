@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { DOJOLM_BENCH_V1, CATEGORY_DIFFICULTY } from './dojolm-bench.js';
 import { AGENTIC_BENCHMARK_SUITE, AGENTIC_CATEGORY_DIFFICULTY } from './agentic-bench.js';
 import { RAG_BENCHMARK_SUITE, RAG_CATEGORY_DIFFICULTY } from './rag-bench.js';
 import { HARMBENCH_SUITE, HARMBENCH_CATEGORY_DIFFICULTY } from './harmbench.js';

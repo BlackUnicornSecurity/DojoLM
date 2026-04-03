@@ -173,3 +173,86 @@ describe('PluginRegistry', () => {
     expect(onUnload).toHaveBeenCalledTimes(1);
   });
 });
+
+// ============================================================================
+// Security Validator Tests
+// ============================================================================
+
+import {
+  validatePluginSecurity,
+  validatePluginDependencies,
+  CAPABILITY_ALLOWLIST,
+  BLOCKED_PATTERNS,
+} from './validator.js';
+
+describe('validatePluginSecurity', () => {
+  it('accepts a valid plugin', () => {
+    const errors = validatePluginSecurity(makeManifest());
+    expect(errors).toHaveLength(0);
+  });
+
+  it('detects blocked patterns in id field', () => {
+    // Test that each blocked pattern is detected when present raw in the id
+    for (const pattern of BLOCKED_PATTERNS) {
+      const testId = `test-${pattern}-plugin`;
+      const errors = validatePluginSecurity(makeManifest({ id: testId, name: 'Safe' }));
+      expect(errors.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('detects blocked patterns in description field', () => {
+    for (const pattern of BLOCKED_PATTERNS) {
+      const errors = validatePluginSecurity(makeManifest({ description: `Uses ${pattern} internally` }));
+      expect(errors.some((e) => e.field === 'description' && e.message.includes('blocked pattern'))).toBe(true);
+    }
+  });
+
+  it('rejects invalid capability', () => {
+    const errors = validatePluginSecurity(makeManifest({ capabilities: ['scan', 'execute_code'] }));
+    expect(errors.some((e) => e.field === 'capabilities' && e.message.includes('execute_code'))).toBe(true);
+  });
+
+  it('accepts valid capabilities', () => {
+    for (const cap of CAPABILITY_ALLOWLIST) {
+      const errors = validatePluginSecurity(makeManifest({ capabilities: [cap] }));
+      const capErrors = errors.filter((e) => e.field === 'capabilities');
+      expect(capErrors).toHaveLength(0);
+    }
+  });
+});
+
+describe('validatePluginDependencies', () => {
+  it('passes when all dependencies exist', () => {
+    const registry = { 'dep-a': makeManifest({ id: 'dep-a', name: 'Dep A' }) };
+    const errors = validatePluginDependencies(makeManifest({ dependencies: ['dep-a'] }), registry);
+    expect(errors).toHaveLength(0);
+  });
+
+  it('detects missing dependency', () => {
+    const errors = validatePluginDependencies(makeManifest({ dependencies: ['missing'] }), {});
+    expect(errors.some((e) => e.message.includes('missing'))).toBe(true);
+  });
+
+  it('detects self-dependency', () => {
+    const errors = validatePluginDependencies(
+      makeManifest({ id: 'self-ref', dependencies: ['self-ref'] }),
+      { 'self-ref': makeManifest({ id: 'self-ref' }) },
+    );
+    expect(errors.some((e) => e.message.includes('cannot depend on itself'))).toBe(true);
+  });
+
+  it('detects circular dependency', () => {
+    const registry = {
+      'a': makeManifest({ id: 'a', name: 'A', dependencies: ['b'] }),
+      'b': makeManifest({ id: 'b', name: 'B', dependencies: ['test-plugin'] }),
+    };
+    const errors = validatePluginDependencies(makeManifest({ dependencies: ['a'] }), registry);
+    expect(errors.some((e) => e.message.includes('Circular'))).toBe(true);
+  });
+
+  it('detects duplicate dependencies', () => {
+    const registry = { 'dep-a': makeManifest({ id: 'dep-a', name: 'Dep A' }) };
+    const errors = validatePluginDependencies(makeManifest({ dependencies: ['dep-a', 'dep-a'] }), registry);
+    expect(errors.some((e) => e.message.includes('Duplicate'))).toBe(true);
+  });
+});

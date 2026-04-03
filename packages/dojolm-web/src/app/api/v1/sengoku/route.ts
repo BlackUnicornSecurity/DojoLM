@@ -41,6 +41,13 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
+    if (campaignId.length > 128) {
+      return NextResponse.json(
+        { error: 'campaignId exceeds maximum length (128)' },
+        { status: 413 }
+      );
+    }
+
     // Stub response — actual Sengoku wiring comes in follow-up
     return NextResponse.json({
       success: true,

@@ -41,11 +41,25 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
+    if (suiteId.length > 128) {
+      return NextResponse.json(
+        { error: 'suiteId exceeds maximum length (128)' },
+        { status: 413 }
+      );
+    }
+
     // Validate required: modelId
     if (!modelId || typeof modelId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: modelId (string)' },
         { status: 400 }
+      );
+    }
+
+    if (modelId.length > 128) {
+      return NextResponse.json(
+        { error: 'modelId exceeds maximum length (128)' },
+        { status: 413 }
       );
     }
 

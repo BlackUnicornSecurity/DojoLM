@@ -41,11 +41,26 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
+    const VALID_ARENA_MODES = ['kunai', 'shuriken', 'naginata', 'musashi'] as const;
+    if (!VALID_ARENA_MODES.includes(mode as typeof VALID_ARENA_MODES[number])) {
+      return NextResponse.json(
+        { error: `Invalid mode. Valid: ${VALID_ARENA_MODES.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
     // Validate required: modelId
     if (!modelId || typeof modelId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: modelId (string)' },
         { status: 400 }
+      );
+    }
+
+    if (modelId.length > 128) {
+      return NextResponse.json(
+        { error: 'modelId exceeds maximum length (128)' },
+        { status: 413 }
       );
     }
 

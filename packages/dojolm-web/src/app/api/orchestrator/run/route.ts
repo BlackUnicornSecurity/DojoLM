@@ -14,7 +14,7 @@ import { withAuth } from '@/lib/auth/route-guard';
 
 const MAX_TEXT_SIZE = 10_000;
 
-const VALID_RUN_TYPES = new Set(['single', 'multi-turn', 'tree-of-thought', 'crescendo']);
+const VALID_RUN_TYPES = new Set(['pair', 'crescendo', 'tap', 'mad-max', 'sensei-adaptive']);
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {

@@ -17,6 +17,7 @@ export type {
   CampaignState,
   FindingDiff,
   SengokuReport,
+  OrchestratorCampaign,
 } from './types.js';
 
 export {
