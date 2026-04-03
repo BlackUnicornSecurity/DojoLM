@@ -1,6 +1,6 @@
 # QA Coverage Matrix (Generated)
 
-Generated on 2026-04-03T17:41:04.368Z.
+Generated on 2026-04-03T18:36:44.390Z.
 
 This file is a repo-driven coverage inventory and drift audit.
 It complements `QA-MASTER-PLAN.md` by enumerating live source surfaces, direct test references, heuristic interactive markers, and missing checks.
@@ -12,8 +12,8 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Metric | Value |
 | --- | --- |
 | Source surfaces tracked | 946 |
-| Test files scanned | 696 |
-| High-risk uncovered surfaces | 23 |
+| Test files scanned | 838 |
+| High-risk uncovered surfaces | 10 |
 | Framework citation drift items | 3 |
 | Packages tracked | dojolm-web, bu-tpi, dojolm-mcp, dojolm-scanner, bmad-cybersec/validators, bmad-cybersec/framework |
 
@@ -32,51 +32,51 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Package | Category | Surfaces | Direct | Indirect | None | High-Risk Uncovered |
 | --- | --- | --- | --- | --- | --- | --- |
 | dojolm-web | route | 102 | 102 | 0 | 0 | 0 |
-| dojolm-web | page | 5 | 0 | 0 | 5 | 5 |
-| dojolm-web | app-shell | 1 | 0 | 0 | 1 | 1 |
+| dojolm-web | page | 5 | 3 | 0 | 2 | 2 |
+| dojolm-web | app-shell | 1 | 1 | 0 | 0 | 0 |
 | dojolm-web | widget | 32 | 32 | 0 | 0 | 0 |
-| dojolm-web | component | 229 | 153 | 0 | 76 | 9 |
+| dojolm-web | component | 229 | 180 | 0 | 49 | 2 |
 | dojolm-web | hook | 5 | 4 | 0 | 1 | 0 |
-| dojolm-web | lib | 117 | 96 | 0 | 21 | 6 |
+| dojolm-web | lib | 117 | 98 | 0 | 19 | 4 |
 | dojolm-web | other | 3 | 1 | 0 | 2 | 0 |
 | bu-tpi | agentic | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | arena | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | attackdna | 8 | 8 | 0 | 0 | 0 |
 | bu-tpi | audit | 1 | 1 | 0 | 0 | 0 |
-| bu-tpi | benchmark | 10 | 8 | 0 | 2 | 0 |
+| bu-tpi | benchmark | 10 | 10 | 0 | 0 | 0 |
 | bu-tpi | branding-helpers.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | ci | 4 | 4 | 0 | 0 | 0 |
 | bu-tpi | cli | 2 | 1 | 0 | 1 | 0 |
 | bu-tpi | compliance | 10 | 10 | 0 | 0 | 0 |
-| bu-tpi | defense | 4 | 1 | 0 | 3 | 0 |
+| bu-tpi | defense | 4 | 3 | 0 | 1 | 0 |
 | bu-tpi | detection | 3 | 3 | 0 | 0 | 0 |
-| bu-tpi | edgefuzz | 2 | 1 | 0 | 1 | 0 |
-| bu-tpi | fingerprint | 26 | 22 | 0 | 4 | 0 |
-| bu-tpi | fuzzing | 7 | 6 | 0 | 1 | 0 |
+| bu-tpi | edgefuzz | 2 | 2 | 0 | 0 | 0 |
+| bu-tpi | fingerprint | 26 | 26 | 0 | 0 | 0 |
+| bu-tpi | fuzzing | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | generate-fixtures.ts | 1 | 0 | 0 | 1 | 1 |
-| bu-tpi | kotoba | 10 | 1 | 0 | 9 | 0 |
-| bu-tpi | llm | 19 | 16 | 0 | 3 | 0 |
+| bu-tpi | kotoba | 10 | 10 | 0 | 0 | 0 |
+| bu-tpi | llm | 19 | 18 | 0 | 1 | 0 |
 | bu-tpi | metadata-parsers.ts | 1 | 1 | 0 | 0 | 0 |
-| bu-tpi | modules | 40 | 39 | 0 | 1 | 0 |
+| bu-tpi | modules | 40 | 40 | 0 | 0 | 0 |
 | bu-tpi | plugins | 4 | 4 | 0 | 0 | 0 |
-| bu-tpi | rag | 8 | 5 | 0 | 3 | 0 |
-| bu-tpi | sage | 11 | 9 | 0 | 2 | 0 |
+| bu-tpi | rag | 8 | 8 | 0 | 0 | 0 |
+| bu-tpi | sage | 11 | 11 | 0 | 0 | 0 |
 | bu-tpi | scanner-binary.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | scanner.ts | 1 | 1 | 0 | 0 | 0 |
-| bu-tpi | sengoku | 6 | 2 | 0 | 4 | 0 |
-| bu-tpi | sensei | 13 | 12 | 0 | 1 | 0 |
+| bu-tpi | sengoku | 6 | 6 | 0 | 0 | 0 |
+| bu-tpi | sensei | 13 | 13 | 0 | 0 | 0 |
 | bu-tpi | serve.ts | 1 | 0 | 0 | 1 | 1 |
-| bu-tpi | shingan | 1 | 0 | 0 | 1 | 0 |
-| bu-tpi | supplychain | 4 | 2 | 0 | 2 | 0 |
-| bu-tpi | test | 3 | 0 | 0 | 3 | 0 |
-| bu-tpi | threatfeed | 8 | 7 | 0 | 1 | 0 |
-| bu-tpi | timechamber | 17 | 14 | 0 | 3 | 0 |
-| bu-tpi | transfer | 4 | 3 | 0 | 1 | 0 |
+| bu-tpi | shingan | 1 | 1 | 0 | 0 | 0 |
+| bu-tpi | supplychain | 4 | 3 | 0 | 1 | 0 |
+| bu-tpi | test | 3 | 3 | 0 | 0 | 0 |
+| bu-tpi | threatfeed | 8 | 8 | 0 | 0 | 0 |
+| bu-tpi | timechamber | 17 | 17 | 0 | 0 | 0 |
+| bu-tpi | transfer | 4 | 4 | 0 | 0 | 0 |
 | bu-tpi | transforms | 3 | 3 | 0 | 0 | 0 |
 | bu-tpi | types.ts | 1 | 1 | 0 | 0 | 0 |
-| bu-tpi | validation | 55 | 54 | 0 | 1 | 0 |
-| bu-tpi | webmcp | 2 | 0 | 0 | 2 | 0 |
-| bu-tpi | xray | 3 | 2 | 0 | 1 | 0 |
+| bu-tpi | validation | 55 | 55 | 0 | 0 | 0 |
+| bu-tpi | webmcp | 2 | 2 | 0 | 0 | 0 |
+| bu-tpi | xray | 3 | 3 | 0 | 0 | 0 |
 | dojolm-mcp | attack-controller.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | attack-engine.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | attack-logger.ts | 1 | 1 | 0 | 0 | 0 |
@@ -118,25 +118,12 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | --- | --- | --- | --- | --- | --- |
 | dojolm-web | / | page | storage, navigation, interactive:10 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/page.tsx` |
 | dojolm-web | NODADashboard.tsx | component | navigation, interactive:4 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| dojolm-web | /login | page | auth, interactive:4 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/login/page.tsx` |
 | dojolm-web | index.ts | component | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/dashboard/index.ts` |
 | bu-tpi | generate-fixtures.ts | generate-fixtures.ts | storage, validation, persistence, network, admin +4 | direct unit or integration coverage | `packages/bu-tpi/src/generate-fixtures.ts` |
-| dojolm-web | /style-guide | page | -- | direct unit or integration coverage | `packages/dojolm-web/src/app/style-guide/page.tsx` |
-| dojolm-web | AmaterasuConfig.tsx | component | auth, persistence, network, interactive:9, api:2 | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
-| dojolm-web | OrchestratorBuilder.tsx | component | network, llm, interactive:13, api:1 | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| dojolm-web | MitsukeSourceConfig.tsx | component | validation, persistence, network, interactive:11 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |
-| dojolm-web | EcosystemContext.tsx | lib | auth, validation, network, api:3 | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/contexts/EcosystemContext.tsx` |
-| dojolm-web | app-shell:/ | app-shell | navigation | direct unit or integration coverage | `packages/dojolm-web/src/app/layout.tsx` |
-| dojolm-web | boundary:404 | page | navigation, interactive:2 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/not-found.tsx` |
-| dojolm-web | LLMModelContext.tsx | lib | auth, network, navigation, api:1, nav:3 | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/contexts/LLMModelContext.tsx` |
-| dojolm-web | CampaignGraphBuilder.tsx | component | interactive:15 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
-| dojolm-web | LibraryPageTemplate.tsx | component | interactive:20 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
 | dojolm-web | boundary:error | page | interactive:2 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
-| dojolm-web | AmaterasuGuide.tsx | component | persistence, interactive:13 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/attackdna/AmaterasuGuide.tsx` |
 | dojolm-web | execution.repository.ts | lib | storage, validation, navigation, db, nav:1 | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/execution.repository.ts` |
 | dojolm-web | AuthContext.tsx | lib | auth, network, api:3 | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/AuthContext.tsx` |
 | bu-tpi | serve.ts | serve.ts | storage, validation, network, navigation, api:6 +1 | direct unit or integration coverage | `packages/bu-tpi/src/serve.ts` |
-| dojolm-web | TemporalTab.tsx | component | persistence, llm, interactive:4 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
 | dojolm-web | index.ts | lib | auth, validation, persistence | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/index.ts` |
 | dojolm-web | base.repository.ts | lib | storage, validation, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/base.repository.ts` |
 
@@ -144,15 +131,15 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 | Line | Citation | Suggested Live Match |
 | --- | --- | --- |
-| 467 | `api/shingan` | -- |
-| 753 | `__tests__/route.test.ts` | -- |
-| 821 | `next/dynamic` | -- |
+| 470 | `api/shingan` | -- |
+| 779 | `__tests__/route.test.ts` | -- |
+| 847 | `next/dynamic` | -- |
 
 ## Package Inventories
 
 ## dojolm-web
 
-Source surfaces: **494**. Test files scanned: **419**.
+Source surfaces: **494**. Test files scanned: **459**.
 
 <details>
 <summary>route (102 surfaces; direct 102, indirect 0, none 0)</summary>
@@ -265,24 +252,24 @@ Source surfaces: **494**. Test files scanned: **419**.
 </details>
 
 <details>
-<summary>page (5 surfaces; direct 0, indirect 0, none 5)</summary>
+<summary>page (5 surfaces; direct 3, indirect 0, none 2)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | boundary:error | root | Error | 2 | api:0 nav:0 xmod:0 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
-| /login | login | LoginPage | 4 | api:0 nav:0 xmod:5 | none | auth | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/login/page.tsx` |
-| boundary:404 | root | NotFound | 2 | api:0 nav:0 xmod:0 | none | navigation | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/not-found.tsx` |
+| /login | login | LoginPage | 4 | api:0 nav:0 xmod:5 | direct:1 | auth | -- | `packages/dojolm-web/src/app/login/page.tsx` |
+| boundary:404 | root | NotFound | 2 | api:0 nav:0 xmod:0 | direct:1 | navigation | -- | `packages/dojolm-web/src/app/not-found.tsx` |
 | / | root | Home | 10 | api:0 nav:0 xmod:32 | none | storage, navigation | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/page.tsx` |
-| /style-guide | style-guide | StyleGuidePage | 0 | api:0 nav:0 xmod:7 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/app/style-guide/page.tsx` |
+| /style-guide | style-guide | StyleGuidePage | 0 | api:0 nav:0 xmod:7 | direct:1 | -- | -- | `packages/dojolm-web/src/app/style-guide/page.tsx` |
 
 </details>
 
 <details>
-<summary>app-shell (1 surfaces; direct 0, indirect 0, none 1)</summary>
+<summary>app-shell (1 surfaces; direct 1, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| app-shell:/ | root | RootLayout | 0 | api:0 nav:0 xmod:2 | none | navigation | direct unit or integration coverage | `packages/dojolm-web/src/app/layout.tsx` |
+| app-shell:/ | root | RootLayout | 0 | api:0 nav:0 xmod:2 | direct:1 | navigation | -- | `packages/dojolm-web/src/app/layout.tsx` |
 
 </details>
 
@@ -327,7 +314,7 @@ Source surfaces: **494**. Test files scanned: **419**.
 </details>
 
 <details>
-<summary>component (229 surfaces; direct 153, indirect 0, none 76)</summary>
+<summary>component (229 surfaces; direct 180, indirect 0, none 49)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -355,8 +342,8 @@ Source surfaces: **494**. Test files scanned: **419**.
 | SkillsLibrary.tsx | adversarial | SkillsLibraryProps | 16 | api:0 nav:0 xmod:7 | direct:2 | -- | -- | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | AgenticLab.tsx | agentic | AgenticLab | 8 | api:1 nav:0 xmod:5 | direct:1 | storage, validation, network, llm | -- | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
 | ScenarioRunner.tsx | agentic | ScenarioRunner | 3 | api:1 nav:0 xmod:3 | direct:1 | network | -- | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
-| AmaterasuConfig.tsx | attackdna | AmaterasuConfig, AmaterasuConfigData, AmaterasuConfigProps | 9 | api:2 nav:0 xmod:3 | none | auth, persistence, network | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
-| AmaterasuGuide.tsx | attackdna | AmaterasuGuide, resetAmaterasuGuide, TabHelpButton, TabHelpContent +2 | 13 | api:0 nav:0 xmod:1 | none | persistence | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/attackdna/AmaterasuGuide.tsx` |
+| AmaterasuConfig.tsx | attackdna | AmaterasuConfig, AmaterasuConfigData, AmaterasuConfigProps | 9 | api:2 nav:0 xmod:3 | direct:1 | auth, persistence, network | -- | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
+| AmaterasuGuide.tsx | attackdna | AmaterasuGuide, resetAmaterasuGuide, TabHelpButton, TabHelpContent +2 | 13 | api:0 nav:0 xmod:1 | direct:1 | persistence | -- | `packages/dojolm-web/src/components/attackdna/AmaterasuGuide.tsx` |
 | AttackDNAExplorer.tsx | attackdna | AttackDNAExplorer | 6 | api:5 nav:0 xmod:7 | direct:2 | auth, network, navigation | -- | `packages/dojolm-web/src/components/attackdna/AttackDNAExplorer.tsx` |
 | BlackBoxAnalysis.tsx | attackdna | BlackBoxAnalysis | 13 | api:1 nav:0 xmod:5 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/attackdna/BlackBoxAnalysis.tsx` |
 | ClusterView.tsx | attackdna | ClusterView | 2 | api:0 nav:0 xmod:3 | direct:1 | llm | -- | `packages/dojolm-web/src/components/attackdna/ClusterView.tsx` |
@@ -414,18 +401,18 @@ Source surfaces: **494**. Test files scanned: **419**.
 | index.ts | kagami | KagamiPanel, KagamiResults, ProbeProgress, FeatureRadar | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/kagami/index.ts` |
 | KagamiPanel.tsx | kagami | KagamiPanel | 9 | api:1 nav:0 xmod:6 | direct:2 | auth, network, llm | -- | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
 | KagamiResults.tsx | kagami | KagamiResults, KagamiResultsProps | 3 | api:0 nav:0 xmod:4 | direct:2 | navigation | -- | `packages/dojolm-web/src/components/kagami/KagamiResults.tsx` |
-| ProbeProgress.tsx | kagami | ProbeProgress, ProbeProgressProps | 0 | api:1 nav:0 xmod:4 | direct:1 | sse, network | -- | `packages/dojolm-web/src/components/kagami/ProbeProgress.tsx` |
+| ProbeProgress.tsx | kagami | ProbeProgress, ProbeProgressProps | 0 | api:1 nav:0 xmod:4 | direct:2 | sse, network | -- | `packages/dojolm-web/src/components/kagami/ProbeProgress.tsx` |
 | index.ts | kotoba | KotobaDashboard, KotobaWorkshop | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/kotoba/index.ts` |
 | KotobaDashboard.tsx | kotoba | KotobaDashboard | 6 | api:0 nav:0 xmod:4 | direct:1 | validation, llm | -- | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
 | KotobaWorkshop.tsx | kotoba | KotobaWorkshop | 5 | api:0 nav:0 xmod:3 | direct:1 | llm | -- | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
-| AnimatedView.tsx | layout | AnimatedView | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/layout/AnimatedView.tsx` |
-| DashboardGrid.tsx | layout | MetricGrid, SplitView, MainPanel, SidePanel +4 | 2 | api:0 nav:0 xmod:2 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
+| AnimatedView.tsx | layout | AnimatedView | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/layout/AnimatedView.tsx` |
+| DashboardGrid.tsx | layout | MetricGrid, SplitView, MainPanel, SidePanel +4 | 2 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
 | MobileNav.tsx | layout | MobileNav | 11 | api:0 nav:0 xmod:4 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
-| NotificationsPanel.tsx | layout | NotificationsPanel, Notification | 6 | api:0 nav:0 xmod:1 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/layout/NotificationsPanel.tsx` |
+| NotificationsPanel.tsx | layout | NotificationsPanel, Notification | 6 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/layout/NotificationsPanel.tsx` |
 | PageToolbar.tsx | layout | PageToolbar | 5 | api:0 nav:0 xmod:1 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/layout/PageToolbar.tsx` |
 | Sidebar.tsx | layout | Sidebar | 10 | api:0 nav:0 xmod:6 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/layout/Sidebar.tsx` |
 | SidebarHeader.tsx | layout | SidebarHeader | 0 | api:0 nav:1 xmod:1 | none | navigation | navigation and deep-link coverage | `packages/dojolm-web/src/components/layout/SidebarHeader.tsx` |
-| BenchmarkPanel.tsx | llm | BenchmarkPanel | 1 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/llm/BenchmarkPanel.tsx` |
+| BenchmarkPanel.tsx | llm | BenchmarkPanel | 1 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/BenchmarkPanel.tsx` |
 | ChatBubble.tsx | llm | ChatBubble, ChatBubbleProps | 2 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/ChatBubble.tsx` |
 | ComparisonView.tsx | llm | ComparisonView | 4 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/llm/ComparisonView.tsx` |
 | CustomProviderBuilder.tsx | llm | CustomProviderBuilder | 16 | api:4 nav:0 xmod:3 | direct:1 | auth, network, llm | -- | `packages/dojolm-web/src/components/llm/CustomProviderBuilder.tsx` |
@@ -441,20 +428,20 @@ Source surfaces: **494**. Test files scanned: **419**.
 | ModelForm.tsx | llm | ModelForm, ModelFormProps | 17 | api:0 nav:0 xmod:8 | direct:2 | validation, network, llm | -- | `packages/dojolm-web/src/components/llm/ModelForm.tsx` |
 | ModelList.tsx | llm | ModelList | 9 | api:0 nav:0 xmod:7 | direct:2 | llm | -- | `packages/dojolm-web/src/components/llm/ModelList.tsx` |
 | ModelResultCard.tsx | llm | calculateBadges, aggregateByModel, ComplianceBadge, AggregatedModelResult | 3 | api:0 nav:0 xmod:9 | direct:3 | -- | -- | `packages/dojolm-web/src/components/llm/ModelResultCard.tsx` |
-| QualityMetricsCard.tsx | llm | QualityMetricsCard | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/llm/QualityMetricsCard.tsx` |
+| QualityMetricsCard.tsx | llm | QualityMetricsCard | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/QualityMetricsCard.tsx` |
 | ReportGenerator.tsx | llm | ReportGenerator, ExportFormatType, ReportGeneratorProps | 7 | api:1 nav:0 xmod:4 | direct:2 | auth, validation, network, navigation | -- | `packages/dojolm-web/src/components/llm/ReportGenerator.tsx` |
 | ResultsView.tsx | llm | ResultsView | 11 | api:0 nav:0 xmod:11 | direct:2 | navigation | -- | `packages/dojolm-web/src/components/llm/ResultsView.tsx` |
 | TestExecution.tsx | llm | TestExecution | 13 | api:3 nav:0 xmod:11 | direct:2 | auth, storage, persistence, network | -- | `packages/dojolm-web/src/components/llm/TestExecution.tsx` |
 | TestExporter.tsx | llm | TestExporter, ExportFormat, TestExporterProps | 4 | api:1 nav:0 xmod:6 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/components/llm/TestExporter.tsx` |
 | TestSummary.tsx | llm | TestSummary, TestSummaryProps | 9 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/TestSummary.tsx` |
-| TransferMatrixPanel.tsx | llm | TransferMatrixPanel | 0 | api:0 nav:0 xmod:2 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/llm/TransferMatrixPanel.tsx` |
+| TransferMatrixPanel.tsx | llm | TransferMatrixPanel | 0 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/TransferMatrixPanel.tsx` |
 | TypingIndicator.tsx | llm | TypingIndicator | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/components/llm/TypingIndicator.tsx` |
 | VulnerabilityPanel.tsx | llm | VulnerabilityPanel | 5 | api:0 nav:0 xmod:7 | direct:2 | -- | -- | `packages/dojolm-web/src/components/llm/VulnerabilityPanel.tsx` |
 | index.ts | payloads | PayloadCard, PayloadGrid, PayloadFilters | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/payloads/index.ts` |
 | PayloadCard.tsx | payloads | PayloadCard, PayloadGrid, PayloadFilters | 2 | api:0 nav:0 xmod:5 | direct:1 | validation | -- | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | index.ts | reference | PatternReference | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/reference/index.ts` |
-| PatternReference.tsx | reference | PatternReference | 1 | api:0 nav:0 xmod:5 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/reference/PatternReference.tsx` |
-| ConsolidatedReportButton.tsx | reports | ConsolidatedReportButton | 3 | api:1 nav:0 xmod:2 | none | network, navigation | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
+| PatternReference.tsx | reference | PatternReference | 1 | api:0 nav:0 xmod:5 | direct:1 | -- | -- | `packages/dojolm-web/src/components/reference/PatternReference.tsx` |
+| ConsolidatedReportButton.tsx | reports | ConsolidatedReportButton | 3 | api:1 nav:0 xmod:2 | direct:1 | network, navigation | -- | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
 | AISeverityCalculator.tsx | ronin | AISeverityCalculator | 7 | api:0 nav:0 xmod:1 | none | persistence | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
 | index.ts | ronin | RoninHub, ProgramCard, ProgramDetail, ProgramsTab +4 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ronin/index.ts` |
 | ProgramCard.tsx | ronin | ProgramCard | 5 | api:0 nav:0 xmod:3 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
@@ -470,27 +457,27 @@ Source surfaces: **494**. Test files scanned: **419**.
 | ModuleBadge.tsx | scanner | ModuleBadge | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleBadge.tsx` |
 | ModuleLegend.tsx | scanner | ModuleLegend | 0 | api:0 nav:0 xmod:4 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleLegend.tsx` |
 | ModuleResults.tsx | scanner | ModuleResults | 3 | api:0 nav:0 xmod:3 | direct:2 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleResults.tsx` |
-| ProtocolFuzzPanel.tsx | scanner | ProtocolFuzzPanel | 5 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/scanner/ProtocolFuzzPanel.tsx` |
+| ProtocolFuzzPanel.tsx | scanner | ProtocolFuzzPanel | 5 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ProtocolFuzzPanel.tsx` |
 | QuickChips.tsx | scanner | QuickChips | 4 | api:0 nav:0 xmod:2 | direct:2 | -- | -- | `packages/dojolm-web/src/components/scanner/QuickChips.tsx` |
 | ScannerInput.tsx | scanner | ScannerInput | 8 | api:0 nav:0 xmod:6 | direct:1 | validation | -- | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
 | ScanningState.tsx | scanner | ScanningState, ScanningStateProps | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ScanningState.tsx` |
-| CampaignGraphBuilder.tsx | sengoku | CampaignGraphBuilder | 15 | api:0 nav:0 xmod:6 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
+| CampaignGraphBuilder.tsx | sengoku | CampaignGraphBuilder | 15 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | index.ts | sengoku | SengokuDashboard, SengokuCampaignBuilder, CampaignGraphBuilder, TemporalTab +1 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/sengoku/index.ts` |
-| OrchestratorBuilder.tsx | sengoku | OrchestratorBuilder | 13 | api:1 nav:0 xmod:3 | none | network, llm | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| OrchestratorVisualization.tsx | sengoku | OrchestratorVisualization | 2 | api:0 nav:0 xmod:2 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
+| OrchestratorBuilder.tsx | sengoku | OrchestratorBuilder | 13 | api:1 nav:0 xmod:3 | direct:1 | network, llm | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| OrchestratorVisualization.tsx | sengoku | OrchestratorVisualization | 2 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
 | SengokuCampaignBuilder.tsx | sengoku | SengokuCampaignBuilder | 16 | api:1 nav:0 xmod:7 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
 | SengokuDashboard.tsx | sengoku | SengokuDashboard | 11 | api:3 nav:0 xmod:9 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
 | temporal-types.ts | sengoku | Turn, AttackType, AttackPlan | 0 | api:0 nav:0 xmod:0 | none | persistence | direct unit or integration coverage | `packages/dojolm-web/src/components/sengoku/temporal-types.ts` |
-| TemporalConversation.tsx | sengoku | TemporalConversation | 2 | api:0 nav:0 xmod:1 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
-| TemporalTab.tsx | sengoku | TemporalTab | 4 | api:0 nav:0 xmod:4 | none | persistence, llm | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
+| TemporalConversation.tsx | sengoku | TemporalConversation | 2 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
+| TemporalTab.tsx | sengoku | TemporalTab | 4 | api:0 nav:0 xmod:4 | direct:1 | persistence, llm | -- | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
 | SenseiChat.tsx | sensei | SenseiChat | 8 | api:0 nav:0 xmod:4 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
 | SenseiDrawer.tsx | sensei | SenseiDrawer | 12 | api:1 nav:0 xmod:5 | direct:2 | auth, network, llm | -- | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
 | SenseiSuggestions.tsx | sensei | SenseiSuggestions | 2 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiSuggestions.tsx` |
 | SenseiToolResult.tsx | sensei | SenseiToolResultCard | 2 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiToolResult.tsx` |
 | index.ts | shingan | ShinganPanel | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/shingan/index.ts` |
 | ShinganPanel.tsx | shingan | ShinganPanel | 12 | api:1 nav:0 xmod:6 | direct:1 | network, navigation | -- | `packages/dojolm-web/src/components/shingan/ShinganPanel.tsx` |
-| AmaterasuSubsystem.tsx | strategic | AmaterasuSubsystem, AmaterasuErrorBoundary | 2 | api:0 nav:0 xmod:1 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/AmaterasuSubsystem.tsx` |
-| ArenaRulesWidget.tsx | strategic | ArenaRulesWidget, RulePreview | 2 | api:0 nav:0 xmod:2 | none | persistence, llm | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/ArenaRulesWidget.tsx` |
+| AmaterasuSubsystem.tsx | strategic | AmaterasuSubsystem, AmaterasuErrorBoundary | 2 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/AmaterasuSubsystem.tsx` |
+| ArenaRulesWidget.tsx | strategic | ArenaRulesWidget, RulePreview | 2 | api:0 nav:0 xmod:2 | direct:1 | persistence, llm | -- | `packages/dojolm-web/src/components/strategic/arena/ArenaRulesWidget.tsx` |
 | BattleLogExporter.tsx | strategic | BattleLogExporter | 7 | api:1 nav:0 xmod:6 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/components/strategic/arena/BattleLogExporter.tsx` |
 | index.ts | strategic | MatchCreationWizard, LiveMatchView, LiveCommentary, LiveInferencePanel +8 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/index.ts` |
 | LiveCommentary.tsx | strategic | LiveCommentary | 0 | api:0 nav:0 xmod:4 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/LiveCommentary.tsx` |
@@ -498,11 +485,11 @@ Source surfaces: **494**. Test files scanned: **419**.
 | LiveMatchView.tsx | strategic | LiveMatchView | 7 | api:2 nav:0 xmod:8 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/strategic/arena/LiveMatchView.tsx` |
 | MatchAnimations.tsx | strategic | useMatchAnimations, MatchAnimationOverlay | 0 | api:0 nav:0 xmod:2 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/MatchAnimations.tsx` |
 | MatchCreationWizard.tsx | strategic | MatchCreationWizard, WizardFormData | 6 | api:0 nav:0 xmod:4 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/MatchCreationWizard.tsx` |
-| MatchStatsWidget.tsx | strategic | MatchStatsWidget, LeaderboardView | 1 | api:0 nav:0 xmod:3 | none | llm | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/MatchStatsWidget.tsx` |
-| AttackModeStep.tsx | strategic | AttackModeStep | 2 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/steps/AttackModeStep.tsx` |
-| BattleModeStep.tsx | strategic | BattleModeStep | 5 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/steps/BattleModeStep.tsx` |
-| LaunchStep.tsx | strategic | LaunchStep | 0 | api:0 nav:0 xmod:3 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/steps/LaunchStep.tsx` |
-| ModelSelectionStep.tsx | strategic | ModelSelectionStep | 3 | api:0 nav:0 xmod:5 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/steps/ModelSelectionStep.tsx` |
+| MatchStatsWidget.tsx | strategic | MatchStatsWidget, LeaderboardView | 1 | api:0 nav:0 xmod:3 | direct:1 | llm | -- | `packages/dojolm-web/src/components/strategic/arena/MatchStatsWidget.tsx` |
+| AttackModeStep.tsx | strategic | AttackModeStep | 2 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/steps/AttackModeStep.tsx` |
+| BattleModeStep.tsx | strategic | BattleModeStep | 5 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/steps/BattleModeStep.tsx` |
+| LaunchStep.tsx | strategic | LaunchStep | 0 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/steps/LaunchStep.tsx` |
+| ModelSelectionStep.tsx | strategic | ModelSelectionStep | 3 | api:0 nav:0 xmod:5 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/steps/ModelSelectionStep.tsx` |
 | WarriorCard.tsx | strategic | WarriorCard | 0 | api:0 nav:0 xmod:4 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/WarriorCard.tsx` |
 | WarriorCardGrid.tsx | strategic | WarriorCardGrid | 4 | api:0 nav:0 xmod:4 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
 | ArenaBrowser.tsx | strategic | ArenaBrowser | 9 | api:4 nav:0 xmod:8 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
@@ -510,20 +497,20 @@ Source surfaces: **494**. Test files scanned: **419**.
 | index.ts | strategic | StrategicHub, SAGEDashboard, ArenaBrowser, ThreatFeedStream +10 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/index.ts` |
 | KumiteConfig.tsx | strategic | SAGEConfig, ArenaConfig, MitsukeConfig, SAGEConfigData +2 | 13 | api:0 nav:0 xmod:2 | direct:1 | persistence, network | -- | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | MitsukeLibrary.tsx | strategic | MitsukeLibrary | 4 | api:0 nav:0 xmod:3 | direct:1 | storage, validation, network, llm +1 | -- | `packages/dojolm-web/src/components/strategic/MitsukeLibrary.tsx` |
-| MitsukeSourceConfig.tsx | strategic | validateSourceUrl, MitsukeSourceConfig, UserSource | 11 | api:0 nav:0 xmod:4 | none | validation, persistence, network | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |
+| MitsukeSourceConfig.tsx | strategic | validateSourceUrl, MitsukeSourceConfig, UserSource | 11 | api:0 nav:0 xmod:4 | direct:1 | validation, persistence, network | -- | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |
 | SAGEDashboard.tsx | strategic | SAGEDashboard | 3 | api:0 nav:0 xmod:4 | direct:2 | -- | -- | `packages/dojolm-web/src/components/strategic/SAGEDashboard.tsx` |
 | SageMutationView.tsx | strategic | SageMutationView | 0 | api:0 nav:0 xmod:3 | direct:1 | storage, llm | -- | `packages/dojolm-web/src/components/strategic/SageMutationView.tsx` |
 | SageQuarantineView.tsx | strategic | SageQuarantineView | 4 | api:1 nav:1 xmod:3 | direct:1 | storage, persistence, network, llm +1 | -- | `packages/dojolm-web/src/components/strategic/SageQuarantineView.tsx` |
 | SageSeedLibrary.tsx | strategic | SageSeedLibrary | 0 | api:0 nav:0 xmod:3 | direct:1 | network, llm | -- | `packages/dojolm-web/src/components/strategic/SageSeedLibrary.tsx` |
 | StrategicHub.tsx | strategic | StrategicHub | 9 | api:0 nav:0 xmod:11 | direct:2 | llm | -- | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| SupplyChainPanel.tsx | strategic | SupplyChainPanel | 6 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| SupplyChainPanel.tsx | strategic | SupplyChainPanel | 6 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
 | ThreatFeedStream.tsx | strategic | ThreatFeedStream | 11 | api:0 nav:0 xmod:7 | direct:1 | storage, network, llm | -- | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | index.ts | tests | TestRunner | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/tests/index.ts` |
 | TestRunner.tsx | tests | TestRunner | 5 | api:0 nav:0 xmod:7 | direct:1 | -- | -- | `packages/dojolm-web/src/components/tests/TestRunner.tsx` |
 | ActivityFeed.tsx | ui | ActivityFeed | 4 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/ActivityFeed.tsx` |
 | badge.tsx | ui | BadgeProps, Badge, badgeVariants | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ui/badge.tsx` |
 | BeltBadge.tsx | ui | getBeltRank, BeltRank | 0 | api:0 nav:0 xmod:1 | direct:3 | -- | -- | `packages/dojolm-web/src/components/ui/BeltBadge.tsx` |
-| BeltLegend.tsx | ui | BeltLegend | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ui/BeltLegend.tsx` |
+| BeltLegend.tsx | ui | BeltLegend | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/BeltLegend.tsx` |
 | button.tsx | ui | ButtonProps, Button, buttonVariants | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/button.tsx` |
 | card.tsx | ui | Card, CardHeader, CardFooter, CardTitle +2 | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/ui/card.tsx` |
 | checkbox.tsx | ui | Checkbox | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ui/checkbox.tsx` |
@@ -540,7 +527,7 @@ Source surfaces: **494**. Test files scanned: **419**.
 | GlowCard.tsx | ui | GlowCardProps | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/ui/GlowCard.tsx` |
 | input.tsx | ui | InputProps, Input | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ui/input.tsx` |
 | label.tsx | ui | Label | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/ui/label.tsx` |
-| LibraryPageTemplate.tsx | ui | LibraryPageTemplate, LibraryColumn, LibraryFilterField, LibraryPageTemplateProps | 20 | api:0 nav:0 xmod:1 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
+| LibraryPageTemplate.tsx | ui | LibraryPageTemplate, LibraryColumn, LibraryFilterField, LibraryPageTemplateProps | 20 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
 | MetricCard.tsx | ui | MetricCard, MetricCardProps | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/MetricCard.tsx` |
 | ModuleGuide.tsx | ui | ModuleGuide, GuideSection, ModuleGuideProps | 3 | api:0 nav:0 xmod:1 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/ui/ModuleGuide.tsx` |
 | ModuleHeader.tsx | ui | ModuleHeader, ModuleHeaderProps | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/components/ui/ModuleHeader.tsx` |
@@ -577,7 +564,7 @@ Source surfaces: **494**. Test files scanned: **419**.
 </details>
 
 <details>
-<summary>lib (117 surfaces; direct 96, indirect 0, none 21)</summary>
+<summary>lib (117 surfaces; direct 98, indirect 0, none 19)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -615,11 +602,11 @@ Source surfaces: **494**. Test files scanned: **419**.
 | client-data-cache.ts | client-data-cache.ts | getCachedFixtureManifest, getCachedScannerStats, clearClientDataCache, ScannerPatternGroup +1 | 0 | api:2 nav:0 xmod:2 | direct:2 | auth, network | -- | `packages/dojolm-web/src/lib/client-data-cache.ts` |
 | constants.ts | constants.ts | NavGroup, NavItem, NavId | 0 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/lib/constants.ts` |
 | ActivityContext.tsx | contexts | isStaticDescription, ActivityProvider, useActivityState, useActivityDispatch +4 | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, persistence | -- | `packages/dojolm-web/src/lib/contexts/ActivityContext.tsx` |
-| EcosystemContext.tsx | contexts | EcosystemProvider, useEcosystem, useEcosystemEmit, useEcosystemFindings +2 | 0 | api:3 nav:0 xmod:4 | none | auth, validation, network | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/contexts/EcosystemContext.tsx` |
+| EcosystemContext.tsx | contexts | EcosystemProvider, useEcosystem, useEcosystemEmit, useEcosystemFindings +2 | 0 | api:3 nav:0 xmod:4 | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/lib/contexts/EcosystemContext.tsx` |
 | GuardContext.tsx | contexts | GuardProvider, useGuard, useGuardMode, useGuardStats | 0 | api:3 nav:0 xmod:4 | direct:1 | auth, network | -- | `packages/dojolm-web/src/lib/contexts/GuardContext.tsx` |
 | index.ts | contexts | LLMModelProvider, useModelContext, useModel, useModelsByProvider +23 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/contexts/index.ts` |
 | LLMExecutionContext.tsx | contexts | resetExecutionStateCache, LLMExecutionProvider, useExecutionContext, useExecutionState +1 | 0 | api:1 nav:10 xmod:3 | direct:1 | auth, validation, persistence, network +1 | -- | `packages/dojolm-web/src/lib/contexts/LLMExecutionContext.tsx` |
-| LLMModelContext.tsx | contexts | LLMModelProvider, useModelContext, useModel, useModelsByProvider +1 | 0 | api:1 nav:3 xmod:3 | none | auth, network, navigation | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/contexts/LLMModelContext.tsx` |
+| LLMModelContext.tsx | contexts | LLMModelProvider, useModelContext, useModel, useModelsByProvider +1 | 0 | api:1 nav:3 xmod:3 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/lib/contexts/LLMModelContext.tsx` |
 | LLMResultsContext.tsx | contexts | LLMResultsProvider, useResultsContext, useModelReport, useLeaderboard +1 | 0 | api:1 nav:7 xmod:3 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/lib/contexts/LLMResultsContext.tsx` |
 | ModuleVisibilityContext.tsx | contexts | ModuleVisibilityProvider, useModuleVisibility | 0 | api:0 nav:0 xmod:1 | direct:1 | persistence | -- | `packages/dojolm-web/src/lib/contexts/ModuleVisibilityContext.tsx` |
 | baiss-framework.ts | data | getControlsByCategory, getControlsBySourceFramework, findBAISSBySourceControl, getSourceMappings +6 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation, persistence, llm | -- | `packages/dojolm-web/src/lib/data/baiss-framework.ts` |
@@ -642,7 +629,7 @@ Source surfaces: **494**. Test files scanned: **419**.
 | retention.ts | db | getRetentionConfig, updateRetentionConfig, runRetention, RetentionResult | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, db | -- | `packages/dojolm-web/src/lib/db/retention.ts` |
 | types.ts | db | ModelConfigRow, TestCaseRow, BatchExecutionRow, BatchTestCaseRow +19 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/dojolm-web/src/lib/db/types.ts` |
 | ecosystem-emitters.ts | ecosystem-emitters.ts | emitScannerFindings, emitExecutionFinding, emitGuardFinding, emitAnalyzeFinding | 0 | api:0 nav:0 xmod:2 | direct:2 | -- | -- | `packages/dojolm-web/src/lib/ecosystem-emitters.ts` |
-| ecosystem-types.ts | ecosystem-types.ts | toEcosystemSeverity, EcosystemSourceModule, EcosystemFindingType, EcosystemSeverity +5 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/dojolm-web/src/lib/ecosystem-types.ts` |
+| ecosystem-types.ts | ecosystem-types.ts | toEcosystemSeverity, EcosystemSourceModule, EcosystemFindingType, EcosystemSeverity +5 | 0 | api:0 nav:0 xmod:0 | direct:5 | -- | -- | `packages/dojolm-web/src/lib/ecosystem-types.ts` |
 | fetch-with-auth.ts | fetch-with-auth.ts | getApiKey, setApiKey, clearApiKey, fetchWithAuth | 0 | api:0 nav:0 xmod:0 | direct:10 | auth, persistence, network | -- | `packages/dojolm-web/src/lib/fetch-with-auth.ts` |
 | fingerprint-state.ts | fingerprint-state.ts | FingerprintSession | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/fingerprint-state.ts` |
 | fixtures-manifest.ts | fixtures-manifest.ts | fixtures-manifest | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/fixtures-manifest.ts` |
@@ -658,7 +645,7 @@ Source surfaces: **494**. Test files scanned: **419**.
 | llm-scenarios.ts | llm-scenarios.ts | getScenarioDefinition, getScenariosByTestingArea, getTestCasesForScenario, isFullScopeScenario +7 | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, llm | -- | `packages/dojolm-web/src/lib/llm-scenarios.ts` |
 | llm-scoring.ts | llm-scoring.ts | calculateResilienceScore, calculateHarmfulness, calculateInjectionSuccess, calculateCoverageScore +4 | 0 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/lib/llm-scoring.ts` |
 | llm-server-utils.ts | llm-server-utils.ts | generateModelReport, fetchCoverageMap, generateBatchModelReports, BatchModelSummary +1 | 0 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/llm-server-utils.ts` |
-| llm-types.ts | llm-types.ts | LLM_PROVIDERS, TEST_SCENARIOS, DEFAULT_SCORING_WEIGHTS, SecureString | 0 | api:0 nav:0 xmod:0 | direct:19 | -- | -- | `packages/dojolm-web/src/lib/llm-types.ts` |
+| llm-types.ts | llm-types.ts | LLM_PROVIDERS, TEST_SCENARIOS, DEFAULT_SCORING_WEIGHTS, SecureString | 0 | api:0 nav:0 xmod:0 | direct:20 | -- | -- | `packages/dojolm-web/src/lib/llm-types.ts` |
 | master-sync-scheduler.ts | master-sync-scheduler.ts | startScheduler, stopScheduler, getSchedulerStatus, SchedulerStatus | 0 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/master-sync-scheduler.ts` |
 | NavigationContext.tsx | NavigationContext.tsx | NavigationProvider, useNavigation | 0 | api:0 nav:0 xmod:1 | none | navigation | direct unit or integration coverage | `packages/dojolm-web/src/lib/NavigationContext.tsx` |
 | Providers.tsx | Providers.tsx | Providers | 0 | api:0 nav:0 xmod:6 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/Providers.tsx` |
@@ -714,20 +701,20 @@ Source surfaces: **494**. Test files scanned: **419**.
 
 ## bu-tpi
 
-Source surfaces: **309**. Test files scanned: **241**.
+Source surfaces: **309**. Test files scanned: **343**.
 
 <details>
 <summary>agentic (7 surfaces; direct 7, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| environment.ts | agentic | createEnvironment, addFile, addEmail, addCalendarEvent +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, llm | -- | `packages/bu-tpi/src/agentic/environment.ts` |
-| evaluator.ts | agentic | evaluateUtility, evaluateSecurity, evaluateScenario | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/agentic/evaluator.ts` |
+| environment.ts | agentic | createEnvironment, addFile, addEmail, addCalendarEvent +4 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, llm | -- | `packages/bu-tpi/src/agentic/environment.ts` |
+| evaluator.ts | agentic | evaluateUtility, evaluateSecurity, evaluateScenario | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/agentic/evaluator.ts` |
 | harness-adapters.ts | agentic | agenticToolToOpenAIFunction, agenticToolToOpenAITool, agenticToolsToOpenAI, parseOpenAIToolCall +15 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/agentic/harness-adapters.ts` |
-| index.ts | agentic | TOOL_ARCHITECTURES, TOOL_CATEGORIES, EMPTY_ENVIRONMENT, MAX_TOOL_CALLS +34 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/agentic/index.ts` |
-| scenarios.ts | agentic | getTemplatesByCategory, getTemplatesByDifficulty, getTemplatesByArchitecture, ScenarioTemplate | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, persistence, network +1 | -- | `packages/bu-tpi/src/agentic/scenarios.ts` |
-| task-generator.ts | agentic | generateTask, generateScenario, generateBatchScenarios, BatchScenarioConfig | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, network, llm | -- | `packages/bu-tpi/src/agentic/task-generator.ts` |
-| types.ts | agentic | ToolArchitecture, AgenticTool, ToolParameter, ToolCategory +10 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, llm | -- | `packages/bu-tpi/src/agentic/types.ts` |
+| index.ts | agentic | TOOL_ARCHITECTURES, TOOL_CATEGORIES, EMPTY_ENVIRONMENT, MAX_TOOL_CALLS +34 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/agentic/index.ts` |
+| scenarios.ts | agentic | getTemplatesByCategory, getTemplatesByDifficulty, getTemplatesByArchitecture, ScenarioTemplate | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, persistence, network +1 | -- | `packages/bu-tpi/src/agentic/scenarios.ts` |
+| task-generator.ts | agentic | generateTask, generateScenario, generateBatchScenarios, BatchScenarioConfig | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, network, llm | -- | `packages/bu-tpi/src/agentic/task-generator.ts` |
+| types.ts | agentic | ToolArchitecture, AgenticTool, ToolParameter, ToolCategory +10 | 0 | api:0 nav:0 xmod:0 | direct:4 | storage, validation, llm | -- | `packages/bu-tpi/src/agentic/types.ts` |
 
 </details>
 
@@ -738,7 +725,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | environment.ts | arena | createEnvironment, addResource, getResource, removeResource +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/arena/environment.ts` |
 | game-modes.ts | arena | getGameMode, createGameModeConfig, createObserver, observeEvent +13 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/game-modes.ts` |
-| index.ts | arena | DEFAULT_ARENA_CONFIG, DEFAULT_AGENT_LIMITS, createSandbox, executeInSandbox +41 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/index.ts` |
+| index.ts | arena | DEFAULT_ARENA_CONFIG, DEFAULT_AGENT_LIMITS, createSandbox, executeInSandbox +41 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/arena/index.ts` |
 | match-runner.ts | arena | createMatch, recordEvent, executeRound, runMatch +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/match-runner.ts` |
 | referee.ts | arena | createReferee, evaluateAction, checkViolation, scoreOutcome +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage | -- | `packages/bu-tpi/src/arena/referee.ts` |
 | sandbox.ts | arena | createSandbox, executeInSandbox, getIsolatedState, setIsolatedState +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/sandbox.ts` |
@@ -753,7 +740,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | dna-ingester.ts | attackdna | ingestScannerFinding, ingestExecutionResult, ingestGuardEvent, ingestMutationResult +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/attackdna/dna-ingester.ts` |
 | graph-builder.ts | attackdna | buildGraphData, buildTimeline, filterByCategory, filterByDateRange +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/attackdna/graph-builder.ts` |
-| index.ts | attackdna | MAX_INPUT_LENGTH, createLineageGraph, addNode, calculateSimilarity +34 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/attackdna/index.ts` |
+| index.ts | attackdna | MAX_INPUT_LENGTH, createLineageGraph, addNode, calculateSimilarity +34 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/attackdna/index.ts` |
 | lineage-engine.ts | attackdna | createLineageGraph, addNode, calculateSimilarity, analyzeLineage +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/attackdna/lineage-engine.ts` |
 | master-pipeline.ts | attackdna | syncSource, syncAllSources, deduplicateEntries, classifyEntries +2 | 0 | api:0 nav:0 xmod:3 | direct:1 | validation, network | -- | `packages/bu-tpi/src/attackdna/master-pipeline.ts` |
 | master-sources.ts | attackdna | getAdapter, getAvailableSourceIds, getAllAdapters, MITREAtlasAdapter +3 | 0 | api:0 nav:0 xmod:2 | direct:1 | validation, network | -- | `packages/bu-tpi/src/attackdna/master-sources.ts` |
@@ -772,20 +759,20 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>benchmark (10 surfaces; direct 8, indirect 0, none 2)</summary>
+<summary>benchmark (10 surfaces; direct 10, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| fixture-content.ts | benchmark | getFixtureContent | 0 | api:0 nav:0 xmod:0 | none | storage, validation, llm | direct unit or integration coverage | `packages/bu-tpi/src/benchmark/fixture-content.ts` |
-| index.ts | benchmark | SCORING_METHODS, MAX_FIXTURES_PER_SUITE, DIFFICULTY_WEIGHTS, DOJOLM_BENCH_V1 +12 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/index.ts` |
+| fixture-content.ts | benchmark | getFixtureContent | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, llm | -- | `packages/bu-tpi/src/benchmark/fixture-content.ts` |
+| index.ts | benchmark | SCORING_METHODS, MAX_FIXTURES_PER_SUITE, DIFFICULTY_WEIGHTS, DOJOLM_BENCH_V1 +12 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/benchmark/index.ts` |
 | regression.ts | benchmark | classifyRegression, compareBenchmarkResults, detectBenchmarkRegressions, formatRegressionReport +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/regression.ts` |
-| runner.ts | benchmark | BenchmarkRunner, BenchmarkProgress, ScanFn | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/benchmark/runner.ts` |
-| agentic-bench.ts | benchmark | agentic-bench | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/benchmark/suites/agentic-bench.ts` |
-| dojolm-bench.ts | benchmark | dojolm-bench | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/suites/dojolm-bench.ts` |
-| harmbench.ts | benchmark | harmbench | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/suites/harmbench.ts` |
-| rag-bench.ts | benchmark | rag-bench | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/suites/rag-bench.ts` |
-| strongreject.ts | benchmark | strongreject | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/suites/strongreject.ts` |
-| types.ts | benchmark | ScoringMethod, DifficultyTier, BenchmarkCategory, BenchmarkSuite +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/types.ts` |
+| runner.ts | benchmark | BenchmarkRunner, BenchmarkProgress, ScanFn | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/benchmark/runner.ts` |
+| agentic-bench.ts | benchmark | agentic-bench | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/benchmark/suites/agentic-bench.ts` |
+| dojolm-bench.ts | benchmark | dojolm-bench | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/dojolm-bench.ts` |
+| harmbench.ts | benchmark | harmbench | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/harmbench.ts` |
+| rag-bench.ts | benchmark | rag-bench | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/rag-bench.ts` |
+| strongreject.ts | benchmark | strongreject | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/strongreject.ts` |
+| types.ts | benchmark | ScoringMethod, DifficultyTier, BenchmarkCategory, BenchmarkSuite +3 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/benchmark/types.ts` |
 
 </details>
 
@@ -803,10 +790,10 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| github-action.ts | ci | readActionConfig, runGitHubAction, FailOnLevel, ActionReportFormat +2 | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, validation | -- | `packages/bu-tpi/src/ci/github-action.ts` |
-| index.ts | ci | extractRules, findingsToSarifResults, generateSarifReport, generateJUnitReport | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/ci/index.ts` |
-| junit-reporter.ts | ci | generateJUnitReport | 0 | api:0 nav:1 xmod:1 | direct:1 | validation, navigation | -- | `packages/bu-tpi/src/ci/junit-reporter.ts` |
-| sarif-reporter.ts | ci | extractRules, findingsToSarifResults, generateSarifReport, SarifReport +5 | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, network | -- | `packages/bu-tpi/src/ci/sarif-reporter.ts` |
+| github-action.ts | ci | readActionConfig, runGitHubAction, FailOnLevel, ActionReportFormat +2 | 0 | api:0 nav:0 xmod:1 | direct:2 | storage, validation | -- | `packages/bu-tpi/src/ci/github-action.ts` |
+| index.ts | ci | extractRules, findingsToSarifResults, generateSarifReport, generateJUnitReport | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/ci/index.ts` |
+| junit-reporter.ts | ci | generateJUnitReport | 0 | api:0 nav:1 xmod:1 | direct:2 | validation, navigation | -- | `packages/bu-tpi/src/ci/junit-reporter.ts` |
+| sarif-reporter.ts | ci | extractRules, findingsToSarifResults, generateSarifReport, SarifReport +5 | 0 | api:0 nav:0 xmod:1 | direct:2 | validation, network | -- | `packages/bu-tpi/src/ci/sarif-reporter.ts` |
 
 </details>
 
@@ -815,7 +802,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| formatters.ts | cli | formatText, formatJson, formatSarif, formatJunit +2 | 0 | api:0 nav:1 xmod:1 | direct:1 | validation, network, navigation | -- | `packages/bu-tpi/src/cli/formatters.ts` |
+| formatters.ts | cli | formatText, formatJson, formatSarif, formatJunit +2 | 0 | api:0 nav:1 xmod:1 | direct:2 | validation, network, navigation | -- | `packages/bu-tpi/src/cli/formatters.ts` |
 | tpi-scan.ts | cli | tpi-scan | 0 | api:0 nav:0 xmod:4 | none | storage, validation | direct unit or integration coverage | `packages/bu-tpi/src/cli/tpi-scan.ts` |
 
 </details>
@@ -827,11 +814,11 @@ Source surfaces: **309**. Test files scanned: **241**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | benchmark-bridge.ts | compliance | extractBenchmarkModules, createBenchmarkEvidence, verifyBenchmarkEvidence, benchmarkToEvidence +4 | 0 | api:0 nav:0 xmod:1 | direct:1 | validation | -- | `packages/bu-tpi/src/compliance/benchmark-bridge.ts` |
 | delta-reporter.ts | compliance | createSnapshot, compareSnapshots, generateDeltaReport, detectCoverageChanges | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/compliance/delta-reporter.ts` |
-| evidence-automation.ts | compliance | verifyModelIntegrity, verifyLineageCompleteness, assessBiasAcrossDimensions, verifySecurityGates +13 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/compliance/evidence-automation.ts` |
-| frameworks.ts | compliance | frameworks | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, persistence | -- | `packages/bu-tpi/src/compliance/frameworks.ts` |
-| nist-ai-rmf.ts | compliance | getMappingsByFunction, getModulesForControl, getFunctionCoverage, getCoveredControlIds +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/compliance/frameworks/nist-ai-rmf.ts` |
-| index.ts | compliance | OWASP_LLM_TOP10, NIST_AI_600_1, MITRE_ATLAS, ISO_42001 +65 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/compliance/index.ts` |
-| llm-test-capabilities.ts | compliance | detectSystemPromptLeakage, generateDoSTestVectors, validateDoSTestResult, createSelfPenTestConfig +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/compliance/llm-test-capabilities.ts` |
+| evidence-automation.ts | compliance | verifyModelIntegrity, verifyLineageCompleteness, assessBiasAcrossDimensions, verifySecurityGates +13 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/compliance/evidence-automation.ts` |
+| frameworks.ts | compliance | frameworks | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, persistence | -- | `packages/bu-tpi/src/compliance/frameworks.ts` |
+| nist-ai-rmf.ts | compliance | getMappingsByFunction, getModulesForControl, getFunctionCoverage, getCoveredControlIds +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/compliance/frameworks/nist-ai-rmf.ts` |
+| index.ts | compliance | OWASP_LLM_TOP10, NIST_AI_600_1, MITRE_ATLAS, ISO_42001 +65 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation | -- | `packages/bu-tpi/src/compliance/index.ts` |
+| llm-test-capabilities.ts | compliance | detectSystemPromptLeakage, generateDoSTestVectors, validateDoSTestResult, createSelfPenTestConfig +4 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, network, llm | -- | `packages/bu-tpi/src/compliance/llm-test-capabilities.ts` |
 | mapper.ts | compliance | mapModuleToControls, mapFixturesToControls, calculateCoverage, getAllMappings | 0 | api:0 nav:0 xmod:0 | direct:3 | validation | -- | `packages/bu-tpi/src/compliance/mapper.ts` |
 | report-generator.ts | compliance | generateFullReport, generateFrameworkReport, formatReportAsMarkdown, formatReportAsJSON +5 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/compliance/report-generator.ts` |
 | types.ts | compliance | ComplianceFramework, ComplianceControl, ControlMapping, CoverageSnapshot +9 | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/compliance/types.ts` |
@@ -839,13 +826,13 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>defense (4 surfaces; direct 1, indirect 0, none 3)</summary>
+<summary>defense (4 surfaces; direct 3, indirect 0, none 1)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| index.ts | defense | DEFENSE_TEMPLATES, recommendDefenses | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/defense/index.ts` |
-| recommender.ts | defense | recommendDefenses | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/defense/recommender.ts` |
-| index.ts | defense | -- | 0 | api:0 nav:1 xmod:0 | none | storage, validation, persistence, network +2 | direct unit or integration coverage | `packages/bu-tpi/src/defense/templates/index.ts` |
+| index.ts | defense | DEFENSE_TEMPLATES, recommendDefenses | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/defense/index.ts` |
+| recommender.ts | defense | recommendDefenses | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/defense/recommender.ts` |
+| index.ts | defense | -- | 0 | api:0 nav:1 xmod:0 | direct:1 | storage, validation, persistence, network +2 | -- | `packages/bu-tpi/src/defense/templates/index.ts` |
 | types.ts | defense | DefenseTemplate, DefenseRecommendation, PromptWeakness, HardenedPrompt | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/defense/types.ts` |
 
 </details>
@@ -855,37 +842,37 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| hybrid-pipeline.ts | detection | classifyConfidence, findingToDetectionResult, runHybridPipeline, filterByConfidence +1 | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/detection/hybrid-pipeline.ts` |
-| index.ts | detection | CONFIDENCE_LEVELS, DEFAULT_HYBRID_CONFIG, classifyConfidence, findingToDetectionResult +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/detection/index.ts` |
-| types.ts | detection | ConfidenceLevel, DetectionResult, HybridPipelineConfig, JudgeConfirmFn | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/detection/types.ts` |
+| hybrid-pipeline.ts | detection | classifyConfidence, findingToDetectionResult, runHybridPipeline, filterByConfidence +1 | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/hybrid-pipeline.ts` |
+| index.ts | detection | CONFIDENCE_LEVELS, DEFAULT_HYBRID_CONFIG, classifyConfidence, findingToDetectionResult +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/index.ts` |
+| types.ts | detection | ConfidenceLevel, DetectionResult, HybridPipelineConfig, JudgeConfirmFn | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/types.ts` |
 
 </details>
 
 <details>
-<summary>edgefuzz (2 surfaces; direct 1, indirect 0, none 1)</summary>
+<summary>edgefuzz (2 surfaces; direct 2, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| generators.ts | edgefuzz | generateLengthCases, generateEncodingCases, generateStructuralCases, generateLanguageCases +4 | 0 | api:0 nav:0 xmod:0 | none | llm | direct unit or integration coverage | `packages/bu-tpi/src/edgefuzz/generators.ts` |
-| index.ts | edgefuzz | EDGE_CASE_TYPES, generateLengthCases, generateEncodingCases, generateStructuralCases +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/edgefuzz/index.ts` |
+| generators.ts | edgefuzz | generateLengthCases, generateEncodingCases, generateStructuralCases, generateLanguageCases +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/edgefuzz/generators.ts` |
+| index.ts | edgefuzz | EDGE_CASE_TYPES, generateLengthCases, generateEncodingCases, generateStructuralCases +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/edgefuzz/index.ts` |
 
 </details>
 
 <details>
-<summary>fingerprint (26 surfaces; direct 22, indirect 0, none 4)</summary>
+<summary>fingerprint (26 surfaces; direct 26, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | engine.ts | fingerprint | serializeResult, KagamiEngine | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/engine.ts` |
-| features.ts | fingerprint | getFeatureDimensions, FeatureDimension | 0 | api:0 nav:0 xmod:0 | none | llm | direct unit or integration coverage | `packages/bu-tpi/src/fingerprint/features.ts` |
-| index.ts | fingerprint | validateSignatures, loadKagamiSignatures, ProbeRunner, extractFeatureVector +11 | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/fingerprint/index.ts` |
+| features.ts | fingerprint | getFeatureDimensions, FeatureDimension | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/fingerprint/features.ts` |
+| index.ts | fingerprint | validateSignatures, loadKagamiSignatures, ProbeRunner, extractFeatureVector +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/fingerprint/index.ts` |
 | probe-runner.ts | fingerprint | ProbeRunner | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probe-runner.ts` |
 | api-metadata.ts | fingerprint | api-metadata | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/api-metadata.ts` |
 | capability.ts | fingerprint | capability | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/capability.ts` |
 | censorship.ts | fingerprint | censorship | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/censorship.ts` |
 | context-window.ts | fingerprint | context-window | 0 | api:0 nav:0 xmod:0 | direct:1 | storage | -- | `packages/bu-tpi/src/fingerprint/probes/context-window.ts` |
 | fine-tuning.ts | fingerprint | fine-tuning | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/fine-tuning.ts` |
-| index.ts | fingerprint | SELF_DISCLOSURE_PROBES, CAPABILITY_PROBES, KNOWLEDGE_BOUNDARY_PROBES, SAFETY_BOUNDARY_PROBES +17 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/fingerprint/probes/index.ts` |
+| index.ts | fingerprint | SELF_DISCLOSURE_PROBES, CAPABILITY_PROBES, KNOWLEDGE_BOUNDARY_PROBES, SAFETY_BOUNDARY_PROBES +17 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/index.ts` |
 | knowledge-boundary.ts | fingerprint | knowledge-boundary | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/fingerprint/probes/knowledge-boundary.ts` |
 | model-lineage.ts | fingerprint | model-lineage | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/model-lineage.ts` |
 | multi-turn.ts | fingerprint | multi-turn | 0 | api:0 nav:0 xmod:0 | direct:1 | persistence | -- | `packages/bu-tpi/src/fingerprint/probes/multi-turn.ts` |
@@ -898,7 +885,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | style-analysis.ts | fingerprint | style-analysis | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/style-analysis.ts` |
 | timing-latency.ts | fingerprint | timing-latency | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/timing-latency.ts` |
 | tokenizer.ts | fingerprint | tokenizer | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/tokenizer.ts` |
-| watermark.ts | fingerprint | watermark | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/fingerprint/probes/watermark.ts` |
+| watermark.ts | fingerprint | watermark | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/watermark.ts` |
 | response-analyzer.ts | fingerprint | extractFeatureVector | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/fingerprint/response-analyzer.ts` |
 | signature-matcher.ts | fingerprint | weightedCosineDistance, matchSignatures, verifySignature, loadSignatures +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/signature-matcher.ts` |
 | types.ts | fingerprint | ProbeCategory, ProbeQuery, ResponseFeature, FeatureVector +9 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/bu-tpi/src/fingerprint/types.ts` |
@@ -906,7 +893,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>fuzzing (7 surfaces; direct 6, indirect 0, none 1)</summary>
+<summary>fuzzing (7 surfaces; direct 7, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -914,8 +901,8 @@ Source surfaces: **309**. Test files scanned: **241**.
 | comparison.ts | fuzzing | compareBenchmarks, formatComparison, isRegression | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fuzzing/comparison.ts` |
 | fuzzer.ts | fuzzing | createFuzzSession, detectAnomaly, fuzz, getFuzzCoverage +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fuzzing/fuzzer.ts` |
 | grammar.ts | fuzzing | createGrammar, generateInput, mutateInput, FuzzRNG +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | admin | -- | `packages/bu-tpi/src/fuzzing/grammar.ts` |
-| index.ts | fuzzing | DEFAULT_FUZZ_CONFIG, DEFAULT_BENCHMARK_CONFIG, createGrammar, generateInput +15 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fuzzing/index.ts` |
-| protocol-fuzzer.ts | fuzzing | ProtocolFuzzer, ProtocolType, ProtocolMutation, ProtocolFuzzConfig +3 | 0 | api:4 nav:0 xmod:1 | none | network | direct unit or integration coverage | `packages/bu-tpi/src/fuzzing/protocol-fuzzer.ts` |
+| index.ts | fuzzing | DEFAULT_FUZZ_CONFIG, DEFAULT_BENCHMARK_CONFIG, createGrammar, generateInput +15 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/fuzzing/index.ts` |
+| protocol-fuzzer.ts | fuzzing | ProtocolFuzzer, ProtocolType, ProtocolMutation, ProtocolFuzzConfig +3 | 0 | api:4 nav:0 xmod:1 | direct:1 | network | -- | `packages/bu-tpi/src/fuzzing/protocol-fuzzer.ts` |
 | types.ts | fuzzing | GrammarRule, FuzzConfig, FuzzResult, AnomalyType +6 | 0 | api:0 nav:0 xmod:0 | direct:5 | -- | -- | `packages/bu-tpi/src/fuzzing/types.ts` |
 
 </details>
@@ -930,46 +917,46 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>kotoba (10 surfaces; direct 1, indirect 0, none 9)</summary>
+<summary>kotoba (10 surfaces; direct 10, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| generator.ts | kotoba | generateVariants | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/generator.ts` |
-| index.ts | kotoba | SCORE_CATEGORIES, MAX_INPUT_LENGTH, MIN_SCORE_A, MIN_SCORE_B +13 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/index.ts` |
-| boundary-rules.ts | kotoba | boundary-rules | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/boundary-rules.ts` |
-| defense-rules.ts | kotoba | defense-rules | 0 | api:0 nav:0 xmod:0 | none | llm | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/defense-rules.ts` |
-| index.ts | kotoba | getAllRules, getRulesByCategory, getRuleCount, BOUNDARY_RULES +4 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/index.ts` |
-| output-rules.ts | kotoba | output-rules | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/output-rules.ts` |
-| priority-rules.ts | kotoba | priority-rules | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/priority-rules.ts` |
-| role-rules.ts | kotoba | role-rules | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/rules/role-rules.ts` |
-| scorer.ts | kotoba | getLetterGrade, scorePrompt | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/scorer.ts` |
-| types.ts | kotoba | ScoreCategory, LetterGrade, PromptAnalysis, PromptIssue +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/kotoba/types.ts` |
+| generator.ts | kotoba | generateVariants | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/generator.ts` |
+| index.ts | kotoba | SCORE_CATEGORIES, MAX_INPUT_LENGTH, MIN_SCORE_A, MIN_SCORE_B +13 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/kotoba/index.ts` |
+| boundary-rules.ts | kotoba | boundary-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/boundary-rules.ts` |
+| defense-rules.ts | kotoba | defense-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/kotoba/rules/defense-rules.ts` |
+| index.ts | kotoba | getAllRules, getRulesByCategory, getRuleCount, BOUNDARY_RULES +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/index.ts` |
+| output-rules.ts | kotoba | output-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/kotoba/rules/output-rules.ts` |
+| priority-rules.ts | kotoba | priority-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/priority-rules.ts` |
+| role-rules.ts | kotoba | role-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/role-rules.ts` |
+| scorer.ts | kotoba | getLetterGrade, scorePrompt | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/kotoba/scorer.ts` |
+| types.ts | kotoba | ScoreCategory, LetterGrade, PromptAnalysis, PromptIssue +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/types.ts` |
 
 </details>
 
 <details>
-<summary>llm (19 surfaces; direct 16, indirect 0, none 3)</summary>
+<summary>llm (19 surfaces; direct 18, indirect 0, none 1)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | config-loader.ts | llm | loadConfig, ProviderConfigEntry, LoadConfigOptions | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, llm | -- | `packages/bu-tpi/src/llm/config-loader.ts` |
 | errors.ts | llm | isRetryableError, getRetryDelay, parseApiError, ProviderError +7 | 0 | api:0 nav:0 xmod:0 | direct:10 | -- | -- | `packages/bu-tpi/src/llm/errors.ts` |
 | fetch-utils.ts | llm | sanitizeUrl, fetchWithTimeout, createTimeoutPromise, withTimeout +2 | 0 | api:0 nav:0 xmod:0 | direct:10 | validation, network | -- | `packages/bu-tpi/src/llm/fetch-utils.ts` |
-| index.ts | llm | LLM_PROVIDERS, TEST_SCENARIOS, DEFAULT_SCORING_WEIGHTS, SecureString +58 | 0 | api:0 nav:0 xmod:0 | direct:4 | validation, llm | -- | `packages/bu-tpi/src/llm/index.ts` |
+| index.ts | llm | LLM_PROVIDERS, TEST_SCENARIOS, DEFAULT_SCORING_WEIGHTS, SecureString +58 | 0 | api:0 nav:0 xmod:0 | direct:5 | validation, llm | -- | `packages/bu-tpi/src/llm/index.ts` |
 | ai21.ts | llm | AI21Provider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/ai21.ts` |
 | anthropic.ts | llm | AnthropicProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | auth, validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/anthropic.ts` |
 | cloudflare.ts | llm | CloudflareProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/cloudflare.ts` |
 | cohere.ts | llm | CohereProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/cohere.ts` |
 | custom.ts | llm | CustomProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | auth, validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/custom.ts` |
 | google.ts | llm | GoogleProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/google.ts` |
-| index.ts | llm | OpenAICompatibleProvider, createOpenAICompatibleProvider, registerOpenAICompatibleProviders, AnthropicProvider +16 | 0 | api:0 nav:0 xmod:0 | none | llm | direct unit or integration coverage | `packages/bu-tpi/src/llm/providers/index.ts` |
+| index.ts | llm | OpenAICompatibleProvider, createOpenAICompatibleProvider, registerOpenAICompatibleProviders, AnthropicProvider +16 | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/llm/providers/index.ts` |
 | openai-compatible-registry.ts | llm | createOpenAICompatibleProvider, registerOpenAICompatibleProviders | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/llm/providers/openai-compatible-registry.ts` |
 | openai-compatible.ts | llm | OpenAICompatibleProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/openai-compatible.ts` |
 | replicate.ts | llm | ReplicateProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/replicate.ts` |
 | sensei.ts | llm | detectCapability, buildSenseiSystemMessage, SenseiProvider | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/sensei.ts` |
 | registry.ts | llm | registerProvider, unregisterProvider, getProviderAdapter, listProviders +7 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/llm/registry.ts` |
 | security.ts | llm | validateProviderUrl, resolveAndValidateUrl, sanitizeCredentials, validateJsonPath +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | auth, validation, network, llm | -- | `packages/bu-tpi/src/llm/security.ts` |
-| test-helpers.ts | llm | createMockResponse, createMockProvider, providerTestContract, setupLLMTestGuard +5 | 0 | api:0 nav:0 xmod:0 | none | validation, network, llm | direct unit or integration coverage | `packages/bu-tpi/src/llm/test-helpers.ts` |
+| test-helpers.ts | llm | createMockResponse, createMockProvider, providerTestContract, setupLLMTestGuard +5 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/test-helpers.ts` |
 | types.ts | llm | SecureString, LLMProvider, LLMProviderStatus, AuthType +24 | 0 | api:0 nav:0 xmod:0 | direct:7 | validation, llm | -- | `packages/bu-tpi/src/llm/types.ts` |
 
 </details>
@@ -984,7 +971,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>modules (40 surfaces; direct 39, indirect 0, none 1)</summary>
+<summary>modules (40 surfaces; direct 40, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1002,7 +989,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | enhanced-pi.ts | modules | detectInstructionBoundaryViolation, detectRoleConfusion, detectContextManipulation, detectSemanticAttackChains +1 | 0 | api:0 nav:7 xmod:1 | direct:1 | storage, validation, persistence, llm +1 | -- | `packages/bu-tpi/src/modules/enhanced-pi.ts` |
 | env-detector.ts | modules | detectEnvManipulation, envDetectorModule | 0 | api:0 nav:0 xmod:1 | direct:1 | llm | -- | `packages/bu-tpi/src/modules/env-detector.ts` |
 | image-scanner.ts | modules | validateImageFormat, sanitizeSVG | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/modules/image-scanner.ts` |
-| index.ts | modules | ScannerRegistry, scannerRegistry, mcpParserModule, documentPdfModule +35 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/modules/index.ts` |
+| index.ts | modules | ScannerRegistry, scannerRegistry, mcpParserModule, documentPdfModule +35 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/modules/index.ts` |
 | mcp-parser.ts | modules | detectMcpJsonRpc, detectMcpPathTraversal, detectMcpSamplingDepth, detectMcpNotificationFlood +2 | 0 | api:0 nav:3 xmod:1 | direct:1 | storage, validation, persistence, llm +1 | -- | `packages/bu-tpi/src/modules/mcp-parser.ts` |
 | model-theft-detector.ts | modules | detectModelTheft, modelTheftDetectorModule | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/modules/model-theft-detector.ts` |
 | output-detector.ts | modules | output-detector | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, validation, persistence, llm | -- | `packages/bu-tpi/src/modules/output-detector.ts` |
@@ -1036,45 +1023,45 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| index.ts | plugins | PLUGIN_TYPES, PLUGIN_STATES, MAX_PLUGINS, validateManifest +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/plugins/index.ts` |
-| loader.ts | plugins | validateManifest, PluginRegistry | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/plugins/loader.ts` |
-| types.ts | plugins | PluginType, PluginState, PluginManifest, PluginLifecycle +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/plugins/types.ts` |
-| validator.ts | plugins | validatePluginSecurity, validatePluginDependencies | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/plugins/validator.ts` |
+| index.ts | plugins | PLUGIN_TYPES, PLUGIN_STATES, MAX_PLUGINS, validateManifest +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/index.ts` |
+| loader.ts | plugins | validateManifest, PluginRegistry | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/loader.ts` |
+| types.ts | plugins | PluginType, PluginState, PluginManifest, PluginLifecycle +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/plugins/types.ts` |
+| validator.ts | plugins | validatePluginSecurity, validatePluginDependencies | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/validator.ts` |
 
 </details>
 
 <details>
-<summary>rag (8 surfaces; direct 5, indirect 0, none 3)</summary>
+<summary>rag (8 surfaces; direct 8, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | context-assembler.ts | rag | injectAtContextBoundary, overflowContext, createConflictingContext, ContextBoundaryInjection +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/context-assembler.ts` |
-| embedding-attacker.ts | rag | perturbEmbedding, generateSimilarityGamingPayload, PerturbationStrategy, PerturbationResult +1 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/rag/embedding-attacker.ts` |
-| index.ts | rag | RAG_STAGES, RAG_ATTACK_VECTORS, DEFAULT_PIPELINE_CONFIG, MAX_DOCUMENTS +24 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/index.ts` |
-| knowledge-conflict.ts | rag | createConflictingFact, createTemporalOverride, createAuthorityImpersonation, ConflictingFact +2 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/rag/knowledge-conflict.ts` |
+| embedding-attacker.ts | rag | perturbEmbedding, generateSimilarityGamingPayload, PerturbationStrategy, PerturbationResult +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/embedding-attacker.ts` |
+| index.ts | rag | RAG_STAGES, RAG_ATTACK_VECTORS, DEFAULT_PIPELINE_CONFIG, MAX_DOCUMENTS +24 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/rag/index.ts` |
+| knowledge-conflict.ts | rag | createConflictingFact, createTemporalOverride, createAuthorityImpersonation, ConflictingFact +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/knowledge-conflict.ts` |
 | live-pipeline.ts | rag | buildRagPrompt, runGenerationStage, detectPoisonInfluence, runPoisoningTest +4 | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/live-pipeline.ts` |
-| pipeline-simulator.ts | rag | chunkDocument, simulateEmbedding, cosineSimilarity, simulateRetrieval +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/pipeline-simulator.ts` |
-| retrieval-poisoner.ts | rag | createPoisonedDocument, generateRankManipulationPayload, InjectionPosition, PoisonedDocument +1 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/rag/retrieval-poisoner.ts` |
-| types.ts | rag | RagStage, RagAttackVector, RagDocument, RagChunk +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/types.ts` |
+| pipeline-simulator.ts | rag | chunkDocument, simulateEmbedding, cosineSimilarity, simulateRetrieval +2 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/rag/pipeline-simulator.ts` |
+| retrieval-poisoner.ts | rag | createPoisonedDocument, generateRankManipulationPayload, InjectionPosition, PoisonedDocument +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/retrieval-poisoner.ts` |
+| types.ts | rag | RagStage, RagAttackVector, RagDocument, RagChunk +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/rag/types.ts` |
 
 </details>
 
 <details>
-<summary>sage (11 surfaces; direct 9, indirect 0, none 2)</summary>
+<summary>sage (11 surfaces; direct 11, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | content-safety.ts | sage | checkContentSafety, calculateHarmScore, sanitizeOutput | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/sage/content-safety.ts` |
-| edgefuzz-mutations.ts | sage | lengthExtreme, encodingWrapMulti, structuralNest, scriptMix +3 | 0 | api:0 nav:0 xmod:0 | none | storage | direct unit or integration coverage | `packages/bu-tpi/src/sage/edgefuzz-mutations.ts` |
+| edgefuzz-mutations.ts | sage | lengthExtreme, encodingWrapMulti, structuralNest, scriptMix +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage | -- | `packages/bu-tpi/src/sage/edgefuzz-mutations.ts` |
 | embeddings-explorer.ts | sage | buildVocabulary, generateEmbedding, generateEmbeddings, cosineSimilarity +7 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/embeddings-explorer.ts` |
 | genetic-core.ts | sage | createPopulation, evaluateFitness, crossover, mutate +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/genetic-core.ts` |
-| index.ts | sage | MUTATION_OPERATORS, DEFAULT_RESOURCE_LIMITS, DEFAULT_POPULATION_CONFIG, DEFAULT_CONTENT_SAFETY +51 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/sage/index.ts` |
-| mutation-engine.ts | sage | characterSubstitution, encodingWrapping, instructionParaphrasing, structuralRearrangement +7 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/sage/mutation-engine.ts` |
+| index.ts | sage | MUTATION_OPERATORS, DEFAULT_RESOURCE_LIMITS, DEFAULT_POPULATION_CONFIG, DEFAULT_CONTENT_SAFETY +51 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation | -- | `packages/bu-tpi/src/sage/index.ts` |
+| mutation-engine.ts | sage | characterSubstitution, encodingWrapping, instructionParaphrasing, structuralRearrangement +7 | 0 | api:0 nav:0 xmod:0 | direct:4 | validation | -- | `packages/bu-tpi/src/sage/mutation-engine.ts` |
 | quarantine.ts | sage | quarantineVariant, getQuarantinedVariants, approveVariant, rejectVariant +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, persistence | -- | `packages/bu-tpi/src/sage/quarantine.ts` |
 | reasoning-lab.ts | sage | createReasoningChain, applyChainInjection, applyStepManipulation, applyConclusionPoisoning +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/reasoning-lab.ts` |
 | seed-library.ts | sage | extractSeeds, extractPrimitives, categorizeSeeds, getSeedStats | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/seed-library.ts` |
 | types.ts | sage | MutationOperator, SeedEntry, SeedStats, MutationResult +12 | 0 | api:0 nav:0 xmod:0 | direct:8 | -- | -- | `packages/bu-tpi/src/sage/types.ts` |
-| webmcp-mutations.ts | sage | applyWebMCPMutation, applyRandomWebMCPMutation, composeWithCoreMutation, WebMCPMutationOperator +1 | 0 | api:0 nav:1 xmod:0 | none | validation, navigation | direct unit or integration coverage | `packages/bu-tpi/src/sage/webmcp-mutations.ts` |
+| webmcp-mutations.ts | sage | applyWebMCPMutation, applyRandomWebMCPMutation, composeWithCoreMutation, WebMCPMutationOperator +1 | 0 | api:0 nav:1 xmod:0 | direct:1 | validation, navigation | -- | `packages/bu-tpi/src/sage/webmcp-mutations.ts` |
 
 </details>
 
@@ -1097,36 +1084,36 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>sengoku (6 surfaces; direct 2, indirect 0, none 4)</summary>
+<summary>sengoku (6 surfaces; direct 6, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| finding-tracker.ts | sengoku | hashFinding, deduplicateFindings, compareRuns, detectRegressions | 0 | api:0 nav:0 xmod:0 | none | persistence | direct unit or integration coverage | `packages/bu-tpi/src/sengoku/finding-tracker.ts` |
-| index.ts | sengoku | MAX_CONCURRENT_CAMPAIGNS, MAX_RATE_RPS, DEFAULT_RATE_RPS, MAX_PAYLOAD_LENGTH +14 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/sengoku/index.ts` |
-| reporter.ts | sengoku | generateReport, formatReportMarkdown, formatReportJSON | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/sengoku/reporter.ts` |
-| scheduler.ts | sengoku | CampaignScheduler | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/sengoku/scheduler.ts` |
-| target-connector.ts | sengoku | validateTargetUrl, healthCheck, sendRequest, resetRateLimiter +2 | 0 | api:0 nav:0 xmod:0 | none | auth, validation, network | direct unit or integration coverage | `packages/bu-tpi/src/sengoku/target-connector.ts` |
-| types.ts | sengoku | Frequency, AuthType, Severity, CampaignState +9 | 0 | api:0 nav:0 xmod:0 | direct:1 | persistence | -- | `packages/bu-tpi/src/sengoku/types.ts` |
+| finding-tracker.ts | sengoku | hashFinding, deduplicateFindings, compareRuns, detectRegressions | 0 | api:0 nav:0 xmod:0 | direct:1 | persistence | -- | `packages/bu-tpi/src/sengoku/finding-tracker.ts` |
+| index.ts | sengoku | MAX_CONCURRENT_CAMPAIGNS, MAX_RATE_RPS, DEFAULT_RATE_RPS, MAX_PAYLOAD_LENGTH +14 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation | -- | `packages/bu-tpi/src/sengoku/index.ts` |
+| reporter.ts | sengoku | generateReport, formatReportMarkdown, formatReportJSON | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/sengoku/reporter.ts` |
+| scheduler.ts | sengoku | CampaignScheduler | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sengoku/scheduler.ts` |
+| target-connector.ts | sengoku | validateTargetUrl, healthCheck, sendRequest, resetRateLimiter +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | auth, validation, network | -- | `packages/bu-tpi/src/sengoku/target-connector.ts` |
+| types.ts | sengoku | Frequency, AuthType, Severity, CampaignState +9 | 0 | api:0 nav:0 xmod:0 | direct:4 | persistence | -- | `packages/bu-tpi/src/sengoku/types.ts` |
 
 </details>
 
 <details>
-<summary>sensei (13 surfaces; direct 12, indirect 0, none 1)</summary>
+<summary>sensei (13 surfaces; direct 13, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | api-service.ts | sensei | validateRouting, validateGenerateRequest, validateMutateRequest, validateJudgeRequest +6 | 0 | api:0 nav:0 xmod:2 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/sensei/api-service.ts` |
-| api-types.ts | sensei | RoutingMode, ProviderRouting, SenseiGenerateRequest, SenseiMutateRequest +4 | 0 | api:0 nav:0 xmod:2 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/sensei/api-types.ts` |
+| api-types.ts | sensei | RoutingMode, ProviderRouting, SenseiGenerateRequest, SenseiMutateRequest +4 | 0 | api:0 nav:0 xmod:2 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/api-types.ts` |
 | attack-generator.ts | sensei | buildGenerationPrompt, parseGeneratedAttacks, generateAttacks, createDefaultRequest +3 | 0 | api:0 nav:0 xmod:1 | direct:3 | validation, llm | -- | `packages/bu-tpi/src/sensei/attack-generator.ts` |
 | data-curator.ts | sensei | hashContent, jaccardSimilarity, filterByQuality, filterByLength +7 | 0 | api:0 nav:0 xmod:0 | direct:2 | llm | -- | `packages/bu-tpi/src/sensei/data-curator.ts` |
 | data-pipeline.ts | sensei | generateSampleId, truncateContent, assessQuality, extractFromSageSeeds +7 | 0 | api:0 nav:0 xmod:5 | direct:2 | llm | -- | `packages/bu-tpi/src/sensei/data-pipeline.ts` |
 | format-converter.ts | sensei | estimateTokenCount, buildSystemMessage, sampleToChatEntry, sampleToAlpacaEntry +5 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/format-converter.ts` |
-| index.ts | sensei | SENSEI_CAPABILITIES, DATA_SOURCE_TYPES, SAMPLE_QUALITY_GRADES, FORMAT_TYPES +71 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/sensei/index.ts` |
+| index.ts | sensei | SENSEI_CAPABILITIES, DATA_SOURCE_TYPES, SAMPLE_QUALITY_GRADES, FORMAT_TYPES +71 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/index.ts` |
 | judge.ts | sensei | parseScore, parseConfidence, parseVerdict, parseJudgeResponse +4 | 0 | api:0 nav:0 xmod:1 | direct:3 | validation, llm | -- | `packages/bu-tpi/src/sensei/judge.ts` |
 | mutation-advisor.ts | sensei | buildMutationPrompt, parseMutationResponse, adviseMutations, MutationSuggestion +1 | 0 | api:0 nav:0 xmod:1 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/mutation-advisor.ts` |
 | plan-generator.ts | sensei | parsePlanResponse, generatePlan, isValidAttackType, PlanGenerationRequest +1 | 0 | api:0 nav:0 xmod:2 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/plan-generator.ts` |
 | probe-executor.ts | sensei | probe, runProbeCampaign, formatProbeCampaignReport, ProbeResult +2 | 0 | api:0 nav:0 xmod:1 | direct:1 | llm | -- | `packages/bu-tpi/src/sensei/probe-executor.ts` |
-| sanitize.ts | sensei | sanitizeForPrompt, sanitizeLabel | 0 | api:0 nav:0 xmod:0 | none | validation, llm | direct unit or integration coverage | `packages/bu-tpi/src/sensei/sanitize.ts` |
+| sanitize.ts | sensei | sanitizeForPrompt, sanitizeLabel | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/sensei/sanitize.ts` |
 | types.ts | sensei | SenseiCapability, SampleQualityGrade, DataSourceType, SenseiTrainingSample +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | network, llm | -- | `packages/bu-tpi/src/sensei/types.ts` |
 
 </details>
@@ -1141,55 +1128,55 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>shingan (1 surfaces; direct 0, indirect 0, none 1)</summary>
+<summary>shingan (1 surfaces; direct 1, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| index.ts | shingan | scanSkill, type SkillFormat, type SkillMetadata, type SkillSection +16 | 0 | api:0 nav:0 xmod:11 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/shingan/index.ts` |
+| index.ts | shingan | scanSkill, type SkillFormat, type SkillMetadata, type SkillSection +16 | 0 | api:0 nav:0 xmod:11 | direct:1 | -- | -- | `packages/bu-tpi/src/shingan/index.ts` |
 
 </details>
 
 <details>
-<summary>supplychain (4 surfaces; direct 2, indirect 0, none 2)</summary>
+<summary>supplychain (4 surfaces; direct 3, indirect 0, none 1)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| dependency-auditor.ts | supplychain | parseRequirementsTxt, parsePackageJson, parsePyprojectToml, checkVulnerabilities +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/bu-tpi/src/supplychain/dependency-auditor.ts` |
-| index.ts | supplychain | verifyModelHash, analyzeModelCard, parseRequirementsTxt, parsePackageJson +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/supplychain/index.ts` |
+| dependency-auditor.ts | supplychain | parseRequirementsTxt, parsePackageJson, parsePyprojectToml, checkVulnerabilities +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation | -- | `packages/bu-tpi/src/supplychain/dependency-auditor.ts` |
+| index.ts | supplychain | verifyModelHash, analyzeModelCard, parseRequirementsTxt, parsePackageJson +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/supplychain/index.ts` |
 | types.ts | supplychain | ModelCardAnalysis, ModelVerificationResult, ParsedDependency, DependencyVulnerability +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/supplychain/types.ts` |
-| verifier.ts | supplychain | verifyModelHash, analyzeModelCard | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/supplychain/verifier.ts` |
+| verifier.ts | supplychain | verifyModelHash, analyzeModelCard | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/supplychain/verifier.ts` |
 
 </details>
 
 <details>
-<summary>test (3 surfaces; direct 0, indirect 0, none 3)</summary>
+<summary>test (3 surfaces; direct 3, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| fixtures.ts | test | createFinding, createScanResult, createBlockedResult, createJPEGBuffer +6 | 0 | api:0 nav:0 xmod:1 | none | llm | direct unit or integration coverage | `packages/bu-tpi/src/test/fixtures.ts` |
-| index.ts | test | -- | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/test/index.ts` |
-| utils.ts | test | getFixturesDir, getFixturePath, readTextFixture, readBinaryFixture +13 | 0 | api:0 nav:2 xmod:1 | none | storage, navigation | direct unit or integration coverage | `packages/bu-tpi/src/test/utils.ts` |
+| fixtures.ts | test | createFinding, createScanResult, createBlockedResult, createJPEGBuffer +6 | 0 | api:0 nav:0 xmod:1 | direct:1 | llm | -- | `packages/bu-tpi/src/test/fixtures.ts` |
+| index.ts | test | -- | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/test/index.ts` |
+| utils.ts | test | getFixturesDir, getFixturePath, readTextFixture, readBinaryFixture +13 | 0 | api:0 nav:2 xmod:1 | direct:1 | storage, navigation | -- | `packages/bu-tpi/src/test/utils.ts` |
 
 </details>
 
 <details>
-<summary>threatfeed (8 surfaces; direct 7, indirect 0, none 1)</summary>
+<summary>threatfeed (8 surfaces; direct 8, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| auto-fixture.ts | threatfeed | generateFixtureFromThreat, approveFixture, rejectFixture, promoteFixture +10 | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/threatfeed/auto-fixture.ts` |
+| auto-fixture.ts | threatfeed | generateFixtureFromThreat, approveFixture, rejectFixture, promoteFixture +10 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/threatfeed/auto-fixture.ts` |
 | classifier.ts | threatfeed | classifyThreat, extractIndicators, assessConfidence, assessSeverity | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, persistence, llm | -- | `packages/bu-tpi/src/threatfeed/classifier.ts` |
 | content-sanitizer.ts | threatfeed | stripXMLEntities, stripScriptTags, stripControlCharacters, normalizeWhitespace +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/threatfeed/content-sanitizer.ts` |
 | deduplicator.ts | threatfeed | createDeduplicator, isDuplicate, addEntry, getDeduplicatorStats +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/threatfeed/deduplicator.ts` |
-| index.ts | threatfeed | DEFAULT_SOURCE_CONFIG, DEFAULT_URL_ALLOWLIST, isInternalIP, validateSourceURL +35 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/threatfeed/index.ts` |
+| index.ts | threatfeed | DEFAULT_SOURCE_CONFIG, DEFAULT_URL_ALLOWLIST, isInternalIP, validateSourceURL +35 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/threatfeed/index.ts` |
 | source-pipeline.ts | threatfeed | createPipeline, addSource, removeSource, parseRSS +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/threatfeed/source-pipeline.ts` |
-| types.ts | threatfeed | SourceType, IndicatorType, ThreatSource, ThreatEntry +7 | 0 | api:0 nav:0 xmod:0 | direct:6 | validation | -- | `packages/bu-tpi/src/threatfeed/types.ts` |
+| types.ts | threatfeed | SourceType, IndicatorType, ThreatSource, ThreatEntry +7 | 0 | api:0 nav:0 xmod:0 | direct:7 | validation | -- | `packages/bu-tpi/src/threatfeed/types.ts` |
 | url-validator.ts | threatfeed | isInternalIP, validateSourceURL | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/threatfeed/url-validator.ts` |
 
 </details>
 
 <details>
-<summary>timechamber (17 surfaces; direct 14, indirect 0, none 3)</summary>
+<summary>timechamber (17 surfaces; direct 17, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1197,31 +1184,31 @@ Source surfaces: **309**. Test files scanned: **241**.
 | accumulation.ts | timechamber | accumulation | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/timechamber/attacks/accumulation.ts` |
 | context-overflow.ts | timechamber | context-overflow | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/timechamber/attacks/context-overflow.ts` |
 | delayed-activation.ts | timechamber | delayed-activation | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/timechamber/attacks/delayed-activation.ts` |
-| index.ts | timechamber | getAllPlans, getPlansByType, getPlanCount, ACCUMULATION_PLANS +4 | 0 | api:0 nav:0 xmod:0 | none | persistence | direct unit or integration coverage | `packages/bu-tpi/src/timechamber/attacks/index.ts` |
+| index.ts | timechamber | getAllPlans, getPlansByType, getPlanCount, ACCUMULATION_PLANS +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | persistence | -- | `packages/bu-tpi/src/timechamber/attacks/index.ts` |
 | persona-drift.ts | timechamber | persona-drift | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/timechamber/attacks/persona-drift.ts` |
 | session-persistence.ts | timechamber | session-persistence | 0 | api:0 nav:0 xmod:0 | direct:1 | persistence, llm | -- | `packages/bu-tpi/src/timechamber/attacks/session-persistence.ts` |
-| index.ts | timechamber | TEMPORAL_ATTACK_TYPES, MAX_TURNS, DEFAULT_TURNS, DEFAULT_RATE_LIMIT +19 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, persistence | -- | `packages/bu-tpi/src/timechamber/index.ts` |
-| crescendo.ts | timechamber | getStageForTurn, CrescendoOrchestrator, EscalationStage | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/timechamber/orchestrators/crescendo.ts` |
-| index.ts | timechamber | createOrchestrator, ORCHESTRATOR_TYPES, DEFAULT_ORCHESTRATOR_CONFIG, MAX_ORCHESTRATOR_TURNS +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/index.ts` |
-| mad-max.ts | timechamber | MADMAXOrchestrator, AttackCluster, ClusterDiversityMetrics | 0 | api:0 nav:0 xmod:0 | none | validation, llm | direct unit or integration coverage | `packages/bu-tpi/src/timechamber/orchestrators/mad-max.ts` |
-| pair.ts | timechamber | PAIROrchestrator | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/pair.ts` |
-| sensei-adaptive.ts | timechamber | selectStrategy, SenseiAdaptiveOrchestrator, AttackStrategy | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/sensei-adaptive.ts` |
-| tap.ts | timechamber | TAPOrchestrator | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/tap.ts` |
-| types.ts | timechamber | OrchestratorType, OrchestratorConfig, OrchestratorTurn, BranchState +5 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/types.ts` |
-| simulator.ts | timechamber | sanitizeConversationContent, TimeChamberSimulator | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/timechamber/simulator.ts` |
-| types.ts | timechamber | TemporalAttackType, Turn, ConversationPlan, ExecutedTurn +2 | 0 | api:0 nav:0 xmod:0 | direct:2 | persistence | -- | `packages/bu-tpi/src/timechamber/types.ts` |
+| index.ts | timechamber | TEMPORAL_ATTACK_TYPES, MAX_TURNS, DEFAULT_TURNS, DEFAULT_RATE_LIMIT +19 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation, persistence | -- | `packages/bu-tpi/src/timechamber/index.ts` |
+| crescendo.ts | timechamber | getStageForTurn, CrescendoOrchestrator, EscalationStage | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/timechamber/orchestrators/crescendo.ts` |
+| index.ts | timechamber | createOrchestrator, ORCHESTRATOR_TYPES, DEFAULT_ORCHESTRATOR_CONFIG, MAX_ORCHESTRATOR_TURNS +11 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/index.ts` |
+| mad-max.ts | timechamber | MADMAXOrchestrator, AttackCluster, ClusterDiversityMetrics | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/mad-max.ts` |
+| pair.ts | timechamber | PAIROrchestrator | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/pair.ts` |
+| sensei-adaptive.ts | timechamber | selectStrategy, SenseiAdaptiveOrchestrator, AttackStrategy | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/sensei-adaptive.ts` |
+| tap.ts | timechamber | TAPOrchestrator | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/tap.ts` |
+| types.ts | timechamber | OrchestratorType, OrchestratorConfig, OrchestratorTurn, BranchState +5 | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/types.ts` |
+| simulator.ts | timechamber | sanitizeConversationContent, TimeChamberSimulator | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/timechamber/simulator.ts` |
+| types.ts | timechamber | TemporalAttackType, Turn, ConversationPlan, ExecutedTurn +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | persistence | -- | `packages/bu-tpi/src/timechamber/types.ts` |
 
 </details>
 
 <details>
-<summary>transfer (4 surfaces; direct 3, indirect 0, none 1)</summary>
+<summary>transfer (4 surfaces; direct 4, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| index.ts | transfer | TransferTestRunner, generateTransferReport, formatReportMarkdown, formatReportJSON +1 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/transfer/index.ts` |
-| reporter.ts | transfer | generateTransferReport, formatReportMarkdown, formatReportJSON, formatReportCSV | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transfer/reporter.ts` |
-| runner.ts | transfer | TransferTestRunner | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transfer/runner.ts` |
-| types.ts | transfer | TransferTestConfig, TransferResult, TransferMatrix, TransferSummary +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transfer/types.ts` |
+| index.ts | transfer | TransferTestRunner, generateTransferReport, formatReportMarkdown, formatReportJSON +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transfer/index.ts` |
+| reporter.ts | transfer | generateTransferReport, formatReportMarkdown, formatReportJSON, formatReportCSV | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/reporter.ts` |
+| runner.ts | transfer | TransferTestRunner | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/runner.ts` |
+| types.ts | transfer | TransferTestConfig, TransferResult, TransferMatrix, TransferSummary +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/types.ts` |
 
 </details>
 
@@ -1230,8 +1217,8 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| buffs.ts | transforms | applyBuff, applyBuffChain, createChain | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transforms/buffs.ts` |
-| index.ts | transforms | BUFF_TYPES, base64Buff, leetSpeakBuff, unicodeSubBuff +12 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transforms/index.ts` |
+| buffs.ts | transforms | applyBuff, applyBuffChain, createChain | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transforms/buffs.ts` |
+| index.ts | transforms | BUFF_TYPES, base64Buff, leetSpeakBuff, unicodeSubBuff +12 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transforms/index.ts` |
 | types.ts | transforms | BuffType, Buff, BuffChain, BuffResult | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transforms/types.ts` |
 
 </details>
@@ -1241,12 +1228,12 @@ Source surfaces: **309**. Test files scanned: **241**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| types.ts | types.ts | Severity, Verdict, Finding, ScanResult +18 | 0 | api:0 nav:0 xmod:0 | direct:36 | -- | -- | `packages/bu-tpi/src/types.ts` |
+| types.ts | types.ts | Severity, Verdict, Finding, ScanResult +18 | 0 | api:0 nav:0 xmod:0 | direct:41 | -- | -- | `packages/bu-tpi/src/types.ts` |
 
 </details>
 
 <details>
-<summary>validation (55 surfaces; direct 54, indirect 0, none 1)</summary>
+<summary>validation (55 surfaces; direct 55, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1254,7 +1241,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | reference-sets.ts | validation | selectReferenceSets, buildReferenceSetManifest, buildSignedReferenceManifest, verifyReferenceManifest +4 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/validation/calibration/reference-sets.ts` |
 | ci-config.ts | validation | detectChangedModules, buildCIValidationCommand, parseCIExitCode, CIExitCode +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/ci/ci-config.ts` |
 | katana-cli.ts | validation | parseArgs, formatHelp, runCLI, ParsedArgs +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/cli/katana-cli.ts` |
-| config.ts | validation | config | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/validation/config.ts` |
+| config.ts | validation | config | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/validation/config.ts` |
 | corpus-expander.ts | validation | expandCorpus, expandCorpusWithContent, computeExpansionTargets, ExpansionStats +2 | 0 | api:0 nav:10 xmod:0 | direct:1 | sse, validation, persistence, network +3 | -- | `packages/bu-tpi/src/validation/corpus/corpus-expander.ts` |
 | fixture-labeler.ts | validation | detectContentType, assignDifficulty, resolveFixtureExpectations, labelFixtures +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, persistence, llm | -- | `packages/bu-tpi/src/validation/corpus/fixture-labeler.ts` |
 | gap-analysis.ts | validation | analyzeGaps, formatGapSummary, ModuleCoverage, GapAnalysisReport | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/validation/corpus/gap-analysis.ts` |
@@ -1277,7 +1264,7 @@ Source surfaces: **309**. Test files scanned: **241**.
 | access-control.ts | validation | buildAccessControlModel, checkSoDViolations, validateRoleSoD, getEffectivePermissions +8 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/governance/access-control.ts` |
 | document-register.ts | validation | buildDocumentRegister, getDocumentById, getDocumentsByCategory, getDocumentsByClause +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/governance/document-register.ts` |
 | threat-model.ts | validation | buildThreatModel, computeThreatCoverage, exportThreatModelMarkdown, ThreatActor +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/governance/threat-model.ts` |
-| index.ts | validation | SCHEMA_VERSION, ValidationVerdict, SampleContentType, SampleDifficulty +266 | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/validation/index.ts` |
+| index.ts | validation | SCHEMA_VERSION, ValidationVerdict, SampleContentType, SampleDifficulty +266 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/validation/index.ts` |
 | certificate-signer.ts | validation | generateSigningKeyPair, isSigningKeyAvailable, isVerifyKeyAvailable, signData +5 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/validation/integrity/certificate-signer.ts` |
 | dependency-integrity.ts | validation | hashLockfile, verifyLockfileExists, checkPinnedDependencies, runAudit +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/bu-tpi/src/validation/integrity/dependency-integrity.ts` |
 | hmac-signer.ts | validation | signHmac, verifyHmac, hashContent, hashFile +3 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/bu-tpi/src/validation/integrity/hmac-signer.ts` |
@@ -1309,23 +1296,23 @@ Source surfaces: **309**. Test files scanned: **241**.
 </details>
 
 <details>
-<summary>webmcp (2 surfaces; direct 0, indirect 0, none 2)</summary>
+<summary>webmcp (2 surfaces; direct 2, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| index.ts | webmcp | validateSSEStream, validateSSEContentType, validateWebSocketSecurity, signMCPMessage +3 | 0 | api:0 nav:0 xmod:0 | none | validation | direct unit or integration coverage | `packages/bu-tpi/src/webmcp/index.ts` |
-| transport-security.ts | webmcp | validateSSEStream, validateSSEContentType, validateWebSocketSecurity, signMCPMessage +11 | 0 | api:0 nav:0 xmod:0 | none | sse, validation, network | direct unit or integration coverage | `packages/bu-tpi/src/webmcp/transport-security.ts` |
+| index.ts | webmcp | validateSSEStream, validateSSEContentType, validateWebSocketSecurity, signMCPMessage +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/webmcp/index.ts` |
+| transport-security.ts | webmcp | validateSSEStream, validateSSEContentType, validateWebSocketSecurity, signMCPMessage +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | sse, validation, network | -- | `packages/bu-tpi/src/webmcp/transport-security.ts` |
 
 </details>
 
 <details>
-<summary>xray (3 surfaces; direct 2, indirect 0, none 1)</summary>
+<summary>xray (3 surfaces; direct 3, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| explainer.ts | xray | explainFinding, explainFindings, getAttackPatterns, getAttackPatternById +2 | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/xray/explainer.ts` |
-| index.ts | xray | explainFinding, explainFindings, getAttackPatterns, getAttackPatternById +5 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/xray/index.ts` |
-| index.ts | xray | getCategories, getCategoryCounts, getTotalPatternCount, AttackPattern +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, persistence, network +1 | -- | `packages/bu-tpi/src/xray/knowledge/index.ts` |
+| explainer.ts | xray | explainFinding, explainFindings, getAttackPatterns, getAttackPatternById +2 | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/bu-tpi/src/xray/explainer.ts` |
+| index.ts | xray | explainFinding, explainFindings, getAttackPatterns, getAttackPatternById +5 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/xray/index.ts` |
+| index.ts | xray | getCategories, getCategoryCounts, getTotalPatternCount, AttackPattern +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, persistence, network +1 | -- | `packages/bu-tpi/src/xray/knowledge/index.ts` |
 
 </details>
 
