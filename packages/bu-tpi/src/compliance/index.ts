@@ -131,3 +131,18 @@ export type {
   SelfPenTestConfig,
   DependencyVulnerability,
 } from './llm-test-capabilities.js';
+
+// Benchmark Evidence Bridge (GUNKIMONO 6.3)
+export type {
+  BenchmarkEvidenceResult,
+  BenchmarkComplianceReport,
+} from './benchmark-bridge.js';
+
+export {
+  extractBenchmarkModules,
+  createBenchmarkEvidence,
+  verifyBenchmarkEvidence,
+  benchmarkToEvidence,
+  generateBenchmarkComplianceReport,
+  formatBenchmarkComplianceReport,
+} from './benchmark-bridge.js';
