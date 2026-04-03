@@ -942,7 +942,7 @@ export const TRANSLATION_JAILBREAK_PATTERNS: RegexPattern[] = [
     desc: 'Arabic system override phrases mixed with English', source: 'TPI-CG-02' },
   // Right-to-left code-switching detection
   { name: 'rtl_code_switching', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.INFO,
-    re: /[؀-ۿ]+.*[a-zA-Z]+|[a-zA-Z]+.*[؀-ۿ]+/,
+    re: /[؀-ۿ][^؀-ۿ]{0,200}[a-zA-Z]|[a-zA-Z][^a-zA-Z]{0,200}[؀-ۿ]/,
     desc: 'Code-switching: Arabic script mixed with Latin characters', source: 'TPI-CG-02' },
   // Hebrew RTL text detection (codepoints U+0590 to U+05FF)
   { name: 'hebrew_text_detection', cat: 'TRANSLATION_JAILBREAK', sev: SEVERITY.WARNING,

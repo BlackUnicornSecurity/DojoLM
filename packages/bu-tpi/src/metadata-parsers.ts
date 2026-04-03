@@ -673,7 +673,7 @@ export async function parseMP3Metadata(buffer: Buffer): Promise<MetadataField[]>
   const fields: MetadataField[] = [];
 
   try {
-    const metadata = await parseBuffer(buffer, 'audio/mpeg');
+    const metadata = await parseBuffer(buffer, 'audio/mpeg', { duration: false, skipCovers: true });
 
     // Common tags
     const common = metadata.common;
@@ -735,7 +735,7 @@ export async function parseWAVMetadata(buffer: Buffer): Promise<MetadataField[]>
   const fields: MetadataField[] = [];
 
   try {
-    const metadata = await parseBuffer(buffer, 'audio/wav');
+    const metadata = await parseBuffer(buffer, 'audio/wav', { duration: false, skipCovers: true });
 
     // Common tags (FIX-2.2)
     const common = metadata.common;
@@ -785,7 +785,7 @@ export async function parseVorbisMetadata(buffer: Buffer, mimeType: string): Pro
   const fields: MetadataField[] = [];
 
   try {
-    const metadata = await parseBuffer(buffer, mimeType);
+    const metadata = await parseBuffer(buffer, mimeType, { duration: false, skipCovers: true });
 
     // Common tags from Vorbis comments (FIX-2.2)
     const common = metadata.common;
@@ -838,7 +838,7 @@ export async function parseM4AMetadata(buffer: Buffer): Promise<MetadataField[]>
   const fields: MetadataField[] = [];
 
   try {
-    const metadata = await parseBuffer(buffer, 'audio/mp4');
+    const metadata = await parseBuffer(buffer, 'audio/mp4', { duration: false, skipCovers: true });
 
     // Common tags (FIX-2.2)
     const common = metadata.common;
@@ -892,7 +892,7 @@ export async function parseWMAMetadata(buffer: Buffer): Promise<MetadataField[]>
   const fields: MetadataField[] = [];
 
   try {
-    const metadata = await parseBuffer(buffer, 'audio/x-ms-wma');
+    const metadata = await parseBuffer(buffer, 'audio/x-ms-wma', { duration: false, skipCovers: true, skipPostHeaders: true });
 
     // Common tags (FIX-2.2)
     const common = metadata.common;
