@@ -9,17 +9,17 @@
  * - Auth guard via createApiHandler (line 110)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // ---------------------------------------------------------------------------
 // Mocks — declared before any dynamic imports
 // ---------------------------------------------------------------------------
 
-const mockCheckApiAuth = vi.fn(() => null);
+const mockCheckApiAuth = vi.fn((..._args: unknown[]) => null as Response | null);
 
 vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args),
+  checkApiAuth: (...args: unknown[]) => (mockCheckApiAuth as (...a: unknown[]) => unknown)(...args),
 }));
 
 const RUNNING_RUN = {
@@ -63,7 +63,7 @@ const FAILED_RUN = {
 const mockFsPromises = {
   access: vi.fn().mockResolvedValue(undefined),
   readFile: vi.fn(() => Promise.resolve(JSON.stringify(RUNNING_RUN))),
-  readdir: vi.fn(() => Promise.resolve([])),
+  readdir: vi.fn(() => Promise.resolve([] as unknown[])),
 };
 
 vi.mock('node:fs/promises', () => ({

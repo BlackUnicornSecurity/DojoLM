@@ -65,6 +65,19 @@ export interface Campaign {
   readonly updatedAt: string;
 }
 
+/** Campaign that uses an orchestrator for multi-turn attacks */
+export interface OrchestratorCampaign extends Campaign {
+  readonly orchestratorType: 'pair' | 'crescendo' | 'tap' | 'mad-max' | 'sensei-adaptive';
+  readonly orchestratorConfig: {
+    readonly maxTurns: number;
+    readonly maxBranches: number;
+    readonly pruneThreshold: number;
+    readonly successThreshold: number;
+    readonly attackerModelId: string;
+    readonly judgeModelId: string;
+  };
+}
+
 // --- Finding ---
 
 export interface SengokuFinding {

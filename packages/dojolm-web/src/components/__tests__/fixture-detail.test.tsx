@@ -72,6 +72,7 @@ import { FixtureDetail } from '../fixtures/FixtureDetail'
 // ---------------------------------------------------------------------------
 
 const textContent = {
+  path: 'images/test.txt',
   content: 'Hello world test content',
   size: 24,
 }
@@ -96,7 +97,9 @@ const scanResult = {
     { id: 'f3', severity: 'WARNING' as const, message: 'Warning issue', engine: 'test', rule: 'r3' },
   ],
   elapsed: 150,
-}
+  textLength: 0,
+  normalizedLength: 0,
+} as unknown as import('@/lib/types').ScanResult
 
 // ---------------------------------------------------------------------------
 // Tests

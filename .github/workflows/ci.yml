@@ -55,6 +55,21 @@ jobs:
       - name: Run regression tests (scanner vs fixtures)
         run: cd packages/bu-tpi && npm run test:regression
 
+      - name: Run unit tests with coverage (dojolm-mcp)
+        run: npm test -w packages/dojolm-mcp -- --coverage
+
+      - name: Run unit tests with coverage (dojolm-scanner)
+        run: npm test -w packages/dojolm-scanner -- --coverage
+
+      - name: Run scanner typecheck (@dojolm/scanner)
+        run: npm run typecheck -w packages/dojolm-scanner
+
+      - name: Install bmad validators dependencies
+        run: npm ci --prefix packages/bmad-cybersec/validators
+
+      - name: Run bmad validators tests
+        run: npm test --prefix packages/bmad-cybersec/validators
+
       - name: Upload coverage reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,7 +78,41 @@ jobs:
           path: |
             packages/bu-tpi/coverage/
             packages/dojolm-web/coverage/
+            packages/dojolm-mcp/coverage/
+            packages/dojolm-scanner/coverage/
           retention-days: 14
+
+  # ============================================
+  # QA Framework Freshness
+  # ============================================
+  qa-framework-freshness:
+    name: QA Framework Freshness
+    runs-on: ubuntu-latest
+    needs: [test]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate QA matrices
+        run: |
+          node team/testing/tools/generate-coverage-matrix.mjs
+          node team/testing/tools/generate-uat-ux-matrix.mjs
+
+      - name: Verify generated matrices are up to date
+        run: |
+          git diff --exit-code -- \
+            team/testing/QA/QA-COVERAGE-MATRIX.generated.md \
+            team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md
 
   # ============================================
   # Security Scan
@@ -90,6 +139,25 @@ jobs:
 
       - name: Validate fixture manifest (S06)
         run: cd packages/bu-tpi && npm run validate:manifest
+
+  # ============================================
+  # SAST
+  # ============================================
+  sast:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    needs: [test]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: |
+            p/javascript
+            p/security-audit
 
   # ============================================
   # SBOM Generation (S08)
@@ -129,7 +197,7 @@ jobs:
   docs-quality:
     name: Documentation Quality
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [test, qa-framework-freshness]
 
     steps:
       - name: Checkout repository
@@ -192,10 +260,46 @@ jobs:
           retention-days: 7
 
   # ============================================
-  # E2E Tests (Phase R4) — main branch only
+  # E2E Smoke on Pull Requests
   # ============================================
-  e2e:
-    name: E2E Tests (Playwright)
+  e2e-pr:
+    name: E2E Smoke (PR)
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: cd packages/dojolm-web && npx playwright install chromium --with-deps
+
+      - name: Run PR smoke E2E (desktop + mobile)
+        run: cd packages/dojolm-web && npx playwright test --project=chromium --project=mobile-chrome --reporter=github
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-pr
+          path: packages/dojolm-web/playwright-report/
+          retention-days: 14
+
+  # ============================================
+  # E2E Tests (Phase R4) — production target on main/master
+  # ============================================
+  e2e-prod:
+    name: E2E Tests (Playwright, Prod Target)
     runs-on: ubuntu-latest
     needs: [test]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -217,7 +321,7 @@ jobs:
         run: cd packages/dojolm-web && npx playwright install chromium --with-deps
 
       - name: Run E2E tests
-        run: cd packages/dojolm-web && npx playwright test --project=chromium --reporter=github
+        run: cd packages/dojolm-web && npx playwright test --reporter=github
         env:
           E2E_TARGET: prod
           E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
@@ -227,6 +331,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-prod
           path: packages/dojolm-web/playwright-report/
           retention-days: 14

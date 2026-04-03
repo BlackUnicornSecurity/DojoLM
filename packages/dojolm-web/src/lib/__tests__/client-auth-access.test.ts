@@ -27,7 +27,7 @@ describe('client-auth-access', () => {
   });
 
   it('returns true in test mode without a network probe', async () => {
-    process.env.NODE_ENV = 'test';
+    (process.env as Record<string, string>).NODE_ENV = 'test';
     const { canAccessProtectedApi } = await import('../client-auth-access');
 
     await expect(canAccessProtectedApi()).resolves.toBe(true);

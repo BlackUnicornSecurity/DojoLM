@@ -30,6 +30,8 @@ const PLANS_BY_TYPE: Record<TemporalAttackType, ConversationPlan[]> = {
   session_persistence: SESSION_PERSISTENCE_PLANS,
   context_overflow: CONTEXT_OVERFLOW_PLANS,
   persona_drift: PERSONA_DRIFT_PLANS,
+  adaptive: [],
+  sensei_orchestrated: [],
 };
 
 /** Return all 20 curated attack plans. */

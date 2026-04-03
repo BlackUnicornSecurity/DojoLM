@@ -56,13 +56,13 @@ import { FixtureComparison, type ComparisonItem } from '../fixtures/FixtureCompa
 
 const makeTextItem = (path: string, content: string, scanResult: ComparisonItem['scanResult'] = null): ComparisonItem => ({
   path,
-  content: { content, size: content.length, lines: content.split('\n').length },
+  content: { path, content, size: content.length },
   scanResult,
 })
 
 const makeBinaryItem = (path: string): ComparisonItem => ({
   path,
-  content: { hex_preview: '00 01 02 03', size: 4, metadata: { mime_type: 'application/octet-stream', encoding: 'binary' } },
+  content: { path, hex_preview: '00 01 02 03', size: 4, metadata: { format: 'binary', fieldCount: 0, sources: [], verdict: 'ALLOW', findingCount: 0 } },
   scanResult: null,
 })
 
@@ -74,7 +74,7 @@ const makeNullItem = (path: string): ComparisonItem => ({
 
 const makeScanResult = (verdict: 'ALLOW' | 'BLOCK', findings: Array<{ engine: string; description: string; severity: string; category: string; match: string; source: string }> = []) => ({
   verdict,
-  findings,
+  findings: findings as unknown as import('@/lib/types').ScanResult['findings'],
   elapsed: 10,
   textLength: 100,
   normalizedLength: 100,
@@ -83,7 +83,7 @@ const makeScanResult = (verdict: 'ALLOW' | 'BLOCK', findings: Array<{ engine: st
     warning: findings.filter(f => f.severity === 'WARNING').length,
     info: findings.filter(f => f.severity === 'INFO').length,
   },
-})
+}) as unknown as import('@/lib/types').ScanResult
 
 // ---------------------------------------------------------------------------
 // Tests

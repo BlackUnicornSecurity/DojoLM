@@ -83,7 +83,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries nodes by default', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -94,7 +94,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries nodes with sourceTier filter', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=nodes&sourceTier=dojo-local');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -104,7 +104,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries nodes with category filter', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=nodes&category=prompt-injection');
-    const res = await GET(req, {});
+    const res = await GET(req);
 
     expect(res.status).toBe(200);
   });
@@ -112,7 +112,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries families', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=families');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -123,7 +123,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries clusters', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=clusters');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -133,7 +133,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries timeline', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=timeline');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -144,7 +144,7 @@ describe('GET /api/attackdna/query', () => {
   it('queries stats', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=stats');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -155,7 +155,7 @@ describe('GET /api/attackdna/query', () => {
   it('rejects invalid query type', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=invalid');
-    const res = await GET(req, {});
+    const res = await GET(req);
 
     expect(res.status).toBe(400);
     const data = await res.json();
@@ -165,7 +165,7 @@ describe('GET /api/attackdna/query', () => {
   it('respects limit and offset parameters', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=nodes&limit=10&offset=0');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -176,7 +176,7 @@ describe('GET /api/attackdna/query', () => {
   it('caps limit at 500', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/query?type=nodes&limit=1000');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);

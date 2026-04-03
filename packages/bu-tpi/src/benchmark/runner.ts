@@ -7,9 +7,20 @@ import type {
   BenchmarkComparison,
   BenchmarkResult,
   BenchmarkSuite,
+  DifficultyTier,
   ScoreBreakdown,
 } from './types.js';
 import { CATEGORY_DIFFICULTY } from './suites/dojolm-bench.js';
+import { AGENTIC_CATEGORY_DIFFICULTY } from './suites/agentic-bench.js';
+import { RAG_CATEGORY_DIFFICULTY } from './suites/rag-bench.js';
+import { getFixtureContent } from './fixture-content.js';
+
+/** Merged difficulty map across all suites */
+const ALL_DIFFICULTY: Readonly<Record<string, DifficultyTier>> = {
+  ...CATEGORY_DIFFICULTY,
+  ...AGENTIC_CATEGORY_DIFFICULTY,
+  ...RAG_CATEGORY_DIFFICULTY,
+};
 
 /** Progress callback payload */
 export interface BenchmarkProgress {
@@ -68,7 +79,7 @@ export class BenchmarkRunner {
           continue;
         }
 
-        const result = scanFn(fixtureId);
+        const result = scanFn(getFixtureContent(fixtureId));
         const actualVerdict = result.verdict;
         const isCorrect = actualVerdict === expectedVerdict;
 
@@ -76,7 +87,7 @@ export class BenchmarkRunner {
           correct++;
         }
 
-        const severity = CATEGORY_DIFFICULTY[category.name] ?? 'medium';
+        const severity = ALL_DIFFICULTY[category.name] ?? 'medium';
 
         breakdown.push({
           fixtureId,

@@ -50,7 +50,7 @@ vi.mock('@/lib/llm-constants', () => ({
 // Mock UI components
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled, type, ...rest }: { children: ReactNode; onClick?: () => void; disabled?: boolean; type?: string; [k: string]: unknown }) => (
-    <button onClick={onClick} disabled={disabled} type={type} {...rest}>{children}</button>
+    <button onClick={onClick} disabled={disabled} type={type as 'button' | 'submit' | 'reset' | undefined} {...rest}>{children}</button>
   ),
 }))
 vi.mock('@/components/ui/input', () => ({

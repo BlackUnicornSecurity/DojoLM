@@ -60,7 +60,7 @@ describe('POST /api/arena', () => {
       ],
     });
 
-    const res = await POST(req, {});
+    const res = await POST(req);
     expect(res.status).toBe(201);
 
     const data = await res.json();
@@ -78,7 +78,7 @@ describe('POST /api/arena', () => {
       fighters: [{ modelId: 'a' }, { modelId: 'b' }],
     });
 
-    const res = await POST(req, {});
+    const res = await POST(req);
     expect(res.status).toBe(400);
     const data = await res.json();
     expect(data.error).toContain('gameMode');
@@ -92,7 +92,7 @@ describe('POST /api/arena', () => {
       fighters: [{ modelId: 'a' }, { modelId: 'b' }],
     });
 
-    const res = await POST(req, {});
+    const res = await POST(req);
     expect(res.status).toBe(400);
     const data = await res.json();
     expect(data.error).toContain('attackMode');
@@ -106,7 +106,7 @@ describe('POST /api/arena', () => {
       fighters: [{ modelId: 'a' }],
     });
 
-    const res = await POST(req, {});
+    const res = await POST(req);
     expect(res.status).toBe(400);
     expect((await res.json()).error).toContain('fighters');
   });
@@ -120,7 +120,7 @@ describe('POST /api/arena', () => {
       fighters: [{ modelId: 'a' }, { modelId: 'b' }],
     });
 
-    const res = await POST(req, {});
+    const res = await POST(req);
     expect(res.status).toBe(201);
     const storedMatch = mockedStorage.createMatch.mock.calls[0][0];
     expect(storedMatch.config.maxRounds).toBeLessThanOrEqual(100);
@@ -140,7 +140,7 @@ describe('GET /api/arena', () => {
 
     const { GET } = await import('../route');
     const req = createGetRequest('/api/arena?status=completed&limit=10');
-    const res = await GET(req, {});
+    const res = await GET(req);
 
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -153,7 +153,7 @@ describe('GET /api/arena', () => {
 
     const { GET } = await import('../route');
     const req = createGetRequest('/api/arena?status=running');
-    await GET(req, {});
+    await GET(req);
 
     expect(mockedStorage.listMatches).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'running' })

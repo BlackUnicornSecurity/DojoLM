@@ -140,7 +140,7 @@ describe('llm-reports', () => {
     it('removes executions from JSON when includeExecutions is false', () => {
       const report = createMockReport();
       // Attach executions to the report object to verify deletion
-      (report as Record<string, unknown>).executions = [
+      ((report as unknown) as Record<string, unknown>).executions = [
         { id: 'exec-1', response: 'test response' },
         { id: 'exec-2', response: 'another response' },
       ];
@@ -161,7 +161,7 @@ describe('llm-reports', () => {
   describe('RPT-006: JSON includeResponses false redacts responses', () => {
     it('redacts response text when includeResponses is false and includeExecutions is true', () => {
       const report = createMockReport();
-      (report as Record<string, unknown>).executions = [
+      ((report as unknown) as Record<string, unknown>).executions = [
         { id: 'exec-1', response: 'sensitive model output' },
         { id: 'exec-2', response: 'another sensitive output' },
       ];

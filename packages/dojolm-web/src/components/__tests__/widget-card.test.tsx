@@ -118,7 +118,7 @@ describe('WidgetCard', () => {
   it('WC-009: uses explicit glow over context glow', () => {
     render(
       <WidgetMetaProvider priority="standard" glow="none">
-        <WidgetCard title="Test" glow="primary">Content</WidgetCard>
+        <WidgetCard title="Test" glow={'primary' as 'none'}>Content</WidgetCard>
       </WidgetMetaProvider>
     )
     const glowCard = screen.getByTestId('glow-card')

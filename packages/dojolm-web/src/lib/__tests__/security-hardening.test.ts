@@ -24,7 +24,7 @@ describe('Security Hardening (Story 8.3)', () => {
     vi.resetModules();
     process.env.NODA_API_KEY = 'test-api-key-for-security-tests';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
-    process.env.NODE_ENV = 'test';
+    (process.env as Record<string, string>).NODE_ENV = 'test';
     mockValidateSession.mockReset();
     mockValidateSession.mockReturnValue({
       id: 'user-1',
@@ -293,7 +293,7 @@ describe('Security Hardening (Story 8.3)', () => {
       mod.resetRateLimiter();
       delete process.env.TRUSTED_PROXY;
       delete process.env.NODA_API_KEY;
-      process.env.NODE_ENV = 'development';
+      (process.env as Record<string, string>).NODE_ENV = 'development';
 
       const makeUiRequest = () =>
         new NextRequest('http://localhost:42001/api/llm/batch?status=running', {

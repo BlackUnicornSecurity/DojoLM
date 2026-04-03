@@ -21,8 +21,8 @@ import {
 // ---------------------------------------------------------------------------
 
 describe('Time Chamber constants', () => {
-  it('TEMPORAL_ATTACK_TYPES has 5 entries', () => {
-    expect(TEMPORAL_ATTACK_TYPES).toHaveLength(5);
+  it('TEMPORAL_ATTACK_TYPES has 7 entries', () => {
+    expect(TEMPORAL_ATTACK_TYPES).toHaveLength(7);
   });
 
   it('MAX_TURNS is defined', () => {

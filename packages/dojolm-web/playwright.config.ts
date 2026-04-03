@@ -18,6 +18,10 @@ delete process.env.NO_COLOR;
 delete process.env.FORCE_COLOR;
 
 const isProd = process.env.E2E_TARGET === 'prod';
+const includeMobileProject =
+  isProd ||
+  process.env.CI === 'true' ||
+  process.env.E2E_INCLUDE_MOBILE === '1';
 const localBaseURL = 'http://127.0.0.1:42001';
 const baseURL =
   process.env.E2E_BASE_URL ||
@@ -54,8 +58,8 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Mobile viewport for prod validation
-    ...(isProd
+    // Mobile viewport for prod + CI smoke validation (or explicit local opt-in)
+    ...(includeMobileProject
       ? [
           {
             name: 'mobile-chrome',

@@ -97,7 +97,7 @@ function makeScanResult(overrides: Partial<ScanResult> = {}): ScanResult {
     ],
     counts: { critical: 1, warning: 0, info: 0 },
     ...overrides,
-  } as ScanResult;
+  } as unknown as ScanResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -182,7 +182,7 @@ describe('guardScanInput', () => {
         { id: 'f1', severity: 'CRITICAL', category: 'injection', message: 'found', engine: 'core' },
       ],
       counts: { critical: 1, warning: 0, info: 0 },
-    } as ScanResult);
+    } as unknown as ScanResult);
 
     const config = makeConfig({ mode: 'samurai', blockThreshold: 'WARNING' });
     const result = guardScanInput('drop table users', config);
@@ -245,7 +245,7 @@ describe('guardScanOutput', () => {
         { id: 'f1', severity: 'CRITICAL', category: 'data-leak', message: 'leak', engine: 'core' },
       ],
       counts: { critical: 1, warning: 0, info: 0 },
-    } as ScanResult);
+    } as unknown as ScanResult);
 
     const config = makeConfig({ mode: 'sensei' });
     const result = guardScanOutput('sensitive data leaked', config);
@@ -329,7 +329,7 @@ describe('calculateConfidence', () => {
         { id: 'f2', severity: 'WARNING', category: 'b', message: 'm', engine: 'e' },
         { id: 'f3', severity: 'WARNING', category: 'c', message: 'm', engine: 'e' },
         { id: 'f4', severity: 'INFO', category: 'd', message: 'm', engine: 'e' },
-      ] as ScanResult['findings'],
+      ] as unknown as ScanResult['findings'],
       counts: { critical: 1, warning: 2, info: 1 },
     });
     const confidence = calculateConfidence(scanResult);
@@ -341,7 +341,7 @@ describe('calculateConfidence', () => {
     const scanResult = makeScanResult({
       findings: Array.from({ length: 10 }, (_, i) => ({
         id: `f${i}`, severity: 'CRITICAL', category: 'x', message: 'm', engine: 'e',
-      })) as ScanResult['findings'],
+      })) as unknown as ScanResult['findings'],
       counts: { critical: 10, warning: 0, info: 0 },
     });
     const confidence = calculateConfidence(scanResult);
@@ -387,7 +387,7 @@ describe('executeWithGuard', () => {
         { id: 'f1', severity: 'CRITICAL', category: 'injection', message: 'blocked', engine: 'core' },
       ],
       counts: { critical: 1, warning: 0, info: 0 },
-    } as ScanResult);
+    } as unknown as ScanResult);
 
     const config = makeConfig({ mode: 'hattori', enabled: true });
     const result = await executeWithGuard(model, testCase, config);

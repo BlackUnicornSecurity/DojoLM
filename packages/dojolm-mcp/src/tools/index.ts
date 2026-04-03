@@ -66,6 +66,12 @@ export {
   AdversarialSearchEngine,
 } from './search-engine.js';
 
+// MUSUBI 7.4: Sensei Platform MCP Tools
+export {
+  SENSEI_TOOLS_SCENARIO,
+  SENSEI_MCP_TOOLS,
+} from './sensei-tools.js';
+
 // Aggregate exports
 import { VECTOR_DB_SCENARIO, VECTOR_DB_TOOLS } from './vector-db.js';
 import { BROWSER_SCENARIO, BROWSER_TOOLS } from './browser.js';
@@ -76,6 +82,7 @@ import { EMAIL_SERVER_SCENARIO, EMAIL_SERVER_TOOLS } from './email-server.js';
 import { CODE_REPO_SCENARIO, CODE_REPO_TOOLS } from './code-repo.js';
 import { MESSAGE_QUEUE_SCENARIO, MESSAGE_QUEUE_TOOLS } from './message-queue.js';
 import { SEARCH_ENGINE_SCENARIO, SEARCH_ENGINE_TOOLS } from './search-engine.js';
+import { SENSEI_TOOLS_SCENARIO, SENSEI_MCP_TOOLS } from './sensei-tools.js';
 import type { AttackScenario, AdversarialTool } from '../types.js';
 
 /** All P5 adversarial tool scenarios */
@@ -89,6 +96,7 @@ export const ALL_P5_SCENARIOS: readonly AttackScenario[] = [
   CODE_REPO_SCENARIO,
   MESSAGE_QUEUE_SCENARIO,
   SEARCH_ENGINE_SCENARIO,
+  SENSEI_TOOLS_SCENARIO,
 ];
 
 /** All P5 adversarial tools */
@@ -102,4 +110,5 @@ export const ALL_P5_TOOLS: readonly AdversarialTool[] = [
   ...CODE_REPO_TOOLS,
   ...MESSAGE_QUEUE_TOOLS,
   ...SEARCH_ENGINE_TOOLS,
+  ...SENSEI_MCP_TOOLS,
 ];

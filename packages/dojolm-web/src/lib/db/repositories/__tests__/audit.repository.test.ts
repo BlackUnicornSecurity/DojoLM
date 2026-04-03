@@ -172,7 +172,7 @@ describe('AuditRepository', () => {
   });
 
   it('AUDIT-014: AuditRepository has no update or delete methods', () => {
-    expect((repo as Record<string, unknown>).update).toBeUndefined();
-    expect((repo as Record<string, unknown>).delete).toBeUndefined();
+    expect(((repo as unknown) as Record<string, unknown>).update).toBeUndefined();
+    expect(((repo as unknown) as Record<string, unknown>).delete).toBeUndefined();
   });
 });

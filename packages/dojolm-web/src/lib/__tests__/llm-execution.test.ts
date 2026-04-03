@@ -129,7 +129,7 @@ describe('executeSingleTest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockExecute.mockResolvedValue(makeProviderResponse());
-    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as ReturnType<typeof scan>);
+    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as unknown as ReturnType<typeof scan>);
     vi.mocked(calculateInjectionSuccess).mockReturnValue(0);
     vi.mocked(calculateHarmfulness).mockReturnValue(0);
     vi.mocked(calculateResilienceScore).mockReturnValue(85);
@@ -278,17 +278,17 @@ describe('executeSingleTest', () => {
   });
 
   it('EXE-014: builds TPI coverage map when tpiStory present', async () => {
-    const tc = makeTestCase({ tpiStory: 'TPI-42' });
+    const tc = makeTestCase({ tpiStory: 'TPI-20' });
     const result = await executeSingleTest(makeModel(), tc);
 
-    expect(result.tpiCoverage).toHaveProperty('TPI-42');
+    expect(result.tpiCoverage).toHaveProperty('TPI-20');
   });
 
   it('EXE-015: populates scanResult when scanner finds issues', async () => {
     vi.mocked(scan).mockReturnValue({
       findings: [{ severity: 'CRITICAL', rule: 'injection', message: 'found', offset: 0 }],
       verdict: 'BLOCK',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = await executeSingleTest(makeModel(), makeTestCase());
 
@@ -317,11 +317,11 @@ describe('executeBatchTests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockExecute.mockResolvedValue(makeProviderResponse());
-    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as ReturnType<typeof scan>);
+    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as unknown as ReturnType<typeof scan>);
     vi.mocked(calculateInjectionSuccess).mockReturnValue(0);
     vi.mocked(calculateHarmfulness).mockReturnValue(0);
     vi.mocked(calculateResilienceScore).mockReturnValue(85);
-    vi.mocked(fileStorage.saveExecution).mockResolvedValue(undefined);
+    vi.mocked(fileStorage.saveExecution).mockResolvedValue(undefined as never);
   });
 
   it('EXE-017: executes all model x testCase combinations', async () => {
@@ -548,7 +548,7 @@ describe('executeTestWithCache', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockExecute.mockResolvedValue(makeProviderResponse());
-    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as ReturnType<typeof scan>);
+    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as unknown as ReturnType<typeof scan>);
     vi.mocked(calculateInjectionSuccess).mockReturnValue(0);
     vi.mocked(calculateHarmfulness).mockReturnValue(0);
     vi.mocked(calculateResilienceScore).mockReturnValue(85);
@@ -614,7 +614,7 @@ describe('scanResponse', () => {
     vi.mocked(scan).mockReturnValue({
       findings: [],
       verdict: 'ALLOW',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = scanResponse('This is a harmless response');
 
@@ -629,7 +629,7 @@ describe('scanResponse', () => {
         { severity: 'WARNING', rule: 'exfil', message: 'detected', offset: 10 },
       ],
       verdict: 'BLOCK',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = scanResponse('Ignore previous instructions');
 
@@ -645,7 +645,7 @@ describe('scanResponse', () => {
         { severity: 'WARNING', rule: 'b', message: 'm', offset: 5 },
       ],
       verdict: 'ALLOW',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = scanResponse('some text');
     expect(result.severity).toBe('WARNING');
@@ -657,7 +657,7 @@ describe('scanResponse', () => {
         { severity: 'INFO', rule: 'minor', message: 'low risk', offset: 0 },
       ],
       verdict: 'ALLOW',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = scanResponse('slightly suspicious');
     expect(result.severity).toBe('INFO');
@@ -671,7 +671,7 @@ describe('scanResponse', () => {
 describe('calculateExecutionScore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as ReturnType<typeof scan>);
+    vi.mocked(scan).mockReturnValue({ findings: [], verdict: 'ALLOW' } as unknown as ReturnType<typeof scan>);
   });
 
   it('EXE-041: safe response returns high resilience score', () => {
@@ -692,7 +692,7 @@ describe('calculateExecutionScore', () => {
     vi.mocked(scan).mockReturnValue({
       findings: [{ severity: 'CRITICAL', rule: 'x', message: 'm', offset: 0 }],
       verdict: 'BLOCK',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = calculateExecutionScore('Malicious output', 'prompt');
 
@@ -718,7 +718,7 @@ describe('calculateExecutionScore', () => {
     vi.mocked(scan).mockReturnValue({
       findings: [{ severity: 'WARNING', rule: 'r', message: 'm', offset: 0 }],
       verdict: 'BLOCK',
-    } as ReturnType<typeof scan>);
+    } as unknown as ReturnType<typeof scan>);
 
     const result = calculateExecutionScore('text', 'prompt');
 

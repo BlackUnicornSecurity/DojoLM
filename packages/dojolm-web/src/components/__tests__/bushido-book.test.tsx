@@ -404,7 +404,7 @@ describe('BSH-009: Checklist export', () => {
     // generateChecklistPDF creates a blob and triggers URL.createObjectURL
     expect(mockCreateObjectURL).toHaveBeenCalled()
     // Verify the blob was created (passed to createObjectURL)
-    const blobArg = mockCreateObjectURL.mock.calls[0]?.[0]
+    const blobArg = (mockCreateObjectURL.mock.calls as unknown[][])[0]?.[0]
     expect(blobArg).toBeInstanceOf(Blob)
   })
 })

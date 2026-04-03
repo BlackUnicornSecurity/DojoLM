@@ -268,6 +268,38 @@ export function contextFraming(text: string, rng: SeededRNG): MutationResult {
   };
 }
 
+/**
+ * Sensei-guided mutation: adaptively combines multiple mutation strategies
+ * using a multi-step approach — paraphrase first, then frame, then encode.
+ */
+export function senseiGuided(text: string, rng: SeededRNG): MutationResult {
+  if (text.length > MAX_INPUT_LENGTH) {
+    return { original: text, mutated: text, operator: 'sensei-guided', description: 'Input too large', changeCount: 0 };
+  }
+
+  // Step 1: paraphrase to change surface form
+  const paraphrased = instructionParaphrasing(text, rng);
+
+  // Step 2: apply context framing
+  const framed = contextFraming(paraphrased.mutated, rng);
+
+  // Step 3: randomly apply encoding or delimiter wrapping
+  const useEncoding = rng.next() > 0.5;
+  const final = useEncoding
+    ? encodingWrapping(framed.mutated, rng)
+    : delimiterInjection(framed.mutated, rng);
+
+  const totalChanges = paraphrased.changeCount + framed.changeCount + final.changeCount;
+
+  return {
+    original: text,
+    mutated: final.mutated,
+    operator: 'sensei-guided',
+    description: 'Sensei-guided adaptive multi-step mutation (paraphrase + frame + encode/delimit)',
+    changeCount: totalChanges,
+  };
+}
+
 // --- Operator registry ---
 
 const OPERATOR_FNS: Record<MutationOperator, (text: string, rng: SeededRNG) => MutationResult> = {
@@ -277,6 +309,7 @@ const OPERATOR_FNS: Record<MutationOperator, (text: string, rng: SeededRNG) => M
   'structural-rearrangement': structuralRearrangement,
   'delimiter-injection': delimiterInjection,
   'context-framing': contextFraming,
+  'sensei-guided': senseiGuided,
 };
 
 /**

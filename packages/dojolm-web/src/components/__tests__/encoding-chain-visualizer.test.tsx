@@ -29,6 +29,8 @@ function makeFinding(description: string) {
     severity: 'WARNING' as const,
     description,
     engine: 'encoding-engine',
+    match: '',
+    source: 'current' as const,
   }
 }
 

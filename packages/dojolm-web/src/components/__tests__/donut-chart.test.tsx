@@ -24,7 +24,7 @@ vi.mock('next/dynamic', () => ({
             {props.centerValue !== undefined && (
               <span className="text-2xl font-bold">{String(props.centerValue)}</span>
             )}
-            {props.centerLabel && (
+            {Boolean(props.centerLabel) && (
               <span className="text-xs text-muted-foreground">{String(props.centerLabel)}</span>
             )}
           </div>

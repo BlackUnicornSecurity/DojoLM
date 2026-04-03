@@ -133,7 +133,7 @@ export function evaluateFitness(
     overall = evasion * 0.4 + novelty * 0.35 + semanticPreservation * 0.25;
   }
 
-  return { novelty, evasion, semanticPreservation, harmScore, overall };
+  return { novelty, evasion, semanticPreservation, harmScore, overall, senseiJudgeScore: undefined };
 }
 
 // --- Crossover ---

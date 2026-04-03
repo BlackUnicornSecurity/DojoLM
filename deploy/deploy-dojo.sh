@@ -4,6 +4,7 @@
 #
 # Usage (from dev machine):
 #   ./deploy/deploy-dojo.sh
+#   ./deploy/deploy-dojo.sh --dry-run
 #
 # Prerequisites:
 #   - SSH access: ssh paultinp@192.168.70.120
@@ -20,6 +21,7 @@ LOG_PREFIX="[$(date -u '+%Y-%m-%dT%H:%M:%SZ')]"
 VOYAGER_IP="192.168.70.120"
 VOYAGER_USER="paultinp"
 REMOTE_DIR="/opt/dojolm"
+DRY_RUN=0
 
 PASS=0
 FAIL=0
@@ -29,10 +31,43 @@ pass() { PASS=$((PASS + 1)); echo "${LOG_PREFIX} [PASS] $1"; }
 fail() { FAIL=$((FAIL + 1)); echo "${LOG_PREFIX} [FAIL] $1"; }
 warn() { WARN=$((WARN + 1)); echo "${LOG_PREFIX} [WARN] $1"; }
 info() { echo "${LOG_PREFIX} [INFO] $1"; }
+skip() { echo "${LOG_PREFIX} [INFO] [DRY-RUN] $1"; }
+
+usage() {
+    cat <<EOF
+Usage:
+  ./deploy/deploy-dojo.sh [--dry-run] [--help]
+
+Options:
+  --dry-run    Execute non-mutating preflight checks only
+  --help       Show this help
+EOF
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --dry-run)
+            DRY_RUN=1
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            fail "Unknown argument: $1"
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
 
 echo "================================================================"
 echo "  DojoLM — Voyager Deployment"
 echo "  Target: ${VOYAGER_IP}:${REMOTE_DIR}"
+if [ "${DRY_RUN}" -eq 1 ]; then
+    echo "  Mode: DRY-RUN (non-mutating preflight)"
+fi
 echo "================================================================"
 echo ""
 
@@ -53,6 +88,14 @@ if [ -f "${SCRIPT_DIR}/docker-compose.yml" ]; then
     pass "docker-compose.yml found"
 else
     fail "docker-compose.yml not found"
+    exit 1
+fi
+
+# Validate docker-compose resolves locally (dry-run safe preflight artifact)
+if docker compose -f "${SCRIPT_DIR}/docker-compose.yml" config >/tmp/dojolm-compose.resolved.yml; then
+    pass "docker-compose resolves cleanly (/tmp/dojolm-compose.resolved.yml)"
+else
+    fail "docker-compose config validation failed"
     exit 1
 fi
 
@@ -91,17 +134,29 @@ else
 fi
 
 # Check remote directory
-ssh "${VOYAGER_USER}@${VOYAGER_IP}" "mkdir -p ${REMOTE_DIR}" && \
-    pass "Remote directory ${REMOTE_DIR} ready" || \
-    fail "Cannot create ${REMOTE_DIR}"
+if [ "${DRY_RUN}" -eq 1 ]; then
+    if ssh "${VOYAGER_USER}@${VOYAGER_IP}" "[ -d ${REMOTE_DIR} ]"; then
+        pass "Remote directory ${REMOTE_DIR} exists"
+    else
+        warn "Remote directory ${REMOTE_DIR} missing (would be created in deploy mode)"
+    fi
+else
+    ssh "${VOYAGER_USER}@${VOYAGER_IP}" "mkdir -p ${REMOTE_DIR}" && \
+        pass "Remote directory ${REMOTE_DIR} ready" || \
+        fail "Cannot create ${REMOTE_DIR}"
+fi
 
 # Check .env on remote
 if ssh "${VOYAGER_USER}@${VOYAGER_IP}" "[ -f ${REMOTE_DIR}/.env ]"; then
     pass ".env file present on Voyager"
 else
-    warn ".env not found — copying template"
-    scp "${SCRIPT_DIR}/.env.example" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/.env"
-    warn "IMPORTANT: SSH to Voyager and fill in ${REMOTE_DIR}/.env with real secrets"
+    if [ "${DRY_RUN}" -eq 1 ]; then
+        warn ".env not found — would copy template in deploy mode"
+    else
+        warn ".env not found — copying template"
+        scp "${SCRIPT_DIR}/.env.example" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/.env"
+        warn "IMPORTANT: SSH to Voyager and fill in ${REMOTE_DIR}/.env with real secrets"
+    fi
 fi
 
 # ── Phase 4: Sync Files ───────────────────────────────────────────────────────
@@ -109,41 +164,45 @@ fi
 info ""
 info "=== Phase 4: Sync Files ==="
 
-info "Syncing project to Voyager (excluding node_modules, .next, team, artifacts)..."
-rsync -az --delete \
-    --exclude 'node_modules' \
-    --exclude '.next' \
-    --exclude '.git' \
-    --exclude 'team' \
-    --exclude '.env' \
-    --exclude '.env.*' \
-    --exclude '*.db' \
-    --exclude '*.png' \
-    --exclude '*.jpg' \
-    --exclude '*.pptx' \
-    --exclude '.playwright-mcp' \
-    --exclude '.claude' \
-    --exclude '/coverage' \
-    --exclude 'packages/bmad-cybersec' \
-    "${PROJECT_ROOT}/" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/app/" && \
-    pass "Files synced to Voyager" || \
-    fail "rsync failed"
+if [ "${DRY_RUN}" -eq 1 ]; then
+    skip "Skipping rsync/scp sync operations."
+else
+    info "Syncing project to Voyager (excluding node_modules, .next, team, artifacts)..."
+    rsync -az --delete \
+        --exclude 'node_modules' \
+        --exclude '.next' \
+        --exclude '.git' \
+        --exclude 'team' \
+        --exclude '.env' \
+        --exclude '.env.*' \
+        --exclude '*.db' \
+        --exclude '*.png' \
+        --exclude '*.jpg' \
+        --exclude '*.pptx' \
+        --exclude '.playwright-mcp' \
+        --exclude '.claude' \
+        --exclude '/coverage' \
+        --exclude 'packages/bmad-cybersec' \
+        "${PROJECT_ROOT}/" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/app/" && \
+        pass "Files synced to Voyager" || \
+        fail "rsync failed"
 
-# Copy docker-compose to deploy root
-scp "${SCRIPT_DIR}/docker-compose.yml" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/" && \
-    pass "docker-compose.yml deployed" || \
-    fail "docker-compose.yml copy failed"
+    # Copy docker-compose to deploy root
+    scp "${SCRIPT_DIR}/docker-compose.yml" "${VOYAGER_USER}@${VOYAGER_IP}:${REMOTE_DIR}/" && \
+        pass "docker-compose.yml deployed" || \
+        fail "docker-compose.yml copy failed"
 
-# Seed validation module corpus into running container (OI-R3-001)
-if [ -d "${SCRIPT_DIR}/validation-seed" ]; then
-    info "Seeding validation module corpus into container..."
-    # Copy seed files to remote /tmp first, then docker cp into container
-    rsync -az "${SCRIPT_DIR}/validation-seed/" \
-        "${VOYAGER_USER}@${VOYAGER_IP}:/tmp/dojolm-validation-seed/" && \
-    ssh "${VOYAGER_USER}@${VOYAGER_IP}" \
-        'for dir in /tmp/dojolm-validation-seed/*/; do module=$(basename "$dir"); docker cp "$dir" dojolm-web:/app/data/validation/modules/"$module" 2>/dev/null; done' && \
-    pass "Validation corpus seeded (29 modules → /app/data/validation/modules/)" || \
-    warn "Validation corpus seed failed — check container status"
+    # Seed validation module corpus into running container (OI-R3-001)
+    if [ -d "${SCRIPT_DIR}/validation-seed" ]; then
+        info "Seeding validation module corpus into container..."
+        # Copy seed files to remote /tmp first, then docker cp into container
+        rsync -az "${SCRIPT_DIR}/validation-seed/" \
+            "${VOYAGER_USER}@${VOYAGER_IP}:/tmp/dojolm-validation-seed/" && \
+        ssh "${VOYAGER_USER}@${VOYAGER_IP}" \
+            'for dir in /tmp/dojolm-validation-seed/*/; do module=$(basename "$dir"); docker cp "$dir" dojolm-web:/app/data/validation/modules/"$module" 2>/dev/null; done' && \
+        pass "Validation corpus seeded (29 modules → /app/data/validation/modules/)" || \
+        warn "Validation corpus seed failed — check container status"
+    fi
 fi
 
 # ── Phase 5: Build & Start ────────────────────────────────────────────────────
@@ -155,69 +214,77 @@ info "=== Phase 5: Build & Start ==="
 BUILD_SHA=$(cd "${PROJECT_ROOT}" && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
-# Tag current image as :previous for rollback BEFORE building new one
-ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker tag dojolm-web:latest dojolm-web:previous 2>/dev/null || true"
+if [ "${DRY_RUN}" -eq 1 ]; then
+    skip "Skipping docker tag/build/compose restart operations."
+else
+    # Tag current image as :previous for rollback BEFORE building new one
+    ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker tag dojolm-web:latest dojolm-web:previous 2>/dev/null || true"
 
-info "Building Docker image on Voyager (SHA: ${BUILD_SHA})..."
-ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR}/app && docker build \
-    --build-arg BUILD_SHA=${BUILD_SHA} \
-    --build-arg BUILD_DATE=${BUILD_DATE} \
-    --build-arg NEXT_PUBLIC_APP_URL=https://dojo.bucc.internal \
-    --build-arg NEXT_PUBLIC_API_URL=https://dojo.bucc.internal \
-    -t dojolm-web:latest \
-    -t dojolm-web:${BUILD_SHA} \
-    -f Dockerfile ." && \
-    pass "Docker image built (tagged: latest + ${BUILD_SHA})" || \
-    fail "Docker build failed"
+    info "Building Docker image on Voyager (SHA: ${BUILD_SHA})..."
+    ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR}/app && docker build \
+        --build-arg BUILD_SHA=${BUILD_SHA} \
+        --build-arg BUILD_DATE=${BUILD_DATE} \
+        --build-arg NEXT_PUBLIC_APP_URL=https://dojo.bucc.internal \
+        --build-arg NEXT_PUBLIC_API_URL=https://dojo.bucc.internal \
+        -t dojolm-web:latest \
+        -t dojolm-web:${BUILD_SHA} \
+        -f Dockerfile ." && \
+        pass "Docker image built (tagged: latest + ${BUILD_SHA})" || \
+        fail "Docker build failed"
 
-info "Starting services..."
-ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR} && docker compose down 2>/dev/null; docker compose up -d" && \
-    pass "Services started" || \
-    fail "docker compose up failed"
+    info "Starting services..."
+    ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR} && docker compose down 2>/dev/null; docker compose up -d" && \
+        pass "Services started" || \
+        fail "docker compose up failed"
 
-# Wait for container to be healthy
-info "Waiting for health check (30s)..."
-sleep 10
+    # Wait for container to be healthy
+    info "Waiting for health check (30s)..."
+    sleep 10
+fi
 
 # ── Phase 6: Verification ─────────────────────────────────────────────────────
 
 info ""
 info "=== Phase 6: Verification ==="
 
-# Check container running
-CONTAINER_STATUS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker ps --filter name=dojolm-web --format '{{.Status}}' 2>/dev/null || echo DOWN")
-if [[ "${CONTAINER_STATUS}" == *"Up"* ]]; then
-    pass "Container running: ${CONTAINER_STATUS}"
+if [ "${DRY_RUN}" -eq 1 ]; then
+    skip "Skipping post-deploy runtime verification checks."
 else
-    fail "Container not running: ${CONTAINER_STATUS}"
-fi
+    # Check container running
+    CONTAINER_STATUS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker ps --filter name=dojolm-web --format '{{.Status}}' 2>/dev/null || echo DOWN")
+    if [[ "${CONTAINER_STATUS}" == *"Up"* ]]; then
+        pass "Container running: ${CONTAINER_STATUS}"
+    else
+        fail "Container not running: ${CONTAINER_STATUS}"
+    fi
 
-# Check API health
-API_RESPONSE=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -s -m 5 http://localhost:3001/api/stats 2>/dev/null || echo FAIL")
-# Note: Caddy proxies dojo.bucc.internal -> localhost:3001 -> container:42001
-if [[ "${API_RESPONSE}" != "FAIL" ]] && [[ "${API_RESPONSE}" == *"{"* ]]; then
-    pass "API responding on :3001"
-else
-    warn "API not responding yet — check: ssh ${VOYAGER_USER}@${VOYAGER_IP} 'docker logs dojolm-web'"
-fi
+    # Check API health
+    API_RESPONSE=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -s -m 5 http://localhost:3001/api/stats 2>/dev/null || echo FAIL")
+    # Note: Caddy proxies dojo.bucc.internal -> localhost:3001 -> container:42001
+    if [[ "${API_RESPONSE}" != "FAIL" ]] && [[ "${API_RESPONSE}" == *"{"* ]]; then
+        pass "API responding on :3001"
+    else
+        warn "API not responding yet — check: ssh ${VOYAGER_USER}@${VOYAGER_IP} 'docker logs dojolm-web'"
+    fi
 
-# Check Caddy proxy
-# Use '; true' so curl exit code never contaminates the output with a second echo
-CADDY_CHECK=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -sk -m 5 -o /dev/null -w '%{http_code}' https://dojo.bucc.internal/ 2>/dev/null; true")
-if [[ "${CADDY_CHECK}" == "200" ]] || [[ "${CADDY_CHECK}" == "302" ]]; then
-    pass "Caddy reverse proxy working (dojo.bucc.internal -> :3001)"
-else
-    warn "Caddy proxy returned ${CADDY_CHECK} — verify Caddyfile includes dojo.bucc.internal"
-fi
+    # Check Caddy proxy
+    # Use '; true' so curl exit code never contaminates the output with a second echo
+    CADDY_CHECK=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -sk -m 5 -o /dev/null -w '%{http_code}' https://dojo.bucc.internal/ 2>/dev/null; true")
+    if [[ "${CADDY_CHECK}" == "200" ]] || [[ "${CADDY_CHECK}" == "302" ]]; then
+        pass "Caddy reverse proxy working (dojo.bucc.internal -> :3001)"
+    else
+        warn "Caddy proxy returned ${CADDY_CHECK} — verify Caddyfile includes dojo.bucc.internal"
+    fi
 
-# Check container logs for errors
-# grep -c exits 1 when no matches; '; true' prevents || echo from doubling the output
-ERRORS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker logs dojolm-web 2>&1 | grep -ci 'error\|fatal\|panic'; true")
-ERRORS="${ERRORS:-0}"
-if [ "${ERRORS}" -eq 0 ]; then
-    pass "No errors in container logs"
-else
-    warn "${ERRORS} error(s) found in container logs — check: docker logs dojolm-web"
+    # Check container logs for errors
+    # grep -c exits 1 when no matches; '; true' prevents || echo from doubling the output
+    ERRORS=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "docker logs dojolm-web 2>&1 | grep -ci 'error\|fatal\|panic'; true")
+    ERRORS="${ERRORS:-0}"
+    if [ "${ERRORS}" -eq 0 ]; then
+        pass "No errors in container logs"
+    else
+        warn "${ERRORS} error(s) found in container logs — check: docker logs dojolm-web"
+    fi
 fi
 
 # ── Summary ───────────────────────────────────────────────────────────────────
@@ -243,6 +310,10 @@ if [ "${FAIL}" -gt 0 ]; then
     echo "  STATUS: INCOMPLETE — address ${FAIL} failure(s) above"
     exit 1
 else
-    echo "  STATUS: DEPLOYED (${BUILD_SHA})"
+    if [ "${DRY_RUN}" -eq 1 ]; then
+        echo "  STATUS: DRY-RUN OK (${BUILD_SHA})"
+    else
+        echo "  STATUS: DEPLOYED (${BUILD_SHA})"
+    fi
     exit 0
 fi

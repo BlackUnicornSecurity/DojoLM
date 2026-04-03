@@ -39,7 +39,7 @@ import { GuardModeSelector } from '@/components/guard/GuardModeSelector'
 let mockConfig = {
   enabled: true,
   mode: 'shinobi' as const,
-  blockThreshold: 'WARNING' as const,
+  blockThreshold: 'WARNING' as 'WARNING' | 'CRITICAL',
   engines: null,
   persist: false,
 }

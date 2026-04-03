@@ -5,6 +5,8 @@
 **Authority:** Subordinate to [QA/QA-MASTER-PLAN.md](QA/QA-MASTER-PLAN.md)
 **Scope:** Addresses the **Revised Top 30 Critical Gaps** from the corrected gap analysis
 
+**Current-state note (2026-04-03):** This remediation plan is a 2026-03-30 baseline. CI/E2E and web threshold status values are updated below to match live repo state.
+
 ---
 
 ## Net Assessment (Corrected)
@@ -20,8 +22,8 @@
 | dojolm-web repositories | **CRITICAL** | 0% (0/8 tested, excl. index) |
 | dojolm-web auth infrastructure | **CRITICAL** | 0% (api-route-access, login-rate-limit untested) |
 | bmad-cybersec validators | **CRITICAL** | 0% (0/58 source files tested) |
-| E2E in CI/CD | **CRITICAL** | 0% (19 specs, never automated) |
-| dojolm-web coverage thresholds | **HIGH** | None configured |
+| E2E in CI/CD | **HIGH** | Partial (`main/master` only; not PR-gated) |
+| dojolm-web coverage thresholds | **MEDIUM** | Configured (`70/60/70/70`) |
 | Fixture category validation | CRITICAL | 25% (9/36) |
 
 **Key insight:** The actual gap profile is narrower but deeper than originally reported. Core bu-tpi is ~95% (not ~60%), but the web app's security infrastructure (providers, repositories, auth whitelist, rate limiting) and the bmad-cybersec package are concentrated, high-severity blind spots.
@@ -232,27 +234,27 @@
 
 ### Phase R4: E2E and CI/CD Infrastructure (3-4 days)
 
-**Rationale:** 19 Playwright specs exist but never run in automation. Coverage thresholds exist for bu-tpi but not dojolm-web. Without CI enforcement, regressions go undetected.
+**Rationale:** 19 Playwright specs run in CI on `main/master`, but PRs are not E2E-gated. `dojolm-web` thresholds exist (`70/60/70/70`) but should be tightened toward parity with bu-tpi and long-term 100% objectives.
 
-#### `CICD-001 | Add E2E to CI pipeline` (Gap #10)
+#### `CICD-001 | Promote E2E from main-only to PR-gated` (Gap #10)
 - **File:** `.github/workflows/ci.yml`
 - Stories:
-  - `CICD-001a` — Add Playwright install + run step to CI workflow
-  - `CICD-001b` — Configure E2E to run on PR and push to main
+  - `CICD-001a` — Keep current Playwright setup and remove branch-only gating for required PR smoke checks
+  - `CICD-001b` — Run minimal PR smoke E2E on pull requests; keep full suite on `main/master` or nightly
   - `CICD-001c` — Upload Playwright HTML report as CI artifact
   - `CICD-001d` — Configure E2E timeout and retry policy for CI environment
-  - `CICD-001e` — Verify all 19 specs pass in CI (headless Chromium)
-- Expected outcome: E2E tests run on every PR
+  - `CICD-001e` — Verify smoke suite gates PR merge and full suite remains green on protected branches
+- Expected outcome: E2E becomes a required PR quality gate
 - Evidence: Green CI run with Playwright results
 
-#### `CICD-002 | Add coverage thresholds to dojolm-web` (Gap #20)
+#### `CICD-002 | Tighten dojolm-web coverage thresholds` (Gap #20)
 - **File:** `packages/dojolm-web/vitest.config.ts`
 - Stories:
-  - `CICD-002a` — Configure coverage thresholds matching bu-tpi (80% lines/functions/statements, 75% branches)
+  - `CICD-002a` — Raise thresholds from `70/60/70/70` toward bu-tpi parity (`80/75/80/80`) with staged targets
   - `CICD-002b` — Add coverage report to CI workflow output
   - `CICD-002c` — Verify current coverage baseline and document starting point
   - `CICD-002d` — If current coverage is below threshold, set incremental targets with dates
-- Expected outcome: Coverage thresholds enforced in CI for dojolm-web
+- Expected outcome: Coverage thresholds are enforced and ratcheted upward release-over-release
 
 #### `CICD-003 | Add SAST tooling to CI` (Gap #30)
 - Stories:
@@ -394,7 +396,7 @@ Each phase must pass before moving to the next priority tier:
 | 7 | 19 Kagami probes untested | FUNC-002 | R5 |
 | 8 | 5 Timechamber attacks untested | FUNC-003 | R5 |
 | 9 | adversarial-skill-engine untested | FUNC-004 | R5 |
-| 10 | E2E not in CI/CD | CICD-001 | R4 |
+| 10 | E2E CI not PR-gated (main/master only) | CICD-001 | R4 |
 | 11 | Zero cross-package integration | FUNC-005 | R5 |
 | 12 | api-route-access.ts untested | SEC-INFRA-001 | R0 |
 | 13 | login-rate-limit.ts untested | SEC-INFRA-003 | R0 |
@@ -404,7 +406,7 @@ Each phase must pass before moving to the next priority tier:
 | 17 | Visual regression not configured | VIS-001 | R6 |
 | 18 | Zero formal UAT | UAT-001 | R6 |
 | 19 | No production UAT sign-off | UAT-001c | R6 |
-| 20 | No dojolm-web coverage thresholds | CICD-002 | R4 |
+| 20 | dojolm-web thresholds are present but below target | CICD-002 | R4 |
 | 21 | Sage content-safety bypass | (extend CYBER-001 scope) | R3 |
 | 22 | Session fixation/expiry | SEC-INFRA-004 | R0 |
 | 23 | RBAC cross-tenant | SEC-INFRA-004 | R0 |
@@ -426,8 +428,8 @@ Each phase must pass before moving to the next priority tier:
 | Provider test coverage | 0% | **100%** | 100% | 100% | 100% |
 | Repository test coverage | 0% | 0% | **100%** | 100% | 100% |
 | bmad-cybersec coverage | 0% | 0% | **80%+** | 80%+ | 80%+ |
-| E2E in CI | 0% | 0% | **100%** | 100% | 100% |
-| Coverage thresholds (web) | None | None | **80%** | 80% | 80% |
+| E2E in CI | Partial (main/master only) | PR smoke + main full | **100%** | 100% | 100% |
+| Coverage thresholds (web) | 70/60/70/70 | 75/65/75/75 | **80/75/80/80** | 80/75/80/80 | 80/75/80/80 |
 | Fixture validation | 25% | 25% | 25% | **100%** | 100% |
 | E2E lifecycle depth | Smoke | Smoke | Smoke | **5+ deep** | 14 deep |
 | A11Y coverage | 0% | 0% | 0% | **WCAG 2.1 AA** | WCAG 2.1 AA |

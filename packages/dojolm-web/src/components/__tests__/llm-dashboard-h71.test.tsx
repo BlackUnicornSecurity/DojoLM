@@ -115,11 +115,11 @@ const CASES = [
 // ---------------------------------------------------------------------------
 
 describe('H7.1 — clickable running tests navigate to results', () => {
-  let navSpy: ReturnType<typeof vi.fn>
+  let navSpy: () => void
 
   beforeEach(() => {
     vi.clearAllMocks()
-    navSpy = vi.fn()
+    navSpy = vi.fn() as unknown as () => void
     esHandlers = {}
 
     mockFetch.mockImplementation((url: string) => {

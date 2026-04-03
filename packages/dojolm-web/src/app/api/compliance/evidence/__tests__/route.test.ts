@@ -17,10 +17,10 @@ import { NextRequest } from 'next/server';
 // Mocks — declared before any dynamic imports
 // ---------------------------------------------------------------------------
 
-const mockCheckApiAuth = vi.fn(() => null);
+const mockCheckApiAuth = vi.fn((..._args: unknown[]) => null as Response | null);
 
 vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args),
+  checkApiAuth: (...args: unknown[]) => (mockCheckApiAuth as (...a: unknown[]) => unknown)(...args),
 }));
 
 const mockMkdir = vi.fn().mockResolvedValue(undefined);

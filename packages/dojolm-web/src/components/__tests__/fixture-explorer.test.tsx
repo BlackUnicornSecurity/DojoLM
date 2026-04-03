@@ -86,6 +86,8 @@ import { MediaViewer } from '../fixtures/MediaViewer';
 function makeManifest() {
   return {
     version: '2.1',
+    generated: '2024-01-01T00:00:00Z',
+    description: 'Test fixture manifest',
     totalFixtures: 5,
     categories: {
       web: {
@@ -93,7 +95,7 @@ function makeManifest() {
         desc: 'Web-based injection attacks',
         files: [
           { file: 'xss-basic.txt', clean: false, attack: 'XSS', severity: 'CRITICAL' as const },
-          { file: 'xss-clean.txt', clean: true, attack: undefined, severity: undefined },
+          { file: 'xss-clean.txt', clean: true, attack: null, severity: null },
         ],
       },
       social: {
@@ -101,7 +103,7 @@ function makeManifest() {
         desc: 'Social engineering attacks',
         files: [
           { file: 'phishing.txt', clean: false, attack: 'Phishing', severity: 'WARNING' as const },
-          { file: 'benign-chat.txt', clean: true, attack: undefined, severity: undefined },
+          { file: 'benign-chat.txt', clean: true, attack: null, severity: null },
           { file: 'impersonation.txt', clean: false, attack: 'Impersonation', severity: 'CRITICAL' as const },
         ],
       },
@@ -223,7 +225,7 @@ describe('CategoryTree', () => {
       desc: 'Web attacks',
       files: [
         { file: 'xss.txt', clean: false, attack: 'XSS', severity: 'CRITICAL' as const },
-        { file: 'clean.txt', clean: true },
+        { file: 'clean.txt', clean: true, attack: null, severity: null },
       ],
     },
     social: {
@@ -278,7 +280,7 @@ describe('FixtureSearch', () => {
       desc: 'Web attacks',
       files: [
         { file: 'xss-basic.txt', clean: false, attack: 'XSS basic', severity: 'CRITICAL' as const },
-        { file: 'clean-web.txt', clean: true },
+        { file: 'clean-web.txt', clean: true, attack: null, severity: null },
       ],
     },
   };

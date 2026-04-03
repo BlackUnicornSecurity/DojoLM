@@ -33,7 +33,7 @@ describe('calculateResilienceScore', () => {
     const score = calculateResilienceScore({
       injectionSuccess: 0,
       harmfulness: 0,
-      scanResult: { verdict: 'BLOCK', findings: [] },
+      scanResult: { verdict: 'BLOCK', findings: 0, severity: null },
       categoriesPassed: ['cat1', 'cat2', 'cat3', 'cat4'],
       categoriesFailed: [],
     });
@@ -45,7 +45,7 @@ describe('calculateResilienceScore', () => {
     const score = calculateResilienceScore({
       injectionSuccess: 1,
       harmfulness: 1,
-      scanResult: { verdict: 'ALLOW', findings: [] },
+      scanResult: { verdict: 'ALLOW', findings: 0, severity: null },
       categoriesPassed: [],
       categoriesFailed: ['cat1'],
     });
@@ -56,7 +56,7 @@ describe('calculateResilienceScore', () => {
     const withScan = calculateResilienceScore({
       injectionSuccess: 0.5,
       harmfulness: 0.5,
-      scanResult: { verdict: 'BLOCK', findings: [] },
+      scanResult: { verdict: 'BLOCK', findings: 0, severity: null },
       categoriesPassed: [],
       categoriesFailed: [],
     });
@@ -75,14 +75,14 @@ describe('calculateResilienceScore', () => {
     const noCategories = calculateResilienceScore({
       injectionSuccess: 0,
       harmfulness: 0,
-      scanResult: { verdict: 'BLOCK', findings: [] },
+      scanResult: { verdict: 'BLOCK', findings: 0, severity: null },
       categoriesPassed: [],
       categoriesFailed: [],
     });
     const manyCategories = calculateResilienceScore({
       injectionSuccess: 0,
       harmfulness: 0,
-      scanResult: { verdict: 'BLOCK', findings: [] },
+      scanResult: { verdict: 'BLOCK', findings: 0, severity: null },
       categoriesPassed: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8'],
       categoriesFailed: [],
     });
@@ -95,7 +95,7 @@ describe('calculateResilienceScore', () => {
     const low = calculateResilienceScore({
       injectionSuccess: 1,
       harmfulness: 1,
-      scanResult: { verdict: 'ALLOW', findings: [] },
+      scanResult: { verdict: 'ALLOW', findings: 0, severity: null },
       categoriesPassed: [],
       categoriesFailed: ['cat1'],
     });
@@ -104,7 +104,7 @@ describe('calculateResilienceScore', () => {
     const high = calculateResilienceScore({
       injectionSuccess: 0,
       harmfulness: 0,
-      scanResult: { verdict: 'BLOCK', findings: [] },
+      scanResult: { verdict: 'BLOCK', findings: 0, severity: null },
       categoriesPassed: ['c1', 'c2', 'c3', 'c4', 'c5'],
       categoriesFailed: [],
     });
@@ -228,8 +228,8 @@ describe('calculateCoverageScore', () => {
 
   it('SCR-021: full coverage returns 100', () => {
     const score = calculateCoverageScore({
-      owasp: { LLM01: { tested: 10, passed: 10, failed: 0, percentage: 100 } },
-      tpi: { TPI1: { tested: 5, passed: 5, failed: 0, percentage: 100 } },
+      owasp: { LLM01: { tested: 10, passed: 10, percentage: 100 } },
+      tpi: { TPI1: { tested: 5, passed: 5, percentage: 100 } },
       custom: {},
     });
     expect(score).toBe(100);
@@ -238,8 +238,8 @@ describe('calculateCoverageScore', () => {
   it('SCR-022: partial coverage calculated correctly', () => {
     const score = calculateCoverageScore({
       owasp: {
-        LLM01: { tested: 10, passed: 5, failed: 5, percentage: 50 },
-        LLM02: { tested: 10, passed: 10, failed: 0, percentage: 100 },
+        LLM01: { tested: 10, passed: 5, percentage: 50 },
+        LLM02: { tested: 10, passed: 10, percentage: 100 },
       },
       tpi: {},
       custom: {},
@@ -250,8 +250,8 @@ describe('calculateCoverageScore', () => {
   it('SCR-023: untested categories (tested=0) are excluded', () => {
     const score = calculateCoverageScore({
       owasp: {
-        LLM01: { tested: 0, passed: 0, failed: 0, percentage: 0 },
-        LLM02: { tested: 10, passed: 10, failed: 0, percentage: 100 },
+        LLM01: { tested: 0, passed: 0, percentage: 0 },
+        LLM02: { tested: 10, passed: 10, percentage: 100 },
       },
       tpi: {},
       custom: {},

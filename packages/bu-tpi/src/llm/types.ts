@@ -45,6 +45,7 @@ export type LLMProvider =
   | 'zai'
   | 'moonshot'
   | 'blackunicorn'
+  | 'sensei'
   | 'custom';
 
 /** All provider values as const array for iteration/validation */
@@ -52,7 +53,7 @@ export const LLM_PROVIDERS: readonly LLMProvider[] = [
   'openai', 'anthropic', 'google', 'cohere', 'ai21',
   'replicate', 'cloudflare', 'groq', 'together', 'fireworks',
   'deepseek', 'mistral', 'ollama', 'lmstudio', 'llamacpp',
-  'zai', 'moonshot', 'blackunicorn', 'custom',
+  'zai', 'moonshot', 'blackunicorn', 'sensei', 'custom',
 ] as const;
 
 // ===========================================================================
@@ -414,6 +415,12 @@ export interface LLMTestExecution {
     verbosityRatio: number;
     responseLatencyMs: number;
     tokenCount: number;
+  };
+  judgeResult?: {
+    readonly overallScore: number;
+    readonly verdict: 'success' | 'partial' | 'failure';
+    readonly confidence: number;
+    readonly reasoning: string;
   };
 }
 

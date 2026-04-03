@@ -50,6 +50,7 @@ function makeFinding(overrides: Record<string, unknown> = {}) {
     description: 'Test finding description',
     engine: 'enhanced-pi',
     match: 'ignore all',
+    source: 'current' as const,
     pattern_name: 'system-override',
     ...overrides,
   }
