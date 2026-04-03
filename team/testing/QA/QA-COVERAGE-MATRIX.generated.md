@@ -1,6 +1,6 @@
 # QA Coverage Matrix (Generated)
 
-Generated on 2026-04-03T19:46:17.322Z.
+Generated on 2026-04-03T20:00:12.474Z.
 
 This file is a repo-driven coverage inventory and drift audit.
 It complements `QA-MASTER-PLAN.md` by enumerating live source surfaces, direct test references, heuristic interactive markers, and missing checks.
@@ -12,8 +12,8 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Metric | Value |
 | --- | --- |
 | Source surfaces tracked | 946 |
-| Test files scanned | 841 |
-| High-risk uncovered surfaces | 7 |
+| Test files scanned | 844 |
+| High-risk uncovered surfaces | 0 |
 | Framework citation drift items | 3 |
 | Packages tracked | dojolm-web, bu-tpi, dojolm-mcp, dojolm-scanner, bmad-cybersec/validators, bmad-cybersec/framework |
 
@@ -32,13 +32,13 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Package | Category | Surfaces | Direct | Indirect | None | High-Risk Uncovered |
 | --- | --- | --- | --- | --- | --- | --- |
 | dojolm-web | route | 102 | 102 | 0 | 0 | 0 |
-| dojolm-web | page | 5 | 4 | 0 | 1 | 1 |
+| dojolm-web | page | 5 | 5 | 0 | 0 | 0 |
 | dojolm-web | app-shell | 1 | 1 | 0 | 0 | 0 |
 | dojolm-web | widget | 32 | 32 | 0 | 0 | 0 |
-| dojolm-web | component | 229 | 181 | 0 | 48 | 1 |
+| dojolm-web | component | 229 | 182 | 0 | 47 | 0 |
 | dojolm-web | hook | 5 | 4 | 0 | 1 | 0 |
-| dojolm-web | lib | 117 | 99 | 0 | 18 | 3 |
-| dojolm-web | other | 3 | 1 | 0 | 2 | 0 |
+| dojolm-web | lib | 117 | 108 | 0 | 9 | 0 |
+| dojolm-web | other | 3 | 2 | 0 | 1 | 0 |
 | bu-tpi | agentic | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | arena | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | attackdna | 8 | 8 | 0 | 0 | 0 |
@@ -46,16 +46,16 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | bu-tpi | benchmark | 10 | 10 | 0 | 0 | 0 |
 | bu-tpi | branding-helpers.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | ci | 4 | 4 | 0 | 0 | 0 |
-| bu-tpi | cli | 2 | 1 | 0 | 1 | 0 |
+| bu-tpi | cli | 2 | 2 | 0 | 0 | 0 |
 | bu-tpi | compliance | 10 | 10 | 0 | 0 | 0 |
-| bu-tpi | defense | 4 | 3 | 0 | 1 | 0 |
+| bu-tpi | defense | 4 | 4 | 0 | 0 | 0 |
 | bu-tpi | detection | 3 | 3 | 0 | 0 | 0 |
 | bu-tpi | edgefuzz | 2 | 2 | 0 | 0 | 0 |
 | bu-tpi | fingerprint | 26 | 26 | 0 | 0 | 0 |
 | bu-tpi | fuzzing | 7 | 7 | 0 | 0 | 0 |
-| bu-tpi | generate-fixtures.ts | 1 | 0 | 0 | 1 | 1 |
+| bu-tpi | generate-fixtures.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | kotoba | 10 | 10 | 0 | 0 | 0 |
-| bu-tpi | llm | 19 | 18 | 0 | 1 | 0 |
+| bu-tpi | llm | 19 | 19 | 0 | 0 | 0 |
 | bu-tpi | metadata-parsers.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | modules | 40 | 40 | 0 | 0 | 0 |
 | bu-tpi | plugins | 4 | 4 | 0 | 0 | 0 |
@@ -65,9 +65,9 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | bu-tpi | scanner.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | sengoku | 6 | 6 | 0 | 0 | 0 |
 | bu-tpi | sensei | 13 | 13 | 0 | 0 | 0 |
-| bu-tpi | serve.ts | 1 | 0 | 0 | 1 | 1 |
+| bu-tpi | serve.ts | 1 | 1 | 0 | 0 | 0 |
 | bu-tpi | shingan | 1 | 1 | 0 | 0 | 0 |
-| bu-tpi | supplychain | 4 | 3 | 0 | 1 | 0 |
+| bu-tpi | supplychain | 4 | 4 | 0 | 0 | 0 |
 | bu-tpi | test | 3 | 3 | 0 | 0 | 0 |
 | bu-tpi | threatfeed | 8 | 8 | 0 | 0 | 0 |
 | bu-tpi | timechamber | 17 | 17 | 0 | 0 | 0 |
@@ -114,15 +114,7 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 ## Priority Gap Register
 
-| Package | Surface | Category | Signals | Missing Checks | File |
-| --- | --- | --- | --- | --- | --- |
-| dojolm-web | NODADashboard.tsx | component | navigation, interactive:4 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| bu-tpi | generate-fixtures.ts | generate-fixtures.ts | storage, validation, persistence, network, admin +4 | direct unit or integration coverage | `packages/bu-tpi/src/generate-fixtures.ts` |
-| dojolm-web | boundary:error | page | interactive:2 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
-| dojolm-web | execution.repository.ts | lib | storage, validation, navigation, db, nav:1 | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/execution.repository.ts` |
-| bu-tpi | serve.ts | serve.ts | storage, validation, network, navigation, api:6 +1 | direct unit or integration coverage | `packages/bu-tpi/src/serve.ts` |
-| dojolm-web | index.ts | lib | auth, validation, persistence | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/index.ts` |
-| dojolm-web | base.repository.ts | lib | storage, validation, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/base.repository.ts` |
+No high-risk uncovered surfaces detected.
 
 ## Framework Citation Drift
 
@@ -136,124 +128,124 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 ## dojolm-web
 
-Source surfaces: **494**. Test files scanned: **462**.
+Source surfaces: **494**. Test files scanned: **465**.
 
 <details>
 <summary>route (102 surfaces; direct 102, indirect 0, none 0)</summary>
 
 | Route | Methods | Area | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- |
-| /api/admin/health | GET | admin | direct:1 | auth, storage, admin | -- | `packages/dojolm-web/src/app/api/admin/health/route.ts` |
-| /api/admin/settings | -- | admin | direct:1 | auth, storage, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/settings/route.ts` |
-| /api/admin/validation/calibrate | -- | admin | direct:2 | auth, storage, network, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/calibrate/route.ts` |
-| /api/admin/validation/export/[runId] | -- | admin | direct:2 | auth, storage, validation, network +2 | -- | `packages/dojolm-web/src/app/api/admin/validation/export/[runId]/route.ts` |
-| /api/admin/validation/modules | -- | admin | direct:2 | auth, storage, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/modules/route.ts` |
-| /api/admin/validation/report/[runId] | -- | admin | direct:2 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/report/[runId]/route.ts` |
-| /api/admin/validation/run | -- | admin | direct:2 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/run/route.ts` |
-| /api/admin/validation/runs | -- | admin | direct:2 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/runs/route.ts` |
-| /api/admin/validation/status/[runId] | -- | admin | direct:2 | auth, storage, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/status/[runId]/route.ts` |
-| /api/admin/validation/verify | -- | admin | direct:2 | auth, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/verify/route.ts` |
-| /api/agentic | OPTIONS | agentic | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/agentic/route.ts` |
-| /api/arena/[id] | -- | arena | direct:2 | -- | -- | `packages/dojolm-web/src/app/api/arena/[id]/route.ts` |
-| /api/arena/[id]/stream | GET | arena | direct:2 | auth, sse, validation | -- | `packages/dojolm-web/src/app/api/arena/[id]/stream/route.ts` |
-| /api/arena/export | -- | arena | direct:1 | validation | -- | `packages/dojolm-web/src/app/api/arena/export/route.ts` |
-| /api/arena | -- | arena | direct:1 | validation, network | -- | `packages/dojolm-web/src/app/api/arena/route.ts` |
-| /api/arena/warriors | -- | arena | direct:1 | validation | -- | `packages/dojolm-web/src/app/api/arena/warriors/route.ts` |
-| /api/attackdna/analyze | -- | attackdna | direct:1 | validation | -- | `packages/dojolm-web/src/app/api/attackdna/analyze/route.ts` |
-| /api/attackdna/ingest | -- | attackdna | direct:1 | storage, persistence, network | -- | `packages/dojolm-web/src/app/api/attackdna/ingest/route.ts` |
-| /api/attackdna/query | -- | attackdna | direct:1 | network | -- | `packages/dojolm-web/src/app/api/attackdna/query/route.ts` |
-| /api/attackdna/sync | -- | attackdna | direct:1 | validation, network | -- | `packages/dojolm-web/src/app/api/attackdna/sync/route.ts` |
-| /api/audit/log | GET, OPTIONS | audit | direct:1 | auth, storage | -- | `packages/dojolm-web/src/app/api/audit/log/route.ts` |
-| /api/auth/login | POST | auth | direct:1 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/auth/login/route.ts` |
-| /api/auth/logout | POST | auth | direct:1 | auth, persistence | -- | `packages/dojolm-web/src/app/api/auth/logout/route.ts` |
-| /api/auth/me | GET | auth | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/auth/me/route.ts` |
-| /api/auth/users/[id] | -- | auth | direct:1 | auth, admin | -- | `packages/dojolm-web/src/app/api/auth/users/[id]/route.ts` |
-| /api/auth/users | -- | auth | direct:1 | auth, admin | -- | `packages/dojolm-web/src/app/api/auth/users/route.ts` |
-| /api/compliance/evidence | GET, POST | compliance | direct:1 | auth, storage, validation | -- | `packages/dojolm-web/src/app/api/compliance/evidence/route.ts` |
-| /api/compliance/export | GET, OPTIONS | compliance | direct:1 | auth, persistence, network, navigation | -- | `packages/dojolm-web/src/app/api/compliance/export/route.ts` |
-| /api/compliance/frameworks | GET, OPTIONS | compliance | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/compliance/frameworks/route.ts` |
-| /api/compliance | GET, OPTIONS | compliance | direct:1 | auth, persistence, network | -- | `packages/dojolm-web/src/app/api/compliance/route.ts` |
-| /api/ecosystem/findings | GET, POST | ecosystem | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/ecosystem/findings/route.ts` |
-| /api/fixtures | GET, OPTIONS | fixtures | direct:1 | auth, storage, network | -- | `packages/dojolm-web/src/app/api/fixtures/route.ts` |
-| /api/health | GET | health | direct:1 | -- | -- | `packages/dojolm-web/src/app/api/health/route.ts` |
-| /api/llm/batch-test/[id] | GET, OPTIONS | llm | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/app/api/llm/batch-test/[id]/route.ts` |
-| /api/llm/batch-test | GET, POST | llm | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/batch-test/route.ts` |
-| /api/llm/batch/[id]/executions | -- | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/executions/route.ts` |
-| /api/llm/batch/[id]/reports | GET | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/reports/route.ts` |
-| /api/llm/batch/[id] | -- | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/route.ts` |
-| /api/llm/batch/[id]/stream | -- | llm | direct:1 | auth, sse, validation | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/stream/route.ts` |
-| /api/llm/batch | -- | llm | direct:1 | auth, storage, validation, persistence +1 | -- | `packages/dojolm-web/src/app/api/llm/batch/route.ts` |
-| /api/llm/chat | -- | llm | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/llm/chat/route.ts` |
-| /api/llm/coverage | GET | llm | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/coverage/route.ts` |
-| /api/llm/execute | -- | llm | direct:1 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/execute/route.ts` |
-| /api/llm/export/[modelId] | GET, OPTIONS | llm | direct:1 | auth, validation, network, navigation | -- | `packages/dojolm-web/src/app/api/llm/export/[modelId]/route.ts` |
-| /api/llm/export | GET, OPTIONS | llm | direct:1 | auth, validation, network, llm +1 | -- | `packages/dojolm-web/src/app/api/llm/export/route.ts` |
-| /api/llm/fingerprint/results | GET | llm | direct:2 | auth, storage, network | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/results/route.ts` |
-| /api/llm/fingerprint | POST | llm | direct:1 | auth, storage, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/route.ts` |
-| /api/llm/fingerprint/signatures | GET | llm | direct:2 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/signatures/route.ts` |
-| /api/llm/fingerprint/stream/[id] | GET | llm | direct:1 | auth, sse | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/stream/[id]/route.ts` |
-| /api/llm/guard/audit | GET | llm | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/guard/audit/route.ts` |
-| /api/llm/guard | GET, POST, PUT, OPTIONS | llm | direct:1 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/guard/route.ts` |
-| /api/llm/guard/stats | GET | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/guard/stats/route.ts` |
-| /api/llm/leaderboard | GET, OPTIONS | llm | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/leaderboard/route.ts` |
-| /api/llm/local-models | GET | llm | direct:1 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/local-models/route.ts` |
-| /api/llm/models/[id] | GET, PATCH, DELETE, OPTIONS | llm | direct:2 | auth, validation | -- | `packages/dojolm-web/src/app/api/llm/models/[id]/route.ts` |
-| /api/llm/models/[id]/test | POST | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/models/[id]/test/route.ts` |
-| /api/llm/models | GET, POST, PATCH, DELETE, OPTIONS | llm | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/models/route.ts` |
-| /api/llm/presets | GET | llm | direct:1 | llm | -- | `packages/dojolm-web/src/app/api/llm/presets/route.ts` |
-| /api/llm/providers/[id]/discover | GET | llm | direct:1 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/discover/route.ts` |
-| /api/llm/providers/[id] | GET, DELETE, OPTIONS | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/route.ts` |
-| /api/llm/providers/[id]/status | GET | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/status/route.ts` |
-| /api/llm/providers | GET, POST, OPTIONS | llm | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/llm/providers/route.ts` |
-| /api/llm/reports | GET | llm | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/reports/route.ts` |
-| /api/llm/results | GET, DELETE | llm | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/results/route.ts` |
-| /api/llm/seed | POST | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/seed/route.ts` |
-| /api/llm/summary | GET | llm | direct:1 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/summary/route.ts` |
-| /api/llm/test-cases | GET, POST, DELETE | llm | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/test-cases/route.ts` |
-| /api/llm/test-fixture | POST | llm | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/llm/test-fixture/route.ts` |
-| /api/mcp/status | GET, POST | mcp | direct:1 | auth, persistence, network | -- | `packages/dojolm-web/src/app/api/mcp/status/route.ts` |
-| /api/orchestrator/run | OPTIONS | orchestrator | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/orchestrator/run/route.ts` |
-| /api/orchestrator/status | OPTIONS | orchestrator | direct:1 | auth, validation, persistence, network | -- | `packages/dojolm-web/src/app/api/orchestrator/status/route.ts` |
-| /api/read-fixture/media | GET, OPTIONS | read-fixture | direct:1 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/read-fixture/media/route.ts` |
-| /api/read-fixture | GET, OPTIONS | read-fixture | direct:1 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/read-fixture/route.ts` |
-| /api/reports/consolidated | GET, OPTIONS | reports | direct:1 | auth, storage, network, navigation | -- | `packages/dojolm-web/src/app/api/reports/consolidated/route.ts` |
-| /api/ronin/cves | GET | ronin | direct:1 | auth, network | -- | `packages/dojolm-web/src/app/api/ronin/cves/route.ts` |
-| /api/ronin/programs | GET | ronin | direct:1 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/ronin/programs/route.ts` |
-| /api/ronin/submissions | GET, POST, PATCH | ronin | direct:1 | auth, validation, persistence, network +1 | -- | `packages/dojolm-web/src/app/api/ronin/submissions/route.ts` |
-| /api/scan-fixture | GET, POST, OPTIONS | scan-fixture | direct:1 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/scan-fixture/route.ts` |
-| /api/scan | OPTIONS | scan | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/scan/route.ts` |
-| /api/sengoku/campaigns/[id] | GET, PATCH, DELETE | sengoku | direct:2 | auth, storage, validation | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/route.ts` |
-| /api/sengoku/campaigns/[id]/run | POST | sengoku | direct:1 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/run/route.ts` |
-| /api/sengoku/campaigns/[id]/runs/[runId] | GET, PATCH | sengoku | direct:1 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/runs/[runId]/route.ts` |
-| /api/sengoku/campaigns/[id]/runs | GET | sengoku | direct:1 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/runs/route.ts` |
-| /api/sengoku/campaigns | GET, POST, OPTIONS | sengoku | direct:1 | auth, storage, validation, network | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/route.ts` |
-| /api/sengoku/runs/[runId] | -- | sengoku | direct:1 | storage | -- | `packages/dojolm-web/src/app/api/sengoku/runs/[runId]/route.ts` |
-| /api/sensei/chat | GET, POST, PUT, PATCH, DELETE, OPTIONS | sensei | direct:2 | auth, sse, validation, persistence +1 | -- | `packages/dojolm-web/src/app/api/sensei/chat/route.ts` |
-| /api/sensei/generate | OPTIONS | sensei | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/generate/route.ts` |
-| /api/sensei/judge | OPTIONS | sensei | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/judge/route.ts` |
-| /api/sensei/mutate | OPTIONS | sensei | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/mutate/route.ts` |
-| /api/sensei/plan | OPTIONS | sensei | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/plan/route.ts` |
-| /api/shingan/batch | POST | shingan | direct:2 | auth, validation | -- | `packages/dojolm-web/src/app/api/shingan/batch/route.ts` |
-| /api/shingan/formats | GET | shingan | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/shingan/formats/route.ts` |
-| /api/shingan/scan | POST | shingan | direct:2 | auth | -- | `packages/dojolm-web/src/app/api/shingan/scan/route.ts` |
-| /api/shingan/url | POST | shingan | direct:2 | auth, network | -- | `packages/dojolm-web/src/app/api/shingan/url/route.ts` |
-| /api/stats | GET | stats | direct:1 | auth | -- | `packages/dojolm-web/src/app/api/stats/route.ts` |
-| /api/tests | GET, POST, OPTIONS | tests | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/tests/route.ts` |
-| /api/v1/arena | OPTIONS | v1 | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/arena/route.ts` |
-| /api/v1/benchmark | OPTIONS | v1 | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/benchmark/route.ts` |
-| /api/v1/scan | OPTIONS | v1 | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/scan/route.ts` |
-| /api/v1/sengoku | OPTIONS | v1 | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/sengoku/route.ts` |
-| /api/v1/sensei | OPTIONS | v1 | direct:1 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/v1/sensei/route.ts` |
-| /api/v1/timechamber | OPTIONS | v1 | direct:1 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/timechamber/route.ts` |
+| /api/admin/health | GET | admin | direct:103 | auth, storage, admin | -- | `packages/dojolm-web/src/app/api/admin/health/route.ts` |
+| /api/admin/settings | -- | admin | direct:103 | auth, storage, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/settings/route.ts` |
+| /api/admin/validation/calibrate | -- | admin | direct:104 | auth, storage, network, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/calibrate/route.ts` |
+| /api/admin/validation/export/[runId] | -- | admin | direct:104 | auth, storage, validation, network +2 | -- | `packages/dojolm-web/src/app/api/admin/validation/export/[runId]/route.ts` |
+| /api/admin/validation/modules | -- | admin | direct:104 | auth, storage, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/modules/route.ts` |
+| /api/admin/validation/report/[runId] | -- | admin | direct:104 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/report/[runId]/route.ts` |
+| /api/admin/validation/run | -- | admin | direct:104 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/run/route.ts` |
+| /api/admin/validation/runs | -- | admin | direct:104 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/runs/route.ts` |
+| /api/admin/validation/status/[runId] | -- | admin | direct:104 | auth, storage, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/status/[runId]/route.ts` |
+| /api/admin/validation/verify | -- | admin | direct:104 | auth, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/verify/route.ts` |
+| /api/agentic | OPTIONS | agentic | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/agentic/route.ts` |
+| /api/arena/[id] | -- | arena | direct:103 | -- | -- | `packages/dojolm-web/src/app/api/arena/[id]/route.ts` |
+| /api/arena/[id]/stream | GET | arena | direct:103 | auth, sse, validation | -- | `packages/dojolm-web/src/app/api/arena/[id]/stream/route.ts` |
+| /api/arena/export | -- | arena | direct:103 | validation | -- | `packages/dojolm-web/src/app/api/arena/export/route.ts` |
+| /api/arena | -- | arena | direct:103 | validation, network | -- | `packages/dojolm-web/src/app/api/arena/route.ts` |
+| /api/arena/warriors | -- | arena | direct:103 | validation | -- | `packages/dojolm-web/src/app/api/arena/warriors/route.ts` |
+| /api/attackdna/analyze | -- | attackdna | direct:103 | validation | -- | `packages/dojolm-web/src/app/api/attackdna/analyze/route.ts` |
+| /api/attackdna/ingest | -- | attackdna | direct:103 | storage, persistence, network | -- | `packages/dojolm-web/src/app/api/attackdna/ingest/route.ts` |
+| /api/attackdna/query | -- | attackdna | direct:103 | network | -- | `packages/dojolm-web/src/app/api/attackdna/query/route.ts` |
+| /api/attackdna/sync | -- | attackdna | direct:103 | validation, network | -- | `packages/dojolm-web/src/app/api/attackdna/sync/route.ts` |
+| /api/audit/log | GET, OPTIONS | audit | direct:103 | auth, storage | -- | `packages/dojolm-web/src/app/api/audit/log/route.ts` |
+| /api/auth/login | POST | auth | direct:103 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/auth/login/route.ts` |
+| /api/auth/logout | POST | auth | direct:103 | auth, persistence | -- | `packages/dojolm-web/src/app/api/auth/logout/route.ts` |
+| /api/auth/me | GET | auth | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/auth/me/route.ts` |
+| /api/auth/users/[id] | -- | auth | direct:103 | auth, admin | -- | `packages/dojolm-web/src/app/api/auth/users/[id]/route.ts` |
+| /api/auth/users | -- | auth | direct:103 | auth, admin | -- | `packages/dojolm-web/src/app/api/auth/users/route.ts` |
+| /api/compliance/evidence | GET, POST | compliance | direct:103 | auth, storage, validation | -- | `packages/dojolm-web/src/app/api/compliance/evidence/route.ts` |
+| /api/compliance/export | GET, OPTIONS | compliance | direct:103 | auth, persistence, network, navigation | -- | `packages/dojolm-web/src/app/api/compliance/export/route.ts` |
+| /api/compliance/frameworks | GET, OPTIONS | compliance | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/compliance/frameworks/route.ts` |
+| /api/compliance | GET, OPTIONS | compliance | direct:103 | auth, persistence, network | -- | `packages/dojolm-web/src/app/api/compliance/route.ts` |
+| /api/ecosystem/findings | GET, POST | ecosystem | direct:103 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/ecosystem/findings/route.ts` |
+| /api/fixtures | GET, OPTIONS | fixtures | direct:103 | auth, storage, network | -- | `packages/dojolm-web/src/app/api/fixtures/route.ts` |
+| /api/health | GET | health | direct:103 | -- | -- | `packages/dojolm-web/src/app/api/health/route.ts` |
+| /api/llm/batch-test/[id] | GET, OPTIONS | llm | direct:103 | auth, network, navigation | -- | `packages/dojolm-web/src/app/api/llm/batch-test/[id]/route.ts` |
+| /api/llm/batch-test | GET, POST | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/batch-test/route.ts` |
+| /api/llm/batch/[id]/executions | -- | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/executions/route.ts` |
+| /api/llm/batch/[id]/reports | GET | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/reports/route.ts` |
+| /api/llm/batch/[id] | -- | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/route.ts` |
+| /api/llm/batch/[id]/stream | -- | llm | direct:103 | auth, sse, validation | -- | `packages/dojolm-web/src/app/api/llm/batch/[id]/stream/route.ts` |
+| /api/llm/batch | -- | llm | direct:103 | auth, storage, validation, persistence +1 | -- | `packages/dojolm-web/src/app/api/llm/batch/route.ts` |
+| /api/llm/chat | -- | llm | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/llm/chat/route.ts` |
+| /api/llm/coverage | GET | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/coverage/route.ts` |
+| /api/llm/execute | -- | llm | direct:103 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/execute/route.ts` |
+| /api/llm/export/[modelId] | GET, OPTIONS | llm | direct:103 | auth, validation, network, navigation | -- | `packages/dojolm-web/src/app/api/llm/export/[modelId]/route.ts` |
+| /api/llm/export | GET, OPTIONS | llm | direct:103 | auth, validation, network, llm +1 | -- | `packages/dojolm-web/src/app/api/llm/export/route.ts` |
+| /api/llm/fingerprint/results | GET | llm | direct:103 | auth, storage, network | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/results/route.ts` |
+| /api/llm/fingerprint | POST | llm | direct:103 | auth, storage, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/route.ts` |
+| /api/llm/fingerprint/signatures | GET | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/signatures/route.ts` |
+| /api/llm/fingerprint/stream/[id] | GET | llm | direct:103 | auth, sse | -- | `packages/dojolm-web/src/app/api/llm/fingerprint/stream/[id]/route.ts` |
+| /api/llm/guard/audit | GET | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/guard/audit/route.ts` |
+| /api/llm/guard | GET, POST, PUT, OPTIONS | llm | direct:103 | auth, validation, persistence | -- | `packages/dojolm-web/src/app/api/llm/guard/route.ts` |
+| /api/llm/guard/stats | GET | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/guard/stats/route.ts` |
+| /api/llm/leaderboard | GET, OPTIONS | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/leaderboard/route.ts` |
+| /api/llm/local-models | GET | llm | direct:103 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/local-models/route.ts` |
+| /api/llm/models/[id] | GET, PATCH, DELETE, OPTIONS | llm | direct:104 | auth, validation | -- | `packages/dojolm-web/src/app/api/llm/models/[id]/route.ts` |
+| /api/llm/models/[id]/test | POST | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/models/[id]/test/route.ts` |
+| /api/llm/models | GET, POST, PATCH, DELETE, OPTIONS | llm | direct:103 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/models/route.ts` |
+| /api/llm/presets | GET | llm | direct:103 | llm | -- | `packages/dojolm-web/src/app/api/llm/presets/route.ts` |
+| /api/llm/providers/[id]/discover | GET | llm | direct:103 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/discover/route.ts` |
+| /api/llm/providers/[id] | GET, DELETE, OPTIONS | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/route.ts` |
+| /api/llm/providers/[id]/status | GET | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/providers/[id]/status/route.ts` |
+| /api/llm/providers | GET, POST, OPTIONS | llm | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/llm/providers/route.ts` |
+| /api/llm/reports | GET | llm | direct:103 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/reports/route.ts` |
+| /api/llm/results | GET, DELETE | llm | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/llm/results/route.ts` |
+| /api/llm/seed | POST | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/seed/route.ts` |
+| /api/llm/summary | GET | llm | direct:103 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/summary/route.ts` |
+| /api/llm/test-cases | GET, POST, DELETE | llm | direct:103 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/test-cases/route.ts` |
+| /api/llm/test-fixture | POST | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/test-fixture/route.ts` |
+| /api/mcp/status | GET, POST | mcp | direct:103 | auth, persistence, network | -- | `packages/dojolm-web/src/app/api/mcp/status/route.ts` |
+| /api/orchestrator/run | OPTIONS | orchestrator | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/orchestrator/run/route.ts` |
+| /api/orchestrator/status | OPTIONS | orchestrator | direct:103 | auth, validation, persistence, network | -- | `packages/dojolm-web/src/app/api/orchestrator/status/route.ts` |
+| /api/read-fixture/media | GET, OPTIONS | read-fixture | direct:103 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/read-fixture/media/route.ts` |
+| /api/read-fixture | GET, OPTIONS | read-fixture | direct:103 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/read-fixture/route.ts` |
+| /api/reports/consolidated | GET, OPTIONS | reports | direct:103 | auth, storage, network, navigation | -- | `packages/dojolm-web/src/app/api/reports/consolidated/route.ts` |
+| /api/ronin/cves | GET | ronin | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/ronin/cves/route.ts` |
+| /api/ronin/programs | GET | ronin | direct:103 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/ronin/programs/route.ts` |
+| /api/ronin/submissions | GET, POST, PATCH | ronin | direct:103 | auth, validation, persistence, network +1 | -- | `packages/dojolm-web/src/app/api/ronin/submissions/route.ts` |
+| /api/scan-fixture | GET, POST, OPTIONS | scan-fixture | direct:103 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/scan-fixture/route.ts` |
+| /api/scan | OPTIONS | scan | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/scan/route.ts` |
+| /api/sengoku/campaigns/[id] | GET, PATCH, DELETE | sengoku | direct:103 | auth, storage, validation | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/route.ts` |
+| /api/sengoku/campaigns/[id]/run | POST | sengoku | direct:103 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/run/route.ts` |
+| /api/sengoku/campaigns/[id]/runs/[runId] | GET, PATCH | sengoku | direct:103 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/runs/[runId]/route.ts` |
+| /api/sengoku/campaigns/[id]/runs | GET | sengoku | direct:103 | auth, storage | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/[id]/runs/route.ts` |
+| /api/sengoku/campaigns | GET, POST, OPTIONS | sengoku | direct:103 | auth, storage, validation, network | -- | `packages/dojolm-web/src/app/api/sengoku/campaigns/route.ts` |
+| /api/sengoku/runs/[runId] | -- | sengoku | direct:103 | storage | -- | `packages/dojolm-web/src/app/api/sengoku/runs/[runId]/route.ts` |
+| /api/sensei/chat | GET, POST, PUT, PATCH, DELETE, OPTIONS | sensei | direct:104 | auth, sse, validation, persistence +1 | -- | `packages/dojolm-web/src/app/api/sensei/chat/route.ts` |
+| /api/sensei/generate | OPTIONS | sensei | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/generate/route.ts` |
+| /api/sensei/judge | OPTIONS | sensei | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/judge/route.ts` |
+| /api/sensei/mutate | OPTIONS | sensei | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/mutate/route.ts` |
+| /api/sensei/plan | OPTIONS | sensei | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/sensei/plan/route.ts` |
+| /api/shingan/batch | POST | shingan | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/shingan/batch/route.ts` |
+| /api/shingan/formats | GET | shingan | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/shingan/formats/route.ts` |
+| /api/shingan/scan | POST | shingan | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/shingan/scan/route.ts` |
+| /api/shingan/url | POST | shingan | direct:103 | auth, network | -- | `packages/dojolm-web/src/app/api/shingan/url/route.ts` |
+| /api/stats | GET | stats | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/stats/route.ts` |
+| /api/tests | GET, POST, OPTIONS | tests | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/tests/route.ts` |
+| /api/v1/arena | OPTIONS | v1 | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/arena/route.ts` |
+| /api/v1/benchmark | OPTIONS | v1 | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/benchmark/route.ts` |
+| /api/v1/scan | OPTIONS | v1 | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/scan/route.ts` |
+| /api/v1/sengoku | OPTIONS | v1 | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/sengoku/route.ts` |
+| /api/v1/sensei | OPTIONS | v1 | direct:103 | auth, validation, llm | -- | `packages/dojolm-web/src/app/api/v1/sensei/route.ts` |
+| /api/v1/timechamber | OPTIONS | v1 | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/v1/timechamber/route.ts` |
 
 </details>
 
 <details>
-<summary>page (5 surfaces; direct 4, indirect 0, none 1)</summary>
+<summary>page (5 surfaces; direct 5, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| boundary:error | root | Error | 2 | api:0 nav:0 xmod:0 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
+| boundary:error | root | Error | 2 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/app/error.tsx` |
 | /login | login | LoginPage | 4 | api:0 nav:0 xmod:5 | direct:1 | auth | -- | `packages/dojolm-web/src/app/login/page.tsx` |
 | boundary:404 | root | NotFound | 2 | api:0 nav:0 xmod:0 | direct:1 | navigation | -- | `packages/dojolm-web/src/app/not-found.tsx` |
 | / | root | Home | 10 | api:0 nav:0 xmod:32 | direct:1 | storage, navigation | -- | `packages/dojolm-web/src/app/page.tsx` |
@@ -311,7 +303,7 @@ Source surfaces: **494**. Test files scanned: **462**.
 </details>
 
 <details>
-<summary>component (229 surfaces; direct 181, indirect 0, none 48)</summary>
+<summary>component (229 surfaces; direct 182, indirect 0, none 47)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -372,7 +364,7 @@ Source surfaces: **494**. Test files scanned: **462**.
 | DashboardConfigContext.tsx | dashboard | migrateSize, DashboardConfigProvider, useDashboardConfig, WidgetSize +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, persistence | -- | `packages/dojolm-web/src/components/dashboard/DashboardConfigContext.tsx` |
 | DashboardCustomizer.tsx | dashboard | DashboardCustomizer | 13 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
 | index.ts | dashboard | NODADashboard, DashboardConfigProvider, useDashboardConfig, WIDGET_CATALOG +29 | 0 | api:0 nav:0 xmod:27 | direct:1 | -- | -- | `packages/dojolm-web/src/components/dashboard/index.ts` |
-| NODADashboard.tsx | dashboard | NODADashboard | 4 | api:0 nav:0 xmod:37 | none | navigation | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
+| NODADashboard.tsx | dashboard | NODADashboard | 4 | api:0 nav:0 xmod:37 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
 | SenseiPanel.tsx | dashboard | SenseiPanel | 5 | api:0 nav:0 xmod:5 | direct:1 | llm | -- | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
 | WidgetCard.tsx | dashboard | WidgetMetaProvider, WidgetCard | 2 | api:0 nav:0 xmod:5 | direct:2 | navigation | -- | `packages/dojolm-web/src/components/dashboard/WidgetCard.tsx` |
 | WidgetEmptyState.tsx | dashboard | WidgetEmptyState, WidgetEmptyStateProps | 1 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/dashboard/WidgetEmptyState.tsx` |
@@ -561,7 +553,7 @@ Source surfaces: **494**. Test files scanned: **462**.
 </details>
 
 <details>
-<summary>lib (117 surfaces; direct 99, indirect 0, none 18)</summary>
+<summary>lib (117 surfaces; direct 108, indirect 0, none 9)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -589,7 +581,7 @@ Source surfaces: **494**. Test files scanned: **462**.
 | audit-logger.ts | audit-logger.ts | AuditLogger, AuditLevel, AuditEvent, AuditLogEntry | 0 | api:0 nav:0 xmod:1 | direct:3 | -- | -- | `packages/dojolm-web/src/lib/audit-logger.ts` |
 | auth.ts | auth | hashPassword, verifyPassword, generateSessionToken, hashSessionToken +1 | 0 | api:0 nav:0 xmod:0 | direct:3 | auth | -- | `packages/dojolm-web/src/lib/auth/auth.ts` |
 | AuthContext.tsx | auth | AuthProvider, useAuth, AuthUser, AuthContextValue | 0 | api:3 nav:0 xmod:0 | direct:1 | auth, network | -- | `packages/dojolm-web/src/lib/auth/AuthContext.tsx` |
-| index.ts | auth | hashPassword, verifyPassword, generateSessionToken, hashSessionToken +22 | 0 | api:0 nav:0 xmod:0 | none | auth, validation, persistence | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/index.ts` |
+| index.ts | auth | hashPassword, verifyPassword, generateSessionToken, hashSessionToken +22 | 0 | api:0 nav:0 xmod:0 | direct:1 | auth, validation, persistence | -- | `packages/dojolm-web/src/lib/auth/index.ts` |
 | login-rate-limit.ts | auth | getLoginRateLimitKey, isLoginRateLimited, recordLoginRateLimitFailure, clearLoginRateLimitFailures +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | auth | -- | `packages/dojolm-web/src/lib/auth/login-rate-limit.ts` |
 | rbac.ts | auth | hasPermission, getAllowedActions, isAtLeastRole, Resource +1 | 0 | api:0 nav:0 xmod:1 | direct:3 | auth, admin | -- | `packages/dojolm-web/src/lib/auth/rbac.ts` |
 | route-guard.ts | auth | withAuth, getSessionToken, buildSessionCookie, buildCsrfCookie +6 | 0 | api:0 nav:0 xmod:1 | direct:2 | auth, validation, persistence | -- | `packages/dojolm-web/src/lib/auth/route-guard.ts` |
@@ -609,20 +601,20 @@ Source surfaces: **494**. Test files scanned: **462**.
 | baiss-framework.ts | data | getControlsByCategory, getControlsBySourceFramework, findBAISSBySourceControl, getSourceMappings +6 | 0 | api:0 nav:0 xmod:0 | direct:3 | validation, persistence, llm | -- | `packages/dojolm-web/src/lib/data/baiss-framework.ts` |
 | ronin-seed-programs.ts | data | BountyPlatform, ProgramStatus, BountyProgram, SubmissionStatus +1 | 0 | api:0 nav:0 xmod:0 | direct:4 | validation, network, llm | -- | `packages/dojolm-web/src/lib/data/ronin-seed-programs.ts` |
 | sample-test-cases.ts | data | getTestCasesByCategory, getTestCasesByOWASP, getTestCasesByTPI, getTestCasesBySeverity +5 | 0 | api:0 nav:0 xmod:3 | direct:1 | storage, validation, persistence, llm | -- | `packages/dojolm-web/src/lib/data/sample-test-cases.ts` |
-| database.ts | db | getDatabase, closeDatabase, getDatabasePath, verifyWalMode +1 | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, db | -- | `packages/dojolm-web/src/lib/db/database.ts` |
+| database.ts | db | getDatabase, closeDatabase, getDatabasePath, verifyWalMode +1 | 0 | api:0 nav:0 xmod:1 | direct:2 | storage, db | -- | `packages/dojolm-web/src/lib/db/database.ts` |
 | encryption.ts | db | encrypt, decrypt, validateEncryptionKey, resetEncryptionKey | 0 | api:0 nav:0 xmod:0 | direct:3 | validation, db | -- | `packages/dojolm-web/src/lib/db/encryption.ts` |
 | index.ts | db | getDatabase, closeDatabase, getDatabasePath, verifyWalMode +21 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/dojolm-web/src/lib/db/index.ts` |
 | migrations.ts | db | getCurrentVersion, getAppliedMigrations, discoverMigrations, runMigrations +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, db | -- | `packages/dojolm-web/src/lib/db/migrations.ts` |
 | query-builder.ts | db | QueryBuilder | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, db | -- | `packages/dojolm-web/src/lib/db/query-builder.ts` |
-| audit.repository.ts | db | AuditRepository | 0 | api:0 nav:0 xmod:0 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/audit.repository.ts` |
-| base.repository.ts | db | QueryOptions | 0 | api:0 nav:0 xmod:0 | none | storage, validation, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/base.repository.ts` |
+| audit.repository.ts | db | AuditRepository | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, db | -- | `packages/dojolm-web/src/lib/db/repositories/audit.repository.ts` |
+| base.repository.ts | db | QueryOptions | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, db | -- | `packages/dojolm-web/src/lib/db/repositories/base.repository.ts` |
 | batch.repository.ts | db | BatchRepository | 0 | api:0 nav:0 xmod:0 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/batch.repository.ts` |
-| execution.repository.ts | db | ExecutionRepository, ExecutionQueryFilters | 0 | api:0 nav:1 xmod:0 | none | storage, validation, navigation, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/execution.repository.ts` |
+| execution.repository.ts | db | ExecutionRepository, ExecutionQueryFilters | 0 | api:0 nav:1 xmod:0 | direct:1 | storage, validation, navigation, db | -- | `packages/dojolm-web/src/lib/db/repositories/execution.repository.ts` |
 | index.ts | db | BaseRepository, type QueryOptions, ModelConfigRepository, modelConfigRepo +17 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/db/repositories/index.ts` |
 | model-config.repository.ts | db | ModelConfigRepository | 0 | api:0 nav:0 xmod:0 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/model-config.repository.ts` |
-| scoreboard.repository.ts | db | ScoreboardRepository, ModelRanking, DailySummary, CategoryBreakdown | 0 | api:0 nav:0 xmod:0 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/scoreboard.repository.ts` |
-| test-case.repository.ts | db | TestCaseRepository | 0 | api:0 nav:0 xmod:0 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/test-case.repository.ts` |
-| user.repository.ts | db | UserRepository, SafeUser | 0 | api:0 nav:0 xmod:1 | none | storage, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/user.repository.ts` |
+| scoreboard.repository.ts | db | ScoreboardRepository, ModelRanking, DailySummary, CategoryBreakdown | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, db | -- | `packages/dojolm-web/src/lib/db/repositories/scoreboard.repository.ts` |
+| test-case.repository.ts | db | TestCaseRepository | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, db | -- | `packages/dojolm-web/src/lib/db/repositories/test-case.repository.ts` |
+| user.repository.ts | db | UserRepository, SafeUser | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, db | -- | `packages/dojolm-web/src/lib/db/repositories/user.repository.ts` |
 | retention.ts | db | getRetentionConfig, updateRetentionConfig, runRetention, RetentionResult | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, db | -- | `packages/dojolm-web/src/lib/db/retention.ts` |
 | types.ts | db | ModelConfigRow, TestCaseRow, BatchExecutionRow, BatchTestCaseRow +19 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/dojolm-web/src/lib/db/types.ts` |
 | ecosystem-emitters.ts | ecosystem-emitters.ts | emitScannerFindings, emitExecutionFinding, emitGuardFinding, emitAnalyzeFinding | 0 | api:0 nav:0 xmod:2 | direct:2 | -- | -- | `packages/dojolm-web/src/lib/ecosystem-emitters.ts` |
@@ -645,7 +637,7 @@ Source surfaces: **494**. Test files scanned: **462**.
 | llm-types.ts | llm-types.ts | LLM_PROVIDERS, TEST_SCENARIOS, DEFAULT_SCORING_WEIGHTS, SecureString | 0 | api:0 nav:0 xmod:0 | direct:20 | -- | -- | `packages/dojolm-web/src/lib/llm-types.ts` |
 | master-sync-scheduler.ts | master-sync-scheduler.ts | startScheduler, stopScheduler, getSchedulerStatus, SchedulerStatus | 0 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/master-sync-scheduler.ts` |
 | NavigationContext.tsx | NavigationContext.tsx | NavigationProvider, useNavigation | 0 | api:0 nav:0 xmod:1 | none | navigation | direct unit or integration coverage | `packages/dojolm-web/src/lib/NavigationContext.tsx` |
-| Providers.tsx | Providers.tsx | Providers | 0 | api:0 nav:0 xmod:6 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/Providers.tsx` |
+| Providers.tsx | Providers.tsx | Providers | 0 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/Providers.tsx` |
 | anthropic.ts | providers | AnthropicProvider | 0 | api:0 nav:0 xmod:3 | direct:2 | auth, validation, network, llm | -- | `packages/dojolm-web/src/lib/providers/anthropic.ts` |
 | errors.ts | providers | isRetryableError, getRetryDelay, parseApiError, ProviderError +7 | 0 | api:0 nav:0 xmod:0 | direct:8 | -- | -- | `packages/dojolm-web/src/lib/providers/errors.ts` |
 | index.ts | providers | getProviderAdapter, getAvailableProviders, isProviderSupported, openaiProvider +9 | 0 | api:0 nav:0 xmod:2 | none | llm | direct unit or integration coverage | `packages/dojolm-web/src/lib/providers/index.ts` |
@@ -680,17 +672,17 @@ Source surfaces: **494**. Test files scanned: **462**.
 | sengoku-storage.ts | storage | listCampaigns, getCampaign, createCampaign, updateCampaignStatus +5 | 0 | api:0 nav:0 xmod:1 | direct:1 | storage, network | -- | `packages/dojolm-web/src/lib/storage/sengoku-storage.ts` |
 | storage-interface.ts | storage | getStorageBackendType, getStorage, getStorageSync, IStorageBackend +6 | 0 | api:0 nav:0 xmod:1 | direct:3 | storage | -- | `packages/dojolm-web/src/lib/storage/storage-interface.ts` |
 | types.ts | types.ts | EngineFilter, QuickPayload, ScanOptions | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/dojolm-web/src/lib/types.ts` |
-| useToast.ts | useToast.ts | useToast | 0 | api:0 nav:0 xmod:2 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/useToast.ts` |
+| useToast.ts | useToast.ts | useToast | 0 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/useToast.ts` |
 | utils.ts | utils.ts | cn, escHtml, escAttr, formatDuration +4 | 0 | api:0 nav:1 xmod:0 | direct:1 | validation, network, navigation | -- | `packages/dojolm-web/src/lib/utils.ts` |
 
 </details>
 
 <details>
-<summary>other (3 surfaces; direct 1, indirect 0, none 2)</summary>
+<summary>other (3 surfaces; direct 2, indirect 0, none 1)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| providers.tsx | other | Providers | 0 | api:0 nav:0 xmod:1 | none | auth | direct unit or integration coverage | `packages/dojolm-web/src/app/providers.tsx` |
+| providers.tsx | other | Providers | 0 | api:0 nav:0 xmod:1 | direct:1 | auth | -- | `packages/dojolm-web/src/app/providers.tsx` |
 | proxy.ts | other | resetRateLimiter, proxy | 0 | api:3 nav:0 xmod:3 | direct:2 | auth, network, admin | -- | `packages/dojolm-web/src/proxy.ts` |
 | setup.ts | other | setup | 0 | api:0 nav:0 xmod:0 | none | persistence | direct unit or integration coverage | `packages/dojolm-web/src/test/setup.ts` |
 
@@ -711,7 +703,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | index.ts | agentic | TOOL_ARCHITECTURES, TOOL_CATEGORIES, EMPTY_ENVIRONMENT, MAX_TOOL_CALLS +34 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/agentic/index.ts` |
 | scenarios.ts | agentic | getTemplatesByCategory, getTemplatesByDifficulty, getTemplatesByArchitecture, ScenarioTemplate | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, persistence, network +1 | -- | `packages/bu-tpi/src/agentic/scenarios.ts` |
 | task-generator.ts | agentic | generateTask, generateScenario, generateBatchScenarios, BatchScenarioConfig | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation, network, llm | -- | `packages/bu-tpi/src/agentic/task-generator.ts` |
-| types.ts | agentic | ToolArchitecture, AgenticTool, ToolParameter, ToolCategory +10 | 0 | api:0 nav:0 xmod:0 | direct:4 | storage, validation, llm | -- | `packages/bu-tpi/src/agentic/types.ts` |
+| types.ts | agentic | ToolArchitecture, AgenticTool, ToolParameter, ToolCategory +10 | 0 | api:0 nav:0 xmod:0 | direct:5 | storage, validation, llm | -- | `packages/bu-tpi/src/agentic/types.ts` |
 
 </details>
 
@@ -726,7 +718,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | match-runner.ts | arena | createMatch, recordEvent, executeRound, runMatch +4 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/match-runner.ts` |
 | referee.ts | arena | createReferee, evaluateAction, checkViolation, scoreOutcome +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage | -- | `packages/bu-tpi/src/arena/referee.ts` |
 | sandbox.ts | arena | createSandbox, executeInSandbox, getIsolatedState, setIsolatedState +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/arena/sandbox.ts` |
-| types.ts | arena | AgentRole, MessageType, DecisionType, MatchStatus +12 | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/arena/types.ts` |
+| types.ts | arena | AgentRole, MessageType, DecisionType, MatchStatus +12 | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/arena/types.ts` |
 
 </details>
 
@@ -742,7 +734,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | master-pipeline.ts | attackdna | syncSource, syncAllSources, deduplicateEntries, classifyEntries +2 | 0 | api:0 nav:0 xmod:3 | direct:1 | validation, network | -- | `packages/bu-tpi/src/attackdna/master-pipeline.ts` |
 | master-sources.ts | attackdna | getAdapter, getAvailableSourceIds, getAllAdapters, MITREAtlasAdapter +3 | 0 | api:0 nav:0 xmod:2 | direct:1 | validation, network | -- | `packages/bu-tpi/src/attackdna/master-sources.ts` |
 | mutation-detector.ts | attackdna | detectMutations, buildMutationTaxonomy, predictNextVariants, analyzeTrends | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/attackdna/mutation-detector.ts` |
-| types.ts | attackdna | MutationType, AttackNode, AttackEdge, AttackFamily +15 | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/attackdna/types.ts` |
+| types.ts | attackdna | MutationType, AttackNode, AttackEdge, AttackFamily +15 | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/attackdna/types.ts` |
 
 </details>
 
@@ -769,7 +761,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | harmbench.ts | benchmark | harmbench | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/harmbench.ts` |
 | rag-bench.ts | benchmark | rag-bench | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/rag-bench.ts` |
 | strongreject.ts | benchmark | strongreject | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/benchmark/suites/strongreject.ts` |
-| types.ts | benchmark | ScoringMethod, DifficultyTier, BenchmarkCategory, BenchmarkSuite +3 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/benchmark/types.ts` |
+| types.ts | benchmark | ScoringMethod, DifficultyTier, BenchmarkCategory, BenchmarkSuite +3 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/bu-tpi/src/benchmark/types.ts` |
 
 </details>
 
@@ -795,12 +787,12 @@ Source surfaces: **309**. Test files scanned: **343**.
 </details>
 
 <details>
-<summary>cli (2 surfaces; direct 1, indirect 0, none 1)</summary>
+<summary>cli (2 surfaces; direct 2, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | formatters.ts | cli | formatText, formatJson, formatSarif, formatJunit +2 | 0 | api:0 nav:1 xmod:1 | direct:2 | validation, network, navigation | -- | `packages/bu-tpi/src/cli/formatters.ts` |
-| tpi-scan.ts | cli | tpi-scan | 0 | api:0 nav:0 xmod:4 | none | storage, validation | direct unit or integration coverage | `packages/bu-tpi/src/cli/tpi-scan.ts` |
+| tpi-scan.ts | cli | tpi-scan | 0 | api:0 nav:0 xmod:4 | direct:1 | storage, validation | -- | `packages/bu-tpi/src/cli/tpi-scan.ts` |
 
 </details>
 
@@ -818,19 +810,19 @@ Source surfaces: **309**. Test files scanned: **343**.
 | llm-test-capabilities.ts | compliance | detectSystemPromptLeakage, generateDoSTestVectors, validateDoSTestResult, createSelfPenTestConfig +4 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, network, llm | -- | `packages/bu-tpi/src/compliance/llm-test-capabilities.ts` |
 | mapper.ts | compliance | mapModuleToControls, mapFixturesToControls, calculateCoverage, getAllMappings | 0 | api:0 nav:0 xmod:0 | direct:3 | validation | -- | `packages/bu-tpi/src/compliance/mapper.ts` |
 | report-generator.ts | compliance | generateFullReport, generateFrameworkReport, formatReportAsMarkdown, formatReportAsJSON +5 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/compliance/report-generator.ts` |
-| types.ts | compliance | ComplianceFramework, ComplianceControl, ControlMapping, CoverageSnapshot +9 | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/compliance/types.ts` |
+| types.ts | compliance | ComplianceFramework, ComplianceControl, ControlMapping, CoverageSnapshot +9 | 0 | api:0 nav:0 xmod:0 | direct:8 | -- | -- | `packages/bu-tpi/src/compliance/types.ts` |
 
 </details>
 
 <details>
-<summary>defense (4 surfaces; direct 3, indirect 0, none 1)</summary>
+<summary>defense (4 surfaces; direct 4, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | index.ts | defense | DEFENSE_TEMPLATES, recommendDefenses | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/defense/index.ts` |
 | recommender.ts | defense | recommendDefenses | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/defense/recommender.ts` |
 | index.ts | defense | -- | 0 | api:0 nav:1 xmod:0 | direct:1 | storage, validation, persistence, network +2 | -- | `packages/bu-tpi/src/defense/templates/index.ts` |
-| types.ts | defense | DefenseTemplate, DefenseRecommendation, PromptWeakness, HardenedPrompt | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/defense/types.ts` |
+| types.ts | defense | DefenseTemplate, DefenseRecommendation, PromptWeakness, HardenedPrompt | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/defense/types.ts` |
 
 </details>
 
@@ -841,7 +833,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | hybrid-pipeline.ts | detection | classifyConfidence, findingToDetectionResult, runHybridPipeline, filterByConfidence +1 | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/hybrid-pipeline.ts` |
 | index.ts | detection | CONFIDENCE_LEVELS, DEFAULT_HYBRID_CONFIG, classifyConfidence, findingToDetectionResult +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/index.ts` |
-| types.ts | detection | ConfidenceLevel, DetectionResult, HybridPipelineConfig, JudgeConfirmFn | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/detection/types.ts` |
+| types.ts | detection | ConfidenceLevel, DetectionResult, HybridPipelineConfig, JudgeConfirmFn | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/detection/types.ts` |
 
 </details>
 
@@ -885,7 +877,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | watermark.ts | fingerprint | watermark | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/probes/watermark.ts` |
 | response-analyzer.ts | fingerprint | extractFeatureVector | 0 | api:0 nav:0 xmod:0 | direct:1 | llm | -- | `packages/bu-tpi/src/fingerprint/response-analyzer.ts` |
 | signature-matcher.ts | fingerprint | weightedCosineDistance, matchSignatures, verifySignature, loadSignatures +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/fingerprint/signature-matcher.ts` |
-| types.ts | fingerprint | ProbeCategory, ProbeQuery, ResponseFeature, FeatureVector +9 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/bu-tpi/src/fingerprint/types.ts` |
+| types.ts | fingerprint | ProbeCategory, ProbeQuery, ResponseFeature, FeatureVector +9 | 0 | api:0 nav:0 xmod:0 | direct:5 | -- | -- | `packages/bu-tpi/src/fingerprint/types.ts` |
 
 </details>
 
@@ -900,16 +892,16 @@ Source surfaces: **309**. Test files scanned: **343**.
 | grammar.ts | fuzzing | createGrammar, generateInput, mutateInput, FuzzRNG +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | admin | -- | `packages/bu-tpi/src/fuzzing/grammar.ts` |
 | index.ts | fuzzing | DEFAULT_FUZZ_CONFIG, DEFAULT_BENCHMARK_CONFIG, createGrammar, generateInput +15 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/fuzzing/index.ts` |
 | protocol-fuzzer.ts | fuzzing | ProtocolFuzzer, ProtocolType, ProtocolMutation, ProtocolFuzzConfig +3 | 0 | api:4 nav:0 xmod:1 | direct:1 | network | -- | `packages/bu-tpi/src/fuzzing/protocol-fuzzer.ts` |
-| types.ts | fuzzing | GrammarRule, FuzzConfig, FuzzResult, AnomalyType +6 | 0 | api:0 nav:0 xmod:0 | direct:5 | -- | -- | `packages/bu-tpi/src/fuzzing/types.ts` |
+| types.ts | fuzzing | GrammarRule, FuzzConfig, FuzzResult, AnomalyType +6 | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/fuzzing/types.ts` |
 
 </details>
 
 <details>
-<summary>generate-fixtures.ts (1 surfaces; direct 0, indirect 0, none 1)</summary>
+<summary>generate-fixtures.ts (1 surfaces; direct 1, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| generate-fixtures.ts | generate-fixtures.ts | returns, T, TC, bypass_restrictions | 3 | api:0 nav:11 xmod:0 | none | storage, validation, persistence, network +3 | direct unit or integration coverage | `packages/bu-tpi/src/generate-fixtures.ts` |
+| generate-fixtures.ts | generate-fixtures.ts | returns, T, TC, bypass_restrictions | 3 | api:0 nav:11 xmod:0 | direct:1 | storage, validation, persistence, network +3 | -- | `packages/bu-tpi/src/generate-fixtures.ts` |
 
 </details>
 
@@ -927,12 +919,12 @@ Source surfaces: **309**. Test files scanned: **343**.
 | priority-rules.ts | kotoba | priority-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/priority-rules.ts` |
 | role-rules.ts | kotoba | role-rules | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/rules/role-rules.ts` |
 | scorer.ts | kotoba | getLetterGrade, scorePrompt | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/kotoba/scorer.ts` |
-| types.ts | kotoba | ScoreCategory, LetterGrade, PromptAnalysis, PromptIssue +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/kotoba/types.ts` |
+| types.ts | kotoba | ScoreCategory, LetterGrade, PromptAnalysis, PromptIssue +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/kotoba/types.ts` |
 
 </details>
 
 <details>
-<summary>llm (19 surfaces; direct 18, indirect 0, none 1)</summary>
+<summary>llm (19 surfaces; direct 19, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -951,10 +943,10 @@ Source surfaces: **309**. Test files scanned: **343**.
 | openai-compatible.ts | llm | OpenAICompatibleProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/openai-compatible.ts` |
 | replicate.ts | llm | ReplicateProvider | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/llm/providers/replicate.ts` |
 | sensei.ts | llm | detectCapability, buildSenseiSystemMessage, SenseiProvider | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/providers/sensei.ts` |
-| registry.ts | llm | registerProvider, unregisterProvider, getProviderAdapter, listProviders +7 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/llm/registry.ts` |
+| registry.ts | llm | registerProvider, unregisterProvider, getProviderAdapter, listProviders +7 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/llm/registry.ts` |
 | security.ts | llm | validateProviderUrl, resolveAndValidateUrl, sanitizeCredentials, validateJsonPath +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | auth, validation, network, llm | -- | `packages/bu-tpi/src/llm/security.ts` |
 | test-helpers.ts | llm | createMockResponse, createMockProvider, providerTestContract, setupLLMTestGuard +5 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network, llm | -- | `packages/bu-tpi/src/llm/test-helpers.ts` |
-| types.ts | llm | SecureString, LLMProvider, LLMProviderStatus, AuthType +24 | 0 | api:0 nav:0 xmod:0 | direct:7 | validation, llm | -- | `packages/bu-tpi/src/llm/types.ts` |
+| types.ts | llm | SecureString, LLMProvider, LLMProviderStatus, AuthType +24 | 0 | api:0 nav:0 xmod:0 | direct:8 | validation, llm | -- | `packages/bu-tpi/src/llm/types.ts` |
 
 </details>
 
@@ -1022,7 +1014,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | index.ts | plugins | PLUGIN_TYPES, PLUGIN_STATES, MAX_PLUGINS, validateManifest +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/index.ts` |
 | loader.ts | plugins | validateManifest, PluginRegistry | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/loader.ts` |
-| types.ts | plugins | PluginType, PluginState, PluginManifest, PluginLifecycle +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/plugins/types.ts` |
+| types.ts | plugins | PluginType, PluginState, PluginManifest, PluginLifecycle +2 | 0 | api:0 nav:0 xmod:0 | direct:4 | -- | -- | `packages/bu-tpi/src/plugins/types.ts` |
 | validator.ts | plugins | validatePluginSecurity, validatePluginDependencies | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/plugins/validator.ts` |
 
 </details>
@@ -1039,7 +1031,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | live-pipeline.ts | rag | buildRagPrompt, runGenerationStage, detectPoisonInfluence, runPoisoningTest +4 | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/live-pipeline.ts` |
 | pipeline-simulator.ts | rag | chunkDocument, simulateEmbedding, cosineSimilarity, simulateRetrieval +2 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/rag/pipeline-simulator.ts` |
 | retrieval-poisoner.ts | rag | createPoisonedDocument, generateRankManipulationPayload, InjectionPosition, PoisonedDocument +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/rag/retrieval-poisoner.ts` |
-| types.ts | rag | RagStage, RagAttackVector, RagDocument, RagChunk +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/rag/types.ts` |
+| types.ts | rag | RagStage, RagAttackVector, RagDocument, RagChunk +3 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/rag/types.ts` |
 
 </details>
 
@@ -1057,7 +1049,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | quarantine.ts | sage | quarantineVariant, getQuarantinedVariants, approveVariant, rejectVariant +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, persistence | -- | `packages/bu-tpi/src/sage/quarantine.ts` |
 | reasoning-lab.ts | sage | createReasoningChain, applyChainInjection, applyStepManipulation, applyConclusionPoisoning +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/reasoning-lab.ts` |
 | seed-library.ts | sage | extractSeeds, extractPrimitives, categorizeSeeds, getSeedStats | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sage/seed-library.ts` |
-| types.ts | sage | MutationOperator, SeedEntry, SeedStats, MutationResult +12 | 0 | api:0 nav:0 xmod:0 | direct:8 | -- | -- | `packages/bu-tpi/src/sage/types.ts` |
+| types.ts | sage | MutationOperator, SeedEntry, SeedStats, MutationResult +12 | 0 | api:0 nav:0 xmod:0 | direct:9 | -- | -- | `packages/bu-tpi/src/sage/types.ts` |
 | webmcp-mutations.ts | sage | applyWebMCPMutation, applyRandomWebMCPMutation, composeWithCoreMutation, WebMCPMutationOperator +1 | 0 | api:0 nav:1 xmod:0 | direct:1 | validation, navigation | -- | `packages/bu-tpi/src/sage/webmcp-mutations.ts` |
 
 </details>
@@ -1090,7 +1082,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | reporter.ts | sengoku | generateReport, formatReportMarkdown, formatReportJSON | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/sengoku/reporter.ts` |
 | scheduler.ts | sengoku | CampaignScheduler | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/sengoku/scheduler.ts` |
 | target-connector.ts | sengoku | validateTargetUrl, healthCheck, sendRequest, resetRateLimiter +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | auth, validation, network | -- | `packages/bu-tpi/src/sengoku/target-connector.ts` |
-| types.ts | sengoku | Frequency, AuthType, Severity, CampaignState +9 | 0 | api:0 nav:0 xmod:0 | direct:4 | persistence | -- | `packages/bu-tpi/src/sengoku/types.ts` |
+| types.ts | sengoku | Frequency, AuthType, Severity, CampaignState +9 | 0 | api:0 nav:0 xmod:0 | direct:5 | persistence | -- | `packages/bu-tpi/src/sengoku/types.ts` |
 
 </details>
 
@@ -1111,16 +1103,16 @@ Source surfaces: **309**. Test files scanned: **343**.
 | plan-generator.ts | sensei | parsePlanResponse, generatePlan, isValidAttackType, PlanGenerationRequest +1 | 0 | api:0 nav:0 xmod:2 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/sensei/plan-generator.ts` |
 | probe-executor.ts | sensei | probe, runProbeCampaign, formatProbeCampaignReport, ProbeResult +2 | 0 | api:0 nav:0 xmod:1 | direct:1 | llm | -- | `packages/bu-tpi/src/sensei/probe-executor.ts` |
 | sanitize.ts | sensei | sanitizeForPrompt, sanitizeLabel | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/bu-tpi/src/sensei/sanitize.ts` |
-| types.ts | sensei | SenseiCapability, SampleQualityGrade, DataSourceType, SenseiTrainingSample +11 | 0 | api:0 nav:0 xmod:0 | direct:1 | network, llm | -- | `packages/bu-tpi/src/sensei/types.ts` |
+| types.ts | sensei | SenseiCapability, SampleQualityGrade, DataSourceType, SenseiTrainingSample +11 | 0 | api:0 nav:0 xmod:0 | direct:2 | network, llm | -- | `packages/bu-tpi/src/sensei/types.ts` |
 
 </details>
 
 <details>
-<summary>serve.ts (1 surfaces; direct 0, indirect 0, none 1)</summary>
+<summary>serve.ts (1 surfaces; direct 1, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| serve.ts | serve.ts | serve | 0 | api:6 nav:2 xmod:3 | none | storage, validation, network, navigation | direct unit or integration coverage | `packages/bu-tpi/src/serve.ts` |
+| serve.ts | serve.ts | serve | 0 | api:6 nav:2 xmod:3 | direct:1 | storage, validation, network, navigation | -- | `packages/bu-tpi/src/serve.ts` |
 
 </details>
 
@@ -1134,13 +1126,13 @@ Source surfaces: **309**. Test files scanned: **343**.
 </details>
 
 <details>
-<summary>supplychain (4 surfaces; direct 3, indirect 0, none 1)</summary>
+<summary>supplychain (4 surfaces; direct 4, indirect 0, none 0)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | dependency-auditor.ts | supplychain | parseRequirementsTxt, parsePackageJson, parsePyprojectToml, checkVulnerabilities +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | storage, validation | -- | `packages/bu-tpi/src/supplychain/dependency-auditor.ts` |
 | index.ts | supplychain | verifyModelHash, analyzeModelCard, parseRequirementsTxt, parsePackageJson +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/supplychain/index.ts` |
-| types.ts | supplychain | ModelCardAnalysis, ModelVerificationResult, ParsedDependency, DependencyVulnerability +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/bu-tpi/src/supplychain/types.ts` |
+| types.ts | supplychain | ModelCardAnalysis, ModelVerificationResult, ParsedDependency, DependencyVulnerability +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/supplychain/types.ts` |
 | verifier.ts | supplychain | verifyModelHash, analyzeModelCard | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/supplychain/verifier.ts` |
 
 </details>
@@ -1167,7 +1159,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | deduplicator.ts | threatfeed | createDeduplicator, isDuplicate, addEntry, getDeduplicatorStats +2 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/threatfeed/deduplicator.ts` |
 | index.ts | threatfeed | DEFAULT_SOURCE_CONFIG, DEFAULT_URL_ALLOWLIST, isInternalIP, validateSourceURL +35 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation | -- | `packages/bu-tpi/src/threatfeed/index.ts` |
 | source-pipeline.ts | threatfeed | createPipeline, addSource, removeSource, parseRSS +6 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/threatfeed/source-pipeline.ts` |
-| types.ts | threatfeed | SourceType, IndicatorType, ThreatSource, ThreatEntry +7 | 0 | api:0 nav:0 xmod:0 | direct:7 | validation | -- | `packages/bu-tpi/src/threatfeed/types.ts` |
+| types.ts | threatfeed | SourceType, IndicatorType, ThreatSource, ThreatEntry +7 | 0 | api:0 nav:0 xmod:0 | direct:8 | validation | -- | `packages/bu-tpi/src/threatfeed/types.ts` |
 | url-validator.ts | threatfeed | isInternalIP, validateSourceURL | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, network | -- | `packages/bu-tpi/src/threatfeed/url-validator.ts` |
 
 </details>
@@ -1191,9 +1183,9 @@ Source surfaces: **309**. Test files scanned: **343**.
 | pair.ts | timechamber | PAIROrchestrator | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/pair.ts` |
 | sensei-adaptive.ts | timechamber | selectStrategy, SenseiAdaptiveOrchestrator, AttackStrategy | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/sensei-adaptive.ts` |
 | tap.ts | timechamber | TAPOrchestrator | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/bu-tpi/src/timechamber/orchestrators/tap.ts` |
-| types.ts | timechamber | OrchestratorType, OrchestratorConfig, OrchestratorTurn, BranchState +5 | 0 | api:0 nav:0 xmod:0 | direct:6 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/types.ts` |
+| types.ts | timechamber | OrchestratorType, OrchestratorConfig, OrchestratorTurn, BranchState +5 | 0 | api:0 nav:0 xmod:0 | direct:7 | -- | -- | `packages/bu-tpi/src/timechamber/orchestrators/types.ts` |
 | simulator.ts | timechamber | sanitizeConversationContent, TimeChamberSimulator | 0 | api:0 nav:0 xmod:0 | direct:1 | validation | -- | `packages/bu-tpi/src/timechamber/simulator.ts` |
-| types.ts | timechamber | TemporalAttackType, Turn, ConversationPlan, ExecutedTurn +2 | 0 | api:0 nav:0 xmod:0 | direct:3 | persistence | -- | `packages/bu-tpi/src/timechamber/types.ts` |
+| types.ts | timechamber | TemporalAttackType, Turn, ConversationPlan, ExecutedTurn +2 | 0 | api:0 nav:0 xmod:0 | direct:4 | persistence | -- | `packages/bu-tpi/src/timechamber/types.ts` |
 
 </details>
 
@@ -1205,7 +1197,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | index.ts | transfer | TransferTestRunner, generateTransferReport, formatReportMarkdown, formatReportJSON +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transfer/index.ts` |
 | reporter.ts | transfer | generateTransferReport, formatReportMarkdown, formatReportJSON, formatReportCSV | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/reporter.ts` |
 | runner.ts | transfer | TransferTestRunner | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/runner.ts` |
-| types.ts | transfer | TransferTestConfig, TransferResult, TransferMatrix, TransferSummary +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transfer/types.ts` |
+| types.ts | transfer | TransferTestConfig, TransferResult, TransferMatrix, TransferSummary +1 | 0 | api:0 nav:0 xmod:0 | direct:3 | -- | -- | `packages/bu-tpi/src/transfer/types.ts` |
 
 </details>
 
@@ -1216,7 +1208,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | buffs.ts | transforms | applyBuff, applyBuffChain, createChain | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transforms/buffs.ts` |
 | index.ts | transforms | BUFF_TYPES, base64Buff, leetSpeakBuff, unicodeSubBuff +12 | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transforms/index.ts` |
-| types.ts | transforms | BuffType, Buff, BuffChain, BuffResult | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/bu-tpi/src/transforms/types.ts` |
+| types.ts | transforms | BuffType, Buff, BuffChain, BuffResult | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/bu-tpi/src/transforms/types.ts` |
 
 </details>
 
@@ -1225,7 +1217,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| types.ts | types.ts | Severity, Verdict, Finding, ScanResult +18 | 0 | api:0 nav:0 xmod:0 | direct:41 | -- | -- | `packages/bu-tpi/src/types.ts` |
+| types.ts | types.ts | Severity, Verdict, Finding, ScanResult +18 | 0 | api:0 nav:0 xmod:0 | direct:42 | -- | -- | `packages/bu-tpi/src/types.ts` |
 
 </details>
 

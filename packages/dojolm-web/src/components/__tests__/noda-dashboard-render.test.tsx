@@ -215,7 +215,7 @@ vi.mock('../dashboard/DashboardConfigContext', () => {
 // Import under test (after all mocks)
 // ---------------------------------------------------------------------------
 
-import { NODADashboard } from '../dashboard'
+import { NODADashboard } from '../dashboard/NODADashboard'
 
 // ---------------------------------------------------------------------------
 // Tests
