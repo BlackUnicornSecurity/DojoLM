@@ -428,7 +428,127 @@ const EXPLAIN_FEATURE: SenseiToolDefinition = {
 };
 
 // ---------------------------------------------------------------------------
-// Registry — All 16 Tools
+// Sensei Platform Tools (MUSUBI Phase 7.4)
+// ---------------------------------------------------------------------------
+
+const GENERATE_ATTACK: SenseiToolDefinition = {
+  name: 'generate_attack',
+  description: 'Generate adversarial attack payloads using Sensei for a specified category. Returns novel attack variants for security testing.',
+  parameters: {
+    type: 'object',
+    properties: {
+      category: { type: 'string', description: 'Attack category (e.g. "prompt-injection", "jailbreak", "rag-injection").' },
+      count: { type: 'number', description: 'Number of attack variants to generate (1-50).' },
+      severity: { type: 'string', description: 'Target severity: "INFO", "WARNING", or "CRITICAL".' },
+      context: { type: 'string', description: 'Optional context about the target system.' },
+    },
+    required: ['category'],
+  },
+  endpoint: '/api/sensei/generate',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+const JUDGE_RESPONSE: SenseiToolDefinition = {
+  name: 'judge_response',
+  description: 'Judge whether an LLM response indicates a successful adversarial attack. Returns multi-criteria scoring.',
+  parameters: {
+    type: 'object',
+    properties: {
+      attackPayload: { type: 'string', description: 'The attack prompt that was sent.' },
+      modelResponse: { type: 'string', description: 'The model response to evaluate.' },
+      category: { type: 'string', description: 'Attack category for evaluation context.' },
+    },
+    required: ['attackPayload', 'modelResponse', 'category'],
+  },
+  endpoint: '/api/sensei/judge',
+  method: 'POST',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'admin',
+};
+
+const RUN_ORCHESTRATOR: SenseiToolDefinition = {
+  name: 'run_orchestrator',
+  description: 'Run a multi-turn attack orchestrator (PAIR, Crescendo, TAP, MAD-MAX, or Sensei-Adaptive) against a target model.',
+  parameters: {
+    type: 'object',
+    properties: {
+      type: { type: 'string', description: 'Orchestrator type: "pair", "crescendo", "tap", "mad-max", or "sensei-adaptive".' },
+      targetModelId: { type: 'string', description: 'ID of the target model to attack.' },
+      objective: { type: 'string', description: 'Attack objective (what you want the model to do).' },
+      maxTurns: { type: 'number', description: 'Maximum conversation turns (default: 20).' },
+    },
+    required: ['type', 'targetModelId', 'objective'],
+  },
+  endpoint: '/api/orchestrator/run',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+const RUN_AGENTIC_TEST: SenseiToolDefinition = {
+  name: 'run_agentic_test',
+  description: 'Run agentic security tests against a tool-calling agent. Tests for indirect prompt injection across multiple tool architectures.',
+  parameters: {
+    type: 'object',
+    properties: {
+      architecture: { type: 'string', description: 'Tool architecture: "openai-functions", "langchain-tools", "mcp-tools", etc.' },
+      categories: { type: 'string', description: 'Comma-separated tool categories to test (e.g. "filesystem,email,database").' },
+      difficulty: { type: 'string', description: 'Difficulty level: "easy", "medium", or "hard".' },
+      targetModelId: { type: 'string', description: 'ID of the agent model to test.' },
+    },
+    required: ['architecture', 'targetModelId'],
+  },
+  endpoint: '/api/agentic',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+const RUN_RAG_PIPELINE_TEST: SenseiToolDefinition = {
+  name: 'run_rag_pipeline_test',
+  description: 'Test a RAG pipeline for poisoning vulnerabilities. Simulates embedding, retrieval, and context assembly attacks.',
+  parameters: {
+    type: 'object',
+    properties: {
+      attackVector: { type: 'string', description: 'RAG attack vector: "boundary-injection", "embedding-manipulation", "retrieval-poisoning", etc.' },
+      documents: { type: 'number', description: 'Number of test documents to inject (default: 5).' },
+      topK: { type: 'number', description: 'Retrieval top-K setting (default: 5).' },
+    },
+    required: ['attackVector'],
+  },
+  endpoint: '/api/v1/scan',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+const PREDICT_VARIANTS: SenseiToolDefinition = {
+  name: 'predict_variants',
+  description: 'Predict how an attack pattern will evolve using AttackDNA lineage analysis and Sensei mutation intelligence.',
+  parameters: {
+    type: 'object',
+    properties: {
+      content: { type: 'string', description: 'The attack payload to analyze for variant prediction.' },
+      category: { type: 'string', description: 'Attack category for mutation context.' },
+    },
+    required: ['content', 'category'],
+  },
+  endpoint: '/api/sensei/mutate',
+  method: 'POST',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'admin',
+};
+
+// ---------------------------------------------------------------------------
+// Registry — All 22 Tools
 // ---------------------------------------------------------------------------
 
 export const SENSEI_TOOLS: readonly SenseiToolDefinition[] = [
@@ -452,6 +572,13 @@ export const SENSEI_TOOLS: readonly SenseiToolDefinition[] = [
   // Client-side (2)
   NAVIGATE_TO,
   EXPLAIN_FEATURE,
+  // Sensei Platform (6) — MUSUBI 7.4
+  GENERATE_ATTACK,
+  JUDGE_RESPONSE,
+  RUN_ORCHESTRATOR,
+  RUN_AGENTIC_TEST,
+  RUN_RAG_PIPELINE_TEST,
+  PREDICT_VARIANTS,
 ] as const;
 
 // ---------------------------------------------------------------------------

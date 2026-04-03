@@ -13,7 +13,7 @@ import type { SenseiContext } from '../sensei/types';
 
 const mockContext: SenseiContext = {
   activeModule: 'dashboard',
-  guardConfig: { enabled: true, mode: 'samurai', blockSeverity: 'WARNING' },
+  guardConfig: { enabled: true, mode: 'samurai', blockThreshold: 'WARNING', engines: null, persist: false },
   configuredModels: ['llama3.2', 'gpt-4o'],
   userRole: 'admin',
   recentActivity: ['scanned prompt', 'ran batch'],
@@ -21,7 +21,7 @@ const mockContext: SenseiContext = {
 
 const disabledGuardContext: SenseiContext = {
   ...mockContext,
-  guardConfig: { enabled: false, mode: 'shinobi', blockSeverity: 'WARNING' },
+  guardConfig: { enabled: false, mode: 'shinobi', blockThreshold: 'WARNING', engines: null, persist: false },
 };
 
 // ---------------------------------------------------------------------------

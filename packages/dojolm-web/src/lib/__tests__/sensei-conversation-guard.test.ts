@@ -33,8 +33,8 @@ const GUARD_ENABLED: Readonly<GuardConfig> = {
 };
 
 const mockGuardMiddleware = {
-  guardScanInput: (_text: string, _config: GuardConfig) => ({ proceed: true }),
-  guardScanOutput: (_text: string, _config: GuardConfig) => ({ flagged: false }),
+  guardScanInput: (_text: string, _config: Readonly<GuardConfig>, _context?: { executionId?: string; modelConfigId?: string; testCaseId?: string }) => ({ proceed: true as boolean, event: null as null }),
+  guardScanOutput: (_text: string, _config: Readonly<GuardConfig>, _context?: { executionId?: string; modelConfigId?: string; testCaseId?: string }) => ({ flagged: false as boolean, event: null as null }),
 };
 
 // ---------------------------------------------------------------------------
@@ -184,8 +184,8 @@ describe('guardSenseiInput', () => {
   describe('guard middleware delegation', () => {
     it('delegates to guardScanInput when guard enabled', () => {
       _setGuardMiddleware({
-        guardScanInput: () => ({ proceed: false }),
-        guardScanOutput: () => ({ flagged: false }),
+        guardScanInput: () => ({ proceed: false, event: null }),
+        guardScanOutput: () => ({ flagged: false, event: null }),
       });
       const result = guardSenseiInput('hello', GUARD_ENABLED);
       expect(result.proceed).toBe(false);
@@ -194,8 +194,8 @@ describe('guardSenseiInput', () => {
 
     it('skips guardScanInput when guard disabled', () => {
       _setGuardMiddleware({
-        guardScanInput: () => ({ proceed: false }),
-        guardScanOutput: () => ({ flagged: false }),
+        guardScanInput: () => ({ proceed: false, event: null }),
+        guardScanOutput: () => ({ flagged: false, event: null }),
       });
       const result = guardSenseiInput('hello', GUARD_DISABLED);
       expect(result.proceed).toBe(true);
@@ -264,8 +264,8 @@ describe('guardSenseiOutput', () => {
   describe('guard middleware delegation', () => {
     it('delegates to guardScanOutput when guard enabled', () => {
       _setGuardMiddleware({
-        guardScanInput: () => ({ proceed: true }),
-        guardScanOutput: () => ({ flagged: true }),
+        guardScanInput: () => ({ proceed: true, event: null }),
+        guardScanOutput: () => ({ flagged: true, event: null }),
       });
       const result = guardSenseiOutput('some text', GUARD_ENABLED);
       expect(result.safe).toBe(false);
@@ -274,8 +274,8 @@ describe('guardSenseiOutput', () => {
 
     it('skips guardScanOutput when guard disabled', () => {
       _setGuardMiddleware({
-        guardScanInput: () => ({ proceed: true }),
-        guardScanOutput: () => ({ flagged: true }),
+        guardScanInput: () => ({ proceed: true, event: null }),
+        guardScanOutput: () => ({ flagged: true, event: null }),
       });
       const result = guardSenseiOutput('some text', GUARD_DISABLED);
       expect(result.safe).toBe(true);
