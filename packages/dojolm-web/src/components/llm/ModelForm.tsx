@@ -139,8 +139,8 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
               Configure your LLM model for security testing
             </CardDescription>
           </div>
-          <Button variant="ghost" size="sm" onClick={onCancel}>
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="sm" onClick={onCancel} aria-label="Close model form">
+            <X className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
       </CardHeader>
@@ -254,8 +254,9 @@ export function ModelForm({ model, onSave, onCancel }: ModelFormProps) {
                   variant="outline"
                   size="icon"
                   onClick={() => setShowApiKey(!showApiKey)}
+                  aria-label={showApiKey ? 'Hide API key' : 'Show API key'}
                 >
-                  {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showApiKey ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                 </Button>
               </div>
               {errors.apiKey && <p className="text-xs text-red-500">{errors.apiKey}</p>}

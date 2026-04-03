@@ -260,6 +260,7 @@ export default function ComplianceDashboard() {
                 className="w-full flex items-center justify-between p-4 hover:bg-[var(--bg-tertiary)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
                 aria-expanded={expandedFramework === f.id}
                 aria-controls={`framework-${f.id}`}
+                aria-label={`${f.name}: ${f.overallCoverage}% coverage, ${f.controls.length} controls`}
               >
                 <div className="flex items-center gap-3">
                   <CoverageGauge value={f.overallCoverage} label={f.name} size="sm" />

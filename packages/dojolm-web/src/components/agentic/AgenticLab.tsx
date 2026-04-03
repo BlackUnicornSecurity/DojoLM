@@ -171,6 +171,8 @@ export function AgenticLab({ availableModels }: AgenticLabProps) {
             <button
               key={arch}
               onClick={() => setArchitecture(arch)}
+              aria-label={`Select architecture: ${info.name}`}
+              aria-pressed={architecture === arch}
               className={cn(
                 'rounded-lg border p-2 text-left transition-all text-xs',
                 architecture === arch
@@ -196,6 +198,8 @@ export function AgenticLab({ availableModels }: AgenticLabProps) {
             <button
               key={cat}
               onClick={() => toggleCategory(cat)}
+              aria-label={`Toggle category: ${label}`}
+              aria-pressed={selectedCategories.includes(cat)}
               className={cn(
                 'rounded-full px-3 py-1 text-xs font-medium transition-all border',
                 selectedCategories.includes(cat)

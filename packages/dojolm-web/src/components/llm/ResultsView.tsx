@@ -368,8 +368,8 @@ function ExecutionCard({
             >
               <Download className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm">
-              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            <Button variant="ghost" size="sm" aria-label={isExpanded ? 'Collapse details' : 'Expand details'}>
+              {isExpanded ? <ChevronUp className="h-4 w-4" aria-hidden="true" /> : <ChevronDown className="h-4 w-4" aria-hidden="true" />}
             </Button>
           </div>
         </div>

@@ -189,6 +189,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       type="button"
                       role="radio"
                       aria-checked={filters.category === cat}
+                      aria-label={`Filter by category: ${CATEGORY_CONFIG[cat].label}`}
                       onClick={() => setCategory(cat)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border',
@@ -229,6 +230,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       type="button"
                       role="radio"
                       aria-checked={filters.difficulty === diff}
+                      aria-label={`Filter by difficulty: ${DIFFICULTY_CONFIG[diff].label}`}
                       onClick={() => setDifficulty(diff)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border',
@@ -270,6 +272,7 @@ export const SkillsLibrary = memo(function SkillsLibrary({
                       type="button"
                       role="radio"
                       aria-checked={filters.owasp === id}
+                      aria-label={`Filter by OWASP: ${id}`}
                       onClick={() => setOwasp(id)}
                       className={cn(
                         'px-2 py-1 text-xs rounded-md border font-mono',

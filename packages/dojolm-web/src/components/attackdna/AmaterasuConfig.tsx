@@ -175,6 +175,7 @@ function SyncControls() {
           onClick={handleAutoSyncToggle}
           role="switch"
           aria-checked={syncStatus?.config?.autoSyncEnabled ?? false}
+          aria-label="Toggle auto-sync"
           className={`w-9 h-5 rounded-full motion-safe:transition-colors relative ${
             syncStatus?.config?.autoSyncEnabled
               ? 'bg-[var(--accent-gold)]'
