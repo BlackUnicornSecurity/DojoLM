@@ -45,3 +45,53 @@ export {
   formatPoisoningReport,
   DEFAULT_LIVE_RAG_CONFIG,
 } from './live-pipeline.js';
+
+// Embedding Attacker (Sensei Platform)
+export type {
+  PerturbationStrategy,
+  PerturbationResult,
+  SimilarityGamingPayload,
+} from './embedding-attacker.js';
+
+export {
+  perturbEmbedding,
+  generateSimilarityGamingPayload,
+} from './embedding-attacker.js';
+
+// Retrieval Poisoner (Sensei Platform)
+export type {
+  InjectionPosition,
+  PoisonedDocument,
+  RankManipulationPayload,
+} from './retrieval-poisoner.js';
+
+export {
+  createPoisonedDocument,
+  generateRankManipulationPayload,
+} from './retrieval-poisoner.js';
+
+// Context Assembler (Sensei Platform)
+export type {
+  ContextBoundaryInjection,
+  ContextOverflow,
+  ConflictingContext,
+} from './context-assembler.js';
+
+export {
+  injectAtContextBoundary,
+  overflowContext,
+  createConflictingContext,
+} from './context-assembler.js';
+
+// Knowledge Conflict (Sensei Platform)
+export type {
+  ConflictingFact,
+  TemporalOverride,
+  AuthorityImpersonation,
+} from './knowledge-conflict.js';
+
+export {
+  createConflictingFact,
+  createTemporalOverride,
+  createAuthorityImpersonation,
+} from './knowledge-conflict.js';

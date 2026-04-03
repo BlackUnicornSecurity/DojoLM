@@ -76,3 +76,23 @@ export {
   convertToolsForHarness,
   HARNESS_TYPES,
 } from './harness-adapters.js';
+
+// Task Generator (Sensei Platform)
+export type { BatchScenarioConfig } from './task-generator.js';
+
+export {
+  generateTask,
+  generateScenario,
+  generateBatchScenarios,
+} from './task-generator.js';
+
+// Scenario Templates (Sensei Platform)
+export type { ScenarioTemplate } from './scenarios.js';
+
+export {
+  SCENARIO_TEMPLATES,
+  TEMPLATE_COUNTS,
+  getTemplatesByCategory,
+  getTemplatesByDifficulty,
+  getTemplatesByArchitecture,
+} from './scenarios.js';

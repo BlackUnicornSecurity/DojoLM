@@ -11,6 +11,8 @@ export const TEMPORAL_ATTACK_TYPES = [
   'session_persistence',
   'context_overflow',
   'persona_drift',
+  'adaptive',
+  'sensei_orchestrated',
 ] as const;
 
 export type TemporalAttackType = (typeof TEMPORAL_ATTACK_TYPES)[number];

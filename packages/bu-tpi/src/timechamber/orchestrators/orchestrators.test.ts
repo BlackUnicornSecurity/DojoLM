@@ -115,8 +115,9 @@ describe('createOrchestrator', () => {
     expect(orc).toBeInstanceOf(SenseiAdaptiveOrchestrator);
   });
 
-  it('throws for unimplemented types', () => {
-    expect(() => createOrchestrator('mad-max')).toThrow('planned for a future phase');
+  it('creates MAD-MAX orchestrator', () => {
+    const orc = createOrchestrator('mad-max');
+    expect(orc.type).toBe('mad-max');
   });
 });
 

@@ -13,6 +13,7 @@ export const MUTATION_OPERATORS = [
   'structural-rearrangement',
   'delimiter-injection',
   'context-framing',
+  'sensei-guided',
 ] as const;
 
 export type MutationOperator = (typeof MUTATION_OPERATORS)[number];
@@ -62,6 +63,7 @@ export interface FitnessScores {
   readonly semanticPreservation: number;
   readonly harmScore: number;
   readonly overall: number;
+  readonly senseiJudgeScore?: number;
 }
 
 // --- Genetic Algorithm ---

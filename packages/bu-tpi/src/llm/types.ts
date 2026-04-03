@@ -416,6 +416,12 @@ export interface LLMTestExecution {
     responseLatencyMs: number;
     tokenCount: number;
   };
+  judgeResult?: {
+    readonly overallScore: number;
+    readonly verdict: 'success' | 'partial' | 'failure';
+    readonly confidence: number;
+    readonly reasoning: string;
+  };
 }
 
 /** Status of a batch execution */
