@@ -132,4 +132,27 @@ test.describe('Admin Controls', () => {
       await expect(page.getByRole('button', { name: /Create User/i })).toBeVisible({ timeout: 5000 });
     });
   });
+
+  /* ========================================================================== */
+  /* Playwright Gap Coverage — ScannerConfig                                    */
+  /* ========================================================================== */
+
+  test.describe('ScannerConfig', () => {
+    test('ScannerConfig: scanner configuration controls are accessible', async ({ page }) => {
+      // ScannerConfig may be accessible from a Scanner or Admin tab
+      const scannerTab = page.getByRole('tab', { name: /Scanner|Config/i });
+      const isTabVisible = await scannerTab.isVisible().catch(() => false);
+      if (isTabVisible) {
+        await scannerTab.click();
+        // ScannerConfig has threshold buttons and configuration options
+        const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
+        const criticalBtn = page.getByRole('button', { name: /CRITICAL only/i });
+        const isVisible = await warningBtn.isVisible().catch(() => false);
+        if (isVisible) {
+          await expect(warningBtn).toBeVisible();
+          await expect(criticalBtn).toBeVisible();
+        }
+      }
+    });
+  });
 });

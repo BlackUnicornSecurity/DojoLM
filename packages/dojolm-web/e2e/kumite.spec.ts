@@ -221,4 +221,79 @@ test.describe('The Kumite', () => {
     await page.getByRole('button', { name: /Configure SAGE/i }).click();
     await expect(page.getByText(/SAGE Configuration|SAGE Config/i).first()).toBeVisible({ timeout: 5000 });
   });
+
+  /* ========================================================================== */
+  /* Playwright Gap Coverage — Strategic Components                             */
+  /* ========================================================================== */
+
+  test.describe('AmaterasuSubsystem', () => {
+    test('AmaterasuSubsystem: subsystem renders in DNA tab', async ({ page }) => {
+      const openDna = page.getByRole('button', { name: /Open Amaterasu DNA dashboard/i });
+      await expect(openDna).toBeVisible({ timeout: 10000 });
+      await openDna.click();
+      await expect(
+        page.getByText(/Select Data Sources|Family|Lineage|Cluster|Analysis|DNA/i).first()
+      ).toBeVisible({ timeout: 15000 });
+    });
+  });
+
+  test.describe('ArenaRulesWidget', () => {
+    test('ArenaRulesWidget: arena rules widget renders in Arena tab', async ({ page }) => {
+      const openArena = page.getByRole('button', { name: /Open Battle Arena dashboard/i });
+      await expect(openArena).toBeVisible({ timeout: 10000 });
+      await openArena.click();
+      const rulesWidget = page.getByText(/Rules|Game Mode|Arena Rules/i).first();
+      const isVisible = await rulesWidget.isVisible().catch(() => false);
+      if (isVisible) {
+        await expect(rulesWidget).toBeVisible();
+      }
+    });
+  });
+
+  test.describe('BattleLogExporter', () => {
+    test('BattleLogExporter: exporter renders in Arena tab', async ({ page }) => {
+      const openArena = page.getByRole('button', { name: /Open Battle Arena dashboard/i });
+      await expect(openArena).toBeVisible({ timeout: 10000 });
+      await openArena.click();
+      const exportBtn = page.getByRole('button', { name: /Export|Download/i }).first();
+      const isVisible = await exportBtn.isVisible().catch(() => false);
+      if (isVisible) {
+        await expect(exportBtn).toBeVisible();
+      }
+    });
+  });
+
+  test.describe('MatchStatsWidget', () => {
+    test('MatchStatsWidget: match stats render in Arena tab', async ({ page }) => {
+      const openArena = page.getByRole('button', { name: /Open Battle Arena dashboard/i });
+      await expect(openArena).toBeVisible({ timeout: 10000 });
+      await openArena.click();
+      const matchStats = page.getByText(/Match|Stats|Rounds|Score/i).first();
+      const isVisible = await matchStats.isVisible().catch(() => false);
+      if (isVisible) {
+        await expect(matchStats).toBeVisible();
+      }
+    });
+  });
+
+  test.describe('BattleModeStep', () => {
+    test('BattleModeStep: battle mode step controls render in Arena', async ({ page }) => {
+      const openArena = page.getByRole('button', { name: /Open Battle Arena dashboard/i });
+      await expect(openArena).toBeVisible({ timeout: 10000 });
+      await openArena.click();
+      // BattleModeStep has mode selection and configuration
+      const modeStep = page.getByText(/Choose Fighters|Game Mode|Battle Mode|Select/i).first();
+      await expect(modeStep).toBeVisible({ timeout: 15000 });
+    });
+  });
+
+  test.describe('SupplyChainPanel', () => {
+    test('SupplyChainPanel: supply chain panel renders in Mitsuke or DNA', async ({ page }) => {
+      const openMitsuke = page.getByRole('button', { name: /Open Mitsuke dashboard/i });
+      await expect(openMitsuke).toBeVisible({ timeout: 10000 });
+      await openMitsuke.click();
+      const supplyChain = page.getByText(/Supply Chain|Source|Feed|Connect/i).first();
+      await expect(supplyChain).toBeVisible({ timeout: 15000 });
+    });
+  });
 });

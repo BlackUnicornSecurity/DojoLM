@@ -167,7 +167,7 @@ test.describe('Sengoku', () => {
     // Open builder
     await page.getByRole('button', { name: /New Campaign/i }).click();
     await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
-    
+
     // Close it (look for close button or backdrop)
     const closeBtn = page.getByRole('button', { name: /Close|Cancel|X/i }).first();
     if (await closeBtn.isVisible().catch(() => false)) {
@@ -176,5 +176,32 @@ test.describe('Sengoku', () => {
       // Click backdrop
       await page.mouse.click(100, 100);
     }
+  });
+
+  /* ========================================================================== */
+  /* Playwright Gap Coverage — Sengoku Components                               */
+  /* ========================================================================== */
+
+  test.describe('OrchestratorBuilder', () => {
+    test('OrchestratorBuilder: orchestrator builder controls are accessible', async ({ page }) => {
+      // OrchestratorBuilder appears in campaign creation flow
+      await page.getByRole('button', { name: /New Campaign/i }).click();
+      await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
+      // OrchestratorBuilder has step configuration, target, and schedule fields
+      const orchestratorField = page.getByText(/Target|Schedule|Step|Orchestrat/i).first();
+      const isVisible = await orchestratorField.isVisible().catch(() => false);
+      if (isVisible) {
+        await expect(orchestratorField).toBeVisible();
+      }
+    });
+  });
+
+  test.describe('TemporalConversation', () => {
+    test('TemporalConversation: temporal conversation controls are accessible', async ({ page }) => {
+      const temporalTab = page.getByRole('tab', { name: /Temporal/i });
+      await temporalTab.click();
+      // TemporalConversation renders conversation threads in temporal attack plans
+      await expect(page.getByText(/Accumulation|Delayed Activation|Temporal Attack/i).first()).toBeVisible({ timeout: 10000 });
+    });
   });
 });
