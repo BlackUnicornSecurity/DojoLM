@@ -1,6 +1,6 @@
 # QA Coverage Matrix (Generated)
 
-Generated on 2026-04-03T18:36:44.390Z.
+Generated on 2026-04-03T19:46:17.322Z.
 
 This file is a repo-driven coverage inventory and drift audit.
 It complements `QA-MASTER-PLAN.md` by enumerating live source surfaces, direct test references, heuristic interactive markers, and missing checks.
@@ -12,8 +12,8 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Metric | Value |
 | --- | --- |
 | Source surfaces tracked | 946 |
-| Test files scanned | 838 |
-| High-risk uncovered surfaces | 10 |
+| Test files scanned | 841 |
+| High-risk uncovered surfaces | 7 |
 | Framework citation drift items | 3 |
 | Packages tracked | dojolm-web, bu-tpi, dojolm-mcp, dojolm-scanner, bmad-cybersec/validators, bmad-cybersec/framework |
 
@@ -32,12 +32,12 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | Package | Category | Surfaces | Direct | Indirect | None | High-Risk Uncovered |
 | --- | --- | --- | --- | --- | --- | --- |
 | dojolm-web | route | 102 | 102 | 0 | 0 | 0 |
-| dojolm-web | page | 5 | 3 | 0 | 2 | 2 |
+| dojolm-web | page | 5 | 4 | 0 | 1 | 1 |
 | dojolm-web | app-shell | 1 | 1 | 0 | 0 | 0 |
 | dojolm-web | widget | 32 | 32 | 0 | 0 | 0 |
-| dojolm-web | component | 229 | 180 | 0 | 49 | 2 |
+| dojolm-web | component | 229 | 181 | 0 | 48 | 1 |
 | dojolm-web | hook | 5 | 4 | 0 | 1 | 0 |
-| dojolm-web | lib | 117 | 98 | 0 | 19 | 4 |
+| dojolm-web | lib | 117 | 99 | 0 | 18 | 3 |
 | dojolm-web | other | 3 | 1 | 0 | 2 | 0 |
 | bu-tpi | agentic | 7 | 7 | 0 | 0 | 0 |
 | bu-tpi | arena | 7 | 7 | 0 | 0 | 0 |
@@ -116,13 +116,10 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 | Package | Surface | Category | Signals | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- |
-| dojolm-web | / | page | storage, navigation, interactive:10 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/page.tsx` |
 | dojolm-web | NODADashboard.tsx | component | navigation, interactive:4 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| dojolm-web | index.ts | component | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/dashboard/index.ts` |
 | bu-tpi | generate-fixtures.ts | generate-fixtures.ts | storage, validation, persistence, network, admin +4 | direct unit or integration coverage | `packages/bu-tpi/src/generate-fixtures.ts` |
 | dojolm-web | boundary:error | page | interactive:2 | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
 | dojolm-web | execution.repository.ts | lib | storage, validation, navigation, db, nav:1 | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/execution.repository.ts` |
-| dojolm-web | AuthContext.tsx | lib | auth, network, api:3 | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/AuthContext.tsx` |
 | bu-tpi | serve.ts | serve.ts | storage, validation, network, navigation, api:6 +1 | direct unit or integration coverage | `packages/bu-tpi/src/serve.ts` |
 | dojolm-web | index.ts | lib | auth, validation, persistence | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/index.ts` |
 | dojolm-web | base.repository.ts | lib | storage, validation, db | query safety and malformed input coverage, read/write invariants and corruption handling | `packages/dojolm-web/src/lib/db/repositories/base.repository.ts` |
@@ -139,7 +136,7 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 ## dojolm-web
 
-Source surfaces: **494**. Test files scanned: **459**.
+Source surfaces: **494**. Test files scanned: **462**.
 
 <details>
 <summary>route (102 surfaces; direct 102, indirect 0, none 0)</summary>
@@ -252,14 +249,14 @@ Source surfaces: **494**. Test files scanned: **459**.
 </details>
 
 <details>
-<summary>page (5 surfaces; direct 3, indirect 0, none 2)</summary>
+<summary>page (5 surfaces; direct 4, indirect 0, none 1)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | boundary:error | root | Error | 2 | api:0 nav:0 xmod:0 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/error.tsx` |
 | /login | login | LoginPage | 4 | api:0 nav:0 xmod:5 | direct:1 | auth | -- | `packages/dojolm-web/src/app/login/page.tsx` |
 | boundary:404 | root | NotFound | 2 | api:0 nav:0 xmod:0 | direct:1 | navigation | -- | `packages/dojolm-web/src/app/not-found.tsx` |
-| / | root | Home | 10 | api:0 nav:0 xmod:32 | none | storage, navigation | click, keyboard, and state transition coverage | `packages/dojolm-web/src/app/page.tsx` |
+| / | root | Home | 10 | api:0 nav:0 xmod:32 | direct:1 | storage, navigation | -- | `packages/dojolm-web/src/app/page.tsx` |
 | /style-guide | style-guide | StyleGuidePage | 0 | api:0 nav:0 xmod:7 | direct:1 | -- | -- | `packages/dojolm-web/src/app/style-guide/page.tsx` |
 
 </details>
@@ -314,7 +311,7 @@ Source surfaces: **494**. Test files scanned: **459**.
 </details>
 
 <details>
-<summary>component (229 surfaces; direct 180, indirect 0, none 49)</summary>
+<summary>component (229 surfaces; direct 181, indirect 0, none 48)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -374,7 +371,7 @@ Source surfaces: **494**. Test files scanned: **459**.
 | index.ts | coverage | CoverageMap, CoverageSummary | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/coverage/index.ts` |
 | DashboardConfigContext.tsx | dashboard | migrateSize, DashboardConfigProvider, useDashboardConfig, WidgetSize +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, persistence | -- | `packages/dojolm-web/src/components/dashboard/DashboardConfigContext.tsx` |
 | DashboardCustomizer.tsx | dashboard | DashboardCustomizer | 13 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
-| index.ts | dashboard | NODADashboard, DashboardConfigProvider, useDashboardConfig, WIDGET_CATALOG +29 | 0 | api:0 nav:0 xmod:27 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/dashboard/index.ts` |
+| index.ts | dashboard | NODADashboard, DashboardConfigProvider, useDashboardConfig, WIDGET_CATALOG +29 | 0 | api:0 nav:0 xmod:27 | direct:1 | -- | -- | `packages/dojolm-web/src/components/dashboard/index.ts` |
 | NODADashboard.tsx | dashboard | NODADashboard | 4 | api:0 nav:0 xmod:37 | none | navigation | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
 | SenseiPanel.tsx | dashboard | SenseiPanel | 5 | api:0 nav:0 xmod:5 | direct:1 | llm | -- | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
 | WidgetCard.tsx | dashboard | WidgetMetaProvider, WidgetCard | 2 | api:0 nav:0 xmod:5 | direct:2 | navigation | -- | `packages/dojolm-web/src/components/dashboard/WidgetCard.tsx` |
@@ -564,7 +561,7 @@ Source surfaces: **494**. Test files scanned: **459**.
 </details>
 
 <details>
-<summary>lib (117 surfaces; direct 98, indirect 0, none 19)</summary>
+<summary>lib (117 surfaces; direct 99, indirect 0, none 18)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -591,7 +588,7 @@ Source surfaces: **494**. Test files scanned: **459**.
 | atemi-session-types.ts | atemi-session-types.ts | AtemiSessionStatus, AtemiSessionEventType, AtemiSessionEvent, AtemiSessionConfig +3 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/atemi-session-types.ts` |
 | audit-logger.ts | audit-logger.ts | AuditLogger, AuditLevel, AuditEvent, AuditLogEntry | 0 | api:0 nav:0 xmod:1 | direct:3 | -- | -- | `packages/dojolm-web/src/lib/audit-logger.ts` |
 | auth.ts | auth | hashPassword, verifyPassword, generateSessionToken, hashSessionToken +1 | 0 | api:0 nav:0 xmod:0 | direct:3 | auth | -- | `packages/dojolm-web/src/lib/auth/auth.ts` |
-| AuthContext.tsx | auth | AuthProvider, useAuth, AuthUser, AuthContextValue | 0 | api:3 nav:0 xmod:0 | none | auth, network | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/AuthContext.tsx` |
+| AuthContext.tsx | auth | AuthProvider, useAuth, AuthUser, AuthContextValue | 0 | api:3 nav:0 xmod:0 | direct:1 | auth, network | -- | `packages/dojolm-web/src/lib/auth/AuthContext.tsx` |
 | index.ts | auth | hashPassword, verifyPassword, generateSessionToken, hashSessionToken +22 | 0 | api:0 nav:0 xmod:0 | none | auth, validation, persistence | permission, expiry, and edge-condition coverage | `packages/dojolm-web/src/lib/auth/index.ts` |
 | login-rate-limit.ts | auth | getLoginRateLimitKey, isLoginRateLimited, recordLoginRateLimitFailure, clearLoginRateLimitFailures +1 | 0 | api:0 nav:0 xmod:0 | direct:2 | auth | -- | `packages/dojolm-web/src/lib/auth/login-rate-limit.ts` |
 | rbac.ts | auth | hasPermission, getAllowedActions, isAtLeastRole, Resource +1 | 0 | api:0 nav:0 xmod:1 | direct:3 | auth, admin | -- | `packages/dojolm-web/src/lib/auth/rbac.ts` |

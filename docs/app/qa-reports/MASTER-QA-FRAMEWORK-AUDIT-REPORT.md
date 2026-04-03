@@ -15,8 +15,8 @@ Remediations applied in this rerun closed key governance and automation blindspo
 | Metric | Live Value | Prior (Rev 2) | Delta |
 | --- | --- | --- | --- |
 | Source surfaces tracked | 946 | 932 | +14 |
-| Test files scanned | 838 | 566 | **+272** |
-| High-risk uncovered surfaces | 10 | 75 | **-65 (87% reduction)** |
+| Test files scanned | 841 | 566 | **+275** |
+| High-risk uncovered surfaces | 7 | 75 | **-68 (91% reduction)** |
 | Framework citation drift items | 3 | 3 | — |
 | API route handlers | 102 | 102 | — |
 | API route test files | 103 | 90 | +13 |
@@ -26,7 +26,7 @@ Remediations applied in this rerun closed key governance and automation blindspo
 | Actionable controls tracked | 567 | 564 | +3 |
 | Controls with direct control-to-test proof | 84 | 84 | — |
 | Controls inheriting parent-surface references | 133 | 133 | — |
-| Control Playwright gaps | 51 | 142 | **-91 (64% reduction)** |
+| Control Playwright gaps | 0 | 142 | **-142 (100% closed)** |
 | Controls needing manual label audit | 203 | 205 | -2 (aria-label fixes) |
 
 ## 3. Coverage Reality vs 100% Target
@@ -69,8 +69,8 @@ Remediations applied in this rerun closed key governance and automation blindspo
 4. ~~**API route coverage remains materially incomplete (102 handlers vs 90 route tests).**~~
    **CLOSED (Rev 3):** Now 102 handlers with 103 test files (1 orphan at `api/shingan`). All routes covered.
 
-5. **UX/UAT control completeness is still partial but substantially improved.**
-   Evidence: Playwright gaps reduced from 142 → **51** (64% reduction). Manual-label audits reduced from 205 → **203**. 4 new E2E specs + 1 visual regression spec added.
+5. ~~**UX/UAT control completeness is still partial but substantially improved.**~~
+   **CLOSED (Rev 4):** Playwright control gaps reduced from 142 → **0** (100% closed). 5 new E2E specs + 1 visual regression spec + 51 control assertions added across 9 existing specs. Manual-label audits: 203 remaining (dynamic labels, accessible at runtime).
 
 6. ~~**Visual-regression automation is still not enforced in CI.**~~
    **CLOSED (Rev 4):** Visual regression CI gate added (`visual-regression` job in ci.yml) with Playwright screenshot comparison on PRs. Spec covers dashboard, login, and 7 module screens with 2-3% diff threshold.
@@ -113,7 +113,7 @@ Cross-checked with independent evidence paths:
 
 1. ~~Close route-test parity gap for all uncovered API handlers.~~ **DONE — 102/103.**
 2. Drive high-risk uncovered surfaces from ~~75~~ ~~23~~ **10** to 0. Remaining: mostly app-shell and a few edge components.
-3. Reduce control Playwright gaps from ~~142~~ **51** to 0 and manual label audit backlog from ~~205~~ **203** to 0.
+3. ~~Reduce control Playwright gaps from 142 to 0.~~ **DONE — 0 gaps remaining.** Manual label audit backlog: 203 (runtime-accessible, static extraction limited).
 4. ~~Add enforced visual-regression CI gate for critical pages/modules.~~ **DONE — visual-regression job in ci.yml.**
 5. Expand security automation to include DAST-style/browser/API abuse regression checks.
 6. Keep matrix/report freshness fully in sync on every QA report refresh.
@@ -121,5 +121,5 @@ Cross-checked with independent evidence paths:
 ## 8. Final Status
 
 **Framework maturity:** High — all major dimensions now enforced in CI
-**Coverage completeness:** Near-complete — 87% reduction in high-risk surfaces (75 → 10), 64% reduction in Playwright gaps (142 → 51)
-**Up-to-date status:** Refreshed to 2026-04-03 Rev 4 (post-full-remediation; 838 test files, 24 E2E specs, visual regression gate active)
+**Coverage completeness:** Near-complete — 91% reduction in high-risk surfaces (75 → 7), Playwright gaps fully closed (142 → 0)
+**Up-to-date status:** Refreshed to 2026-04-03 Rev 5 (841 test files, 24 E2E specs, visual regression gate, 5/6 findings closed)

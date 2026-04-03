@@ -461,18 +461,18 @@ This framework was re-baselined against the live repo on 2026-04-03 using:
 - `node team/testing/tools/generate-coverage-matrix.mjs`
 - `node team/testing/tools/generate-uat-ux-matrix.mjs`
 
-Current live baseline (2026-04-03 Rev 5, post-full-remediation, filesystem-verified):
+Current live baseline (2026-04-03 Rev 6, final remediation, filesystem-verified):
 
 - Source surfaces tracked: **946** (was 932)
-- Test files scanned: **838** (was 566)
-- High-risk uncovered surfaces: **10** (was 75; 87% reduction)
+- Test files scanned: **841** (was 566)
+- High-risk uncovered surfaces: **7** (was 75; 91% reduction)
 - API route handlers: **102**
 - API route test directories: **103** (102 route handlers + 1 orphan at `api/shingan`)
 - API routes without tests: **0** (all 102 routes covered)
 - Playwright specs: **24** (was 19; +5 new specs)
 - Playwright tests: **167** (+ new control/page/widget/component/visual tests pending first run)
 - Actionable controls tracked in UAT/UX matrix: **567** (was 564)
-- Control Playwright gaps: **51** (was 142; 64% reduction)
+- Control Playwright gaps: **0** (was 142; 100% closed)
 - Total components (dojolm-web): **236**
 - Component test files: **184** (was 174; +10 widget tests)
 - bu-tpi test files: **244** (was 240; +4 probe/attack/sensei files; 5,374 tests, all passing)

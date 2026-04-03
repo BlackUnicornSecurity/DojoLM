@@ -406,7 +406,7 @@ describe('S44: Notification Flooding + Prompt Injection', () => {
 });
 
 describe('ALL_SCENARIOS aggregate', () => {
-  it('has all 17 attack types (8 P4 + 9 P5)', () => {
+  it('has 17 unique attack types (sensei-tools shares tool-poisoning type)', () => {
     const types = new Set(ALL_SCENARIOS.map((s) => s.type));
     expect(types.size).toBe(17);
   });

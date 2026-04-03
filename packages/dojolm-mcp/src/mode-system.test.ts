@@ -13,7 +13,7 @@ describe('S45: Attack Mode System', () => {
         timeoutMs: 0,
         consentRequired: false,
       });
-      expect(server.getController().getAllScenarios().length).toBe(17); // 8 P4 + 9 P5
+      expect(server.getController().getAllScenarios().length).toBe(18); // 8 P4 + 10 P5 scenarios
     });
 
     it('creates server with all tools registered', () => {
@@ -74,8 +74,8 @@ describe('S45: Attack Mode System', () => {
         consentRequired: false,
       });
       const active = server.getController().getActiveScenarios();
-      expect(active.length).toBe(1);
-      expect(active[0].type).toBe('tool-poisoning');
+      expect(active.length).toBe(2);
+      expect(active.some(s => s.type === 'tool-poisoning')).toBe(true);
     });
 
     it('advanced mode enables 4 attack types', () => {
@@ -85,7 +85,7 @@ describe('S45: Attack Mode System', () => {
         consentRequired: false,
       });
       const active = server.getController().getActiveScenarios();
-      expect(active.length).toBe(9); // 4 P4 + 5 P5 in advanced mode
+      expect(active.length).toBe(10); // 4 P4 + 6 P5 in advanced mode
     });
 
     it('aggressive mode enables all 17 attack types', () => {
@@ -95,7 +95,7 @@ describe('S45: Attack Mode System', () => {
         consentRequired: false,
       });
       const active = server.getController().getActiveScenarios();
-      expect(active.length).toBe(17); // 8 P4 + 9 P5
+      expect(active.length).toBe(18); // 8 P4 + 10 P5 scenarios
     });
 
     it('mode switching works at runtime without restart', () => {
@@ -107,10 +107,10 @@ describe('S45: Attack Mode System', () => {
       expect(server.getController().getActiveScenarios().length).toBe(0);
 
       server.getController().setMode('aggressive');
-      expect(server.getController().getActiveScenarios().length).toBe(17); // 8 P4 + 9 P5
+      expect(server.getController().getActiveScenarios().length).toBe(18); // 8 P4 + 10 P5 scenarios
 
       server.getController().setMode('basic');
-      expect(server.getController().getActiveScenarios().length).toBe(1);
+      expect(server.getController().getActiveScenarios().length).toBe(2);
     });
 
     it('each mode progressively increases attack intensity', () => {
@@ -135,7 +135,7 @@ describe('S45: Attack Mode System', () => {
       expect(passive.toolCount).toBe(0);
 
       const aggressive = getModeSummary('aggressive');
-      expect(aggressive.attackCount).toBe(17); // 8 P4 + 9 P5 attack types
+      expect(aggressive.attackCount).toBe(17); // 17 unique attack types in enabledAttacks
       expect(aggressive.toolCount).toBeGreaterThan(0);
     });
 
