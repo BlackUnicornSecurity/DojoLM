@@ -17,6 +17,20 @@ export default defineConfig({
     // Test environment
     environment: "jsdom",
 
+    // Externalize bu-tpi dynamic imports — Vite import analysis cannot resolve
+    // subpath exports that only exist at runtime (dist/ not built in dev)
+    server: {
+      deps: {
+        external: [
+          'bu-tpi/sensei',
+          'bu-tpi/agentic',
+          'bu-tpi/llm',
+          'bu-tpi/timechamber',
+          'bu-tpi/benchmark',
+        ],
+      },
+    },
+
     // Global setup
     globals: true,
 

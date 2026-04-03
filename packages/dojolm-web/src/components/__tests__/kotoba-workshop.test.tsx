@@ -61,7 +61,6 @@ describe('KotobaWorkshop (KW-001 to KW-007)', () => {
 
   it('KW-003: Moderate is selected by default', () => {
     render(<KotobaWorkshop />)
-    const moderateBtn = screen.getByRole('radio', { name: '' })
     // Check the first radio (Moderate) is checked
     const radios = screen.getAllByRole('radio')
     expect(radios[0]).toHaveAttribute('aria-checked', 'true')

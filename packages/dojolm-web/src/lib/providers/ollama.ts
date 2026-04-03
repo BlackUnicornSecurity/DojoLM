@@ -67,7 +67,7 @@ export class OllamaProvider implements LLMProviderAdapter {
 
     const startTime = Date.now();
     const timeout = options.timeout ?? DEFAULT_REQUEST_TIMEOUT_MS;
-    const baseUrl = config.baseUrl || 'http://localhost:11434';
+    const baseUrl = config.baseUrl || process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 
     try {
       const requestBody = this.buildRequestBody(config, options);
@@ -116,7 +116,7 @@ export class OllamaProvider implements LLMProviderAdapter {
 
     const startTime = Date.now();
     const timeout = options.timeout ?? DEFAULT_REQUEST_TIMEOUT_MS;
-    const baseUrl = config.baseUrl || 'http://localhost:11434';
+    const baseUrl = config.baseUrl || process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 
     const requestBody = {
       ...this.buildRequestBody(config, options),
@@ -170,7 +170,7 @@ export class OllamaProvider implements LLMProviderAdapter {
 
   async testConnection(config: LLMModelConfig): Promise<boolean> {
     try {
-      const baseUrl = config.baseUrl || 'http://localhost:11434';
+      const baseUrl = config.baseUrl || process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 
       // Check if Ollama is running
       const response = await fetch(`${baseUrl}/api/tags`, {

@@ -40,8 +40,9 @@ describe('POST /api/v1/sengoku', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.message).toBe('Sengoku v1 endpoint ready');
-    expect(json.data).toBeNull();
+    expect(json.data).toBeDefined();
+    expect(json.data.campaignId).toBe('campaign-alpha');
+    expect(json.data.status).toBe('ready');
   });
 
   // SENGOKU-002: Invalid JSON returns 400

@@ -107,8 +107,8 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     // Call bu-tpi Sensei service layer with graceful degradation
     try {
-      const llmMod = await import(/* webpackIgnore: true */ 'bu-tpi/llm' as string);
-      const senseiMod = await import(/* webpackIgnore: true */ 'bu-tpi/sensei' as string);
+      const llmMod = await import(/* @vite-ignore */ /* webpackIgnore: true */ 'bu-tpi/llm' as string);
+      const senseiMod = await import(/* @vite-ignore */ /* webpackIgnore: true */ 'bu-tpi/sensei' as string);
       const SenseiProvider = llmMod.SenseiProvider;
       const executeMutate = senseiMod.executeMutate;
 

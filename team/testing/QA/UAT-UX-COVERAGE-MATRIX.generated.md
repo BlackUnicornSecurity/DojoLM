@@ -1,6 +1,6 @@
 # UAT / UX Coverage Matrix (Generated)
 
-Generated on 2026-04-03T20:00:12.711Z.
+Generated on 2026-04-03T20:35:36.803Z.
 
 This file inventories the current user-facing DojoLM surface area for UAT and UX planning.
 Playwright is the default runner whenever the surface is automatable in-browser.

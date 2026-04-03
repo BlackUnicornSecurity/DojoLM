@@ -17,8 +17,8 @@ import type { SenseiToolDefinition } from '../types';
 import type { NavId } from '../../constants';
 
 describe('SENSEI_TOOLS registry', () => {
-  it('contains exactly 16 tools', () => {
-    expect(SENSEI_TOOLS).toHaveLength(16);
+  it('contains exactly 22 tools', () => {
+    expect(SENSEI_TOOLS).toHaveLength(22);
   });
 
   it('has unique tool names', () => {
@@ -60,9 +60,9 @@ describe('SENSEI_TOOLS registry', () => {
     }
   });
 
-  it('contains 4 mutating tools with confirmation', () => {
+  it('contains 7 mutating tools with confirmation', () => {
     const mutating = SENSEI_TOOLS.filter((t) => t.mutating);
-    expect(mutating.length).toBe(3); // run_test, run_batch, set_guard_mode
+    expect(mutating.length).toBe(7); // run_test, run_batch, set_guard_mode, generate_attack, run_orchestrator, run_agentic_test, run_rag_pipeline_test
     for (const t of mutating) {
       expect(t.requiresConfirmation).toBe(true);
     }
@@ -119,14 +119,14 @@ describe('getToolByName', () => {
 });
 
 describe('getToolsForPrompt', () => {
-  it('returns all 16 tools for Claude provider', () => {
+  it('returns all 22 tools for Claude provider', () => {
     const tools = getToolsForPrompt('anthropic', 'dashboard');
-    expect(tools).toHaveLength(16);
+    expect(tools).toHaveLength(22);
   });
 
-  it('returns all 16 tools for OpenAI provider', () => {
+  it('returns all 22 tools for OpenAI provider', () => {
     const tools = getToolsForPrompt('openai', 'scanner');
-    expect(tools).toHaveLength(16);
+    expect(tools).toHaveLength(22);
   });
 
   it('returns top 5 tools for Ollama provider', () => {
@@ -219,10 +219,10 @@ describe('generateToolDescriptionBlock', () => {
     expect(block).toBe('');
   });
 
-  it('generates full list for all 16 tools', () => {
+  it('generates full list for all 22 tools', () => {
     const block = generateToolDescriptionBlock(SENSEI_TOOLS);
     const lines = block.split('\n');
-    expect(lines).toHaveLength(16);
+    expect(lines).toHaveLength(22);
   });
 });
 
@@ -255,6 +255,6 @@ describe('generateToolSchemaBlock', () => {
   it('handles full tool registry', () => {
     const block = generateToolSchemaBlock(SENSEI_TOOLS);
     const parsed = JSON.parse(block);
-    expect(parsed).toHaveLength(16);
+    expect(parsed).toHaveLength(22);
   });
 });

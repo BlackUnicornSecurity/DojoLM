@@ -128,7 +128,7 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     // Call bu-tpi agentic service layer with graceful degradation
     try {
-      const agenticMod = await import(/* webpackIgnore: true */ 'bu-tpi/agentic' as string);
+      const agenticMod = await import(/* @vite-ignore */ /* webpackIgnore: true */ 'bu-tpi/agentic' as string);
       const createEnvironment = agenticMod.createEnvironment;
       const env = createEnvironment();
 

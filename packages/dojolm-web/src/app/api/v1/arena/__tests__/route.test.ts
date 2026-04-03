@@ -33,15 +33,15 @@ describe('POST /api/v1/arena', () => {
 
   // ARENA-001: Valid request returns 200
   it('ARENA-001: valid request with mode and modelId returns 200', async () => {
-    const req = createPostRequest({ mode: 'attack', modelId: 'gpt-4' });
+    const req = createPostRequest({ mode: 'kunai', modelId: 'gpt-4' });
 
     const res = await POST(req);
     const json = await res.json();
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.message).toBe('Arena v1 endpoint ready');
-    expect(json.data).toBeNull();
+    expect(json.data).toBeDefined();
+    expect(json.data.status).toBe('ready');
   });
 
   // ARENA-002: Invalid JSON returns 400
@@ -79,7 +79,7 @@ describe('POST /api/v1/arena', () => {
 
   // ARENA-005: Missing modelId returns 400
   it('ARENA-005: missing modelId returns 400', async () => {
-    const req = createPostRequest({ mode: 'attack' });
+    const req = createPostRequest({ mode: 'kunai' });
 
     const res = await POST(req);
     const json = await res.json();
@@ -101,7 +101,7 @@ describe('POST /api/v1/arena', () => {
 
   // ARENA-007: Non-string modelId returns 400
   it('ARENA-007: non-string modelId returns 400', async () => {
-    const req = createPostRequest({ mode: 'attack', modelId: 42 });
+    const req = createPostRequest({ mode: 'kunai', modelId: 42 });
 
     const res = await POST(req);
     const json = await res.json();
@@ -123,7 +123,7 @@ describe('POST /api/v1/arena', () => {
 
   // ARENA-009: Empty string modelId returns 400
   it('ARENA-009: empty string modelId returns 400', async () => {
-    const req = createPostRequest({ mode: 'attack', modelId: '' });
+    const req = createPostRequest({ mode: 'kunai', modelId: '' });
 
     const res = await POST(req);
     const json = await res.json();

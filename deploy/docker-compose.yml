@@ -35,6 +35,7 @@ services:
       TPI_SESSION_TTL_HOURS: "${TPI_SESSION_TTL_HOURS:-24}"
       TPI_CORS_ORIGINS: "${TPI_CORS_ORIGINS:-https://dojo.bucc.internal}"
       GUARD_CONFIG_SECRET: "${GUARD_CONFIG_SECRET}"
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://localhost:11434}"
     volumes:
       - dojolm_data:/app/data
     deploy:

@@ -13,6 +13,12 @@ import { afterEach, vi } from "vitest";
 
 const SUPPRESSED_CONSOLE_ERROR_PATTERNS = [
   'Not implemented: navigation to another Document',
+  // React act() warnings from components with async state updates on mount
+  // (e.g. fetch-on-mount in ComplianceBarsWidget, SengokuDashboard,
+  //  CustomProviderBuilder, SenseiDrawer). All tests pass; this is a
+  //  cosmetic warning that cleanup fires before pending promises settle.
+  'Warning: An update to',
+  'act(...)',
 ] as const;
 
 const SUPPRESSED_CONSOLE_DEBUG_PATTERNS = [

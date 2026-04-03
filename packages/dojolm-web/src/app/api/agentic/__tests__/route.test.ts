@@ -157,7 +157,7 @@ describe('POST /api/agentic', () => {
     expect(json.error).toContain('targetModelId');
   });
 
-  // AGEN-012: Valid request returns 200
+  // AGEN-012: Valid request returns 200 with environment data
   it('AGEN-012: valid request returns 200', async () => {
     const req = createPostRequest(VALID_BODY);
     const res = await POST(req);
@@ -165,10 +165,11 @@ describe('POST /api/agentic', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.params.architecture).toBe('single-agent');
-    expect(json.params.categories).toEqual(['prompt-injection']);
-    expect(json.params.difficulty).toBe('medium');
-    expect(json.params.targetModelId).toBe('gpt-4');
+    expect(json.data.architecture).toBe('single-agent');
+    expect(json.data.categories).toEqual(['prompt-injection']);
+    expect(json.data.difficulty).toBe('medium');
+    expect(json.data.targetModelId).toBe('gpt-4');
+    expect(json.data.environmentReady).toBe(true);
   });
 
   // AGEN-013: OPTIONS returns 200

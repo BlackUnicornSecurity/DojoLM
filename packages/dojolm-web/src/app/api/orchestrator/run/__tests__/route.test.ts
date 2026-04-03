@@ -21,7 +21,7 @@ function createPostRequest(body: unknown): NextRequest {
 }
 
 const VALID_BODY = {
-  type: 'single',
+  type: 'pair',
   targetModelId: 'gpt-4',
   attackerModelId: 'gpt-3.5',
   judgeModelId: 'claude-3',
@@ -68,7 +68,7 @@ describe('POST /api/orchestrator/run', () => {
 
     expect(res.status).toBe(400);
     expect(json.error).toContain('Invalid type');
-    expect(json.error).toContain('single');
+    expect(json.error).toContain('pair');
   });
 
   // ORCH-RUN-004: Missing targetModelId returns 400
@@ -167,7 +167,7 @@ describe('POST /api/orchestrator/run', () => {
     expect(json.error).toContain('maxTurns');
   });
 
-  // ORCH-RUN-013: Valid request returns 200
+  // ORCH-RUN-013: Valid request returns 200 with run data
   it('ORCH-RUN-013: valid request returns 200', async () => {
     const req = createPostRequest(VALID_BODY);
     const res = await POST(req);
@@ -175,13 +175,14 @@ describe('POST /api/orchestrator/run', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.params.type).toBe('single');
-    expect(json.params.targetModelId).toBe('gpt-4');
-    expect(json.params.attackerModelId).toBe('gpt-3.5');
-    expect(json.params.judgeModelId).toBe('claude-3');
+    expect(json.data.type).toBe('pair');
+    expect(json.data.status).toBe('accepted');
+    expect(json.data.config.targetModelId).toBe('gpt-4');
+    expect(json.data.config.attackerModelId).toBe('gpt-3.5');
+    expect(json.data.config.judgeModelId).toBe('claude-3');
   });
 
-  // ORCH-RUN-014: Valid request with optional fields returns 200
+  // ORCH-RUN-014: Valid request with optional fields returns 200 with run data
   it('ORCH-RUN-014: valid request with optional fields returns 200', async () => {
     const req = createPostRequest({ ...VALID_BODY, category: 'prompt-injection', maxTurns: 10, maxBranches: 5 });
     const res = await POST(req);
@@ -189,9 +190,9 @@ describe('POST /api/orchestrator/run', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.params.category).toBe('prompt-injection');
-    expect(json.params.maxTurns).toBe(10);
-    expect(json.params.maxBranches).toBe(5);
+    expect(json.data.config.category).toBe('prompt-injection');
+    expect(json.data.config.maxTurns).toBe(10);
+    expect(json.data.config.maxBranches).toBe(5);
   });
 
   // ORCH-RUN-015: OPTIONS returns 200

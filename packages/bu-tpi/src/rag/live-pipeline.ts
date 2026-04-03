@@ -106,7 +106,7 @@ export async function runGenerationStage(
 
   return {
     response: response.text,
-    tokensUsed: response.tokensUsed ?? 0,
+    tokensUsed: response.totalTokens ?? 0,
     elapsed: Date.now() - startTime,
     poisonedChunksInContext: poisonedCount,
     totalChunksInContext: totalChunks,

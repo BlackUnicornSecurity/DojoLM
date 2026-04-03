@@ -31,7 +31,7 @@ describe('POST /api/v1/sensei', () => {
     OPTIONS = mod.OPTIONS;
   });
 
-  // SENSEI-001: Valid request returns 200
+  // SENSEI-001: Valid request returns 200 with capabilities data
   it('SENSEI-001: valid request with capability returns 200', async () => {
     const req = createPostRequest({ capability: 'detect-injection' });
 
@@ -40,8 +40,9 @@ describe('POST /api/v1/sensei', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.message).toBe('Sensei v1 endpoint ready');
-    expect(json.data).toBeNull();
+    expect(json.data.capability).toBe('detect-injection');
+    expect(json.data.status).toBe('ready');
+    expect(Array.isArray(json.data.availableCapabilities)).toBe(true);
   });
 
   // SENSEI-002: Invalid JSON returns 400
@@ -130,6 +131,7 @@ describe('POST /api/v1/sensei', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
+    expect(json.data.status).toBe('ready');
   });
 
   // SENSEI-010: Boolean capability returns 400

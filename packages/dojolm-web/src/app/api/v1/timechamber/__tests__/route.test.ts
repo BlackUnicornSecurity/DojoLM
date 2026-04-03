@@ -40,8 +40,9 @@ describe('POST /api/v1/timechamber', () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(json.message).toBe('TimeChamber v1 endpoint ready');
-    expect(json.data).toBeNull();
+    expect(json.data).toBeDefined();
+    expect(json.data.planId).toBe('plan-001');
+    expect(json.data.status).toBe('ready');
   });
 
   // TC-002: Invalid JSON returns 400

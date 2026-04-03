@@ -52,7 +52,7 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     // Sensei v1 — pull available capabilities from bu-tpi
     try {
-      const senseiMod = await import(/* webpackIgnore: true */ 'bu-tpi/sensei' as string);
+      const senseiMod = await import(/* @vite-ignore */ /* webpackIgnore: true */ 'bu-tpi/sensei' as string);
       const SENSEI_CAPABILITIES = senseiMod.SENSEI_CAPABILITIES;
       return NextResponse.json(
         {

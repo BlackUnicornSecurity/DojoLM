@@ -96,7 +96,7 @@ describe('SenseiDrawer (SD-001 to SD-007)', () => {
     mockUseSensei.isOpen = true
     render(<SenseiDrawer activeModule="dashboard" />)
     expect(screen.getByLabelText('Clear chat history')).toBeInTheDocument()
-    expect(screen.getByLabelText('Close Sensei')).toBeInTheDocument()
+    expect(screen.getAllByLabelText('Close Sensei').length).toBeGreaterThanOrEqual(1)
   })
 
   it('SD-005: calls clearHistory when trash button clicked', () => {

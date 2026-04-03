@@ -1,6 +1,6 @@
 # QA Coverage Matrix (Generated)
 
-Generated on 2026-04-03T20:00:12.474Z.
+Generated on 2026-04-03T20:35:37.414Z.
 
 This file is a repo-driven coverage inventory and drift audit.
 It complements `QA-MASTER-PLAN.md` by enumerating live source surfaces, direct test references, heuristic interactive markers, and missing checks.
@@ -121,8 +121,8 @@ No high-risk uncovered surfaces detected.
 | Line | Citation | Suggested Live Match |
 | --- | --- | --- |
 | 470 | `api/shingan` | -- |
-| 779 | `__tests__/route.test.ts` | -- |
-| 847 | `next/dynamic` | -- |
+| 802 | `__tests__/route.test.ts` | -- |
+| 870 | `next/dynamic` | -- |
 
 ## Package Inventories
 
