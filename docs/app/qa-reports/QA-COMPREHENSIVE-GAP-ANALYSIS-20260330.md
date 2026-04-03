@@ -6,6 +6,8 @@
 **Method:** Cross-module expert review across 8 testing dimensions
 **Status:** Gap analysis only — no modifications to the QA Master Framework
 
+**Current-state note (2026-04-03):** This document is a 2026-03-30 snapshot. CI/E2E and coverage-threshold status items are superseded by `MASTER-QA-FRAMEWORK-AUDIT-REPORT.md` and `QA-FRAMEWORK-EXECUTION-REPORT-20260403.md`.
+
 ---
 
 ## Executive Summary
@@ -40,7 +42,7 @@ The existing MASTER-QA-FRAMEWORK-AUDIT-REPORT (2026-03-30) provides a strong fou
 
 ### 1.1 What the Framework Covers
 
-The framework tracks source files, test files, and test counts per package. It identifies 7,550+ passing unit tests and ~90 Playwright E2E tests.
+The framework tracks source files, test files, and test counts per package. It identifies 7,550+ passing unit tests and 19 Playwright specs (167 tests) in the current repository.
 
 ### 1.2 What's Missing
 
@@ -961,11 +963,11 @@ The gap analysis mentioned "repository CRUD integration" as a general concern bu
 
 ### U7. E2E Tests NOT in CI/CD — UNDERSTATED
 
-19 Playwright spec files exist but are **completely absent from the CI pipeline** (`.github/workflows/ci.yml`). The gap analysis mentioned this as a CI gate issue but did not emphasize that E2E tests literally never run in automation.
+19 Playwright spec files exist and are automated in CI for `main/master`, but they are **not PR-gated** because the E2E job is branch-scoped. This leaves a pre-merge regression gap.
 
 ### U8. dojolm-web Coverage Thresholds — MISSING
 
-bu-tpi has coverage thresholds enforced (80% lines/functions/statements, 75% branches). **dojolm-web has NO coverage thresholds** configured at all — neither in vitest.config nor in CI.
+bu-tpi has coverage thresholds enforced (80% lines/functions/statements, 75% branches). `dojolm-web` also has thresholds configured (`70/60/70/70`), but they are lower than bu-tpi and far below a 100% target posture.
 
 ---
 
@@ -985,8 +987,8 @@ bu-tpi has coverage thresholds enforced (80% lines/functions/statements, 75% bra
 | Fixture category validation | 17% (6/36) | **25%** (9/36 incl. cross-module) | CRITICAL |
 | E2E spec files | 16 | **19** | CORRECTED |
 | E2E lifecycle coverage | 0% | **0%** (still smoke-only) | CRITICAL |
-| E2E in CI/CD | Not assessed | **0%** (not in pipeline) | **CRITICAL** |
-| dojolm-web coverage thresholds | Not assessed | **None configured** | **HIGH** |
+| E2E in CI/CD | Not assessed | **Partial** (present on `main/master`; not PR-gated) | **HIGH** |
+| dojolm-web coverage thresholds | Not assessed | **Configured** (`70/60/70/70`) | **MEDIUM** |
 
 ---
 
@@ -1006,7 +1008,7 @@ Items struck from original list are marked ~~strikethrough~~. New items from aud
 | 7 | 19 Kagami probe types with ZERO tests | **CRITICAL** |
 | 8 | 5 Timechamber attack types with ZERO tests | **CRITICAL** |
 | 9 | adversarial-skill-engine.ts UNTESTED | **CRITICAL** |
-| 10 | **[NEW]** E2E tests not in CI/CD pipeline (19 specs, never automated) | **CRITICAL** |
+| 10 | **[NEW]** E2E CI is branch-scoped (`main/master`) and does not gate PR validation | **HIGH** |
 | 11 | ZERO cross-package integration tests | **CRITICAL** |
 | ~~12~~ | ~~7 Shingan modules with ZERO tests~~ | ~~REMOVED — all tested~~ |
 | ~~13~~ | ~~9 API routes untested~~ | ~~REMOVED — all tested~~ |
@@ -1018,7 +1020,7 @@ Items struck from original list are marked ~~strikethrough~~. New items from aud
 | 17 | Automated visual regression: NOT CONFIGURED | CRITICAL |
 | 18 | ZERO formal UAT epic executions | CRITICAL |
 | 19 | No production UAT sign-off documented | CRITICAL |
-| 20 | **[NEW]** dojolm-web has NO coverage thresholds (bu-tpi has 80%) | HIGH |
+| 20 | **[NEW]** dojolm-web thresholds (`70/60/70/70`) remain below bu-tpi and below 100% objective | HIGH |
 | 21 | Sage content-safety bypass testing UNTESTED | HIGH |
 | 22 | Authentication lifecycle gaps (session fixation, expiry) | HIGH |
 | 23 | RBAC cross-tenant access testing UNTESTED | HIGH |

@@ -11,7 +11,7 @@
     "build": "npm run build:packages && npm run build --workspace=dojolm-web",
     "build:watch": "npm run dev:web",
     "dev": "npm run dev:web",
-    "test": "npm run test --workspace=bu-tpi && npm run test --workspace=@dojolm/mcp && npm run test --workspace=dojolm-web",
+    "test": "npm run test --workspace=bu-tpi && npm run test --workspace=@dojolm/mcp && npm run test --workspace=@dojolm/scanner && npm run test --workspace=dojolm-web",
     "test:watch": "npm run test:watch --workspace=dojolm-web",
     "lint": "npm run lint --workspace=dojolm-web",
     "type-check": "npm run typecheck --workspace=bu-tpi --workspace=@dojolm/mcp --workspace=@dojolm/scanner --workspace=dojolm-web",

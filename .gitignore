@@ -8,8 +8,26 @@ packages/bmad-cybersec/
 .claude/
 
 # Private/internal documentation (not public)
-# All team/ folder contents are internal and should not be committed
-team/
+# Keep most team/ content ignored, but track active QA framework artifacts
+team/**
+!team/testing/
+team/testing/**
+!team/testing/QA/
+!team/testing/plans/
+!team/testing/tools/
+team/testing/QA/**
+team/testing/plans/**
+team/testing/tools/**
+!team/testing/QA/qa-framework.md
+!team/testing/QA/QA-MASTER-PLAN.md
+!team/testing/QA/QA-COVERAGE-MATRIX.generated.md
+!team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md
+!team/testing/plans/testing-execution-checklist.md
+!team/testing/plans/security-test-plan.md
+!team/testing/plans/uat-ux-testing-plan.md
+!team/testing/plans/scanner-testing-plan.md
+!team/testing/tools/generate-coverage-matrix.mjs
+!team/testing/tools/generate-uat-ux-matrix.mjs
 
 # Project instructions file
 CLAUDE.md
@@ -28,11 +46,15 @@ dojolm.config.json
 
 # Development tools (not part of the main package)
 tools/
+!team/testing/tools/
+!team/testing/tools/generate-coverage-matrix.mjs
+!team/testing/tools/generate-uat-ux-matrix.mjs
 
 # Dev artifacts and debug files
 packages/bu-tpi/agent_failures.txt
 packages/bu-tpi/debug-*.js
 packages/bu-tpi/coverage/
+packages/dojolm-scanner/coverage/
 packages/bu-tpi/tools/
 packages/dojolm-scanner/test-vec-fixtures.cjs
 

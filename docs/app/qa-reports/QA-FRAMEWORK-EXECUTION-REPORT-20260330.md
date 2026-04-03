@@ -1,5 +1,7 @@
 # QA Framework Execution Report — 2026-03-30
 
+**Current-state note (2026-04-03):** This report captures a 2026-03-30 execution snapshot and is superseded by `QA-FRAMEWORK-EXECUTION-REPORT-20260403.md` for current inventory and coverage metrics.
+
 ## Executive Summary
 
 Full execution of the MASTER-QA-FRAMEWORK plan completed. All phases R0–R6 executed.
@@ -85,7 +87,7 @@ Full execution of the MASTER-QA-FRAMEWORK plan completed. All phases R0–R6 exe
 
 ## CI/CD Configuration (Phase R4)
 
-- `.github/workflows/ci.yml`: unit tests + coverage + E2E on push/PR
+- `.github/workflows/ci.yml`: unit tests + coverage on push/PR, E2E on `main/master`
 - Coverage thresholds enforced: bu-tpi 80%, dojolm-web 70%
 - E2E runs on main branch with Chromium project
 
