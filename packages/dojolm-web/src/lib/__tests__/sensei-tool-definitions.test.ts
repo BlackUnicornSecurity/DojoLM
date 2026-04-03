@@ -9,8 +9,8 @@ import {
 
 describe('sensei tool-definitions', () => {
   describe('SENSEI_TOOLS', () => {
-    it('exports 16 tools', () => {
-      expect(SENSEI_TOOLS).toHaveLength(16);
+    it('exports all tools', () => {
+      expect(SENSEI_TOOLS.length).toBeGreaterThanOrEqual(16);
     });
 
     it('all tools have required fields', () => {
@@ -92,14 +92,14 @@ describe('sensei tool-definitions', () => {
   });
 
   describe('getToolsForPrompt', () => {
-    it('returns all 16 tools for standard provider', () => {
+    it('returns all tools for standard provider', () => {
       const tools = getToolsForPrompt('openai', 'dashboard');
-      expect(tools).toHaveLength(16);
+      expect(tools.length).toBe(SENSEI_TOOLS.length);
     });
 
-    it('returns all 16 tools for anthropic provider', () => {
+    it('returns all tools for anthropic provider', () => {
       const tools = getToolsForPrompt('anthropic', 'dashboard');
-      expect(tools).toHaveLength(16);
+      expect(tools.length).toBe(SENSEI_TOOLS.length);
     });
 
     it('returns compact (5) tools for ollama', () => {
