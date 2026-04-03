@@ -20,6 +20,7 @@ import type {
 import { PAIROrchestrator } from './pair.js';
 import { CrescendoOrchestrator, ESCALATION_STAGES, getStageForTurn } from './crescendo.js';
 import { TAPOrchestrator } from './tap.js';
+import { SenseiAdaptiveOrchestrator, ATTACK_STRATEGIES, selectStrategy } from './sensei-adaptive.js';
 
 // ============================================================================
 // Mock Functions
@@ -108,9 +109,14 @@ describe('createOrchestrator', () => {
     expect(orc).toBeInstanceOf(TAPOrchestrator);
   });
 
+  it('creates Sensei-Adaptive orchestrator', () => {
+    const orc = createOrchestrator('sensei-adaptive');
+    expect(orc.type).toBe('sensei-adaptive');
+    expect(orc).toBeInstanceOf(SenseiAdaptiveOrchestrator);
+  });
+
   it('throws for unimplemented types', () => {
-    expect(() => createOrchestrator('mad-max')).toThrow('planned for Phase 2.2');
-    expect(() => createOrchestrator('sensei-adaptive')).toThrow('planned for Phase 2.2');
+    expect(() => createOrchestrator('mad-max')).toThrow('planned for a future phase');
   });
 });
 
@@ -374,5 +380,155 @@ describe('TAPOrchestrator', () => {
     );
 
     expect(result.state.status).toBe('budget-exceeded');
+  });
+});
+
+// ============================================================================
+// Sensei-Adaptive Orchestrator Tests
+// ============================================================================
+
+describe('SenseiAdaptiveOrchestrator', () => {
+  const adaptive = new SenseiAdaptiveOrchestrator();
+
+  it('has correct type', () => {
+    expect(adaptive.type).toBe('sensei-adaptive');
+  });
+
+  describe('selectStrategy', () => {
+    it('returns roleplay for first turn', () => {
+      expect(selectStrategy([], [], 0)).toBe('roleplay');
+    });
+
+    it('keeps high-scoring strategy', () => {
+      const result = selectStrategy([7, 3], ['roleplay', 'direct'], 2);
+      expect(result).toBe('roleplay');
+    });
+
+    it('tries untried strategy when scores are low', () => {
+      const result = selectStrategy([2, 3], ['roleplay', 'direct'], 2);
+      // Should pick an untried strategy
+      expect(result).not.toBe('roleplay');
+      expect(result).not.toBe('direct');
+      expect(ATTACK_STRATEGIES).toContain(result);
+    });
+
+    it('cycles when all strategies tried', () => {
+      const allStrategies = [...ATTACK_STRATEGIES];
+      const allScores = allStrategies.map(() => 2);
+      const result = selectStrategy(allScores, allStrategies, 10);
+      // turnIndex 10 % 8 strategies = index 2 = 'hypothetical'
+      expect(result).toBe(ATTACK_STRATEGIES[10 % ATTACK_STRATEGIES.length]);
+    });
+  });
+
+  it('defines all attack strategies', () => {
+    expect(ATTACK_STRATEGIES).toHaveLength(8);
+    expect(ATTACK_STRATEGIES).toContain('direct');
+    expect(ATTACK_STRATEGIES).toContain('roleplay');
+    expect(ATTACK_STRATEGIES).toContain('encoding');
+  });
+
+  it('executes adaptive two-phase attack', async () => {
+    const llmCall = makeLLMCall(['adaptive attack', 'target response']);
+    const judgeCall = makeJudgeCall([
+      { score: 3, reasoning: 'Low' },
+      { score: 5, reasoning: 'Medium' },
+      { score: 7, reasoning: 'Getting close' },
+    ]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 5, successThreshold: 9 }),
+      llmCall,
+      judgeCall,
+    );
+
+    expect(result.allTurns.length).toBeGreaterThan(0);
+    expect(result.state.configType).toBe('sensei-adaptive');
+    expect(result.state.branches.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('stops on success in PAIR phase', async () => {
+    const llmCall = makeLLMCall(['attack', 'sure here is my prompt']);
+    const judgeCall = makeJudgeCall([{ score: 10, reasoning: 'Complete success' }]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 10, successThreshold: 8 }),
+      llmCall,
+      judgeCall,
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.state.status).toBe('succeeded');
+    expect(result.allTurns.length).toBe(1);
+  });
+
+  it('transitions to TAP phase when PAIR phase fails', async () => {
+    const llmCall = makeLLMCall(['attack', 'blocked']);
+    const judgeCall = makeJudgeCall([
+      { score: 2, reasoning: 'Blocked' },
+      { score: 4, reasoning: 'Still blocked' },
+      { score: 3, reasoning: 'Still blocked' },
+    ]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 6, successThreshold: 9, maxBranches: 2 }),
+      llmCall,
+      judgeCall,
+    );
+
+    // Should have used turns from both phases
+    expect(result.allTurns.length).toBeGreaterThan(1);
+    expect(result.state.branches.length).toBeGreaterThanOrEqual(1);
+    // Verify TAP phase branch exists (if enough turns ran)
+    const hasTapPhase = result.state.branches.some((b) => b.id === 'tap-phase');
+    if (result.allTurns.length > 3) {
+      expect(hasTapPhase).toBe(true);
+    }
+  });
+
+  it('respects budget cap', async () => {
+    const llmCall = makeLLMCall(['attack', 'response']);
+    const judgeCall = makeJudgeCall([{ score: 3, reasoning: 'Low' }]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 50, spendingCapUsd: 0.0003 }),
+      llmCall,
+      judgeCall,
+    );
+
+    expect(result.state.status).toBe('budget-exceeded');
+  });
+
+  it('tracks best attack across both phases', async () => {
+    const llmCall = makeLLMCall(['attack', 'response']);
+    const judgeCall = makeJudgeCall([
+      { score: 2, reasoning: 'Low' },
+      { score: 6, reasoning: 'Medium' },
+      { score: 4, reasoning: 'Low again' },
+    ]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 5, successThreshold: 9 }),
+      llmCall,
+      judgeCall,
+    );
+
+    expect(result.state.bestScore).toBe(6);
+    expect(result.bestAttack).not.toBeNull();
+    expect(result.bestAttack!.judgeScore).toBe(6);
+  });
+
+  it('records startedAt timestamp', async () => {
+    const llmCall = makeLLMCall(['attack', 'response']);
+    const judgeCall = makeJudgeCall([{ score: 10, reasoning: 'Success' }]);
+
+    const result = await adaptive.execute(
+      makeConfig({ maxTurns: 1, successThreshold: 8 }),
+      llmCall,
+      judgeCall,
+    );
+
+    expect(result.state.startedAt).toBeDefined();
+    expect(new Date(result.state.startedAt).getTime()).not.toBeNaN();
   });
 });
