@@ -33,21 +33,21 @@ export const GET = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual status lookup comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Orchestrator status endpoint ready',
-      data: {
-        runId,
-        status: 'pending',
-        progress: 0,
-        startedAt: null,
-        completedAt: null,
+    // Return pending status — real implementation would check a persistent run store
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          runId,
+          status: 'pending',
+          progress: 0,
+          startedAt: null,
+          completedAt: null,
+          message: 'Run status tracking requires a persistent store',
+        },
       },
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+      { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+    );
   } catch (error) {
     console.error('Orchestrator status API error:', error);
     return NextResponse.json(

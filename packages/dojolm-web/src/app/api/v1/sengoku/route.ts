@@ -48,15 +48,18 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual Sengoku wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Sengoku v1 endpoint ready',
-      data: null,
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Sengoku v1 — validated and ready
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          campaignId,
+          status: 'ready',
+          message: 'Sengoku v1 — use /api/sengoku for full campaign management',
+        },
+      },
+      { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+    );
   } catch (error) {
     console.error('v1 Sengoku API error:', error);
     return NextResponse.json(

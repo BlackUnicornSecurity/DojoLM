@@ -64,15 +64,19 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual Arena wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Arena v1 endpoint ready',
-      data: null,
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Arena v1 — validated and ready
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          mode,
+          modelId,
+          status: 'ready',
+          message: 'Arena v1 — use /api/arena for full arena functionality',
+        },
+      },
+      { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+    );
   } catch (error) {
     console.error('v1 Arena API error:', error);
     return NextResponse.json(

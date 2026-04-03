@@ -136,16 +136,52 @@ export const POST = withAuth(async (request: NextRequest) => {
       }
     }
 
-    // Stub response — actual generation wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Sensei generate endpoint ready',
-      data: null,
-      params: { category, count, severity, context: context ? '[provided]' : undefined, temperature, maxTokens },
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Call bu-tpi Sensei service layer with graceful degradation
+    try {
+      // Dynamic imports: bu-tpi may not be built — try/catch handles gracefully
+      const llmMod = await import(/* webpackIgnore: true */ 'bu-tpi/llm' as string);
+      const senseiMod = await import(/* webpackIgnore: true */ 'bu-tpi/sensei' as string);
+      const SenseiProvider = llmMod.SenseiProvider;
+      const executeGenerate = senseiMod.executeGenerate;
+
+      const provider = new SenseiProvider();
+      const result = await executeGenerate(provider, {
+        category: category!,
+        count: count ?? 5,
+        severity: (severity as 'INFO' | 'WARNING' | 'CRITICAL') ?? null,
+        context: context ?? null,
+        temperature: temperature ?? 0.8,
+        maxTokens: maxTokens ?? 2048,
+        routing: {
+          mode: 'sensei',
+          baseUrl: routing?.baseUrl as string,
+          modelName: routing?.modelName as string,
+        },
+      });
+
+      if (!result.success) {
+        return NextResponse.json(
+          { success: false, error: result.error, meta: result.meta },
+          { status: 502 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, data: result.data, meta: result.meta },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch (serviceErr) {
+      console.error('Sensei generate service error:', serviceErr);
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Sensei service unavailable — provider not connected',
+          data: null,
+          params: { category, count, severity, temperature, maxTokens },
+        },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('Sensei generate API error:', error);
     return NextResponse.json(

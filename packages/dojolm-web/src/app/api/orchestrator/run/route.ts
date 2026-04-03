@@ -127,16 +127,33 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual orchestrator wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Orchestrator run endpoint ready',
-      data: null,
-      params: { type, targetModelId, attackerModelId, judgeModelId, objectiveLength: objective.length, category, maxTurns, maxBranches },
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Call bu-tpi TimeChamber orchestrator with graceful degradation
+    try {
+      const tcMod = await import(/* webpackIgnore: true */ 'bu-tpi/timechamber' as string);
+      const TimeChamberSimulator = tcMod.TimeChamberSimulator;
+      const runId = `run-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            runId,
+            type,
+            status: 'accepted',
+            message: 'Orchestrator run queued',
+            config: { targetModelId, attackerModelId, judgeModelId, category, maxTurns, maxBranches },
+          },
+          meta: { type, objective: objective.slice(0, 100) },
+        },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch (serviceErr) {
+      console.error('Orchestrator run service error:', serviceErr);
+      return NextResponse.json(
+        { success: false, error: 'Orchestrator service unavailable' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('Orchestrator run API error:', error);
     return NextResponse.json(

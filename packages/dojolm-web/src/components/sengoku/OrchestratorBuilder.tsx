@@ -91,22 +91,36 @@ export function OrchestratorBuilder({ availableModels, onLaunch, isRunning }: Or
 
   const canLaunch = !isRunning && targetModel && attackerModel && judgeModel && objective.trim()
 
-  const handleLaunch = useCallback(() => {
-    if (!canLaunch) return
-    onLaunch({
-      type: selectedType,
-      targetModelId: targetModel,
-      attackerModelId: attackerModel,
-      judgeModelId: judgeModel,
-      objective: objective.trim(),
-      category,
-      maxTurns,
-      maxBranches,
-      pruneThreshold,
-      successThreshold,
-      spendingCapUsd: spendingCap,
-    })
-  }, [canLaunch, selectedType, targetModel, attackerModel, judgeModel, objective, category, maxTurns, maxBranches, pruneThreshold, successThreshold, spendingCap, onLaunch])
+  const [isLaunching, setIsLaunching] = useState(false)
+
+  const handleLaunch = useCallback(async () => {
+    if (!canLaunch || isLaunching) return
+    setIsLaunching(true)
+    try {
+      const res = await fetch('/api/orchestrator/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: selectedType,
+          targetModelId: targetModel,
+          attackerModelId: attackerModel,
+          judgeModelId: judgeModel || attackerModel,
+          objective: objective.trim(),
+          category,
+          maxTurns,
+          maxBranches,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        onLaunch?.(data.data)
+      }
+    } catch {
+      // Network error
+    } finally {
+      setIsLaunching(false)
+    }
+  }, [canLaunch, isLaunching, selectedType, targetModel, attackerModel, judgeModel, objective, category, maxTurns, maxBranches, onLaunch])
 
   return (
     <div className="space-y-6">
@@ -286,11 +300,11 @@ export function OrchestratorBuilder({ availableModels, onLaunch, isRunning }: Or
       <div className="flex justify-end">
         <Button
           onClick={handleLaunch}
-          disabled={!canLaunch}
+          disabled={!canLaunch || isLaunching}
           className="bg-orange-600 hover:bg-orange-700 text-white px-6"
         >
           <Play className="h-4 w-4 mr-2" />
-          {isRunning ? 'Running...' : `Launch ${ORCHESTRATOR_INFO[selectedType].name}`}
+          {isRunning || isLaunching ? 'Running...' : `Launch ${ORCHESTRATOR_INFO[selectedType].name}`}
         </Button>
       </div>
     </div>

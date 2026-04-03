@@ -63,15 +63,28 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual TimeChamber wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'TimeChamber v1 endpoint ready',
-      data: null,
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // TimeChamber v1 — pull available attack types from bu-tpi
+    try {
+      const tcMod = await import(/* webpackIgnore: true */ 'bu-tpi/timechamber' as string);
+      const TEMPORAL_ATTACK_TYPES = tcMod.TEMPORAL_ATTACK_TYPES;
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            planId,
+            modelId,
+            availableTypes: [...TEMPORAL_ATTACK_TYPES],
+            status: 'ready',
+          },
+        },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'TimeChamber unavailable' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('v1 TimeChamber API error:', error);
     return NextResponse.json(

@@ -50,15 +50,27 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual Sensei v1 wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Sensei v1 endpoint ready',
-      data: null,
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Sensei v1 — pull available capabilities from bu-tpi
+    try {
+      const senseiMod = await import(/* webpackIgnore: true */ 'bu-tpi/sensei' as string);
+      const SENSEI_CAPABILITIES = senseiMod.SENSEI_CAPABILITIES;
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            capability,
+            availableCapabilities: [...SENSEI_CAPABILITIES],
+            status: 'ready',
+          },
+        },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Sensei unavailable' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('v1 Sensei API error:', error);
     return NextResponse.json(

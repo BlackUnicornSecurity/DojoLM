@@ -113,16 +113,49 @@ export const POST = withAuth(async (request: NextRequest) => {
       }
     }
 
-    // Stub response — actual plan wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Sensei plan endpoint ready',
-      data: null,
-      params: { attackType, targetDescriptionLength: targetDescription.length, maxTurns },
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Call bu-tpi Sensei service layer with graceful degradation
+    try {
+      const llmMod = await import(/* webpackIgnore: true */ 'bu-tpi/llm' as string);
+      const senseiMod = await import(/* webpackIgnore: true */ 'bu-tpi/sensei' as string);
+      const SenseiProvider = llmMod.SenseiProvider;
+      const executePlan = senseiMod.executePlan;
+
+      const provider = new SenseiProvider();
+      const result = await executePlan(provider, {
+        attackType: attackType!,
+        targetDescription: targetDescription!,
+        maxTurns: maxTurns ?? 10,
+        context: context ?? null,
+        routing: {
+          mode: 'sensei',
+          baseUrl: routing?.baseUrl as string,
+          modelName: routing?.modelName as string,
+        },
+      });
+
+      if (!result.success) {
+        return NextResponse.json(
+          { success: false, error: result.error, meta: result.meta },
+          { status: 502 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: true, data: result.data, meta: result.meta },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch (serviceErr) {
+      console.error('Sensei plan service error:', serviceErr);
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Sensei service unavailable — provider not connected',
+          data: null,
+          params: { attackType, targetDescriptionLength: targetDescription.length, maxTurns },
+        },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('Sensei plan API error:', error);
     return NextResponse.json(

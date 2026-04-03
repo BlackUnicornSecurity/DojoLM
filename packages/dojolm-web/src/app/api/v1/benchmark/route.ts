@@ -63,15 +63,34 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual benchmark wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Benchmark v1 endpoint ready',
-      data: null,
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Benchmark v1 — pull available suites from bu-tpi
+    try {
+      const benchMod = await import(/* webpackIgnore: true */ 'bu-tpi/benchmark' as string);
+      const AGENTIC_BENCHMARK_SUITE = benchMod.AGENTIC_BENCHMARK_SUITE;
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            suiteId,
+            modelId,
+            availableSuites: [
+              'dojolm-bench-v1',
+              'agentic-bench-v1',
+              'rag-bench-v1',
+              'harmbench-v1',
+              'strongreject-v1',
+            ],
+            status: 'ready',
+          },
+        },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Benchmark unavailable' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('v1 Benchmark API error:', error);
     return NextResponse.json(

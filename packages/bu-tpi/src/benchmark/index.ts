@@ -36,6 +36,7 @@ export { RAG_BENCHMARK_SUITE, RAG_CATEGORY_DIFFICULTY } from './suites/rag-bench
 // ===========================================================================
 
 export { BenchmarkRunner } from './runner.js';
+export { FIXTURE_CONTENT, getFixtureContent } from './fixture-content.js';
 
 // ===========================================================================
 // Regression Tracker (GUNKIMONO 6.2)

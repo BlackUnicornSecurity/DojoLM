@@ -13,6 +13,7 @@ import type {
 import { CATEGORY_DIFFICULTY } from './suites/dojolm-bench.js';
 import { AGENTIC_CATEGORY_DIFFICULTY } from './suites/agentic-bench.js';
 import { RAG_CATEGORY_DIFFICULTY } from './suites/rag-bench.js';
+import { getFixtureContent } from './fixture-content.js';
 
 /** Merged difficulty map across all suites */
 const ALL_DIFFICULTY: Readonly<Record<string, DifficultyTier>> = {
@@ -78,7 +79,7 @@ export class BenchmarkRunner {
           continue;
         }
 
-        const result = scanFn(fixtureId);
+        const result = scanFn(getFixtureContent(fixtureId));
         const actualVerdict = result.verdict;
         const isCorrect = actualVerdict === expectedVerdict;
 

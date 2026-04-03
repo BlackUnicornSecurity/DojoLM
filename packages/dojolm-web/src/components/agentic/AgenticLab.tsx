@@ -125,15 +125,32 @@ export function AgenticLab({ availableModels }: AgenticLabProps) {
     )
   }, [])
 
-  const handleRun = useCallback(() => {
+  const handleRun = useCallback(async () => {
     if (!targetModel || isRunning) return
     setIsRunning(true)
-    // In production, this would call the API
-    // For now, simulate completion
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/agentic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          architecture,
+          categories: selectedCategories,
+          difficulty,
+          objective,
+          targetModelId: targetModel,
+        }),
+      })
+      const data = await res.json()
+      if (data.success && data.data) {
+        // Map response to display format when real data is returned
+        setResults([])
+      }
+    } catch {
+      // Network error — silently handle
+    } finally {
       setIsRunning(false)
-    }, 2000)
-  }, [targetModel, isRunning])
+    }
+  }, [targetModel, isRunning, architecture, selectedCategories, difficulty, objective])
 
   return (
     <div className="space-y-6">

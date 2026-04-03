@@ -126,16 +126,33 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Stub response — actual agentic test wiring comes in follow-up
-    return NextResponse.json({
-      success: true,
-      message: 'Agentic test endpoint ready',
-      data: null,
-      params: { architecture, categories, difficulty, objectiveLength: objective.length, targetModelId },
-    }, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
-    });
+    // Call bu-tpi agentic service layer with graceful degradation
+    try {
+      const agenticMod = await import(/* webpackIgnore: true */ 'bu-tpi/agentic' as string);
+      const createEnvironment = agenticMod.createEnvironment;
+      const env = createEnvironment();
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: {
+            architecture,
+            categories,
+            difficulty,
+            targetModelId,
+            environmentReady: true,
+            message: 'Agentic environment initialized — connect an LLM provider to run scenarios',
+          },
+        },
+        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      );
+    } catch (serviceErr) {
+      console.error('Agentic service error:', serviceErr);
+      return NextResponse.json(
+        { success: false, error: 'Agentic service unavailable' },
+        { status: 503 }
+      );
+    }
   } catch (error) {
     console.error('Agentic API error:', error);
     return NextResponse.json(
