@@ -45,7 +45,7 @@ vi.mock('@/lib/storage/file-storage', () => ({
 }));
 
 function createRequest(method: string, body?: unknown): NextRequest {
-  const opts: RequestInit = { method };
+  const opts: { method: string; headers?: Record<string, string>; body?: string } = { method };
   if (body) {
     opts.headers = { 'content-type': 'application/json' };
     opts.body = JSON.stringify(body);

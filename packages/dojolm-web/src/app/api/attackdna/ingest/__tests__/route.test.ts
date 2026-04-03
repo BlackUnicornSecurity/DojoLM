@@ -59,7 +59,7 @@ describe('POST /api/attackdna/ingest', () => {
   it('returns success with no findings to ingest', async () => {
     const { POST } = await import('../route');
     const req = createPostRequest('/api/attackdna/ingest');
-    const res = await POST(req, {});
+    const res = await POST(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -88,7 +88,7 @@ describe('POST /api/attackdna/ingest', () => {
 
     const { POST } = await import('../route');
     const req = createPostRequest('/api/attackdna/ingest');
-    const res = await POST(req, {});
+    const res = await POST(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -99,7 +99,7 @@ describe('POST /api/attackdna/ingest', () => {
   it('handles rebuild action', async () => {
     const { POST } = await import('../route');
     const req = createPostRequest('/api/attackdna/ingest?action=rebuild');
-    const res = await POST(req, {});
+    const res = await POST(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);
@@ -117,7 +117,7 @@ describe('GET /api/attackdna/ingest', () => {
   it('returns ingestion status', async () => {
     const { GET } = await import('../route');
     const req = createGetRequest('/api/attackdna/ingest');
-    const res = await GET(req, {});
+    const res = await GET(req);
     const data = await res.json();
 
     expect(res.status).toBe(200);

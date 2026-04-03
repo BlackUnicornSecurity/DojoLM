@@ -64,7 +64,7 @@ const mockFsPromises = {
   writeFile: vi.fn().mockResolvedValue(undefined),
   rename: vi.fn().mockResolvedValue(undefined),
   readFile: vi.fn(() => Promise.resolve(JSON.stringify(STORED_CAMPAIGN))),
-  readdir: vi.fn(() => Promise.resolve([])),
+  readdir: vi.fn(() => Promise.resolve([] as unknown[])),
 };
 
 vi.mock('node:fs', () => ({

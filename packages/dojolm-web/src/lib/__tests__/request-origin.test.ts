@@ -85,7 +85,7 @@ describe('getConfiguredAppOrigin', () => {
   // RQORG-003: Falls back to 127.0.0.1 dev origin when env var not set in development
   it('RQORG-003: returns dev fallback origin in development when env var is absent', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { getConfiguredAppOrigin } = await import('../request-origin');
     expect(getConfiguredAppOrigin()).toBe('http://127.0.0.1:42001');
   });
@@ -93,7 +93,7 @@ describe('getConfiguredAppOrigin', () => {
   // RQORG-004: Returns null in production when NEXT_PUBLIC_APP_URL is not set
   it('RQORG-004: returns null in production when NEXT_PUBLIC_APP_URL is absent', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { getConfiguredAppOrigin } = await import('../request-origin');
     expect(getConfiguredAppOrigin()).toBeNull();
   });
@@ -138,7 +138,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-008: Allows configured origin in production
   it('RQORG-008: allows the exact configured origin in production', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('https://dojo.example.com')).toBe(true);
   });
@@ -146,7 +146,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-009: Rejects a different origin in production
   it('RQORG-009: rejects a different origin in production', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('https://evil.example.com')).toBe(false);
   });
@@ -154,7 +154,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-010: Rejects invalid origin string
   it('RQORG-010: rejects an invalid origin string', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('not-a-url')).toBe(false);
   });
@@ -162,7 +162,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-011: Fails closed when appOrigin is null (production, no env var)
   it('RQORG-011: fails closed when appOrigin cannot be determined', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('https://anything.example.com')).toBe(false);
   });
@@ -170,7 +170,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-012: Allows extra dev origins in development
   it('RQORG-012: allows localhost:42001 in development', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('http://localhost:42001')).toBe(true);
   });
@@ -178,7 +178,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-013: Allows localhost:3001 in development
   it('RQORG-013: allows localhost:3001 in development', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('http://localhost:3001')).toBe(true);
   });
@@ -186,7 +186,7 @@ describe('isAllowedCorsOrigin', () => {
   // RQORG-014: Rejects random origin in development
   it('RQORG-014: rejects an unknown origin in development', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('http://attacker.local')).toBe(false);
   });
@@ -210,7 +210,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-015: Accepts request with matching origin + valid fetch metadata (production)
   it('RQORG-015: accepts same-origin request with valid fetch metadata in production', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -224,7 +224,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-016: Accepts when referer origin matches and fetch metadata is valid
   it('RQORG-016: accepts request matching via referer header in production', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -238,7 +238,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-017: Rejects cross-origin request even with valid fetch metadata
   it('RQORG-017: rejects cross-origin request in production', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -252,7 +252,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-018: Rejects request with missing fetch metadata headers
   it('RQORG-018: rejects request missing Fetch Metadata headers', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -266,7 +266,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-019: Rejects when sec-fetch-site is 'cross-site'
   it('RQORG-019: rejects when sec-fetch-site is cross-site', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -282,7 +282,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-020: Rejects when appOrigin cannot be determined (production, no env var)
   it('RQORG-020: fails closed when appOrigin is null', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -296,7 +296,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-021: Accepts dev-extra origin in development
   it('RQORG-021: accepts localhost:3001 in development', async () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('http://localhost:3001/api/test', {
@@ -310,7 +310,7 @@ describe('isTrustedBrowserOriginRequest', () => {
   // RQORG-022: Rejects sec-fetch-dest 'script' (not in allowed set)
   it('RQORG-022: rejects when sec-fetch-dest is script', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserOriginRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -344,7 +344,7 @@ describe('isTrustedBrowserSessionRequest', () => {
   // RQORG-023: Returns true for trusted origin + valid session cookie
   it('RQORG-023: returns true when origin is trusted and session is valid', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockReturnValue({ id: 'user-1', role: 'admin' });
     const { isTrustedBrowserSessionRequest } = await import('../request-origin');
 
@@ -363,7 +363,7 @@ describe('isTrustedBrowserSessionRequest', () => {
   // RQORG-024: Returns false when origin is trusted but session is invalid
   it('RQORG-024: returns false when session validation fails', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockReturnValue(null); // invalid session
     const { isTrustedBrowserSessionRequest } = await import('../request-origin');
 
@@ -382,7 +382,7 @@ describe('isTrustedBrowserSessionRequest', () => {
   // RQORG-025: Returns false when origin check fails regardless of session
   it('RQORG-025: returns false when origin is untrusted even with a valid session', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockReturnValue({ id: 'user-1', role: 'admin' });
     const { isTrustedBrowserSessionRequest } = await import('../request-origin');
 
@@ -401,7 +401,7 @@ describe('isTrustedBrowserSessionRequest', () => {
   // RQORG-026: Returns false when no session cookie is present at all
   it('RQORG-026: returns false when session cookie is absent', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { isTrustedBrowserSessionRequest } = await import('../request-origin');
 
     const req = makeRequest('https://dojo.example.com/api/test', {
@@ -415,7 +415,7 @@ describe('isTrustedBrowserSessionRequest', () => {
   // RQORG-027: Returns false when validateSession throws (defensive handling)
   it('RQORG-027: returns false when validateSession throws an error', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://dojo.example.com';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockImplementation(() => {
       throw new Error('crypto failure');
     });

@@ -37,7 +37,7 @@ function createApiRequest(
   } = {}
 ): NextRequest {
   const url = `http://localhost:42001${path}`;
-  const init: RequestInit = {
+  const init: { method: string; headers: Headers; body?: string } = {
     method: options.method ?? 'GET',
     headers: new Headers(options.headers ?? {}),
   };
@@ -63,7 +63,7 @@ describe('Proxy', () => {
   // MW-001: Timing-safe API key comparison with valid key
   it('MW-001: allows requests with valid API key', async () => {
     process.env.NODA_API_KEY = 'test-valid-key-12345';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -82,7 +82,7 @@ describe('Proxy', () => {
   // MW-002: Timing-safe comparison with invalid key
   it('MW-002: rejects requests with invalid API key', async () => {
     process.env.NODA_API_KEY = 'test-valid-key-12345';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -103,7 +103,7 @@ describe('Proxy', () => {
   // MW-003: Missing NODA_API_KEY in production mode blocks all requests
   it('MW-003: blocks all requests when NODA_API_KEY is not set in production', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const { proxy } = await import('@/proxy');
@@ -120,7 +120,7 @@ describe('Proxy', () => {
   // MW-004: Missing NODA_API_KEY in development mode allows requests
   it('MW-004: allows requests when NODA_API_KEY is not set in development', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -135,7 +135,7 @@ describe('Proxy', () => {
   // MW-005: Public route whitelist allows without auth
   it('MW-005: allows public routes without authentication', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/admin/health', {
@@ -149,7 +149,7 @@ describe('Proxy', () => {
 
   it('MW-005b: allows public read routes without authentication', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/fixtures', {
@@ -162,7 +162,7 @@ describe('Proxy', () => {
 
   it('MW-005c: allows trusted same-origin public scanner actions without authentication', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -184,7 +184,7 @@ describe('Proxy', () => {
   // MW-006: Non-API routes pass through without checks
   it('MW-006: non-API routes pass through without auth checks', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/dashboard', {
@@ -200,7 +200,7 @@ describe('Proxy', () => {
   // NextRequest constructor rejects TRACE method, so we mock the method property
   it('MW-007: blocks TRACE method with 405', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', { method: 'GET' });
@@ -215,7 +215,7 @@ describe('Proxy', () => {
   // MW-008: OPTIONS preflight requests are allowed without auth
   it('MW-008: allows OPTIONS preflight without auth', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -231,7 +231,7 @@ describe('Proxy', () => {
   // MW-009: Content-Type validation on POST (valid JSON)
   it('MW-009: accepts application/json content-type on POST', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -246,7 +246,7 @@ describe('Proxy', () => {
   // MW-010: Content-Type validation on POST (invalid type)
   it('MW-010: rejects unsupported Content-Type on POST', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
 
     const { proxy } = await import('@/proxy');
     const req = createApiRequest('/api/scan', {
@@ -264,7 +264,7 @@ describe('Proxy', () => {
   // MW-011: Auth failure triggers audit logging
   it('MW-011: logs auth failure to audit logger', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');
@@ -295,7 +295,7 @@ describe('Proxy', () => {
   // MW-012: Client IP extraction from x-forwarded-for (first IP)
   it('MW-012: extracts first IP from x-forwarded-for header', async () => {
     process.env.NODA_API_KEY = 'test-key';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     process.env.TRUSTED_PROXY = 'true'; // PT-RATELIM-M01: X-Forwarded-For only trusted with TRUSTED_PROXY
 
     const auditModule = await import('@/lib/audit-logger');

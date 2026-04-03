@@ -19,7 +19,7 @@ describe('CrossModuleActions', () => {
     sourceModule: 'scanner' as const,
     title: 'SQL Injection Found',
     description: 'A SQL injection vulnerability was detected',
-    severity: 'high' as const,
+    severity: 'CRITICAL' as const,
   }
 
   beforeEach(() => {

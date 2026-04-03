@@ -86,7 +86,7 @@ describe('ablation-engine', () => {
     it('calculates correct score delta', () => {
       const scoreFn = (s: string) => s.length / 100
       const content = 'ABCDE'
-      const components = [{ id: 'test-0', type: 'payload' as const, content: 'BC', startIndex: 1, endIndex: 3 }]
+      const components = [{ id: 'test-0', type: 'payload' as const, content: 'BC', rawContent: 'BC', startIndex: 1, endIndex: 3 }]
       const results = runAblation(content, components, scoreFn)
       expect(results[0].originalScore).toBeCloseTo(0.05, 5)
       expect(results[0].withoutScore).toBeCloseTo(0.03, 5)

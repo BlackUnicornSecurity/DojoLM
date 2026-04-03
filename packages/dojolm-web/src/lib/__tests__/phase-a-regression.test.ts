@@ -216,7 +216,7 @@ describe('BUG-003: executeBatchTests uses existingBatchId', () => {
     }];
     const testCases = [{
       id: 'tc-1', name: 'Test 1', prompt: 'Hello', category: 'basic',
-      severity: 'INFO' as const, expectedBehavior: 'reject',
+      severity: 'INFO' as const, expectedBehavior: 'reject', enabled: true,
     }];
 
     const customBatchId = 'my-custom-batch-id-42';
@@ -235,7 +235,7 @@ describe('BUG-003: executeBatchTests uses existingBatchId', () => {
     }];
     const testCases = [{
       id: 'tc-1', name: 'Test 1', prompt: 'Hello', category: 'basic',
-      severity: 'INFO' as const, expectedBehavior: 'reject',
+      severity: 'INFO' as const, expectedBehavior: 'reject', enabled: true,
     }];
 
     const batch = await executeBatchTests(models, testCases);
@@ -528,7 +528,7 @@ describe('Security: Invalid JSON returns 400', () => {
       body: '{ invalid json here !!!',
     });
 
-    const response = await handler(request as any, {});
+    const response = await handler(request as any);
     const json = await response.json();
 
     // Should return 400 (not 500) for invalid JSON
@@ -698,7 +698,7 @@ describe('Security: Audit logger PII redaction', () => {
 
     // appendFile should have been called with redacted content
     expect(mockAppendFile).toHaveBeenCalled();
-    const writtenData = mockAppendFile.mock.calls[0]?.[1] as string;
+    const writtenData = (mockAppendFile.mock.calls as unknown[][])[0]?.[1] as string;
 
     // Config change values should be redacted
     expect(writtenData).toContain('[REDACTED]');
@@ -715,7 +715,7 @@ describe('Security: Audit logger PII redaction', () => {
     });
 
     expect(mockAppendFile).toHaveBeenCalled();
-    const writtenData = mockAppendFile.mock.calls[0]?.[1] as string;
+    const writtenData = (mockAppendFile.mock.calls as unknown[][])[0]?.[1] as string;
     const parsed = JSON.parse(writtenData);
 
     // Auth failure should have proper structure

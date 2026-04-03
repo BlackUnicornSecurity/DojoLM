@@ -65,7 +65,7 @@ describe('GET /api/arena/warriors', () => {
     ]);
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:42001/api/arena/warriors'));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.warriors).toHaveLength(2);
@@ -75,7 +75,7 @@ describe('GET /api/arena/warriors', () => {
     mockGetWarriors.mockResolvedValue([{ id: 'w1' }, { id: 'w2' }, { id: 'w3' }]);
 
     const { GET } = await import('../route');
-    const res = await GET();
+    const res = await GET(new NextRequest('http://localhost:42001/api/arena/warriors'));
     const json = await res.json();
     expect(json.total).toBe(3);
   });

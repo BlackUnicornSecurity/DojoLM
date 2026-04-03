@@ -356,22 +356,22 @@ describe('BlackBoxAnalysis (DNA-013 to DNA-019)', () => {
 describe('Ablation engine data types (DNA-021 to DNA-023)', () => {
   it('DNA-021: analysis result structure is valid', async () => {
     const { fetchWithAuth } = await import('@/lib/fetch-with-auth')
-    const mockFetch = fetchWithAuth as ReturnType<typeof vi.fn>
-    const response = await mockFetch()
+    const mockFetch = fetchWithAuth as unknown as (...args: unknown[]) => unknown
+    const response = await mockFetch() as { json: () => Promise<Record<string, unknown>> }
     const data = await response.json()
     expect(data.analysis).toBeDefined()
-    expect(data.analysis.components).toBeInstanceOf(Array)
-    expect(data.analysis.ablationResults).toBeInstanceOf(Array)
-    expect(data.analysis.tokenHeatmap).toBeInstanceOf(Array)
-    expect(typeof data.analysis.baselineScore).toBe('number')
+    expect((data.analysis as Record<string, unknown>).components).toBeInstanceOf(Array)
+    expect((data.analysis as Record<string, unknown>).ablationResults).toBeInstanceOf(Array)
+    expect((data.analysis as Record<string, unknown>).tokenHeatmap).toBeInstanceOf(Array)
+    expect(typeof (data.analysis as Record<string, unknown>).baselineScore).toBe('number')
   })
 
   it('DNA-022: ablation result has required fields', async () => {
     const { fetchWithAuth } = await import('@/lib/fetch-with-auth')
-    const mockFetch = fetchWithAuth as ReturnType<typeof vi.fn>
-    const response = await mockFetch()
+    const mockFetch = fetchWithAuth as unknown as (...args: unknown[]) => unknown
+    const response = await mockFetch() as { json: () => Promise<Record<string, unknown>> }
     const data = await response.json()
-    const result = data.analysis.ablationResults[0]
+    const result = (data.analysis as Record<string, unknown[]>).ablationResults[0]
     expect(result).toHaveProperty('componentId')
     expect(result).toHaveProperty('componentType')
     expect(result).toHaveProperty('scoreDelta')
@@ -380,11 +380,13 @@ describe('Ablation engine data types (DNA-021 to DNA-023)', () => {
 
   it('DNA-023: explanation has required fields', async () => {
     const { fetchWithAuth } = await import('@/lib/fetch-with-auth')
-    const mockFetch = fetchWithAuth as ReturnType<typeof vi.fn>
-    const response = await mockFetch()
+    const mockFetch = fetchWithAuth as unknown as (...args: unknown[]) => unknown
+    const response = await mockFetch() as { json: () => Promise<Record<string, unknown>> }
     const data = await response.json()
-    expect(data.analysis.explanation.summary).toBeTruthy()
-    expect(data.analysis.explanation.criticalComponents).toBeInstanceOf(Array)
-    expect(data.analysis.explanation.defenseRecommendations).toBeInstanceOf(Array)
+    const analysis = data.analysis as Record<string, unknown>
+    const explanation = analysis.explanation as Record<string, unknown>
+    expect(explanation.summary).toBeTruthy()
+    expect(explanation.criticalComponents).toBeInstanceOf(Array)
+    expect(explanation.defenseRecommendations).toBeInstanceOf(Array)
   })
 })

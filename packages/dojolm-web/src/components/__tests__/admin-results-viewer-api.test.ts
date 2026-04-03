@@ -60,7 +60,7 @@ vi.mock('fs/promises', () => {
 // ---------------------------------------------------------------------------
 
 function makeRequest(method: string, url: string, body?: Record<string, unknown>): NextRequest {
-  const init: RequestInit = { method }
+  const init: { method: string; body?: string; headers?: Record<string, string> } = { method }
   if (body) {
     init.body = JSON.stringify(body)
     init.headers = { 'Content-Type': 'application/json' }

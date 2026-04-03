@@ -74,7 +74,7 @@ describe('createApiHandler', () => {
     const handler = createApiHandler(async () => NextResponse.json({ ok: true }));
     const req = makeRequest('GET');
     Object.defineProperty(req, 'method', { value: 'TRACE', writable: false });
-    const res = await handler(req, {});
+    const res = await handler(req);
 
     expect(res.status).toBe(405);
     const body = await res.json();
@@ -85,7 +85,7 @@ describe('createApiHandler', () => {
   it('AH-002: checks auth for non-public routes', async () => {
     const handler = createApiHandler(async () => NextResponse.json({ ok: true }));
     const req = makeRequest('GET');
-    await handler(req, {});
+    await handler(req);
 
     expect(checkApiAuth).toHaveBeenCalledWith(req);
   });
@@ -96,7 +96,7 @@ describe('createApiHandler', () => {
       async () => NextResponse.json({ ok: true }),
       { public: true },
     );
-    await handler(makeRequest('GET'), {});
+    await handler(makeRequest('GET'));
 
     expect(checkApiAuth).not.toHaveBeenCalled();
   });
@@ -107,7 +107,7 @@ describe('createApiHandler', () => {
     vi.mocked(checkApiAuth).mockReturnValueOnce(authResponse);
 
     const handler = createApiHandler(async () => NextResponse.json({ ok: true }));
-    const res = await handler(makeRequest('GET'), {});
+    const res = await handler(makeRequest('GET'));
 
     expect(res.status).toBe(401);
     const body = await res.json();
@@ -120,7 +120,7 @@ describe('createApiHandler', () => {
       async () => NextResponse.json({ ok: true }),
       { public: true },
     );
-    const res = await handler(makeRequest('GET', '5.5.5.5'), {});
+    const res = await handler(makeRequest('GET', '5.5.5.5'));
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-RateLimit-Remaining')).toBeDefined();
@@ -140,7 +140,7 @@ describe('createApiHandler', () => {
       async () => NextResponse.json({ ok: true }),
       { public: true },
     );
-    const res = await handler(makeRequest('GET', ip), {});
+    const res = await handler(makeRequest('GET', ip));
 
     expect(res.status).toBe(429);
     const body = await res.json();
@@ -158,7 +158,7 @@ describe('createApiHandler', () => {
       },
       { public: true },
     );
-    const res = await handler(makeRequest('POST', '7.7.7.7'), {});
+    const res = await handler(makeRequest('POST', '7.7.7.7'));
 
     expect(res.status).toBe(400);
     expect(apiError).toHaveBeenCalledWith(
@@ -176,7 +176,7 @@ describe('createApiHandler', () => {
       },
       { public: true },
     );
-    const res = await handler(makeRequest('GET', '8.8.8.8'), {});
+    const res = await handler(makeRequest('GET', '8.8.8.8'));
 
     expect(res.status).toBe(500);
     expect(apiError).toHaveBeenCalledWith(
@@ -199,11 +199,11 @@ describe('createApiHandler', () => {
 
     // Exhaust 20 POST requests (write bucket)
     for (let i = 0; i < 20; i++) {
-      await postHandler(makeRequest('POST', ip), {});
+      await postHandler(makeRequest('POST', ip));
     }
 
     // 21st POST should be rate limited
-    const postRes = await postHandler(makeRequest('POST', ip), {});
+    const postRes = await postHandler(makeRequest('POST', ip));
     expect(postRes.status).toBe(429);
 
     // But GET from same IP should still work (separate read bucket)
@@ -211,7 +211,7 @@ describe('createApiHandler', () => {
       async () => NextResponse.json({ ok: true }),
       { public: true },
     );
-    const getRes = await getHandler(makeRequest('GET', ip), {});
+    const getRes = await getHandler(makeRequest('GET', ip));
     expect(getRes.status).toBe(200);
   });
 
@@ -225,12 +225,12 @@ describe('createApiHandler', () => {
 
     // Execute tier has 5 tokens; exhaust them
     for (let i = 0; i < 5; i++) {
-      const res = await handler(makeRequest('GET', ip), {});
+      const res = await handler(makeRequest('GET', ip));
       expect(res.status).toBe(200);
     }
 
     // 6th request should be rate limited
-    const res = await handler(makeRequest('GET', ip), {});
+    const res = await handler(makeRequest('GET', ip));
     expect(res.status).toBe(429);
   });
 });

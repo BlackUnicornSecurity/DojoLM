@@ -41,7 +41,7 @@ const MOCK_RUN_2 = {
 };
 
 const mockFsPromises = {
-  readdir: vi.fn(() => Promise.resolve([])),
+  readdir: vi.fn(() => Promise.resolve([] as unknown[])),
   readFile: vi.fn(() => Promise.resolve('{}')),
 };
 

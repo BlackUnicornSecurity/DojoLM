@@ -279,7 +279,7 @@ describe('guard-storage', () => {
 
     // The updated index should be written (via writeFile+rename)
     const indexWriteCalls = fsMock.writeFile.mock.calls.filter(
-      (call: [string, string]) => typeof call[0] === 'string' && call[0].includes('index.json')
+      ((call: unknown[]) => typeof call[0] === 'string' && (call[0] as string).includes('index.json'))
     );
     expect(indexWriteCalls.length).toBeGreaterThan(0);
 
@@ -507,7 +507,7 @@ describe('guard-storage', () => {
 
     // Updated index should only contain the new event
     const indexWriteCalls = fsMock.writeFile.mock.calls.filter(
-      (call: [string, string]) => typeof call[0] === 'string' && call[0].includes('index.json')
+      ((call: unknown[]) => typeof call[0] === 'string' && (call[0] as string).includes('index.json'))
     );
     const lastIndexContent = indexWriteCalls[indexWriteCalls.length - 1][1];
     const idx = JSON.parse(lastIndexContent);

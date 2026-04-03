@@ -32,7 +32,7 @@ describe('apiError', () => {
 
   // AERR-002: Does not leak error details in production
   it('AERR-002: does not leak error details in production', async () => {
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { apiError } = await import('../api-error');
 
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -45,7 +45,7 @@ describe('apiError', () => {
 
   // AERR-003: Includes error details in development
   it('AERR-003: includes error details in development', async () => {
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { apiError } = await import('../api-error');
 
     vi.spyOn(console, 'error').mockImplementation(() => {});

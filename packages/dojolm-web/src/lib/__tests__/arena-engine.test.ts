@@ -223,7 +223,7 @@ describe('executeMatch', () => {
     const deps = makeDeps({
       isAborted: vi.fn(() => {
         callCount++;
-        return callCount > 2;
+        return Promise.resolve(callCount > 2);
       }),
     });
 

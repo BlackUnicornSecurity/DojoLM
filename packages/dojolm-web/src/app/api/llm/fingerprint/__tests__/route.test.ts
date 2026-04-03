@@ -44,10 +44,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // Module-level mocks — must appear before any imports of the routes
 // ---------------------------------------------------------------------------
 
-const mockCheckApiAuth = vi.fn(() => null as NextResponse | null);
+const mockCheckApiAuth = vi.fn((_req?: unknown) => null as NextResponse | null);
 
 vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args as [NextRequest]),
+  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args as [unknown]),
 }));
 
 const mockGetModelConfigs = vi.fn(() =>
@@ -58,11 +58,11 @@ const mockGetModelConfigs = vi.fn(() =>
 
 vi.mock('@/lib/storage/file-storage', () => ({
   fileStorage: {
-    getModelConfigs: (...args: unknown[]) => mockGetModelConfigs(...args),
+    getModelConfigs: (...args: unknown[]) => (mockGetModelConfigs as (...a: unknown[]) => unknown)(...args),
   },
 }));
 
-const mockIdentify = vi.fn(() =>
+const mockIdentify = vi.fn((..._args: unknown[]) =>
   Promise.resolve({
     candidates: [{ modelId: 'gpt-4o', confidence: 0.95, distance: 0.05 }],
     totalProbes: 40,
@@ -71,7 +71,7 @@ const mockIdentify = vi.fn(() =>
   })
 );
 
-const mockVerify = vi.fn(() =>
+const mockVerify = vi.fn((..._args: unknown[]) =>
   Promise.resolve({
     match: true,
     driftScore: 0.1,
@@ -79,16 +79,16 @@ const mockVerify = vi.fn(() =>
   })
 );
 
-const mockLoadKagamiSignatures = vi.fn(() => []);
+const mockLoadKagamiSignatures = vi.fn(() => [] as unknown[]);
 
 // KagamiEngine must be a real constructor (class) so `new KagamiEngine()` works.
 // We define it here and delegate to the per-test mock fns so tests can override them.
 class MockKagamiEngine {
   identify(...args: unknown[]) {
-    return mockIdentify(...args);
+    return (mockIdentify as (...a: unknown[]) => unknown)(...args);
   }
   verify(...args: unknown[]) {
-    return mockVerify(...args);
+    return (mockVerify as (...a: unknown[]) => unknown)(...args);
   }
 }
 
@@ -101,42 +101,42 @@ vi.mock('@/lib/llm-providers', () => ({
   getProviderAdapter: vi.fn(() => Promise.resolve({})),
 }));
 
-const mockActiveFingerprintsCreate = vi.fn(() => ({ listeners: new Set() }));
-const mockActiveFingerprintsUpdate = vi.fn();
-const mockActiveFingerprintsComplete = vi.fn();
-const mockActiveFingerprintsGet = vi.fn();
+const mockActiveFingerprintsCreate = vi.fn((..._args: unknown[]) => ({ listeners: new Set() }));
+const mockActiveFingerprintsUpdate = vi.fn((..._args: unknown[]) => undefined);
+const mockActiveFingerprintsComplete = vi.fn((..._args: unknown[]) => undefined);
+const mockActiveFingerprintsGet = vi.fn((..._args: unknown[]) => undefined);
 
 vi.mock('@/lib/fingerprint-state', () => ({
   activeFingerprints: {
-    create: (...args: unknown[]) => mockActiveFingerprintsCreate(...args),
-    update: (...args: unknown[]) => mockActiveFingerprintsUpdate(...args),
-    complete: (...args: unknown[]) => mockActiveFingerprintsComplete(...args),
-    get: (...args: unknown[]) => mockActiveFingerprintsGet(...args),
+    create: (...args: unknown[]) => (mockActiveFingerprintsCreate as (...a: unknown[]) => unknown)(...args),
+    update: (...args: unknown[]) => (mockActiveFingerprintsUpdate as (...a: unknown[]) => unknown)(...args),
+    complete: (...args: unknown[]) => (mockActiveFingerprintsComplete as (...a: unknown[]) => unknown)(...args),
+    get: (...args: unknown[]) => (mockActiveFingerprintsGet as (...a: unknown[]) => unknown)(...args),
   },
 }));
 
-const mockFsMkdir = vi.fn(() => Promise.resolve());
-const mockFsWriteFile = vi.fn(() => Promise.resolve());
-const mockFsRename = vi.fn(() => Promise.resolve());
+const mockFsMkdir = vi.fn((..._args: unknown[]) => Promise.resolve());
+const mockFsWriteFile = vi.fn((..._args: unknown[]) => Promise.resolve());
+const mockFsRename = vi.fn((..._args: unknown[]) => Promise.resolve());
 const mockFsReaddir = vi.fn(() => Promise.resolve([] as string[]));
-const mockFsReadFile = vi.fn();
+const mockFsReadFile = vi.fn((..._args: unknown[]) => Promise.resolve(undefined as string | undefined));
 
 vi.mock('node:fs', () => ({
   default: {
     promises: {
-      mkdir: (...args: unknown[]) => mockFsMkdir(...args),
-      writeFile: (...args: unknown[]) => mockFsWriteFile(...args),
-      rename: (...args: unknown[]) => mockFsRename(...args),
-      readdir: (...args: unknown[]) => mockFsReaddir(...args),
-      readFile: (...args: unknown[]) => mockFsReadFile(...args),
+      mkdir: (...args: unknown[]) => (mockFsMkdir as (...a: unknown[]) => unknown)(...args),
+      writeFile: (...args: unknown[]) => (mockFsWriteFile as (...a: unknown[]) => unknown)(...args),
+      rename: (...args: unknown[]) => (mockFsRename as (...a: unknown[]) => unknown)(...args),
+      readdir: (...args: unknown[]) => (mockFsReaddir as (...a: unknown[]) => unknown)(...args),
+      readFile: (...args: unknown[]) => (mockFsReadFile as (...a: unknown[]) => unknown)(...args),
     },
   },
   promises: {
-    mkdir: (...args: unknown[]) => mockFsMkdir(...args),
-    writeFile: (...args: unknown[]) => mockFsWriteFile(...args),
-    rename: (...args: unknown[]) => mockFsRename(...args),
-    readdir: (...args: unknown[]) => mockFsReaddir(...args),
-    readFile: (...args: unknown[]) => mockFsReadFile(...args),
+    mkdir: (...args: unknown[]) => (mockFsMkdir as (...a: unknown[]) => unknown)(...args),
+    writeFile: (...args: unknown[]) => (mockFsWriteFile as (...a: unknown[]) => unknown)(...args),
+    rename: (...args: unknown[]) => (mockFsRename as (...a: unknown[]) => unknown)(...args),
+    readdir: (...args: unknown[]) => (mockFsReaddir as (...a: unknown[]) => unknown)(...args),
+    readFile: (...args: unknown[]) => (mockFsReadFile as (...a: unknown[]) => unknown)(...args),
   },
 }));
 

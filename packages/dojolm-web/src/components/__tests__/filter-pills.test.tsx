@@ -22,12 +22,12 @@ const mockFilters: FilterPill[] = [
 const allDisabledFilters: FilterPill[] = mockFilters.map(f => ({ ...f, enabled: false }))
 
 describe('FilterPills', () => {
-  let onToggle: ReturnType<typeof vi.fn>
-  let onReset: ReturnType<typeof vi.fn>
+  let onToggle: (filterId: string) => void
+  let onReset: () => void
 
   beforeEach(() => {
-    onToggle = vi.fn()
-    onReset = vi.fn()
+    onToggle = vi.fn() as unknown as (filterId: string) => void
+    onReset = vi.fn() as unknown as () => void
   })
 
   describe('Basic rendering', () => {

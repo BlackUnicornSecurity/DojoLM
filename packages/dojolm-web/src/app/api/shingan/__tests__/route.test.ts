@@ -34,10 +34,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // Module-level mocks — must be hoisted before route imports
 // ---------------------------------------------------------------------------
 
-const mockCheckApiAuth = vi.fn(() => null as NextResponse | null);
+const mockCheckApiAuth = vi.fn((_req?: unknown) => null as NextResponse | null);
 
 vi.mock('@/lib/api-auth', () => ({
-  checkApiAuth: (...args: unknown[]) => mockCheckApiAuth(...args as [NextRequest]),
+  checkApiAuth: (...args: unknown[]) => (mockCheckApiAuth as (...a: unknown[]) => unknown)(...args),
 }));
 
 // Minimal trust score shape returned by the mock
@@ -62,8 +62,8 @@ const mockBatchTrustScore = vi.fn((skills: unknown[]) =>
 );
 
 vi.mock('bu-tpi/shingan', () => ({
-  scanSkill: (...args: unknown[]) => mockScanSkill(...args),
-  computeTrustScore: (...args: unknown[]) => mockComputeTrustScore(...args),
+  scanSkill: (...args: unknown[]) => (mockScanSkill as (...a: unknown[]) => unknown)(...args),
+  computeTrustScore: (...args: unknown[]) => (mockComputeTrustScore as (...a: unknown[]) => unknown)(...args),
   batchTrustScore: (skills: unknown) => mockBatchTrustScore(skills as unknown[]),
 }));
 

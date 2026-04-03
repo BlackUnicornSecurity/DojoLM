@@ -66,7 +66,7 @@ describe('checkApiAuth', () => {
   // AUTH-004: Bypasses auth in dev when NODA_API_KEY not set
   it('AUTH-004: bypasses auth in dev when NODA_API_KEY not set', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string>).NODE_ENV = 'development';
     const { checkApiAuth } = await import('../api-auth');
 
     const result = checkApiAuth(createReq());
@@ -76,7 +76,7 @@ describe('checkApiAuth', () => {
   // AUTH-005: Returns 503 in production when NODA_API_KEY not set
   it('AUTH-005: returns 503 in production when NODA_API_KEY not set', async () => {
     delete process.env.NODA_API_KEY;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { checkApiAuth } = await import('../api-auth');
 
     const result = checkApiAuth(createReq());
@@ -101,7 +101,7 @@ describe('checkApiAuth', () => {
   it('AUTH-007: allows trusted same-origin requests with a valid session cookie', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockReturnValue({ id: 'user-1' });
 
     const { checkApiAuth } = await import('../api-auth');
@@ -120,7 +120,7 @@ describe('checkApiAuth', () => {
   it('AUTH-008: rejects same-origin headers without a valid session cookie', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
 
     const { checkApiAuth } = await import('../api-auth');
 
@@ -138,7 +138,7 @@ describe('checkApiAuth', () => {
   it('AUTH-009: fails closed for same-origin bypass when NEXT_PUBLIC_APP_URL is missing in production', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     delete process.env.NEXT_PUBLIC_APP_URL;
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     mockValidateSession.mockReturnValue({ id: 'user-1' });
 
     const { checkApiAuth } = await import('../api-auth');
@@ -157,7 +157,7 @@ describe('checkApiAuth', () => {
 
   it('AUTH-010: allows public read routes without API key or session', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { checkApiAuth } = await import('../api-auth');
 
     const req = new NextRequest('http://localhost:42001/api/fixtures');
@@ -168,7 +168,7 @@ describe('checkApiAuth', () => {
   it('AUTH-011: allows trusted same-origin scanner actions without API key or session', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
     const { checkApiAuth } = await import('../api-auth');
 
     const req = new NextRequest('http://localhost:42001/api/scan', {

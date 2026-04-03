@@ -8,7 +8,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { SortableTable, type Column } from '@/components/ui/SortableTable'
 
-interface TestRow {
+interface TestRow extends Record<string, unknown> {
   id: string
   name: string
   score: number
