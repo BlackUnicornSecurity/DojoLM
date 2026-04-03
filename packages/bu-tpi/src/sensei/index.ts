@@ -84,6 +84,38 @@ export type {
   ConversionOutput,
 } from './format-converter.js';
 
+// API Types
+export type {
+  RoutingMode,
+  ProviderRouting,
+  SenseiGenerateRequest,
+  SenseiMutateRequest,
+  SenseiJudgeRequest,
+  SenseiPlanRequest,
+  SenseiApiResponse,
+  ValidationError as SenseiValidationError,
+} from './api-types.js';
+
+export {
+  ROUTING_MODES,
+  DEFAULT_ROUTING,
+  API_LIMITS,
+} from './api-types.js';
+
+// API Service
+export {
+  validateRouting,
+  validateGenerateRequest,
+  validateMutateRequest,
+  validateJudgeRequest,
+  validatePlanRequest,
+  buildModelConfig,
+  executeGenerate,
+  executeMutate,
+  executeJudge,
+  executePlan,
+} from './api-service.js';
+
 // Sanitization
 export {
   sanitizeForPrompt,
