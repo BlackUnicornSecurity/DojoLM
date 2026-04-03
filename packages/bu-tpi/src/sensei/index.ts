@@ -178,3 +178,17 @@ export type {
   JudgeResult,
   JudgeRequest,
 } from './judge.js';
+
+// Probe Executor (SHURIKENJUTSU 8.2)
+export type {
+  ProbeResult,
+  ProbeCampaignResult,
+  ProbeCampaignConfig,
+} from './probe-executor.js';
+
+export {
+  probe,
+  runProbeCampaign,
+  formatProbeCampaignReport,
+  DEFAULT_PROBE_CONFIG,
+} from './probe-executor.js';

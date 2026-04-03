@@ -49,3 +49,30 @@ export {
   evaluateSecurity,
   evaluateScenario,
 } from './evaluator.js';
+
+// Harness Adapters (SHURIKENJUTSU 8.3)
+export type {
+  OpenAIFunction,
+  OpenAITool,
+  OpenAIToolCall,
+  OpenAIToolResult,
+  OpenAIParameterSchema,
+  LangChainToolSchema,
+  LangChainToolInvocation,
+  HarnessType,
+  HarnessConversionResult,
+} from './harness-adapters.js';
+
+export {
+  agenticToolToOpenAIFunction,
+  agenticToolToOpenAITool,
+  agenticToolsToOpenAI,
+  parseOpenAIToolCall,
+  executeOpenAIToolCall,
+  agenticToolToLangChain,
+  agenticToolsToLangChain,
+  parseLangChainInvocation,
+  executeLangChainInvocation,
+  convertToolsForHarness,
+  HARNESS_TYPES,
+} from './harness-adapters.js';

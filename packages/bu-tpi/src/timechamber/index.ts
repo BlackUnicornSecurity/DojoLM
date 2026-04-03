@@ -45,3 +45,26 @@ export {
   CONTEXT_OVERFLOW_PLANS,
   PERSONA_DRIFT_PLANS,
 } from './attacks/index.js';
+
+// ===========================================================================
+// Adaptive Probing (SHURIKENJUTSU 8.1)
+// ===========================================================================
+
+export type {
+  ResponseSignal,
+  AdaptTurnFn,
+  ScoreResponseFn,
+  AdaptiveStrategy,
+  AdaptiveProbeConfig,
+  AdaptiveProbeResult,
+} from './adaptive-probe.js';
+
+export {
+  analyzeResponse,
+  selectStrategy,
+  rewriteTurn,
+  defaultAdaptTurn,
+  runAdaptiveProbe,
+  ADAPTIVE_STRATEGIES,
+  DEFAULT_ADAPTIVE_CONFIG,
+} from './adaptive-probe.js';

@@ -29,3 +29,19 @@ export {
   assembleContext,
   simulateRagPipeline,
 } from './pipeline-simulator.js';
+
+// Live Pipeline (SHURIKENJUTSU 8.4)
+export type {
+  GenerationResult,
+  PoisoningTestResult,
+  LiveRagConfig,
+} from './live-pipeline.js';
+
+export {
+  buildRagPrompt,
+  runGenerationStage,
+  detectPoisonInfluence,
+  runPoisoningTest,
+  formatPoisoningReport,
+  DEFAULT_LIVE_RAG_CONFIG,
+} from './live-pipeline.js';
