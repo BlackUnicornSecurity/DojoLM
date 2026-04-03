@@ -13,7 +13,7 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('../WidgetCard', () => ({
+vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div data-testid="widget-card">
       <div data-testid="widget-title">{title}</div>
