@@ -25,6 +25,8 @@ Public or minimally protected routes include:
 - `GET /api/auth/me`
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
+- `GET /api/setup/status` (returns `{ needsSetup: boolean }`)
+- `POST /api/setup/admin` (first-run only; returns 403 once any user exists)
 
 Rate limits enforced by the API proxy:
 

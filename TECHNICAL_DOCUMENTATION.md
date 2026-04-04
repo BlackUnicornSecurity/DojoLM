@@ -5,7 +5,7 @@
 DojoLM is a comprehensive, production-grade platform for prompt-injection detection, LLM red teaming, compliance mapping, and adversarial evaluation. Built as a TypeScript monorepo with zero runtime dependencies in the core engine, it represents a breakthrough in AI security testing and safety validation.
 
 **Key Metrics:**
-- **510+ detection patterns** across **49 pattern groups**
+- **512 detection patterns** across **49 pattern groups**
 - **2,960+ attack fixtures** across **37 fixture categories**
 - **18 DojoV2 security controls** with 100% implementation coverage
 - **57 built-in LLM provider presets** in the core registry
@@ -87,16 +87,16 @@ The heart of DojoLM is `bu-tpi` — a hardened, zero-dependency scanner engine w
 
 | Category | Description | Pattern Count |
 |----------|-------------|---------------|
-| System Override | Direct instruction override attempts | 45+ |
-| Role Hijacking | XML/JSON/Markdown injection for role confusion | 30+ |
-| Jailbreak Patterns | DAN, AIM, STAN, Grandma exploit, etc. | 60+ |
-| Boundary Manipulation | Control tokens, confusable Unicode | 40+ |
-| Multilingual Attacks | 12+ languages with 4 patterns each | 50+ |
-| Agent Security | Tool credential extraction, A2A attacks | 80+ |
-| RAG Poisoning | Knowledge base injection, vector DB attacks | 35+ |
-| Multi-Turn Attacks | Session persistence, context manipulation | 40+ |
-| Modern Jailbreaks | DeepInception, ArtPrompt, FlipAttack | 30+ |
-| Encoding Evasion | Base64, hex, Unicode, homoglyphs | 50+ |
+| System Override | Direct instruction override attempts | 47 |
+| Role Hijacking | XML/JSON/Markdown injection for role confusion | 32 |
+| Jailbreak Patterns | DAN, AIM, STAN, Grandma exploit, etc. | 64 |
+| Boundary Manipulation | Control tokens, confusable Unicode | 42 |
+| Multilingual Attacks | 14 languages with native patterns | 56 |
+| Agent Security | Tool credential extraction, A2A attacks | 82 |
+| RAG Poisoning | Knowledge base injection, vector DB attacks | 38 |
+| Multi-Turn Attacks | Session persistence, context manipulation | 44 |
+| Modern Jailbreaks | DeepInception, ArtPrompt, FlipAttack | 32 |
+| Encoding Evasion | Base64, hex, Unicode, homoglyphs | 75 |
 
 #### Standalone API Endpoints
 
@@ -315,19 +315,43 @@ export const AGENT_CREDENTIAL_PATTERNS: RegexPattern[] = [
 ### 6. Multilingual Attack Detection
 
 **Innovation**: Native support for 12+ languages with transliteration detection:
+**Innovation**: Native support for 14 languages and variants with specialized pattern sets and transliteration detection:
 
+| Language | Code | Detection Focus | Features |
+| :--- | :--- | :--- | :--- |
+| **English** | `en` | Base jailbreak vocabulary | Semantic & Keyword |
+| **Chinese (Simplified)** | `zh` | Character-based overrides | Native Script |
+| **Chinese Pinyin** | `zh-pinyin` | Transliterated evasion | Phonetic matching |
+| **Spanish** | `es` | Direct instruction hijacking | Native Script |
+| **French** | `fr` | Boundary manipulation | Native Script |
+| **German** | `de` | Compound word jailbreaks | Native Script |
+| **Italian** | `it` | Social engineering lures | Native Script |
+| **Portuguese** | `pt` | System role confusion | Native Script |
+| **Russian** | `ru` | Cyrillic evasion patterns | Native Script |
+| **Japanese** | `ja` | Kanji/Kana mix injections | Native Script |
+| **Korean** | `ko` | Hangul-based roleplay | Native Script |
+| **Arabic** | `ar` | RTL script-injection | RTL Support |
+| **Hebrew** | `he` | RTL instruction bypass | RTL Support |
+| **Persian** | `fa` | RTL logical manipulation | RTL Support |
+
+#### Example Pattern Implementation
 ```typescript
 // Chinese patterns
+// Chinese Simplified (zh)
 { name: 'zh_system_override', lang: 'zh',
   re: /忽略所有之前的指令|忽略以上所有指示/ }
 
 // Chinese Pinyin (transliterated)
+// Chinese Pinyin (zh-pinyin)
 { name: 'zh_pinyin_override', lang: 'zh-pinyin',
   re: /hush[ie]?\s+suoyou\s+zhiqian\s+(?:de\s+)?zhiling/i }
 
 // Hebrew RTL patterns
 { name: 'hebrew_text_detection', lang: 'he',
   re: /[֐-׿]{50,}/ }
+// Arabic (ar) - RTL Logic
+{ name: 'ar_jailbreak_dan', lang: 'ar',
+  re: /الآن أنت في وضع/i }
 ```
 
 ### 7. Binary Content Scanning
@@ -363,23 +387,20 @@ export function scanBinary(buffer: Buffer): BinaryScanResult {
 
 | Module | File | Purpose | Pattern Count |
 |--------|------|---------|---------------|
-| Enhanced PI | `modules/enhanced-pi.ts` | Semantic injection, boundaries, role confusion | 156 |
-| MCP Parser | `modules/mcp-parser.ts` | MCP protocol-specific attacks | 45 |
-| Document PDF | `modules/document-pdf.ts` | PDF-based injection vectors | 32 |
-| Document Office | `modules/document-office.ts` | DOCX/XLSX attacks | 28 |
-| SSRF Detector | `modules/ssrf-detector.ts` | Server-side request forgery | 24 |
-| Encoding Engine | `modules/encoding-engine.ts` | Base64, hex, URL encoding | 38 |
-| Token Analyzer | `modules/token-analyzer.ts` | Token-level attacks | 19 |
-| RAG Analyzer | `modules/rag-analyzer.ts` | Retrieval poisoning | 42 |
-| VectorDB Interface | `modules/vectordb-interface.ts` | Vector database attacks | 35 |
-| DoS Detector | `modules/dos-detector.ts` | Denial of service | 67 |
-| Supply Chain | `modules/supply-chain-detector.ts` | Supply chain attacks | 23 |
-| Bias Detector | `modules/bias-detector.ts` | Bias and fairness | 41 |
-| PII Detector | `modules/pii-detector.ts` | Personal information | 52 |
-| Deepfake Detector | `modules/deepfake-detector.ts` | Synthetic media | 18 |
-| Social Engineering | `modules/social-engineering-detector.ts` | Social attacks | 36 |
-| Image Scanner | `modules/image-scanner.ts` | Visual attacks | 29 |
-| Audio Scanner | `modules/audio-scanner.ts` | Audio-based attacks | 31 |
+| Enhanced PI | `modules/enhanced-pi.ts` | Semantic analysis, boundary violations, and role-confusion chains. | 156 |
+| MCP Parser | `modules/mcp-parser.ts` | JSON-RPC and MCP-specific adversarial protocol parsing. | 45 |
+| RAG Analyzer | `modules/rag-analyzer.ts` | Retrieval poisoning and knowledge base injection detection. | 42 |
+| VectorDB Interface | `modules/vectordb-interface.ts` | Vector leaks, similarity tricking, and vector-SEO patterns. | 35 |
+| DoS Detector | `modules/dos-detector.ts` | Regex/XML bombs, deep nesting, and token-explosion detection. | 67 |
+| Supply Chain | `modules/supply-chain-detector.ts` | Dependency confusion, model poisoning, and benchmark fraud. | 23 |
+| Model Theft | `modules/model-theft-detector.ts` | Kagami fingerprinting (210+ probes) and distillation defense. | 9+ groups |
+| Overreliance | `modules/overreliance-detector.ts` | Hallucination triggers, fake citations, and statistical fraud. | 6 functions |
+| Bias Detector | `modules/bias-detector.ts` | Demographic parity and fairness violation detection. | 41 |
+| PII Detector | `modules/pii-detector.ts` | Masking and detection of credentials and sensitive personal data. | 52 |
+| Social Engineering | `modules/social-engineering-detector.ts` | Cognitive bias exploits and authority-spoofing detection. | 36 |
+| Image Scanner | `modules/image-scanner.ts` | Metadata injection (EXIF/XMP) and steganographic payloads. | 29 |
+| Audio Scanner | `modules/audio-scanner.ts` | ID3/RIFF metadata attacks and cross-modal injections. | 31 |
+| Shingan Universal | `modules/shingan-context.ts` | 6-layer correlated attack scanning and context security. | Universal |
 
 ### Validation Framework (Katana)
 
@@ -492,6 +513,8 @@ export async function checkApiAuth(request: Request): Promise<AuthResult> {
 | `/api/llm/batch` | POST | API Key | Batch execution |
 | `/api/guard/check` | POST | API Key | Guard middleware check |
 | `/api/health` | GET | Public | Health check |
+| `/api/setup/status` | GET | Public | Check if first-time setup is needed |
+| `/api/setup/admin` | POST | Public (0 users only) | Create initial admin account |
 
 ---
 

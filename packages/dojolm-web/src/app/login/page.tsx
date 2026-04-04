@@ -23,6 +23,27 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Check if first-time setup is needed
+  useEffect(() => {
+    async function checkSetup() {
+      try {
+        const res = await fetch('/api/setup/status');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.needsSetup) {
+            router.replace('/setup');
+            return;
+          }
+        }
+      } catch {
+        // If status check fails, continue to normal login
+      }
+    }
+    if (!loading && !user) {
+      checkSetup();
+    }
+  }, [loading, user, router]);
+
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {

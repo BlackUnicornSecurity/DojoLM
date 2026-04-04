@@ -4,6 +4,8 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/auth/me',
   '/api/auth/login',
   '/api/auth/logout',
+  '/api/setup/status',
+  '/api/setup/admin',
 ]);
 
 const PUBLIC_READONLY_API_ROUTES = new Set([

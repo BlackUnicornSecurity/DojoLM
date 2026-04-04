@@ -47,15 +47,28 @@ npm run dev:web
 
 This starts the Next.js app on `http://localhost:42001`.
 
+## First-Time Setup Wizard
+
+On first launch (when no users exist in the database), the platform redirects to a guided setup wizard at `/setup`. The wizard walks you through:
+
+1. **Create Admin Account** -- username, email, password (required)
+2. **Configure Ollama** -- connect to a local Ollama server, discover and register models (optional)
+3. **Cloud Providers** -- add API keys for OpenAI, Anthropic, Google, Groq, DeepSeek, or Mistral (optional)
+4. **Provision Sensei** -- choose which model powers the Sensei AI assistant (optional)
+5. **Review & Launch** -- summary of what was configured
+
+Skipped steps can be completed later from the [Admin Panel](modules/ADMIN.md).
+
 ## First-Day Checklist
 
-1. Open `http://localhost:42001`.
-2. Review the [Platform Guide](PLATFORM_GUIDE.md) so the module names match the live navigation.
-3. Run a manual scan in [Haiku Scanner](modules/HAIKU_SCANNER.md).
-4. Browse a fixture in [Armory](modules/ARMORY.md).
-5. Add at least one model through [Admin](modules/ADMIN.md) and [LLM Dashboard](modules/LLM_DASHBOARD.md).
-6. Run a single LLM test.
-7. Turn on [Hattori Guard](modules/HATTORI_GUARD.md) if you want blocking or audit coverage during execution.
+1. Open `http://localhost:42001` (the setup wizard appears automatically on first launch).
+2. Complete the setup wizard to create your admin account and optionally configure models.
+3. Review the [Platform Guide](PLATFORM_GUIDE.md) so the module names match the live navigation.
+4. Run a manual scan in [Haiku Scanner](modules/HAIKU_SCANNER.md).
+5. Browse a fixture in [Armory](modules/ARMORY.md).
+6. If you skipped model setup in the wizard, add at least one model through [Admin](modules/ADMIN.md) and [LLM Dashboard](modules/LLM_DASHBOARD.md).
+7. Run a single LLM test.
+8. Turn on [Hattori Guard](modules/HATTORI_GUARD.md) if you want blocking or audit coverage during execution.
 
 ## First Scan
 
