@@ -44,45 +44,39 @@ function getClientIp(req: NextRequest): string | null {
  * Validate request origin to mitigate CSRF on this unauthenticated endpoint.
  * Since no session/CSRF cookie exists yet, we check Origin/Referer headers.
  */
+function isPrivateNetworkHost(hostname: string): boolean {
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  // RFC 1918 private ranges
+  if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) return true;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(hostname)) return true;
+  return false;
+}
+
 function isValidOrigin(req: NextRequest): boolean {
   const origin = req.headers.get('origin');
   const referer = req.headers.get('referer');
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
-  // In development without configured origin, allow same-origin requests
+  // In development without configured origin, allow all
   if (!appUrl && process.env.NODE_ENV !== 'production') {
     return true;
   }
 
-  // If neither header is present, reject (fetch from browser always sends at least one)
+  // If neither header is present, reject (browser fetch always sends at least one)
   if (!origin && !referer) {
     return false;
   }
 
-  // Check origin header first (more reliable)
-  if (origin) {
-    if (appUrl && origin === new URL(appUrl).origin) return true;
-    // Allow localhost origins in development
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        const url = new URL(origin);
-        if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return true;
-      } catch { /* invalid origin */ }
-    }
-    return false;
-  }
+  const sourceUrl = origin ?? referer;
+  if (!sourceUrl) return false;
 
-  // Fall back to referer
-  if (referer) {
-    try {
-      const refererOrigin = new URL(referer).origin;
-      if (appUrl && refererOrigin === new URL(appUrl).origin) return true;
-      if (process.env.NODE_ENV !== 'production') {
-        const url = new URL(referer);
-        if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return true;
-      }
-    } catch { /* invalid referer */ }
-  }
+  try {
+    const parsed = new URL(sourceUrl);
+    // Allow if origin matches configured app URL
+    if (appUrl && parsed.origin === new URL(appUrl).origin) return true;
+    // Allow private network origins (setup is first-run only, LAN access is expected)
+    if (isPrivateNetworkHost(parsed.hostname)) return true;
+  } catch { /* invalid URL */ }
 
   return false;
 }
