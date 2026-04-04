@@ -75,6 +75,7 @@ export function AdminPanel() {
         passed?: number
         failed?: number
         skipped?: number
+        duration_ms?: number
       }
       results?: Array<{
         name: string
@@ -84,6 +85,7 @@ export function AdminPanel() {
         output?: string
         required?: boolean
       }>
+      timestamp?: string
     }
 
     return {
@@ -92,6 +94,7 @@ export function AdminPanel() {
         passed: data.summary?.passed ?? 0,
         failed: data.summary?.failed ?? 0,
         skipped: data.summary?.skipped ?? 0,
+        duration_ms: data.summary?.duration_ms ?? 0,
       },
       results: (data.results ?? []).map((result) => ({
         name: result.name,
@@ -100,6 +103,7 @@ export function AdminPanel() {
         output: result.output ?? '',
         required: Boolean(result.required),
       })),
+      timestamp: data.timestamp ?? new Date().toISOString(),
     }
   }, [])
 
