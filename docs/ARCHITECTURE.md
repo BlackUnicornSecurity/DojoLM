@@ -27,7 +27,7 @@ The canonical scanner engine.
 - Owns the scanner logic, types, fixtures, heuristics, LLM types, and standalone HTTP API.
 - Exposes subpaths such as `bu-tpi/scanner`, `bu-tpi/types`, `bu-tpi/llm`, `bu-tpi/attackdna`, `bu-tpi/compliance`, `bu-tpi/sengoku`, and more through `package.json`.
 - Runs a hardened GET-only server from `src/serve.ts` on port `8089` by default.
-- Current verified metrics: **510 patterns**, **49 pattern groups**, **2,960 fixtures**, **37 fixture categories**.
+- Current verified metrics: **512 patterns**, **49 pattern groups**, **2,960 fixtures**, **37 fixture categories**.
 - **18 DojoV2 controls** fully implemented (100% coverage):
   - Prompt Injection (LLM-01, LLM-02)
   - System Prompt Extraction/Manipulation (LLM-03, LLM-04)

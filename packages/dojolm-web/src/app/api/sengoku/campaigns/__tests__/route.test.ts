@@ -41,6 +41,8 @@ const STORED_CAMPAIGN = {
   authConfig: {},
   schedule: null,
   webhookUrl: null,
+  targetSource: 'external',
+  targetModelId: null,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };

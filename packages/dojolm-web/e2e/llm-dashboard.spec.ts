@@ -35,28 +35,23 @@ test.describe('LLM Dashboard', () => {
   });
 
   test('Models tab shows Add Model button and provider info', async ({ page }) => {
-    // Two 'Add Model' buttons may exist on the page; use first() to avoid strict mode violation
-    await page.waitForLoadState('networkidle');
     const addBtn = page.getByRole('button', { name: /Add Model/i }).first();
     await expect(addBtn).toBeVisible({ timeout: 20000 });
-    // Click Add Model to open form
     await addBtn.click();
-    // Model form should appear with provider selector
-    await expect(page.getByText(/Provider|Display Name|Model/i).first()).toBeVisible({ timeout: 20000 });
+
+    await expect(page.getByRole('heading', { name: /Add New Model/i })).toBeVisible({ timeout: 20000 });
+    await expect(page.getByLabel(/Display Name/i)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByLabel(/^Provider$/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Add Model form has required fields and provider dropdown', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
     const addBtn = page.getByRole('button', { name: /Add Model/i }).first();
     await expect(addBtn).toBeVisible({ timeout: 20000 });
     await addBtn.click();
 
-    // Check form fields exist
-    await expect(page.getByLabel(/Display Name|Name/i).first()).toBeVisible({ timeout: 20000 });
-    // Provider selector
-    await expect(page.getByText(/OpenAI|Anthropic|Google|Provider/i).first()).toBeVisible({ timeout: 15000 });
-    // Temperature control
-    await expect(page.getByText(/Temperature/i).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.getByLabel(/Display Name/i)).toBeVisible({ timeout: 20000 });
+    await expect(page.getByLabel(/^Provider$/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByLabel(/Temperature/i)).toBeVisible({ timeout: 15000 });
   });
 
   test('Tests tab shows model selection and category filters', async ({ page }) => {

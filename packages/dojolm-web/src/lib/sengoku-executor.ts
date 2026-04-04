@@ -10,6 +10,40 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { getDataPath } from '@/lib/runtime-paths';
 
+/**
+ * Resolve the effective target URL for a campaign based on its targetSource.
+ * - 'external' / 'local': uses campaign.targetUrl directly
+ * - 'dashboard': resolves model config from DB to get provider base URL
+ */
+export async function resolveTargetUrl(campaign: Campaign): Promise<string> {
+  if (campaign.targetSource !== 'dashboard' || !campaign.targetModelId) {
+    return campaign.targetUrl;
+  }
+
+  // Dynamic import to avoid circular dependency in test environments
+  const { modelConfigRepo } = await import('@/lib/db/repositories/model-config.repository');
+  const model = modelConfigRepo.findByIdWithKey(campaign.targetModelId);
+  if (!model) {
+    throw new Error(`Dashboard model not found: ${campaign.targetModelId}`);
+  }
+
+  // Build target URL from model config
+  const baseUrl = model.base_url || getDefaultProviderUrl(model.provider ?? '');
+  return baseUrl;
+}
+
+function getDefaultProviderUrl(provider: string): string {
+  const defaults: Record<string, string> = {
+    ollama: 'http://localhost:11434/v1/chat/completions',
+    lmstudio: 'http://localhost:1234/v1/chat/completions',
+    llamacpp: 'http://localhost:8080/v1/chat/completions',
+    openai: 'https://api.openai.com/v1/chat/completions',
+    anthropic: 'https://api.anthropic.com/v1/messages',
+  };
+  return defaults[provider] || `https://${provider}.example.com/v1/chat/completions`;
+}
+
+
 const RUNS_DIR = getDataPath('sengoku', 'runs');
 const RUN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -59,6 +93,9 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), RUN_TIMEOUT_MS);
 
+  // Resolve actual target URL (handles dashboard model lookup)
+  const effectiveTargetUrl = await resolveTargetUrl(campaign);
+
   const allResults: SkillRunResult[] = [];
   const allFindings: Finding[] = [];
 
@@ -93,7 +130,7 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
 
       try {
         // Execute skill by scanning its probe text
-        const skillProbe = `[Skill Probe: ${skillId}] Target: ${campaign.targetUrl}`;
+        const skillProbe = `[Skill Probe: ${skillId}] Target: ${effectiveTargetUrl}`;
         const result = scan(skillProbe);
         const findings = result.findings ?? [];
 

@@ -19,17 +19,29 @@ test.describe('Admin Controls', () => {
     await expect(page.getByRole('heading', { name: 'Admin & Settings' })).toBeVisible({ timeout: 10000 });
   });
 
-  test.describe('AdminSettings (General tab)', () => {
-    test('shows edit settings button', async ({ page }) => {
+  test.describe('General tab', () => {
+    test('shows platform information summary', async ({ page }) => {
       const generalTab = page.getByRole('tab', { name: 'General' });
       await expect(generalTab).toBeVisible({ timeout: 5000 });
       await generalTab.click();
+      await expect(page.getByText('Platform Information')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('Modules')).toBeVisible({ timeout: 5000 });
+    });
+  });
+
+  test.describe('AdminSettings (Admin Settings tab)', () => {
+    test.beforeEach(async ({ page }) => {
+      const settingsTab = page.getByRole('tab', { name: 'Admin Settings' });
+      await expect(settingsTab).toBeVisible({ timeout: 5000 });
+      await settingsTab.click();
+      await expect(page.getByText('Admin Settings').first()).toBeVisible({ timeout: 10000 });
+    });
+
+    test('shows edit settings button', async ({ page }) => {
       await expect(page.getByRole('button', { name: /Edit settings/i })).toBeVisible({ timeout: 10000 });
     });
 
     test('edit mode shows save and cancel buttons', async ({ page }) => {
-      const generalTab = page.getByRole('tab', { name: 'General' });
-      await generalTab.click();
       const editBtn = page.getByRole('button', { name: /Edit settings/i });
       await expect(editBtn).toBeVisible({ timeout: 10000 });
       await editBtn.click();
@@ -38,8 +50,6 @@ test.describe('Admin Controls', () => {
     });
 
     test('cancel returns to view mode', async ({ page }) => {
-      const generalTab = page.getByRole('tab', { name: 'General' });
-      await generalTab.click();
       const editBtn = page.getByRole('button', { name: /Edit settings/i });
       await expect(editBtn).toBeVisible({ timeout: 10000 });
       await editBtn.click();

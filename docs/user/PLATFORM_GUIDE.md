@@ -6,7 +6,7 @@ This guide describes the current user-visible surface of the DojoLM web app and 
 
 As of the 2026-03-24 documentation audit:
 
-- Scanner engine: 510 patterns across 49 groups
+- Scanner engine: 512 patterns across 49 groups
 - Fixture library: 2,960 fixtures across 37 categories
 - Standalone scanner API: `http://localhost:8089`
 - Web app: `http://localhost:42001`

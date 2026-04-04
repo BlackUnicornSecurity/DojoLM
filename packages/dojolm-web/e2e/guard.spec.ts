@@ -7,6 +7,8 @@
 
 import { test, expect } from '@playwright/test';
 
+const isProd = process.env.E2E_TARGET === 'prod';
+
 test.describe('Hattori Guard', () => {
   // Guard tests navigate via the desktop sidebar — skip on mobile-chrome project
   // where the sidebar is replaced by the bottom nav.
@@ -44,6 +46,11 @@ test.describe('Hattori Guard', () => {
     // The toggle button has aria-label "Guard enabled, click to disable" or "Guard disabled, click to enable"
     const toggleBtn = page.getByRole('button', { name: /Guard (enabled|disabled)|click to (enable|disable)/i });
     await expect(toggleBtn).toBeVisible({ timeout: 10000 });
+    if (isProd) {
+      // Production QA is read-only by default. Verify the control is truthful without mutating live guard state.
+      await expect(toggleBtn).toBeVisible({ timeout: 5000 });
+      return;
+    }
     // Click to toggle state
     await toggleBtn.click();
     // Button should still be visible after toggle
@@ -65,13 +72,17 @@ test.describe('Hattori Guard', () => {
     const isDisabled = await toggleBtn.getAttribute('aria-label').then(
       (label) => label?.toLowerCase().includes('disabled') ?? false
     ).catch(() => false);
-    if (isDisabled) {
+    if (isDisabled && !isProd) {
       await toggleBtn.click();
       await page.waitForTimeout(500);
     }
     // Look for block threshold controls (only rendered when guard is enabled)
     const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
     const criticalBtn = page.getByRole('button', { name: /CRITICAL only/i });
+    if (isProd && isDisabled) {
+      await expect(toggleBtn).toBeVisible({ timeout: 5000 });
+      return;
+    }
     await expect(warningBtn).toBeVisible({ timeout: 10000 });
     await expect(criticalBtn).toBeVisible({ timeout: 5000 });
   });
@@ -84,9 +95,13 @@ test.describe('Hattori Guard', () => {
     const isDisabled = await toggleBtn.getAttribute('aria-label').then(
       (label) => label?.toLowerCase().includes('disabled') ?? false
     ).catch(() => false);
-    if (isDisabled) {
+    if (isDisabled && !isProd) {
       await toggleBtn.click();
       await page.waitForTimeout(500);
+    }
+    if (isProd) {
+      await expect(page.getByText(/Active Mode/i).first()).toBeVisible({ timeout: 5000 });
+      return;
     }
 
     // Select Samurai mode

@@ -4,13 +4,13 @@
  * Story: HAKONE H17.8, DAITENGUYAMA D4.4
  * Index:
  * - Steps: Target, Skills, Schedule, Alerts (line ~30)
- * - Skill selector with category filter (line ~130)
- * - POST handler (line ~60)
+ * - Skill selector with category filter (line ~140)
+ * - POST handler (line ~80)
  */
 
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { ChevronRight, ChevronLeft, Check, Loader2 } from 'lucide-react'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,16 @@ import {
   SKILL_CATEGORIES,
   type SkillEntry,
   type SkillCategory,
+  type TargetSource,
 } from '@/lib/sengoku-types'
+
+interface DashboardModel {
+  readonly id: string
+  readonly name: string
+  readonly provider: string
+  readonly model: string
+  readonly baseUrl?: string
+}
 
 const STEPS = ['Target', 'Skills', 'Schedule', 'Alerts'] as const
 
@@ -41,8 +50,15 @@ interface SengokuCampaignBuilderProps {
 export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBuilderProps) {
   const [step, setStep] = useState(0)
   const [campaignName, setCampaignName] = useState('')
+  const [targetSource, setTargetSource] = useState<TargetSource>('external')
   const [targetUrl, setTargetUrl] = useState('')
   const [authType, setAuthType] = useState<'api_key' | 'bearer'>('api_key')
+  const [targetModelId, setTargetModelId] = useState('')
+  const [ollamaBaseUrl, setOllamaBaseUrl] = useState('http://localhost:11434')
+  const [ollamaModel, setOllamaModel] = useState('')
+  const [dashboardModels, setDashboardModels] = useState<readonly DashboardModel[]>([])
+  const [localModels, setLocalModels] = useState<readonly { id: string; name: string }[]>([])
+  const [modelsLoading, setModelsLoading] = useState(false)
   const [selectedSkillIds, setSelectedSkillIds] = useState<ReadonlySet<string>>(new Set())
   const [activeCategory, setActiveCategory] = useState<SkillCategory | 'all'>('all')
   const [schedule, setSchedule] = useState('daily')
@@ -50,11 +66,50 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Fetch dashboard models when source switches to 'dashboard'
+  useEffect(() => {
+    if (targetSource !== 'dashboard' || dashboardModels.length > 0) return
+    setModelsLoading(true)
+    fetchWithAuth('/api/llm/models?enabled=true')
+      .then((res) => res.json())
+      .then((data: DashboardModel[] | { models?: DashboardModel[] }) => {
+        const models = Array.isArray(data) ? data : (data.models ?? [])
+        setDashboardModels(models)
+      })
+      .catch(() => { /* best effort */ })
+      .finally(() => setModelsLoading(false))
+  }, [targetSource, dashboardModels.length])
+
+  // Fetch local Ollama models when source switches to 'local'
+  useEffect(() => {
+    if (targetSource !== 'local') return
+    setModelsLoading(true)
+    fetchWithAuth(`/api/llm/local-models?provider=ollama&baseUrl=${encodeURIComponent(ollamaBaseUrl)}`)
+      .then((res) => res.json())
+      .then((data: { models?: { id: string; name: string }[] }) => {
+        setLocalModels(data.models ?? [])
+      })
+      .catch(() => setLocalModels([]))
+      .finally(() => setModelsLoading(false))
+  }, [targetSource, ollamaBaseUrl])
+
   const currentStep = STEPS[step]
   const isLast = step === STEPS.length - 1
 
+  /** Resolve effective target URL based on source */
+  const resolvedTargetUrl = useMemo(() => {
+    if (targetSource === 'external') return targetUrl.trim()
+    if (targetSource === 'local') {
+      return ollamaModel
+        ? `${ollamaBaseUrl}/v1/chat/completions`
+        : ''
+    }
+    // dashboard — URL comes from the selected model config at execution time
+    return targetModelId ? `dashboard://${targetModelId}` : ''
+  }, [targetSource, targetUrl, ollamaBaseUrl, ollamaModel, targetModelId])
+
   const canNext =
-    step === 0 ? targetUrl.trim().length > 0 && campaignName.trim().length > 0
+    step === 0 ? resolvedTargetUrl.length > 0 && campaignName.trim().length > 0
     : step === 1 ? selectedSkillIds.size > 0
     : true
 
@@ -107,16 +162,30 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
         return
       }
 
+      // Build auth config only for external targets
+      const authConfig = targetSource === 'external'
+        ? (authType === 'bearer' ? { Authorization: 'Bearer <token>' } : { 'X-API-Key': '<key>' })
+        : {}
+
+      // Resolve target URL for local sources
+      const effectiveUrl = targetSource === 'local'
+        ? `${ollamaBaseUrl}/v1/chat/completions`
+        : targetSource === 'dashboard'
+          ? `dashboard://${targetModelId}`
+          : targetUrl.trim()
+
       const res = await fetchWithAuth('/api/sengoku/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: campaignName.trim(),
-          targetUrl: targetUrl.trim(),
-          authConfig: authType === 'bearer' ? { Authorization: 'Bearer <token>' } : { 'X-API-Key': '<key>' },
+          targetUrl: effectiveUrl,
+          authConfig,
           selectedSkillIds: [...selectedSkillIds],
           schedule: schedule || null,
           webhookUrl: webhookUrl.trim() || null,
+          targetSource,
+          targetModelId: targetSource === 'dashboard' ? targetModelId : undefined,
         }),
       })
 
@@ -132,7 +201,7 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
     } finally {
       setSubmitting(false)
     }
-  }, [campaignName, targetUrl, authType, selectedSkillIds, schedule, webhookUrl, onCreated])
+  }, [campaignName, targetUrl, targetSource, targetModelId, authType, ollamaBaseUrl, selectedSkillIds, schedule, webhookUrl, onCreated])
 
   return (
     <GlowCard glow="accent" className="p-6">
@@ -168,27 +237,141 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
                 className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
               />
             </label>
-            <label className="block">
-              <span className="text-sm text-muted-foreground">Target URL</span>
-              <input
-                type="url"
-                value={targetUrl}
-                onChange={(e) => setTargetUrl(e.target.value)}
-                placeholder="https://api.example.com/v1/chat"
-                className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
-              />
-            </label>
-            <label className="block">
-              <span className="text-sm text-muted-foreground">Auth Type</span>
-              <select
-                value={authType}
-                onChange={(e) => setAuthType(e.target.value as 'api_key' | 'bearer')}
-                className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
-              >
-                <option value="api_key">API Key</option>
-                <option value="bearer">Bearer Token</option>
-              </select>
-            </label>
+
+            {/* Target Source Toggle */}
+            <div>
+              <span className="text-sm text-muted-foreground block mb-1.5">Target Source</span>
+              <div className="flex gap-2">
+                {([
+                  { value: 'external' as const, label: 'External URL' },
+                  { value: 'dashboard' as const, label: 'LLM Dashboard' },
+                  { value: 'local' as const, label: 'Local (Ollama)' },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setTargetSource(opt.value)}
+                    className={cn(
+                      'px-3 py-1.5 rounded-md text-xs font-medium border transition-colors',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
+                      targetSource === opt.value
+                        ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]'
+                        : 'border-[var(--border)] hover:bg-muted',
+                    )}
+                    role="radio"
+                    aria-checked={targetSource === opt.value}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* External URL fields */}
+            {targetSource === 'external' && (
+              <>
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">Target URL</span>
+                  <input
+                    type="url"
+                    value={targetUrl}
+                    onChange={(e) => setTargetUrl(e.target.value)}
+                    placeholder="https://api.example.com/v1/chat"
+                    className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">Auth Type</span>
+                  <select
+                    value={authType}
+                    onChange={(e) => setAuthType(e.target.value as 'api_key' | 'bearer')}
+                    className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                  >
+                    <option value="api_key">API Key</option>
+                    <option value="bearer">Bearer Token</option>
+                  </select>
+                </label>
+              </>
+            )}
+
+            {/* Dashboard model picker */}
+            {targetSource === 'dashboard' && (
+              <label className="block">
+                <span className="text-sm text-muted-foreground">Select Model from LLM Dashboard</span>
+                {modelsLoading ? (
+                  <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                    Loading models…
+                  </div>
+                ) : (
+                  <select
+                    value={targetModelId}
+                    onChange={(e) => setTargetModelId(e.target.value)}
+                    className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                  >
+                    <option value="">Select a model…</option>
+                    {dashboardModels.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name} ({m.provider} / {m.model})
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {dashboardModels.length === 0 && !modelsLoading && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    No models configured. Add models in the LLM Dashboard first.
+                  </p>
+                )}
+              </label>
+            )}
+
+            {/* Local (Ollama) fields */}
+            {targetSource === 'local' && (
+              <>
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">Ollama Base URL</span>
+                  <input
+                    type="url"
+                    value={ollamaBaseUrl}
+                    onChange={(e) => setOllamaBaseUrl(e.target.value)}
+                    placeholder="http://localhost:11434"
+                    className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-sm text-muted-foreground">Model</span>
+                  {modelsLoading ? (
+                    <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                      Detecting models…
+                    </div>
+                  ) : localModels.length > 0 ? (
+                    <select
+                      value={ollamaModel}
+                      onChange={(e) => setOllamaModel(e.target.value)}
+                      className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                    >
+                      <option value="">Select a model…</option>
+                      {localModels.map((m) => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={ollamaModel}
+                      onChange={(e) => setOllamaModel(e.target.value)}
+                      placeholder="llama3.2"
+                      className="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+                    />
+                  )}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {localModels.length > 0
+                      ? `${localModels.length} model(s) detected`
+                      : 'Type a model name or ensure Ollama is running to auto-detect'}
+                  </p>
+                </label>
+              </>
+            )}
           </div>
         )}
 
@@ -318,7 +501,14 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
             {/* Summary */}
             <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-sm space-y-1">
               <p><span className="text-muted-foreground">Name:</span> {campaignName}</p>
-              <p><span className="text-muted-foreground">Target:</span> {targetUrl}</p>
+              <p><span className="text-muted-foreground">Source:</span> {targetSource === 'external' ? 'External URL' : targetSource === 'dashboard' ? 'LLM Dashboard' : 'Local (Ollama)'}</p>
+              <p><span className="text-muted-foreground">Target:</span> {
+                targetSource === 'dashboard'
+                  ? dashboardModels.find((m) => m.id === targetModelId)?.name ?? targetModelId
+                  : targetSource === 'local'
+                    ? `${ollamaBaseUrl} / ${ollamaModel}`
+                    : targetUrl
+              }</p>
               <p><span className="text-muted-foreground">Skills:</span> {selectedSkillIds.size} selected</p>
               <p><span className="text-muted-foreground">Schedule:</span> {schedule}</p>
             </div>

@@ -56,6 +56,9 @@ RUN find packages/bu-tpi/src -name '*.json' -exec sh -c \
     'for f; do dest="packages/bu-tpi/dist${f#packages/bu-tpi/src}"; mkdir -p "$(dirname "$dest")"; cp "$f" "$dest"; done' \
     _ {} +
 
+# Build dojolm-mcp
+RUN npx tsc -b packages/dojolm-mcp --force
+
 # Build dojolm-scanner
 RUN npx tsc -b packages/dojolm-scanner --force
 
@@ -111,6 +114,9 @@ COPY --from=builder /app/packages/bu-tpi/package.json ./packages/bu-tpi/package.
 # Copy compiled dojolm-scanner
 COPY --from=builder /app/packages/dojolm-scanner/dist ./packages/dojolm-scanner/dist
 COPY --from=builder /app/packages/dojolm-scanner/package.json ./packages/dojolm-scanner/package.json
+# Copy compiled dojolm-mcp (spawned on-demand by web API)
+COPY --from=builder /app/packages/dojolm-mcp/dist ./packages/dojolm-mcp/dist
+COPY --from=builder /app/packages/dojolm-mcp/package.json ./packages/dojolm-mcp/package.json
 
 # Create data directory for JSON file storage (mount point)
 RUN mkdir -p /app/data && chown dojolm:dojolm /app/data

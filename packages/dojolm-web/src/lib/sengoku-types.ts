@@ -5,6 +5,13 @@
 
 import type { Finding } from '@dojolm/scanner';
 
+// ---------------------------------------------------------------------------
+// Target Source — how the campaign resolves its target LLM
+// ---------------------------------------------------------------------------
+
+export const TARGET_SOURCES = ['external', 'dashboard', 'local'] as const;
+export type TargetSource = (typeof TARGET_SOURCES)[number];
+
 export interface FindingsSummary {
   readonly total: number;
   readonly critical: number;
@@ -53,6 +60,10 @@ export interface Campaign {
   readonly webhookUrl: string | null;
   readonly status: CampaignStatus;
   readonly graph?: CampaignGraph;
+  /** How the target is resolved: external URL, dashboard model, or local (Ollama) */
+  readonly targetSource: TargetSource;
+  /** Model config ID when targetSource is 'dashboard' */
+  readonly targetModelId: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -84,6 +95,10 @@ export interface CreateCampaignRequest {
   readonly schedule?: string | null;
   readonly webhookUrl?: string | null;
   readonly graph?: CampaignGraph;
+  /** How the target is resolved: external URL, dashboard model, or local (Ollama). Defaults to 'external'. */
+  readonly targetSource?: TargetSource;
+  /** Model config ID when targetSource is 'dashboard' */
+  readonly targetModelId?: string;
 }
 
 export interface UpdateCampaignRequest {
@@ -93,6 +108,9 @@ export interface UpdateCampaignRequest {
   readonly status?: CampaignStatus;
   readonly graph?: CampaignGraph;
   readonly webhookUrl?: string | null;
+  readonly targetSource?: TargetSource;
+  readonly targetModelId?: string | null;
+  readonly targetUrl?: string;
 }
 
 // ---------------------------------------------------------------------------

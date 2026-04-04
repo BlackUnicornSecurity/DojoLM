@@ -12,15 +12,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkApiAuth } from '@/lib/api-auth'
 
+// SME HIGH-14: MCP server must only bind to loopback addresses
+const ALLOWED_MCP_HOSTS = new Set(['127.0.0.1', '::1', 'localhost'])
 const MCP_HOST = process.env.MCP_HOST ?? '127.0.0.1'
+if (!ALLOWED_MCP_HOSTS.has(MCP_HOST)) {
+  throw new Error(`MCP_HOST must be a loopback address, got: ${MCP_HOST}`)
+}
 const MCP_PORT = parseInt(process.env.MCP_PORT ?? '18000', 10)
 const MCP_BASE = `http://${MCP_HOST}:${MCP_PORT}`
 const PROBE_TIMEOUT_MS = 3000
+
+// Valid attack modes for the adversarial MCP server
+const VALID_MODES = new Set(['basic', 'passive', 'prompt-injection', 'tool-poisoning', 'exfiltration', 'confused-deputy', 'advanced', 'aggressive'])
 
 // Module-level state: tracks whether the user has toggled "enabled" via POST.
 // In production this would be persisted to disk/DB; in-memory is acceptable for
 // a single-instance dev deployment (lessons learned: module-level let resets on restart).
 let mcpEnabled = false
+let mcpStartPromise: Promise<boolean> | null = null
 let mcpChildProcess: ReturnType<typeof import('node:child_process').spawn> | null = null
 
 /**
@@ -97,6 +106,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'enabled must be a boolean' }, { status: 400 })
   }
 
+  // Validate mode at the API boundary before forwarding
+  if (mode !== undefined && (typeof mode !== 'string' || !VALID_MODES.has(mode))) {
+    return NextResponse.json({ error: 'Invalid mode value' }, { status: 400 })
+  }
+
   // Handle mode switching on running server
   if (mode !== undefined && typeof mode === 'string') {
     try {
@@ -131,7 +145,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           connected: false,
           enabled: true,
-          message: 'MCP server process could not be spawned. Start it manually: npx tsx packages/dojolm-mcp/src/index.ts',
+          message: 'MCP server process could not be spawned. Start it manually: npx tsx packages/dojolm-mcp/src/main.ts',
         })
       }
 
@@ -166,7 +180,16 @@ export async function POST(request: NextRequest) {
 // Server lifecycle helpers
 // ---------------------------------------------------------------------------
 
-async function startMcpServer(): Promise<boolean> {
+function startMcpServer(): Promise<boolean> {
+  // Shared promise: concurrent callers await the same spawn result
+  if (mcpStartPromise) return mcpStartPromise
+  mcpStartPromise = doStartMcpServer().finally(() => {
+    mcpStartPromise = null
+  })
+  return mcpStartPromise
+}
+
+async function doStartMcpServer(): Promise<boolean> {
   // If already running, just return true
   if (mcpChildProcess && !mcpChildProcess.killed) {
     return true
@@ -181,21 +204,43 @@ async function startMcpServer(): Promise<boolean> {
     const { spawn } = await import('node:child_process')
     const { resolve } = await import('node:path')
 
-    // Locate the MCP server entry point relative to the monorepo root
-    const mcpEntry = resolve(process.cwd(), 'packages/dojolm-mcp/src/index.ts')
+    // Locate the MCP server entry point relative to the monorepo root.
+    // In production (Docker), use compiled JS; in dev, fall back to tsx.
+    const distEntry = resolve(process.cwd(), 'packages/dojolm-mcp/dist/main.js')
+    const srcEntry = resolve(process.cwd(), 'packages/dojolm-mcp/src/main.ts')
 
-    mcpChildProcess = spawn('npx', ['tsx', mcpEntry], {
+    const { existsSync } = await import('node:fs')
+    const useCompiled = existsSync(distEntry)
+
+    if (!useCompiled) {
+      console.warn('[mcp] dist/main.js not found, falling back to tsx + src/main.ts')
+    }
+
+    const cmd = useCompiled ? 'node' : 'npx'
+    const args = useCompiled ? [distEntry] : ['tsx', srcEntry]
+
+    // Consent: web UI click is the consent gate; respect env override if set
+    mcpChildProcess = spawn(cmd, args, {
       env: {
         ...process.env,
         MCP_PORT: String(MCP_PORT),
         MCP_HOST: MCP_HOST,
-        MCP_CONSENT: 'true', // Auto-consent in web-managed mode
+        MCP_CONSENT: process.env.MCP_CONSENT ?? 'true',
       },
-      stdio: 'ignore',
+      stdio: ['ignore', 'ignore', 'pipe'],
       detached: false,
     })
 
-    mcpChildProcess.on('exit', () => {
+    if (mcpChildProcess.stderr) {
+      mcpChildProcess.stderr.on('data', (d: Buffer) => {
+        console.error('[mcp]', d.toString().trimEnd())
+      })
+    } else {
+      console.warn('[mcp] stderr pipe not available — child process output will be lost')
+    }
+
+    mcpChildProcess.on('exit', (code, signal) => {
+      console.error(`[mcp] process exited code=${code} signal=${signal}`)
       mcpChildProcess = null
     })
 
@@ -206,28 +251,24 @@ async function startMcpServer(): Promise<boolean> {
 }
 
 async function stopMcpServer(): Promise<void> {
-  if (mcpChildProcess && !mcpChildProcess.killed) {
-    mcpChildProcess.kill('SIGTERM')
-    // Wait up to 2s for graceful exit
-    await new Promise<void>((resolve) => {
-      const timeout = setTimeout(() => {
-        if (mcpChildProcess && !mcpChildProcess.killed) {
-          mcpChildProcess.kill('SIGKILL')
-        }
-        resolve()
-      }, 2000)
-      if (mcpChildProcess) {
-        mcpChildProcess.on('exit', () => {
-          clearTimeout(timeout)
-          resolve()
-        })
-      } else {
-        clearTimeout(timeout)
-        resolve()
+  // Capture ref locally to avoid state changes from the exit listener during async ops
+  const child = mcpChildProcess
+  if (!child || child.killed) return
+
+  child.kill('SIGTERM')
+  await new Promise<void>((resolve) => {
+    const timeout = setTimeout(() => {
+      if (!child.killed) {
+        child.kill('SIGKILL')
       }
+      resolve()
+    }, 2000)
+    child.on('exit', () => {
+      clearTimeout(timeout)
+      resolve()
     })
-    mcpChildProcess = null
-  }
+  })
+  mcpChildProcess = null
 }
 
 async function probeHealth(): Promise<boolean> {

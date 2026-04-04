@@ -17,7 +17,7 @@ vi.mock('lucide-react', () => new Proxy({}, {
   get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
 }))
 
-vi.mock('../WidgetCard', () => ({
+vi.mock('@/components/dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div data-testid="widget-card">
       <div data-testid="widget-title">{title}</div>
@@ -26,12 +26,16 @@ vi.mock('../WidgetCard', () => ({
   ),
 }))
 
-vi.mock('@/lib/constants', () => ({
-  OWASP_LLM_COVERAGE_DATA: [
-    { id: 'LLM01', pre: 30, post: 80 },
-    { id: 'LLM02', pre: 20, post: 60 },
-  ],
-}))
+vi.mock('@/lib/constants', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/constants')>()
+  return {
+    ...actual,
+    OWASP_LLM_COVERAGE_DATA: [
+      { id: 'LLM01', pre: 30, post: 80 },
+      { id: 'LLM02', pre: 20, post: 60 },
+    ],
+  }
+})
 
 vi.mock('@/lib/client-data-cache', () => ({
   getCachedScannerStats: vi.fn().mockResolvedValue({ patternCount: 0, groupCount: 0, patternGroups: [] }),

@@ -54,6 +54,12 @@ vi.mock('../sengoku-webhook', () => ({
   validateSengokuWebhookUrl: (...args: unknown[]) => mockValidateSengokuWebhookUrl(...args),
 }));
 
+vi.mock('@/lib/db/repositories/model-config.repository', () => ({
+  modelConfigRepo: {
+    findByIdWithKey: vi.fn(() => null),
+  },
+}));
+
 // ---------------------------------------------------------------------------
 // Imports (after mocks)
 // ---------------------------------------------------------------------------
@@ -77,6 +83,8 @@ function makeCampaign(overrides: Partial<Campaign> = {}): Campaign {
     schedule: null,
     webhookUrl: null,
     status: 'active',
+    targetSource: 'external',
+    targetModelId: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
     graph: {
@@ -169,6 +177,8 @@ describe('Linear campaign execution', () => {
       schedule: null,
       webhookUrl: null,
       status: 'active',
+      targetSource: 'external',
+      targetModelId: null,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       // no graph field

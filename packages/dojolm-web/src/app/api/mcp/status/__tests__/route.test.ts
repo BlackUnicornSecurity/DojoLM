@@ -38,6 +38,10 @@ vi.mock('node:path', () => ({
   resolve: (...parts: string[]) => parts.join('/'),
 }));
 
+vi.mock('node:fs', () => ({
+  existsSync: () => true,
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -194,5 +198,37 @@ describe('POST /api/mcp/status', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.message).toMatch(/no action/i);
+  });
+
+  // MCP-013
+  it('MCP-013: POST with invalid mode returns 400', async () => {
+    const res = await POST(makePostRequest({ mode: 'evil-mode' }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toMatch(/invalid mode/i);
+  });
+
+  // MCP-014
+  it('MCP-014: POST with non-string mode returns 400', async () => {
+    const res = await POST(makePostRequest({ mode: 42 }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toMatch(/invalid mode/i);
+  });
+
+  // MCP-015
+  it('MCP-015: POST enabled=true calls spawn', async () => {
+    mockFetch
+      .mockRejectedValueOnce(new Error('ECONNREFUSED'))  // probeHealth
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ status: 'ok' }) }); // waitForServer
+    await POST(makePostRequest({ enabled: true }));
+    expect(mockSpawn).toHaveBeenCalledTimes(1);
+    expect(mockSpawn).toHaveBeenCalledWith(
+      'node',
+      expect.arrayContaining([expect.stringContaining('main.js')]),
+      expect.objectContaining({
+        stdio: ['ignore', 'ignore', 'pipe'],
+      }),
+    );
   });
 });

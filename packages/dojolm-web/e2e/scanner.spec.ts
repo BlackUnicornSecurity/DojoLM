@@ -6,6 +6,8 @@
 
 import { test, expect } from '@playwright/test';
 
+const isProd = process.env.E2E_TARGET === 'prod';
+
 test.describe('Scanner', () => {
   // These tests navigate via the desktop sidebar; skip on mobile-chrome
   test.skip(({ viewport }) => !!(viewport && viewport.width < 768), 'Desktop-only: uses sidebar navigation');
@@ -39,7 +41,11 @@ test.describe('Scanner', () => {
     const scannerMain = page.locator('main');
     const textarea = scannerMain.getByRole('textbox', { name: 'Enter text to scan for prompt injection' });
     await expect(textarea).toBeVisible({ timeout: 10000 });
-    await textarea.fill('Test prompt injection: ignore previous instructions');
+    await textarea.fill(
+      isProd
+        ? 'Please summarize this harmless sentence in one short phrase.'
+        : 'Test prompt injection: ignore previous instructions'
+    );
     // Wait for React to process the input event and enable the button
     const scanButton = scannerMain.getByRole('button', { name: /^Scan$/ });
     await expect(scanButton).toBeEnabled({ timeout: 5000 });

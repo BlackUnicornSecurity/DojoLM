@@ -10,6 +10,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, UpdateCampaignRequest, CampaignStatus } from '@/lib/sengoku-types';
+import { TARGET_SOURCES, type TargetSource } from '@/lib/sengoku-types';
 import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
 import { getDataPath } from '@/lib/runtime-paths';
 
@@ -124,6 +125,9 @@ export async function PATCH(
     ...(body.status !== undefined && VALID_STATUSES.includes(body.status) && { status: body.status }),
     ...(body.graph !== undefined && { graph: body.graph }),
     ...(body.webhookUrl !== undefined && { webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null }),
+    ...(body.targetSource !== undefined && TARGET_SOURCES.includes(body.targetSource) && { targetSource: body.targetSource }),
+    ...(body.targetModelId !== undefined && { targetModelId: body.targetModelId }),
+    ...(body.targetUrl !== undefined && { targetUrl: String(body.targetUrl).slice(0, 2048) }),
     updatedAt: new Date().toISOString(),
   };
 

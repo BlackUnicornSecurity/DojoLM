@@ -10,6 +10,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Campaign, CreateCampaignRequest } from '@/lib/sengoku-types';
+import { TARGET_SOURCES, type TargetSource } from '@/lib/sengoku-types';
 import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
 import { getDataPath } from '@/lib/runtime-paths';
 
@@ -66,16 +67,34 @@ export async function POST(request: NextRequest) {
     if (!body.name || !SAFE_NAME.test(body.name)) {
       return NextResponse.json({ error: 'Invalid campaign name' }, { status: 400 });
     }
+    // Validate targetSource (defaults to 'external' for backward compatibility)
+    const targetSource: TargetSource = body.targetSource && TARGET_SOURCES.includes(body.targetSource as TargetSource)
+      ? (body.targetSource as TargetSource)
+      : 'external';
+
+    // Validate targetModelId when using dashboard source
+    const targetModelId: string | null = targetSource === 'dashboard' && typeof body.targetModelId === 'string'
+      ? body.targetModelId.slice(0, 256)
+      : null;
+
+    if (targetSource === 'dashboard' && !targetModelId) {
+      return NextResponse.json({ error: 'targetModelId is required when targetSource is dashboard' }, { status: 400 });
+    }
+
     if (!body.targetUrl || typeof body.targetUrl !== 'string') {
       return NextResponse.json({ error: 'targetUrl is required' }, { status: 400 });
     }
-    try {
-      const parsed = new URL(body.targetUrl);
-      if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-        return NextResponse.json({ error: 'targetUrl must use http or https' }, { status: 400 });
+
+    // URL validation: dashboard:// is a virtual scheme for dashboard model references
+    if (targetSource === 'external' || targetSource === 'local') {
+      try {
+        const parsed = new URL(body.targetUrl);
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+          return NextResponse.json({ error: 'targetUrl must use http or https' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'targetUrl must be a valid URL' }, { status: 400 });
       }
-    } catch {
-      return NextResponse.json({ error: 'targetUrl must be a valid URL' }, { status: 400 });
     }
     if (!body.selectedSkillIds || !Array.isArray(body.selectedSkillIds) || body.selectedSkillIds.length === 0) {
       return NextResponse.json({ error: 'At least one skill must be selected' }, { status: 400 });
@@ -103,6 +122,8 @@ export async function POST(request: NextRequest) {
       webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null,
       status: 'draft',
       graph: body.graph,
+      targetSource,
+      targetModelId,
       createdAt: now,
       updatedAt: now,
     };

@@ -4,7 +4,7 @@
 
 ## Current Metrics
 
-- `510` patterns
+- `512` patterns
 - `49` pattern groups
 - `2,960` fixtures
 - `37` fixture categories
