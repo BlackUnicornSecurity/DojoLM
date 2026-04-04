@@ -43,6 +43,8 @@ import { GapMatrix } from './GapMatrix'
 import { AuditTrail } from './AuditTrail'
 import { ComplianceChecklist } from './ComplianceChecklist'
 import { FrameworkNavigator } from './FrameworkNavigator'
+import ComplianceDashboard from './ComplianceDashboard'
+import { ComplianceExport } from './ComplianceExport'
 import { CoverageMap } from '@/components/coverage'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { EnsoGauge } from '@/components/ui/EnsoGauge'
@@ -150,7 +152,7 @@ interface ComplianceCenterData {
   lastUpdated: string
 }
 
-type SubView = 'overview' | 'coverage' | 'gap-matrix' | 'audit-trail' | 'checklists' | 'navigator' | 'compliance-scan'
+type SubView = 'overview' | 'coverage' | 'gap-matrix' | 'audit-trail' | 'checklists' | 'navigator' | 'compliance-scan' | 'dashboard'
 
 /** H8.1: Group mode for framework list and overview panel */
 type GroupMode = 'tier' | 'category'
@@ -412,10 +414,22 @@ export default function ComplianceCenter() {
   const selectedFw = data.frameworks.find((f) => f.id === selectedFramework) ?? data.frameworks[0]
   const implementedFrameworks = data.frameworks.filter((f) => f.tier === 'implemented')
   const totalGaps = implementedFrameworks.reduce((sum, f) => sum + f.gapControls + f.partialControls, 0)
+  const selectedFrameworkExport = {
+    id: selectedFw.id,
+    name: selectedFw.name,
+    overallCoverage: selectedFw.overallCoverage,
+    controls: (selectedFw.controls ?? []).map((control) => ({
+      id: control.id,
+      name: control.name,
+      status: control.status,
+      coverage: control.coverage,
+    })),
+  }
 
   const subTabs: { id: SubView; label: string; icon: typeof BarChart3 }[] = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'coverage', label: 'Coverage', icon: Layers },
+    { id: 'dashboard', label: 'Coverage Dashboard', icon: BarChart3 },
     { id: 'gap-matrix', label: 'Gap Matrix', icon: ClipboardList },
     { id: 'audit-trail', label: 'Audit Trail', icon: FileText },
     { id: 'checklists', label: 'Checklists', icon: ListChecks },
@@ -526,6 +540,31 @@ export default function ComplianceCenter() {
         </Card>
       </div>
 
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Selected Framework
+            </p>
+            <h3 className="text-lg font-semibold text-foreground">{selectedFw.name}</h3>
+            <p className="text-sm text-muted-foreground">
+              Export the current framework snapshot or switch to the classic coverage dashboard for a wider framework-by-framework summary.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <ComplianceExport frameworkData={selectedFrameworkExport} />
+            <Button
+              type="button"
+              variant={subView === 'dashboard' ? 'default' : 'outline'}
+              onClick={() => handleSubViewChange('dashboard')}
+              className="min-h-[44px]"
+            >
+              Open Coverage Dashboard
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Sub-View Navigation */}
       <Card>
         <Tabs value={subView} onValueChange={(v) => handleSubViewChange(v as SubView)}>
@@ -552,6 +591,9 @@ export default function ComplianceCenter() {
             </TabsContent>
             <TabsContent value="coverage" className="mt-0">
               <CoveragePanel frameworks={data.frameworks} />
+            </TabsContent>
+            <TabsContent value="dashboard" className="mt-0">
+              <ComplianceDashboard />
             </TabsContent>
             <TabsContent value="gap-matrix" className="mt-0">
               <GapMatrix />

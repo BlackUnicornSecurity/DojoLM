@@ -13,6 +13,7 @@ export { SessionRecorder } from './SessionRecorder'
 export { SessionHistory } from './SessionHistory'
 export { SkillCard } from './SkillCard'
 export { SkillsLibrary } from './SkillsLibrary'
+export { PlaybookRunner } from './PlaybookRunner'
 
 // Types
 export type { AdversarialLabProps } from './AdversarialLab'

@@ -11,7 +11,7 @@
  * - SupplyChainPanel component (line 70)
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -83,6 +83,8 @@ const SEVERITY_BADGE: Record<string, string> = {
 }
 
 export function SupplyChainPanel() {
+  const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([])
+
   // Model Verification state
   const [modelPath, setModelPath] = useState('models/llama-3-8b-instruct')
   const [modelHash, setModelHash] = useState('sha256:a1b2c3d4e5f6...')
@@ -97,19 +99,30 @@ export function SupplyChainPanel() {
   const handleVerify = useCallback(() => {
     setVerifying(true)
     setVerifyResult(null)
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setVerifying(false)
       setVerifyResult(MOCK_VERIFICATION)
     }, 1500)
+    timeoutRefs.current.push(timeoutId)
   }, [])
 
   const handleAudit = useCallback(() => {
     setAuditing(true)
     setAuditResults(null)
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setAuditing(false)
       setAuditResults(MOCK_DEPENDENCIES)
     }, 1800)
+    timeoutRefs.current.push(timeoutId)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      for (const timeoutId of timeoutRefs.current) {
+        clearTimeout(timeoutId)
+      }
+      timeoutRefs.current = []
+    }
   }, [])
 
   const totalVulns = auditResults?.reduce((sum, d) => sum + d.vulnerabilities.length, 0) ?? 0

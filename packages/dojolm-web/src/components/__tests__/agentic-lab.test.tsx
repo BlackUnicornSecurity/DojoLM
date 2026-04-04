@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -56,6 +56,12 @@ vi.mock('@/components/ui/EmptyState', () => ({
   ),
 }))
 
+vi.mock('../agentic/ScenarioRunner', () => ({
+  ScenarioRunner: ({ scenarioName }: { scenarioName: string }) => (
+    <div data-testid="scenario-runner">{scenarioName}</div>
+  ),
+}))
+
 import { AgenticLab } from '../agentic/AgenticLab'
 
 // ---------------------------------------------------------------------------
@@ -70,6 +76,24 @@ const mockModels = [
 describe('AgenticLab (AL-001 to AL-007)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      json: vi.fn().mockResolvedValue({
+        success: true,
+        data: {
+          environmentReady: true,
+          message: 'Agentic environment initialized',
+          scenario: {
+            scenarioId: 'agentic-openai-functions',
+            scenarioName: 'OpenAI Functions Scenario',
+            utilityScore: 8.4,
+            securityScore: 7.1,
+            combinedScore: 7.75,
+            taskCompleted: true,
+            injectionFollowed: false,
+          },
+        },
+      }),
+    }))
   })
 
   it('AL-001: renders module header with title and subtitle', () => {
@@ -123,5 +147,33 @@ describe('AgenticLab (AL-001 to AL-007)', () => {
     render(<AgenticLab availableModels={mockModels} />)
     const runButton = screen.getByText('Run Agentic Test').closest('button')
     expect(runButton).toBeDisabled()
+  })
+
+  it('AL-008: running a configured scenario renders a result card', async () => {
+    render(<AgenticLab availableModels={mockModels} />)
+
+    fireEvent.change(screen.getByDisplayValue('Select model...'), {
+      target: { value: 'model-1' },
+    })
+    fireEvent.click(screen.getByText('Run Agentic Test'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Results')).toBeInTheDocument()
+    })
+    expect(screen.getByText('OpenAI Functions Scenario')).toBeInTheDocument()
+    expect(screen.getByText('Agentic environment initialized')).toBeInTheDocument()
+  })
+
+  it('AL-009: exposes the guided scenario runner once a target model is selected', () => {
+    render(<AgenticLab availableModels={mockModels} />)
+
+    expect(screen.getByText('Select a target model to unlock the guided scenario runner.')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByDisplayValue('Select model...'), {
+      target: { value: 'model-1' },
+    })
+
+    expect(screen.getByTestId('scenario-runner')).toBeInTheDocument()
+    expect(screen.getByText('OpenAI Functions Guided Run')).toBeInTheDocument()
   })
 })

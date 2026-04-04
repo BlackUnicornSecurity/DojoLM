@@ -17,20 +17,85 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children, value, onValueChange }: { children: React.ReactNode; value: string; onValueChange?: (v: string) => void }) => (
-    <div data-testid="tabs" data-value={value}>{children}</div>
-  ),
-  TabsList: ({ children, 'aria-label': ariaLabel }: { children: React.ReactNode; 'aria-label'?: string }) => (
+vi.mock('@/components/ui/tabs', () => {
+  const React = require('react')
+  const TabsContext = React.createContext({
+    value: '',
+    setValue: (_nextValue: string) => {},
+  })
+
+  const Tabs = ({
+    children,
+    value,
+    onValueChange,
+  }: {
+    children: React.ReactNode
+    value: string
+    onValueChange?: (v: string) => void
+  }) => {
+    const [internalValue, setInternalValue] = React.useState(value)
+
+    React.useEffect(() => {
+      setInternalValue(value)
+    }, [value])
+
+    const handleChange = (nextValue: string) => {
+      setInternalValue(nextValue)
+      onValueChange?.(nextValue)
+    }
+
+    return (
+      <TabsContext.Provider value={{ value: internalValue, setValue: handleChange }}>
+        <div data-testid="tabs" data-value={internalValue}>{children}</div>
+      </TabsContext.Provider>
+    )
+  }
+
+  const TabsList = ({
+    children,
+    'aria-label': ariaLabel,
+  }: {
+    children: React.ReactNode
+    'aria-label'?: string
+  }) => (
     <div role="tablist" aria-label={ariaLabel}>{children}</div>
-  ),
-  TabsTrigger: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <button role="tab" data-value={value}>{children}</button>
-  ),
-  TabsContent: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <div data-testid={`tab-content-${value}`}>{children}</div>
-  ),
-}))
+  )
+
+  const TabsTrigger = ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode
+    value: string
+  }) => {
+    const { value: activeValue, setValue } = React.useContext(TabsContext)
+
+    return (
+      <button
+        role="tab"
+        data-value={value}
+        aria-selected={activeValue === value}
+        onClick={() => setValue(value)}
+      >
+        {children}
+      </button>
+    )
+  }
+
+  const TabsContent = ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode
+    value: string
+  }) => {
+    const { value: activeValue } = React.useContext(TabsContext)
+    if (activeValue !== value) return null
+    return <div data-testid={`tab-content-${value}`}>{children}</div>
+  }
+
+  return { Tabs, TabsList, TabsTrigger, TabsContent }
+})
 
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, ...props }: { children: React.ReactNode; [k: string]: unknown }) => <div data-testid="card" {...props}>{children}</div>,
@@ -136,28 +201,27 @@ describe('StrategicHub', () => {
   it('SH-005: navigates to SAGE subsystem when Open SAGE is clicked', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open SAGE dashboard'))
-    // Should show sub-tab navigation and Overview button
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument()
   })
 
   it('SH-006: navigates to Arena subsystem when Open Battle Arena is clicked', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open Battle Arena dashboard'))
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Arena' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByTestId('tab-content-arena')).toBeInTheDocument()
   })
 
   it('SH-007: navigates to Mitsuke subsystem when Open Mitsuke is clicked', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open Mitsuke dashboard'))
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Mitsuke' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByTestId('tab-content-threatfeed')).toBeInTheDocument()
   })
 
   it('SH-008: returns to overview when Overview button is clicked', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open SAGE dashboard'))
-    expect(screen.getByText('Overview')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Overview' })).toBeInTheDocument()
     fireEvent.click(screen.getByLabelText('Return to The Kumite overview'))
     // Back to overview with all three cards
     expect(screen.getByText('Battle Arena')).toBeInTheDocument()
@@ -188,7 +252,41 @@ describe('StrategicHub', () => {
   it('SH-012: renders all six tab triggers in subsystem view', () => {
     render(<StrategicHub />)
     fireEvent.click(screen.getByLabelText('Open SAGE dashboard'))
-    const tabs = screen.getAllByRole('tab')
-    expect(tabs.length).toBe(6)
+    const subsystemTabs = screen.getAllByRole('tab').filter((tab) => [
+      'SAGE',
+      'Arena',
+      'Mitsuke',
+      'DNA',
+      'Kagami',
+      'Shingan',
+    ].includes(tab.textContent ?? ''))
+    expect(subsystemTabs).toHaveLength(6)
+  })
+
+  it('SH-013: exposes SAGE secondary views', () => {
+    render(<StrategicHub />)
+    fireEvent.click(screen.getByLabelText('Open SAGE dashboard'))
+    expect(screen.getByRole('tab', { name: 'Seed Library' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Mutation Operators' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Quarantine' })).toBeInTheDocument()
+  })
+
+  it('SH-014: exposes Mitsuke library and source configuration views', () => {
+    render(<StrategicHub />)
+    fireEvent.click(screen.getByLabelText('Open Mitsuke dashboard'))
+    expect(screen.getByRole('tab', { name: 'Library' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Source Config' })).toBeInTheDocument()
+  })
+
+  it('SH-015: exposes DNA library view', () => {
+    render(<StrategicHub />)
+    fireEvent.click(screen.getByLabelText('Open Amaterasu DNA dashboard'))
+    expect(screen.getByRole('tab', { name: 'Library' })).toBeInTheDocument()
+  })
+
+  it('SH-016: exposes the Shingan supply-chain workspace', () => {
+    render(<StrategicHub />)
+    fireEvent.click(screen.getByLabelText('Open Shingan dashboard'))
+    expect(screen.getByRole('tab', { name: 'Supply Chain' })).toBeInTheDocument()
   })
 })

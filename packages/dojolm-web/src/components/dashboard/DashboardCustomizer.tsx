@@ -139,9 +139,10 @@ function CategorySection({
 interface DashboardCustomizerProps {
   open: boolean
   onClose: () => void
+  onOpenModuleVisibility?: () => void
 }
 
-export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps) {
+export function DashboardCustomizer({ open, onClose, onOpenModuleVisibility }: DashboardCustomizerProps) {
   const { config, toggleWidget, resetToDefaults, moveWidget, resizeWidget } = useDashboardConfig()
   const panelRef = useRef<HTMLDivElement>(null)
   const scrollPosRef = useRef<number>(0)
@@ -255,6 +256,14 @@ export function DashboardCustomizer({ open, onClose }: DashboardCustomizerProps)
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
             Reset to Defaults
           </button>
+          {onOpenModuleVisibility ? (
+            <button
+              onClick={onOpenModuleVisibility}
+              className="flex items-center gap-1.5 mt-2 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+            >
+              Module Visibility
+            </button>
+          ) : null}
         </div>
 
         {/* Widget list by category */}

@@ -6,18 +6,24 @@
  * Story: TPI-UIP-11
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGuard } from '@/lib/contexts/GuardContext';
 import { GuardModeSelector } from './GuardModeSelector';
 import { GuardAuditLog } from './GuardAuditLog';
+import { SystemPromptHardener } from './SystemPromptHardener';
+import { ForgeDefensePanel } from './ForgeDefensePanel';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { GUARD_MODES } from '@/lib/guard-constants';
 import { ShieldAlert, ShieldCheck, ShieldOff, BarChart3, Eye } from 'lucide-react';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
 import { GuardProvider } from '@/lib/contexts/GuardContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+type GuardTab = 'overview' | 'hardening' | 'defenses';
 
 function GuardDashboardInner() {
   const { stats, isLoading, error, refreshStats, config } = useGuard();
+  const [activeTab, setActiveTab] = useState<GuardTab>('overview');
 
   useEffect(() => {
     refreshStats();
@@ -85,17 +91,39 @@ function GuardDashboardInner() {
         />
       </div>
 
-      {/* Mode Selector */}
-      <section aria-label="Guard mode configuration">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Guard Mode</h3>
-        <GuardModeSelector />
-      </section>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as GuardTab)} className="space-y-4">
+        <TabsList aria-label="Hattori Guard views" className="bg-muted/50">
+          <TabsTrigger value="overview" className="min-h-[44px]">Overview</TabsTrigger>
+          <TabsTrigger value="hardening" className="min-h-[44px]">Hardening</TabsTrigger>
+          <TabsTrigger value="defenses" className="min-h-[44px]">Defense Templates</TabsTrigger>
+        </TabsList>
 
-      {/* Audit Log */}
-      <section aria-label="Guard audit log">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Audit Log</h3>
-        <GuardAuditLog />
-      </section>
+        <TabsContent value="overview" className="space-y-6">
+          {/* Mode Selector */}
+          <section aria-label="Guard mode configuration">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Guard Mode</h3>
+            <GuardModeSelector />
+          </section>
+
+          {/* Audit Log */}
+          <section aria-label="Guard audit log">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Audit Log</h3>
+            <GuardAuditLog />
+          </section>
+        </TabsContent>
+
+        <TabsContent value="hardening">
+          <section aria-label="System prompt hardening">
+            <SystemPromptHardener />
+          </section>
+        </TabsContent>
+
+        <TabsContent value="defenses">
+          <section aria-label="Defense templates">
+            <ForgeDefensePanel />
+          </section>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

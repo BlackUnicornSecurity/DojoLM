@@ -10,8 +10,7 @@
  * - GeneralSettings sub-component (line 116)
  */
 
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
+import { useCallback, useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ApiKeyManager } from './ApiKeyManager'
@@ -22,7 +21,10 @@ import { UserManagement } from './UserManagement'
 import { Scoreboard } from './Scoreboard'
 import { AdminSettings } from './AdminSettings'
 import { ValidationManager } from './ValidationManager'
-import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck } from 'lucide-react'
+import { TestRunner } from '@/components/tests/TestRunner'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import type { TestSuiteResult } from '@/lib/types'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical } from 'lucide-react'
 
 const ADMIN_TABS = [
   { id: 'general', label: 'General', icon: Settings },
@@ -34,6 +36,7 @@ const ADMIN_TABS = [
   { id: 'export', label: 'Export', icon: FileOutput },
   { id: 'settings', label: 'Admin Settings', icon: Lock },
   { id: 'validation', label: 'Validation', icon: ClipboardCheck },
+  { id: 'test-runner', label: 'Test Runner', icon: FlaskConical },
 ] as const
 
 type AdminTabId = typeof ADMIN_TABS[number]['id']
@@ -54,6 +57,51 @@ const PLATFORM_MODULES = [
 
 export function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTabId>('general')
+
+  const handleRunTests = useCallback(async (filter?: string): Promise<TestSuiteResult> => {
+    const response = await fetchWithAuth('/api/tests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filter }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Test runner request failed with status ${response.status}`)
+    }
+
+    const data = await response.json() as {
+      summary?: {
+        total?: number
+        passed?: number
+        failed?: number
+        skipped?: number
+      }
+      results?: Array<{
+        name: string
+        status: string
+        duration?: number
+        duration_ms?: number
+        output?: string
+        required?: boolean
+      }>
+    }
+
+    return {
+      summary: {
+        total: data.summary?.total ?? 0,
+        passed: data.summary?.passed ?? 0,
+        failed: data.summary?.failed ?? 0,
+        skipped: data.summary?.skipped ?? 0,
+      },
+      results: (data.results ?? []).map((result) => ({
+        name: result.name,
+        status: result.status === 'pass' || result.status === 'skip' ? result.status : 'fail',
+        duration_ms: result.duration_ms ?? result.duration ?? 0,
+        output: result.output ?? '',
+        required: Boolean(result.required),
+      })),
+    }
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -98,6 +146,9 @@ export function AdminPanel() {
         </TabsContent>
         <TabsContent value="validation">
           <ValidationManager />
+        </TabsContent>
+        <TabsContent value="test-runner">
+          <TestRunner onRunTests={handleRunTests} />
         </TabsContent>
       </Tabs>
     </div>

@@ -18,6 +18,8 @@ export { CustomProviderBuilder } from './CustomProviderBuilder';
 export { ExecutiveSummary } from './ExecutiveSummary';
 export { VulnerabilityPanel } from './VulnerabilityPanel';
 export { ReportGenerator } from './ReportGenerator';
+export { BenchmarkPanel } from './BenchmarkPanel';
+export { TransferMatrixPanel } from './TransferMatrixPanel';
 
 // Jutsu components (merged from components/jutsu/ — DAITENGUYAMA M1)
 export { JutsuTab } from './JutsuTab';

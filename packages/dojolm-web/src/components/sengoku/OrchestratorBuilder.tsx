@@ -13,17 +13,18 @@
 
 import { useState, useCallback } from 'react'
 import {
-  Swords, Play, Settings2, Cpu, Target, ShieldAlert,
+  Play, Settings2, Cpu, Target,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { GlowCard } from '@/components/ui/GlowCard'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { cn } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-type OrchestratorType = 'pair' | 'crescendo' | 'tap' | 'sensei-adaptive'
+export type OrchestratorType = 'pair' | 'crescendo' | 'tap' | 'mad-max' | 'sensei-adaptive'
 
 interface OrchestratorConfig {
   readonly type: OrchestratorType
@@ -39,9 +40,24 @@ interface OrchestratorConfig {
   readonly spendingCapUsd: number
 }
 
+export interface OrchestratorLaunchResult {
+  readonly runId: string
+  readonly type: OrchestratorType
+  readonly status: 'accepted'
+  readonly message: string
+  readonly config: {
+    readonly targetModelId: string
+    readonly attackerModelId: string
+    readonly judgeModelId: string
+    readonly category?: string
+    readonly maxTurns?: number
+    readonly maxBranches?: number
+  }
+}
+
 interface OrchestratorBuilderProps {
   readonly availableModels: readonly { id: string; name: string }[]
-  readonly onLaunch: (config: OrchestratorConfig) => void
+  readonly onLaunch: (launch: OrchestratorLaunchResult) => void
   readonly isRunning: boolean
 }
 
@@ -64,6 +80,11 @@ const ORCHESTRATOR_INFO: Record<OrchestratorType, { name: string; description: s
     name: 'TAP',
     description: 'Tree of Attacks — explores multiple branches with pruning of weak paths',
     icon: '🌳',
+  },
+  'mad-max': {
+    name: 'MAD-MAX',
+    description: 'Breadth-first multi-agent divergence that fans out and pressure tests weak spots quickly',
+    icon: '⚡',
   },
   'sensei-adaptive': {
     name: 'Sensei Adaptive',
@@ -97,35 +118,53 @@ export function OrchestratorBuilder({ availableModels, onLaunch, isRunning }: Or
     if (!canLaunch || isLaunching) return
     setIsLaunching(true)
     try {
-      const res = await fetch('/api/orchestrator/run', {
+      const requestConfig: OrchestratorConfig = {
+        type: selectedType,
+        targetModelId: targetModel,
+        attackerModelId: attackerModel,
+        judgeModelId: judgeModel || attackerModel,
+        objective: objective.trim(),
+        category,
+        maxTurns,
+        maxBranches,
+        pruneThreshold,
+        successThreshold,
+        spendingCapUsd: spendingCap,
+      }
+
+      const res = await fetchWithAuth('/api/orchestrator/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: selectedType,
-          targetModelId: targetModel,
-          attackerModelId: attackerModel,
-          judgeModelId: judgeModel || attackerModel,
-          objective: objective.trim(),
-          category,
-          maxTurns,
-          maxBranches,
-        }),
+        body: JSON.stringify(requestConfig),
       })
       const data = await res.json()
-      if (data.success) {
-        onLaunch?.(data.data)
+      if (res.ok && data.success) {
+        onLaunch?.({
+          runId: data.data?.runId ?? `pending-${Date.now()}`,
+          type: selectedType,
+          status: 'accepted',
+          message: data.data?.message ?? 'Orchestrator run queued',
+          config: {
+            targetModelId: requestConfig.targetModelId,
+            attackerModelId: requestConfig.attackerModelId,
+            judgeModelId: requestConfig.judgeModelId,
+            category: requestConfig.category,
+            maxTurns: requestConfig.maxTurns,
+            maxBranches: requestConfig.maxBranches,
+          },
+        })
       }
     } catch {
       // Network error
     } finally {
       setIsLaunching(false)
     }
-  }, [canLaunch, isLaunching, selectedType, targetModel, attackerModel, judgeModel, objective, category, maxTurns, maxBranches, onLaunch])
+  }, [attackerModel, canLaunch, category, isLaunching, judgeModel, maxBranches, maxTurns, objective, onLaunch, pruneThreshold, selectedType, spendingCap, successThreshold, targetModel])
 
   return (
     <div className="space-y-6">
       {/* Orchestrator Type Selector */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         {(Object.entries(ORCHESTRATOR_INFO) as [OrchestratorType, typeof ORCHESTRATOR_INFO[OrchestratorType]][]).map(([type, info]) => (
           <button
             key={type}
@@ -237,23 +276,23 @@ export function OrchestratorBuilder({ availableModels, onLaunch, isRunning }: Or
             <input
               type="number"
               value={maxTurns}
-              onChange={(e) => setMaxTurns(Math.min(50, Math.max(1, Number(e.target.value))))}
+              onChange={(e) => setMaxTurns(Math.min(100, Math.max(1, Number(e.target.value))))}
               className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200"
               min={1}
-              max={50}
+              max={100}
             />
           </div>
-          {(selectedType === 'tap' || selectedType === 'sensei-adaptive') && (
+          {(selectedType === 'tap' || selectedType === 'mad-max' || selectedType === 'sensei-adaptive') && (
             <>
               <div>
                 <label className="text-xs text-zinc-400 mb-1 block">Max Branches</label>
                 <input
                   type="number"
                   value={maxBranches}
-                  onChange={(e) => setMaxBranches(Math.min(10, Math.max(1, Number(e.target.value))))}
+                  onChange={(e) => setMaxBranches(Math.min(50, Math.max(1, Number(e.target.value))))}
                   className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200"
                   min={1}
-                  max={10}
+                  max={50}
                 />
               </div>
               <div>

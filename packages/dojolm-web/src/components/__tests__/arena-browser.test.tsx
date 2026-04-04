@@ -17,17 +17,73 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children, value, onValueChange }: { children: React.ReactNode; value: string; onValueChange: (v: string) => void }) => (
-    <div data-testid="tabs" data-value={value}>{children}</div>
-  ),
-  TabsList: ({ children, 'aria-label': ariaLabel }: { children: React.ReactNode; 'aria-label'?: string }) => (
+vi.mock('@/components/ui/tabs', () => {
+  const React = require('react')
+  const TabsContext = React.createContext({
+    value: '',
+    setValue: (_nextValue: string) => {},
+  })
+
+  const Tabs = ({
+    children,
+    value,
+    onValueChange,
+  }: {
+    children: React.ReactNode
+    value: string
+    onValueChange: (v: string) => void
+  }) => {
+    const [internalValue, setInternalValue] = React.useState(value)
+
+    React.useEffect(() => {
+      setInternalValue(value)
+    }, [value])
+
+    const handleChange = (nextValue: string) => {
+      setInternalValue(nextValue)
+      onValueChange(nextValue)
+    }
+
+    return (
+      <TabsContext.Provider value={{ value: internalValue, setValue: handleChange }}>
+        <div data-testid="tabs" data-value={internalValue}>{children}</div>
+      </TabsContext.Provider>
+    )
+  }
+
+  const TabsList = ({
+    children,
+    'aria-label': ariaLabel,
+  }: {
+    children: React.ReactNode
+    'aria-label'?: string
+  }) => (
     <div role="tablist" aria-label={ariaLabel}>{children}</div>
-  ),
-  TabsTrigger: ({ children, value }: { children: React.ReactNode; value: string }) => (
-    <button role="tab" data-value={value}>{children}</button>
-  ),
-}))
+  )
+
+  const TabsTrigger = ({
+    children,
+    value,
+  }: {
+    children: React.ReactNode
+    value: string
+  }) => {
+    const { value: activeValue, setValue } = React.useContext(TabsContext)
+
+    return (
+      <button
+        role="tab"
+        data-value={value}
+        aria-selected={activeValue === value}
+        onClick={() => setValue(value)}
+      >
+        {children}
+      </button>
+    )
+  }
+
+  return { Tabs, TabsList, TabsTrigger }
+})
 
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children }: { children: React.ReactNode }) => <div data-testid="card">{children}</div>,
@@ -113,6 +169,18 @@ vi.mock('../strategic/arena/WarriorCardGrid', () => ({
 
 vi.mock('../strategic/arena/BattleLogExporter', () => ({
   BattleLogExporter: () => <div data-testid="battle-log-exporter">Exporter</div>,
+}))
+
+vi.mock('../strategic/ArenaRoster', () => ({
+  ArenaRoster: () => <div data-testid="arena-roster">Arena Roster</div>,
+}))
+
+vi.mock('../strategic/arena/ArenaRulesWidget', () => ({
+  ArenaRulesWidget: () => <div data-testid="arena-rules">Arena Rules</div>,
+}))
+
+vi.mock('../strategic/arena/MatchStatsWidget', () => ({
+  MatchStatsWidget: () => <div data-testid="arena-stats">Arena Stats</div>,
 }))
 
 import { ArenaBrowser } from '../strategic/ArenaBrowser'
@@ -263,5 +331,43 @@ describe('ArenaBrowser', () => {
       expect(screen.getByTestId('warrior-grid')).toBeInTheDocument()
       expect(screen.getByText('Warriors: 1')).toBeInTheDocument()
     })
+  })
+
+  it('AB-013: exposes roster, rules, and stats views', async () => {
+    setupMockFetch([mockMatch], [{ modelId: 'gpt-4', modelName: 'GPT-4' }])
+    render(<ArenaBrowser />)
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Roster' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Rules' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Stats' })).toBeInTheDocument()
+    })
+  })
+
+  it('AB-014: switches to the roster view', async () => {
+    setupMockFetch([mockMatch], [{ modelId: 'gpt-4', modelName: 'GPT-4' }])
+    render(<ArenaBrowser />)
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Roster' })).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Roster' }))
+    expect(screen.getByTestId('arena-roster')).toBeInTheDocument()
+  })
+
+  it('AB-015: switches to the rules and stats views', async () => {
+    setupMockFetch([mockMatch], [{ modelId: 'gpt-4', modelName: 'GPT-4' }])
+    render(<ArenaBrowser />)
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Rules' })).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Rules' }))
+    expect(screen.getByTestId('arena-rules')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Stats' }))
+    expect(screen.getByTestId('arena-stats')).toBeInTheDocument()
   })
 })

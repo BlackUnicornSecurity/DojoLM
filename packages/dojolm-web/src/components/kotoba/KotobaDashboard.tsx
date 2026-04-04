@@ -22,6 +22,7 @@ import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { KotobaWorkshop } from './KotobaWorkshop'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -131,6 +132,7 @@ const MINIMAL_EXAMPLE_PROMPT = `You are a chatbot. Answer questions.`
 // ---------------------------------------------------------------------------
 
 export function KotobaDashboard() {
+  const [activeView, setActiveView] = useState<'studio' | 'workshop'>('studio')
   const [promptText, setPromptText] = useState('')
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
   const [hardenedText, setHardenedText] = useState<string | null>(null)
@@ -153,10 +155,47 @@ export function KotobaDashboard() {
     <div className="space-y-6">
       <ModuleHeader
         title="Kotoba"
-        subtitle="Prompt Optimization Studio"
+        subtitle="Prompt Optimization Studio and hardening workshop"
         icon={PenTool}
       />
 
+      <div
+        className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-2"
+        role="tablist"
+        aria-label="Kotoba views"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeView === 'studio'}
+          onClick={() => setActiveView('studio')}
+          className={cn(
+            'min-h-[44px] rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+            activeView === 'studio'
+              ? 'bg-[var(--dojo-primary)] text-white'
+              : 'text-muted-foreground hover:bg-[var(--bg-tertiary)]'
+          )}
+        >
+          Studio
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeView === 'workshop'}
+          onClick={() => setActiveView('workshop')}
+          className={cn(
+            'min-h-[44px] rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+            activeView === 'workshop'
+              ? 'bg-[var(--dojo-primary)] text-white'
+              : 'text-muted-foreground hover:bg-[var(--bg-tertiary)]'
+          )}
+        >
+          Workshop
+        </button>
+      </div>
+
+      {activeView === 'studio' && (
+        <>
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3">
         <StatCard label="Rules Loaded" value="24" />
@@ -333,6 +372,10 @@ export function KotobaDashboard() {
           )}
         </>
       )}
+        </>
+      )}
+
+      {activeView === 'workshop' && <KotobaWorkshop />}
     </div>
   )
 }

@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -100,13 +100,20 @@ vi.mock('@/lib/hooks', () => ({
 }))
 
 vi.mock('../dashboard/DashboardCustomizer', () => ({
-  DashboardCustomizer: ({ open }: { open: boolean }) => (
-    open ? <div data-testid="dashboard-customizer">Customizer</div> : null
+  DashboardCustomizer: ({ open, onOpenModuleVisibility }: { open: boolean; onOpenModuleVisibility?: () => void }) => (
+    open ? (
+      <div data-testid="dashboard-customizer">
+        <button onClick={onOpenModuleVisibility}>Module Visibility</button>
+        Customizer
+      </div>
+    ) : null
   ),
 }))
 
 vi.mock('../dashboard/SenseiPanel', () => ({
-  SenseiPanel: () => <div data-testid="sensei-panel">Sensei</div>,
+  SenseiPanel: ({ open }: { open: boolean }) => (
+    open ? <div data-testid="sensei-panel">Sensei</div> : null
+  ),
 }))
 
 vi.mock('@/hooks/useSenseiScroll', () => ({
@@ -295,5 +302,13 @@ describe('NODADashboard render', () => {
     render(<NODADashboard />)
     const boundaries = screen.getAllByTestId('error-boundary')
     expect(boundaries.length).toBeGreaterThan(0)
+  })
+
+  it('DSH-R-011: visible dashboard settings can open module visibility controls', () => {
+    render(<NODADashboard />)
+    fireEvent.click(screen.getByLabelText('Customize Dashboard'))
+    expect(screen.getByTestId('dashboard-customizer')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Module Visibility'))
+    expect(screen.getByTestId('sensei-panel')).toBeInTheDocument()
   })
 })

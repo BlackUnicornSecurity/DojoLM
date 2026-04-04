@@ -18,6 +18,10 @@ vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }))
 
+vi.mock('@/lib/fetch-with-auth', () => ({
+  fetchWithAuth: vi.fn(),
+}))
+
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, ...props }: Record<string, unknown>) => <button {...props}>{children}</button>,
 }))
@@ -48,6 +52,7 @@ describe('OrchestratorBuilder', () => {
     expect(screen.getByText('PAIR')).toBeInTheDocument()
     expect(screen.getByText('Crescendo')).toBeInTheDocument()
     expect(screen.getByText('TAP')).toBeInTheDocument()
+    expect(screen.getByText('MAD-MAX')).toBeInTheDocument()
     expect(screen.getByText('Sensei Adaptive')).toBeInTheDocument()
   })
 

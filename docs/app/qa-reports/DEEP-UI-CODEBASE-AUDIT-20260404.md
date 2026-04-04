@@ -21,37 +21,45 @@ This review compared:
 
 This is a static audit, not a runtime browser test.
 
+## Reconciliation Note
+
+This report captured a broad hidden-feature sweep at the start of the session, but the codebase moved underneath it during implementation review.
+
+A follow-up reachability audit against the current tree found that many of the originally flagged surfaces were already mounted by the time implementation work began, including:
+
+- Atemi `Playbooks`, `Protocol Fuzz`, and `Agentic`
+- scanner `Pattern Reference` and module diagnostics
+- SAGE, Mitsuke, DNA, Kagami, Guard, Kotoba, and Bushido subviews that had previously been hidden
+- Sengoku `Workbench` and Sensei orchestrator affordances
+
+The remaining true orphaned UI surfaces in the current tree were:
+
+- `TestRunner`
+- `SupplyChainPanel`
+- `ScenarioRunner`
+
+Those three are now surfaced from mounted product UI entry points:
+
+- `TestRunner` from Admin `Test Runner`
+- `SupplyChainPanel` from Shingan `Supply Chain`
+- `ScenarioRunner` from Agentic Lab `Guided Scenario Runner`
+
+After that reconciliation pass, the remaining zero-caller component scan only returned utility/helper components rather than hidden product features.
+
 ## Executive Summary
 
-The biggest gap is not a single missing button. It is structural:
+After reconciliation against the current tree, the platform no longer has the broad hidden-surface problem described in the first sweep.
 
-- several complete feature surfaces exist but are not mounted anywhere
-- several visible modules stop at summary or placeholder views while richer subviews already exist in code
-- some advanced capabilities are only reachable through internal assistant tooling or direct API calls
-- one user-facing control surface is hidden behind a secret keyboard sequence
+Current-state summary:
 
-The highest-value hidden or under-surfaced areas are:
+- most of the originally flagged module subviews were already mounted by the time implementation review began
+- the remaining true orphaned product surfaces were `TestRunner`, `SupplyChainPanel`, and `ScenarioRunner`
+- those three now have visible UI entry points in mounted product flows
+- the remaining reachability concern is the module-visibility manager, which still exists as a separate hidden `SenseiPanel` in addition to the visible dashboard customizer
 
-1. `AgenticLab` and agentic scenario execution
-2. Atemi `Protocol Fuzz`
-3. SAGE seed, mutation, and quarantine views
-4. Mitsuke source management and library views
-5. Guard `SystemPromptHardener`
-6. Sengoku orchestrator tooling
-7. consolidated reporting and validation-signature verification
+This means the sections below should be read as the historical findings from the original broad audit pass, not the final current-state verdict.
 
-A second tier of hidden-but-meaningful surfaces also exists:
-
-- Atemi red-team playbooks
-- scanner module diagnostics
-- Battle Arena roster, rules, and match analytics
-- Amaterasu DNA library views
-- Kotoba workshop mode
-- Bushido Book export/dashboard variants
-- Guard defense-template library
-- LLM benchmark and export side panels
-
-## Findings
+## Historical Findings Snapshot
 
 ### 1. Hidden full module: Agentic Security Testing Lab
 

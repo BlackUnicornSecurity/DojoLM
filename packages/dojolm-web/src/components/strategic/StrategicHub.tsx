@@ -53,6 +53,21 @@ const SAGEDashboard = dynamic(
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
+const SageSeedLibrary = dynamic(
+  () => import('./SageSeedLibrary').then(mod => ({ default: mod.SageSeedLibrary })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const SageMutationView = dynamic(
+  () => import('./SageMutationView').then(mod => ({ default: mod.SageMutationView })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const SageQuarantineView = dynamic(
+  () => import('./SageQuarantineView').then(mod => ({ default: mod.SageQuarantineView })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
 const ArenaBrowser = dynamic(
   () => import('./ArenaBrowser').then(mod => ({ default: mod.ArenaBrowser })),
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
@@ -63,8 +78,23 @@ const ThreatFeedStream = dynamic(
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
+const MitsukeLibrary = dynamic(
+  () => import('./MitsukeLibrary').then(mod => ({ default: mod.MitsukeLibrary })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const MitsukeSourceConfig = dynamic(
+  () => import('./MitsukeSourceConfig').then(mod => ({ default: mod.MitsukeSourceConfig })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
 const AmaterasuSubsystem = dynamic(
   () => import('./AmaterasuSubsystem').then(mod => ({ default: mod.AmaterasuSubsystem })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const DNALibrary = dynamic(
+  () => import('../attackdna/DNALibrary').then(mod => ({ default: mod.DNALibrary })),
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
@@ -75,6 +105,11 @@ const KagamiPanel = dynamic(
 
 const ShinganPanel = dynamic(
   () => import('../shingan/ShinganPanel').then(mod => ({ default: mod.ShinganPanel })),
+  { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
+)
+
+const SupplyChainPanel = dynamic(
+  () => import('./SupplyChainPanel').then(mod => ({ default: mod.SupplyChainPanel })),
   { ssr: false, loading: () => <SubsystemLoadingSkeleton /> }
 )
 
@@ -361,6 +396,97 @@ const ONBOARDING_STEPS: Record<SubsystemKey, OnboardingStep[]> = {
   ],
 }
 
+const SUBSYSTEM_TABS_LIST_CLASS = 'flex w-full h-auto gap-1 overflow-x-auto rounded-full bg-muted/40 p-1 scrollbar-hide'
+const SUBSYSTEM_TABS_TRIGGER_CLASS = 'min-h-[40px] gap-2 whitespace-nowrap'
+
+function SAGEWorkspace() {
+  const [activeView, setActiveView] = useState<'overview' | 'seeds' | 'mutations' | 'quarantine'>('overview')
+
+  return (
+    <Tabs value={activeView} onValueChange={(value) => setActiveView(value as typeof activeView)} className="space-y-4">
+      <TabsList aria-label="SAGE views" className={SUBSYSTEM_TABS_LIST_CLASS}>
+        <TabsTrigger value="overview" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Overview</TabsTrigger>
+        <TabsTrigger value="seeds" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Seed Library</TabsTrigger>
+        <TabsTrigger value="mutations" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Mutation Operators</TabsTrigger>
+        <TabsTrigger value="quarantine" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Quarantine</TabsTrigger>
+      </TabsList>
+      <TabsContent value="overview">
+        <SAGEDashboard />
+      </TabsContent>
+      <TabsContent value="seeds">
+        <SageSeedLibrary />
+      </TabsContent>
+      <TabsContent value="mutations">
+        <SageMutationView />
+      </TabsContent>
+      <TabsContent value="quarantine">
+        <SageQuarantineView />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function MitsukeWorkspace() {
+  const [activeView, setActiveView] = useState<'stream' | 'library' | 'sources'>('stream')
+
+  return (
+    <Tabs value={activeView} onValueChange={(value) => setActiveView(value as typeof activeView)} className="space-y-4">
+      <TabsList aria-label="Mitsuke views" className={SUBSYSTEM_TABS_LIST_CLASS}>
+        <TabsTrigger value="stream" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Stream</TabsTrigger>
+        <TabsTrigger value="library" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Library</TabsTrigger>
+        <TabsTrigger value="sources" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Source Config</TabsTrigger>
+      </TabsList>
+      <TabsContent value="stream">
+        <ThreatFeedStream />
+      </TabsContent>
+      <TabsContent value="library">
+        <MitsukeLibrary />
+      </TabsContent>
+      <TabsContent value="sources">
+        <MitsukeSourceConfig />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function DNAWorkspace() {
+  const [activeView, setActiveView] = useState<'explorer' | 'library'>('explorer')
+
+  return (
+    <Tabs value={activeView} onValueChange={(value) => setActiveView(value as typeof activeView)} className="space-y-4">
+      <TabsList aria-label="Amaterasu DNA views" className={SUBSYSTEM_TABS_LIST_CLASS}>
+        <TabsTrigger value="explorer" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Explorer</TabsTrigger>
+        <TabsTrigger value="library" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Library</TabsTrigger>
+      </TabsList>
+      <TabsContent value="explorer">
+        <AmaterasuSubsystem />
+      </TabsContent>
+      <TabsContent value="library">
+        <DNALibrary />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function ShinganWorkspace() {
+  const [activeView, setActiveView] = useState<'deep-scan' | 'supply-chain'>('deep-scan')
+
+  return (
+    <Tabs value={activeView} onValueChange={(value) => setActiveView(value as typeof activeView)} className="space-y-4">
+      <TabsList aria-label="Shingan views" className={SUBSYSTEM_TABS_LIST_CLASS}>
+        <TabsTrigger value="deep-scan" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Deep Scan</TabsTrigger>
+        <TabsTrigger value="supply-chain" className={SUBSYSTEM_TABS_TRIGGER_CLASS}>Supply Chain</TabsTrigger>
+      </TabsList>
+      <TabsContent value="deep-scan">
+        <ShinganPanel />
+      </TabsContent>
+      <TabsContent value="supply-chain">
+        <SupplyChainPanel />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
 /**
  * The Kumite - Main landing page and container for SAGE, Arena, Mitsuke
  */
@@ -458,7 +584,7 @@ export function StrategicHub() {
                 steps={ONBOARDING_STEPS.sage}
                 accentColor="var(--dojo-primary)"
               />
-              <SAGEDashboard />
+              <SAGEWorkspace />
             </div>
           </TabsContent>
           <TabsContent value="arena">
@@ -480,7 +606,7 @@ export function StrategicHub() {
                 steps={ONBOARDING_STEPS.threatfeed}
                 accentColor="var(--severity-high)"
               />
-              <ThreatFeedStream />
+              <MitsukeWorkspace />
             </div>
           </TabsContent>
           <TabsContent value="dna">
@@ -491,7 +617,7 @@ export function StrategicHub() {
                 steps={ONBOARDING_STEPS.dna}
                 accentColor="var(--dojo-primary)"
               />
-              <AmaterasuSubsystem />
+              <DNAWorkspace />
             </div>
           </TabsContent>
           <TabsContent value="kagami">
@@ -513,7 +639,7 @@ export function StrategicHub() {
                 steps={ONBOARDING_STEPS.shingan}
                 accentColor="var(--severity-high)"
               />
-              <ShinganPanel />
+              <ShinganWorkspace />
             </div>
           </TabsContent>
         </Tabs>

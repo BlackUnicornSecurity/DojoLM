@@ -55,6 +55,7 @@ import { DashboardCustomizer } from '../dashboard/DashboardCustomizer'
 
 describe('DashboardCustomizer', () => {
   const onClose = vi.fn()
+  const onOpenModuleVisibility = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -90,6 +91,14 @@ describe('DashboardCustomizer', () => {
     expect(resetBtn).toBeInTheDocument()
     fireEvent.click(resetBtn)
     expect(mockResetToDefaults).toHaveBeenCalled()
+  })
+
+  it('DC-005b: renders visible module-visibility entry point when provided', () => {
+    render(<DashboardCustomizer open={true} onClose={onClose} onOpenModuleVisibility={onOpenModuleVisibility} />)
+    const moduleButton = screen.getByText('Module Visibility')
+    expect(moduleButton).toBeInTheDocument()
+    fireEvent.click(moduleButton)
+    expect(onOpenModuleVisibility).toHaveBeenCalledTimes(1)
   })
 
   it('DC-006: renders widget toggles as switches', () => {

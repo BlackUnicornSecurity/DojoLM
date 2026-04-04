@@ -204,7 +204,11 @@ function WidgetShell({ slot, mountIndex }: { slot: WidgetSlot; mountIndex: numbe
 }
 
 /** Inner dashboard content — consumes config context */
-function DashboardContent() {
+function DashboardContent({
+  onOpenModuleVisibility,
+}: {
+  onOpenModuleVisibility: () => void
+}) {
   const { config } = useDashboardConfig()
   const { setActiveTab } = useNavigation()
   const [customizerOpen, setCustomizerOpen] = useState(false)
@@ -319,7 +323,7 @@ function DashboardContent() {
         setCustomizerOpen(false)
         // BUG-037: Restore focus to trigger button after modal close
         requestAnimationFrame(() => triggerRef.current?.focus())
-      }} />
+      }} onOpenModuleVisibility={onOpenModuleVisibility} />
     </div>
   )
 }
@@ -327,11 +331,16 @@ function DashboardContent() {
 /** Main dashboard component with config provider */
 export function NODADashboard() {
   const { activated, reset } = useSenseiScroll(true)
+  const [moduleVisibilityOpen, setModuleVisibilityOpen] = useState(false)
+  const senseiOpen = activated || moduleVisibilityOpen
 
   return (
     <DashboardConfigProvider>
-      <DashboardContent />
-      <SenseiPanel open={activated} onClose={reset} />
+      <DashboardContent onOpenModuleVisibility={() => setModuleVisibilityOpen(true)} />
+      <SenseiPanel open={senseiOpen} onClose={() => {
+        reset()
+        setModuleVisibilityOpen(false)
+      }} />
     </DashboardConfigProvider>
   )
 }

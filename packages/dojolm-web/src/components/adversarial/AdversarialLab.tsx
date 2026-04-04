@@ -38,6 +38,8 @@ import {
   Fingerprint,
   Eye,
   ArrowRight,
+  BookOpen,
+  Bot,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -51,6 +53,9 @@ import { AtemiConfig } from './AtemiConfig'
 import { SessionRecorder } from './SessionRecorder'
 import { SessionHistory } from './SessionHistory'
 import { SkillsLibrary } from './SkillsLibrary'
+import { PlaybookRunner } from './PlaybookRunner'
+import { ProtocolFuzzPanel } from '../scanner/ProtocolFuzzPanel'
+import { AgenticLab } from '../agentic/AgenticLab'
 import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
@@ -59,7 +64,7 @@ import type { EcosystemSeverity } from '@/lib/ecosystem-types'
 // Types & Configuration
 // ---------------------------------------------------------------------------
 
-type AtemiTab = 'attack-tools' | 'skills' | 'mcp' | 'protocol-fuzz' | 'webmcp'
+type AtemiTab = 'attack-tools' | 'skills' | 'playbooks' | 'mcp' | 'protocol-fuzz' | 'agentic' | 'webmcp'
 
 type AttackMode = 'passive' | 'basic' | 'advanced' | 'aggressive'
 
@@ -71,6 +76,14 @@ interface AttackToolDef {
   severity: 'low' | 'medium' | 'high' | 'critical'
   /** Minimum mode required for this tool to be enabled */
   minMode: AttackMode
+}
+
+interface AtemiWorkspaceShortcut {
+  tab: Extract<AtemiTab, 'playbooks' | 'protocol-fuzz' | 'agentic'>
+  title: string
+  description: string
+  badge: string
+  icon: typeof BookOpen
 }
 
 // ---------------------------------------------------------------------------
@@ -201,6 +214,30 @@ const MODE_CONFIG = {
 } as const
 
 const MODE_ORDER: AttackMode[] = ['passive', 'basic', 'advanced', 'aggressive']
+
+const WORKSPACE_SHORTCUTS: AtemiWorkspaceShortcut[] = [
+  {
+    tab: 'playbooks',
+    title: 'Run Guided Playbooks',
+    description: 'Launch curated red-team chains instead of building each adversarial sequence from scratch.',
+    badge: 'Guided',
+    icon: BookOpen,
+  },
+  {
+    tab: 'protocol-fuzz',
+    title: 'Open Protocol Fuzz',
+    description: 'Exercise MCP, HTTP API, and JSON-RPC mutation suites from the same Atemi workspace.',
+    badge: 'Mutation Lab',
+    icon: Zap,
+  },
+  {
+    tab: 'agentic',
+    title: 'Explore Agentic Lab',
+    description: 'Pivot into tool-calling agent evaluations when you need architecture-level attack coverage.',
+    badge: 'Agentic',
+    icon: Bot,
+  },
+]
 
 // ---------------------------------------------------------------------------
 // Attack Tool Definitions (8 MCP P4 + 9 P5 Tools)
@@ -844,15 +881,63 @@ export function AdversarialLab({
         </Card>
       )}
 
+      <div className="grid gap-4 xl:grid-cols-3">
+        {WORKSPACE_SHORTCUTS.map((shortcut) => {
+          const ShortcutIcon = shortcut.icon
+          const isActive = activeTab === shortcut.tab
+
+          return (
+            <Card
+              key={shortcut.tab}
+              className={cn(
+                'border-[var(--border)] transition-colors',
+                isActive && 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/5',
+              )}
+            >
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-lg bg-[var(--bg-quaternary)] p-2">
+                      <ShortcutIcon className="h-4 w-4 text-[var(--dojo-primary)]" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--foreground)]">{shortcut.title}</p>
+                      <p className="text-xs text-muted-foreground">{shortcut.badge}</p>
+                    </div>
+                  </div>
+                  {isActive ? (
+                    <Badge variant="outline" className="text-[10px] border-[var(--dojo-primary)]/30 bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)]">
+                      Active
+                    </Badge>
+                  ) : null}
+                </div>
+                <p className="text-sm text-muted-foreground">{shortcut.description}</p>
+                <Button
+                  type="button"
+                  variant={isActive ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => setActiveTab(shortcut.tab)}
+                  aria-label={`Open ${shortcut.title}`}
+                  className="w-full justify-between"
+                >
+                  <span>{isActive ? 'Viewing workspace' : 'Open workspace'}</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
       {/* Tabbed Interface (H13.2) */}
       <Tabs
         value={activeTab}
         onValueChange={(v) => {
-          const valid: AtemiTab[] = ['attack-tools', 'skills', 'mcp', 'protocol-fuzz', 'webmcp']
+          const valid: AtemiTab[] = ['attack-tools', 'skills', 'playbooks', 'mcp', 'protocol-fuzz', 'agentic', 'webmcp']
           if (valid.includes(v as AtemiTab)) setActiveTab(v as AtemiTab)
         }}
       >
-        <TabsList className="grid grid-cols-5 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
           <TabsTrigger value="attack-tools" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Swords className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Attack Tools</span>
@@ -862,6 +947,10 @@ export function AdversarialLab({
             <Wrench className="h-3 w-3" aria-hidden="true" />
             <span>Skills</span>
           </TabsTrigger>
+          <TabsTrigger value="playbooks" className="gap-1 text-xs min-h-[44px] rounded-md">
+            <BookOpen className="h-3 w-3" aria-hidden="true" />
+            <span>Playbooks</span>
+          </TabsTrigger>
           <TabsTrigger value="mcp" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Shield className="h-3 w-3" aria-hidden="true" />
             <span>MCP</span>
@@ -870,6 +959,10 @@ export function AdversarialLab({
             <Zap className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Protocol Fuzz</span>
             <span className="sm:hidden">Fuzz</span>
+          </TabsTrigger>
+          <TabsTrigger value="agentic" className="gap-1 text-xs min-h-[44px] rounded-md">
+            <Bot className="h-3 w-3" aria-hidden="true" />
+            <span>Agentic</span>
           </TabsTrigger>
           <TabsTrigger value="webmcp" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Globe className="h-3 w-3" aria-hidden="true" />
@@ -917,6 +1010,11 @@ export function AdversarialLab({
           <SkillsLibrary onExecuteSkill={handleExecuteSkill} executingSkillId={executingSkill} />
         </TabsContent>
 
+        {/* Playbooks Tab */}
+        <TabsContent value="playbooks" className="mt-4">
+          <PlaybookRunner />
+        </TabsContent>
+
         {/* MCP Tab — mcp-type attack cards */}
         <TabsContent value="mcp" className="mt-4">
           <div className="flex items-center gap-2 mb-3">
@@ -944,15 +1042,19 @@ export function AdversarialLab({
           </div>
         </TabsContent>
 
-        {/* Protocol Fuzz Tab — placeholder */}
+        {/* Protocol Fuzz Tab */}
         <TabsContent value="protocol-fuzz" className="mt-4">
-          <div className="flex flex-col items-center justify-center py-12">
-            <Zap className="h-8 w-8 text-muted-foreground mb-3" aria-hidden="true" />
-            <p className="text-sm font-medium">Protocol Fuzzing</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Coming in Phase 11 — MCP protocol fuzzing engine integration.
-            </p>
-          </div>
+          <ProtocolFuzzPanel />
+        </TabsContent>
+
+        {/* Agentic Tab */}
+        <TabsContent value="agentic" className="mt-4">
+          <AgenticLab
+            availableModels={AVAILABLE_MODELS.map((model) => ({
+              id: model.id,
+              name: model.name,
+            }))}
+          />
         </TabsContent>
 
         {/* WebMCP Tab — functional panel (H16.3) */}

@@ -19,29 +19,17 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (value: unknown) => String(value ?? ''),
 }))
 
-vi.mock('lucide-react', () => {
-  const Icon = () => <span data-testid="icon" />
-  return {
-    Swords: Icon,
-    Plus: Icon,
-    Play: Icon,
-    Pause: Icon,
-    RefreshCw: Icon,
-    FileText: Icon,
-    AlertTriangle: Icon,
-    CheckCircle2: Icon,
-    Clock: Icon,
-    XCircle: Icon,
-    ChevronRight: Icon,
-    Timer: Icon,
-    Loader2: Icon,
-  }
-})
+vi.mock('lucide-react', () => new Proxy({}, {
+  get: (_target, prop) => {
+    if (prop === '__esModule') return true
+    return (props: Record<string, unknown>) => <span data-testid={`icon-${String(prop)}`} {...props} />
+  },
+}))
 
 vi.mock('@/components/ui/tabs', () => ({
   Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   TabsList: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  TabsTrigger: ({ children }: { children: React.ReactNode }) => <button>{children}</button>,
+  TabsTrigger: ({ children }: { children: React.ReactNode }) => <button role="tab">{children}</button>,
   TabsContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
@@ -80,14 +68,35 @@ vi.mock('../sengoku/SengokuCampaignBuilder', () => ({
   SengokuCampaignBuilder: () => <div>Campaign Builder</div>,
 }))
 
+vi.mock('../sengoku/OrchestratorBuilder', () => ({
+  OrchestratorBuilder: () => <div>Orchestrator Builder</div>,
+}))
+
+vi.mock('../sengoku/OrchestratorVisualization', () => ({
+  OrchestratorVisualization: () => <div>Orchestrator Visualization</div>,
+}))
+
+vi.mock('../sengoku/CampaignGraphBuilder', () => ({
+  CampaignGraphBuilder: () => <div>Campaign Graph Builder</div>,
+}))
+
 import { SengokuDashboard } from '../sengoku/SengokuDashboard'
 describe('SengokuDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockCanAccessProtectedApi.mockResolvedValue(true)
-    mockFetchWithAuth.mockResolvedValue({
-      ok: true,
-      json: async () => ({ campaigns: [] }),
+    mockFetchWithAuth.mockImplementation(async (url: string) => {
+      if (url === '/api/llm/models?enabled=true') {
+        return {
+          ok: true,
+          json: async () => ({ models: [{ id: 'model-1', name: 'GPT-4o' }] }),
+        }
+      }
+
+      return {
+        ok: true,
+        json: async () => ({ campaigns: [] }),
+      }
     })
   })
 
@@ -138,5 +147,16 @@ describe('SengokuDashboard', () => {
     fireEvent.click(rerenderedButton)
 
     expect(screen.queryByText('Run Now')).not.toBeInTheDocument()
+  })
+
+  it('surfaces the orchestrator workbench and Sensei helper tools', async () => {
+    render(<SengokuDashboard />)
+
+    expect(screen.getByRole('tab', { name: /Workbench/i })).toBeInTheDocument()
+    expect(screen.getByText('Orchestrator Builder')).toBeInTheDocument()
+    expect(screen.getByText('Orchestrator Visualization')).toBeInTheDocument()
+    expect(screen.getByText('Campaign Graph Builder')).toBeInTheDocument()
+    expect(screen.getByText('run_orchestrator')).toBeInTheDocument()
+    expect(screen.getByText('sensei_plan')).toBeInTheDocument()
   })
 })

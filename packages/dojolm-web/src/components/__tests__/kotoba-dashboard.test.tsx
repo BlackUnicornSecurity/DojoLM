@@ -50,6 +50,10 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }))
 
+vi.mock('../kotoba/KotobaWorkshop', () => ({
+  KotobaWorkshop: () => <div data-testid="kotoba-workshop">KotobaWorkshop</div>,
+}))
+
 import { KotobaDashboard } from '../kotoba/KotobaDashboard'
 
 // ---------------------------------------------------------------------------
@@ -64,7 +68,7 @@ describe('KotobaDashboard (KD-001 to KD-008)', () => {
   it('KD-001: renders module header with Kotoba title', () => {
     render(<KotobaDashboard />)
     expect(screen.getByText('Kotoba')).toBeInTheDocument()
-    expect(screen.getByText('Prompt Optimization Studio')).toBeInTheDocument()
+    expect(screen.getByText('Prompt Optimization Studio and hardening workshop')).toBeInTheDocument()
   })
 
   it('KD-002: renders stats row with 3 stat cards', () => {
@@ -113,5 +117,12 @@ describe('KotobaDashboard (KD-001 to KD-008)', () => {
   it('KD-008: renders character counter', () => {
     render(<KotobaDashboard />)
     expect(screen.getByText('0 / 5,000')).toBeInTheDocument()
+  })
+
+  it('KD-009: exposes a Workshop view and renders the workshop when selected', () => {
+    render(<KotobaDashboard />)
+    const workshopTab = screen.getByRole('tab', { name: 'Workshop' })
+    fireEvent.click(workshopTab)
+    expect(screen.getByTestId('kotoba-workshop')).toBeInTheDocument()
   })
 })

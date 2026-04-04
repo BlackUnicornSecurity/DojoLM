@@ -90,6 +90,16 @@ vi.mock('../compliance/FrameworkNavigator', () => ({
   FrameworkNavigator: () => <div data-testid="framework-navigator">Navigator</div>,
 }))
 
+vi.mock('../compliance/ComplianceDashboard', () => ({
+  default: () => <div data-testid="compliance-dashboard">ComplianceDashboard</div>,
+}))
+
+vi.mock('../compliance/ComplianceExport', () => ({
+  ComplianceExport: ({ frameworkData }: { frameworkData: { name: string } | null }) => (
+    <div data-testid="compliance-export">{frameworkData?.name ?? 'No framework'}</div>
+  ),
+}))
+
 vi.mock('@/components/coverage', () => ({
   CoverageMap: ({ title }: { title: string }) => <div data-testid="coverage-map">{title}</div>,
 }))
@@ -238,7 +248,7 @@ describe('CC-005: Framework count shown', () => {
 // CC-006: Sub-view tabs render
 // ===========================================================================
 describe('CC-006: Sub-view tabs render', () => {
-  it('renders all 6 sub-view tab triggers', async () => {
+  it('renders all mounted sub-view tab triggers, including the dashboard affordance', async () => {
     mockFetchWithAuth.mockResolvedValue({
       ok: true,
       json: async () => makeApiResponse(),
@@ -249,10 +259,12 @@ describe('CC-006: Sub-view tabs render', () => {
     })
     expect(screen.getAllByText('Overview').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Coverage').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Coverage Dashboard').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Gap Matrix').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Audit Trail').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Checklists').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Navigator').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Framework Compliance').length).toBeGreaterThan(0)
   })
 })
 
@@ -260,18 +272,39 @@ describe('CC-006: Sub-view tabs render', () => {
 // CC-007: Sub-components render in tab panels
 // ===========================================================================
 describe('CC-007: Sub-components render in tab panels', () => {
-  it('renders GapMatrix, AuditTrail, Checklist, Navigator sub-components', async () => {
+  it('renders dashboard, GapMatrix, AuditTrail, Checklist, Navigator, and export affordances', async () => {
     mockFetchWithAuth.mockResolvedValue({
       ok: true,
       json: async () => makeApiResponse(),
     })
     render(<ComplianceCenter />)
     await waitFor(() => {
-      expect(screen.getByTestId('gap-matrix')).toBeInTheDocument()
+      expect(screen.getByTestId('compliance-dashboard')).toBeInTheDocument()
     })
+    expect(screen.getByTestId('compliance-export')).toHaveTextContent('OWASP LLM Top 10')
+    expect(screen.getByRole('button', { name: /open coverage dashboard/i })).toBeInTheDocument()
+    expect(screen.getByTestId('gap-matrix')).toBeInTheDocument()
     expect(screen.getByTestId('audit-trail')).toBeInTheDocument()
     expect(screen.getByTestId('compliance-checklist')).toBeInTheDocument()
     expect(screen.getByTestId('framework-navigator')).toBeInTheDocument()
+  })
+})
+
+// ===========================================================================
+// CC-007A: Selected framework actions
+// ===========================================================================
+describe('CC-007A: Selected framework actions', () => {
+  it('shows selected framework context next to the export controls', async () => {
+    mockFetchWithAuth.mockResolvedValue({
+      ok: true,
+      json: async () => makeApiResponse(),
+    })
+    render(<ComplianceCenter />)
+    await waitFor(() => {
+      expect(screen.getByText('Selected Framework')).toBeInTheDocument()
+    })
+    expect(screen.getByTestId('compliance-export')).toHaveTextContent('OWASP LLM Top 10')
+    expect(screen.getByText(/classic coverage dashboard/i)).toBeInTheDocument()
   })
 })
 
@@ -358,7 +391,7 @@ describe('CC-012: Framework selection', () => {
     })
     render(<ComplianceCenter />)
     await waitFor(() => {
-      expect(screen.getAllByText('OWASP LLM Top 10').length).toBeGreaterThan(0)
+      expect(screen.getByTestId('gap-matrix')).toBeInTheDocument()
     })
     // Framework buttons render with coverage info
     const buttons = screen.getAllByRole('button')

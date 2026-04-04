@@ -33,6 +33,8 @@ const mockTestModel = vi.fn().mockResolvedValue({ success: true })
 const mockRefresh = vi.fn()
 const mockGetExecutions = vi.fn()
 const mockGetModelReport = vi.fn()
+const mockGetBatch = vi.fn()
+const mockGetBatchExecutions = vi.fn()
 
 const mockLeaderboard = [
   { modelId: 'm1', modelName: 'GPT-4o', rank: 1, score: 92 },
@@ -65,6 +67,9 @@ vi.mock('@/lib/contexts', () => ({
     isExecuting: false,
     startExecution: vi.fn(),
     cancelExecution: vi.fn(),
+    activeBatchId: 'batch-1',
+    getBatch: mockGetBatch,
+    getBatchExecutions: mockGetBatchExecutions,
   }),
 }))
 
@@ -75,10 +80,11 @@ vi.mock('@/components/guard', () => ({
 
 // Mock ModuleHeader
 vi.mock('@/components/ui/ModuleHeader', () => ({
-  ModuleHeader: ({ title, subtitle }: { title: string; subtitle: string }) => (
+  ModuleHeader: ({ title, subtitle, actions }: { title: string; subtitle: string; actions?: ReactNode }) => (
     <div data-testid="module-header">
       <h1>{title}</h1>
       <p>{subtitle}</p>
+      <div data-testid="module-header-actions">{actions}</div>
     </div>
   ),
 }))
@@ -201,6 +207,18 @@ vi.mock('../llm/ResultsView', () => ({
 vi.mock('../llm/CustomProviderBuilder', () => ({
   CustomProviderBuilder: () => <div data-testid="custom-provider-builder">CustomProviderBuilder</div>,
 }))
+vi.mock('../llm/BenchmarkPanel', () => ({
+  BenchmarkPanel: () => <div data-testid="benchmark-panel">BenchmarkPanel</div>,
+}))
+vi.mock('../llm/TransferMatrixPanel', () => ({
+  TransferMatrixPanel: () => <div data-testid="transfer-matrix-panel">TransferMatrixPanel</div>,
+}))
+vi.mock('../llm/TestExporter', () => ({
+  TestExporter: () => <div data-testid="test-exporter">TestExporter</div>,
+}))
+vi.mock('@/components/reports/ConsolidatedReportButton', () => ({
+  ConsolidatedReportButton: () => <button data-testid="consolidated-report-button">Download Report</button>,
+}))
 vi.mock('../llm/LocalModelSelector', () => ({
   LocalModelSelector: () => <div data-testid="local-model-selector" />,
 }))
@@ -228,6 +246,14 @@ beforeEach(() => {
   localStorageMock.clear()
   mockFetchWithAuth.mockReset()
   mockGetExecutions.mockResolvedValue([])
+  mockGetBatch.mockResolvedValue({
+    id: 'batch-1',
+    status: 'completed',
+    completedTests: 12,
+    failedTests: 2,
+    totalTests: 12,
+  })
+  mockGetBatchExecutions.mockResolvedValue([])
 })
 
 // ---------------------------------------------------------------------------
@@ -247,13 +273,28 @@ import { BeltBadge, getBeltRank } from '../ui/BeltBadge'
 // LLM-001: Renders with all tab buttons visible
 // ===========================================================================
 describe('LLM-001: Dashboard tab rendering', () => {
-  it('renders all 7 tab buttons (H7.2: summary + vulns merged into results, M1: jutsu added)', () => {
+  it('renders all 8 tab buttons including analytics', () => {
     render(<LLMDashboard />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs.length).toBe(7)
-    // Check values — summary and vulnerabilities removed in H7.2, jutsu added in DAITENGUYAMA M1
+    expect(tabs.length).toBe(8)
     const values = tabs.map(t => t.getAttribute('data-value'))
-    expect(values).toEqual(['models', 'tests', 'results', 'leaderboard', 'compare', 'custom', 'jutsu'])
+    expect(values).toEqual(['models', 'tests', 'results', 'leaderboard', 'compare', 'analytics', 'custom', 'jutsu'])
+  })
+})
+
+describe('LLM-002: Analytics and reporting surfaces', () => {
+  it('renders consolidated reporting and advanced analytics panels', async () => {
+    render(<LLMDashboard />)
+
+    expect(screen.getAllByTestId('consolidated-report-button')).toHaveLength(2)
+    expect(screen.getByTestId('benchmark-panel')).toBeInTheDocument()
+    expect(screen.getByTestId('transfer-matrix-panel')).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(mockGetBatch).toHaveBeenCalledWith('batch-1')
+      expect(mockGetBatchExecutions).toHaveBeenCalledWith('batch-1')
+      expect(screen.getByTestId('test-exporter')).toBeInTheDocument()
+    })
   })
 })
 
@@ -754,6 +795,6 @@ describe('LLMDashboardWithProviders', () => {
   it('wraps dashboard in all 3 providers', () => {
     render(<LLMDashboardWithProviders />)
     // Should render without error - providers are mocked as pass-through
-    expect(screen.getAllByRole('tab').length).toBe(7)
+    expect(screen.getAllByRole('tab').length).toBe(8)
   })
 })

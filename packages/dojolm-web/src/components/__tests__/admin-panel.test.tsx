@@ -137,6 +137,25 @@ vi.mock('../admin/AdminSettings', () => ({
 vi.mock('../admin/ValidationManager', () => ({
   ValidationManager: () => <div data-testid="validation-manager">ValidationManager</div>,
 }));
+vi.mock('../tests/TestRunner', () => ({
+  TestRunner: ({ onRunTests }: { onRunTests: (filter?: string) => Promise<{ results: Array<{ status: string; duration_ms: number }> }> }) => {
+    const React = require('react');
+    const [resultSummary, setResultSummary] = React.useState('TestRunner');
+
+    return (
+      <button
+        data-testid="test-runner"
+        onClick={async () => {
+          const result = await onRunTests('regression');
+          const first = result.results[0];
+          setResultSummary(first ? `${first.status}:${first.duration_ms}` : 'empty');
+        }}
+      >
+        {resultSummary}
+      </button>
+    );
+  },
+}));
 
 import { AdminPanel } from '../admin/AdminPanel';
 
@@ -158,13 +177,13 @@ describe('AdminPanel', () => {
   });
 
   // ADM-001: AdminPanel renders with all tabs/sections
-  it('ADM-001: renders with page toolbar and all 9 admin tabs', () => {
+  it('ADM-001: renders with page toolbar and all 10 admin tabs', () => {
     render(<AdminPanel />);
 
     expect(screen.getByText('Admin & Settings')).toBeInTheDocument();
     // Check tab triggers by role
     const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(9);
+    expect(tabs).toHaveLength(10);
     expect(tabs[0]).toHaveTextContent('General');
     expect(tabs[1]).toHaveTextContent('Users');
     expect(tabs[2]).toHaveTextContent('Scoreboard');
@@ -174,6 +193,7 @@ describe('AdminPanel', () => {
     expect(tabs[6]).toHaveTextContent('Export');
     expect(tabs[7]).toHaveTextContent('Admin Settings');
     expect(tabs[8]).toHaveTextContent('Validation');
+    expect(tabs[9]).toHaveTextContent('Test Runner');
   });
 
   // ADM-009: Panel navigation between sections
@@ -182,9 +202,9 @@ describe('AdminPanel', () => {
 
     // All TabsContent are rendered with data-tab attribute
     const panels = container.querySelectorAll('[data-tab]');
-    expect(panels).toHaveLength(9);
+    expect(panels).toHaveLength(10);
     const tabIds = Array.from(panels).map(p => p.getAttribute('data-tab'));
-    expect(tabIds).toEqual(['general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation']);
+    expect(tabIds).toEqual(['general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation', 'test-runner']);
   });
 
   // ADM-010: General settings section renders content
@@ -212,6 +232,33 @@ describe('AdminPanel', () => {
   it('ADM-013: Admin Settings tab renders AdminSettings component', () => {
     render(<AdminPanel />);
     expect(screen.getByTestId('admin-settings')).toBeInTheDocument();
+  });
+
+  it('ADM-014: Test Runner tab renders TestRunner component', () => {
+    render(<AdminPanel />);
+    expect(screen.getByTestId('test-runner')).toBeInTheDocument();
+  });
+
+  it('ADM-015: Test Runner calls /api/tests and normalizes backend results', async () => {
+    mockFetchWithAuth.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        summary: { total: 1, passed: 0, failed: 1, skipped: 0 },
+        results: [
+          { name: 'regression', status: 'timeout', duration: 123, output: 'timed out', required: true },
+        ],
+      }),
+    });
+
+    render(<AdminPanel />);
+    fireEvent.click(screen.getByTestId('test-runner'));
+
+    await waitFor(() => {
+      expect(mockFetchWithAuth).toHaveBeenCalledWith('/api/tests', expect.objectContaining({
+        method: 'POST',
+      }));
+      expect(screen.getByText('fail:123')).toBeInTheDocument();
+    });
   });
 });
 

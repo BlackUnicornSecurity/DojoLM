@@ -108,6 +108,18 @@ function formatToolName(tool: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Safe cast — returns null if data is not a plain object. */
+function asRecord(data: unknown): Record<string, unknown> | null {
+  if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+    return data as Record<string, unknown>
+  }
+  return null
+}
+
+// ---------------------------------------------------------------------------
 // Specialized renderers
 // ---------------------------------------------------------------------------
 
@@ -119,6 +131,7 @@ function renderToolData(tool: string, data: unknown): React.ReactNode {
   switch (tool) {
     case 'scan_text':
     case 'scan_format':
+    case 'run_rag_pipeline_test':
       return renderScanResult(data)
     case 'list_models':
       return renderModelList(data)
@@ -131,6 +144,34 @@ function renderToolData(tool: string, data: unknown): React.ReactNode {
       return renderFingerprint(data)
     case 'get_compliance':
       return renderCompliance(data)
+    case 'navigate_to':
+      return renderNavigate(data)
+    case 'explain_feature':
+      return renderExplain(data)
+    case 'create_arena_match':
+      return renderArenaCreated(data)
+    case 'list_arena_matches':
+      return renderArenaList(data)
+    case 'get_warriors':
+      return renderWarriors(data)
+    case 'query_dna':
+      return renderDnaQuery(data)
+    case 'analyze_dna':
+      return renderDnaAnalysis(data)
+    case 'generate_attack':
+      return renderAttackGenerated(data)
+    case 'judge_response':
+      return renderJudgeResult(data)
+    case 'run_orchestrator':
+    case 'run_agentic_test':
+      return renderRunQueued(data)
+    case 'list_campaigns':
+      return renderCampaignList(data)
+    case 'get_results':
+    case 'get_guard_audit':
+    case 'get_ecosystem_findings':
+    case 'get_leaderboard':
+      return renderDataTable(data)
     default:
       return renderGeneric(data)
   }
@@ -138,7 +179,8 @@ function renderToolData(tool: string, data: unknown): React.ReactNode {
 
 // --- Scan results ---
 function renderScanResult(data: unknown): React.ReactNode {
-  const d = data as Record<string, unknown>
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
   const findings = Array.isArray(d.findings) ? d.findings : []
   const verdict = typeof d.verdict === 'string' ? d.verdict : 'UNKNOWN'
 
@@ -216,7 +258,8 @@ const GUARD_ICONS: Record<string, typeof Shield> = {
 }
 
 function renderGuardStatus(data: unknown): React.ReactNode {
-  const d = data as Record<string, unknown>
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
   const mode = typeof d.mode === 'string' ? d.mode : 'unknown'
   const enabled = d.enabled === true
   const GuardIcon = GUARD_ICONS[mode] ?? Shield
@@ -237,7 +280,8 @@ function renderGuardStatus(data: unknown): React.ReactNode {
 
 // --- Stats ---
 function renderStats(data: unknown): React.ReactNode {
-  const d = data as Record<string, unknown>
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
   const entries = Object.entries(d).filter(([, v]) => typeof v === 'number' || typeof v === 'string')
   if (entries.length === 0) return renderGeneric(data)
 
@@ -255,7 +299,8 @@ function renderStats(data: unknown): React.ReactNode {
 
 // --- Fingerprint ---
 function renderFingerprint(data: unknown): React.ReactNode {
-  const d = data as Record<string, unknown>
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
   const identity = typeof d.identity === 'string' ? d.identity : null
   const confidence = typeof d.confidence === 'number' ? d.confidence : null
 
@@ -280,7 +325,8 @@ function renderFingerprint(data: unknown): React.ReactNode {
 
 // --- Compliance ---
 function renderCompliance(data: unknown): React.ReactNode {
-  const d = data as Record<string, unknown>
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
   const frameworks = Array.isArray(d.frameworks) ? d.frameworks : []
 
   if (frameworks.length === 0) return renderGeneric(data)
@@ -305,6 +351,265 @@ function renderCompliance(data: unknown): React.ReactNode {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// --- Navigate result ---
+function renderNavigate(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const module = typeof d.module === 'string' ? d.module : 'unknown'
+  return (
+    <p className="text-xs text-[var(--text-secondary)]">
+      Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(module)}</span>
+    </p>
+  )
+}
+
+// --- Explain feature ---
+function renderExplain(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const description = typeof d.description === 'string' ? d.description : ''
+  return <p className="text-xs text-[var(--foreground)] whitespace-pre-wrap">{description}</p>
+}
+
+// --- Arena match created ---
+function renderArenaCreated(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  return (
+    <div className="space-y-1">
+      <div className="text-xs">
+        <span className="text-[var(--text-tertiary)]">Match ID: </span>
+        <span className="text-[var(--foreground)] font-mono font-medium">{String(d.matchId ?? '')}</span>
+      </div>
+      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400">
+        {String(d.status ?? 'pending')}
+      </span>
+    </div>
+  )
+}
+
+// --- Arena match list ---
+function renderArenaList(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  const matches = d && Array.isArray(d.matches) ? d.matches : (Array.isArray(data) ? data : [])
+  if (matches.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No matches found</p>
+  return (
+    <div className="space-y-1 max-h-32 overflow-y-auto">
+      {matches.slice(0, 10).map((m: Record<string, unknown>, i: number) => (
+        <div key={String(m.id ?? i)} className="flex items-center justify-between text-xs">
+          <span className="text-[var(--foreground)] font-mono">{String(m.id ?? '').slice(0, 8)}</span>
+          <span className={cn(
+            'px-1.5 py-0.5 rounded text-[10px] font-medium',
+            m.status === 'completed' && 'bg-emerald-500/20 text-emerald-400',
+            m.status === 'running' && 'bg-blue-500/20 text-blue-400',
+            m.status === 'pending' && 'bg-amber-500/20 text-amber-400',
+            m.status === 'aborted' && 'bg-red-500/20 text-red-400',
+          )}>
+            {String(m.status ?? 'unknown')}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- Warriors leaderboard ---
+function renderWarriors(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const warriors = Array.isArray(d.warriors) ? d.warriors : []
+  if (warriors.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No warriors yet</p>
+  return (
+    <div className="space-y-1 max-h-32 overflow-y-auto">
+      {warriors.slice(0, 10).map((w: Record<string, unknown>, i: number) => (
+        <div key={String(w.modelId ?? i)} className="flex items-center justify-between text-xs">
+          <span className="text-[var(--foreground)] font-medium">{String(w.modelName ?? w.modelId ?? 'Unknown')}</span>
+          <span className="text-[var(--text-tertiary)]">
+            {String(w.wins ?? 0)}W/{String(w.losses ?? 0)}L — {typeof w.winRate === 'number' ? `${Math.round(w.winRate * 100)}%` : '—'}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- DNA query ---
+function renderDnaQuery(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  // Stats view
+  if (d.stats && typeof d.stats === 'object') return renderStats(d.stats)
+  // Nodes, families, clusters, timeline
+  const items = (d.nodes ?? d.families ?? d.clusters ?? d.timeline) as unknown[] | undefined
+  const total = typeof d.total === 'number' ? d.total : (items?.length ?? 0)
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-[var(--text-secondary)]">
+        <span className="font-medium text-[var(--foreground)]">{total}</span> result{total !== 1 ? 's' : ''}
+      </p>
+      {Array.isArray(items) && (items as Record<string, unknown>[]).slice(0, 5).map((item, i) => (
+        <div key={String(item.id ?? i)} className="text-xs text-[var(--text-tertiary)] truncate">
+          {String(item.content ?? item.id ?? item.name ?? JSON.stringify(item).slice(0, 80))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- DNA ablation analysis ---
+function renderDnaAnalysis(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const analysis = (d.analysis ?? d) as Record<string, unknown>
+  const meta = (d.meta ?? {}) as Record<string, unknown>
+  const components = typeof meta.componentCount === 'number' ? meta.componentCount : '?'
+  const critical = typeof meta.criticalCount === 'number' ? meta.criticalCount : '?'
+  return (
+    <div className="space-y-1">
+      <div className="flex gap-3 text-xs">
+        <div>
+          <span className="text-[var(--text-tertiary)]">Components: </span>
+          <span className="text-[var(--foreground)] font-medium">{components}</span>
+        </div>
+        <div>
+          <span className="text-[var(--text-tertiary)]">Critical: </span>
+          <span className="text-red-400 font-medium">{critical}</span>
+        </div>
+      </div>
+      {typeof analysis.baselineScore === 'number' && (
+        <div className="text-xs">
+          <span className="text-[var(--text-tertiary)]">Baseline Score: </span>
+          <span className="text-[var(--foreground)] font-medium">{(analysis.baselineScore as number).toFixed(2)}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// --- Attack generated ---
+function renderAttackGenerated(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const attacks = Array.isArray(d.attacks) ? d.attacks : (Array.isArray(d.data) ? d.data : [])
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-[var(--text-secondary)]">
+        <span className="font-medium text-[var(--foreground)]">{attacks.length}</span> attack variant{attacks.length !== 1 ? 's' : ''} generated
+      </p>
+    </div>
+  )
+}
+
+// --- Judge result ---
+function renderJudgeResult(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const success = d.success === true || d.attackSuccessful === true
+  const score = typeof d.score === 'number' ? d.score : (typeof d.confidence === 'number' ? d.confidence : null)
+  return (
+    <div className="flex items-center gap-2">
+      <span className={cn(
+        'px-2 py-0.5 rounded text-xs font-bold uppercase',
+        success ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400',
+      )}>
+        {success ? 'Attack Succeeded' : 'Attack Blocked'}
+      </span>
+      {score !== null && (
+        <span className="text-xs text-[var(--text-tertiary)]">
+          Score: {(score * 100).toFixed(0)}%
+        </span>
+      )}
+    </div>
+  )
+}
+
+// --- Run queued (orchestrator, agentic) ---
+function renderRunQueued(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const inner = (d.data ?? d) as Record<string, unknown>
+  return (
+    <div className="space-y-1">
+      {!!inner.runId && (
+        <div className="text-xs">
+          <span className="text-[var(--text-tertiary)]">Run ID: </span>
+          <span className="text-[var(--foreground)] font-mono">{String(inner.runId).slice(0, 20)}</span>
+        </div>
+      )}
+      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-500/20 text-blue-400">
+        {String(inner.status ?? inner.message ?? 'queued')}
+      </span>
+    </div>
+  )
+}
+
+// --- Campaign list ---
+function renderCampaignList(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  const campaigns = Array.isArray(d.campaigns) ? d.campaigns : []
+  if (campaigns.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No campaigns found</p>
+  return (
+    <div className="space-y-1 max-h-32 overflow-y-auto">
+      {campaigns.slice(0, 10).map((c: Record<string, unknown>, i: number) => (
+        <div key={String(c.id ?? i)} className="flex items-center justify-between text-xs">
+          <span className="text-[var(--foreground)] font-medium">{String(c.name ?? 'Untitled')}</span>
+          <span className={cn(
+            'px-1.5 py-0.5 rounded text-[10px] font-medium',
+            c.status === 'running' && 'bg-blue-500/20 text-blue-400',
+            c.status === 'draft' && 'bg-gray-500/20 text-gray-400',
+            c.status === 'completed' && 'bg-emerald-500/20 text-emerald-400',
+          )}>
+            {String(c.status ?? 'unknown')}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// --- Data table (generic list/table renderer for results, audit, findings, leaderboard) ---
+function renderDataTable(data: unknown): React.ReactNode {
+  const d = asRecord(data)
+  if (!d) return renderGeneric(data)
+  // Try to find the main array in common response shapes
+  const items = (d.data ?? d.leaderboard ?? d.events ?? d.executions ?? d.findings) as unknown[] | undefined
+  const total = typeof d.total === 'number' ? d.total : (typeof (d.meta as Record<string, unknown>)?.total === 'number' ? (d.meta as Record<string, unknown>).total as number : null)
+
+  if (!Array.isArray(items) || items.length === 0) {
+    if (total === 0) return <p className="text-xs text-[var(--text-tertiary)]">No results</p>
+    return renderGeneric(data)
+  }
+
+  return (
+    <div className="space-y-1">
+      {total !== null && (
+        <p className="text-xs text-[var(--text-secondary)]">
+          <span className="font-medium text-[var(--foreground)]">{total}</span> result{total !== 1 ? 's' : ''}
+        </p>
+      )}
+      <div className="max-h-32 overflow-y-auto space-y-0.5">
+        {(items as Record<string, unknown>[]).slice(0, 8).map((item, i) => {
+          const label = String(item.modelName ?? item.name ?? item.title ?? item.id ?? `#${i + 1}`)
+          const detail = item.avgResilienceScore != null
+            ? `Score: ${item.avgResilienceScore}`
+            : item.severity != null
+              ? String(item.severity)
+              : item.action != null
+                ? String(item.action)
+                : ''
+          return (
+            <div key={String(item.id ?? i)} className="flex items-center justify-between text-xs">
+              <span className="text-[var(--foreground)] truncate">{label}</span>
+              {detail && <span className="text-[var(--text-tertiary)] ml-2">{detail}</span>}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

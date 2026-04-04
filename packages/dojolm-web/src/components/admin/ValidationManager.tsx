@@ -127,6 +127,18 @@ interface ReportData {
   signature?: string
 }
 
+interface SignatureVerificationResult {
+  valid: boolean | null
+  structural_valid?: boolean
+  signature_present?: boolean
+  signature_format_valid?: boolean
+  crypto_verification_available?: boolean
+  crypto_verified?: boolean
+  reason?: string
+  report_id?: string
+  run_id?: string
+}
+
 const AVAILABLE_MODULES = [
   'prompt-injection',
   'jailbreak',
@@ -209,6 +221,9 @@ export function ValidationManager() {
 
   // Traceability viewer state (K6.6)
   const [traceExpanded, setTraceExpanded] = useState(false)
+  const [verifyLoading, setVerifyLoading] = useState(false)
+  const [verifyError, setVerifyError] = useState<string | null>(null)
+  const [signatureVerification, setSignatureVerification] = useState<SignatureVerificationResult | null>(null)
 
   // Export state (K6.7)
   const [exportLoading, setExportLoading] = useState<string | null>(null)
@@ -264,6 +279,8 @@ export function ValidationManager() {
   const fetchReport = useCallback(async (runId: string) => {
     setReportLoading(true)
     setReportError(null)
+    setVerifyError(null)
+    setSignatureVerification(null)
     try {
       const res = await fetchWithAuth(`/api/admin/validation/report/${runId}`)
       if (res.ok) {
@@ -453,6 +470,8 @@ export function ValidationManager() {
       if (selectedRunId === runId) {
         setSelectedRunId(null)
         setReportData(null)
+        setVerifyError(null)
+        setSignatureVerification(null)
         return
       }
       setSelectedRunId(runId)
@@ -464,6 +483,31 @@ export function ValidationManager() {
     },
     [selectedRunId, fetchReport],
   )
+
+  const handleVerifySignature = useCallback(async () => {
+    if (!reportData) return
+    setVerifyLoading(true)
+    setVerifyError(null)
+    setSignatureVerification(null)
+    try {
+      const res = await fetchWithAuth('/api/admin/validation/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report: reportData }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: 'Failed to verify signature' }))
+        setVerifyError(body.error ?? 'Failed to verify signature')
+        return
+      }
+      const data: SignatureVerificationResult = await res.json()
+      setSignatureVerification(data)
+    } catch {
+      setVerifyError('Network error verifying signature.')
+    } finally {
+      setVerifyLoading(false)
+    }
+  }, [reportData])
 
   // K6.6 — Toggle module expansion in results viewer
   const toggleModuleExpansion = useCallback((moduleId: string) => {
@@ -1068,6 +1112,81 @@ export function ValidationManager() {
                   </div>
                 </div>
 
+                {reportData.signature && (
+                  <div
+                    className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4 space-y-3"
+                    data-testid="signature-verification-panel"
+                  >
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-medium text-foreground">Signature Verification</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Confirm structural integrity for this report before exporting or sharing it outside the admin workspace.
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Signature: <span className="font-mono text-foreground">{String(reportData.signature).slice(0, 24)}...</span>
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleVerifySignature}
+                        disabled={verifyLoading}
+                        className="inline-flex min-h-[44px] items-center gap-2 rounded-md bg-muted px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/80 disabled:cursor-not-allowed disabled:opacity-50 motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                        aria-label="Verify signature"
+                      >
+                        <Shield className="w-3 h-3" aria-hidden="true" />
+                        {verifyLoading ? 'Verifying...' : 'Verify Signature'}
+                      </button>
+                    </div>
+
+                    {verifyError && (
+                      <p role="alert" className="text-xs text-red-400">
+                        {verifyError}
+                      </p>
+                    )}
+
+                    {signatureVerification && (
+                      <div
+                        role="status"
+                        aria-label="Signature verification result"
+                        className={`rounded-md border px-3 py-2 text-xs ${
+                          signatureVerification.valid === false
+                            ? 'border-red-500/20 bg-red-500/10 text-red-300'
+                            : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
+                        }`}
+                      >
+                        <div className="grid gap-3 sm:grid-cols-3">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider opacity-80">Verification</p>
+                            <p className="mt-1 font-medium">
+                              {signatureVerification.valid === true
+                                ? 'Signature Verified'
+                                : signatureVerification.valid === false
+                                  ? 'Verification Failed'
+                                  : 'Structural Verification Complete'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider opacity-80">Crypto Support</p>
+                            <p className="mt-1 font-medium">
+                              {signatureVerification.crypto_verification_available ? 'Available' : 'Unavailable'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider opacity-80">Signature Format</p>
+                            <p className="mt-1 font-medium">
+                              {signatureVerification.signature_format_valid === false ? 'Invalid' : 'Accepted'}
+                            </p>
+                          </div>
+                        </div>
+                        {signatureVerification.reason && (
+                          <p className="mt-2 text-[11px] opacity-90">{signatureVerification.reason}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Per-module results (expandable) */}
                 {reportData.modules && reportData.modules.length > 0 && (
                   <div className="space-y-2">
@@ -1368,11 +1487,31 @@ export function ValidationManager() {
                         </div>
                         {/* Signature info */}
                         {reportData.signature && (
-                          <div>
+                          <div className="space-y-2">
                             <h5 className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Digital Signature</h5>
                             <p className="font-mono text-foreground break-all">
                               {String(reportData.signature).slice(0, 64)}...
                             </p>
+                            {signatureVerification && (
+                              <div
+                                className={`rounded-md border px-2 py-1.5 text-[11px] ${
+                                  signatureVerification.valid === false
+                                    ? 'border-red-500/20 bg-red-500/10 text-red-300'
+                                    : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
+                                }`}
+                              >
+                                <p className="font-medium">
+                                  {signatureVerification.valid === true
+                                    ? 'Signature verified'
+                                    : signatureVerification.valid === false
+                                      ? 'Signature verification failed'
+                                      : 'Structural verification complete'}
+                                </p>
+                                {signatureVerification.reason && (
+                                  <p className="mt-1 text-[10px] opacity-90">{signatureVerification.reason}</p>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

@@ -95,7 +95,7 @@ function saveModelId(modelId: string): void {
 // Hook
 // ---------------------------------------------------------------------------
 
-export function useSensei(activeModule: NavId) {
+export function useSensei(activeModule: NavId, onNavigate?: (module: NavId) => void) {
   const [messages, setMessages] = useState<readonly SenseiMessage[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -146,6 +146,7 @@ export function useSensei(activeModule: NavId) {
   const clearHistory = useCallback(() => {
     setMessages([])
     setPendingConfirmations([])
+    handledNavigationIds.current.clear()
     if (typeof window !== 'undefined') {
       try { localStorage.removeItem(STORAGE_KEY_MESSAGES) } catch { /* ignore */ }
     }
@@ -271,6 +272,39 @@ export function useSensei(activeModule: NavId) {
   }, [])
 
   const clearError = useCallback(() => setError(null), [])
+
+  // Process navigate_to tool results — dispatch navigation when detected
+  const onNavigateRef = useRef(onNavigate)
+  useEffect(() => { onNavigateRef.current = onNavigate }, [onNavigate])
+
+  const VALID_NAV_IDS = useRef(new Set([
+    'dashboard', 'scanner', 'armory', 'llm', 'guard', 'compliance',
+    'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
+  ]))
+  const handledNavigationIds = useRef(new Set<string>())
+
+  useEffect(() => {
+    if (messages.length === 0) return
+    const lastMsg = messages[messages.length - 1]
+    if (lastMsg.role !== 'assistant' || !lastMsg.toolResults) return
+
+    for (const result of lastMsg.toolResults) {
+      if (
+        result.tool === 'navigate_to' &&
+        result.success &&
+        !handledNavigationIds.current.has(result.toolCallId) &&
+        typeof result.data === 'object' &&
+        result.data !== null &&
+        (result.data as Record<string, unknown>).action === 'navigate'
+      ) {
+        const module = (result.data as Record<string, unknown>).module
+        if (typeof module === 'string' && VALID_NAV_IDS.current.has(module)) {
+          handledNavigationIds.current.add(result.toolCallId)
+          onNavigateRef.current?.(module as NavId)
+        }
+      }
+    }
+  }, [messages])
 
   return {
     messages,

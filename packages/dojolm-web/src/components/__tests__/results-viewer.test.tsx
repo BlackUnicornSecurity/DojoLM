@@ -132,6 +132,19 @@ function setupDefaultMocks() {
         json: () => Promise.resolve(MOCK_REPORT),
       })
     }
+    if (url.includes('/verify')) {
+      return Promise.resolve({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            valid: null,
+            structural_valid: true,
+            reason: 'Structural validation passed. Signature NOT cryptographically verified.',
+            report_id: MOCK_REPORT.report_id,
+            run_id: MOCK_REPORT.run_id,
+          }),
+      })
+    }
     if (url.includes('/export/')) {
       return Promise.resolve({
         ok: true,
@@ -442,7 +455,97 @@ describe('ValidationManager — Traceability Viewer (K6.6)', () => {
     })
 
     await waitFor(() => {
-      expect(screen.getByText(/abcdef0123456789/)).toBeInTheDocument()
+      expect(screen.getAllByText(/abcdef0123456789/).length).toBeGreaterThan(0)
+    })
+  })
+
+  it('VR-015A: exposes signature verification in the main results workspace', async () => {
+    setupDefaultMocks()
+    const { ValidationManager } = await import('@/components/admin/ValidationManager')
+    render(<ValidationManager />)
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole('button', { name: /view results/i }))
+    })
+
+    await waitFor(() => {
+      expect(screen.getByTestId('signature-verification-panel')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /verify signature/i })).toBeInTheDocument()
+    })
+  })
+
+  it('VR-015B: verifies the signature from the main results workspace', async () => {
+    setupDefaultMocks()
+    const { ValidationManager } = await import('@/components/admin/ValidationManager')
+    render(<ValidationManager />)
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole('button', { name: /view results/i }))
+    })
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /verify signature/i })).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /verify signature/i }))
+
+    await waitFor(() => {
+      expect(mockFetchWithAuth).toHaveBeenCalledWith(
+        '/api/admin/validation/verify',
+        expect.objectContaining({
+          method: 'POST',
+          body: expect.stringContaining('"report_id":"rpt-001"'),
+        }),
+      )
+      expect(screen.getByRole('status', { name: /signature verification result/i })).toBeInTheDocument()
+      expect(screen.getByText(/structural verification complete/i)).toBeInTheDocument()
+    })
+  })
+
+  it('VR-015C: shows verify errors in the main results workspace', async () => {
+    mockFetchWithAuth.mockImplementation((url: string) => {
+      if (url.includes('/runs')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ runs: MOCK_RUNS, total: 1, page: 1, limit: 10 }),
+        })
+      }
+      if (url.includes('/modules')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ modules: MOCK_MODULES }),
+        })
+      }
+      if (url.includes('/report/')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(MOCK_REPORT),
+        })
+      }
+      if (url.includes('/verify')) {
+        return Promise.resolve({
+          ok: false,
+          json: () => Promise.resolve({ error: 'Verification service unavailable' }),
+        })
+      }
+      return Promise.resolve({ ok: false, json: () => Promise.resolve({ error: 'Not found' }) })
+    })
+
+    const { ValidationManager } = await import('@/components/admin/ValidationManager')
+    render(<ValidationManager />)
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByRole('button', { name: /view results/i }))
+    })
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /verify signature/i })).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /verify signature/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/verification service unavailable/i)).toBeInTheDocument()
     })
   })
 })

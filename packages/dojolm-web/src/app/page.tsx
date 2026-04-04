@@ -16,7 +16,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ScannerInput } from '@/components/scanner'
-import { FindingsList } from '@/components/scanner'
+import { ScannerInsightsPanel } from '@/components/scanner'
 import { FixtureDetail, FixtureComparison, FixtureExplorer } from '@/components/fixtures'
 import type { ComparisonItem } from '@/components/fixtures/FixtureComparison'
 import { PayloadCard } from '@/components/payloads'
@@ -365,7 +365,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
           <ScannerInput onScan={onScan} onClear={onClear} isScanning={isScanning} allEnginesDisabled={allEnginesDisabled} />
         </div>
         <div className="blundesi-context xl:sticky xl:top-4 self-start">
-          <FindingsList result={scanResult} />
+          <ScannerInsightsPanel result={scanResult} />
         </div>
       </div>
     </div>
@@ -582,8 +582,8 @@ function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
 
 /** Connected SenseiDrawer — reads activeTab from NavigationContext (SH8.1) */
 function ConnectedSenseiDrawer() {
-  const { activeTab } = useNavigation()
-  return <SenseiDrawer activeModule={activeTab} />
+  const { activeTab, setActiveTab } = useNavigation()
+  return <SenseiDrawer activeModule={activeTab} onNavigate={setActiveTab} />
 }
 
 /** Screen reader announcer for module navigation changes (Story 5.3) */

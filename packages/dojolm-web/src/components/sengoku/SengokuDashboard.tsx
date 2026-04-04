@@ -12,7 +12,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   Swords, Plus, Play, Pause, RefreshCw, FileText,
   AlertTriangle, CheckCircle2, Clock, XCircle, ChevronRight, Timer, Loader2,
@@ -27,9 +27,24 @@ import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { cn, formatDate } from '@/lib/utils'
 import { TemporalTab } from './TemporalTab'
 import { SengokuCampaignBuilder } from './SengokuCampaignBuilder'
-import type { Campaign, CampaignStatus } from '@/lib/sengoku-types'
+import { CampaignGraphBuilder } from './CampaignGraphBuilder'
+import { OrchestratorBuilder, type OrchestratorLaunchResult } from './OrchestratorBuilder'
+import { OrchestratorVisualization, type OrchestratorState, type OrchestratorTurn } from './OrchestratorVisualization'
+import { getToolByName } from '@/lib/sensei/tool-definitions'
+import type { Campaign, CampaignStatus, GraphSkillNode } from '@/lib/sengoku-types'
 
-type SengokuTab = 'campaigns' | 'temporal'
+type SengokuTab = 'campaigns' | 'temporal' | 'workbench'
+
+interface DashboardModel {
+  readonly id: string
+  readonly name: string
+}
+
+const SENSEI_TOOL_NAMES = ['run_orchestrator', 'sensei_plan', 'list_campaigns', 'create_campaign'] as const
+
+function isDefined<T>(value: T | null | undefined): value is T {
+  return value != null
+}
 
 /** UI display shape — extends Campaign with computed display fields */
 interface CampaignDisplay {
@@ -94,9 +109,20 @@ export function SengokuDashboard() {
   const [showBuilder, setShowBuilder] = useState(false)
   const [runProgress, setRunProgress] = useState<RunProgress | null>(null)
   const [runLoading, setRunLoading] = useState<string | null>(null)
+  const [availableModels, setAvailableModels] = useState<readonly DashboardModel[]>([])
+  const [modelsLoading, setModelsLoading] = useState(false)
+  const [graphNodes, setGraphNodes] = useState<readonly GraphSkillNode[]>([])
+  const [latestLaunch, setLatestLaunch] = useState<OrchestratorLaunchResult | null>(null)
+  const [orchestratorState, setOrchestratorState] = useState<OrchestratorState | null>(null)
+  const [orchestratorTurns, setOrchestratorTurns] = useState<readonly OrchestratorTurn[]>([])
+  const [selectedTurnIndex, setSelectedTurnIndex] = useState<number | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const selected = campaigns.find((c) => c.id === selectedId)
+  const senseiTools = useMemo(
+    () => SENSEI_TOOL_NAMES.map((name) => getToolByName(name)).filter(isDefined),
+    [],
+  )
 
   // -----------------------------------------------------------------------
   // Fetch campaigns
@@ -139,6 +165,39 @@ export function SengokuDashboard() {
   useEffect(() => {
     fetchCampaigns()
   }, [fetchCampaigns])
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (activeTab !== 'workbench' || availableModels.length > 0) {
+      return () => {
+        cancelled = true
+      }
+    }
+
+    setModelsLoading(true)
+    fetchWithAuth('/api/llm/models?enabled=true')
+      .then((res) => res.json())
+      .then((data: DashboardModel[] | { models?: DashboardModel[] }) => {
+        if (cancelled) return
+        const models = Array.isArray(data) ? data : (data.models ?? [])
+        setAvailableModels(models.map((model) => ({ id: model.id, name: model.name })))
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAvailableModels([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setModelsLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [activeTab, availableModels.length])
 
   // -----------------------------------------------------------------------
   // Run Now handler
@@ -215,6 +274,37 @@ export function SengokuDashboard() {
     fetchCampaigns()
   }, [fetchCampaigns])
 
+  const handleOrchestratorLaunch = useCallback((launch: OrchestratorLaunchResult) => {
+    const shouldBranch = launch.type === 'tap' || launch.type === 'mad-max' || launch.type === 'sensei-adaptive'
+    const branchCount = shouldBranch
+      ? Math.max(launch.config.maxBranches ?? graphNodes.length, 1)
+      : 1
+
+    setLatestLaunch(launch)
+    setSelectedTurnIndex(null)
+    setOrchestratorTurns([])
+    setOrchestratorState({
+      configType: launch.type,
+      status: 'running',
+      currentTurn: 0,
+      totalTurns: launch.config.maxTurns ?? 20,
+      branches: Array.from({ length: branchCount }, (_value, index) => ({
+        id: graphNodes[index]?.skillId ?? (index === 0 ? 'main' : `branch-${index + 1}`),
+        parentId: index === 0 ? null : 'main',
+        depth: index === 0 ? 0 : 1,
+        turns: [],
+        currentScore: 0,
+        pruned: false,
+        prunedReason: null,
+      })),
+      bestScore: 0,
+      bestTurnIndex: null,
+      totalTokensUsed: 0,
+      totalCostUsd: 0,
+      startedAt: new Date().toISOString(),
+    })
+  }, [graphNodes])
+
   const TEMPORAL_PLAN_COUNT = 20
 
   return (
@@ -276,12 +366,16 @@ export function SengokuDashboard() {
 
       {/* Tab System */}
       <Tabs value={activeTab} onValueChange={(v) => {
-        if (v === 'campaigns' || v === 'temporal') setActiveTab(v)
+        if (v === 'campaigns' || v === 'temporal' || v === 'workbench') setActiveTab(v)
       }} className="space-y-4">
         <TabsList className="flex w-full h-auto gap-1 bg-muted/50 p-1 rounded-full overflow-x-auto scrollbar-hide">
           <TabsTrigger value="campaigns" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Swords className="h-4 w-4" />
             <span className="hidden sm:inline">Campaigns</span>
+          </TabsTrigger>
+          <TabsTrigger value="workbench" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
+            <Play className="h-4 w-4" />
+            <span className="hidden sm:inline">Workbench</span>
           </TabsTrigger>
           <TabsTrigger value="temporal" className="gap-2 min-h-[44px] flex-shrink-0 px-3">
             <Timer className="h-4 w-4" />
@@ -455,6 +549,104 @@ export function SengokuDashboard() {
               </div>
             </GlowCard>
           )}
+        </TabsContent>
+
+        <TabsContent value="workbench" className="space-y-4">
+          <GlowCard glow="subtle" className="p-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="space-y-1">
+                <h3 className="text-base font-semibold">Orchestrator Workbench</h3>
+                <p className="text-sm text-muted-foreground">
+                  Launch multi-model attack runs, shape campaign flows visually, and keep Sengoku&apos;s advanced Sensei tools within reach.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full bg-[var(--bg-tertiary)] px-3 py-1 text-xs font-medium">
+                  {availableModels.length} models ready
+                </span>
+                <span className="rounded-full bg-[var(--bg-tertiary)] px-3 py-1 text-xs font-medium">
+                  {graphNodes.length} graph nodes
+                </span>
+                {latestLaunch && (
+                  <span className="rounded-full bg-[var(--bu-electric)]/10 px-3 py-1 text-xs font-medium text-[var(--bu-electric)]">
+                    Latest launch: {latestLaunch.type}
+                  </span>
+                )}
+              </div>
+            </div>
+          </GlowCard>
+
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+            <div className="space-y-4">
+              <GlowCard glow="subtle" className="p-4 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-sm font-semibold">Launch Orchestrator</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Use PAIR, Crescendo, TAP, MAD-MAX, or Sensei Adaptive directly from Sengoku.
+                    </p>
+                  </div>
+                  {modelsLoading && (
+                    <span className="text-xs text-muted-foreground">Loading models...</span>
+                  )}
+                </div>
+
+                {availableModels.length === 0 && !modelsLoading && (
+                  <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    Enable at least one dashboard model in the LLM module to activate orchestrated launches.
+                  </div>
+                )}
+
+                <OrchestratorBuilder
+                  availableModels={availableModels}
+                  onLaunch={handleOrchestratorLaunch}
+                  isRunning={orchestratorState?.status === 'running'}
+                />
+              </GlowCard>
+
+              <CampaignGraphBuilder initialNodes={graphNodes} onChange={setGraphNodes} />
+            </div>
+
+            <div className="space-y-4">
+              <GlowCard glow="subtle" className="p-4">
+                <h4 className="text-sm font-semibold">Sensei Advanced Tools</h4>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  These assistant tools are now aligned with Sengoku&apos;s visible workbench.
+                </p>
+                <div className="mt-3 space-y-2">
+                  {senseiTools.map((tool) => (
+                    <div key={tool.name} className="rounded-lg border bg-[var(--bg-tertiary)] p-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <code className="text-xs font-semibold">{tool.name}</code>
+                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{tool.method}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">{tool.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </GlowCard>
+
+              {latestLaunch && (
+                <GlowCard glow="subtle" className="p-4">
+                  <h4 className="text-sm font-semibold">Latest Launch</h4>
+                  <p className="mt-1 text-sm text-muted-foreground">{latestLaunch.message}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                    <div><span className="text-muted-foreground">Run ID:</span> <span className="font-mono text-xs break-all">{latestLaunch.runId}</span></div>
+                    <div><span className="text-muted-foreground">Type:</span> {latestLaunch.type}</div>
+                    <div><span className="text-muted-foreground">Attacker:</span> <span className="font-mono text-xs">{latestLaunch.config.attackerModelId}</span></div>
+                    <div><span className="text-muted-foreground">Judge:</span> <span className="font-mono text-xs">{latestLaunch.config.judgeModelId}</span></div>
+                  </div>
+                </GlowCard>
+              )}
+
+              <OrchestratorVisualization
+                state={orchestratorState}
+                allTurns={orchestratorTurns}
+                selectedTurnIndex={selectedTurnIndex}
+                onSelectTurn={setSelectedTurnIndex}
+              />
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="temporal" className="space-y-4">

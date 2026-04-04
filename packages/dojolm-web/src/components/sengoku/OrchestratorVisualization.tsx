@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 // Types (mirror bu-tpi orchestrator types for display)
 // ---------------------------------------------------------------------------
 
-interface OrchestratorTurn {
+export interface OrchestratorTurn {
   readonly index: number
   readonly attackPrompt: string
   readonly targetResponse: string
@@ -46,7 +46,7 @@ interface BranchState {
 
 type OrchestratorStatus = 'running' | 'succeeded' | 'failed' | 'timeout' | 'budget-exceeded'
 
-interface OrchestratorState {
+export interface OrchestratorState {
   readonly configType: string
   readonly status: OrchestratorStatus
   readonly currentTurn: number

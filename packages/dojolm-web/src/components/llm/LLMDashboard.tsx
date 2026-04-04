@@ -17,17 +17,114 @@ import { Leaderboard } from './Leaderboard';
 import { ComparisonView } from './ComparisonView';
 import { CustomProviderBuilder } from './CustomProviderBuilder';
 import { ReportGenerator } from './ReportGenerator';
-import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, ScrollText } from 'lucide-react';
+import { BenchmarkPanel } from './BenchmarkPanel';
+import { TransferMatrixPanel } from './TransferMatrixPanel';
+import { TestExporter } from './TestExporter';
+import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider, useExecutionContext } from '@/lib/contexts';
+import type { LLMBatchExecution, LLMTestExecution } from '@/lib/llm-types';
+import { Brain, Play, BarChart3, Trophy, GitCompare, Wrench, ScrollText, FlaskConical, Download } from 'lucide-react';
 import { GuardBadge } from '@/components/guard';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConsolidatedReportButton } from '@/components/reports/ConsolidatedReportButton';
 import { JutsuTab } from './JutsuTab';
 
-type DashboardTab = 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'custom' | 'jutsu';
+type DashboardTab = 'models' | 'tests' | 'results' | 'leaderboard' | 'compare' | 'analytics' | 'custom' | 'jutsu';
 
 export interface LLMDashboardProps {
   /** Optional initial tab to display */
   initialTab?: DashboardTab;
+}
+
+function AnalyticsWorkspace() {
+  const { activeBatchId, getBatch, getBatchExecutions } = useExecutionContext();
+  const [batch, setBatch] = useState<LLMBatchExecution | null>(null);
+  const [executions, setExecutions] = useState<LLMTestExecution[]>([]);
+  const [isLoadingBatch, setIsLoadingBatch] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!activeBatchId) {
+      setBatch(null);
+      setExecutions([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setIsLoadingBatch(true);
+
+    void Promise.all([
+      getBatch(activeBatchId),
+      getBatchExecutions(activeBatchId),
+    ]).then(([nextBatch, nextExecutions]) => {
+      if (cancelled) return;
+      setBatch(nextBatch);
+      setExecutions(nextExecutions);
+    }).catch(() => {
+      if (cancelled) return;
+      setBatch(null);
+      setExecutions([]);
+    }).finally(() => {
+      if (!cancelled) {
+        setIsLoadingBatch(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeBatchId, getBatch, getBatchExecutions]);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 xl:grid-cols-2">
+        <BenchmarkPanel />
+        <TransferMatrixPanel />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Cross-Module Reporting
+            </CardTitle>
+            <CardDescription>
+              Generate an executive report that combines LLM, compliance, guard, evidence, and Shingan data.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              Use the consolidated report when you need a broader platform narrative than the standard batch export.
+            </p>
+            <ConsolidatedReportButton />
+          </CardContent>
+        </Card>
+
+        {batch ? (
+          <TestExporter batch={batch} executions={executions} />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Batch Export</CardTitle>
+              <CardDescription>
+                Export the currently active LLM test batch in JSON, PDF, or Markdown.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                {isLoadingBatch
+                  ? 'Loading the active batch export surface...'
+                  : 'Run or reconnect to a batch from the Tests tab to unlock the richer export panel.'}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -67,7 +164,7 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
 
   const validTabs: readonly DashboardTab[] = [
     'models', 'tests', 'results',
-    'leaderboard', 'compare', 'custom', 'jutsu',
+    'leaderboard', 'compare', 'analytics', 'custom', 'jutsu',
   ];
 
   return (
@@ -79,6 +176,7 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
         icon={Brain}
         actions={
           <>
+            <ConsolidatedReportButton />
             <ReportGenerator compact />
             <GuardBadge />
           </>
@@ -110,6 +208,10 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
             <GitCompare className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Compare</span>
           </TabsTrigger>
+          <TabsTrigger value="analytics" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Analytics">
+            <FlaskConical className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Analytics</span>
+          </TabsTrigger>
           <TabsTrigger value="custom" className="gap-2 min-h-[44px] flex-shrink-0 px-3" aria-label="Custom Models">
             <Wrench className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Custom Models</span>
@@ -138,6 +240,10 @@ export function LLMDashboard({ initialTab = 'models' }: LLMDashboardProps) {
 
         <TabsContent value="compare" className="space-y-4">
           <ComparisonView />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <AnalyticsWorkspace />
         </TabsContent>
 
         <TabsContent value="custom" className="space-y-4">

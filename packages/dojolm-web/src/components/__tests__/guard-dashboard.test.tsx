@@ -27,6 +27,73 @@ vi.mock('../guard/GuardAuditLog', () => ({
   GuardAuditLog: () => <div data-testid="guard-audit-log">GuardAuditLog</div>,
 }));
 
+vi.mock('../guard/SystemPromptHardener', () => ({
+  SystemPromptHardener: () => <div data-testid="system-prompt-hardener">SystemPromptHardener</div>,
+}));
+
+vi.mock('../guard/ForgeDefensePanel', () => ({
+  ForgeDefensePanel: () => <div data-testid="forge-defense-panel">ForgeDefensePanel</div>,
+}));
+
+vi.mock('@/components/ui/tabs', async () => {
+  const React = await vi.importActual<typeof import('react')>('react');
+  const TabsContext = React.createContext<{
+    value: string;
+    onValueChange?: (value: string) => void;
+  }>({ value: '' });
+
+  return {
+    Tabs: ({
+      children,
+      value,
+      onValueChange,
+    }: {
+      children: React.ReactNode;
+      value: string;
+      onValueChange?: (value: string) => void;
+    }) => (
+      <TabsContext.Provider value={{ value, onValueChange }}>
+        <div data-testid="tabs">{children}</div>
+      </TabsContext.Provider>
+    ),
+    TabsList: ({ children, 'aria-label': ariaLabel }: { children: React.ReactNode; 'aria-label'?: string }) => (
+      <div role="tablist" aria-label={ariaLabel}>{children}</div>
+    ),
+    TabsTrigger: ({
+      children,
+      value,
+      className,
+    }: {
+      children: React.ReactNode;
+      value: string;
+      className?: string;
+    }) => {
+      const ctx = React.useContext(TabsContext);
+      return (
+        <button
+          role="tab"
+          data-value={value}
+          aria-selected={ctx.value === value}
+          className={className}
+          onClick={() => ctx.onValueChange?.(value)}
+        >
+          {children}
+        </button>
+      );
+    },
+    TabsContent: ({
+      children,
+      value,
+    }: {
+      children: React.ReactNode;
+      value: string;
+    }) => {
+      const ctx = React.useContext(TabsContext);
+      return ctx.value === value ? <div>{children}</div> : null;
+    },
+  };
+});
+
 vi.mock('@/components/ui/MetricCard', () => ({
   MetricCard: ({ label, value }: { label: string; value: string | number }) => (
     <div data-testid={`metric-${label.toLowerCase().replace(/\s/g, '-')}`}>
@@ -119,6 +186,32 @@ describe('GuardDashboard', () => {
     expect(screen.getByTestId('guard-audit-log')).toBeInTheDocument();
     expect(screen.getByText('Guard Mode')).toBeInTheDocument();
     expect(screen.getByText('Audit Log')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Hardening' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Defense Templates' })).toBeInTheDocument();
+  });
+
+  it('GRD-001A: reveals the hardening panel when the Hardening tab is selected', async () => {
+    setupSuccessfulFetch({ enabled: true, mode: 'shinobi' });
+    render(<GuardDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Hardening' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Hardening' }));
+    expect(screen.getByTestId('system-prompt-hardener')).toBeInTheDocument();
+  });
+
+  it('GRD-001B: reveals defense templates when the Defense Templates tab is selected', async () => {
+    setupSuccessfulFetch({ enabled: true, mode: 'shinobi' });
+    render(<GuardDashboard />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Defense Templates' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Defense Templates' }));
+    expect(screen.getByTestId('forge-defense-panel')).toBeInTheDocument();
   });
 
   // GRD-002: Shinobi mode renders

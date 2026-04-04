@@ -1,6 +1,6 @@
 /**
  * Sensei — Tool Registry & Definitions
- * SH2.1: All 16 platform tools the assistant can invoke.
+ * SH2.1: All 33 platform tools the assistant can invoke.
  * SH2.2: Tool description generators for system prompt injection.
  */
 
@@ -437,12 +437,12 @@ const GENERATE_ATTACK: SenseiToolDefinition = {
   parameters: {
     type: 'object',
     properties: {
-      category: { type: 'string', description: 'Attack category (e.g. "prompt-injection", "jailbreak", "rag-injection").' },
-      count: { type: 'number', description: 'Number of attack variants to generate (1-50).' },
-      severity: { type: 'string', description: 'Target severity: "INFO", "WARNING", or "CRITICAL".' },
+      category: { type: 'string', enum: ['prompt-injection', 'jailbreak', 'data-extraction', 'hallucination', 'toxicity', 'bias', 'pii-leak', 'system-prompt-leak'], description: 'Attack category.' },
+      count: { type: 'number', description: 'Number of attack variants to generate (1-100).' },
+      severity: { type: 'string', enum: ['INFO', 'WARNING', 'CRITICAL'], description: 'Target severity.' },
       context: { type: 'string', description: 'Optional context about the target system.' },
     },
-    required: ['category'],
+    required: ['category', 'count'],
   },
   endpoint: '/api/sensei/generate',
   method: 'POST',
@@ -476,12 +476,16 @@ const RUN_ORCHESTRATOR: SenseiToolDefinition = {
   parameters: {
     type: 'object',
     properties: {
-      type: { type: 'string', description: 'Orchestrator type: "pair", "crescendo", "tap", "mad-max", or "sensei-adaptive".' },
+      type: { type: 'string', enum: ['pair', 'crescendo', 'tap', 'mad-max', 'sensei-adaptive'], description: 'Orchestrator type.' },
       targetModelId: { type: 'string', description: 'ID of the target model to attack.' },
+      attackerModelId: { type: 'string', description: 'ID of the attacking model that generates adversarial prompts.' },
+      judgeModelId: { type: 'string', description: 'ID of the judge model that evaluates attack success.' },
       objective: { type: 'string', description: 'Attack objective (what you want the model to do).' },
-      maxTurns: { type: 'number', description: 'Maximum conversation turns (default: 20).' },
+      category: { type: 'string', description: 'Optional attack category for context.' },
+      maxTurns: { type: 'number', description: 'Maximum conversation turns (1-100, default: 20).' },
+      maxBranches: { type: 'number', description: 'Maximum parallel branches (1-50, TAP/MAD-MAX only).' },
     },
-    required: ['type', 'targetModelId', 'objective'],
+    required: ['type', 'targetModelId', 'attackerModelId', 'judgeModelId', 'objective'],
   },
   endpoint: '/api/orchestrator/run',
   method: 'POST',
@@ -496,12 +500,21 @@ const RUN_AGENTIC_TEST: SenseiToolDefinition = {
   parameters: {
     type: 'object',
     properties: {
-      architecture: { type: 'string', description: 'Tool architecture: "openai-functions", "langchain-tools", "mcp-tools", etc.' },
-      categories: { type: 'string', description: 'Comma-separated tool categories to test (e.g. "filesystem,email,database").' },
-      difficulty: { type: 'string', description: 'Difficulty level: "easy", "medium", or "hard".' },
+      architecture: {
+        type: 'string',
+        enum: ['single-agent', 'multi-agent', 'hierarchical', 'debate', 'openai-functions', 'langchain-tools', 'code-interpreter', 'react-agent', 'mcp-tools', 'custom-schema'],
+        description: 'Agent architecture or tool wiring pattern to test.',
+      },
+      categories: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Attack or tool categories to test (e.g. ["prompt-injection", "filesystem"]).',
+      },
+      difficulty: { type: 'string', enum: ['easy', 'medium', 'hard', 'expert'], description: 'Difficulty level.' },
+      objective: { type: 'string', description: 'Attack objective describing the test goal.' },
       targetModelId: { type: 'string', description: 'ID of the agent model to test.' },
     },
-    required: ['architecture', 'targetModelId'],
+    required: ['architecture', 'categories', 'difficulty', 'objective', 'targetModelId'],
   },
   endpoint: '/api/agentic',
   method: 'POST',
@@ -512,21 +525,20 @@ const RUN_AGENTIC_TEST: SenseiToolDefinition = {
 
 const RUN_RAG_PIPELINE_TEST: SenseiToolDefinition = {
   name: 'run_rag_pipeline_test',
-  description: 'Test a RAG pipeline for poisoning vulnerabilities. Simulates embedding, retrieval, and context assembly attacks.',
+  description: 'Scan adversarial RAG-style payloads (boundary injection, retrieval poisoning) using the Haiku Scanner engine.',
   parameters: {
     type: 'object',
     properties: {
-      attackVector: { type: 'string', description: 'RAG attack vector: "boundary-injection", "embedding-manipulation", "retrieval-poisoning", etc.' },
-      documents: { type: 'number', description: 'Number of test documents to inject (default: 5).' },
-      topK: { type: 'number', description: 'Retrieval top-K setting (default: 5).' },
+      text: { type: 'string', description: 'RAG poisoning payload to scan (e.g. boundary injection, retrieval poisoning content).' },
+      engines: { type: 'array', items: { type: 'string' }, description: 'Optional list of scanner engines to use.' },
     },
-    required: ['attackVector'],
+    required: ['text'],
   },
-  endpoint: '/api/v1/scan',
+  endpoint: '/api/scan',
   method: 'POST',
-  mutating: true,
-  requiresConfirmation: true,
-  minRole: 'admin',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'user',
 };
 
 const PREDICT_VARIANTS: SenseiToolDefinition = {
@@ -548,7 +560,225 @@ const PREDICT_VARIANTS: SenseiToolDefinition = {
 };
 
 // ---------------------------------------------------------------------------
-// Registry — All 22 Tools
+// Arena Tools (Battle Arena / The Kumite)
+// ---------------------------------------------------------------------------
+
+const CREATE_ARENA_MATCH: SenseiToolDefinition = {
+  name: 'create_arena_match',
+  description: 'Launch an arena battle between two LLM models. Supports CTF, KOTH, and RvB game modes with multiple attack strategies.',
+  parameters: {
+    type: 'object',
+    properties: {
+      gameMode: { type: 'string', enum: ['CTF', 'KOTH', 'RvB'], description: 'Game mode: CTF (Capture the Flag), KOTH (King of the Hill), or RvB (Red vs Blue).' },
+      attackMode: { type: 'string', enum: ['kunai', 'shuriken', 'naginata', 'musashi'], description: 'Attack strategy: kunai (templates), shuriken (SAGE mutations), naginata (mixed), musashi (all sources).' },
+      fighters: { type: 'array', items: { type: 'object', properties: { modelId: { type: 'string' }, modelName: { type: 'string' }, provider: { type: 'string' } }, required: ['modelId'] }, description: 'Array of fighter objects. Each must have modelId (required), modelName, and provider. Minimum 2 fighters.' },
+      maxRounds: { type: 'number', description: 'Maximum rounds (1-100).' },
+      victoryPoints: { type: 'number', description: 'Victory point target (10-1000).' },
+    },
+    required: ['gameMode', 'attackMode', 'fighters'],
+  },
+  endpoint: '/api/arena',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'user',
+};
+
+const LIST_ARENA_MATCHES: SenseiToolDefinition = {
+  name: 'list_arena_matches',
+  description: 'List arena matches with optional filtering by status (pending, running, completed, aborted).',
+  parameters: {
+    type: 'object',
+    properties: {
+      status: { type: 'string', enum: ['pending', 'running', 'completed', 'aborted'], description: 'Filter by match status.' },
+      limit: { type: 'number', description: 'Max results to return (1-100, default 25).' },
+    },
+  },
+  endpoint: '/api/arena',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+const GET_WARRIORS: SenseiToolDefinition = {
+  name: 'get_warriors',
+  description: 'Get the arena warrior leaderboard showing all fighters ranked by win rate, scores, and match history.',
+  parameters: {
+    type: 'object',
+    properties: {},
+  },
+  endpoint: '/api/arena/warriors',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+// ---------------------------------------------------------------------------
+// AttackDNA / Amaterasu Tools
+// ---------------------------------------------------------------------------
+
+const QUERY_DNA: SenseiToolDefinition = {
+  name: 'query_dna',
+  description: 'Query the Amaterasu DNA graph for attack nodes, families, clusters, timeline, or aggregated stats.',
+  parameters: {
+    type: 'object',
+    properties: {
+      type: { type: 'string', enum: ['nodes', 'families', 'clusters', 'timeline', 'stats'], description: 'Query type (default: nodes).' },
+      sourceTier: { type: 'string', description: 'Filter by data tier (e.g. "dojo-local", "master").' },
+      category: { type: 'string', description: 'Filter by attack category.' },
+      severity: { type: 'string', enum: ['INFO', 'WARNING', 'CRITICAL'], description: 'Filter by severity.' },
+      search: { type: 'string', description: 'Text search across node content.' },
+      limit: { type: 'number', description: 'Max results (1-500, default 25).' },
+    },
+  },
+  endpoint: '/api/attackdna/query',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+const ANALYZE_DNA: SenseiToolDefinition = {
+  name: 'analyze_dna',
+  description: 'Run black-box ablation analysis on an attack payload. Decomposes the attack into components and identifies critical elements.',
+  parameters: {
+    type: 'object',
+    properties: {
+      payload: { type: 'string', description: 'Attack payload to analyze (max 10,000 chars).' },
+      modelId: { type: 'string', description: 'Target model ID for ablation testing.' },
+    },
+    required: ['payload', 'modelId'],
+  },
+  endpoint: '/api/attackdna/analyze',
+  method: 'POST',
+  mutating: false,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+// ---------------------------------------------------------------------------
+// Sengoku Campaign Tools
+// ---------------------------------------------------------------------------
+
+const LIST_CAMPAIGNS: SenseiToolDefinition = {
+  name: 'list_campaigns',
+  description: 'List all Sengoku red-teaming campaigns with their status and configuration.',
+  parameters: {
+    type: 'object',
+    properties: {},
+  },
+  endpoint: '/api/sengoku/campaigns',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+const CREATE_CAMPAIGN: SenseiToolDefinition = {
+  name: 'create_campaign',
+  description: 'Create a new Sengoku red-teaming campaign targeting an LLM endpoint with selected attack skills.',
+  parameters: {
+    type: 'object',
+    properties: {
+      name: { type: 'string', description: 'Campaign name (1-200 chars, alphanumeric/dash/space).' },
+      targetUrl: { type: 'string', description: 'Target LLM endpoint URL.' },
+      selectedSkillIds: { type: 'array', items: { type: 'string' }, description: 'Array of attack skill IDs to use (1-100 skills).' },
+      targetSource: { type: 'string', enum: ['external', 'local', 'dashboard'], description: 'Target source type (default: external).' },
+      targetModelId: { type: 'string', description: 'Model ID when targetSource is "dashboard".' },
+    },
+    required: ['name', 'targetUrl', 'selectedSkillIds'],
+  },
+  endpoint: '/api/sengoku/campaigns',
+  method: 'POST',
+  mutating: true,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+// ---------------------------------------------------------------------------
+// Miscellaneous Missing Tools
+// ---------------------------------------------------------------------------
+
+const SENSEI_PLAN: SenseiToolDefinition = {
+  name: 'sensei_plan',
+  description: 'Generate a multi-turn adversarial attack conversation plan with step-by-step strategy.',
+  parameters: {
+    type: 'object',
+    properties: {
+      attackType: { type: 'string', description: 'Type of attack (e.g. "prompt-injection", "jailbreak").' },
+      targetDescription: { type: 'string', description: 'Description of the target system to attack.' },
+      maxTurns: { type: 'number', description: 'Maximum conversation turns in the plan (1-50).' },
+      context: { type: 'string', description: 'Optional additional context about the target.' },
+    },
+    required: ['attackType', 'targetDescription', 'maxTurns'],
+  },
+  endpoint: '/api/sensei/plan',
+  method: 'POST',
+  mutating: false,
+  requiresConfirmation: true,
+  minRole: 'admin',
+};
+
+const GET_ECOSYSTEM_FINDINGS: SenseiToolDefinition = {
+  name: 'get_ecosystem_findings',
+  description: 'Query cross-module ecosystem findings (threats, vulnerabilities, attack variants) or get aggregated stats.',
+  parameters: {
+    type: 'object',
+    properties: {
+      mode: { type: 'string', enum: ['query', 'stats'], description: 'Query mode: "query" for findings, "stats" for aggregated statistics.' },
+      sourceModule: { type: 'string', enum: ['scanner', 'atemi', 'sage', 'arena', 'mitsuke', 'attackdna', 'ronin', 'jutsu', 'guard'], description: 'Filter by source module.' },
+      severity: { type: 'string', enum: ['CRITICAL', 'WARNING', 'INFO'], description: 'Filter by severity.' },
+      search: { type: 'string', description: 'Text search across findings.' },
+      limit: { type: 'number', description: 'Max results (default 50).' },
+    },
+  },
+  endpoint: '/api/ecosystem/findings',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+const GET_GUARD_AUDIT: SenseiToolDefinition = {
+  name: 'get_guard_audit',
+  description: 'Query Hattori Guard audit events with optional filtering by mode, direction, action, and date range.',
+  parameters: {
+    type: 'object',
+    properties: {
+      mode: { type: 'string', enum: ['shinobi', 'samurai', 'sensei', 'hattori'], description: 'Filter by guard mode.' },
+      direction: { type: 'string', enum: ['input', 'output'], description: 'Filter by scan direction.' },
+      action: { type: 'string', enum: ['allow', 'block', 'log'], description: 'Filter by guard action taken.' },
+      limit: { type: 'number', description: 'Max results (1-100, default 25).' },
+    },
+  },
+  endpoint: '/api/llm/guard/audit',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+const GET_LEADERBOARD: SenseiToolDefinition = {
+  name: 'get_leaderboard',
+  description: 'Get the model resilience leaderboard — models ranked by average security test scores, injection rates, and category breakdowns.',
+  parameters: {
+    type: 'object',
+    properties: {
+      limit: { type: 'number', description: 'Max models to return (1-100, default 20).' },
+      category: { type: 'string', description: 'Filter by test category.' },
+    },
+  },
+  endpoint: '/api/llm/leaderboard',
+  method: 'GET',
+  mutating: false,
+  requiresConfirmation: false,
+  minRole: 'viewer',
+};
+
+// ---------------------------------------------------------------------------
+// Registry — All 33 Tools
 // ---------------------------------------------------------------------------
 
 export const SENSEI_TOOLS: readonly SenseiToolDefinition[] = [
@@ -579,6 +809,21 @@ export const SENSEI_TOOLS: readonly SenseiToolDefinition[] = [
   RUN_AGENTIC_TEST,
   RUN_RAG_PIPELINE_TEST,
   PREDICT_VARIANTS,
+  // Arena (3)
+  CREATE_ARENA_MATCH,
+  LIST_ARENA_MATCHES,
+  GET_WARRIORS,
+  // AttackDNA / Amaterasu (2)
+  QUERY_DNA,
+  ANALYZE_DNA,
+  // Sengoku Campaigns (2)
+  LIST_CAMPAIGNS,
+  CREATE_CAMPAIGN,
+  // Misc (4)
+  SENSEI_PLAN,
+  GET_ECOSYSTEM_FINDINGS,
+  GET_GUARD_AUDIT,
+  GET_LEADERBOARD,
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -597,7 +842,7 @@ export function getToolByName(
 }
 
 /**
- * Module → most-relevant tool names (top 5) for compact prompt injection.
+ * Module → most-relevant tool names (top 7) for compact prompt injection.
  * Used by `getToolsForPrompt` when provider needs a smaller context window.
  */
 const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
@@ -605,8 +850,10 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'get_stats',
     'list_models',
     'get_guard_status',
+    'get_leaderboard',
     'scan_text',
     'navigate_to',
+    'get_ecosystem_findings',
   ],
   scanner: [
     'scan_text',
@@ -628,10 +875,13 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'run_batch',
     'get_results',
     'generate_report',
+    'get_leaderboard',
+    'navigate_to',
   ],
   guard: [
     'get_guard_status',
     'set_guard_mode',
+    'get_guard_audit',
     'explain_feature',
     'scan_text',
     'navigate_to',
@@ -644,31 +894,38 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'navigate_to',
   ],
   adversarial: [
-    'scan_text',
-    'run_test',
+    'generate_attack',
+    'run_orchestrator',
+    'judge_response',
+    'sensei_plan',
+    'run_agentic_test',
     'list_models',
-    'explain_feature',
     'navigate_to',
   ],
   strategic: [
-    'list_models',
-    'get_results',
-    'fingerprint',
-    'get_stats',
+    'create_arena_match',
+    'list_arena_matches',
+    'get_warriors',
+    'query_dna',
+    'analyze_dna',
+    'get_ecosystem_findings',
     'navigate_to',
   ],
   'ronin-hub': [
     'scan_text',
     'get_results',
+    'get_ecosystem_findings',
     'explain_feature',
     'list_models',
     'navigate_to',
   ],
   sengoku: [
-    'run_batch',
+    'run_orchestrator',
+    'sensei_plan',
+    'list_campaigns',
+    'create_campaign',
     'list_models',
-    'get_results',
-    'scan_text',
+    'get_ecosystem_findings',
     'navigate_to',
   ],
   kotoba: [
@@ -684,13 +941,15 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'get_stats',
     'get_compliance',
     'discover_local',
+    'get_guard_audit',
+    'get_leaderboard',
   ],
 };
 
 /**
  * Get tools for system prompt injection.
- * Compact providers get top 5 tools for the active module.
- * Full providers get all 16 tools.
+ * Compact providers get top tools for the active module.
+ * Full providers get all tools.
  */
 export function getToolsForPrompt(
   provider: string,

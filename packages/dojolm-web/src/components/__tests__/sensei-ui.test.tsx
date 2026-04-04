@@ -109,9 +109,9 @@ describe('SenseiSuggestions', () => {
     const onSend = vi.fn()
     render(<SenseiSuggestions activeModule="dashboard" onSend={onSend} />)
 
-    expect(screen.getByText('Platform overview')).toBeInTheDocument()
-    expect(screen.getByText('Run quick scan')).toBeInTheDocument()
+    expect(screen.getByText('Show platform stats')).toBeInTheDocument()
     expect(screen.getByText('Check guard status')).toBeInTheDocument()
+    expect(screen.getByText('Show leaderboard')).toBeInTheDocument()
   })
 
   it('renders scanner-specific suggestions', () => {
@@ -126,8 +126,8 @@ describe('SenseiSuggestions', () => {
     const onSend = vi.fn()
     render(<SenseiSuggestions activeModule="dashboard" onSend={onSend} />)
 
-    fireEvent.click(screen.getByText('Platform overview'))
-    expect(onSend).toHaveBeenCalledWith('Platform overview')
+    fireEvent.click(screen.getByText('Show platform stats'))
+    expect(onSend).toHaveBeenCalledWith('Show platform stats')
   })
 
   it('has accessible list role', () => {
@@ -312,7 +312,7 @@ describe('SenseiChat', () => {
     render(<SenseiChat {...defaultProps} />)
 
     // Should show dashboard suggestions
-    expect(screen.getByText('Platform overview')).toBeInTheDocument()
+    expect(screen.getByText('Show platform stats')).toBeInTheDocument()
   })
 
   it('renders messages when present', () => {

@@ -70,6 +70,14 @@ vi.mock('../admin/AdminSettings', () => ({
   AdminSettings: () => <div data-testid="admin-settings">AdminSettings</div>,
 }))
 
+vi.mock('../admin/ValidationManager', () => ({
+  ValidationManager: () => <div data-testid="validation-manager">ValidationManager</div>,
+}))
+
+vi.mock('../tests/TestRunner', () => ({
+  TestRunner: () => <div data-testid="test-runner">TestRunner</div>,
+}))
+
 vi.mock('@/components/layout/PageToolbar', () => ({
   PageToolbar: ({ title, subtitle }: { title: string; subtitle?: string }) => (
     <div data-testid="page-toolbar">
@@ -105,10 +113,10 @@ describe('AdminPanel', () => {
     expect(screen.getByRole('tablist', { name: /admin sections/i })).toBeInTheDocument()
   })
 
-  it('AP-004: renders all 9 admin tabs', () => {
+  it('AP-004: renders all 10 admin tabs', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(9)
+    expect(tabs).toHaveLength(10)
   })
 
   it('AP-005: General tab is selected by default', () => {
@@ -184,7 +192,7 @@ describe('AdminPanel', () => {
     const tabs = screen.getAllByRole('tab')
     const values = tabs.map(t => t.getAttribute('data-value'))
     expect(values).toEqual([
-      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation',
+      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation', 'test-runner',
     ])
   })
 
@@ -195,5 +203,12 @@ describe('AdminPanel', () => {
     rerender(<AdminPanel />)
     expect(screen.getByRole('tab', { name: /^Users$/i })).toHaveAttribute('data-state', 'active')
     expect(screen.getByRole('tab', { name: /^General$/i })).toHaveAttribute('data-state', 'inactive')
+  })
+
+  it('AP-017: clicking Test Runner tab shows the internal test runner', () => {
+    const { rerender } = render(<AdminPanel />)
+    fireEvent.click(screen.getByRole('tab', { name: /Test Runner/i }))
+    rerender(<AdminPanel />)
+    expect(screen.getByTestId('test-runner')).toBeInTheDocument()
   })
 })

@@ -84,7 +84,7 @@ describe('sensei tool-definitions', () => {
       expect(getToolByName('')).toBeUndefined();
     });
 
-    it('finds all 16 tools by name', () => {
+    it('finds all 33 tools by name', () => {
       for (const tool of SENSEI_TOOLS) {
         expect(getToolByName(tool.name)).toBeDefined();
       }
@@ -102,19 +102,22 @@ describe('sensei tool-definitions', () => {
       expect(tools.length).toBe(SENSEI_TOOLS.length);
     });
 
-    it('returns compact (5) tools for ollama', () => {
+    it('returns module-specific tools for ollama', () => {
       const tools = getToolsForPrompt('ollama', 'dashboard');
-      expect(tools).toHaveLength(5);
+      expect(tools.length).toBeGreaterThanOrEqual(5);
+      expect(tools.length).toBeLessThanOrEqual(10);
     });
 
     it('returns compact tools for lmstudio', () => {
       const tools = getToolsForPrompt('lmstudio', 'scanner');
-      expect(tools).toHaveLength(5);
+      expect(tools.length).toBeGreaterThanOrEqual(5);
+      expect(tools.length).toBeLessThanOrEqual(10);
     });
 
     it('returns compact tools for llamacpp', () => {
       const tools = getToolsForPrompt('llamacpp', 'llm');
-      expect(tools).toHaveLength(5);
+      expect(tools.length).toBeGreaterThanOrEqual(5);
+      expect(tools.length).toBeLessThanOrEqual(10);
     });
 
     it('returns module-relevant tools for compact provider', () => {

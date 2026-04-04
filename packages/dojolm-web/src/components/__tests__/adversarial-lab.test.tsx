@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import type { ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -103,27 +103,69 @@ vi.mock('../adversarial/SkillsLibrary', () => ({
   ),
 }))
 
+vi.mock('../adversarial/PlaybookRunner', () => ({
+  PlaybookRunner: () => <div data-testid="playbook-runner">Playbooks</div>,
+}))
+
+vi.mock('../scanner/ProtocolFuzzPanel', () => ({
+  ProtocolFuzzPanel: () => <div data-testid="protocol-fuzz-panel">Protocol Fuzzer</div>,
+}))
+
+vi.mock('../agentic/AgenticLab', () => ({
+  AgenticLab: () => <div data-testid="agentic-lab">Agentic Security Lab</div>,
+}))
+
+const TabsContext = createContext<{ value: string; setValue: (value: string) => void } | null>(null)
+
 vi.mock('@/components/ui/tabs', () => ({
   Tabs: ({
     children,
     value,
-    onValueChange: _onValueChange,
+    onValueChange,
     ...rest
   }: {
     children: ReactNode
     value: string
     onValueChange?: (value: string) => void
     [k: string]: unknown
-  }) => (
-    <div data-testid="tabs-root" data-value={value} {...rest}>{children}</div>
-  ),
+  }) => {
+    return (
+      <TabsContext.Provider
+        value={{
+          value,
+          setValue: (nextValue) => onValueChange?.(nextValue),
+        }}
+      >
+        <div data-testid="tabs-root" data-value={value} {...rest}>{children}</div>
+      </TabsContext.Provider>
+    )
+  },
   TabsList: ({ children, ...rest }: { children: ReactNode; [k: string]: unknown }) => <div role="tablist" {...rest}>{children}</div>,
-  TabsTrigger: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
-    <button role="tab" data-value={value} {...rest}>{children}</button>
-  ),
-  TabsContent: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => (
-    <div role="tabpanel" data-testid={`tab-content-${value}`} {...rest}>{children}</div>
-  ),
+  TabsTrigger: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => {
+    const context = useContext(TabsContext)
+    const selected = context?.value === value
+
+    return (
+      <button
+        role="tab"
+        data-value={value}
+        aria-selected={selected}
+        onClick={() => context?.setValue(value)}
+        {...rest}
+      >
+        {children}
+      </button>
+    )
+  },
+  TabsContent: ({ children, value, ...rest }: { children: ReactNode; value: string; [k: string]: unknown }) => {
+    const context = useContext(TabsContext)
+
+    if (context?.value !== value) return null
+
+    return (
+      <div role="tabpanel" data-testid={`tab-content-${value}`} {...rest}>{children}</div>
+    )
+  },
 }))
 
 beforeEach(() => {
@@ -227,16 +269,43 @@ describe('AL-007: Tabbed interface renders', () => {
     render(<AdversarialLab />)
     // Tab triggers are present
     expect(screen.getByRole('tablist')).toBeInTheDocument()
-    expect(screen.getByText('Attack Tools')).toBeInTheDocument()
-    expect(screen.getByText('Skills')).toBeInTheDocument()
-    expect(screen.getByText('MCP')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Attack Tools/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Skills/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Playbooks/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /^MCP$/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Agentic/i })).toBeInTheDocument()
     // Tool-type card visible in default tab (Browser Exploitation has minMode 'basic' but is type 'tool')
     expect(screen.getByTestId('tab-content-attack-tools')).toBeInTheDocument()
   })
 
-  it('renders MCP tools in the MCP tab', () => {
+  it('switches to the MCP tab when clicked', () => {
     render(<AdversarialLab />)
+    fireEvent.click(screen.getByRole('tab', { name: /^MCP$/i }))
     expect(screen.getByTestId('tab-content-mcp')).toBeInTheDocument()
+  })
+
+  it('switches to the hidden workspaces from tab triggers', () => {
+    render(<AdversarialLab />)
+
+    fireEvent.click(screen.getByRole('tab', { name: /Playbooks/i }))
+    expect(screen.getByTestId('playbook-runner')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('tab', { name: /Protocol Fuzz|Fuzz/i }))
+    expect(screen.getByTestId('protocol-fuzz-panel')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('tab', { name: /Agentic/i }))
+    expect(screen.getByTestId('agentic-lab')).toBeInTheDocument()
+  })
+
+  it('surfaces quick-launch cards for advanced Atemi workspaces', () => {
+    render(<AdversarialLab />)
+
+    expect(screen.getByText('Run Guided Playbooks')).toBeInTheDocument()
+    expect(screen.getByText('Open Protocol Fuzz')).toBeInTheDocument()
+    expect(screen.getByText('Explore Agentic Lab')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /Open Explore Agentic Lab/i }))
+    expect(screen.getByTestId('agentic-lab')).toBeInTheDocument()
   })
 })
 

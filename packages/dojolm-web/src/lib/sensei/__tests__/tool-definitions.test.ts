@@ -17,8 +17,8 @@ import type { SenseiToolDefinition } from '../types';
 import type { NavId } from '../../constants';
 
 describe('SENSEI_TOOLS registry', () => {
-  it('contains exactly 22 tools', () => {
-    expect(SENSEI_TOOLS).toHaveLength(22);
+  it('contains exactly 33 tools', () => {
+    expect(SENSEI_TOOLS).toHaveLength(33);
   });
 
   it('has unique tool names', () => {
@@ -60,9 +60,9 @@ describe('SENSEI_TOOLS registry', () => {
     }
   });
 
-  it('contains 7 mutating tools with confirmation', () => {
+  it('contains 8 mutating tools with confirmation', () => {
     const mutating = SENSEI_TOOLS.filter((t) => t.mutating);
-    expect(mutating.length).toBe(7); // run_test, run_batch, set_guard_mode, generate_attack, run_orchestrator, run_agentic_test, run_rag_pipeline_test
+    expect(mutating.length).toBe(8); // run_test, run_batch, set_guard_mode, generate_attack, run_orchestrator, run_agentic_test, create_arena_match, create_campaign
     for (const t of mutating) {
       expect(t.requiresConfirmation).toBe(true);
     }
@@ -93,6 +93,66 @@ describe('SENSEI_TOOLS registry', () => {
     expect(guard?.minRole).toBe('admin');
   });
 
+  it('contains 3 arena tools', () => {
+    const arenaTools = ['create_arena_match', 'list_arena_matches', 'get_warriors'];
+    for (const name of arenaTools) {
+      expect(getToolByName(name)).toBeDefined();
+    }
+  });
+
+  it('contains 2 DNA tools', () => {
+    const dnaTools = ['query_dna', 'analyze_dna'];
+    for (const name of dnaTools) {
+      expect(getToolByName(name)).toBeDefined();
+    }
+  });
+
+  it('contains 2 Sengoku campaign tools', () => {
+    const campaignTools = ['list_campaigns', 'create_campaign'];
+    for (const name of campaignTools) {
+      expect(getToolByName(name)).toBeDefined();
+    }
+  });
+
+  it('contains misc tools (sensei_plan, ecosystem, guard_audit, leaderboard)', () => {
+    const miscTools = ['sensei_plan', 'get_ecosystem_findings', 'get_guard_audit', 'get_leaderboard'];
+    for (const name of miscTools) {
+      expect(getToolByName(name)).toBeDefined();
+    }
+  });
+
+  it('run_orchestrator has attackerModelId and judgeModelId as required', () => {
+    const tool = getToolByName('run_orchestrator');
+    expect(tool).toBeDefined();
+    const required = (tool!.parameters as { required?: readonly string[] }).required ?? [];
+    expect(required).toContain('attackerModelId');
+    expect(required).toContain('judgeModelId');
+  });
+
+  it('run_agentic_test has correct architecture enum matching route', () => {
+    const tool = getToolByName('run_agentic_test');
+    expect(tool).toBeDefined();
+    const props = (tool!.parameters as { properties: Record<string, { enum?: readonly string[] }> }).properties;
+    expect(props.architecture.enum).toEqual([
+      'single-agent',
+      'multi-agent',
+      'hierarchical',
+      'debate',
+      'openai-functions',
+      'langchain-tools',
+      'code-interpreter',
+      'react-agent',
+      'mcp-tools',
+      'custom-schema',
+    ]);
+  });
+
+  it('run_rag_pipeline_test points to /api/scan not /api/v1/scan', () => {
+    const tool = getToolByName('run_rag_pipeline_test');
+    expect(tool).toBeDefined();
+    expect(tool!.endpoint).toBe('/api/scan');
+  });
+
   it('all parameters have type: object', () => {
     for (const tool of SENSEI_TOOLS) {
       const params = tool.parameters as { type?: string };
@@ -119,29 +179,32 @@ describe('getToolByName', () => {
 });
 
 describe('getToolsForPrompt', () => {
-  it('returns all 22 tools for Claude provider', () => {
+  it('returns all 33 tools for Claude provider', () => {
     const tools = getToolsForPrompt('anthropic', 'dashboard');
-    expect(tools).toHaveLength(22);
+    expect(tools).toHaveLength(33);
   });
 
-  it('returns all 22 tools for OpenAI provider', () => {
+  it('returns all 33 tools for OpenAI provider', () => {
     const tools = getToolsForPrompt('openai', 'scanner');
-    expect(tools).toHaveLength(22);
+    expect(tools).toHaveLength(33);
   });
 
-  it('returns top 5 tools for Ollama provider', () => {
+  it('returns module-specific tools for Ollama provider', () => {
     const tools = getToolsForPrompt('ollama', 'dashboard');
-    expect(tools).toHaveLength(5);
+    expect(tools.length).toBeGreaterThanOrEqual(5);
+    expect(tools.length).toBeLessThanOrEqual(10);
   });
 
-  it('returns top 5 tools for LMStudio provider', () => {
+  it('returns module-specific tools for LMStudio provider', () => {
     const tools = getToolsForPrompt('lmstudio', 'scanner');
-    expect(tools).toHaveLength(5);
+    expect(tools.length).toBeGreaterThanOrEqual(5);
+    expect(tools.length).toBeLessThanOrEqual(10);
   });
 
-  it('returns top 5 tools for LlamaCPP provider', () => {
+  it('returns module-specific tools for LlamaCPP provider', () => {
     const tools = getToolsForPrompt('llamacpp', 'llm');
-    expect(tools).toHaveLength(5);
+    expect(tools.length).toBeGreaterThanOrEqual(5);
+    expect(tools.length).toBeLessThanOrEqual(10);
   });
 
   it('scanner module Ollama tools include scan_text', () => {
@@ -155,6 +218,27 @@ describe('getToolsForPrompt', () => {
     const names = tools.map((t) => t.name);
     expect(names).toContain('run_test');
     expect(names).toContain('list_models');
+  });
+
+  it('strategic module Ollama tools include arena and DNA tools', () => {
+    const tools = getToolsForPrompt('ollama', 'strategic');
+    const names = tools.map((t) => t.name);
+    expect(names).toContain('create_arena_match');
+    expect(names).toContain('query_dna');
+  });
+
+  it('adversarial module Ollama tools include attack generation tools', () => {
+    const tools = getToolsForPrompt('ollama', 'adversarial');
+    const names = tools.map((t) => t.name);
+    expect(names).toContain('generate_attack');
+    expect(names).toContain('run_orchestrator');
+  });
+
+  it('sengoku module Ollama tools include campaign tools', () => {
+    const tools = getToolsForPrompt('ollama', 'sengoku');
+    const names = tools.map((t) => t.name);
+    expect(names).toContain('list_campaigns');
+    expect(names).toContain('create_campaign');
   });
 
   it('guard module Ollama tools include get_guard_status and set_guard_mode', () => {
@@ -173,8 +257,16 @@ describe('getToolsForPrompt', () => {
     for (const mod of allModules) {
       const tools = getToolsForPrompt('ollama', mod);
       expect(tools.length).toBeGreaterThan(0);
-      expect(tools.length).toBeLessThanOrEqual(5);
+      expect(tools.length).toBeLessThanOrEqual(10);
     }
+  });
+
+  it('sengoku compact tools expose orchestrator planning affordances', () => {
+    const tools = getToolsForPrompt('ollama', 'sengoku');
+    const names = tools.map((t) => t.name);
+    expect(names).toContain('run_orchestrator');
+    expect(names).toContain('sensei_plan');
+    expect(names).toContain('list_campaigns');
   });
 });
 
@@ -219,10 +311,10 @@ describe('generateToolDescriptionBlock', () => {
     expect(block).toBe('');
   });
 
-  it('generates full list for all 22 tools', () => {
+  it('generates full list for all 33 tools', () => {
     const block = generateToolDescriptionBlock(SENSEI_TOOLS);
     const lines = block.split('\n');
-    expect(lines).toHaveLength(22);
+    expect(lines).toHaveLength(33);
   });
 });
 
@@ -255,6 +347,6 @@ describe('generateToolSchemaBlock', () => {
   it('handles full tool registry', () => {
     const block = generateToolSchemaBlock(SENSEI_TOOLS);
     const parsed = JSON.parse(block);
-    expect(parsed).toHaveLength(22);
+    expect(parsed).toHaveLength(33);
   });
 });

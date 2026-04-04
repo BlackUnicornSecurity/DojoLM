@@ -24,6 +24,7 @@ import type { NavId } from '@/lib/constants'
 
 interface SenseiDrawerProps {
   readonly activeModule: NavId
+  readonly onNavigate?: (module: NavId) => void
 }
 
 interface ModelInfo {
@@ -36,7 +37,7 @@ interface ModelInfo {
 // Main Drawer Component
 // ---------------------------------------------------------------------------
 
-export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
+export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
   const {
     messages,
     isOpen,
@@ -52,7 +53,7 @@ export function SenseiDrawer({ activeModule }: SenseiDrawerProps) {
     close,
     clearHistory,
     clearError,
-  } = useSensei(activeModule)
+  } = useSensei(activeModule, onNavigate)
 
   const drawerRef = useRef<HTMLDivElement>(null)
 

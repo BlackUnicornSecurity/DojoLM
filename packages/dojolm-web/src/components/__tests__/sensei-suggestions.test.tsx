@@ -26,9 +26,9 @@ describe('SenseiSuggestions (SSG-001 to SSG-006)', () => {
 
   it('SSG-002: renders dashboard-specific suggestions', () => {
     render(<SenseiSuggestions activeModule="dashboard" onSend={vi.fn()} />)
-    expect(screen.getByText('Platform overview')).toBeInTheDocument()
-    expect(screen.getByText('Run quick scan')).toBeInTheDocument()
+    expect(screen.getByText('Show platform stats')).toBeInTheDocument()
     expect(screen.getByText('Check guard status')).toBeInTheDocument()
+    expect(screen.getByText('Show leaderboard')).toBeInTheDocument()
   })
 
   it('SSG-003: renders scanner-specific suggestions', () => {
@@ -40,14 +40,13 @@ describe('SenseiSuggestions (SSG-001 to SSG-006)', () => {
   it('SSG-004: renders default suggestions for unknown module', () => {
     render(<SenseiSuggestions activeModule={'unknown-module' as never} onSend={vi.fn()} />)
     expect(screen.getByText('What can I do?')).toBeInTheDocument()
-    expect(screen.getByText('Platform overview')).toBeInTheDocument()
   })
 
   it('SSG-005: calls onSend with suggestion text when clicked', () => {
     const onSend = vi.fn()
     render(<SenseiSuggestions activeModule="dashboard" onSend={onSend} />)
-    fireEvent.click(screen.getByText('Run quick scan'))
-    expect(onSend).toHaveBeenCalledWith('Run quick scan')
+    fireEvent.click(screen.getByText('Show platform stats'))
+    expect(onSend).toHaveBeenCalledWith('Show platform stats')
   })
 
   it('SSG-006: renders correct number of suggestion buttons for guard module', () => {
@@ -55,7 +54,7 @@ describe('SenseiSuggestions (SSG-001 to SSG-006)', () => {
     const items = screen.getAllByRole('listitem')
     expect(items).toHaveLength(3)
     expect(screen.getByText('Check guard status')).toBeInTheDocument()
+    expect(screen.getByText('Show guard audit log')).toBeInTheDocument()
     expect(screen.getByText('Explain guard modes')).toBeInTheDocument()
-    expect(screen.getByText('Set guard to Samurai')).toBeInTheDocument()
   })
 })
