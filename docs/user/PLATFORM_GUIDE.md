@@ -99,6 +99,8 @@ The continuous red teaming module. Current tabs are:
 - `Campaigns`
 - `Temporal`
 
+Campaign targets can be configured from three sources: an external URL with API Key or Bearer auth, a model from the LLM Dashboard (credentials resolved automatically), or a local Ollama instance with auto-detected models.
+
 Guide: [Sengoku](modules/SENGOKU.md)
 
 ### Kotoba

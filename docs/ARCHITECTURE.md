@@ -116,7 +116,7 @@ Important nesting:
 
 - `LLM Dashboard` contains `Models`, `Tests`, `Results`, `Leaderboard`, `Compare`, `Custom Models`, and `Jutsu`.
 - `Strategic Hub` contains `sage`, `arena`, `threatfeed`, `dna`, `kagami`, and `shingan`.
-- `Sengoku` contains `Campaigns` and `Temporal`; Time Chamber content has been merged into the temporal path and related widgets.
+- `Sengoku` contains `Campaigns` and `Temporal`; Time Chamber content has been merged into the temporal path and related widgets. Campaign targets support three source modes: `external` (URL + API key/bearer), `dashboard` (LLM Dashboard model with auto-resolved credentials), and `local` (Ollama with auto-detection).
 - `Admin` contains `General`, `Users`, `Scoreboard`, `API Keys`, `Haiku Scanner & Guard`, `System Health`, `Export`, `Admin Settings`, and `Validation`.
 
 ## Storage

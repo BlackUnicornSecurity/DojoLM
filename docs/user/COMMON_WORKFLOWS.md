@@ -122,10 +122,15 @@ This guide collects the most common end-user paths through the live platform.
 ## Launch A Sengoku Campaign
 
 1. Open [Sengoku](modules/SENGOKU.md).
-2. Create a new campaign or select an existing one.
-3. Use `Run Now` to trigger execution.
-4. Monitor progress in the run banner.
-5. Use `Temporal` for time-oriented or session-sequenced testing.
+2. Click `New Campaign`.
+3. Choose a **Target Source**:
+   - **External URL** — enter the endpoint URL and select API Key or Bearer auth.
+   - **LLM Dashboard** — pick a model already configured in the LLM Dashboard (credentials are resolved automatically).
+   - **Local (Ollama)** — select from auto-detected local models or type a model name.
+4. Select attack skills and set a schedule.
+5. Create the campaign, then use `Run Now` to trigger execution.
+6. Monitor progress in the run banner.
+7. Use `Temporal` for time-oriented or session-sequenced testing.
 
 ## Score And Harden A Prompt
 
