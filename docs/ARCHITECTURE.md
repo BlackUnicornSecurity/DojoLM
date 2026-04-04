@@ -67,11 +67,14 @@ The Next.js web application.
 
 An adversarial MCP server for agent-security testing.
 
-- Default host: `127.0.0.1`
+- Entry point: `src/main.ts` (standalone) / `src/index.ts` (library exports)
+- Default host: `127.0.0.1` (loopback enforced — rejects non-loopback `MCP_HOST`)
 - Default port: `18000`
 - Provides JSON-RPC at `/` or `/mcp`
 - Provides supporting HTTP endpoints at `/health`, `/status`, and `/mode`
-- Uses a virtual filesystem and auto-shutdown timer for safer local testing
+- Uses a virtual filesystem and auto-shutdown timer (5 min) for safer local testing
+- Spawned on-demand by the web API (`POST /api/mcp/status`) using compiled `dist/main.js` in production or `tsx src/main.ts` in development
+- Valid attack modes: `basic`, `passive`, `prompt-injection`, `tool-poisoning`, `exfiltration`, `confused-deputy`, `advanced`, `aggressive`
 
 ### `packages/bmad-cybersec`
 

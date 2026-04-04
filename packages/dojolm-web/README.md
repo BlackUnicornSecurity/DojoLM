@@ -90,6 +90,16 @@ packages/dojolm-web/data/
 
 Protected API routes use `X-API-Key` for external callers and same-origin bypass for verified browser requests. The shared key is `NODA_API_KEY`.
 
+## MCP Server Integration
+
+The adversarial MCP server (`@dojolm/mcp`) is spawned on-demand via `POST /api/mcp/status { enabled: true }`.
+
+- In production (Docker): spawns `node packages/dojolm-mcp/dist/main.js`
+- In development: falls back to `npx tsx packages/dojolm-mcp/src/main.ts`
+- Health probed at `http://127.0.0.1:18000/health`
+- Mode switching validated against an allowlist before forwarding
+- Concurrent spawn requests share a single Promise (no duplicate processes)
+
 ## Notes
 
 - `npm run dev` automatically builds `packages/dojolm-scanner` first

@@ -1,7 +1,7 @@
 # Master QA Framework Audit Report
 
 **Repository:** BU-TPI (DojoLM/NODA Platform)  
-**Audit Date:** 2026-04-03 (Rev 5 — final remediation)
+**Audit Date:** 2026-04-04 (Rev 6 — MCP server fix + hardening)
 **Audit Type:** Full framework-to-codebase reconciliation + adversarial re-validation + comprehensive gap closure
 
 ## 1. Executive Verdict
@@ -9,6 +9,8 @@
 The MASTER-QA-FRAMEWORK has reached **near-complete coverage**. All 6 critical findings from the original audit are now closed. High-risk uncovered surfaces: **0**. Playwright control gaps: **0**. Visual regression CI gate: **active**.
 
 Remaining work: package-level code coverage percentages (dojolm-web 74%, mcp 82%), 203 dynamic labels needing runtime verification, and DAST security automation expansion.
+
+**Rev 6 (2026-04-04):** MCP server production startup fix — added standalone entry point (`main.ts`), Docker build/copy, hardened spawn logic (loopback validation, mode allowlist, spawn mutex, stderr piping), and 3 new MCP route tests (MCP-013 to MCP-015). Total MCP route tests: 13.
 
 ## 2. Verified Live Inventory (2026-04-03, Rev 5 — final)
 
@@ -90,6 +92,12 @@ Remaining work: package-level code coverage percentages (dojolm-web 74%, mcp 82%
 8. UAT/UX matrix generator now includes a control-level direct-proof layer (heuristic selector-match based), reducing the previous "0 proof" state.
 9. `@dojolm/scanner` now has a formal test suite and CI coverage execution path.
 
+## 5b. Rev 6 Remediations (2026-04-04)
+
+1. **MCP server production startup fix:** Server never started in prod because `index.ts` was a barrel export with no server instantiation, the Dockerfile didn't build/copy `dojolm-mcp`, and `tsx` was unavailable at runtime. Fixed with a standalone `main.ts` entry point, Docker build step, and compiled-JS spawn path.
+2. **Security hardening:** Loopback host validation (SME HIGH-14 enforcement), mode allowlist at API boundary, spawn mutex (shared Promise), stderr piping for debuggability, port validation with fallback warning.
+3. **New tests:** MCP-013 (invalid mode string → 400), MCP-014 (non-string mode → 400), MCP-015 (spawn assertion verifying `node dist/main.js` invocation with correct stdio config). Total MCP route tests: 13.
+
 ## 6. Adversarial Reconciliation Outcome
 
 Cross-checked with independent evidence paths:
@@ -126,4 +134,4 @@ Cross-checked with independent evidence paths:
 **Framework maturity:** Production-grade — all dimensions enforced in CI
 **Coverage completeness:** All 6 critical findings closed. 0 high-risk surfaces. 0 Playwright gaps. 844 test files.
 **Remaining work:** Package-level coverage % (dojolm-web 74%, mcp 82%), 203 dynamic labels, DAST expansion
-**Up-to-date status:** 2026-04-03 Rev 5 final
+**Up-to-date status:** 2026-04-04 Rev 6
