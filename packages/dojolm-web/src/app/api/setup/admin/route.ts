@@ -26,9 +26,14 @@ import {
 } from '@/lib/auth/login-rate-limit';
 import crypto from 'node:crypto';
 
-const SESSION_TTL_SECONDS = 24 * 60 * 60;
+const DEFAULT_SESSION_TTL_HOURS = 24;
 const MAX_EMAIL_LENGTH = 254; // RFC 5321
 const MAX_DISPLAY_NAME_LENGTH = 128;
+
+function getSessionTtlSeconds(): number {
+  const hours = parseInt(process.env.TPI_SESSION_TTL_HOURS ?? '', 10);
+  return (Number.isFinite(hours) && hours > 0 ? hours : DEFAULT_SESSION_TTL_HOURS) * 60 * 60;
+}
 
 function getClientIp(req: NextRequest): string | null {
   if (!process.env.TRUSTED_PROXY) return null;
@@ -45,10 +50,12 @@ function getClientIp(req: NextRequest): string | null {
  * Since no session/CSRF cookie exists yet, we check Origin/Referer headers.
  */
 function isPrivateNetworkHost(hostname: string): boolean {
-  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
-  // RFC 1918 private ranges
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') return true;
+  // RFC 1918 private ranges (IPv4)
   if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) return true;
   if (/^172\.(1[6-9]|2\d|3[01])\./.test(hostname)) return true;
+  // IPv6 private/link-local ranges
+  if (hostname.startsWith('fe80:') || hostname.startsWith('fd') || hostname.startsWith('fc')) return true;
   return false;
 }
 
@@ -57,8 +64,8 @@ function isValidOrigin(req: NextRequest): boolean {
   const referer = req.headers.get('referer');
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
-  // In development without configured origin, allow all
-  if (!appUrl && process.env.NODE_ENV !== 'production') {
+  // Only allow bypass in explicit development mode (not staging/test)
+  if (!appUrl && process.env.NODE_ENV === 'development') {
     return true;
   }
 
@@ -110,7 +117,12 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { username, email, password, displayName } = body;
+    const { email, displayName } = body;
+    // Allow env var fallbacks for headless/automated setup
+    const username = typeof body.username === 'string' ? body.username
+      : (process.env.TPI_ADMIN_USERNAME || undefined);
+    const password = typeof body.password === 'string' ? body.password
+      : (process.env.TPI_ADMIN_PASSWORD || undefined);
 
     // Validate required fields
     if (!username || !password) {
@@ -121,16 +133,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (typeof username !== 'string' || typeof password !== 'string') {
-      recordLoginRateLimitFailure(rateLimitKey);
-      return NextResponse.json(
-        { error: 'Invalid input format' },
-        { status: 400 }
-      );
-    }
-
     // Username validation
     if (username.length < 3 || username.length > 64) {
+      recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
         { error: 'Username must be between 3 and 64 characters' },
         { status: 400 }
@@ -138,6 +143,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+      recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
         { error: 'Username may only contain letters, numbers, underscores, dots, and hyphens' },
         { status: 400 }
@@ -146,6 +152,11 @@ export async function POST(req: NextRequest) {
 
     // Password complexity (matches existing rules in /api/auth/users)
     if (password.length < 12 || password.length > 72) {
+      recordLoginRateLimitFailure(rateLimitKey);
+      // Log when env var password fails — helps operators diagnose deployment issues
+      if (!body.password && process.env.TPI_ADMIN_PASSWORD) {
+        console.warn('[setup] TPI_ADMIN_PASSWORD env var does not meet length requirements (12-72 chars)');
+      }
       return NextResponse.json(
         { error: 'Password must be between 12 and 72 characters' },
         { status: 400 }
@@ -158,6 +169,10 @@ export async function POST(req: NextRequest) {
       !/[0-9]/.test(password) ||
       !/[^A-Za-z0-9]/.test(password)
     ) {
+      recordLoginRateLimitFailure(rateLimitKey);
+      if (!body.password && process.env.TPI_ADMIN_PASSWORD) {
+        console.warn('[setup] TPI_ADMIN_PASSWORD env var does not meet complexity requirements (uppercase, lowercase, digit, special char)');
+      }
       return NextResponse.json(
         { error: 'Password must contain uppercase, lowercase, digit, and special character' },
         { status: 400 }
@@ -167,12 +182,14 @@ export async function POST(req: NextRequest) {
     // Email validation (optional, with length bound)
     if (email !== undefined && email !== null && email !== '') {
       if (typeof email !== 'string' || email.length > MAX_EMAIL_LENGTH) {
+        recordLoginRateLimitFailure(rateLimitKey);
         return NextResponse.json(
           { error: 'Email must be a string of 254 characters or fewer' },
           { status: 400 }
         );
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        recordLoginRateLimitFailure(rateLimitKey);
         return NextResponse.json(
           { error: 'Invalid email format' },
           { status: 400 }
@@ -183,6 +200,7 @@ export async function POST(req: NextRequest) {
     // Display name validation (optional, with type + length bound)
     if (displayName !== undefined && displayName !== null && displayName !== '') {
       if (typeof displayName !== 'string' || displayName.length > MAX_DISPLAY_NAME_LENGTH) {
+        recordLoginRateLimitFailure(rateLimitKey);
         return NextResponse.json(
           { error: 'Display name must be a string of 128 characters or fewer' },
           { status: 400 }
@@ -228,6 +246,7 @@ export async function POST(req: NextRequest) {
     // Create session (auto-login)
     const clientIp = getClientIp(req);
     const userAgent = req.headers.get('user-agent') ?? null;
+    const sessionTtl = getSessionTtlSeconds();
     const sessionToken = createSession(result.id, clientIp, userAgent);
     const csrfToken = generateCsrfToken();
 
@@ -245,8 +264,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-    response.headers.append('Set-Cookie', buildSessionCookie(sessionToken, SESSION_TTL_SECONDS));
-    response.headers.append('Set-Cookie', buildCsrfCookie(csrfToken, SESSION_TTL_SECONDS));
+    response.headers.append('Set-Cookie', buildSessionCookie(sessionToken, sessionTtl));
+    response.headers.append('Set-Cookie', buildCsrfCookie(csrfToken, sessionTtl));
 
     return response;
   } catch {

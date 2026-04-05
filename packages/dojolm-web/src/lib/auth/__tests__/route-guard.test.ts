@@ -2,9 +2,10 @@
  * Route-guard tests.
  *
  * Covers: withAuth, getSessionToken, buildSessionCookie,
- *         buildCsrfCookie, buildLogoutCookies, CSRF enforcement.
+ *         buildCsrfCookie, buildLogoutCookies, CSRF enforcement,
+ *         API key auth, params Promise resolution (Next.js 15+).
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
 // ---- mocks ----
@@ -46,9 +47,17 @@ const VALID_USER = {
   displayName: 'Alice',
 };
 
+const ANALYST_USER = {
+  id: 'u2',
+  username: 'bob',
+  email: 'bob@example.com',
+  role: 'analyst',
+  displayName: 'Bob',
+};
+
 function makeRequest(
   method: string,
-  opts?: { sessionToken?: string; csrfCookie?: string; csrfHeader?: string },
+  opts?: { sessionToken?: string; csrfCookie?: string; csrfHeader?: string; apiKey?: string },
 ): NextRequest {
   const url = 'http://localhost:42001/api/test';
   const headers = new Headers();
@@ -67,6 +76,9 @@ function makeRequest(
   if (opts?.csrfHeader) {
     headers.set(CSRF_HEADER_NAME, opts.csrfHeader);
   }
+  if (opts?.apiKey) {
+    headers.set('x-api-key', opts.apiKey);
+  }
 
   return new NextRequest(url, { method, headers });
 }
@@ -75,11 +87,31 @@ const dummyHandler = vi.fn((_req, ctx) =>
   NextResponse.json({ ok: true, user: ctx.user }),
 );
 
+// Save original env values for cleanup
+const originalEnv: Record<string, string | undefined> = {};
+
 beforeEach(() => {
   vi.clearAllMocks();
   mockValidateSession.mockReturnValue(null);
   mockIsAtLeastRole.mockReturnValue(true);
   mockHasPermission.mockReturnValue(true);
+  // Save env vars that tests may mutate
+  originalEnv.NODA_API_KEY_ROLE = process.env.NODA_API_KEY_ROLE;
+  originalEnv.API_KEY_PERMISSIONS = process.env.API_KEY_PERMISSIONS;
+});
+
+afterEach(() => {
+  // Restore env vars to prevent test contamination
+  if (originalEnv.NODA_API_KEY_ROLE === undefined) {
+    delete process.env.NODA_API_KEY_ROLE;
+  } else {
+    process.env.NODA_API_KEY_ROLE = originalEnv.NODA_API_KEY_ROLE;
+  }
+  if (originalEnv.API_KEY_PERMISSIONS === undefined) {
+    delete process.env.API_KEY_PERMISSIONS;
+  } else {
+    process.env.API_KEY_PERMISSIONS = originalEnv.API_KEY_PERMISSIONS;
+  }
 });
 
 // ---- tests ----
@@ -157,6 +189,38 @@ describe('route-guard', () => {
     expect(dummyHandler).not.toHaveBeenCalled();
   });
 
+  // RG-005a: CSRF length mismatch (different-length tokens)
+  it('RG-005a: withAuth returns 403 on CSRF token length mismatch', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('POST', {
+      sessionToken: 'tok',
+      csrfCookie: 'short',
+      csrfHeader: 'much-longer-csrf-value',
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(403);
+    expect(dummyHandler).not.toHaveBeenCalled();
+  });
+
+  // RG-005b: CSRF header absent (cookie present, header missing)
+  it('RG-005b: withAuth returns 403 when CSRF header is absent on POST', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('POST', {
+      sessionToken: 'tok',
+      csrfCookie: 'csrf-cookie-value',
+      // no csrfHeader
+    });
+    const res = await handler(req);
+
+    expect(res.status).toBe(403);
+    expect(dummyHandler).not.toHaveBeenCalled();
+  });
+
   // RG-006
   it('RG-006: withAuth skips CSRF when skipCsrf option is true', async () => {
     mockValidateSession.mockReturnValue(VALID_USER);
@@ -183,6 +247,19 @@ describe('route-guard', () => {
     const body = await res.json();
     expect(body.error).toMatch(/insufficient/i);
     expect(mockIsAtLeastRole).toHaveBeenCalledWith('admin', 'admin');
+  });
+
+  // RG-007a: isAtLeastRole argument order verified with distinct user/required roles
+  it('RG-007a: withAuth passes user role as first arg and required role as second to isAtLeastRole', async () => {
+    mockValidateSession.mockReturnValue(ANALYST_USER); // role = 'analyst'
+    mockIsAtLeastRole.mockReturnValue(false);
+
+    const handler = withAuth(dummyHandler, { role: 'admin' });
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    await handler(req);
+
+    // First arg: user's role ('analyst'), second arg: required role ('admin')
+    expect(mockIsAtLeastRole).toHaveBeenCalledWith('analyst', 'admin');
   });
 
   // RG-008
@@ -263,12 +340,11 @@ describe('route-guard', () => {
 
   // RG-014
   it('RG-014: withAuth handles PATCH, PUT, DELETE methods with CSRF enforcement', async () => {
-    mockValidateSession.mockReturnValue(VALID_USER);
     const csrfVal = 'csrf-ok';
 
     for (const method of ['PATCH', 'PUT', 'DELETE']) {
-      vi.clearAllMocks();
       mockValidateSession.mockReturnValue(VALID_USER);
+      dummyHandler.mockClear();
 
       const handler = withAuth(dummyHandler);
 
@@ -290,16 +366,12 @@ describe('route-guard', () => {
 
   // RG-015: API key auth - defaults to analyst role
   it('RG-015: withAuth authenticates with API key and defaults to analyst role', async () => {
-    // No session, but API key present
     mockValidateSession.mockReturnValue(null);
     delete process.env.NODA_API_KEY_ROLE;
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'GET',
-      headers: { 'x-api-key': 'test-api-key' },
-    });
+    const req = makeRequest('GET', { apiKey: 'test-api-key' });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
@@ -315,10 +387,7 @@ describe('route-guard', () => {
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'GET',
-      headers: { 'x-api-key': 'test-api-key' },
-    });
+    const req = makeRequest('GET', { apiKey: 'test-api-key' });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
@@ -333,10 +402,7 @@ describe('route-guard', () => {
     delete process.env.API_KEY_PERMISSIONS;
 
     const handler = withAuth(dummyHandler);
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'GET',
-      headers: { 'x-api-key': 'test-api-key' },
-    });
+    const req = makeRequest('GET', { apiKey: 'test-api-key' });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
@@ -348,21 +414,18 @@ describe('route-guard', () => {
   it('RG-018: withAuth uses API_KEY_PERMISSIONS for per-key role mapping', async () => {
     mockValidateSession.mockReturnValue(null);
     delete process.env.NODA_API_KEY_ROLE;
-    
+
     // Create a SHA-256 hash of the test key (first 16 chars)
     const crypto = await import('node:crypto');
     const testKey = 'my-special-key';
     const keyHash = crypto.createHash('sha256').update(testKey).digest('hex').slice(0, 16);
-    
+
     process.env.API_KEY_PERMISSIONS = JSON.stringify([
       { keyHash, role: 'admin' },
     ]);
 
     const handler = withAuth(dummyHandler);
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'GET',
-      headers: { 'x-api-key': testKey },
-    });
+    const req = makeRequest('GET', { apiKey: testKey });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
@@ -374,17 +437,14 @@ describe('route-guard', () => {
   it('RG-019: withAuth falls back to default role for unmapped API key', async () => {
     mockValidateSession.mockReturnValue(null);
     process.env.NODA_API_KEY_ROLE = 'viewer';
-    
+
     // Set up permissions for a different key
     process.env.API_KEY_PERMISSIONS = JSON.stringify([
       { keyHash: 'someotherhash', role: 'admin' },
     ]);
 
     const handler = withAuth(dummyHandler);
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'GET',
-      headers: { 'x-api-key': 'unknown-key' },
-    });
+    const req = makeRequest('GET', { apiKey: 'unknown-key' });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
@@ -392,20 +452,102 @@ describe('route-guard', () => {
     expect(ctx.user.role).toBe('viewer');
   });
 
-  // RG-020: API key auth - CSRF is skipped for API key requests
-  it('RG-020: withAuth skips CSRF check for API key authenticated requests', async () => {
+  // -- Params Promise resolution (Next.js 15+) --
+
+  // RG-020: withAuth resolves Promise params
+  it('RG-020: withAuth resolves Promise<params> before passing to handler', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const promiseParams: Promise<Record<string, string>> = Promise.resolve({ id: 'batch-123' });
+    const res = await handler(req, { params: promiseParams });
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.params).toEqual({ id: 'batch-123' });
+  });
+
+  // RG-021: withAuth handles sync params (backwards compat)
+  it('RG-021: withAuth handles synchronous params object', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const res = await handler(req, { params: { id: 'batch-456' } });
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.params).toEqual({ id: 'batch-456' });
+  });
+
+  // RG-022: withAuth handles undefined params
+  it('RG-022: withAuth handles undefined params gracefully', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const res = await handler(req, {});
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.params).toBeUndefined();
+  });
+
+  // RG-023: withAuth handles missing context entirely
+  it('RG-023: withAuth handles missing context entirely', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.params).toBeUndefined();
+  });
+
+  // RG-024: withAuth handles rejected Promise params
+  it('RG-024: withAuth returns 500 on rejected params Promise', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const rejectedParams = Promise.reject(new Error('params error'));
+    const res = await handler(req, { params: rejectedParams as any });
+
+    expect(res.status).toBe(500);
+    const body = await res.json();
+    expect(body.error).toMatch(/route parameter/i);
+    expect(dummyHandler).not.toHaveBeenCalled();
+  });
+
+  // RG-025: withAuth handles null params
+  it('RG-025: withAuth handles null params gracefully', async () => {
+    mockValidateSession.mockReturnValue(VALID_USER);
+
+    const handler = withAuth(dummyHandler);
+    const req = makeRequest('GET', { sessionToken: 'tok' });
+    const res = await handler(req, { params: null as any });
+
+    expect(res.status).toBe(200);
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.params).toBeUndefined();
+  });
+
+  // RG-026: API key auth - CSRF is skipped for API key requests
+  it('RG-026: withAuth skips CSRF check for API key authenticated requests', async () => {
     mockValidateSession.mockReturnValue(null);
     delete process.env.NODA_API_KEY_ROLE;
 
     const handler = withAuth(dummyHandler);
-    // POST without CSRF tokens - should work with API key
-    const req = new NextRequest('http://localhost:42001/api/test', {
-      method: 'POST',
-      headers: { 'x-api-key': 'test-api-key' },
-    });
+    const req = makeRequest('POST', { apiKey: 'test-api-key' });
     const res = await handler(req);
 
     expect(res.status).toBe(200);
     expect(dummyHandler).toHaveBeenCalled();
+    const ctx = dummyHandler.mock.calls[0][1];
+    expect(ctx.user.role).toBe('analyst');
+    expect(ctx.user.id).toBe('api-key-user');
   });
 });

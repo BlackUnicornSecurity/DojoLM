@@ -1,5 +1,9 @@
 /**
  * D4.3 — Server-Side Campaign Skill Executor
+ *
+ * DEPLOYMENT NOTE: This executor requires a long-lived Node.js process.
+ * It will NOT complete on serverless/edge runtimes where the function
+ * context terminates after the HTTP response is sent.
  */
 
 import { scan } from '@dojolm/scanner';
@@ -9,6 +13,15 @@ import { validateSengokuWebhookUrl } from './sengoku-webhook';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDataPath } from '@/lib/runtime-paths';
+
+const KNOWN_PROVIDERS = new Set(['ollama', 'lmstudio', 'llamacpp', 'openai', 'anthropic']);
+const PROVIDER_DEFAULTS: Record<string, string> = {
+  ollama: 'http://localhost:11434/v1/chat/completions',
+  lmstudio: 'http://localhost:1234/v1/chat/completions',
+  llamacpp: 'http://localhost:8080/v1/chat/completions',
+  openai: 'https://api.openai.com/v1/chat/completions',
+  anthropic: 'https://api.anthropic.com/v1/messages',
+};
 
 /**
  * Resolve the effective target URL for a campaign based on its targetSource.
@@ -24,41 +37,39 @@ export async function resolveTargetUrl(campaign: Campaign): Promise<string> {
   const { modelConfigRepo } = await import('@/lib/db/repositories/model-config.repository');
   const model = modelConfigRepo.findByIdWithKey(campaign.targetModelId);
   if (!model) {
-    throw new Error(`Dashboard model not found: ${campaign.targetModelId}`);
+    throw new Error('Dashboard model not found');
   }
 
-  // Build target URL from model config
-  const baseUrl = model.base_url || getDefaultProviderUrl(model.provider ?? '');
-  return baseUrl;
-}
-
-function getDefaultProviderUrl(provider: string): string {
-  const defaults: Record<string, string> = {
-    ollama: 'http://localhost:11434/v1/chat/completions',
-    lmstudio: 'http://localhost:1234/v1/chat/completions',
-    llamacpp: 'http://localhost:8080/v1/chat/completions',
-    openai: 'https://api.openai.com/v1/chat/completions',
-    anthropic: 'https://api.anthropic.com/v1/messages',
-  };
-  return defaults[provider] || `https://${provider}.example.com/v1/chat/completions`;
+  // Build target URL from model config — only trust known providers
+  const provider = model.provider ?? '';
+  if (model.base_url) {
+    return model.base_url;
+  }
+  if (KNOWN_PROVIDERS.has(provider)) {
+    return PROVIDER_DEFAULTS[provider];
+  }
+  throw new Error(`Unknown provider: ${provider}`);
 }
 
 
 const RUNS_DIR = getDataPath('sengoku', 'runs');
-const RUN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const RUN_TIMEOUT_MS = Number(process.env.SENGOKU_RUN_TIMEOUT_MS ?? 30 * 60 * 1000);
 
 function summarizeFindings(allFindings: readonly Finding[]): FindingsSummary {
-  let total = 0, critical = 0, high = 0, medium = 0, low = 0, info = 0;
-  for (const f of allFindings) {
-    total++;
-    const sev = (f.severity ?? '').toLowerCase();
-    if (sev === 'critical') critical++;
-    else if (sev === 'high') high++;
-    else if (sev === 'medium' || sev === 'warning') medium++;
-    else if (sev === 'low') low++;
-    else info++;
-  }
-  return { total, critical, high, medium, low, info };
+  return allFindings.reduce<FindingsSummary>(
+    (acc, f) => {
+      const sev = (f.severity ?? '').toLowerCase();
+      return {
+        total: acc.total + 1,
+        critical: sev === 'critical' ? acc.critical + 1 : acc.critical,
+        high: sev === 'high' ? acc.high + 1 : acc.high,
+        medium: sev === 'medium' || sev === 'warning' ? acc.medium + 1 : acc.medium,
+        low: sev === 'low' ? acc.low + 1 : acc.low,
+        info: !['critical', 'high', 'medium', 'warning', 'low'].includes(sev) ? acc.info + 1 : acc.info,
+      };
+    },
+    { total: 0, critical: 0, high: 0, medium: 0, low: 0, info: 0 },
+  );
 }
 
 function hasCriticalFinding(findings: readonly Finding[]): boolean {
@@ -93,8 +104,38 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), RUN_TIMEOUT_MS);
 
+  // Read the existing run to preserve the original startedAt
+  let originalStartedAt = new Date().toISOString();
+  try {
+    const runFile = path.join(RUNS_DIR, campaign.id, `${runId}.json`);
+    const content = await fs.promises.readFile(runFile, 'utf-8');
+    const existing = JSON.parse(content) as CampaignRun;
+    if (existing.startedAt) {
+      originalStartedAt = existing.startedAt;
+    }
+  } catch {
+    // Use default startedAt
+  }
+
   // Resolve actual target URL (handles dashboard model lookup)
-  const effectiveTargetUrl = await resolveTargetUrl(campaign);
+  let effectiveTargetUrl: string;
+  try {
+    effectiveTargetUrl = await resolveTargetUrl(campaign);
+  } catch (err) {
+    console.error(`[sengoku] resolveTargetUrl failed for campaign ${campaign.id}:`, err instanceof Error ? err.message : err);
+    const failedRun: CampaignRun = {
+      id: runId,
+      campaignId: campaign.id,
+      startedAt: originalStartedAt,
+      endedAt: new Date().toISOString(),
+      status: 'failed',
+      skillResults: [],
+      findingsSummary: { total: 0, critical: 0, high: 0, medium: 0, low: 0, info: 0 },
+    };
+    await persistRun(campaign.id, failedRun);
+    clearTimeout(timeoutId);
+    return;
+  }
 
   const allResults: SkillRunResult[] = [];
   const allFindings: Finding[] = [];
@@ -108,9 +149,9 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
       }
     }
 
-    // Determine execution order
+    // Determine execution order — use entryNodeId for graph-based campaigns
     const skillIds = campaign.graph
-      ? traverseGraph(campaign.graph, nodeMap)
+      ? traverseGraph(campaign.graph)
       : [...campaign.selectedSkillIds];
 
     const visited = new Set<string>();
@@ -128,65 +169,73 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
       visited.add(skillId);
       const startedAt = new Date().toISOString();
 
+      // Execute skill by scanning its probe text
+      const skillProbe = `[Skill Probe: ${skillId}] Target: ${effectiveTargetUrl}`;
+      let scanResult: ReturnType<typeof scan> | null = null;
       try {
-        // Execute skill by scanning its probe text
-        const skillProbe = `[Skill Probe: ${skillId}] Target: ${effectiveTargetUrl}`;
-        const result = scan(skillProbe);
-        const findings = result.findings ?? [];
-
-        const skillResult: SkillRunResult = {
-          skillId,
-          status: findings.length > 0 ? 'failure' : 'success',
-          findings,
-          startedAt,
-          completedAt: new Date().toISOString(),
-        };
-
-        allResults.push(skillResult);
-        allFindings.push(...findings);
-
-        // Branching logic
-        const node = nodeMap.get(skillId);
-        if (node) {
-          if (hasCriticalFinding(findings) && node.onCriticalFinding?.length) {
-            // Insert critical branch skills next
-            skillIds.splice(currentIndex + 1, 0, ...node.onCriticalFinding);
-          } else if (findings.length > 0 && node.onFail) {
-            skillIds.splice(currentIndex + 1, 0, node.onFail);
-          } else if (findings.length === 0 && node.onPass) {
-            skillIds.splice(currentIndex + 1, 0, node.onPass);
-          }
-        }
-
-        // Persist incrementally
-        const run: CampaignRun = {
-          id: runId,
-          campaignId: campaign.id,
-          startedAt: allResults[0]?.startedAt ?? startedAt,
-          endedAt: null,
-          status: 'running',
-          skillResults: allResults,
-          findingsSummary: summarizeFindings(allFindings),
-        };
-        await persistRun(campaign.id, run);
-
-        // Webhook on critical
-        if (campaign.webhookUrl && hasCriticalFinding(findings)) {
-          await fireWebhook(campaign.webhookUrl, {
-            event: 'critical_finding',
-            campaignId: campaign.id,
-            runId,
-            skillId,
-            findings: findings.filter((f) => (f.severity ?? '').toLowerCase() === 'critical'),
-          });
-        }
-      } catch (err) {
+        scanResult = scan(skillProbe);
+      } catch {
+        // scan() threw — treat as error result, not a crash
         allResults.push({
           skillId,
           status: 'error',
           findings: [],
           startedAt,
           completedAt: new Date().toISOString(),
+        });
+        currentIndex++;
+        continue;
+      }
+
+      const findings = scanResult.findings ?? [];
+
+      const skillResult: SkillRunResult = {
+        skillId,
+        status: findings.length > 0 ? 'failure' : 'success',
+        findings,
+        startedAt,
+        completedAt: new Date().toISOString(),
+      };
+
+      allResults.push(skillResult);
+      allFindings.push(...findings);
+
+      // Branching logic
+      const node = nodeMap.get(skillId);
+      if (node) {
+        if (hasCriticalFinding(findings) && node.onCriticalFinding?.length) {
+          skillIds.splice(currentIndex + 1, 0, ...node.onCriticalFinding);
+        } else if (findings.length > 0 && node.onFail) {
+          skillIds.splice(currentIndex + 1, 0, node.onFail);
+        } else if (findings.length === 0 && node.onPass) {
+          skillIds.splice(currentIndex + 1, 0, node.onPass);
+        }
+      }
+
+      // Persist incrementally
+      try {
+        const run: CampaignRun = {
+          id: runId,
+          campaignId: campaign.id,
+          startedAt: originalStartedAt,
+          endedAt: null,
+          status: 'running',
+          skillResults: allResults,
+          findingsSummary: summarizeFindings(allFindings),
+        };
+        await persistRun(campaign.id, run);
+      } catch {
+        // Persist failure should not crash the executor
+      }
+
+      // Webhook on critical
+      if (campaign.webhookUrl && hasCriticalFinding(findings)) {
+        await fireWebhook(campaign.webhookUrl, {
+          event: 'critical_finding',
+          campaignId: campaign.id,
+          runId,
+          skillId,
+          findings: findings.filter((f) => (f.severity ?? '').toLowerCase() === 'critical'),
         });
       }
 
@@ -197,7 +246,7 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
     const finalRun: CampaignRun = {
       id: runId,
       campaignId: campaign.id,
-      startedAt: allResults[0]?.startedAt ?? new Date().toISOString(),
+      startedAt: originalStartedAt,
       endedAt: new Date().toISOString(),
       status: controller.signal.aborted ? 'cancelled' : 'completed',
       skillResults: allResults,
@@ -209,8 +258,20 @@ export async function executeCampaignRun(campaign: Campaign, runId: string): Pro
   }
 }
 
-function traverseGraph(graph: import('./sengoku-types').CampaignGraph, _nodeMap: Map<string, CampaignNode>): string[] {
-  // Simple topological ordering by node.order
+function traverseGraph(graph: import('./sengoku-types').CampaignGraph): string[] {
+  // Start from entryNodeId, fall back to sorting by order
+  const entryId = graph.entryNodeId;
   const sorted = [...graph.nodes].sort((a, b) => a.order - b.order);
-  return sorted.map((n) => n.skillId);
+  const skillIds = sorted.map((n) => n.skillId);
+
+  // If entryNodeId is specified and valid, ensure it's first
+  if (entryId) {
+    const entryIdx = skillIds.indexOf(entryId);
+    if (entryIdx > 0) {
+      skillIds.splice(entryIdx, 1);
+      skillIds.unshift(entryId);
+    }
+  }
+
+  return skillIds;
 }

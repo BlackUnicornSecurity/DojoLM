@@ -34,12 +34,16 @@ vi.mock('fs', async (importOriginal) => {
       renameSync: vi.fn(),
       mkdirSync: vi.fn(),
       unlinkSync: vi.fn(),
+      openSync: vi.fn().mockReturnValue(42),
+      closeSync: vi.fn(),
     },
     readFileSync: vi.fn().mockImplementation(() => { throw new Error('not found'); }),
     writeFileSync: vi.fn(),
     renameSync: vi.fn(),
     mkdirSync: vi.fn(),
     unlinkSync: vi.fn(),
+    openSync: vi.fn().mockReturnValue(42),
+    closeSync: vi.fn(),
   };
 });
 

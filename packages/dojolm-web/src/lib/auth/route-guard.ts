@@ -20,15 +20,19 @@ interface ApiKeyPermission {
   role: UserRole;
 }
 
-/** Parse and validate API_KEY_PERMISSIONS JSON env var */
+/**
+ * Parse and validate API_KEY_PERMISSIONS JSON env var.
+ * Intentionally re-parsed on every call to support runtime env changes
+ * (e.g., Docker config reload) without requiring a process restart.
+ */
 function getApiKeyPermissions(): Map<string, UserRole> {
   const permissionsMap = new Map<string, UserRole>();
   const permissionsJson = process.env.API_KEY_PERMISSIONS;
-  
+
   if (!permissionsJson) {
     return permissionsMap;
   }
-  
+
   try {
     const permissions = JSON.parse(permissionsJson) as ApiKeyPermission[];
     for (const entry of permissions) {
@@ -37,9 +41,9 @@ function getApiKeyPermissions(): Map<string, UserRole> {
       }
     }
   } catch {
-    // Invalid JSON - ignore and return empty map
+    console.warn('API_KEY_PERMISSIONS is set but contains invalid JSON — ignoring');
   }
-  
+
   return permissionsMap;
 }
 
@@ -55,14 +59,14 @@ function getApiKeyRole(apiKey: string): UserRole {
       return specificRole;
     }
   }
-  
+
   // Fall back to default NODA_API_KEY_ROLE env var with validation
   // This allows scoped API key permissions via environment configuration
   const configuredRole = process.env.NODA_API_KEY_ROLE as UserRole;
   if (VALID_ROLES.includes(configuredRole)) {
     return configuredRole;
   }
-  
+
   // Safe default - analyst has limited privileges
   return 'analyst';
 }
@@ -71,10 +75,6 @@ const SESSION_COOKIE_NAME = 'tpi_session';
 const CSRF_COOKIE_NAME = 'tpi_csrf';
 const CSRF_HEADER_NAME = 'x-csrf-token';
 const STATE_MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
-
-export interface AuthenticatedRequest extends NextRequest {
-  user?: SessionUser;
-}
 
 export interface RouteGuardOptions {
   /** Minimum role required. If omitted, any authenticated user is allowed. */
@@ -86,12 +86,20 @@ export interface RouteGuardOptions {
   skipCsrf?: boolean;
 }
 
-// Next.js 16 uses Promise<Params> for dynamic route params
+/** Context shape accepted by Next.js 15+ route handlers (params may be a Promise) */
+type RouteContext = { params?: Record<string, string> | Promise<Record<string, string>> };
+
+// Next.js 15+ uses Promise<Params> for dynamic route params
 type RouteHandler = (
   req: NextRequest,
-  context?: any
+  context?: RouteContext
 ) => Promise<NextResponse | Response> | NextResponse | Response;
 
+/**
+ * Handler signature after withAuth resolves params.
+ * `params` is always a resolved plain object (never a Promise) by the time
+ * the handler receives it — withAuth awaits it before forwarding.
+ */
 type AuthenticatedHandler = (
   req: NextRequest,
   context: { params?: Record<string, string>; user: SessionUser }
@@ -107,7 +115,20 @@ export function withAuth(
   handler: AuthenticatedHandler,
   options?: RouteGuardOptions
 ): RouteHandler {
-  return async (req: NextRequest, context?: { params?: Record<string, string> }) => {
+  return async (req: NextRequest, context?: RouteContext) => {
+    // Next.js 15+ passes params as a Promise — resolve before forwarding
+    let resolvedParams: Record<string, string> | undefined;
+    try {
+      resolvedParams = context?.params
+        ? await Promise.resolve(context.params)
+        : undefined;
+    } catch {
+      return NextResponse.json(
+        { error: 'Route parameter resolution failed' },
+        { status: 500 }
+      );
+    }
+
     let user: SessionUser | null = null;
 
     // Try session cookie auth first
@@ -161,7 +182,7 @@ export function withAuth(
       }
     }
 
-    return handler(req, { params: context?.params, user });
+    return handler(req, { params: resolvedParams, user });
   };
 }
 

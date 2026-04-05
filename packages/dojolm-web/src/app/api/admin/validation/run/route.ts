@@ -4,17 +4,18 @@
  * Story: K6.4 (Admin Validation API Routes)
  * Index:
  * - Constants & types (line 14)
- * - Lock file helpers (line 30)
- * - POST handler (line 65)
+ * - Lock helpers (line 30)
+ * - POST handler (line 55)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { readFileSync, writeFileSync, renameSync, mkdirSync, unlinkSync } from 'fs'
-import { join, dirname } from 'path'
+import { readFileSync, unlinkSync } from 'fs'
+import { join } from 'path'
 import crypto from 'node:crypto'
 import { withAuth } from '@/lib/auth/route-guard'
 import { auditLog } from '@/lib/audit-logger'
 import { getDataPath } from '@/lib/runtime-paths'
+import { SAFE_MODULE_ID, writeProgressAtomic, acquireLock } from '@/lib/validation-executor'
 
 const DATA_DIR = getDataPath('validation')
 const LOCK_PATH = join(DATA_DIR, 'run-lock.json')
@@ -22,8 +23,7 @@ const LOCK_PATH = join(DATA_DIR, 'run-lock.json')
 /** Lock expiry: 90 minutes — prevents permanent DoS from stale locks */
 const LOCK_EXPIRY_MS = 90 * 60 * 1000
 
-/** Safe module ID pattern — prevents path traversal */
-const SAFE_MODULE_ID = /^[a-zA-Z0-9_-]{1,128}$/
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 const SECURITY_HEADERS = {
   'Content-Type': 'application/json',
@@ -34,16 +34,14 @@ const SECURITY_HEADERS = {
 interface RunLock {
   runId: string
   startedAt: string
-  modules: string[] | null
-  fullCorpus: boolean
-  includeHoldout: boolean
 }
 
 function readLock(): RunLock | null {
   try {
     const raw = readFileSync(LOCK_PATH, 'utf8')
     const parsed = JSON.parse(raw)
-    if (parsed && typeof parsed.runId === 'string') {
+    // Validate runId is a proper UUID to prevent injection
+    if (parsed && typeof parsed.runId === 'string' && UUID_REGEX.test(parsed.runId)) {
       // Check lock age — if older than LOCK_EXPIRY_MS, treat as stale
       if (parsed.startedAt) {
         const lockAge = Date.now() - new Date(parsed.startedAt).getTime()
@@ -56,37 +54,12 @@ function readLock(): RunLock | null {
           return null
         }
       }
-      return parsed as RunLock
+      return { runId: parsed.runId, startedAt: parsed.startedAt }
     }
     return null
   } catch {
     return null
   }
-}
-
-function writeLockAtomic(lock: RunLock): void {
-  const dir = dirname(LOCK_PATH)
-  mkdirSync(dir, { recursive: true })
-
-  const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`
-  const tmpPath = `${LOCK_PATH}.${uniqueSuffix}.tmp`
-
-  const data = JSON.stringify(lock, null, 2)
-  writeFileSync(tmpPath, data, 'utf8')
-  renameSync(tmpPath, LOCK_PATH)
-}
-
-function writeProgressAtomic(runId: string, progress: Record<string, unknown>): void {
-  const runDir = join(DATA_DIR, 'runs', runId)
-  mkdirSync(runDir, { recursive: true })
-
-  const progressPath = join(runDir, 'progress.json')
-  const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(4).toString('hex')}`
-  const tmpPath = `${progressPath}.${uniqueSuffix}.tmp`
-
-  const data = JSON.stringify(progress, null, 2)
-  writeFileSync(tmpPath, data, 'utf8')
-  renameSync(tmpPath, progressPath)
 }
 
 export const POST = withAuth(async (request: NextRequest) => {
@@ -121,9 +94,9 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     // Validate modules if provided
     if (body.modules !== undefined) {
-      if (!Array.isArray(body.modules)) {
+      if (!Array.isArray(body.modules) || body.modules.length === 0) {
         return NextResponse.json(
-          { error: 'modules must be an array of strings' },
+          { error: 'modules must be a non-empty array of strings' },
           { status: 400, headers: SECURITY_HEADERS }
         )
       }
@@ -169,24 +142,23 @@ export const POST = withAuth(async (request: NextRequest) => {
     const fullCorpus = (body.fullCorpus as boolean | undefined) ?? false
     const includeHoldout = (body.includeHoldout as boolean | undefined) ?? false
 
-    // Write lock file
-    const lock: RunLock = {
-      runId,
-      startedAt: now,
-      modules,
-      fullCorpus,
-      includeHoldout,
+    // Atomic lock acquisition (O_EXCL prevents TOCTOU race)
+    const lockAcquired = acquireLock(runId, now, modules, fullCorpus, includeHoldout)
+    if (!lockAcquired) {
+      return NextResponse.json(
+        { error: 'A validation run is already in progress' },
+        { status: 429, headers: SECURITY_HEADERS }
+      )
     }
-    writeLockAtomic(lock)
 
-    // Write initial progress file
+    // Write initial progress file — modulesTotal is null until executor discovers modules
     writeProgressAtomic(runId, {
       runId,
       status: 'queued',
       progress: 0,
       currentModule: null,
       modulesCompleted: 0,
-      modulesTotal: modules ? modules.length : 0,
+      modulesTotal: null,
       samplesProcessed: 0,
       samplesTotal: 0,
       nonConformities: 0,
@@ -196,9 +168,10 @@ export const POST = withAuth(async (request: NextRequest) => {
       fullCorpus,
       includeHoldout,
       modules,
+      validationMode: 'metadata_check',
     })
 
-    // Audit log the action
+    // Audit log
     void auditLog.configChange({
       endpoint: '/api/admin/validation/run',
       field: 'validation_run',
@@ -206,12 +179,22 @@ export const POST = withAuth(async (request: NextRequest) => {
       newValue: runId,
     })
 
+    // Fire-and-forget: start async execution
+    // NOTE: Requires a long-lived Node.js process (not serverless/edge)
+    import('@/lib/validation-executor')
+      .then(({ executeValidationRun }) =>
+        executeValidationRun(runId, { modules, fullCorpus, includeHoldout, startedAt: now })
+      )
+      .catch((err) => {
+        console.error(`Validation run ${runId} executor failed to start:`, err instanceof Error ? err.message : err)
+      })
+
     return NextResponse.json(
       { runId, status: 'queued' },
       { status: 200, headers: SECURITY_HEADERS }
     )
   } catch (error) {
-    console.error('Validation run POST error:', error)
+    console.error('Validation run POST error:', error instanceof Error ? error.message : error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500, headers: SECURITY_HEADERS }
