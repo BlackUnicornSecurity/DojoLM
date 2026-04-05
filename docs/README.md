@@ -2,11 +2,11 @@
 
 This directory contains the active user-facing and reference documentation for the current codebase. Historical update summaries and superseded material have been moved under [`docs/archive/`](archive/).
 
-## Current Implementation (March 2026)
+## Current Implementation Snapshot (March 30, 2026)
 
 | Metric | Count |
 |--------|-------|
-| Detection Patterns | 510 across 49 groups |
+| Detection Patterns | 512 across 49 groups |
 | Attack Fixtures | 2,960 across 37 categories |
 | DojoV2 Controls | 18 (100% implemented) |
 | LLM Provider Presets | 57 |

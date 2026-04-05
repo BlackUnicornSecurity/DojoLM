@@ -119,6 +119,14 @@ function asRecord(data: unknown): Record<string, unknown> | null {
   return null
 }
 
+/** Filter an unknown array to only plain objects. */
+function filterRecords(arr: unknown[]): Record<string, unknown>[] {
+  return arr.filter(
+    (item): item is Record<string, unknown> =>
+      typeof item === 'object' && item !== null && !Array.isArray(item),
+  )
+}
+
 // ---------------------------------------------------------------------------
 // Specialized renderers
 // ---------------------------------------------------------------------------
@@ -239,7 +247,7 @@ function renderModelList(data: unknown): React.ReactNode {
   }
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
-      {models.map((m: Record<string, unknown>, i: number) => (
+      {filterRecords(models).map((m, i) => (
         <div key={String(m.id ?? i)} className="flex items-center justify-between text-xs">
           <span className="text-[var(--foreground)] font-medium">{String(m.name ?? m.id ?? 'Unknown')}</span>
           <span className="text-[var(--text-tertiary)]">{String(m.provider ?? '')}</span>
@@ -333,7 +341,7 @@ function renderCompliance(data: unknown): React.ReactNode {
 
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
-      {frameworks.map((f: Record<string, unknown>, i: number) => {
+      {filterRecords(frameworks).map((f, i) => {
         const name = String(f.name ?? 'Framework')
         const coverage = typeof f.coverage === 'number' ? f.coverage : 0
         return (
@@ -399,7 +407,7 @@ function renderArenaList(data: unknown): React.ReactNode {
   if (matches.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No matches found</p>
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
-      {matches.slice(0, 10).map((m: Record<string, unknown>, i: number) => (
+      {filterRecords(matches).slice(0, 10).map((m, i) => (
         <div key={String(m.id ?? i)} className="flex items-center justify-between text-xs">
           <span className="text-[var(--foreground)] font-mono">{String(m.id ?? '').slice(0, 8)}</span>
           <span className={cn(
@@ -425,7 +433,7 @@ function renderWarriors(data: unknown): React.ReactNode {
   if (warriors.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No warriors yet</p>
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
-      {warriors.slice(0, 10).map((w: Record<string, unknown>, i: number) => (
+      {filterRecords(warriors).slice(0, 10).map((w, i) => (
         <div key={String(w.modelId ?? i)} className="flex items-center justify-between text-xs">
           <span className="text-[var(--foreground)] font-medium">{String(w.modelName ?? w.modelId ?? 'Unknown')}</span>
           <span className="text-[var(--text-tertiary)]">
@@ -451,7 +459,7 @@ function renderDnaQuery(data: unknown): React.ReactNode {
       <p className="text-xs text-[var(--text-secondary)]">
         <span className="font-medium text-[var(--foreground)]">{total}</span> result{total !== 1 ? 's' : ''}
       </p>
-      {Array.isArray(items) && (items as Record<string, unknown>[]).slice(0, 5).map((item, i) => (
+      {Array.isArray(items) && filterRecords(items).slice(0, 5).map((item, i) => (
         <div key={String(item.id ?? i)} className="text-xs text-[var(--text-tertiary)] truncate">
           {String(item.content ?? item.id ?? item.name ?? JSON.stringify(item).slice(0, 80))}
         </div>
@@ -555,7 +563,7 @@ function renderCampaignList(data: unknown): React.ReactNode {
   if (campaigns.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No campaigns found</p>
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
-      {campaigns.slice(0, 10).map((c: Record<string, unknown>, i: number) => (
+      {filterRecords(campaigns).slice(0, 10).map((c, i) => (
         <div key={String(c.id ?? i)} className="flex items-center justify-between text-xs">
           <span className="text-[var(--foreground)] font-medium">{String(c.name ?? 'Untitled')}</span>
           <span className={cn(
@@ -593,7 +601,7 @@ function renderDataTable(data: unknown): React.ReactNode {
         </p>
       )}
       <div className="max-h-32 overflow-y-auto space-y-0.5">
-        {(items as Record<string, unknown>[]).slice(0, 8).map((item, i) => {
+        {filterRecords(items as unknown[]).slice(0, 8).map((item, i) => {
           const label = String(item.modelName ?? item.name ?? item.title ?? item.id ?? `#${i + 1}`)
           const detail = item.avgResilienceScore != null
             ? `Score: ${item.avgResilienceScore}`

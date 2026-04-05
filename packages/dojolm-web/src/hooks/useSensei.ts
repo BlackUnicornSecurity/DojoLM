@@ -23,6 +23,11 @@ import type { NavId } from '@/lib/constants'
 // Constants
 // ---------------------------------------------------------------------------
 
+const VALID_NAV_IDS = new Set([
+  'dashboard', 'scanner', 'armory', 'llm', 'guard', 'compliance',
+  'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
+])
+
 const STORAGE_KEY_MESSAGES = 'sensei-messages'
 const STORAGE_KEY_MODEL = 'sensei-model'
 const MAX_STORED_MESSAGES = 100
@@ -277,10 +282,6 @@ export function useSensei(activeModule: NavId, onNavigate?: (module: NavId) => v
   const onNavigateRef = useRef(onNavigate)
   useEffect(() => { onNavigateRef.current = onNavigate }, [onNavigate])
 
-  const VALID_NAV_IDS = useRef(new Set([
-    'dashboard', 'scanner', 'armory', 'llm', 'guard', 'compliance',
-    'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
-  ]))
   const handledNavigationIds = useRef(new Set<string>())
 
   useEffect(() => {
@@ -298,7 +299,7 @@ export function useSensei(activeModule: NavId, onNavigate?: (module: NavId) => v
         (result.data as Record<string, unknown>).action === 'navigate'
       ) {
         const module = (result.data as Record<string, unknown>).module
-        if (typeof module === 'string' && VALID_NAV_IDS.current.has(module)) {
+        if (typeof module === 'string' && VALID_NAV_IDS.has(module)) {
           handledNavigationIds.current.add(result.toolCallId)
           onNavigateRef.current?.(module as NavId)
         }

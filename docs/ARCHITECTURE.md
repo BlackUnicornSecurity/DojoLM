@@ -36,13 +36,13 @@ The canonical scanner engine.
   - Code/Tool Security (LLM-08, LLM-09)
   - Denial of Service (DoS)
   - Supply Chain
-  - Agent Security
-  - Model Theft
+  - Agent Security 
   - Output Handling
-  - Vector/Embeddings
-  - Multimodal
-  - Overreliance
-  - Bias/Fairness
+  - Vector/Embed
+  - Overreliance (Hallucination Triggers)
+  - Bias/Fairness (Demographic Parity)
+  - **Shingan Universal Scanner**: 6-layer cross-module correlation.
+  - **Kagami Fingerprinting**: 210+ probes for model signature verification.
 
 ### `packages/dojolm-scanner`
 

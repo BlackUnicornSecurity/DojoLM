@@ -346,28 +346,16 @@ Recommendation:
 
 ### 13. Sensei service capabilities exist as APIs, but not as first-class user-facing controls
 
-Status: API-capable, mostly assistant-only.
+Status: **RESOLVED (2026-04-04)** — All Sensei API routes are now wired as Sensei tools.
 
 Evidence:
 
-- `packages/dojolm-web/src/app/api/sensei/generate/route.ts:1`
-- `packages/dojolm-web/src/app/api/sensei/judge/route.ts:1`
-- `packages/dojolm-web/src/app/api/sensei/mutate/route.ts:1`
-- `packages/dojolm-web/src/app/api/sensei/plan/route.ts:1`
+- `packages/dojolm-web/src/app/api/sensei/generate/route.ts:1` — wired as `generate_attack`
+- `packages/dojolm-web/src/app/api/sensei/judge/route.ts:1` — wired as `judge_response`
+- `packages/dojolm-web/src/app/api/sensei/mutate/route.ts:1` — wired as `predict_variants`
+- `packages/dojolm-web/src/app/api/sensei/plan/route.ts:1` — wired as `sensei_plan`
 
-Why this matters:
-
-- These routes cover attack generation, judging, mutation, and conversation planning.
-- They appear to be available mainly through internal assistant tooling rather than explicit user-facing controls.
-
-Impact:
-
-- Powerful Sensei capabilities are present, but users may not know they exist unless they interact with the assistant in exactly the right way.
-
-Recommendation:
-
-- Add an `Advanced Sensei Tools` drawer or a small explicit action menu in Atemi or LLM Dashboard.
-- `packages/dojolm-web/src/app/api/sensei/plan/route.ts:1` appears even more hidden than the others: it does not show up in the visible UI and does not appear to be registered in `packages/dojolm-web/src/lib/sensei/tool-definitions.ts`.
+Additionally, 11 new tools were added for Arena (3), AttackDNA (2), Sengoku (2), and misc (4) features that previously had no Sensei tool wiring. Total tools: 33 (was 22, 3 of which were broken). MODULE_TOP_TOOLS updated to surface relevant tools per module. `navigate_to` now actually navigates (wired to setActiveTab with NavId whitelist). See `team/testing/QA/QA-Log/qa-report-20260404-sensei-wiring-fix.md` for full details.
 
 ### 14. Validation signature verification exists but has no visible verification affordance
 

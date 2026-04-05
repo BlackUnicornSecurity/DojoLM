@@ -190,7 +190,7 @@ team/
 | DojoV2 Controls | 18 | ✅ 100% Complete |
 | Attack Fixtures | 2,960+ | ✅ Verified |
 | Fixture Categories | 37 | ✅ Verified |
-| Detection Patterns | 510+ | ✅ Verified |
+| Detection Patterns | 512 | ✅ Verified |
 | Pattern Groups | 49 | ✅ Verified |
 | Specialized Detectors | 6 | ✅ Verified |
 | LLM Provider Presets | 57 | ✅ Verified |
