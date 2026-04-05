@@ -9,16 +9,24 @@ import { NextResponse } from 'next/server';
 import { getAllPresets } from 'bu-tpi/llm';
 
 export async function GET() {
-  const presets = getAllPresets().map((preset) => ({
-    id: preset.id,
-    name: preset.name,
-    tier: preset.tier,
-    region: preset.region ?? 'Global',
-    isOpenAICompatible: preset.isOpenAICompatible,
-    authType: preset.authType,
-    baseUrl: preset.baseUrl,
-    defaultModels: [...preset.defaultModels],
-  }));
+  try {
+    const presets = getAllPresets().map((preset) => ({
+      id: preset.id,
+      name: preset.name,
+      tier: preset.tier,
+      region: preset.region ?? 'Global',
+      isOpenAICompatible: preset.isOpenAICompatible,
+      authType: preset.authType,
+      baseUrl: preset.baseUrl,
+      defaultModels: [...preset.defaultModels],
+    }));
 
-  return NextResponse.json(presets);
+    return NextResponse.json(presets);
+  } catch (error) {
+    console.error('Failed to load provider presets:', error);
+    return NextResponse.json(
+      { error: 'Failed to load provider presets' },
+      { status: 500 }
+    );
+  }
 }

@@ -195,27 +195,38 @@ export function getSessionToken(req: NextRequest): string | undefined {
 }
 
 /**
+ * Read TPI_COOKIE_SECURE at runtime (not build-time) so Docker containers
+ * can disable the Secure flag for HTTP-only deployments via env var.
+ * Set TPI_COOKIE_SECURE=0 to omit the Secure attribute (only '0' disables it).
+ * BUG-001 fix: was previously hardcoded in string literals.
+ */
+function getSecureFlag(): string {
+  return process.env.TPI_COOKIE_SECURE === '0' ? '' : 'Secure; ';
+}
+
+/**
  * Cookie helper: builds Set-Cookie header with security attributes.
  */
 export function buildSessionCookie(token: string, maxAgeSeconds: number): string {
-  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly; ${getSecureFlag()}SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds CSRF Set-Cookie (readable by JS for double-submit).
+ * Secure flag controlled by TPI_COOKIE_SECURE env var (PT-CSRF-H04).
  */
 export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): string {
-  // PT-CSRF-H04 fix: Always include Secure flag (matches session cookie behavior)
-  return `${CSRF_COOKIE_NAME}=${csrfToken}; Secure; SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  return `${CSRF_COOKIE_NAME}=${csrfToken}; ${getSecureFlag()}SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds expired cookies for logout.
  */
 export function buildLogoutCookies(): string[] {
+  const secure = getSecureFlag();
   return [
-    `${SESSION_COOKIE_NAME}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`,
-    `${CSRF_COOKIE_NAME}=; Secure; SameSite=Strict; Path=/; Max-Age=0`,
+    `${SESSION_COOKIE_NAME}=; HttpOnly; ${secure}SameSite=Strict; Path=/; Max-Age=0`,
+    `${CSRF_COOKIE_NAME}=; ${secure}SameSite=Strict; Path=/; Max-Age=0`,
   ];
 }
 

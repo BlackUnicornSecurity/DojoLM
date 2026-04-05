@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
@@ -42,6 +42,18 @@ export function Sidebar() {
   const { isVisible } = useModuleVisibility()
   const [collapsed, setCollapsed] = useState(false)
   const [activityExpanded, setActivityExpanded] = useState(true)
+
+  // BUG-006 fix: sync collapsed state to CSS variable so main content
+  // padding can respond to the toggle (not just breakpoints)
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sidebar-current',
+      collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)'
+    )
+    return () => {
+      document.documentElement.style.removeProperty('--sidebar-current')
+    }
+  }, [collapsed])
 
   const renderNavItem = (item: typeof NAV_ITEMS[number]) => {
     const Icon = item.icon

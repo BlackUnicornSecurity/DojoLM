@@ -98,6 +98,7 @@ beforeEach(() => {
   // Save env vars that tests may mutate
   originalEnv.NODA_API_KEY_ROLE = process.env.NODA_API_KEY_ROLE;
   originalEnv.API_KEY_PERMISSIONS = process.env.API_KEY_PERMISSIONS;
+  originalEnv.TPI_COOKIE_SECURE = process.env.TPI_COOKIE_SECURE;
 });
 
 afterEach(() => {
@@ -111,6 +112,11 @@ afterEach(() => {
     delete process.env.API_KEY_PERMISSIONS;
   } else {
     process.env.API_KEY_PERMISSIONS = originalEnv.API_KEY_PERMISSIONS;
+  }
+  if (originalEnv.TPI_COOKIE_SECURE === undefined) {
+    delete process.env.TPI_COOKIE_SECURE;
+  } else {
+    process.env.TPI_COOKIE_SECURE = originalEnv.TPI_COOKIE_SECURE;
   }
 });
 
@@ -549,5 +555,70 @@ describe('route-guard', () => {
     const ctx = dummyHandler.mock.calls[0][1];
     expect(ctx.user.role).toBe('analyst');
     expect(ctx.user.id).toBe('api-key-user');
+  });
+
+  // ---------------------------------------------------------------------------
+  // BUG-001: TPI_COOKIE_SECURE runtime flag
+  // ---------------------------------------------------------------------------
+
+  // RG-027: buildSessionCookie omits Secure flag when TPI_COOKIE_SECURE=0
+  it('RG-027: buildSessionCookie omits Secure when TPI_COOKIE_SECURE=0', () => {
+    process.env.TPI_COOKIE_SECURE = '0';
+    const cookie = buildSessionCookie('tok-123', 3600);
+
+    expect(cookie).not.toContain('Secure');
+    expect(cookie).toContain('HttpOnly');
+    expect(cookie).toContain('SameSite=Strict');
+    expect(cookie).toContain('Path=/');
+    expect(cookie).toContain('Max-Age=3600');
+  });
+
+  // RG-028: buildCsrfCookie omits Secure flag when TPI_COOKIE_SECURE=0
+  it('RG-028: buildCsrfCookie omits Secure when TPI_COOKIE_SECURE=0', () => {
+    process.env.TPI_COOKIE_SECURE = '0';
+    const cookie = buildCsrfCookie('csrf-abc', 3600);
+
+    expect(cookie).not.toContain('Secure');
+    expect(cookie).toContain('SameSite=Strict');
+    expect(cookie).toContain('Max-Age=3600');
+  });
+
+  // RG-029: buildLogoutCookies omit Secure flag when TPI_COOKIE_SECURE=0
+  it('RG-029: buildLogoutCookies omit Secure when TPI_COOKIE_SECURE=0', () => {
+    process.env.TPI_COOKIE_SECURE = '0';
+    const cookies = buildLogoutCookies();
+
+    expect(cookies).toHaveLength(2);
+    expect(cookies[0]).not.toContain('Secure');
+    expect(cookies[1]).not.toContain('Secure');
+    expect(cookies[0]).toContain('Max-Age=0');
+    expect(cookies[1]).toContain('Max-Age=0');
+  });
+
+  // RG-030: Secure flag is read per-call, not cached at module load
+  it('RG-030: getSecureFlag reads env var per-call (not cached)', () => {
+    // Default: Secure present
+    delete process.env.TPI_COOKIE_SECURE;
+    expect(buildSessionCookie('t', 60)).toContain('Secure');
+
+    // Disable: Secure absent
+    process.env.TPI_COOKIE_SECURE = '0';
+    expect(buildSessionCookie('t', 60)).not.toContain('Secure');
+
+    // Re-enable: Secure present again
+    delete process.env.TPI_COOKIE_SECURE;
+    expect(buildSessionCookie('t', 60)).toContain('Secure');
+  });
+
+  // RG-031: TPI_COOKIE_SECURE with non-'0' values still includes Secure
+  it('RG-031: non-zero TPI_COOKIE_SECURE values keep Secure flag', () => {
+    process.env.TPI_COOKIE_SECURE = '1';
+    expect(buildSessionCookie('t', 60)).toContain('Secure');
+
+    process.env.TPI_COOKIE_SECURE = 'false';
+    expect(buildSessionCookie('t', 60)).toContain('Secure');
+
+    process.env.TPI_COOKIE_SECURE = '';
+    expect(buildSessionCookie('t', 60)).toContain('Secure');
   });
 });

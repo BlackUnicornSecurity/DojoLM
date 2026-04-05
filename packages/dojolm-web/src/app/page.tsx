@@ -624,7 +624,7 @@ export default function Home() {
           aria-label="Main content"
           className={cn(
             "pt-8 pb-16 md:pb-8 pr-6 pl-6",
-            "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-width)+24px)]",
+            "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-current,var(--sidebar-width))+24px)]",
             "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
           )}
         >

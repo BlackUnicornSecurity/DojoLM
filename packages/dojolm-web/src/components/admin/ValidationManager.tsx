@@ -244,12 +244,18 @@ export function ValidationManager() {
     try {
       const res = await fetchWithAuth(`/api/admin/validation/runs?page=${page}&limit=10`)
       if (res.ok) {
-        const data = await res.json()
-        setRuns(data.runs ?? [])
-        setHistoryTotal(data.total ?? 0)
+        const data = await res.json().catch(() => null)
+        if (data) {
+          setRuns(Array.isArray(data.runs) ? data.runs : [])
+          setHistoryTotal(typeof data.total === 'number' ? data.total : 0)
+        } else {
+          setHistoryError('Invalid response from validation endpoint.')
+        }
+      } else {
+        setHistoryError('Failed to load run history.')
       }
     } catch {
-      setHistoryError('Failed to load run history.')
+      setHistoryError('Network error loading run history.')
     } finally {
       setHistoryLoading(false)
     }
@@ -261,11 +267,15 @@ export function ValidationManager() {
     try {
       const res = await fetchWithAuth('/api/admin/validation/modules')
       if (res.ok) {
-        const data = await res.json()
-        const normalizedModules = Array.isArray(data.modules)
-          ? data.modules.map(normalizeModuleCalibration)
-          : []
-        setModules(normalizedModules)
+        const data = await res.json().catch(() => null)
+        if (data) {
+          const normalizedModules = Array.isArray(data.modules)
+            ? data.modules.map(normalizeModuleCalibration)
+            : []
+          setModules(normalizedModules)
+        } else {
+          setCalibrationError('Invalid response from modules endpoint.')
+        }
       } else {
         setCalibrationError('Failed to load module calibration data.')
       }
@@ -284,11 +294,16 @@ export function ValidationManager() {
     try {
       const res = await fetchWithAuth(`/api/admin/validation/report/${runId}`)
       if (res.ok) {
-        const data: ReportData = await res.json()
-        setReportData(data)
+        const data = await res.json().catch(() => null) as ReportData | null
+        if (data) {
+          setReportData(data)
+        } else {
+          setReportError('Invalid report data received.')
+        }
       } else {
         const body = await res.json().catch(() => ({ error: 'Failed to load report' }))
-        setReportError(body.error ?? 'Failed to load report')
+        const errMsg = typeof body.error === 'string' ? body.error.slice(0, 200) : 'Failed to load report'
+        setReportError(errMsg)
       }
     } catch {
       setReportError('Network error loading report.')
@@ -322,7 +337,8 @@ export function ValidationManager() {
         try {
           const res = await fetchWithAuth(`/api/admin/validation/status/${runId}`)
           if (res.ok) {
-            const data: ValidationRunStatus = await res.json()
+            const data = await res.json().catch(() => null) as ValidationRunStatus | null
+            if (!data) return // Skip malformed response, continue polling
             setActiveRun(data)
             if (data.status === 'completed' || data.status === 'failed') {
               stopPolling()
@@ -1622,6 +1638,15 @@ export function ValidationManager() {
 }
 
 function normalizeModuleCalibration(module: ModuleCalibrationApi, index: number): ModuleCalibration {
+  if (!module || typeof module !== 'object') {
+    return {
+      id: `module-${index + 1}`,
+      name: `module-${index + 1}`,
+      tier: 'Unknown',
+      lastCalibration: null,
+      status: 'expired' as const,
+    }
+  }
   const name =
     typeof module.name === 'string' && module.name.length > 0
       ? module.name
@@ -1651,7 +1676,7 @@ function normalizeModuleCalibration(module: ModuleCalibrationApi, index: number)
         : 'expired'
 
   return {
-    id: name,
+    id: typeof module.moduleId === 'string' && module.moduleId.length > 0 ? module.moduleId : name,
     name,
     tier,
     lastCalibration,

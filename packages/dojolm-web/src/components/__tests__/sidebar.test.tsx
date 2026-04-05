@@ -64,6 +64,8 @@ describe('Sidebar', () => {
   beforeEach(() => {
     mockActiveTab = 'dashboard'
     mockSetActiveTab.mockClear()
+    // Clean up BUG-006 CSS variable between tests
+    document.documentElement.style.removeProperty('--sidebar-current')
   })
 
   it('SB-001: renders the sidebar aside element', () => {
@@ -156,5 +158,24 @@ describe('Sidebar', () => {
     render(<Sidebar />)
     const scannerBtn = screen.getByRole('button', { name: /haiku scanner/i })
     expect(scannerBtn).not.toHaveAttribute('aria-current')
+  })
+
+  // ---------------------------------------------------------------------------
+  // BUG-006: Collapsed sidebar sets CSS variable
+  // ---------------------------------------------------------------------------
+
+  it('SB-015: collapsed sidebar sets --sidebar-current CSS variable', () => {
+    render(<Sidebar />)
+    const collapseBtn = screen.getByRole('button', { name: /collapse sidebar/i })
+    fireEvent.click(collapseBtn)
+    const value = document.documentElement.style.getPropertyValue('--sidebar-current')
+    expect(value).toBe('var(--sidebar-collapsed)')
+  })
+
+  it('SB-016: expanded sidebar sets --sidebar-current to full width', () => {
+    render(<Sidebar />)
+    // Default is expanded
+    const value = document.documentElement.style.getPropertyValue('--sidebar-current')
+    expect(value).toBe('var(--sidebar-width)')
   })
 })

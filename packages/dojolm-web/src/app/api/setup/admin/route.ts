@@ -62,7 +62,7 @@ function isPrivateNetworkHost(hostname: string): boolean {
 function isValidOrigin(req: NextRequest): boolean {
   const origin = req.headers.get('origin');
   const referer = req.headers.get('referer');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = process.env.TPI_APP_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL;
 
   // Only allow bypass in explicit development mode (not staging/test)
   if (!appUrl && process.env.NODE_ENV === 'development') {

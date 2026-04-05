@@ -52,7 +52,10 @@ function hasValidSession(request: NextRequest): boolean {
 }
 
 export function getConfiguredAppOrigin(): string | null {
-  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  // BUG-002 fix: TPI_APP_URL is a server-only env var that can be changed
+  // in Docker env config without rebuilding the image. NEXT_PUBLIC_APP_URL
+  // is frozen into the client-side bundle at build time by Next.js.
+  const configured = (process.env.TPI_APP_URL?.trim() || process.env.NEXT_PUBLIC_APP_URL)?.trim();
   if (configured) {
     return normalizeOrigin(configured);
   }

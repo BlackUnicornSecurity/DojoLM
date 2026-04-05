@@ -402,9 +402,11 @@ export function ScannerInput({
               onClick={handleScan}
               disabled={!hasContent || isScanning || allEnginesDisabled}
               className="gap-2"
+              title="Scan (⌘↵ / Ctrl+Enter)"
             >
               <Scan className="h-4 w-4" aria-hidden="true" />
               {isScanning ? 'Scanning...' : 'Scan'}
+              {!isScanning && <kbd className="hidden sm:inline-flex ml-1 text-[10px] opacity-60 bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded font-mono" aria-hidden="true">⌘↵</kbd>}
             </Button>
             <button
               onClick={handleClear}

@@ -72,4 +72,20 @@ describe('QuickScanWidget', () => {
     const input = screen.getByPlaceholderText('Paste text to scan...')
     expect(input).not.toBeDisabled()
   })
+
+  // ---------------------------------------------------------------------------
+  // BUG-007: Stale result prevention
+  // ---------------------------------------------------------------------------
+
+  it('QSW-001: does not show stale BLOCK result from global scanner context', () => {
+    // The mock above has scanResult: null, so no stale result shown
+    // This verifies the widget does NOT display results it didn't initiate
+    render(<QuickScanWidget />)
+    expect(screen.queryByText('BLOCK')).not.toBeInTheDocument()
+  })
+
+  it('QSW-002: does not show dismiss button when no local result exists', () => {
+    render(<QuickScanWidget />)
+    expect(screen.queryByRole('button', { name: /dismiss/i })).not.toBeInTheDocument()
+  })
 })

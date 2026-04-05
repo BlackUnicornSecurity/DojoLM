@@ -61,6 +61,7 @@ describe('getConfiguredAppOrigin', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...ORIGINAL_ENV };
+    delete process.env.TPI_APP_URL; // Ensure BUG-002 override doesn't leak
     mockValidateSession.mockReset();
   });
 
@@ -118,6 +119,66 @@ describe('getConfiguredAppOrigin', () => {
     const { getConfiguredAppOrigin } = await import('../request-origin');
     expect(getConfiguredAppOrigin()).toBe('https://dojo.example.com');
   });
+
+  // ---------------------------------------------------------------------------
+  // BUG-002: TPI_APP_URL runtime override
+  // ---------------------------------------------------------------------------
+
+  // RQORG-028: TPI_APP_URL takes precedence over NEXT_PUBLIC_APP_URL
+  it('RQORG-028: TPI_APP_URL takes precedence over NEXT_PUBLIC_APP_URL', async () => {
+    process.env.TPI_APP_URL = 'https://runtime.example.com';
+    process.env.NEXT_PUBLIC_APP_URL = 'https://build.example.com';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBe('https://runtime.example.com');
+  });
+
+  // RQORG-029: Falls back to NEXT_PUBLIC_APP_URL when TPI_APP_URL is not set
+  it('RQORG-029: falls back to NEXT_PUBLIC_APP_URL when TPI_APP_URL is absent', async () => {
+    delete process.env.TPI_APP_URL;
+    process.env.NEXT_PUBLIC_APP_URL = 'https://build.example.com';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBe('https://build.example.com');
+  });
+
+  // RQORG-030: TPI_APP_URL is normalised (path stripped to origin)
+  it('RQORG-030: normalises TPI_APP_URL to origin only', async () => {
+    process.env.TPI_APP_URL = 'https://runtime.example.com/some/path';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBe('https://runtime.example.com');
+  });
+
+  // RQORG-031: TPI_APP_URL whitespace is trimmed
+  it('RQORG-031: trims whitespace from TPI_APP_URL', async () => {
+    process.env.TPI_APP_URL = '  https://runtime.example.com  ';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBe('https://runtime.example.com');
+  });
+
+  // RQORG-033: Empty TPI_APP_URL falls back to NEXT_PUBLIC_APP_URL
+  it('RQORG-033: empty TPI_APP_URL falls back to NEXT_PUBLIC_APP_URL', async () => {
+    process.env.TPI_APP_URL = '';
+    process.env.NEXT_PUBLIC_APP_URL = 'https://build.example.com';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBe('https://build.example.com');
+  });
+
+  // RQORG-034: TPI_APP_URL with invalid protocol returns null
+  it('RQORG-034: TPI_APP_URL with invalid protocol returns null', async () => {
+    process.env.TPI_APP_URL = 'ftp://example.com';
+    delete process.env.NEXT_PUBLIC_APP_URL;
+    (process.env as Record<string, string>).NODE_ENV = 'production';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBeNull();
+  });
+
+  // RQORG-035: TPI_APP_URL with non-URL string returns null
+  it('RQORG-035: TPI_APP_URL with non-URL string returns null', async () => {
+    process.env.TPI_APP_URL = 'not-a-valid-url';
+    delete process.env.NEXT_PUBLIC_APP_URL;
+    (process.env as Record<string, string>).NODE_ENV = 'production';
+    const { getConfiguredAppOrigin } = await import('../request-origin');
+    expect(getConfiguredAppOrigin()).toBeNull();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -129,6 +190,7 @@ describe('isAllowedCorsOrigin', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...ORIGINAL_ENV };
+    delete process.env.TPI_APP_URL; // Ensure BUG-002 override doesn't leak
   });
 
   afterEach(() => {
@@ -189,6 +251,16 @@ describe('isAllowedCorsOrigin', () => {
     (process.env as Record<string, string>).NODE_ENV = 'development';
     const { isAllowedCorsOrigin } = await import('../request-origin');
     expect(isAllowedCorsOrigin('http://attacker.local')).toBe(false);
+  });
+
+  // RQORG-032: TPI_APP_URL propagates to isAllowedCorsOrigin in production
+  it('RQORG-032: TPI_APP_URL propagates to isAllowedCorsOrigin in production', async () => {
+    process.env.TPI_APP_URL = 'https://runtime.example.com';
+    process.env.NEXT_PUBLIC_APP_URL = 'https://build.example.com';
+    (process.env as Record<string, string>).NODE_ENV = 'production';
+    const { isAllowedCorsOrigin } = await import('../request-origin');
+    expect(isAllowedCorsOrigin('https://runtime.example.com')).toBe(true);
+    expect(isAllowedCorsOrigin('https://build.example.com')).toBe(false);
   });
 });
 
