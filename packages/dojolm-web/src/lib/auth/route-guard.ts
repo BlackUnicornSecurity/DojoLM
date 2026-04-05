@@ -86,10 +86,10 @@ export interface RouteGuardOptions {
   skipCsrf?: boolean;
 }
 
-/** Context shape accepted by Next.js 15+ route handlers (params may be a Promise) */
-type RouteContext = { params?: Record<string, string> | Promise<Record<string, string>> };
+/** Context shape matching Next.js 16+ route handler second argument */
+type RouteContext = { params?: Promise<Record<string, string | string[] | undefined>> };
 
-// Next.js 15+ uses Promise<Params> for dynamic route params
+// Next.js 16+ route handler signature
 type RouteHandler = (
   req: NextRequest,
   context: RouteContext
@@ -116,11 +116,11 @@ export function withAuth(
   options?: RouteGuardOptions
 ): RouteHandler {
   return async (req: NextRequest, context: RouteContext) => {
-    // Next.js 15+ passes params as a Promise — resolve before forwarding
+    // Next.js 16+ passes params as a Promise — resolve before forwarding
     let resolvedParams: Record<string, string> | undefined;
     try {
       resolvedParams = context?.params
-        ? await Promise.resolve(context.params)
+        ? (await context.params) as Record<string, string>
         : undefined;
     } catch {
       return NextResponse.json(
