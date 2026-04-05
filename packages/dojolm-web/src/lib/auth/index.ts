@@ -36,6 +36,5 @@ export {
   SESSION_COOKIE_NAME,
   CSRF_COOKIE_NAME,
   CSRF_HEADER_NAME,
-  type AuthenticatedRequest,
   type RouteGuardOptions,
 } from './route-guard';
