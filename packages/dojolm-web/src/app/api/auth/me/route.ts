@@ -5,10 +5,17 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { validateSession } from '@/lib/auth/session';
-import { getSessionToken } from '@/lib/auth/route-guard';
+import { isDemoMode, DEMO_USER } from '@/lib/demo';
 
 export async function GET(req: NextRequest) {
+  // Demo mode: always return demo user
+  if (isDemoMode()) {
+    return NextResponse.json({ user: DEMO_USER });
+  }
+
+  const { validateSession } = await import('@/lib/auth/session');
+  const { getSessionToken } = await import('@/lib/auth/route-guard');
+
   const token = getSessionToken(req);
 
   if (!token) {

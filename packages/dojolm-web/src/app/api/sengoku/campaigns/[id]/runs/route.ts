@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoCampaignRunsGet } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,10 +18,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
+  if (isDemoMode()) return demoCampaignRunsGet(id);
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
-
-  const { id } = await params;
   if (!SAFE_ID.test(id)) {
     return NextResponse.json({ error: 'Invalid campaign ID' }, { status: 400 });
   }

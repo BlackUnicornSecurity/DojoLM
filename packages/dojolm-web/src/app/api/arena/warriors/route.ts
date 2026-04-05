@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoArenaWarriorsGet } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import * as arenaStorage from '@/lib/storage/arena-storage';
 import type { GameMode } from '@/lib/arena-types';
@@ -23,6 +25,7 @@ const SAFE_NAME = /^[^<>&"']+$/;
 
 export const GET = createApiHandler(
   async () => {
+    if (isDemoMode()) return demoArenaWarriorsGet();
     const warriors = await arenaStorage.getWarriors();
 
     return NextResponse.json({

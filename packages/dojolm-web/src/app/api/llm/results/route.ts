@@ -7,6 +7,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoResultsGet } from '@/lib/demo/mock-api-handlers';
 
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
@@ -17,6 +19,7 @@ import { fileStorage } from '@/lib/storage/file-storage';
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoResultsGet();
   try {
     const { searchParams } = new URL(request.url);
 

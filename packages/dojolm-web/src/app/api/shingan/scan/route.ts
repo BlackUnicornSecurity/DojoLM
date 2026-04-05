@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoShinganScansGet } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import { scanSkill, computeTrustScore } from 'bu-tpi/shingan';
 
@@ -30,6 +32,8 @@ function checkRateLimit(ip: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoShinganScansGet();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

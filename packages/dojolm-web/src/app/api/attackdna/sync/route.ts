@@ -10,6 +10,8 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import * as masterStorage from '@/lib/storage/master-storage';
 import {
@@ -33,6 +35,7 @@ let syncInProgress = false;
 
 export const POST = createApiHandler(
   async (request) => {
+    if (isDemoMode()) return demoNoOp();
     // Rate limit check
     const now = Date.now();
     if (syncInProgress) {

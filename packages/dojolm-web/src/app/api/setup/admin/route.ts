@@ -14,16 +14,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { userRepo } from '@/lib/db/repositories/user.repository';
-import { hashPassword, generateCsrfToken } from '@/lib/auth/auth';
-import { createSession } from '@/lib/auth/session';
+import { isDemoMode, DEMO_USER, DEMO_SESSION_TOKEN, DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS } from '@/lib/demo';
 import { buildSessionCookie, buildCsrfCookie } from '@/lib/auth/route-guard';
-import { getDatabase } from '@/lib/db/database';
-import {
-  getLoginRateLimitKey,
-  isLoginRateLimited,
-  recordLoginRateLimitFailure,
-} from '@/lib/auth/login-rate-limit';
 import crypto from 'node:crypto';
 
 const DEFAULT_SESSION_TTL_HOURS = 24;
@@ -89,7 +81,29 @@ function isValidOrigin(req: NextRequest): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  // Demo mode: simulate admin creation success
+  if (isDemoMode()) {
+    const response = NextResponse.json(
+      { user: { id: DEMO_USER.id, username: DEMO_USER.username, role: DEMO_USER.role } },
+      { status: 201 }
+    );
+    response.headers.append('Set-Cookie', buildSessionCookie(DEMO_SESSION_TOKEN, DEMO_SESSION_TTL_SECONDS));
+    response.headers.append('Set-Cookie', buildCsrfCookie(DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS));
+    return response;
+  }
+
   try {
+    // Lazy-import heavy dependencies only in non-demo mode
+    const { userRepo } = await import('@/lib/db/repositories/user.repository');
+    const { hashPassword, generateCsrfToken } = await import('@/lib/auth/auth');
+    const { createSession } = await import('@/lib/auth/session');
+    const { getDatabase } = await import('@/lib/db/database');
+    const {
+      getLoginRateLimitKey,
+      isLoginRateLimited,
+      recordLoginRateLimitFailure,
+    } = await import('@/lib/auth/login-rate-limit');
+
     // Rate limiting
     const rateLimitKey = getLoginRateLimitKey(req, '__setup__');
     if (isLoginRateLimited(rateLimitKey)) {

@@ -1,6 +1,6 @@
 # QA Coverage Matrix (Generated)
 
-Generated on 2026-04-03T22:24:11.646Z.
+Generated on 2026-04-04T08:52:17.985Z.
 
 This file is a repo-driven coverage inventory and drift audit.
 It complements `QA-MASTER-PLAN.md` by enumerating live source surfaces, direct test references, heuristic interactive markers, and missing checks.
@@ -11,8 +11,8 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 
 | Metric | Value |
 | --- | --- |
-| Source surfaces tracked | 946 |
-| Test files scanned | 844 |
+| Source surfaces tracked | 949 |
+| Test files scanned | 843 |
 | High-risk uncovered surfaces | 0 |
 | Framework citation drift items | 3 |
 | Packages tracked | dojolm-web, bu-tpi, dojolm-mcp, dojolm-scanner, bmad-cybersec/validators, bmad-cybersec/framework |
@@ -35,7 +35,7 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | dojolm-web | page | 5 | 5 | 0 | 0 | 0 |
 | dojolm-web | app-shell | 1 | 1 | 0 | 0 | 0 |
 | dojolm-web | widget | 32 | 32 | 0 | 0 | 0 |
-| dojolm-web | component | 229 | 182 | 0 | 47 | 0 |
+| dojolm-web | component | 231 | 181 | 0 | 50 | 0 |
 | dojolm-web | hook | 5 | 4 | 0 | 1 | 0 |
 | dojolm-web | lib | 117 | 108 | 0 | 9 | 0 |
 | dojolm-web | other | 3 | 2 | 0 | 1 | 0 |
@@ -82,6 +82,7 @@ Surface rows are file-level and exported-symbol oriented; private helper functio
 | dojolm-mcp | attack-logger.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | fixture-generator.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | index.ts | 1 | 1 | 0 | 0 | 0 |
+| dojolm-mcp | main.ts | 1 | 0 | 0 | 1 | 0 |
 | dojolm-mcp | mode-system.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | observer.ts | 1 | 1 | 0 | 0 | 0 |
 | dojolm-mcp | pipeline | 3 | 3 | 0 | 0 | 0 |
@@ -128,7 +129,7 @@ No high-risk uncovered surfaces detected.
 
 ## dojolm-web
 
-Source surfaces: **494**. Test files scanned: **465**.
+Source surfaces: **496**. Test files scanned: **464**.
 
 <details>
 <summary>route (102 surfaces; direct 102, indirect 0, none 0)</summary>
@@ -145,7 +146,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | /api/admin/validation/runs | -- | admin | direct:104 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/admin/validation/runs/route.ts` |
 | /api/admin/validation/status/[runId] | -- | admin | direct:104 | auth, storage, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/status/[runId]/route.ts` |
 | /api/admin/validation/verify | -- | admin | direct:104 | auth, validation, admin | -- | `packages/dojolm-web/src/app/api/admin/validation/verify/route.ts` |
-| /api/agentic | OPTIONS | agentic | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/agentic/route.ts` |
+| /api/agentic | OPTIONS | agentic | direct:103 | auth, storage, validation, llm | -- | `packages/dojolm-web/src/app/api/agentic/route.ts` |
 | /api/arena/[id] | -- | arena | direct:103 | -- | -- | `packages/dojolm-web/src/app/api/arena/[id]/route.ts` |
 | /api/arena/[id]/stream | GET | arena | direct:103 | auth, sse, validation | -- | `packages/dojolm-web/src/app/api/arena/[id]/stream/route.ts` |
 | /api/arena/export | -- | arena | direct:103 | validation | -- | `packages/dojolm-web/src/app/api/arena/export/route.ts` |
@@ -203,7 +204,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | /api/llm/summary | GET | llm | direct:103 | auth, validation, network, llm | -- | `packages/dojolm-web/src/app/api/llm/summary/route.ts` |
 | /api/llm/test-cases | GET, POST, DELETE | llm | direct:103 | auth, validation, network | -- | `packages/dojolm-web/src/app/api/llm/test-cases/route.ts` |
 | /api/llm/test-fixture | POST | llm | direct:103 | auth | -- | `packages/dojolm-web/src/app/api/llm/test-fixture/route.ts` |
-| /api/mcp/status | GET, POST | mcp | direct:103 | auth, persistence, network | -- | `packages/dojolm-web/src/app/api/mcp/status/route.ts` |
+| /api/mcp/status | GET, POST | mcp | direct:103 | auth, validation, persistence, network | -- | `packages/dojolm-web/src/app/api/mcp/status/route.ts` |
 | /api/orchestrator/run | OPTIONS | orchestrator | direct:103 | auth, validation | -- | `packages/dojolm-web/src/app/api/orchestrator/run/route.ts` |
 | /api/orchestrator/status | OPTIONS | orchestrator | direct:103 | auth, validation, persistence, network | -- | `packages/dojolm-web/src/app/api/orchestrator/status/route.ts` |
 | /api/read-fixture/media | GET, OPTIONS | read-fixture | direct:103 | auth, storage, validation, network +1 | -- | `packages/dojolm-web/src/app/api/read-fixture/media/route.ts` |
@@ -303,11 +304,11 @@ Source surfaces: **494**. Test files scanned: **465**.
 </details>
 
 <details>
-<summary>component (229 surfaces; direct 182, indirect 0, none 47)</summary>
+<summary>component (231 surfaces; direct 181, indirect 0, none 50)</summary>
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AdminPanel.tsx | admin | AdminPanel | 5 | api:0 nav:2 xmod:3 | direct:2 | admin, navigation | -- | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
+| AdminPanel.tsx | admin | AdminPanel | 5 | api:1 nav:2 xmod:5 | direct:2 | auth, network, admin, navigation | -- | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
 | AdminSettings.tsx | admin | AdminSettings | 8 | api:1 nav:0 xmod:2 | direct:1 | auth, storage, persistence, network +1 | -- | `packages/dojolm-web/src/components/admin/AdminSettings.tsx` |
 | ApiKeyManager.tsx | admin | ApiKeyManager | 20 | api:3 nav:0 xmod:3 | direct:2 | auth, network, admin, llm | -- | `packages/dojolm-web/src/components/admin/ApiKeyManager.tsx` |
 | ExportSettings.tsx | admin | ExportSettings | 4 | api:0 nav:0 xmod:1 | direct:1 | admin | -- | `packages/dojolm-web/src/components/admin/ExportSettings.tsx` |
@@ -316,13 +317,13 @@ Source surfaces: **494**. Test files scanned: **465**.
 | Scoreboard.tsx | admin | Scoreboard | 0 | api:1 nav:0 xmod:2 | none | auth, network, admin | fetch integration and failure-state coverage | `packages/dojolm-web/src/components/admin/Scoreboard.tsx` |
 | SystemHealth.tsx | admin | SystemHealth | 2 | api:2 nav:0 xmod:3 | direct:1 | auth, storage, network, admin | -- | `packages/dojolm-web/src/components/admin/SystemHealth.tsx` |
 | UserManagement.tsx | admin | UserManagement | 9 | api:2 nav:0 xmod:6 | direct:1 | auth, network, admin | -- | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
-| ValidationManager.tsx | admin | ValidationManager | 29 | api:7 nav:1 xmod:2 | direct:2 | auth, network, admin, navigation | -- | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| AdversarialLab.tsx | adversarial | AdversarialLab, AdversarialLabProps | 27 | api:0 nav:1 xmod:9 | direct:1 | storage, validation, persistence, network +2 | -- | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| ValidationManager.tsx | admin | ValidationManager | 31 | api:8 nav:1 xmod:2 | direct:2 | auth, network, admin, navigation | -- | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| AdversarialLab.tsx | adversarial | AdversarialLab, AdversarialLabProps | 32 | api:0 nav:1 xmod:11 | direct:1 | storage, validation, persistence, network +2 | -- | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
 | AtemiConfig.tsx | adversarial | AtemiConfig, AtemiConfigData, AtemiConfigProps | 14 | api:0 nav:0 xmod:2 | direct:2 | persistence | -- | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
 | AtemiGettingStarted.tsx | adversarial | AtemiGettingStarted, AtemiGettingStartedProps | 6 | api:0 nav:0 xmod:3 | direct:1 | persistence | -- | `packages/dojolm-web/src/components/adversarial/AtemiGettingStarted.tsx` |
 | AttackLog.tsx | adversarial | AttackLog, AttackLogProps | 2 | api:0 nav:0 xmod:6 | direct:2 | -- | -- | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
 | AttackToolCard.tsx | adversarial | AttackToolCard, ExecutionResult, LearnMoreContent, AttackToolCardProps | 8 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
-| index.ts | adversarial | AdversarialLab, AttackToolCard, AttackLog, AtemiGettingStarted +6 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/adversarial/index.ts` |
+| index.ts | adversarial | AdversarialLab, AttackToolCard, AttackLog, AtemiGettingStarted +7 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/adversarial/index.ts` |
 | McpConnectorStatus.tsx | adversarial | McpConnectorStatus, McpConnectorStatusProps | 14 | api:1 nav:0 xmod:4 | direct:1 | auth, persistence, network | -- | `packages/dojolm-web/src/components/adversarial/McpConnectorStatus.tsx` |
 | PlaybookRunner.tsx | adversarial | PlaybookRunner | 4 | api:0 nav:0 xmod:6 | direct:1 | llm | -- | `packages/dojolm-web/src/components/adversarial/PlaybookRunner.tsx` |
 | SessionHistory.tsx | adversarial | SessionHistory, SessionHistoryProps | 15 | api:0 nav:0 xmod:4 | direct:1 | persistence | -- | `packages/dojolm-web/src/components/adversarial/SessionHistory.tsx` |
@@ -330,7 +331,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | SkillCard.tsx | adversarial | SkillCardProps | 2 | api:0 nav:0 xmod:6 | direct:2 | -- | -- | `packages/dojolm-web/src/components/adversarial/SkillCard.tsx` |
 | SkillsLibrary.tsx | adversarial | SkillsLibraryProps | 16 | api:0 nav:0 xmod:7 | direct:2 | -- | -- | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | AgenticLab.tsx | agentic | AgenticLab | 8 | api:1 nav:0 xmod:5 | direct:1 | storage, validation, network, llm | -- | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
-| ScenarioRunner.tsx | agentic | ScenarioRunner | 3 | api:1 nav:0 xmod:3 | direct:1 | network | -- | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
+| ScenarioRunner.tsx | agentic | ScenarioRunner | 3 | api:1 nav:0 xmod:3 | none | network | click, keyboard, and state transition coverage, fetch integration and failure-state coverage | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
 | AmaterasuConfig.tsx | attackdna | AmaterasuConfig, AmaterasuConfigData, AmaterasuConfigProps | 9 | api:2 nav:0 xmod:3 | direct:1 | auth, persistence, network | -- | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
 | AmaterasuGuide.tsx | attackdna | AmaterasuGuide, resetAmaterasuGuide, TabHelpButton, TabHelpContent +2 | 13 | api:0 nav:0 xmod:1 | direct:1 | persistence | -- | `packages/dojolm-web/src/components/attackdna/AmaterasuGuide.tsx` |
 | AttackDNAExplorer.tsx | attackdna | AttackDNAExplorer | 6 | api:5 nav:0 xmod:7 | direct:2 | auth, network, navigation | -- | `packages/dojolm-web/src/components/attackdna/AttackDNAExplorer.tsx` |
@@ -352,7 +353,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | LineChart.tsx | charts | DojoLineChart, DojoLineChartProps | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/charts/LineChart.tsx` |
 | TrendChart.tsx | charts | DojoTrendChart, DojoTrendChartProps | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/charts/TrendChart.tsx` |
 | AuditTrail.tsx | compliance | AuditTrail, AuditTrailProps | 8 | api:1 nav:0 xmod:3 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/compliance/AuditTrail.tsx` |
-| ComplianceCenter.tsx | compliance | ComplianceCenter | 25 | api:1 nav:0 xmod:13 | direct:5 | auth, storage, validation, persistence +2 | -- | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| ComplianceCenter.tsx | compliance | ComplianceCenter | 26 | api:1 nav:0 xmod:13 | direct:5 | auth, storage, validation, persistence +2 | -- | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
 | ComplianceChecklist.tsx | compliance | ComplianceChecklist, ComplianceChecklistProps, FRAMEWORK_REGISTRY, FRAMEWORK_TIERS +3 | 20 | api:0 nav:0 xmod:4 | direct:3 | persistence, navigation | -- | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
 | ComplianceDashboard.tsx | compliance | ComplianceDashboard | 2 | api:1 nav:0 xmod:1 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/compliance/ComplianceDashboard.tsx` |
 | ComplianceExport.tsx | compliance | sanitizeForExport, generateMarkdown, generateJSON, generateCSV +5 | 4 | api:0 nav:1 xmod:2 | direct:1 | validation, navigation | -- | `packages/dojolm-web/src/components/compliance/ComplianceExport.tsx` |
@@ -362,7 +363,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | CoverageMap.tsx | coverage | CoverageMap, CoverageSummary | 0 | api:0 nav:0 xmod:5 | direct:1 | storage | -- | `packages/dojolm-web/src/components/coverage/CoverageMap.tsx` |
 | index.ts | coverage | CoverageMap, CoverageSummary | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/coverage/index.ts` |
 | DashboardConfigContext.tsx | dashboard | migrateSize, DashboardConfigProvider, useDashboardConfig, WidgetSize +3 | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, persistence | -- | `packages/dojolm-web/src/components/dashboard/DashboardConfigContext.tsx` |
-| DashboardCustomizer.tsx | dashboard | DashboardCustomizer | 13 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
+| DashboardCustomizer.tsx | dashboard | DashboardCustomizer | 15 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
 | index.ts | dashboard | NODADashboard, DashboardConfigProvider, useDashboardConfig, WIDGET_CATALOG +29 | 0 | api:0 nav:0 xmod:27 | direct:1 | -- | -- | `packages/dojolm-web/src/components/dashboard/index.ts` |
 | NODADashboard.tsx | dashboard | NODADashboard | 4 | api:0 nav:0 xmod:37 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
 | SenseiPanel.tsx | dashboard | SenseiPanel | 5 | api:0 nav:0 xmod:5 | direct:1 | llm | -- | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
@@ -382,17 +383,17 @@ Source surfaces: **494**. Test files scanned: **465**.
 | ForgeDefensePanel.tsx | guard | ForgeDefensePanel | 5 | api:0 nav:0 xmod:3 | direct:1 | validation, llm | -- | `packages/dojolm-web/src/components/guard/ForgeDefensePanel.tsx` |
 | GuardAuditLog.tsx | guard | GuardAuditLog | 10 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
 | GuardBadge.tsx | guard | GuardBadge | 0 | api:1 nav:0 xmod:5 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/guard/GuardBadge.tsx` |
-| GuardDashboard.tsx | guard | GuardDashboard | 0 | api:0 nav:0 xmod:4 | direct:1 | -- | -- | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
+| GuardDashboard.tsx | guard | GuardDashboard | 7 | api:0 nav:0 xmod:5 | direct:1 | llm, navigation | -- | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
 | GuardModeSelector.tsx | guard | GuardModeSelector | 7 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
-| index.ts | guard | GuardDashboard, GuardModeSelector, GuardAuditLog, GuardBadge | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/guard/index.ts` |
+| index.ts | guard | GuardDashboard, GuardModeSelector, GuardAuditLog, GuardBadge +2 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/guard/index.ts` |
 | SystemPromptHardener.tsx | guard | SystemPromptHardener | 2 | api:0 nav:0 xmod:3 | direct:1 | llm | -- | `packages/dojolm-web/src/components/guard/SystemPromptHardener.tsx` |
 | FeatureRadar.tsx | kagami | FeatureRadar, RadarAxis, FeatureRadarProps | 0 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/kagami/FeatureRadar.tsx` |
 | index.ts | kagami | KagamiPanel, KagamiResults, ProbeProgress, FeatureRadar | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/kagami/index.ts` |
-| KagamiPanel.tsx | kagami | KagamiPanel | 9 | api:1 nav:0 xmod:6 | direct:2 | auth, network, llm | -- | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel.tsx | kagami | KagamiPanel | 17 | api:2 nav:0 xmod:6 | direct:2 | auth, network, llm | -- | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
 | KagamiResults.tsx | kagami | KagamiResults, KagamiResultsProps | 3 | api:0 nav:0 xmod:4 | direct:2 | navigation | -- | `packages/dojolm-web/src/components/kagami/KagamiResults.tsx` |
 | ProbeProgress.tsx | kagami | ProbeProgress, ProbeProgressProps | 0 | api:1 nav:0 xmod:4 | direct:2 | sse, network | -- | `packages/dojolm-web/src/components/kagami/ProbeProgress.tsx` |
 | index.ts | kotoba | KotobaDashboard, KotobaWorkshop | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/kotoba/index.ts` |
-| KotobaDashboard.tsx | kotoba | KotobaDashboard | 6 | api:0 nav:0 xmod:4 | direct:1 | validation, llm | -- | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| KotobaDashboard.tsx | kotoba | KotobaDashboard | 10 | api:0 nav:0 xmod:4 | direct:1 | validation, llm | -- | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
 | KotobaWorkshop.tsx | kotoba | KotobaWorkshop | 5 | api:0 nav:0 xmod:3 | direct:1 | llm | -- | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
 | AnimatedView.tsx | layout | AnimatedView | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/layout/AnimatedView.tsx` |
 | DashboardGrid.tsx | layout | MetricGrid, SplitView, MainPanel, SidePanel +4 | 2 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
@@ -406,12 +407,12 @@ Source surfaces: **494**. Test files scanned: **465**.
 | ComparisonView.tsx | llm | ComparisonView | 4 | api:0 nav:0 xmod:1 | direct:2 | -- | -- | `packages/dojolm-web/src/components/llm/ComparisonView.tsx` |
 | CustomProviderBuilder.tsx | llm | CustomProviderBuilder | 16 | api:4 nav:0 xmod:3 | direct:1 | auth, network, llm | -- | `packages/dojolm-web/src/components/llm/CustomProviderBuilder.tsx` |
 | ExecutiveSummary.tsx | llm | ExecutiveSummary | 2 | api:1 nav:0 xmod:7 | direct:2 | auth, validation, network | -- | `packages/dojolm-web/src/components/llm/ExecutiveSummary.tsx` |
-| index.ts | llm | LLMDashboard, LLMDashboardWithProviders, ModelList, ModelForm +18 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/llm/index.ts` |
+| index.ts | llm | LLMDashboard, LLMDashboardWithProviders, ModelList, ModelForm +20 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/llm/index.ts` |
 | JutsuAggregation.ts | llm | aggregateByModel, calculateTrend, TestExecution, AggregatedModel | 0 | api:0 nav:0 xmod:0 | direct:2 | -- | -- | `packages/dojolm-web/src/components/llm/JutsuAggregation.ts` |
 | JutsuModelCard.tsx | llm | JutsuModelCard | 8 | api:0 nav:0 xmod:3 | direct:2 | -- | -- | `packages/dojolm-web/src/components/llm/JutsuModelCard.tsx` |
 | JutsuTab.tsx | llm | JutsuTab | 5 | api:1 nav:0 xmod:7 | direct:2 | auth, validation, persistence, network +1 | -- | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
 | Leaderboard.tsx | llm | Leaderboard | 3 | api:1 nav:0 xmod:11 | direct:2 | auth, validation, persistence, network | -- | `packages/dojolm-web/src/components/llm/Leaderboard.tsx` |
-| LLMDashboard.tsx | llm | LLMDashboard, LLMDashboardWithProviders, LLMDashboardProps | 15 | api:0 nav:0 xmod:4 | direct:2 | persistence, navigation | -- | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLMDashboard.tsx | llm | LLMDashboard, LLMDashboardWithProviders, LLMDashboardProps | 17 | api:0 nav:0 xmod:7 | direct:2 | persistence, navigation | -- | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
 | LocalModelSelector.tsx | llm | LocalModelSelector, LocalModelInfo, LocalModelSelectorProps | 5 | api:1 nav:0 xmod:9 | direct:1 | auth, network, llm | -- | `packages/dojolm-web/src/components/llm/LocalModelSelector.tsx` |
 | ModelDetailView.tsx | llm | ModelDetailView | 20 | api:0 nav:0 xmod:6 | direct:1 | validation, network, navigation | -- | `packages/dojolm-web/src/components/llm/ModelDetailView.tsx` |
 | ModelForm.tsx | llm | ModelForm, ModelFormProps | 17 | api:0 nav:0 xmod:8 | direct:2 | validation, network, llm | -- | `packages/dojolm-web/src/components/llm/ModelForm.tsx` |
@@ -429,6 +430,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | index.ts | payloads | PayloadCard, PayloadGrid, PayloadFilters | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/payloads/index.ts` |
 | PayloadCard.tsx | payloads | PayloadCard, PayloadGrid, PayloadFilters | 2 | api:0 nav:0 xmod:5 | direct:1 | validation | -- | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | index.ts | reference | PatternReference | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/reference/index.ts` |
+| pattern-reference-data.ts | reference | PatternReferenceEntry, PatternReferenceGroup | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/reference/pattern-reference-data.ts` |
 | PatternReference.tsx | reference | PatternReference | 1 | api:0 nav:0 xmod:5 | direct:1 | -- | -- | `packages/dojolm-web/src/components/reference/PatternReference.tsx` |
 | ConsolidatedReportButton.tsx | reports | ConsolidatedReportButton | 3 | api:1 nav:0 xmod:2 | direct:1 | network, navigation | -- | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
 | AISeverityCalculator.tsx | ronin | AISeverityCalculator | 7 | api:0 nav:0 xmod:1 | none | persistence | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
@@ -442,27 +444,28 @@ Source surfaces: **494**. Test files scanned: **465**.
 | SubmissionWizard.tsx | ronin | SubmissionWizard | 15 | api:0 nav:0 xmod:3 | direct:2 | -- | -- | `packages/dojolm-web/src/components/ronin/SubmissionWizard.tsx` |
 | EncodingChainVisualizer.tsx | scanner | EncodingChainVisualizer | 0 | api:0 nav:1 xmod:1 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/scanner/EncodingChainVisualizer.tsx` |
 | FindingsList.tsx | scanner | FindingsList | 0 | api:0 nav:0 xmod:8 | direct:2 | llm | -- | `packages/dojolm-web/src/components/scanner/FindingsList.tsx` |
-| index.ts | scanner | QuickChips, ScannerInput, ScanningState, FindingsList +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/scanner/index.ts` |
+| index.ts | scanner | QuickChips, ScannerInput, ScanningState, FindingsList +5 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/scanner/index.ts` |
 | ModuleBadge.tsx | scanner | ModuleBadge | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleBadge.tsx` |
 | ModuleLegend.tsx | scanner | ModuleLegend | 0 | api:0 nav:0 xmod:4 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleLegend.tsx` |
 | ModuleResults.tsx | scanner | ModuleResults | 3 | api:0 nav:0 xmod:3 | direct:2 | -- | -- | `packages/dojolm-web/src/components/scanner/ModuleResults.tsx` |
 | ProtocolFuzzPanel.tsx | scanner | ProtocolFuzzPanel | 5 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ProtocolFuzzPanel.tsx` |
 | QuickChips.tsx | scanner | QuickChips | 4 | api:0 nav:0 xmod:2 | direct:2 | -- | -- | `packages/dojolm-web/src/components/scanner/QuickChips.tsx` |
 | ScannerInput.tsx | scanner | ScannerInput | 8 | api:0 nav:0 xmod:6 | direct:1 | validation | -- | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
+| ScannerInsightsPanel.tsx | scanner | ScannerInsightsPanel | 8 | api:0 nav:0 xmod:8 | direct:1 | navigation | -- | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
 | ScanningState.tsx | scanner | ScanningState, ScanningStateProps | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/components/scanner/ScanningState.tsx` |
 | CampaignGraphBuilder.tsx | sengoku | CampaignGraphBuilder | 15 | api:0 nav:0 xmod:6 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
-| index.ts | sengoku | SengokuDashboard, SengokuCampaignBuilder, CampaignGraphBuilder, TemporalTab +1 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/sengoku/index.ts` |
-| OrchestratorBuilder.tsx | sengoku | OrchestratorBuilder | 13 | api:1 nav:0 xmod:3 | direct:1 | network, llm | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| OrchestratorVisualization.tsx | sengoku | OrchestratorVisualization | 2 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
-| SengokuCampaignBuilder.tsx | sengoku | SengokuCampaignBuilder | 16 | api:1 nav:0 xmod:7 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuDashboard.tsx | sengoku | SengokuDashboard | 11 | api:3 nav:0 xmod:9 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| index.ts | sengoku | SengokuDashboard, SengokuCampaignBuilder, CampaignGraphBuilder, OrchestratorBuilder +3 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/sengoku/index.ts` |
+| OrchestratorBuilder.tsx | sengoku | OrchestratorBuilder, OrchestratorType, OrchestratorLaunchResult | 13 | api:1 nav:0 xmod:4 | direct:1 | auth, network, llm | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| OrchestratorVisualization.tsx | sengoku | OrchestratorVisualization, OrchestratorTurn, OrchestratorState | 2 | api:0 nav:0 xmod:2 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
+| SengokuCampaignBuilder.tsx | sengoku | SengokuCampaignBuilder | 22 | api:3 nav:0 xmod:7 | direct:1 | auth, network, llm | -- | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuDashboard.tsx | sengoku | SengokuDashboard | 14 | api:4 nav:0 xmod:10 | direct:1 | auth, network, navigation | -- | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
 | temporal-types.ts | sengoku | Turn, AttackType, AttackPlan | 0 | api:0 nav:0 xmod:0 | none | persistence | direct unit or integration coverage | `packages/dojolm-web/src/components/sengoku/temporal-types.ts` |
 | TemporalConversation.tsx | sengoku | TemporalConversation | 2 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
 | TemporalTab.tsx | sengoku | TemporalTab | 4 | api:0 nav:0 xmod:4 | direct:1 | persistence, llm | -- | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
 | SenseiChat.tsx | sensei | SenseiChat | 8 | api:0 nav:0 xmod:4 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
 | SenseiDrawer.tsx | sensei | SenseiDrawer | 12 | api:1 nav:0 xmod:5 | direct:2 | auth, network, llm | -- | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
 | SenseiSuggestions.tsx | sensei | SenseiSuggestions | 2 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiSuggestions.tsx` |
-| SenseiToolResult.tsx | sensei | SenseiToolResultCard | 2 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/components/sensei/SenseiToolResult.tsx` |
+| SenseiToolResult.tsx | sensei | SenseiToolResultCard | 2 | api:0 nav:0 xmod:1 | direct:2 | llm, navigation | -- | `packages/dojolm-web/src/components/sensei/SenseiToolResult.tsx` |
 | index.ts | shingan | ShinganPanel | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/shingan/index.ts` |
 | ShinganPanel.tsx | shingan | ShinganPanel | 12 | api:1 nav:0 xmod:6 | direct:1 | network, navigation | -- | `packages/dojolm-web/src/components/shingan/ShinganPanel.tsx` |
 | AmaterasuSubsystem.tsx | strategic | AmaterasuSubsystem, AmaterasuErrorBoundary | 2 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/AmaterasuSubsystem.tsx` |
@@ -481,7 +484,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | ModelSelectionStep.tsx | strategic | ModelSelectionStep | 3 | api:0 nav:0 xmod:5 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/arena/steps/ModelSelectionStep.tsx` |
 | WarriorCard.tsx | strategic | WarriorCard | 0 | api:0 nav:0 xmod:4 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/arena/WarriorCard.tsx` |
 | WarriorCardGrid.tsx | strategic | WarriorCardGrid | 4 | api:0 nav:0 xmod:4 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
-| ArenaBrowser.tsx | strategic | ArenaBrowser | 9 | api:4 nav:0 xmod:8 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser.tsx | strategic | ArenaBrowser | 17 | api:4 nav:0 xmod:8 | direct:1 | auth, network | -- | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
 | ArenaRoster.tsx | strategic | ArenaRoster | 0 | api:0 nav:0 xmod:2 | direct:1 | llm | -- | `packages/dojolm-web/src/components/strategic/ArenaRoster.tsx` |
 | index.ts | strategic | StrategicHub, SAGEDashboard, ArenaBrowser, ThreatFeedStream +10 | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/strategic/index.ts` |
 | KumiteConfig.tsx | strategic | SAGEConfig, ArenaConfig, MitsukeConfig, SAGEConfigData +2 | 13 | api:0 nav:0 xmod:2 | direct:1 | persistence, network | -- | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
@@ -491,8 +494,8 @@ Source surfaces: **494**. Test files scanned: **465**.
 | SageMutationView.tsx | strategic | SageMutationView | 0 | api:0 nav:0 xmod:3 | direct:1 | storage, llm | -- | `packages/dojolm-web/src/components/strategic/SageMutationView.tsx` |
 | SageQuarantineView.tsx | strategic | SageQuarantineView | 4 | api:1 nav:1 xmod:3 | direct:1 | storage, persistence, network, llm +1 | -- | `packages/dojolm-web/src/components/strategic/SageQuarantineView.tsx` |
 | SageSeedLibrary.tsx | strategic | SageSeedLibrary | 0 | api:0 nav:0 xmod:3 | direct:1 | network, llm | -- | `packages/dojolm-web/src/components/strategic/SageSeedLibrary.tsx` |
-| StrategicHub.tsx | strategic | StrategicHub | 9 | api:0 nav:0 xmod:11 | direct:2 | llm | -- | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| SupplyChainPanel.tsx | strategic | SupplyChainPanel | 6 | api:0 nav:0 xmod:3 | direct:1 | -- | -- | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| StrategicHub.tsx | strategic | StrategicHub | 31 | api:0 nav:0 xmod:12 | direct:2 | llm | -- | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| SupplyChainPanel.tsx | strategic | SupplyChainPanel | 6 | api:0 nav:0 xmod:3 | none | -- | click, keyboard, and state transition coverage | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
 | ThreatFeedStream.tsx | strategic | ThreatFeedStream | 11 | api:0 nav:0 xmod:7 | direct:1 | storage, network, llm | -- | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | index.ts | tests | TestRunner | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/components/tests/index.ts` |
 | TestRunner.tsx | tests | TestRunner | 5 | api:0 nav:0 xmod:7 | direct:1 | -- | -- | `packages/dojolm-web/src/components/tests/TestRunner.tsx` |
@@ -544,7 +547,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| useSensei.ts | useSensei.ts | useSensei | 0 | api:1 nav:0 xmod:3 | direct:1 | auth, validation, persistence, network +1 | -- | `packages/dojolm-web/src/hooks/useSensei.ts` |
+| useSensei.ts | useSensei.ts | useSensei | 0 | api:1 nav:0 xmod:3 | direct:1 | auth, validation, persistence, network +2 | -- | `packages/dojolm-web/src/hooks/useSensei.ts` |
 | useSenseiScroll.ts | useSenseiScroll.ts | useSenseiScroll | 0 | api:0 nav:0 xmod:0 | direct:2 | llm | -- | `packages/dojolm-web/src/hooks/useSenseiScroll.ts` |
 | index.ts | index.ts | useToast, useScannerMetrics | 0 | api:0 nav:0 xmod:2 | none | -- | state lifecycle and dependency coverage | `packages/dojolm-web/src/lib/hooks/index.ts` |
 | useScannerMetrics.ts | useScannerMetrics.ts | useScannerMetrics, _resetScanHistory, ScannerMetrics | 0 | api:0 nav:0 xmod:1 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/hooks/useScannerMetrics.ts` |
@@ -589,7 +592,7 @@ Source surfaces: **494**. Test files scanned: **465**.
 | authenticated-event-stream.ts | authenticated-event-stream.ts | connectAuthenticatedEventStream, AuthenticatedEventStream | 0 | api:0 nav:0 xmod:1 | direct:1 | auth, sse | -- | `packages/dojolm-web/src/lib/authenticated-event-stream.ts` |
 | client-auth-access.ts | client-auth-access.ts | resetClientAuthAccessCache, canAccessProtectedApi | 0 | api:1 nav:0 xmod:1 | direct:1 | network | -- | `packages/dojolm-web/src/lib/client-auth-access.ts` |
 | client-data-cache.ts | client-data-cache.ts | getCachedFixtureManifest, getCachedScannerStats, clearClientDataCache, ScannerPatternGroup +1 | 0 | api:2 nav:0 xmod:2 | direct:2 | auth, network | -- | `packages/dojolm-web/src/lib/client-data-cache.ts` |
-| constants.ts | constants.ts | NavGroup, NavItem, NavId | 0 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/lib/constants.ts` |
+| constants.ts | constants.ts | NavGroup, NavItem, NavId | 0 | api:0 nav:0 xmod:1 | direct:3 | llm | -- | `packages/dojolm-web/src/lib/constants.ts` |
 | ActivityContext.tsx | contexts | isStaticDescription, ActivityProvider, useActivityState, useActivityDispatch +4 | 0 | api:0 nav:0 xmod:1 | direct:1 | validation, persistence | -- | `packages/dojolm-web/src/lib/contexts/ActivityContext.tsx` |
 | EcosystemContext.tsx | contexts | EcosystemProvider, useEcosystem, useEcosystemEmit, useEcosystemFindings +2 | 0 | api:3 nav:0 xmod:4 | direct:1 | auth, validation, network | -- | `packages/dojolm-web/src/lib/contexts/EcosystemContext.tsx` |
 | GuardContext.tsx | contexts | GuardProvider, useGuard, useGuardMode, useGuardStats | 0 | api:3 nav:0 xmod:4 | direct:1 | auth, network | -- | `packages/dojolm-web/src/lib/contexts/GuardContext.tsx` |
@@ -651,14 +654,14 @@ Source surfaces: **494**. Test files scanned: **465**.
 | runtime-env.ts | runtime-env.ts | getPublicRuntimeEnv, serializePublicRuntimeEnvScript, getClientRuntimeEnv, PublicRuntimeEnvKey +1 | 0 | api:0 nav:0 xmod:0 | direct:1 | -- | -- | `packages/dojolm-web/src/lib/runtime-env.ts` |
 | runtime-paths.ts | runtime-paths.ts | getDataRootDir, getDataPath, resolveDataPath | 0 | api:0 nav:0 xmod:0 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/runtime-paths.ts` |
 | ScannerContext.tsx | ScannerContext.tsx | ScannerProvider, useScanner | 0 | api:0 nav:0 xmod:3 | none | -- | direct unit or integration coverage | `packages/dojolm-web/src/lib/ScannerContext.tsx` |
-| sengoku-executor.ts | sengoku-executor.ts | executeCampaignRun | 0 | api:0 nav:0 xmod:3 | direct:1 | storage, validation, persistence, network | -- | `packages/dojolm-web/src/lib/sengoku-executor.ts` |
-| sengoku-types.ts | sengoku-types.ts | FindingsSummary, SkillRunResult, CampaignNode, CampaignGraph +13 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation | -- | `packages/dojolm-web/src/lib/sengoku-types.ts` |
+| sengoku-executor.ts | sengoku-executor.ts | resolveTargetUrl, executeCampaignRun | 0 | api:0 nav:0 xmod:3 | direct:1 | storage, validation, persistence, network +1 | -- | `packages/dojolm-web/src/lib/sengoku-executor.ts` |
+| sengoku-types.ts | sengoku-types.ts | TargetSource, FindingsSummary, SkillRunResult, CampaignNode +14 | 0 | api:0 nav:0 xmod:0 | direct:1 | storage, validation, llm | -- | `packages/dojolm-web/src/lib/sengoku-types.ts` |
 | sengoku-webhook.ts | sengoku-webhook.ts | validateSengokuWebhookUrl, WebhookValidationResult | 0 | api:0 nav:0 xmod:0 | none | validation, network | direct unit or integration coverage | `packages/dojolm-web/src/lib/sengoku-webhook.ts` |
 | context-builder.ts | sensei | buildSenseiContext, buildClientContext, ClientContextInput | 0 | api:0 nav:0 xmod:6 | direct:1 | auth, validation, persistence, llm | -- | `packages/dojolm-web/src/lib/sensei/context-builder.ts` |
 | conversation-guard.ts | sensei | guardSenseiInput, guardSenseiOutput, guardToolExecution, _resetRateLimits +9 | 0 | api:0 nav:1 xmod:2 | direct:2 | validation, llm, navigation | -- | `packages/dojolm-web/src/lib/sensei/conversation-guard.ts` |
 | index.ts | sensei | buildSystemMessage, buildCompactSystemMessage, getSystemMessageBuilder, MODULE_CONTEXT +15 | 0 | api:0 nav:0 xmod:0 | direct:1 | validation, llm | -- | `packages/dojolm-web/src/lib/sensei/index.ts` |
 | system-prompt.ts | sensei | buildSystemMessage, buildCompactSystemMessage, getSystemMessageBuilder, MODULE_CONTEXT | 0 | api:0 nav:0 xmod:1 | direct:2 | llm | -- | `packages/dojolm-web/src/lib/sensei/system-prompt.ts` |
-| tool-definitions.ts | sensei | getToolByName, getToolsForPrompt, generateToolDescriptionBlock, generateToolSchemaBlock | 0 | api:19 nav:0 xmod:1 | direct:2 | storage, validation, network, admin +2 | -- | `packages/dojolm-web/src/lib/sensei/tool-definitions.ts` |
+| tool-definitions.ts | sensei | getToolByName, getToolsForPrompt, generateToolDescriptionBlock, generateToolSchemaBlock | 0 | api:27 nav:0 xmod:1 | direct:2 | validation, network, admin, llm +1 | -- | `packages/dojolm-web/src/lib/sensei/tool-definitions.ts` |
 | tool-executor.ts | sensei | validateArgs, sanitizeResult, executeToolCall | 0 | api:0 nav:0 xmod:0 | direct:2 | auth, validation, persistence, network +2 | -- | `packages/dojolm-web/src/lib/sensei/tool-executor.ts` |
 | tool-parser.ts | sensei | extractToolCalls, escapeToolCallTags, ParsedToolCall, ExtractResult | 0 | api:0 nav:0 xmod:0 | direct:2 | validation, llm | -- | `packages/dojolm-web/src/lib/sensei/tool-parser.ts` |
 | types.ts | sensei | SenseiToolCall, SenseiToolResult, SenseiToolDefinition, SenseiMessageRole +10 | 0 | api:0 nav:0 xmod:2 | direct:6 | validation, persistence, llm | -- | `packages/dojolm-web/src/lib/sensei/types.ts` |
@@ -1307,7 +1310,7 @@ Source surfaces: **309**. Test files scanned: **343**.
 
 ## dojolm-mcp
 
-Source surfaces: **34**. Test files scanned: **35**.
+Source surfaces: **35**. Test files scanned: **35**.
 
 <details>
 <summary>attack-controller.ts (1 surfaces; direct 1, indirect 0, none 0)</summary>
@@ -1351,6 +1354,15 @@ Source surfaces: **34**. Test files scanned: **35**.
 | Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | index.ts | index.ts | DEFAULT_SERVER_CONFIG, AdversarialMCPServer, AttackController, ATTACK_MODES +60 | 0 | api:0 nav:0 xmod:13 | direct:1 | validation | -- | `packages/dojolm-mcp/src/index.ts` |
+
+</details>
+
+<details>
+<summary>main.ts (1 surfaces; direct 0, indirect 0, none 1)</summary>
+
+| Surface | Area | Symbols | Interactive | Integrations | Coverage | Risks | Missing Checks | File |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| main.ts | main.ts | shutdown | 0 | api:0 nav:0 xmod:1 | none | -- | direct unit or integration coverage | `packages/dojolm-mcp/src/main.ts` |
 
 </details>
 

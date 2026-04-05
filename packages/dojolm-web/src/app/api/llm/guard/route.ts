@@ -6,6 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoGuardConfigGet, demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { getGuardConfig, saveGuardConfig } from '@/lib/storage/guard-storage';
 import { VALID_GUARD_MODES, VALID_BLOCK_THRESHOLDS, DEFAULT_GUARD_CONFIG } from '@/lib/guard-constants';
 import type { GuardConfig } from '@/lib/guard-types';
@@ -27,6 +29,7 @@ export function OPTIONS(_request: NextRequest) {
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoGuardConfigGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
@@ -45,6 +48,7 @@ export async function GET(request: NextRequest) {
 // ===========================================================================
 
 export async function PUT(request: NextRequest) {
+  if (isDemoMode()) return demoNoOp();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
@@ -140,5 +144,6 @@ export async function PUT(request: NextRequest) {
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoNoOp();
   return PUT(request);
 }

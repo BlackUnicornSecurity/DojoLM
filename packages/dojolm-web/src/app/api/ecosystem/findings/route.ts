@@ -7,6 +7,8 @@
 
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoEcosystemGet } from '@/lib/demo/mock-api-handlers';
 import {
   saveFinding,
   queryFindings,
@@ -32,6 +34,7 @@ import type {
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoEcosystemGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

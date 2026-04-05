@@ -7,6 +7,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoLeaderboardGet } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 import type { LLMModelConfig } from '@/lib/llm-types';
@@ -28,6 +30,7 @@ export function OPTIONS(_request: NextRequest) {
  * Returns models ranked by average resilience score.
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoLeaderboardGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

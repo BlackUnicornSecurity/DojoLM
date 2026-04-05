@@ -6,6 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoStatsGet } from '@/lib/demo/mock-api-handlers'
 import { getPatternCount, getPatternGroups } from '@dojolm/scanner'
 import { checkApiAuth } from '@/lib/api-auth'
 
@@ -14,6 +16,7 @@ import { checkApiAuth } from '@/lib/api-auth'
  * Returns scanner statistics including pattern count and groups
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoStatsGet()
   const authError = checkApiAuth(request)
   if (authError) return authError
 

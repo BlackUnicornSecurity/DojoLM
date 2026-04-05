@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { isPublicApiRoute, isPublicBrowserActionRoute } from '@/lib/api-route-access';
 import { isTrustedBrowserOriginRequest, isTrustedBrowserSessionRequest } from '@/lib/request-origin';
+import { isDemoMode } from '@/lib/demo';
 
 /**
  * Check API authentication via X-API-Key header.
@@ -22,6 +23,11 @@ import { isTrustedBrowserOriginRequest, isTrustedBrowserSessionRequest } from '@
  * breaking development workflows. A console warning is emitted in production.
  */
 export function checkApiAuth(request: NextRequest): NextResponse | null {
+  // Demo mode: bypass all API auth checks
+  if (isDemoMode()) {
+    return null;
+  }
+
   // OPTIONS preflight requests must always be allowed through so route
   // handlers can respond with the correct 204 + Allow header (SEC-R3-001).
   if (request.method === 'OPTIONS') {

@@ -1,6 +1,6 @@
 # UAT / UX Coverage Matrix (Generated)
 
-Generated on 2026-04-03T22:24:09.409Z.
+Generated on 2026-04-04T08:52:18.250Z.
 
 This file inventories the current user-facing DojoLM surface area for UAT and UX planning.
 Playwright is the default runner whenever the surface is automatable in-browser.
@@ -14,13 +14,13 @@ Spec references are heuristic planning signals based on current Playwright suite
 | Standalone app surfaces tracked | 6 |
 | Global UX/layout surfaces tracked | 9 |
 | Dashboard widgets tracked | 32 |
-| Interactive components tracked | 137 |
-| Actionable controls tracked | 567 |
-| Controls with explicit labels | 364 |
-| Controls needing manual label audit | 203 |
+| Interactive components tracked | 138 |
+| Actionable controls tracked | 604 |
+| Controls with explicit labels | 398 |
+| Controls needing manual label audit | 206 |
 | Controls with direct control-to-test proof | 196 |
-| Controls inheriting parent-surface references | 168 |
-| Control Playwright gaps | 0 |
+| Controls inheriting parent-surface references | 199 |
+| Control Playwright gaps | 3 |
 | Shared module render files | 1 |
 | Playwright specs in repo | 24 |
 | Playwright projects configured | 2 |
@@ -45,7 +45,7 @@ Spec references are heuristic planning signals based on current Playwright suite
 | Surface inventory freshness | pass | `team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md` | regenerate this file whenever app navigation, pages, widgets, or interactive components change |
 | Playwright config breadth | desktop+mobile configured | `packages/dojolm-web/playwright.config.ts` (chromium, mobile-chrome) | keep desktop/mobile projects aligned with UX policy |
 | Navigation spec parity | in sync | `packages/dojolm-web/e2e/navigation.spec.ts` (12/12 modules; missing --; unexpected --) | keep navigation suite aligned with NAV_ITEMS changes |
-| Actionable control naming | 203 controls need manual label audit | `team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md` actionable-control inventory | review icon-only or expression-only controls and add accessible names or QA notes before release sign-off |
+| Actionable control naming | 206 controls need manual label audit | `team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md` actionable-control inventory | review icon-only or expression-only controls and add accessible names or QA notes before release sign-off |
 | Control-level proof layer | 196 direct proof link(s) detected | `team/testing/QA/UAT-UX-COVERAGE-MATRIX.generated.md` actionable-control inventory | expand explicit selector assertions to reduce inherited-only control coverage |
 | Shared module render files | 1 files serve multiple module labels | page.tsx: Armory, Haiku Scanner | record per-label evidence for every shared-file module and do not let sibling references piggyback |
 
@@ -59,7 +59,7 @@ Spec references are heuristic planning signals based on current Playwright suite
 
 | Spec | Suite | Tests | Primary Focus |
 | --- | --- | --- | --- |
-| `packages/dojolm-web/e2e/admin-controls.spec.ts` | Admin Controls | 12 | admin-controls, Admin Controls |
+| `packages/dojolm-web/e2e/admin-controls.spec.ts` | Admin Controls | 13 | admin-controls, Admin Controls |
 | `packages/dojolm-web/e2e/admin.spec.ts` | Admin | 2 | admin, Admin |
 | `packages/dojolm-web/e2e/api-security.spec.ts` | API Security | 4 | api-security, API Security |
 | `packages/dojolm-web/e2e/atemi-lab.spec.ts` | Atemi Lab | 13 | atemi-lab, Atemi Lab |
@@ -92,7 +92,7 @@ Spec references are heuristic planning signals based on current Playwright suite
 | page | 6 | 6 | 0 |
 | layout | 9 | 9 | 0 |
 | widget | 32 | 32 | 0 |
-| component | 137 | 137 | 0 |
+| component | 138 | 137 | 1 |
 
 ## Actionable Control Summary
 
@@ -103,16 +103,16 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 
 | Source Category | Controls Tracked | Direct Proof Links | Inherited Parent-Surface References | Playwright Gaps | Manual Gaps | Manual Label Audit |
 | --- | --- | --- | --- | --- | --- | --- |
-| component | 427 | 133 | 131 | 0 | 0 | 163 |
-| layout | 33 | 6 | 11 | 0 | 0 | 16 |
-| module | 62 | 30 | 16 | 0 | 0 | 16 |
+| component | 441 | 129 | 144 | 3 | 0 | 165 |
+| layout | 34 | 6 | 12 | 0 | 0 | 16 |
+| module | 84 | 34 | 33 | 0 | 0 | 17 |
 | page | 14 | 6 | 7 | 0 | 0 | 1 |
 | widget | 31 | 21 | 3 | 0 | 0 | 7 |
 
 ## Actionable Control Inventory
 
 <details>
-<summary>Actionable control inventory (567 controls)</summary>
+<summary>Actionable control inventory (604 controls)</summary>
 
 | Surface | Category | Control | Label | Line | Direct Proof Refs | Spec References | Status | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -130,9 +130,9 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | /style-guide | page | button | Outline | 163 | -- | pages.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/app/style-guide/page.tsx` |
 | /style-guide | page | button | Secondary | 164 | pages.spec.ts | pages.spec.ts | direct control proof | `packages/dojolm-web/src/app/style-guide/page.tsx` |
 | /style-guide | page | button | Ghost | 165 | -- | pages.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/app/style-guide/page.tsx` |
-| Admin | module | tab-trigger | manual audit required | 68 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
-| Admin | module | link | Platform Guide → | 163 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
-| Admin | module | link | API Reference → | 171 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
+| Admin | module | tab-trigger | manual audit required | 116 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
+| Admin | module | link | Platform Guide → | 214 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
+| Admin | module | link | API Reference → | 222 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
 | AdminSettings | component | button | Edit settings | 128 | admin-controls.spec.ts | admin-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/AdminSettings.tsx` |
 | AdminSettings | component | button | Save settings | 139 | admin-controls.spec.ts | admin-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/AdminSettings.tsx` |
 | AdminSettings | component | button | Cancel editing | 148 | admin-controls.spec.ts | admin-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/AdminSettings.tsx` |
@@ -153,33 +153,37 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | UserManagement | component | button | manual audit required | 154 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
 | UserManagement | component | button | Cancel | 240 | sengoku.spec.ts | admin-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
 | UserManagement | component | button | Create User | 241 | admin-controls.spec.ts | admin-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
-| ValidationManager | component | button | Run full validation | 670 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Run calibration only | 684 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | manual audit required | 927 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | JSON | 937 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Previous page | 959 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Next page | 971 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Download JSON report | 997 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Download CSV report | 1007 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Download Markdown report | 1017 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | manual audit required | 1081 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Traceability Chain | 1322 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | Recalibrate all modules | 1396 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| Atemi Lab | module | button | Open Atemi Lab configuration | 694 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | manual audit required | 736 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Dismiss | 834 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | tab-trigger | attack-tools | 856 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | tab-trigger | skills | 861 | atemi-lab.spec.ts, component-controls.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | tab-trigger | mcp | 865 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | tab-trigger | protocol-fuzz | 869 | atemi-lab.spec.ts, component-controls.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | tab-trigger | webmcp | 874 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | manual audit required | 1014 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | manual audit required | 1084 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Cancel execution | 1123 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Cancel and return | 1141 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Confirm and execute WebMCP tests | 1150 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Launch Kagami mirror testing | 1238 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | Launch Shingan deep scan | 1266 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| ValidationManager | component | button | Run full validation | 714 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Run calibration only | 728 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | manual audit required | 971 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | JSON | 981 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Previous page | 1003 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Next page | 1015 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Download JSON report | 1041 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Download CSV report | 1051 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Download Markdown report | 1061 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Verify signature | 1130 | -- | admin-controls.spec.ts, component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | manual audit required | 1200 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Traceability Chain | 1441 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | Recalibrate all modules | 1535 | admin-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| Atemi Lab | module | button | Open Atemi Lab configuration | 731 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 773 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Dismiss | 871 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 915 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | attack-tools | 941 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | skills | 946 | atemi-lab.spec.ts, component-controls.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | playbooks | 950 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | mcp | 954 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | protocol-fuzz | 958 | atemi-lab.spec.ts, component-controls.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | agentic | 963 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | tab-trigger | webmcp | 967 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 1116 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 1186 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Cancel execution | 1225 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Cancel and return | 1243 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Confirm and execute WebMCP tests | 1252 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Launch Kagami mirror testing | 1340 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | Launch Shingan deep scan | 1368 | atemi-lab.spec.ts | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
 | AtemiConfig | component | button | Close config panel | 153 | component-controls.spec.ts | atemi-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
 | AtemiConfig | component | button | manual audit required | 192 | -- | atemi-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
 | AtemiConfig | component | button | Toggle auto-logging | 266 | -- | atemi-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
@@ -188,11 +192,11 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | AtemiGettingStarted | component | button | Getting Started / steps completed | 84 | -- | atemi-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AtemiGettingStarted.tsx` |
 | AtemiGettingStarted | component | button | Dismiss getting started guide | 102 | -- | atemi-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AtemiGettingStarted.tsx` |
 | AtemiGettingStarted | component | button | Got it, don&apos;t show again → | 160 | -- | atemi-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AtemiGettingStarted.tsx` |
-| AttackLog | component | button | manual audit required | 202 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +4 | manual label audit | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
-| AttackToolCard | component | button | attack | 193 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +7 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
-| AttackToolCard | component | button | Confirm | 228 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +7 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
-| AttackToolCard | component | button | Cancel | 238 | sengoku.spec.ts | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +7 | direct control proof | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
-| AttackToolCard | component | button | Learn More | 273 | atemi-lab.spec.ts | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +7 | direct control proof | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
+| AttackLog | component | button | manual audit required | 202 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +5 | manual label audit | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
+| AttackToolCard | component | button | attack | 193 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +8 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
+| AttackToolCard | component | button | Confirm | 228 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +8 | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
+| AttackToolCard | component | button | Cancel | 238 | sengoku.spec.ts | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +8 | direct control proof | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
+| AttackToolCard | component | button | Learn More | 273 | atemi-lab.spec.ts | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +8 | direct control proof | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
 | McpConnectorStatus | component | button | Refresh connection status | 272 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/adversarial/McpConnectorStatus.tsx` |
 | McpConnectorStatus | component | button | Toggle troubleshooting panel | 285 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/McpConnectorStatus.tsx` |
 | McpConnectorStatus | component | button | Start MCP server | 327 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/McpConnectorStatus.tsx` |
@@ -225,9 +229,9 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | SkillsLibrary | component | button | manual audit required | 270 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | SkillsLibrary | component | button | Reset Filters | 293 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | SkillsLibrary | component | button | Reset Filters | 327 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
-| AgenticLab | component | button | manual audit required | 171 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
-| AgenticLab | component | button | manual audit required | 198 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
-| AgenticLab | component | button | manual audit required | 256 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 233 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 260 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 318 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
 | ScenarioRunner | component | button | Run | 260 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
 | ScenarioRunner | component | button | Pause | 265 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
 | ScenarioRunner | component | button | Reset | 270 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/agentic/ScenarioRunner.tsx` |
@@ -269,18 +273,19 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | XRayPanel | component | input | Search attack patterns | 287 | -- | atemi-lab.spec.ts, attackdna.spec.ts, component-controls.spec.ts +7 | inherits heuristic surface reference | `packages/dojolm-web/src/components/attackdna/XRayPanel.tsx` |
 | AuditTrail | component | button | Retry | 210 | component-controls.spec.ts | component-controls.spec.ts, guard.spec.ts | direct control proof | `packages/dojolm-web/src/components/compliance/AuditTrail.tsx` |
 | AuditTrail | component | button | Refresh audit log | 316 | -- | component-controls.spec.ts, guard.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/AuditTrail.tsx` |
-| Bushido Book | module | button | manual audit required | 203 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Group by tier | 461 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Group by category | 476 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | tab-trigger | manual audit required | 536 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | manual audit required | 600 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Changes | 805 | compliance.spec.ts | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Comparison | 817 | compliance.spec.ts | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Back to Coverage | 968 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Back to Coverage | 1146 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Test in LLM Dashboard | 1292 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | Run compliance scan | 1456 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | manual audit required | 1516 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 205 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Group by tier | 475 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Group by category | 490 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Open Coverage Dashboard | 556 | attackdna.spec.ts, kumite.spec.ts, shingan.spec.ts | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | tab-trigger | manual audit required | 575 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 642 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Changes | 847 | compliance.spec.ts | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Comparison | 859 | compliance.spec.ts | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Back to Coverage | 1010 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Back to Coverage | 1188 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Test in LLM Dashboard | 1334 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | Run compliance scan | 1498 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 1558 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
 | ComplianceChecklist | component | button | Select compliance framework | 337 | compliance.spec.ts | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
 | ComplianceChecklist | component | button | manual audit required | 381 | -- | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
 | ComplianceChecklist | component | button | Export checklist as text file | 419 | -- | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
@@ -304,12 +309,13 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | DashboardCustomizer | layout | button | manual audit required | 95 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
 | DashboardCustomizer | layout | button | manual audit required | 116 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
 | DashboardCustomizer | layout | button | manual audit required | 123 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
-| DashboardCustomizer | layout | button | Close customizer | 243 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
-| DashboardCustomizer | layout | button | Reset to Defaults | 251 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
-| Dashboard | module | button | Scan Text | 237 | dashboard-widgets.spec.ts, scanner.spec.ts, widget-controls.spec.ts | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| Dashboard | module | button | Models | 241 | llm-dashboard.spec.ts | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| Dashboard | module | button | Guard | 245 | -- | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
-| Dashboard | module | button | Customize Dashboard | 249 | -- | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
+| DashboardCustomizer | layout | button | Close customizer | 244 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
+| DashboardCustomizer | layout | button | Reset to Defaults | 252 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
+| DashboardCustomizer | layout | button | Module Visibility | 260 | -- | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
+| Dashboard | module | button | Scan Text | 241 | dashboard-widgets.spec.ts, scanner.spec.ts, widget-controls.spec.ts | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
+| Dashboard | module | button | Models | 245 | llm-dashboard.spec.ts | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
+| Dashboard | module | button | Guard | 249 | -- | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
+| Dashboard | module | button | Customize Dashboard | 253 | -- | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
 | SenseiPanel | component | button | manual audit required | 56 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
 | SenseiPanel | component | button | manual audit required | 101 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
 | SenseiPanel | component | button | Reset All | 138 | widget-controls.spec.ts | widget-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/dashboard/SenseiPanel.tsx` |
@@ -352,15 +358,15 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | FixtureComparison | component | button | Close comparison | 50 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureComparison.tsx` |
 | FixtureDetail | component | button | Rescan | 85 | -- | atemi-lab.spec.ts, component-controls.spec.ts, mobile-nav.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/fixtures/FixtureDetail.tsx` |
 | FixtureDetail | component | button | Close | 96 | -- | atemi-lab.spec.ts, component-controls.spec.ts, mobile-nav.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/fixtures/FixtureDetail.tsx` |
-| FixtureExplorer | component | button | manual audit required | 190 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | Tree view | 225 | test-lab.spec.ts | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | Search view | 242 | test-lab.spec.ts | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | Grid view | 259 | test-lab.spec.ts | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | Compare | 280 | llm-dashboard.spec.ts | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | manual audit required | 471 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | input | for comparison | 624 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | manual audit required | 693 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | Scan | 704 | scanner.spec.ts, shingan.spec.ts, test-lab.spec.ts | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 190 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | Tree view | 225 | test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | Search view | 242 | test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | Grid view | 259 | component-controls.spec.ts, test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | Compare | 280 | llm-dashboard.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 471 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | input | for comparison | 624 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 693 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | Scan | 704 | scanner.spec.ts, shingan.spec.ts, test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
 | FixtureFilters | component | button | Filters | 171 | component-controls.spec.ts | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
 | FixtureFilters | component | button | Clear all filters | 197 | component-controls.spec.ts | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | direct control proof | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
 | FixtureFilters | component | button | manual audit required | 304 | -- | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
@@ -385,25 +391,34 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | GuardAuditLog | component | button | manual audit required | 128 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
 | GuardAuditLog | component | button | Previous page | 236 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
 | GuardAuditLog | component | button | Next page | 247 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
+| Hattori Guard | module | tab-trigger | overview | 96 | component-controls.spec.ts | component-controls.spec.ts, dashboard-widgets.spec.ts, guard.spec.ts +4 | direct control proof | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
+| Hattori Guard | module | tab-trigger | hardening | 97 | -- | component-controls.spec.ts, dashboard-widgets.spec.ts, guard.spec.ts +4 | inherits heuristic surface reference | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
+| Hattori Guard | module | tab-trigger | defenses | 98 | -- | component-controls.spec.ts, dashboard-widgets.spec.ts, guard.spec.ts +4 | inherits heuristic surface reference | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
 | GuardModeSelector | component | button | manual audit required | 25 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
 | GuardModeSelector | component | button | Block on WARNING and CRITICAL findings | 45 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
 | GuardModeSelector | component | button | Block on CRITICAL findings only | 59 | admin-controls.spec.ts, guard.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
-| GuardModeSelector | component | button | IN OUT | 85 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
+| GuardModeSelector | component | button | IN OUT | 85 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
 | SystemPromptHardener | component | button | manual audit required | 121 | -- | guard.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/SystemPromptHardener.tsx` |
-| KagamiPanel | component | button | Identify | 218 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
-| KagamiPanel | component | button | Verify | 227 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
-| KagamiPanel | component | button | probes | 265 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
-| KagamiPanel | component | button | advanced category selection | 292 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
-| KagamiPanel | component | button | manual audit required | 328 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | manual label audit | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Identify | 152 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Verify | 161 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | probes | 197 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | advanced category selection | 223 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | manual audit required | 258 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | manual label audit | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Features Cutoff Verified | 396 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Fingerprint | 761 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Signatures | 769 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | component | button | Feature Radar | 777 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
 | KagamiResults | component | button | feature comparison | 128 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/kagami/KagamiResults.tsx` |
 | KagamiResults | component | button | Export JSON | 251 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/kagami/KagamiResults.tsx` |
-| Kotoba | module | button | Score Prompt | 205 | kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
-| Kotoba | module | button | manual audit required | 277 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
-| Kotoba | module | button | Harden | 304 | kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
-| Kotoba | module | textarea | Hardened prompt output | 323 | kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
-| KotobaWorkshop | component | button | Moderate | 135 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
-| KotobaWorkshop | component | button | Aggressive | 148 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
-| KotobaWorkshop | component | button | Apply | 162 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
+| Kotoba | module | button | Studio | 167 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Kotoba | module | button | Workshop | 181 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Kotoba | module | button | Score Prompt | 244 | component-controls.spec.ts, kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Kotoba | module | button | manual audit required | 316 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Kotoba | module | button | Harden | 343 | kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Kotoba | module | textarea | Hardened prompt output | 362 | kotoba.spec.ts | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| KotobaWorkshop | component | button | Moderate | 135 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
+| KotobaWorkshop | component | button | Aggressive | 148 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
+| KotobaWorkshop | component | button | Apply | 162 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
 | DashboardGrid | component | button | manual audit required | 107 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
 | MobileNav | layout | button | manual audit required | 60 | -- | atemi-lab.spec.ts, component-controls.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
 | MobileNav | layout | button | More | 90 | -- | atemi-lab.spec.ts, component-controls.spec.ts, kotoba.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
@@ -431,18 +446,19 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | JutsuModelCard | component | button | View | 127 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/llm/JutsuModelCard.tsx` |
 | JutsuModelCard | component | button | Re-Test | 136 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/llm/JutsuModelCard.tsx` |
 | JutsuModelCard | component | button | manual audit required | 146 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/llm/JutsuModelCard.tsx` |
-| JutsuTab | component | button | Open Jutsu guide | 220 | ronin-hub.spec.ts, widget-controls.spec.ts | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +10 | direct control proof | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
-| JutsuTab | component | button | Open Jutsu settings | 228 | ronin-hub.spec.ts, widget-controls.spec.ts | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +10 | direct control proof | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
+| JutsuTab | component | button | Open Jutsu guide | 220 | ronin-hub.spec.ts, widget-controls.spec.ts | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
+| JutsuTab | component | button | Open Jutsu settings | 228 | ronin-hub.spec.ts, widget-controls.spec.ts | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
 | Leaderboard | component | button | By Score | 266 | -- | llm-dashboard.spec.ts, widget-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/llm/Leaderboard.tsx` |
 | Leaderboard | component | button | By Name | 273 | -- | llm-dashboard.spec.ts, widget-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/llm/Leaderboard.tsx` |
 | Leaderboard | component | button | Re-test this model | 434 | -- | llm-dashboard.spec.ts, widget-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/llm/Leaderboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Models | 93 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Tests | 97 | component-controls.spec.ts, llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Results | 101 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Leaderboard | 105 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Compare | 109 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Custom Models | 113 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| LLM Dashboard | module | tab-trigger | Jutsu | 117 | llm-dashboard.spec.ts | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Models | 191 | llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Tests | 195 | component-controls.spec.ts, llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Results | 199 | llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Leaderboard | 203 | llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Compare | 207 | llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Analytics | 211 | -- | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Custom Models | 215 | llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| LLM Dashboard | module | tab-trigger | Jutsu | 219 | component-controls.spec.ts, llm-dashboard.spec.ts | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | direct control proof | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
 | LocalModelSelector | component | button | manual audit required | 147 | -- | llm-dashboard.spec.ts | manual label audit | `packages/dojolm-web/src/components/llm/LocalModelSelector.tsx` |
 | LocalModelSelector | component | button | manual audit required | 281 | -- | llm-dashboard.spec.ts | manual label audit | `packages/dojolm-web/src/components/llm/LocalModelSelector.tsx` |
 | ModelDetailView | component | button | Close model detail | 98 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/llm/ModelDetailView.tsx` |
@@ -505,9 +521,9 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | PayloadCard | component | checkbox | manual audit required | 147 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | ConsolidatedReportButton | component | button | Download consolidated report | 131 | admin-controls.spec.ts | admin-controls.spec.ts, compliance.spec.ts | direct control proof | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
 | ConsolidatedReportButton | component | button | manual audit required | 184 | -- | admin-controls.spec.ts, compliance.spec.ts | manual label audit | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
-| AISeverityCalculator | component | button | CVSS Base Metrics | 267 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +11 | inherits heuristic surface reference | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
-| AISeverityCalculator | component | button | manual audit required | 284 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
-| AISeverityCalculator | component | button | AI-Specific Risk Factors | 309 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +11 | inherits heuristic surface reference | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
+| AISeverityCalculator | component | button | CVSS Base Metrics | 267 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
+| AISeverityCalculator | component | button | manual audit required | 284 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +12 | manual label audit | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
+| AISeverityCalculator | component | button | AI-Specific Risk Factors | 309 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +12 | inherits heuristic surface reference | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
 | ProgramCard | component | button | manual audit required | 120 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
 | ProgramCard | component | link | manual audit required | 137 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
 | ProgramDetail | component | button | Close program details | 58 | component-controls.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/ronin/ProgramDetail.tsx` |
@@ -540,6 +556,10 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | ScannerInput | component | button | Upload File | 358 | -- | scanner.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
 | ScannerInput | component | button | manual audit required | 400 | -- | scanner.spec.ts | manual label audit | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
 | ScannerInput | component | button | Clear | 409 | sensei.spec.ts | scanner.spec.ts | direct control proof | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
+| ScannerInsightsPanel | component | button | manual audit required | 115 | -- | -- | manual label audit | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
+| ScannerInsightsPanel | component | tab-trigger | findings | 133 | -- | -- | playwright gap | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
+| ScannerInsightsPanel | component | tab-trigger | modules | 137 | -- | -- | playwright gap | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
+| ScannerInsightsPanel | component | tab-trigger | reference | 141 | -- | -- | playwright gap | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
 | CampaignGraphBuilder | component | button | applyTemplate(tmpl)} > ( ) | 191 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 231 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 243 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
@@ -548,24 +568,26 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | CampaignGraphBuilder | component | button | Close skill picker | 328 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 338 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | Add Skill | 353 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
-| OrchestratorBuilder | component | button | manual audit required | 130 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| OrchestratorBuilder | component | button | manual audit required | 301 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| OrchestratorBuilder | component | button | manual audit required | 169 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| OrchestratorBuilder | component | button | manual audit required | 340 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
 | OrchestratorVisualization | component | button | Turn | 201 | -- | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
-| SengokuCampaignBuilder | component | button | All | 205 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 218 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | Select All | 236 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | Clear | 239 | sensei.spec.ts | component-controls.spec.ts | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 247 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 282 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 335 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 339 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| Sengoku | module | button | New Campaign | 227 | component-controls.spec.ts, sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | tab-trigger | campaigns | 282 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | tab-trigger | temporal | 286 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | button | manual audit required | 324 | -- | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | button | Create new campaign | 375 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | button | Run Now | 431 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Sengoku | module | button | Report | 445 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 250 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | All | 388 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 401 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | Select All | 419 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | Clear | 422 | sensei.spec.ts | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 430 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 465 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 525 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 529 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| Sengoku | module | button | New Campaign | 317 | component-controls.spec.ts, sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | tab-trigger | campaigns | 372 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | tab-trigger | workbench | 376 | -- | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | tab-trigger | temporal | 380 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | button | manual audit required | 418 | -- | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | button | Create new campaign | 469 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | button | Run Now | 525 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Sengoku | module | button | Report | 539 | sengoku.spec.ts | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | direct control proof | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
 | TemporalConversation | component | button | manual audit required | 136 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
 | TemporalTab | component | button | turns | 119 | -- | sengoku.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
 | TemporalTab | component | button | Simulation coming soon | 159 | -- | sengoku.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
@@ -574,12 +596,12 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | SenseiChat | layout | button | Send message | 171 | -- | component-controls.spec.ts, kotoba.spec.ts, llm-dashboard.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
 | SenseiChat | layout | button | Confirm | 217 | -- | component-controls.spec.ts, kotoba.spec.ts, llm-dashboard.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
 | SenseiChat | layout | button | Cancel | 223 | sengoku.spec.ts | component-controls.spec.ts, kotoba.spec.ts, llm-dashboard.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
-| SenseiDrawer | layout | button | manual audit required | 87 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | Clear chat history | 130 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | Close Sensei | 138 | sensei.spec.ts | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | Dismiss error | 163 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | Select model | 290 | atemi-lab.spec.ts | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | manual audit required | 326 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | manual audit required | 88 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | Clear chat history | 131 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | Close Sensei | 139 | sensei.spec.ts | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | Dismiss error | 164 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | Select model | 291 | atemi-lab.spec.ts | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | manual audit required | 327 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
 | SenseiSuggestions | layout | button | manual audit required | 59 | -- | sensei.spec.ts | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiSuggestions.tsx` |
 | SenseiToolResult | layout | button | manual audit required | 78 | -- | sensei.spec.ts, widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiToolResult.tsx` |
 | ShinganPanel | component | button | finding | 243 | -- | shingan.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/shingan/ShinganPanel.tsx` |
@@ -613,10 +635,14 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | BattleModeStep | component | button | manual audit required | 65 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/arena/steps/BattleModeStep.tsx` |
 | WarriorCardGrid | component | button | manual audit required | 87 | -- | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +8 | manual label audit | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
 | WarriorCardGrid | component | button | W / L / D % | 158 | -- | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +8 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
-| ArenaBrowser | component | button | New Stand Off | 254 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
-| ArenaBrowser | component | tab-trigger | manual audit required | 270 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
-| ArenaBrowser | component | button | Export match data | 524 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
-| ArenaBrowser | component | button | Close match detail | 532 | component-controls.spec.ts | kumite.spec.ts | direct control proof | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | button | New Stand Off | 258 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | matches | 272 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | roster | 273 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | rules | 274 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | stats | 275 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | manual audit required | 285 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | button | Export match data | 547 | -- | kumite.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | button | Close match detail | 555 | component-controls.spec.ts | kumite.spec.ts | direct control proof | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
 | KumiteConfig | component | button | manual audit required | 139 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | KumiteConfig | component | button | manual audit required | 159 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | KumiteConfig | component | button | manual audit required | 486 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
@@ -635,16 +661,27 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | SAGEDashboard | component | button | Updated | 297 | -- | component-controls.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/SAGEDashboard.tsx` |
 | SageQuarantineView | component | button | Approve | 424 | -- | api-security.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +14 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/SageQuarantineView.tsx` |
 | SageQuarantineView | component | button | Reject | 439 | -- | api-security.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +14 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/SageQuarantineView.tsx` |
-| The Kumite | module | button | manual audit required | 411 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 422 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | Return to The Kumite overview | 430 | attackdna.spec.ts, kumite.spec.ts, shingan.spec.ts | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | tab-trigger | manual audit required | 446 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 555 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 563 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | Open | 593 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 164 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 225 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 243 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| The Kumite | module | tab-trigger | overview | 408 | component-controls.spec.ts | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | seeds | 409 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | mutations | 410 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | quarantine | 411 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | stream | 435 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | library | 436 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | sources | 437 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | explorer | 458 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | library | 459 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | deep-scan | 477 | atemi-lab.spec.ts | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | supply-chain | 478 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 537 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 548 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | Return to The Kumite overview | 556 | attackdna.spec.ts, kumite.spec.ts, shingan.spec.ts | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | direct control proof | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | manual audit required | 572 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 681 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 689 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | Open | 719 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 177 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 238 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 256 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
 | ThreatFeedStream | component | button | Alerts | 241 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +13 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | ThreatFeedStream | component | button | Clear search | 277 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +13 | inherits heuristic surface reference | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | ThreatFeedStream | component | button | manual audit required | 291 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +13 | manual label audit | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
@@ -670,7 +707,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | ExpandableCard | component | button | manual audit required | 58 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ui/ExpandableCard.tsx` |
 | FilterPills | component | button | manual audit required | 126 | -- | scanner.spec.ts | manual label audit | `packages/dojolm-web/src/components/ui/FilterPills.tsx` |
 | FilterPills | component | button | Reset all engine filters | 149 | -- | scanner.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/ui/FilterPills.tsx` |
-| LibraryPageTemplate | component | button | Grid view | 176 | test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
+| LibraryPageTemplate | component | button | Grid view | 176 | component-controls.spec.ts, test-lab.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
 | LibraryPageTemplate | component | button | List view | 187 | -- | admin-controls.spec.ts, component-controls.spec.ts, test-lab.spec.ts | inherits heuristic surface reference | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
 | LibraryPageTemplate | component | button | manual audit required | 206 | -- | admin-controls.spec.ts, component-controls.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
 | LibraryPageTemplate | component | button | Previous page | 281 | admin-controls.spec.ts, component-controls.spec.ts | admin-controls.spec.ts, component-controls.spec.ts, test-lab.spec.ts | direct control proof | `packages/dojolm-web/src/components/ui/LibraryPageTemplate.tsx` |
@@ -689,34 +726,35 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 ## Manual Label Audit Queue
 
 <details>
-<summary>Controls requiring manual label audit (203)</summary>
+<summary>Controls requiring manual label audit (206)</summary>
 
 | Surface | Category | Control | Label | Line | Direct Proof Refs | Spec References | Status | File |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | /login | page | button | manual audit required | 103 | -- | pages.spec.ts, visual-regression.spec.ts | manual label audit | `packages/dojolm-web/src/app/login/page.tsx` |
-| Admin | module | tab-trigger | manual audit required | 68 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
+| Admin | module | tab-trigger | manual audit required | 116 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
 | ApiKeyManager | component | button | manual audit required | 259 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ApiKeyManager.tsx` |
 | ApiKeyManager | component | button | manual audit required | 381 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ApiKeyManager.tsx` |
 | ExportSettings | component | button | manual audit required | 56 | -- | admin-controls.spec.ts, api-security.spec.ts, compliance.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/admin/ExportSettings.tsx` |
 | ScannerConfig | component | button | manual audit required | 82 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ScannerConfig.tsx` |
 | ScannerConfig | component | button | manual audit required | 121 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ScannerConfig.tsx` |
 | UserManagement | component | button | manual audit required | 154 | -- | admin-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
-| ValidationManager | component | button | manual audit required | 927 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| ValidationManager | component | button | manual audit required | 1081 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
-| Atemi Lab | module | button | manual audit required | 736 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | manual audit required | 1014 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| Atemi Lab | module | button | manual audit required | 1084 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| ValidationManager | component | button | manual audit required | 971 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | component | button | manual audit required | 1200 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| Atemi Lab | module | button | manual audit required | 773 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 915 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 1116 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| Atemi Lab | module | button | manual audit required | 1186 | -- | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
 | AtemiConfig | component | button | manual audit required | 192 | -- | atemi-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
-| AttackLog | component | button | manual audit required | 202 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +4 | manual label audit | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
+| AttackLog | component | button | manual audit required | 202 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +5 | manual label audit | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
 | SessionHistory | component | button | manual audit required | 229 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SessionHistory.tsx` |
 | SkillCard | component | button | manual audit required | 112 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillCard.tsx` |
 | SkillCard | component | button | manual audit required | 129 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillCard.tsx` |
 | SkillsLibrary | component | button | manual audit required | 187 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | SkillsLibrary | component | button | manual audit required | 228 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
 | SkillsLibrary | component | button | manual audit required | 270 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/adversarial/SkillsLibrary.tsx` |
-| AgenticLab | component | button | manual audit required | 171 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
-| AgenticLab | component | button | manual audit required | 198 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
-| AgenticLab | component | button | manual audit required | 256 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 233 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 260 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
+| AgenticLab | component | button | manual audit required | 318 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/agentic/AgenticLab.tsx` |
 | AmaterasuConfig | component | button | manual audit required | 154 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
 | AmaterasuConfig | component | button | manual audit required | 193 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
 | AmaterasuConfig | component | button | manual audit required | 269 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/attackdna/AmaterasuConfig.tsx` |
@@ -732,10 +770,10 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | DNALibrary | component | button | manual audit required | 620 | -- | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | manual label audit | `packages/dojolm-web/src/components/attackdna/DNALibrary.tsx` |
 | FamilyTreeView | component | button | manual audit required | 226 | -- | attackdna.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/attackdna/FamilyTreeView.tsx` |
 | XRayPanel | component | button | manual audit required | 87 | -- | atemi-lab.spec.ts, attackdna.spec.ts, component-controls.spec.ts +7 | manual label audit | `packages/dojolm-web/src/components/attackdna/XRayPanel.tsx` |
-| Bushido Book | module | button | manual audit required | 203 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | tab-trigger | manual audit required | 536 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | manual audit required | 600 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Bushido Book | module | button | manual audit required | 1516 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 205 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | tab-trigger | manual audit required | 575 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 642 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Bushido Book | module | button | manual audit required | 1558 | -- | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
 | ComplianceChecklist | component | button | manual audit required | 381 | -- | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
 | ComplianceChecklist | component | button | manual audit required | 433 | -- | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
 | ComplianceChecklist | component | button | manual audit required | 468 | -- | compliance.spec.ts, pages.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/compliance/ComplianceChecklist.tsx` |
@@ -761,9 +799,9 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | QuickLLMTestWidget | widget | button | manual audit required | 98 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/dashboard/widgets/QuickLLMTestWidget.tsx` |
 | QuickScanWidget | widget | button | manual audit required | 41 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/dashboard/widgets/QuickScanWidget.tsx` |
 | CategoryTree | component | button | manual audit required | 200 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/CategoryTree.tsx` |
-| FixtureExplorer | component | button | manual audit required | 190 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | manual audit required | 471 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
-| FixtureExplorer | component | button | manual audit required | 693 | -- | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 190 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 471 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | component | button | manual audit required | 693 | -- | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
 | FixtureFilters | component | button | manual audit required | 304 | -- | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
 | FixtureFilters | component | select-trigger | manual audit required | 330 | -- | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
 | FixtureList | component | button | manual audit required | 229 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/fixtures/FixtureList.tsx` |
@@ -775,8 +813,8 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | GuardAuditLog | component | button | manual audit required | 128 | -- | admin-controls.spec.ts, component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
 | GuardModeSelector | component | button | manual audit required | 25 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
 | SystemPromptHardener | component | button | manual audit required | 121 | -- | guard.spec.ts | manual label audit | `packages/dojolm-web/src/components/guard/SystemPromptHardener.tsx` |
-| KagamiPanel | component | button | manual audit required | 328 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | manual label audit | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
-| Kotoba | module | button | manual audit required | 277 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| KagamiPanel | component | button | manual audit required | 258 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | manual label audit | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| Kotoba | module | button | manual audit required | 316 | -- | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
 | DashboardGrid | component | button | manual audit required | 107 | -- | widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
 | MobileNav | layout | button | manual audit required | 60 | -- | atemi-lab.spec.ts, component-controls.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
 | MobileNav | layout | button | manual audit required | 227 | -- | atemi-lab.spec.ts, component-controls.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
@@ -820,7 +858,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | PayloadCard | component | checkbox | manual audit required | 140 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | PayloadCard | component | checkbox | manual audit required | 147 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | ConsolidatedReportButton | component | button | manual audit required | 184 | -- | admin-controls.spec.ts, compliance.spec.ts | manual label audit | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
-| AISeverityCalculator | component | button | manual audit required | 284 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
+| AISeverityCalculator | component | button | manual audit required | 284 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +12 | manual label audit | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
 | ProgramCard | component | button | manual audit required | 120 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
 | ProgramCard | component | link | manual audit required | 137 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
 | ProgramDetail | component | button | manual audit required | 162 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/ronin/ProgramDetail.tsx` |
@@ -835,22 +873,24 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | QuickChips | component | button | manual audit required | 59 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/scanner/QuickChips.tsx` |
 | ScannerInput | component | button | manual audit required | 95 | -- | scanner.spec.ts | manual label audit | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
 | ScannerInput | component | button | manual audit required | 400 | -- | scanner.spec.ts | manual label audit | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
+| ScannerInsightsPanel | component | button | manual audit required | 115 | -- | -- | manual label audit | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 231 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 243 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 270 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | CampaignGraphBuilder | component | button | manual audit required | 338 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
-| OrchestratorBuilder | component | button | manual audit required | 130 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| OrchestratorBuilder | component | button | manual audit required | 301 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 218 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 247 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 282 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 335 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| SengokuCampaignBuilder | component | button | manual audit required | 339 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
-| Sengoku | module | button | manual audit required | 324 | -- | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| OrchestratorBuilder | component | button | manual audit required | 169 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| OrchestratorBuilder | component | button | manual audit required | 340 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 250 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 401 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 430 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 465 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 525 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | component | button | manual audit required | 529 | -- | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| Sengoku | module | button | manual audit required | 418 | -- | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | manual label audit | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
 | TemporalConversation | component | button | manual audit required | 136 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
 | TemporalTab | component | button | manual audit required | 179 | -- | sengoku.spec.ts | manual label audit | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
-| SenseiDrawer | layout | button | manual audit required | 87 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
-| SenseiDrawer | layout | button | manual audit required | 326 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | manual audit required | 88 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
+| SenseiDrawer | layout | button | manual audit required | 327 | -- | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
 | SenseiSuggestions | layout | button | manual audit required | 59 | -- | sensei.spec.ts | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiSuggestions.tsx` |
 | SenseiToolResult | layout | button | manual audit required | 78 | -- | sensei.spec.ts, widget-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/sensei/SenseiToolResult.tsx` |
 | ShinganPanel | component | input | manual audit required | 679 | -- | shingan.spec.ts | manual label audit | `packages/dojolm-web/src/components/shingan/ShinganPanel.tsx` |
@@ -864,7 +904,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | AttackModeStep | component | button | manual audit required | 61 | -- | atemi-lab.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/arena/steps/AttackModeStep.tsx` |
 | BattleModeStep | component | button | manual audit required | 65 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/arena/steps/BattleModeStep.tsx` |
 | WarriorCardGrid | component | button | manual audit required | 87 | -- | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +8 | manual label audit | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
-| ArenaBrowser | component | tab-trigger | manual audit required | 270 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | component | tab-trigger | manual audit required | 285 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
 | KumiteConfig | component | button | manual audit required | 139 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | KumiteConfig | component | button | manual audit required | 159 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | KumiteConfig | component | button | manual audit required | 486 | -- | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | manual label audit | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
@@ -874,14 +914,14 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | MitsukeSourceConfig | component | button | manual audit required | 296 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |
 | MitsukeSourceConfig | component | button | manual audit required | 441 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |
 | SAGEDashboard | component | button | manual audit required | 154 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SAGEDashboard.tsx` |
-| The Kumite | module | button | manual audit required | 411 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 422 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | tab-trigger | manual audit required | 446 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 555 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| The Kumite | module | button | manual audit required | 563 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 164 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 225 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
-| SupplyChainPanel | component | button | manual audit required | 243 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| The Kumite | module | button | manual audit required | 537 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 548 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | tab-trigger | manual audit required | 572 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 681 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| The Kumite | module | button | manual audit required | 689 | -- | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | manual label audit | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 177 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 238 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
+| SupplyChainPanel | component | button | manual audit required | 256 | -- | kumite.spec.ts | manual label audit | `packages/dojolm-web/src/components/strategic/SupplyChainPanel.tsx` |
 | ThreatFeedStream | component | button | manual audit required | 291 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +13 | manual label audit | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | ThreatFeedStream | component | button | manual audit required | 699 | -- | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +13 | manual label audit | `packages/dojolm-web/src/components/strategic/ThreatFeedStream.tsx` |
 | TestRunner | component | button | manual audit required | 73 | -- | component-controls.spec.ts | manual label audit | `packages/dojolm-web/src/components/tests/TestRunner.tsx` |
@@ -903,6 +943,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 
 | Surface | Category | Interactive | Recommended Runner | Required Coverage | File |
 | --- | --- | --- | --- | --- | --- |
+| ScannerInsightsPanel | component | 8 | Playwright | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
 
 ## Module Journeys
 
@@ -911,14 +952,14 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | Dashboard | -- | 4 | admin.spec.ts, attackdna.spec.ts, compliance.spec.ts +12 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/dashboard/NODADashboard.tsx` |
 | Haiku Scanner | attack | 12 | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/app/page.tsx` |
 | Armory | attack | 12 | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/app/page.tsx` |
-| LLM Dashboard | attack | 15 | api-security.spec.ts, atemi-lab.spec.ts, component-controls.spec.ts +11 | Playwright + manual visual/device | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
-| Hattori Guard | defense | 0 | component-controls.spec.ts, dashboard-widgets.spec.ts, guard.spec.ts +4 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
-| Bushido Book | defense | 26 | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
-| Atemi Lab | redteam | 30 | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
-| The Kumite | analysis | 9 | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
+| LLM Dashboard | attack | 17 | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +12 | Playwright + manual visual/device | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/llm/LLMDashboard.tsx` |
+| Hattori Guard | defense | 7 | component-controls.spec.ts, dashboard-widgets.spec.ts, guard.spec.ts +4 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/guard/GuardDashboard.tsx` |
+| Bushido Book | defense | 27 | compliance.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +3 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/compliance/ComplianceCenter.tsx` |
+| Atemi Lab | redteam | 35 | atemi-lab.spec.ts, component-controls.spec.ts, navigation.spec.ts +1 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/adversarial/AdversarialLab.tsx` |
+| The Kumite | analysis | 31 | attackdna.spec.ts, component-controls.spec.ts, kumite.spec.ts +2 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/strategic/StrategicHub.tsx` |
 | Ronin Hub | analysis | 6 | component-controls.spec.ts, navigation.spec.ts, ronin-hub.spec.ts | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/ronin/RoninHub.tsx` |
-| Sengoku | redteam | 11 | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
-| Kotoba | defense | 8 | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
+| Sengoku | redteam | 14 | component-controls.spec.ts, navigation.spec.ts, sengoku.spec.ts +1 | Playwright + manual visual | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/sengoku/SengokuDashboard.tsx` |
+| Kotoba | defense | 12 | component-controls.spec.ts, kotoba.spec.ts, navigation.spec.ts +1 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/kotoba/KotobaDashboard.tsx` |
 | Admin | -- | 5 | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +3 | Playwright | heuristic playwright reference | load, primary journey, error/empty, keyboard, mobile | `packages/dojolm-web/src/components/admin/AdminPanel.tsx` |
 
 ## Standalone App Surfaces
@@ -940,7 +981,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | MobileNav | layout | 11 | atemi-lab.spec.ts, component-controls.spec.ts, kotoba.spec.ts +2 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/layout/MobileNav.tsx` |
 | PageToolbar | layout | 6 | attackdna.spec.ts, compliance.spec.ts, component-controls.spec.ts +3 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/layout/PageToolbar.tsx` |
 | NotificationsPanel | layout | 6 | atemi-lab.spec.ts, component-controls.spec.ts | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/layout/NotificationsPanel.tsx` |
-| DashboardCustomizer | layout | 14 | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
+| DashboardCustomizer | layout | 16 | cross-module.spec.ts, dashboard-widgets.spec.ts, kumite.spec.ts +1 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/dashboard/DashboardCustomizer.tsx` |
 | SenseiDrawer | sensei | 12 | component-controls.spec.ts, guard.spec.ts, kotoba.spec.ts +2 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/sensei/SenseiDrawer.tsx` |
 | SenseiChat | sensei | 9 | component-controls.spec.ts, kotoba.spec.ts, llm-dashboard.spec.ts +2 | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/sensei/SenseiChat.tsx` |
 | SenseiSuggestions | sensei | 2 | sensei.spec.ts | Playwright | heuristic playwright reference | navigation, focus management, responsive, open/close states | `packages/dojolm-web/src/components/sensei/SenseiSuggestions.tsx` |
@@ -986,7 +1027,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 ## Interactive Components
 
 <details>
-<summary>Interactive component inventory (137 surfaces)</summary>
+<summary>Interactive component inventory (138 surfaces)</summary>
 
 | Component | Area | Interactive | Spec References | Runner | Status | Required Coverage | File |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -996,11 +1037,11 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | ScannerConfig | admin | 9 | admin-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/admin/ScannerConfig.tsx` |
 | SystemHealth | admin | 2 | admin-controls.spec.ts, api-security.spec.ts, atemi-lab.spec.ts +19 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/admin/SystemHealth.tsx` |
 | UserManagement | admin | 11 | admin-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/admin/UserManagement.tsx` |
-| ValidationManager | admin | 33 | admin-controls.spec.ts, component-controls.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
+| ValidationManager | admin | 35 | admin-controls.spec.ts, component-controls.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/admin/ValidationManager.tsx` |
 | AtemiConfig | adversarial | 18 | atemi-lab.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AtemiConfig.tsx` |
 | AtemiGettingStarted | adversarial | 6 | atemi-lab.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AtemiGettingStarted.tsx` |
-| AttackLog | adversarial | 2 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +4 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
-| AttackToolCard | adversarial | 8 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +7 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
+| AttackLog | adversarial | 2 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +5 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AttackLog.tsx` |
+| AttackToolCard | adversarial | 8 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +8 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/AttackToolCard.tsx` |
 | McpConnectorStatus | adversarial | 15 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/McpConnectorStatus.tsx` |
 | PlaybookRunner | adversarial | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/PlaybookRunner.tsx` |
 | SessionHistory | adversarial | 15 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/adversarial/SessionHistory.tsx` |
@@ -1034,7 +1075,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | FixtureCategoryCard | fixtures | 2 | component-controls.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureCategoryCard.tsx` |
 | FixtureComparison | fixtures | 1 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureComparison.tsx` |
 | FixtureDetail | fixtures | 2 | atemi-lab.spec.ts, component-controls.spec.ts, mobile-nav.spec.ts +2 | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureDetail.tsx` |
-| FixtureExplorer | fixtures | 15 | admin-controls.spec.ts, llm-dashboard.spec.ts, test-lab.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
+| FixtureExplorer | fixtures | 15 | admin-controls.spec.ts, component-controls.spec.ts, llm-dashboard.spec.ts +1 | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureExplorer.tsx` |
 | FixtureFilters | fixtures | 12 | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureFilters.tsx` |
 | FixtureList | fixtures | 2 | component-controls.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureList.tsx` |
 | FixtureSearch | fixtures | 16 | component-controls.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/fixtures/FixtureSearch.tsx` |
@@ -1043,7 +1084,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | GuardAuditLog | guard | 10 | admin-controls.spec.ts, component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/guard/GuardAuditLog.tsx` |
 | GuardModeSelector | guard | 8 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/guard/GuardModeSelector.tsx` |
 | SystemPromptHardener | guard | 3 | guard.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/guard/SystemPromptHardener.tsx` |
-| KagamiPanel | kagami | 11 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
+| KagamiPanel | kagami | 19 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +9 | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/kagami/KagamiPanel.tsx` |
 | KagamiResults | kagami | 3 | component-controls.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/kagami/KagamiResults.tsx` |
 | KotobaWorkshop | kotoba | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/kotoba/KotobaWorkshop.tsx` |
 | DashboardGrid | layout | 2 | widget-controls.spec.ts | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/layout/DashboardGrid.tsx` |
@@ -1053,7 +1094,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | CustomProviderBuilder | llm | 22 | llm-dashboard.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/CustomProviderBuilder.tsx` |
 | ExecutiveSummary | llm | 2 | llm-dashboard.spec.ts | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/ExecutiveSummary.tsx` |
 | JutsuModelCard | llm | 8 | component-controls.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/JutsuModelCard.tsx` |
-| JutsuTab | llm | 6 | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +10 | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
+| JutsuTab | llm | 6 | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +11 | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/JutsuTab.tsx` |
 | Leaderboard | llm | 3 | llm-dashboard.spec.ts, widget-controls.spec.ts | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/Leaderboard.tsx` |
 | LocalModelSelector | llm | 5 | llm-dashboard.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/LocalModelSelector.tsx` |
 | ModelDetailView | llm | 21 | component-controls.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/llm/ModelDetailView.tsx` |
@@ -1069,7 +1110,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | PayloadCard | payloads | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/payloads/PayloadCard.tsx` |
 | PatternReference | reference | 1 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/reference/PatternReference.tsx` |
 | ConsolidatedReportButton | reports | 3 | admin-controls.spec.ts, compliance.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/reports/ConsolidatedReportButton.tsx` |
-| AISeverityCalculator | ronin | 7 | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +11 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
+| AISeverityCalculator | ronin | 7 | admin-controls.spec.ts, atemi-lab.spec.ts, attackdna.spec.ts +12 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/ronin/AISeverityCalculator.tsx` |
 | ProgramCard | ronin | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/ronin/ProgramCard.tsx` |
 | ProgramDetail | ronin | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/ronin/ProgramDetail.tsx` |
 | ProgramsTab | ronin | 7 | ronin-hub.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/ronin/ProgramsTab.tsx` |
@@ -1081,10 +1122,11 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | ProtocolFuzzPanel | scanner | 5 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/scanner/ProtocolFuzzPanel.tsx` |
 | QuickChips | scanner | 4 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/scanner/QuickChips.tsx` |
 | ScannerInput | scanner | 9 | scanner.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/scanner/ScannerInput.tsx` |
+| ScannerInsightsPanel | scanner | 8 | -- | Playwright | playwright gap | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/scanner/ScannerInsightsPanel.tsx` |
 | CampaignGraphBuilder | sengoku | 15 | component-controls.spec.ts | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/CampaignGraphBuilder.tsx` |
 | OrchestratorBuilder | sengoku | 19 | sengoku.spec.ts | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/OrchestratorBuilder.tsx` |
 | OrchestratorVisualization | sengoku | 2 | admin-controls.spec.ts, admin.spec.ts, atemi-lab.spec.ts +20 | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/OrchestratorVisualization.tsx` |
-| SengokuCampaignBuilder | sengoku | 19 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
+| SengokuCampaignBuilder | sengoku | 28 | component-controls.spec.ts, llm-dashboard.spec.ts, mobile-nav.spec.ts +3 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/SengokuCampaignBuilder.tsx` |
 | TemporalConversation | sengoku | 2 | sengoku.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/TemporalConversation.tsx` |
 | TemporalTab | sengoku | 4 | sengoku.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/sengoku/TemporalTab.tsx` |
 | ShinganPanel | shingan | 15 | shingan.spec.ts | Playwright + manual visual/device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/shingan/ShinganPanel.tsx` |
@@ -1099,7 +1141,7 @@ Direct-proof links are heuristic and should be paired with run evidence for rele
 | BattleModeStep | strategic | 10 | kumite.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/arena/steps/BattleModeStep.tsx` |
 | ModelSelectionStep | strategic | 5 | shingan.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/arena/steps/ModelSelectionStep.tsx` |
 | WarriorCardGrid | strategic | 4 | admin-controls.spec.ts, attackdna.spec.ts, compliance.spec.ts +8 | Playwright + manual visual | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/arena/WarriorCardGrid.tsx` |
-| ArenaBrowser | strategic | 9 | kumite.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
+| ArenaBrowser | strategic | 17 | kumite.spec.ts | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/ArenaBrowser.tsx` |
 | KumiteConfig | strategic | 15 | admin-controls.spec.ts, atemi-lab.spec.ts, compliance.spec.ts +11 | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/KumiteConfig.tsx` |
 | MitsukeLibrary | strategic | 4 | admin-controls.spec.ts, admin.spec.ts, api-security.spec.ts +21 | Playwright + manual device | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/MitsukeLibrary.tsx` |
 | MitsukeSourceConfig | strategic | 14 | component-controls.spec.ts | Playwright | heuristic playwright reference | interaction path, keyboard, visual states | `packages/dojolm-web/src/components/strategic/MitsukeSourceConfig.tsx` |

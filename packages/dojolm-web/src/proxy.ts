@@ -201,6 +201,11 @@ function isDevelopmentBrowserReadRequest(request: NextRequest): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  // Demo mode: bypass all proxy auth/rate-limiting for API routes
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+    return NextResponse.next();
+  }
+
   const { pathname } = request.nextUrl;
 
   // Only apply to API routes

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
+import { isDemoMode } from '@/lib/demo';
 
 /**
  * Standardized model info returned by this endpoint
@@ -40,6 +41,20 @@ interface LocalModelInfo {
  * Returns list of available models from the specified local provider
  */
 export async function GET(request: NextRequest) {
+  // Demo mode: return mock local models for setup wizard
+  if (isDemoMode()) {
+    return NextResponse.json({
+      provider: 'ollama',
+      baseUrl: 'http://localhost:11434',
+      models: [
+        { id: 'shogun:13b', name: 'shogun:13b', size: 7365960704, sizeFormatted: '6.9 GB', quantization: 'Q4_0', modifiedAt: new Date().toISOString() },
+        { id: 'basileak:7b', name: 'basileak:7b', size: 3825819648, sizeFormatted: '3.6 GB', quantization: 'Q4_0', modifiedAt: new Date().toISOString() },
+        { id: 'marfaak:70b', name: 'marfaak:70b', size: 39144407040, sizeFormatted: '36.5 GB', quantization: 'Q4_K_M', modifiedAt: new Date().toISOString() },
+      ],
+      count: 3,
+    });
+  }
+
   try {
     const authResult = checkApiAuth(request);
     if (authResult) return authResult;

@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoArenaMatchById } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import * as arenaStorage from '@/lib/storage/arena-storage';
 
@@ -23,6 +25,7 @@ export const GET = createApiHandler(
     { params }: { params: Promise<{ id: string }> }
   ) => {
     const { id } = await params;
+    if (isDemoMode()) return demoArenaMatchById(id);
 
     if (!id || !SAFE_ID.test(id)) {
       return NextResponse.json({ error: 'Invalid match ID' }, { status: 400 });

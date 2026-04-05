@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoCoverageGet } from '@/lib/demo/mock-api-handlers';
 
 import { apiError } from '@/lib/api-error';
 import { fetchCoverageMap } from '@/lib/llm-server-utils';
@@ -15,6 +17,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoCoverageGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 

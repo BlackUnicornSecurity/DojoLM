@@ -6,6 +6,8 @@
  * DELETE /api/llm/providers/:id — Remove provider (via [id] route)
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoProvidersGet, demoProvidersPost } from '@/lib/demo/mock-api-handlers';
 import { getStorage } from '@/lib/storage/storage-interface';
 import { checkApiAuth } from '@/lib/api-auth';
 
@@ -37,6 +39,7 @@ export function OPTIONS(_request: NextRequest) {
  * POST /api/llm/providers — Register new provider
  */
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoProvidersPost();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 
@@ -129,6 +132,7 @@ export async function POST(request: NextRequest) {
  * GET /api/llm/providers — List configured providers (no auth details)
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoProvidersGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 

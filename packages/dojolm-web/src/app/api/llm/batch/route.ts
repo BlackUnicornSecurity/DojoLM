@@ -7,6 +7,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoBatchGet, demoBatchPost } from '@/lib/demo/mock-api-handlers';
 
 import { apiError } from '@/lib/api-error';
 import { withAuth } from '@/lib/auth/route-guard';
@@ -24,6 +26,7 @@ import { getDataPath } from '@/lib/runtime-paths';
 // ===========================================================================
 
 export const POST = withAuth(async (request: NextRequest) => {
+  if (isDemoMode()) return demoBatchPost();
   try {
     let body: Record<string, unknown>;
     try {
@@ -211,6 +214,7 @@ export const POST = withAuth(async (request: NextRequest) => {
 // ===========================================================================
 
 export const GET = withAuth(async (request: NextRequest) => {
+  if (isDemoMode()) return demoBatchGet();
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

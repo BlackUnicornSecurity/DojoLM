@@ -9,6 +9,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoTestsGet } from '@/lib/demo/mock-api-handlers';
 import { spawn } from 'child_process';
 import { join } from 'path';
 
@@ -167,6 +169,7 @@ function executeTest(
 }
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoTestsGet();
   try {
     const authResult = checkApiAuth(request);
     if (authResult) return authResult;
@@ -235,6 +238,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoTestsGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

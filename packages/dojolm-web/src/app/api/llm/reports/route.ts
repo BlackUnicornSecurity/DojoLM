@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoReportsGet } from '@/lib/demo/mock-api-handlers';
 
 import { apiError } from '@/lib/api-error';
 import type { ReportFormat, ReportRequest } from '@/lib/llm-types';
@@ -18,6 +20,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoReportsGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 

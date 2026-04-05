@@ -5,11 +5,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { apiError } from '@/lib/api-error';
 import { withAuth } from '@/lib/auth/route-guard';
 import { getStorage } from '@/lib/storage/storage-interface';
 
 export const POST = withAuth(async (request: NextRequest) => {
+  if (isDemoMode()) return demoNoOp();
   try {
     let body: Record<string, unknown> = {};
     try {

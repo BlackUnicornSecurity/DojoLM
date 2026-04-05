@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoFingerprintGet, demoNoOpAccepted } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 import { getProviderAdapter } from '@/lib/llm-providers';
@@ -45,7 +47,36 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoFingerprintGet();
+
+  const authResult = checkApiAuth(request);
+  if (authResult) return authResult;
+
+  // Return stored fingerprint results
+  const resultsDir = getDataPath('llm-results', 'fingerprint');
+  try {
+    await fs.promises.mkdir(resultsDir, { recursive: true });
+    const files = await fs.promises.readdir(resultsDir);
+    const results: unknown[] = [];
+    for (const f of files.filter(f => f.endsWith('.json'))) {
+      try {
+        const content = await fs.promises.readFile(path.join(resultsDir, f), 'utf-8');
+        results.push(JSON.parse(content));
+      } catch {
+        // Skip corrupt files
+      }
+    }
+    results.sort((a: any, b: any) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''));
+    return NextResponse.json({ results });
+  } catch {
+    return NextResponse.json({ results: [] });
+  }
+}
+
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoNoOpAccepted();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

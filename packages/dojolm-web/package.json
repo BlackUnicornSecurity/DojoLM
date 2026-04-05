@@ -6,6 +6,7 @@
     "dev": "npm run build:scanner && next dev --port 42001",
     "dev:e2e": "npm run build:scanner && NEXT_IGNORE_INCORRECT_LOCKFILE=1 next dev --hostname 127.0.0.1 --port 42001",
     "build": "npm run build:scanner && NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build --webpack",
+    "build:demo": "npm run build:scanner && NEXT_IGNORE_INCORRECT_LOCKFILE=1 NEXT_PUBLIC_DEMO_MODE=true next build --webpack",
     "build:e2e": "npm run build:scanner && NEXT_IGNORE_INCORRECT_LOCKFILE=1 NEXT_PUBLIC_API_URL=http://127.0.0.1:42001 NEXT_PUBLIC_APP_URL=http://127.0.0.1:42001 next build --webpack",
     "build:scanner": "cd ../dojolm-scanner && npm run build",
     "start": "next start --port 42001",

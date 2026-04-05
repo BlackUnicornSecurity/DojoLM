@@ -9,12 +9,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoScanPost } from '@/lib/demo/mock-api-handlers';
 import { scan } from '@dojolm/scanner';
 import type { ScanOptions } from '@dojolm/scanner';
 import { withAuth } from '@/lib/auth/route-guard';
 import { emitScannerFindings } from '@/lib/ecosystem-emitters';
 
 export const POST = withAuth(async (request: NextRequest) => {
+  if (isDemoMode()) return await demoScanPost(request);
   try {
     let body: Record<string, unknown>;
     try {

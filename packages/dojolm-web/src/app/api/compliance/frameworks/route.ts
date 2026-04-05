@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoComplianceFrameworksGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
 
 export async function OPTIONS(_request: NextRequest) {
@@ -20,6 +22,7 @@ export async function OPTIONS(_request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoComplianceFrameworksGet()
   const authError = checkApiAuth(request)
   if (authError) return authError
 

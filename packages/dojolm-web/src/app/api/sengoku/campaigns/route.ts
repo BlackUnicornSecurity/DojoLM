@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoCampaignsGet, demoNoOpCreated } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -30,6 +32,7 @@ export function OPTIONS(_request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoCampaignsGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
@@ -58,6 +61,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoNoOpCreated();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

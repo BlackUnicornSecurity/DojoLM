@@ -5,16 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyPassword, generateCsrfToken } from '@/lib/auth/auth';
-import { createSession } from '@/lib/auth/session';
 import { buildSessionCookie, buildCsrfCookie } from '@/lib/auth/route-guard';
-import {
-  clearLoginRateLimitFailures,
-  getLoginRateLimitKey,
-  isLoginRateLimited,
-  recordLoginRateLimitFailure,
-} from '@/lib/auth/login-rate-limit';
-import { userRepo } from '@/lib/db/repositories/user.repository';
+import { isDemoMode, DEMO_USER, DEMO_SESSION_TOKEN, DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS } from '@/lib/demo';
 
 const SESSION_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 const MAX_USERNAME_LENGTH = 128;
@@ -40,7 +32,34 @@ function getSessionIpAddress(req: NextRequest): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  // Demo mode: always succeed with demo user
+  if (isDemoMode()) {
+    const response = NextResponse.json({
+      user: {
+        id: DEMO_USER.id,
+        username: DEMO_USER.username,
+        email: DEMO_USER.email,
+        role: DEMO_USER.role,
+        displayName: DEMO_USER.displayName,
+      },
+    });
+    response.headers.append('Set-Cookie', buildSessionCookie(DEMO_SESSION_TOKEN, DEMO_SESSION_TTL_SECONDS));
+    response.headers.append('Set-Cookie', buildCsrfCookie(DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS));
+    return response;
+  }
+
   try {
+    // Lazy-import heavy dependencies only in non-demo mode
+    const { verifyPassword, generateCsrfToken } = await import('@/lib/auth/auth');
+    const { createSession } = await import('@/lib/auth/session');
+    const {
+      clearLoginRateLimitFailures,
+      getLoginRateLimitKey,
+      isLoginRateLimited,
+      recordLoginRateLimitFailure,
+    } = await import('@/lib/auth/login-rate-limit');
+    const { userRepo } = await import('@/lib/db/repositories/user.repository');
+
     const body = await req.json();
     const { username, password } = body;
 

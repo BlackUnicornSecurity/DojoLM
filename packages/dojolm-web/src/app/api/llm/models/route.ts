@@ -9,6 +9,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoModelsGet, demoModelsPost } from '@/lib/demo/mock-api-handlers';
 
 import type { LLMModelConfig } from '@/lib/llm-types';
 import { getStorage } from '@/lib/storage/storage-interface';
@@ -69,6 +71,7 @@ export function OPTIONS(_request: NextRequest) {
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoModelsGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
@@ -106,6 +109,7 @@ export async function GET(request: NextRequest) {
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoModelsPost(request);
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

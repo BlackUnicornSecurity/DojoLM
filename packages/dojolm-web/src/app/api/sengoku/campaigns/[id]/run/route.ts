@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoNoOpAccepted } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -19,6 +21,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  if (isDemoMode()) return demoNoOpAccepted();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

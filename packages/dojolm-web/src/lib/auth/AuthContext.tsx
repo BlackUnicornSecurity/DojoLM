@@ -13,6 +13,16 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
+const DEMO_AUTH_USER: AuthUser = {
+  id: 'demo-admin-001',
+  username: 'demo-admin',
+  email: 'admin@demo.dojolm.ai',
+  role: 'admin',
+  displayName: 'Demo Admin',
+};
+
 export interface AuthUser {
   id: string;
   username: string;
@@ -36,6 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    // Demo mode: immediately set demo user without server call
+    if (DEMO_MODE) {
+      setUser(DEMO_AUTH_USER);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
       if (res.ok) {
@@ -52,6 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (username: string, password: string) => {
+    // Demo mode: always succeed
+    if (DEMO_MODE) {
+      setUser(DEMO_AUTH_USER);
+      return { success: true };
+    }
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',

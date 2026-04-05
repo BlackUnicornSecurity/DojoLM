@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoRoninProgramsGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
 import { apiError } from '@/lib/api-error'
 import { SEED_PROGRAMS } from '@/lib/data/ronin-seed-programs'
@@ -14,6 +16,7 @@ import { SEED_PROGRAMS } from '@/lib/data/ronin-seed-programs'
  * Query params: ?platform=hackerone&status=active&search=openai
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoRoninProgramsGet()
   const authError = checkApiAuth(request)
   if (authError) return authError
 

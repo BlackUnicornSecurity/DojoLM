@@ -9,6 +9,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoBatchById, demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { apiError } from '@/lib/api-error';
 import { withAuth } from '@/lib/auth/route-guard';
 import { fileStorage } from '@/lib/storage/file-storage';
@@ -17,8 +19,9 @@ type RouteParams = { params?: Record<string, string> };
 
 // GET /api/llm/batch/:id — Get batch details
 export const GET = withAuth(async (request: NextRequest, { params }: RouteParams) => {
+  const id = params?.['id'];
+  if (isDemoMode() && id) return demoBatchById(id);
   try {
-    const id = params?.['id'];
     if (!id) {
       return NextResponse.json({ error: 'Missing batch id' }, { status: 400 });
     }
@@ -36,6 +39,7 @@ export const GET = withAuth(async (request: NextRequest, { params }: RouteParams
 
 // PATCH /api/llm/batch/:id — Cancel a running batch
 export const PATCH = withAuth(async (request: NextRequest, { params }: RouteParams) => {
+  if (isDemoMode()) return demoNoOp();
   try {
     const id = params?.['id'];
     if (!id) {
@@ -67,6 +71,7 @@ export const PATCH = withAuth(async (request: NextRequest, { params }: RoutePara
 
 // DELETE /api/llm/batch/:id — Delete a batch
 export const DELETE = withAuth(async (request: NextRequest, { params }: RouteParams) => {
+  if (isDemoMode()) return demoNoOp();
   try {
     const id = params?.['id'];
     if (!id) {

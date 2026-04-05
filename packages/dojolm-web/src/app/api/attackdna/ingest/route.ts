@@ -9,6 +9,8 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import * as ecosystemStorage from '@/lib/storage/ecosystem-storage';
 import * as dnaStorage from '@/lib/storage/dna-storage';
@@ -55,6 +57,7 @@ async function writeIngestMeta(meta: IngestMeta): Promise<void> {
 
 export const POST = createApiHandler(
   async (request) => {
+    if (isDemoMode()) return demoNoOp();
     const url = new URL(request.url);
     const action = url.searchParams.get('action');
 

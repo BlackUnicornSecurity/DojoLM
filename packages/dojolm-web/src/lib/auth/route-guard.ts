@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import { validateSession, type SessionUser } from './session';
 import { hasPermission, isAtLeastRole, type Resource, type Action, VALID_ROLES } from './rbac';
 import type { UserRole } from '../db/types';
+import { isDemoMode, DEMO_USER } from '../demo';
 
 /** Valid API key permission entry for JSON mapping */
 interface ApiKeyPermission {
@@ -130,6 +131,11 @@ export function withAuth(
       );
     }
 
+    // Demo mode: bypass all auth checks with synthetic admin user
+    if (isDemoMode()) {
+      return handler(req, { params: resolvedParams, user: DEMO_USER });
+    }
+
     let user: SessionUser | null = null;
 
     // Try session cookie auth first
@@ -194,39 +200,32 @@ export function getSessionToken(req: NextRequest): string | undefined {
   return req.cookies.get(SESSION_COOKIE_NAME)?.value;
 }
 
-/**
- * Read TPI_COOKIE_SECURE at runtime (not build-time) so Docker containers
- * can disable the Secure flag for HTTP-only deployments via env var.
- * Set TPI_COOKIE_SECURE=0 to omit the Secure attribute (only '0' disables it).
- * BUG-001 fix: was previously hardcoded in string literals.
- */
-function getSecureFlag(): string {
-  return process.env.TPI_COOKIE_SECURE === '0' ? '' : 'Secure; ';
-}
+/** Secure flag: only set when HTTPS is available (TLS proxy or direct).
+ * When accessed directly on HTTP without a TLS-terminating proxy, omit Secure
+ * so cookies are sent. Controlled by TPI_COOKIE_SECURE env var (default: true). */
+const SECURE_FLAG = process.env.TPI_COOKIE_SECURE === '0' ? '' : ' Secure;';
 
 /**
  * Cookie helper: builds Set-Cookie header with security attributes.
  */
 export function buildSessionCookie(token: string, maxAgeSeconds: number): string {
-  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly; ${getSecureFlag()}SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds CSRF Set-Cookie (readable by JS for double-submit).
- * Secure flag controlled by TPI_COOKIE_SECURE env var (PT-CSRF-H04).
  */
 export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): string {
-  return `${CSRF_COOKIE_NAME}=${csrfToken}; ${getSecureFlag()}SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+  return `${CSRF_COOKIE_NAME}=${csrfToken};${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds expired cookies for logout.
  */
 export function buildLogoutCookies(): string[] {
-  const secure = getSecureFlag();
   return [
-    `${SESSION_COOKIE_NAME}=; HttpOnly; ${secure}SameSite=Strict; Path=/; Max-Age=0`,
-    `${CSRF_COOKIE_NAME}=; ${secure}SameSite=Strict; Path=/; Max-Age=0`,
+    `${SESSION_COOKIE_NAME}=; HttpOnly;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=0`,
+    `${CSRF_COOKIE_NAME}=;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=0`,
   ];
 }
 

@@ -5,14 +5,17 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { destroySession } from '@/lib/auth/session';
-import { getSessionToken, buildLogoutCookies } from '@/lib/auth/route-guard';
+import { isDemoMode } from '@/lib/demo';
+import { buildLogoutCookies } from '@/lib/auth/route-guard';
 
 export async function POST(req: NextRequest) {
-  const token = getSessionToken(req);
-
-  if (token) {
-    destroySession(token);
+  if (!isDemoMode()) {
+    const { destroySession } = await import('@/lib/auth/session');
+    const { getSessionToken } = await import('@/lib/auth/route-guard');
+    const token = getSessionToken(req);
+    if (token) {
+      destroySession(token);
+    }
   }
 
   const response = NextResponse.json({ success: true });

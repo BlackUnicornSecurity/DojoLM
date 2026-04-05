@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoRoninSubmissionsGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
 import { apiError } from '@/lib/api-error'
 
@@ -43,6 +45,7 @@ function sanitizeText(text: string): string {
  * Query params: ?status=draft
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoRoninSubmissionsGet()
   const traceBlock = blockTrace(request);
   if (traceBlock) return traceBlock;
   const authError = checkApiAuth(request)

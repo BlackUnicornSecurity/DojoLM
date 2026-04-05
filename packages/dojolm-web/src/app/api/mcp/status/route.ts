@@ -10,6 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoMcpStatusGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
 
 // SME HIGH-14: MCP server must only bind to loopback addresses
@@ -36,6 +38,8 @@ let mcpChildProcess: ReturnType<typeof import('node:child_process').spawn> | nul
  * GET /api/mcp/status — probe the real MCP server on localhost:18000/health
  */
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoMcpStatusGet()
+
   const authResult = checkApiAuth(request)
   if (authResult) return authResult
 

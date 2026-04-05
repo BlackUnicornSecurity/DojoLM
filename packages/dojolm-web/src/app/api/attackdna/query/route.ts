@@ -11,6 +11,8 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoAttackDnaQueryGet } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import * as dnaStorage from '@/lib/storage/dna-storage';
 import { buildTimeline, createLineageGraph } from 'bu-tpi/attackdna';
@@ -21,6 +23,7 @@ import { buildTimeline, createLineageGraph } from 'bu-tpi/attackdna';
 
 export const GET = createApiHandler(
   async (request) => {
+    if (isDemoMode()) return demoAttackDnaQueryGet();
     const url = new URL(request.url);
     const queryType = url.searchParams.get('type') || 'nodes';
 

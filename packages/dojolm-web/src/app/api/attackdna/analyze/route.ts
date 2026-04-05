@@ -6,6 +6,8 @@
  */
 
 import { NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoNoOp } from '@/lib/demo/mock-api-handlers'
 import { createApiHandler } from '@/lib/api-handler'
 import { analyzeAttack } from '@/lib/ablation-engine'
 import { emitAnalyzeFinding } from '@/lib/ecosystem-emitters'
@@ -15,6 +17,7 @@ const MAX_ABLATION_COMPONENTS = 20
 
 export const POST = createApiHandler(
   async (request) => {
+    if (isDemoMode()) return demoNoOp()
     const body: unknown = await request.json()
 
     // Validate request body

@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoShinganFormatsGet } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
 
 const FORMATS = [
@@ -17,6 +19,8 @@ const FORMATS = [
 ] as const;
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoShinganFormatsGet();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

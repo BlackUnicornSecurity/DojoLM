@@ -17,9 +17,12 @@ const withBundleAnalyzer =
       })
     : (config: NextConfig) => config;
 
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 const nextConfig: NextConfig = withBundleAnalyzer({
   // Standalone output for Docker deployment (required by Dockerfile)
-  output: "standalone",
+  // Disabled in demo mode — Vercel uses its own build adapter
+  ...(isDemoMode ? {} : { output: "standalone" }),
 
   // Enable React strict mode for better development experience
   reactStrictMode: true,
@@ -51,7 +54,8 @@ const nextConfig: NextConfig = withBundleAnalyzer({
   },
 
   // Keep native SQLite dependency available in standalone server output.
-  serverExternalPackages: ['better-sqlite3'],
+  // In demo mode, exclude native modules entirely to prevent Vercel build failures.
+  serverExternalPackages: isDemoMode ? [] : ['better-sqlite3'],
 
   // F-12: Turbopack config (Next.js 16 default bundler)
   turbopack: {},

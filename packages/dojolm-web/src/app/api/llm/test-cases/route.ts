@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoTestCasesGet, demoNoOpCreated } from '@/lib/demo/mock-api-handlers';
 
 import { apiError } from '@/lib/api-error';
 import type { LLMPromptTestCase, TestCaseSeverity } from '@/lib/llm-types';
@@ -20,6 +22,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoTestCasesGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 
@@ -55,6 +58,7 @@ export async function GET(request: NextRequest) {
 // ===========================================================================
 
 export async function POST(request: NextRequest) {
+  if (isDemoMode()) return demoNoOpCreated();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 

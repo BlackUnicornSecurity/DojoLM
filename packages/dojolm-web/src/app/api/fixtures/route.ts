@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoFixturesGet } from '@/lib/demo/mock-api-handlers';
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { checkApiAuth } from '@/lib/api-auth';
@@ -52,6 +54,7 @@ function loadManifest() {
 }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoFixturesGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
 

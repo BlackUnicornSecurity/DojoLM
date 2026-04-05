@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoNoOp } from '@/lib/demo/mock-api-handlers';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { checkApiAuth } from '@/lib/api-auth';

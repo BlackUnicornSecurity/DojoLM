@@ -10,6 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoSettingsGet } from '@/lib/demo/mock-api-handlers'
 import { readFileSync, writeFileSync, renameSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
 import crypto from 'node:crypto'
@@ -61,6 +63,7 @@ const SECURITY_HEADERS = {
 
 // PT-AUTHZ-C02 fix: Require admin role for settings access
 export const GET = withAuth(async () => {
+  if (isDemoMode()) return demoSettingsGet()
   try {
     const settings = readSettings()
     return NextResponse.json(settings, { headers: SECURITY_HEADERS })
@@ -72,6 +75,7 @@ export const GET = withAuth(async () => {
 
 // PT-AUTHZ-C02 fix: Require admin role for settings modification
 export const PATCH = withAuth(async (request) => {
+  if (isDemoMode()) return NextResponse.json({ sessionTtlMinutes: 1440, retentionDays: 90 })
   try {
     let body: Record<string, unknown>
     try {

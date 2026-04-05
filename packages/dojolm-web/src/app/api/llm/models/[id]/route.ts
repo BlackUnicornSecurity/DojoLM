@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoModelById, demoNoOp } from '@/lib/demo/mock-api-handlers';
 
 import type { LLMModelConfig } from '@/lib/llm-types';
 import { getStorage } from '@/lib/storage/storage-interface';
@@ -43,11 +45,13 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+  if (isDemoMode()) return demoModelById(id);
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
   try {
-    const { id } = await params;
     const storage = await getStorage();
 
     const model = await storage.getModelConfig(id);
@@ -74,6 +78,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (isDemoMode()) return demoNoOp();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
@@ -150,6 +156,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (isDemoMode()) return demoNoOp();
+
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

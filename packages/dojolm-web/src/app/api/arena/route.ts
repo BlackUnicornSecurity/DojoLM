@@ -9,6 +9,8 @@
 
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoArenaGet, demoArenaPost } from '@/lib/demo/mock-api-handlers';
 import { createApiHandler } from '@/lib/api-handler';
 import { scheduleArenaMatchStart } from '@/lib/arena-runner';
 import * as arenaStorage from '@/lib/storage/arena-storage';
@@ -25,6 +27,7 @@ const SAFE_MODEL_ID = /^[\w.-]{1,128}$/;
 
 export const POST = createApiHandler(
   async (request: NextRequest) => {
+    if (isDemoMode()) return demoArenaPost();
     let body: Record<string, unknown>;
     try {
       body = await request.json();
@@ -131,6 +134,7 @@ export const POST = createApiHandler(
 
 export const GET = createApiHandler(
   async (request: NextRequest) => {
+    if (isDemoMode()) return demoArenaGet();
     const url = new URL(request.url);
     const status = url.searchParams.get('status') ?? undefined;
     const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') ?? '25', 10) || 25, 1), 100);

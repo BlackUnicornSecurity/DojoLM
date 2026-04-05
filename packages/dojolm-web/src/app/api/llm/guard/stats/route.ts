@@ -6,6 +6,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoGuardStatsGet } from '@/lib/demo/mock-api-handlers';
 import { getGuardStats } from '@/lib/storage/guard-storage';
 import { checkApiAuth } from '@/lib/api-auth';
 
@@ -14,6 +16,7 @@ import { checkApiAuth } from '@/lib/api-auth';
 // ===========================================================================
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoGuardStatsGet();
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

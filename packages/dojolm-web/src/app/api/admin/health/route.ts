@@ -10,6 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoHealthGet } from '@/lib/demo/mock-api-handlers'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { checkApiAuth } from '@/lib/api-auth'
@@ -22,6 +24,7 @@ try {
 } catch { /* fallback to default */ }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoHealthGet()
   // ADM-SEC-01: Two-tier response — minimal for unauthenticated, full for authenticated
   const isAuthenticated = checkApiAuth(request) === null;
 

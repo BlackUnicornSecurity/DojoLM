@@ -8,6 +8,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { isDemoMode } from '@/lib/demo'
+import { demoComplianceGet } from '@/lib/demo/mock-api-handlers'
 import { BAISS_CONTROLS, BAISS_CATEGORIES, getBAISSSummary } from '@/lib/data/baiss-framework'
 import { checkApiAuth } from '@/lib/api-auth'
 import { fileStorage } from '@/lib/storage/file-storage'
@@ -450,6 +452,7 @@ export function OPTIONS(_request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (isDemoMode()) return demoComplianceGet()
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 

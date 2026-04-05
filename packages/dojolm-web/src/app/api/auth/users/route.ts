@@ -5,6 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoUsersGet, demoNoOpCreated } from '@/lib/demo/mock-api-handlers';
 import { withAuth } from '@/lib/auth/route-guard';
 import { userRepo } from '@/lib/db/repositories/user.repository';
 import type { UserRole } from '@/lib/db/types';
@@ -13,6 +15,7 @@ const VALID_ROLES: UserRole[] = ['admin', 'analyst', 'viewer'];
 
 export const GET = withAuth(
   async () => {
+    if (isDemoMode()) return demoUsersGet();
     const users = userRepo.listUsers();
     return NextResponse.json({ users });
   },
@@ -21,6 +24,7 @@ export const GET = withAuth(
 
 export const POST = withAuth(
   async (req: NextRequest) => {
+    if (isDemoMode()) return demoNoOpCreated();
     try {
       const body = await req.json();
       const { username, email, password, role, displayName } = body;
