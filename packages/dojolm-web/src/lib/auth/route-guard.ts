@@ -87,7 +87,8 @@ export interface RouteGuardOptions {
 }
 
 /** Context shape matching Next.js 16+ route handler second argument */
-type RouteContext = { params?: Promise<Record<string, string | string[] | undefined>> };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RouteContext = { params: Promise<any> };
 
 // Next.js 16+ route handler signature
 type RouteHandler = (
@@ -119,7 +120,7 @@ export function withAuth(
     // Next.js 16+ passes params as a Promise — resolve before forwarding
     let resolvedParams: Record<string, string> | undefined;
     try {
-      resolvedParams = context?.params
+      resolvedParams = context.params
         ? (await context.params) as Record<string, string>
         : undefined;
     } catch {
