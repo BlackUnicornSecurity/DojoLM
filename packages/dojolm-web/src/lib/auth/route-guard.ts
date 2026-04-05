@@ -92,7 +92,7 @@ type RouteContext = { params?: Record<string, string> | Promise<Record<string, s
 // Next.js 15+ uses Promise<Params> for dynamic route params
 type RouteHandler = (
   req: NextRequest,
-  context?: RouteContext
+  context: RouteContext
 ) => Promise<NextResponse | Response> | NextResponse | Response;
 
 /**
@@ -115,7 +115,7 @@ export function withAuth(
   handler: AuthenticatedHandler,
   options?: RouteGuardOptions
 ): RouteHandler {
-  return async (req: NextRequest, context?: RouteContext) => {
+  return async (req: NextRequest, context: RouteContext) => {
     // Next.js 15+ passes params as a Promise — resolve before forwarding
     let resolvedParams: Record<string, string> | undefined;
     try {
