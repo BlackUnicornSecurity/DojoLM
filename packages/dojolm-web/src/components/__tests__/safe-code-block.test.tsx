@@ -116,7 +116,8 @@ describe('SafeCodeBlock', () => {
     const spans = container.querySelectorAll('span')
     const keywordSpan = Array.from(spans).find(s => s.textContent === 'const')
     expect(keywordSpan).toBeTruthy()
-    expect(keywordSpan?.className).toContain('syntax-keyword')
+    // Train 1 token consolidation: --syntax-* tokens deleted, colors inlined as Tailwind arbitrary values
+    expect(keywordSpan?.className).toContain('#B08ADB')
   })
 
   // SCB-013: Highlights string literals
@@ -125,7 +126,7 @@ describe('SafeCodeBlock', () => {
     const spans = container.querySelectorAll('span')
     const strSpan = Array.from(spans).find(s => s.textContent === '"hello"')
     expect(strSpan).toBeTruthy()
-    expect(strSpan?.className).toContain('syntax-string')
+    expect(strSpan?.className).toContain('#A8D880')
   })
 
   // SCB-014: Highlights comments
@@ -134,7 +135,7 @@ describe('SafeCodeBlock', () => {
     const spans = container.querySelectorAll('span')
     const commentSpan = Array.from(spans).find(s => s.textContent === '// a comment')
     expect(commentSpan).toBeTruthy()
-    expect(commentSpan?.className).toContain('syntax-comment')
+    expect(commentSpan?.className).toContain('#565D6B')
   })
 
   // SCB-015: Python hash comments are highlighted
@@ -143,6 +144,6 @@ describe('SafeCodeBlock', () => {
     const spans = container.querySelectorAll('span')
     const commentSpan = Array.from(spans).find(s => s.textContent === '# a comment')
     expect(commentSpan).toBeTruthy()
-    expect(commentSpan?.className).toContain('syntax-comment')
+    expect(commentSpan?.className).toContain('#565D6B')
   })
 })

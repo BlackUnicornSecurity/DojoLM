@@ -72,7 +72,8 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
     it('GlowCard accent glow applied via inline style, not Tailwind', () => {
       const { container } = render(<GlowCard glow="accent">Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('var(--shadow-glow-primary)')
+      // Train 1 token consolidation: shadow-glow-primary token deleted, dojo-primary glow inlined
+      expect(card.style.boxShadow).toContain('204, 58, 47')
     })
 
     it('GlowCard none glow has no inline box-shadow', () => {

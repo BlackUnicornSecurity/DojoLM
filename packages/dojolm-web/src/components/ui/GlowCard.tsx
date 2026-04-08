@@ -29,7 +29,8 @@ export interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
 const glowBoxShadow: Record<NonNullable<GlowCardProps['glow']>, string | undefined> = {
   none: undefined,
   subtle: 'inset 0 1px 0 0 var(--overlay-subtle)',
-  accent: 'var(--shadow-glow-primary)',
+  // dojo-primary glow inlined post Train-1 token consolidation (was var(--shadow-glow-primary))
+  accent: '0 0 20px rgba(204, 58, 47, 0.25)',
   input: undefined, // handled via CSS class .glow-card-input
 }
 

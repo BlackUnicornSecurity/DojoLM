@@ -367,10 +367,10 @@ function renderCompliance(data: unknown): React.ReactNode {
 function renderNavigate(data: unknown): React.ReactNode {
   const d = asRecord(data)
   if (!d) return renderGeneric(data)
-  const module = typeof d.module === 'string' ? d.module : 'unknown'
+  const moduleName = typeof d.module === 'string' ? d.module : 'unknown'
   return (
     <p className="text-xs text-[var(--text-secondary)]">
-      Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(module)}</span>
+      Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(moduleName)}</span>
     </p>
   )
 }

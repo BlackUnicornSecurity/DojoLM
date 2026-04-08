@@ -6,8 +6,6 @@
   --bg-secondary: #12131A;
   --bg-tertiary: #1C1D26;
   --bg-quaternary: #262734;
-  --bg-primary: var(--background);       /* Story 2.0 (R2-C5): alias for 30+ files */
-  --border-primary: var(--border);       /* Story 2.0 (R2-C5): alias for components */
 
   /* ===== Steel Blue accent (AI/intelligence elements) — Story 2.3 ===== */
   --bu-electric: #5B8DEF;
@@ -19,11 +17,10 @@
    * --dojo-primary (#CC3A2F): Interactive elements, borders, icons on dark backgrounds.
    *   WCAG AA: 4.6:1 on #09090F (AA large text). Use --dojo-primary-lg for small text.
    * --dojo-primary-lg (#E0544A): Small text variant (>=14px).
-   * --dojo-electric (#B8322A): Decorative/non-text accents only (glows, borders).
+   * --dojo-hover (#D94A3F): Hover state for interactive dojo-primary elements.
    */
   --dojo-primary: #CC3A2F;
   --dojo-primary-lg: #E0544A;
-  --dojo-electric: #B8322A;
   --dojo-hover: #D94A3F;
 
   /* ===== Accent violet + gold — Story 2.3 ===== */
@@ -67,21 +64,20 @@
   --rank-silver: #8B95A5;
   --rank-bronze: #C87830;
 
-  /* ===== Severity badge tokens — Story 2.8 ===== */
+  /* ===== Severity badge tokens — Story 2.8 (bg variants now derived via color-mix) ===== */
   --severity-critical: var(--danger);
-  --severity-critical-bg: rgba(212, 64, 64, 0.15);
+  --severity-critical-bg: color-mix(in srgb, var(--danger) 15%, transparent);
   --severity-high-text: #E08040;
-  --severity-high-bg: rgba(224, 128, 64, 0.15);
+  --severity-high-bg: color-mix(in srgb, #E08040 15%, transparent);
   --severity-medium: #E5A030;
-  --severity-medium-bg: rgba(229, 160, 48, 0.12);
+  --severity-medium-bg: color-mix(in srgb, #E5A030 12%, transparent);
   --severity-low-text: #40C870;
-  --severity-low-bg: rgba(64, 200, 112, 0.12);
+  --severity-low-bg: color-mix(in srgb, #40C870 12%, transparent);
 
   /* ===== Text colors — Story 2.4 ===== */
   --foreground: #ECEEF2;
   --muted-foreground: #7E8A9A;
   --text-tertiary: #565D6B;
-  --text-quaternary: #3D4350;  /* Decorative elements only */
 
   /* ===== UI colors — Story 2.6 ===== */
   --card: #12131A;
@@ -107,11 +103,10 @@
   --destructive: #D44040;
   --destructive-foreground: #FAFAFA;
 
-  /* ===== Layout tokens ===== */
-  --sidebar-width: 260px;
-  --sidebar-collapsed: 72px;
-  --sidebar-current: var(--sidebar-width); /* BUG-006: runtime-synced by Sidebar.tsx */
-  --header-height: 64px;
+  /* ===== Layout tokens — aligned to BUCC-mem0 (Train 1 v2.1) ===== */
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 64px;
+  --header-height: 56px;
 
   /* ===== Spacing (8px grid) ===== */
   --spacing-xs: 4px;
@@ -132,8 +127,6 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
-  --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
   /* ===== Overlay & border opacity tokens — Story 2.5 ===== */
   --overlay-subtle: rgba(255, 255, 255, 0.04);
@@ -149,32 +142,10 @@
   --z-dropdown: 60;
   --z-toast: 100;
 
-  /* ===== Border radius (aligned with Tailwind defaults) ===== */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-full: 9999px;
-
   /* ===== Card state tokens ===== */
   --card-elevated: #1C1D26;
   --card-pressed: #0E0F15;
   --dojo-subtle: rgba(204, 58, 47, 0.12);
-  --surface-base: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 42%), var(--card);
-  --surface-interactive: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, transparent 45%), rgba(18, 19, 26, 0.94);
-  --surface-hero: linear-gradient(135deg, rgba(91, 141, 239, 0.10) 0%, rgba(18, 19, 26, 0.96) 48%, rgba(18, 19, 26, 0.92) 100%);
-  --surface-alert: linear-gradient(135deg, rgba(204, 58, 47, 0.12) 0%, rgba(18, 19, 26, 0.96) 58%, rgba(18, 19, 26, 0.92) 100%);
-  --surface-border-interactive: rgba(255, 255, 255, 0.08);
-  --surface-border-hero: rgba(91, 141, 239, 0.16);
-  --surface-border-alert: rgba(224, 96, 96, 0.18);
-
-  /* ===== Syntax highlighting — Story 5.5 (adjusted for darker bg) ===== */
-  --syntax-keyword: #B08ADB;
-  --syntax-string: #A8D880;
-  --syntax-number: #E08060;
-  --syntax-comment: #565D6B;
-  --syntax-plain: #ECEEF2;
 
   /* ===== Belt rank colors (Dojo Identity — UNCHANGED) ===== */
   --belt-white: #F5F5F5;
@@ -261,21 +232,19 @@
   --color-belt-brown: var(--belt-brown);
   --color-belt-black: var(--belt-black);
 
-  /* Border radius (direct values — aligned with Tailwind defaults) */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
+  /* Border radius — aligned to BUCC-mem0 scale (xs/sm/md/lg/xl) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 
-  /* Shadows */
+  /* Shadows — kept 5 (sm/md/lg/card/card-hover); glow tokens dropped per Train 1 token consolidation */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-primary: 0 0 20px rgba(204, 58, 47, 0.25);
-  --shadow-glow-accent: 0 0 20px rgba(91, 141, 239, 0.2);
 
   /* Fonts — Story 3.2 */
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -467,25 +436,6 @@ body {
 /* ===== Card inner gradient (Story 4.1 — via CSS class, not inline style) ===== */
 .card-gradient {
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
-}
-
-.surface-base {
-  background: var(--surface-base);
-}
-
-.surface-interactive {
-  background: var(--surface-interactive);
-  border-color: var(--surface-border-interactive);
-}
-
-.surface-hero {
-  background: var(--surface-hero);
-  border-color: var(--surface-border-hero);
-}
-
-.surface-alert {
-  background: var(--surface-alert);
-  border-color: var(--surface-border-alert);
 }
 
 /* ===== Widget hero gradient border (Story 4.2, H3.1 — blue accent) ===== */

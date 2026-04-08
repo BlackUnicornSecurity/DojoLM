@@ -227,7 +227,7 @@ function DashboardContent({
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
       {/* Hero header — compact command bar */}
-      <section className="rounded-2xl border border-[var(--surface-border-hero)] surface-hero p-4 shadow-[var(--shadow-card)]">
+      <section className="glass-card rounded-2xl border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div>

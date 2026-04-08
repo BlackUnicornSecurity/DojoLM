@@ -32,7 +32,8 @@ describe('GlowCard', () => {
     it('applies accent glow box-shadow', () => {
       const { container } = render(<GlowCard glow="accent">Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.style.boxShadow).toBe('var(--shadow-glow-primary)')
+      // Train 1 token consolidation: shadow-glow-primary token deleted, dojo-primary glow inlined
+      expect(card.style.boxShadow).toContain('204, 58, 47')
     })
 
     it('applies glow-card-input class for input variant', () => {

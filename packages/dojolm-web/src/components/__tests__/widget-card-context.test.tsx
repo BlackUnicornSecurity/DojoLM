@@ -105,7 +105,8 @@ describe('WidgetCard', () => {
         <WidgetCard title="Widget" glow="accent">Content</WidgetCard>
       )
       const root = container.firstElementChild as HTMLElement
-      expect(root.style.boxShadow).toBe('var(--shadow-glow-primary)')
+      // Train 1 token consolidation: shadow-glow-primary token deleted, dojo-primary glow inlined
+      expect(root.style.boxShadow).toContain('204, 58, 47')
     })
 
     it('defaults to glow="none" (no inline box-shadow)', () => {
@@ -134,7 +135,8 @@ describe('WidgetCard', () => {
         </WidgetMetaProvider>
       )
       const root = container.firstElementChild as HTMLElement
-      expect(root.style.boxShadow).toBe('var(--shadow-glow-primary)')
+      // Train 1 token consolidation: shadow-glow-primary token deleted, dojo-primary glow inlined
+      expect(root.style.boxShadow).toContain('204, 58, 47')
     })
 
     it('explicit priority prop overrides context', () => {

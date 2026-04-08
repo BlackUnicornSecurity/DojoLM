@@ -331,7 +331,7 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       </div>
 
       {/* Engine Filters */}
-      <div className="rounded-2xl border border-[var(--surface-border-interactive)] surface-interactive p-4 shadow-[var(--shadow-card)]">
+      <div className="glass-card rounded-2xl border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-section-title text-[var(--foreground)]">Engine Stack</h2>

@@ -163,13 +163,18 @@ function tokenize(code: string, language?: string): Token[] {
   return tokens
 }
 
-/** CSS color classes per token type — uses design system tokens from globals.css */
+/**
+ * CSS color classes per token type.
+ * Colors inlined here (component-scoped) post Train-1 token consolidation —
+ * the previous --syntax-* tokens were removed from globals.css since they
+ * were only used by this component.
+ */
 const TOKEN_COLORS: Record<Token['type'], string> = {
-  keyword: 'text-[var(--syntax-keyword)]',
-  string: 'text-[var(--syntax-string)]',
-  number: 'text-[var(--syntax-number)]',
-  comment: 'text-[var(--syntax-comment)]',
-  plain: 'text-[var(--syntax-plain)]',
+  keyword: 'text-[#B08ADB]',
+  string: 'text-[#A8D880]',
+  number: 'text-[#E08060]',
+  comment: 'text-[#565D6B]',
+  plain: 'text-[#ECEEF2]',
 }
 
 /**

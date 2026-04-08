@@ -298,10 +298,10 @@ export function useSensei(activeModule: NavId, onNavigate?: (module: NavId) => v
         result.data !== null &&
         (result.data as Record<string, unknown>).action === 'navigate'
       ) {
-        const module = (result.data as Record<string, unknown>).module
-        if (typeof module === 'string' && VALID_NAV_IDS.has(module)) {
+        const moduleName = (result.data as Record<string, unknown>).module
+        if (typeof moduleName === 'string' && VALID_NAV_IDS.has(moduleName)) {
           handledNavigationIds.current.add(result.toolCallId)
-          onNavigateRef.current?.(module as NavId)
+          onNavigateRef.current?.(moduleName as NavId)
         }
       }
     }

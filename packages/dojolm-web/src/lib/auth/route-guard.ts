@@ -88,8 +88,7 @@ export interface RouteGuardOptions {
 }
 
 /** Context shape matching Next.js 16+ route handler second argument */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type RouteContext = { params: Promise<any> };
+type RouteContext = { params: Promise<unknown> };
 
 // Next.js 16+ route handler signature
 type RouteHandler = (

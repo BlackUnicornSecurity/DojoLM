@@ -59,7 +59,7 @@ export default function StyleGuidePage() {
       aria-label="Main content"
       className="mx-auto min-h-screen max-w-6xl space-y-10 p-6 md:p-8"
     >
-      <header className="rounded-2xl border border-[var(--surface-border-hero)] surface-hero p-6 shadow-[var(--shadow-card)]">
+      <header className="glass-card rounded-2xl border border-[var(--border-subtle)] p-6 shadow-[var(--shadow-card)]">
         <p className="text-label text-[var(--bu-electric)]">Live Design Reference</p>
         <h1 className="mt-3 text-page-title text-[var(--foreground)]">DojoLM Style Guide</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -73,9 +73,9 @@ export default function StyleGuidePage() {
       >
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <ColorSwatch name="Background" token="--background" usage="App shell and page canvas." />
-          <ColorSwatch name="Interactive Surface" token="--surface-interactive" usage="Controls, filters, and action panels." />
-          <ColorSwatch name="Hero Surface" token="--surface-hero" usage="Premium module intros and dashboard heroes." />
-          <ColorSwatch name="Alert Surface" token="--surface-alert" usage="Threat-led or urgent contexts." />
+          <ColorSwatch name="Surface Secondary" token="--bg-secondary" usage="Cards and elevated panels." />
+          <ColorSwatch name="Surface Tertiary" token="--bg-tertiary" usage="Subtle elevation, hover states." />
+          <ColorSwatch name="Border Subtle" token="--border-subtle" usage="Default card and panel borders." />
           <ColorSwatch name="Dojo Primary" token="--dojo-primary" usage="Decisive actions and red-led threat emphasis." />
           <ColorSwatch name="BU Electric" token="--bu-electric" usage="System intelligence, active state, and blue accents." />
           <ColorSwatch name="Success" token="--success" usage="Healthy outcomes, clean results, and stable posture." />
