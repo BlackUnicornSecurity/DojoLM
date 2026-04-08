@@ -80,6 +80,10 @@ docs/app/improvement-tracker.md
 qa*.png
 *.png
 
+# Exception: Playwright visual regression baselines must be tracked
+!packages/*/e2e/**/*.png
+!packages/*/e2e/**/*-snapshots/**
+
 # Data directory (runtime artifacts, root-level only)
 /data/
 

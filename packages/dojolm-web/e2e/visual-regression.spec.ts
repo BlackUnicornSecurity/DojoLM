@@ -95,7 +95,7 @@ test.describe('Visual Regression — Module Screens', () => {
   });
 
   test('Bushido Book module', async ({ page }) => {
-    await navigateToModule(page, 'Compliance', /Bushido|Compliance/i, 35000);
+    await navigateToModule(page, 'Bushido', /Bushido|Compliance/i, 35000);
     await expect(page).toHaveScreenshot('compliance.png', {
       maxDiffPixelRatio: 0.03,
       timeout: VISUAL_TIMEOUT,
