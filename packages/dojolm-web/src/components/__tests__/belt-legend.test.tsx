@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
-vi.mock('lucide-react', () => new Proxy({}, { get: (_, name) => { if (name === '__esModule') return true; return (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} /> } }))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 vi.mock('@/lib/utils', () => ({ cn: (...args: unknown[]) => args.filter(Boolean).join(' ') }))
 
 import { BeltLegend } from '../ui/BeltLegend'

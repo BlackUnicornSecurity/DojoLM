@@ -15,12 +15,17 @@ import '@testing-library/jest-dom'
 const mockSetActiveTab = vi.fn()
 let mockActiveTab = 'dashboard'
 
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({
-    activeTab: mockActiveTab,
-    setActiveTab: mockSetActiveTab,
-  }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({
+      activeTab: mockActiveTab,
+      setActiveTab: mockSetActiveTab,
+    }),
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 vi.mock('@/lib/contexts/ModuleVisibilityContext', () => ({
   useModuleVisibility: () => ({

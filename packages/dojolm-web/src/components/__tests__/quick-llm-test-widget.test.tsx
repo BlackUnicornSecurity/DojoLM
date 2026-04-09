@@ -7,17 +7,16 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
-vi.mock('../WidgetCard', () => ({
+vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div data-testid="widget-card">
       <div data-testid="widget-title">{title}</div>

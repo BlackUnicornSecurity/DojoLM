@@ -6,6 +6,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -17,9 +18,7 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 const mockSetMode = vi.fn()
 const mockSetEnabled = vi.fn()

@@ -6,6 +6,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -16,14 +17,21 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+// Train 2 regression fix pass: Proxy-based lucide-react mock hangs under
+// Node 25 / vitest 4.0.18. Use the shared mockLucideIcons helper with '*'
+// which expands to a baseline of ~80 common icons (no Proxy).
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    // WidgetCard.tsx imports the React Context itself.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children, actions }: { title: string; children: React.ReactNode; actions?: React.ReactNode }) => (

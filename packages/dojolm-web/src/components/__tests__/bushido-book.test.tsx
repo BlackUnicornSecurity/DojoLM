@@ -77,9 +77,15 @@ vi.mock('@/components/ui/table', () => ({
 
 // Mock NavigationContext (H8.3 uses useNavigation in ComplianceCenter)
 const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ activeTab: 'compliance', setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    // WidgetCard.tsx imports the React Context itself.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 // Mock sub-components
 vi.mock('../compliance/GapMatrix', () => ({

@@ -5,13 +5,9 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_target, prop) => {
-    if (prop === '__esModule') return true
-    return (props: Record<string, unknown>) => <span data-testid={`icon-${String(prop)}`} {...props} />
-  },
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),

@@ -53,9 +53,17 @@ vi.mock('@/components/ui/card', () => ({
 }))
 
 // H8.3: ComplianceCenter now uses useNavigation and Button
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ activeTab: 'compliance', setActiveTab: vi.fn() }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: vi.fn() }),
+    // WidgetCard.tsx imports the React Context itself — must be a real Context
+    // so useContext(NavigationContext) doesn't throw. Null default value exercises
+    // the useSafeNavigation null-fallback path.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, ...props }: { children: ReactNode; [key: string]: unknown }) => <button {...props}>{children}</button>,
 }))

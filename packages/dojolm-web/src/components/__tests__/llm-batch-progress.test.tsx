@@ -6,6 +6,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -16,14 +17,18 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    // WidgetCard.tsx imports the React Context itself.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children }: { title: string; children: React.ReactNode }) => (

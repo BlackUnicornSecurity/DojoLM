@@ -7,21 +7,28 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ setActiveTab: vi.fn() }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: vi.fn() }),
+    // WidgetCard.tsx imports the React Context itself — must be a real Context
+    // so useContext(NavigationContext) doesn't throw. Null default value exercises
+    // the useSafeNavigation null-fallback path.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
-vi.mock('../WidgetCard', () => ({
+vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children, actions }: { title: string; children: React.ReactNode; actions?: React.ReactNode }) => (
     <div data-testid="widget-card">
       <div data-testid="widget-title">{title}</div>

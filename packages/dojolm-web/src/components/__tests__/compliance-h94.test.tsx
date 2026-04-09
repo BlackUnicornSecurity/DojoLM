@@ -14,9 +14,15 @@ import type { ReactNode } from 'react'
 // ---------------------------------------------------------------------------
 
 const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    // WidgetCard.tsx imports the React Context itself.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 const mockFetchWithAuth = vi.fn()
 vi.mock('@/lib/fetch-with-auth', () => ({

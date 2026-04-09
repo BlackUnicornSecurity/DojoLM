@@ -17,9 +17,15 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 const mockSetActiveTab = vi.fn()
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    // WidgetCard.tsx imports the React Context itself.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 vi.mock('../dashboard/WidgetCard', () => ({
   WidgetCard: ({ title, children, actions }: { title: string; children: React.ReactNode; actions?: React.ReactNode }) => (

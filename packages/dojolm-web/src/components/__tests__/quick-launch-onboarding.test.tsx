@@ -26,12 +26,17 @@ vi.mock('@/components/dashboard/widgets/QuickLaunchPad', () => ({
 }))
 
 // Mock NavigationContext for DojoReadiness
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({
-    activeTab: 'dashboard',
-    setActiveTab: vi.fn(),
-  }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: vi.fn() }),
+    // WidgetCard.tsx imports the React Context itself — must be a real Context
+    // so useContext(NavigationContext) doesn't throw. Null default value exercises
+    // the useSafeNavigation null-fallback path.
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 // localStorage mock
 const localStorageMock = (() => {

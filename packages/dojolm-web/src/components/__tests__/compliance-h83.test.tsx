@@ -36,9 +36,14 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
-vi.mock('@/lib/NavigationContext', () => ({
-  useNavigation: () => ({ activeTab: 'compliance', setActiveTab: mockSetActiveTab }),
-}))
+vi.mock('@/lib/NavigationContext', async () => {
+  const { createContext } = await import('react')
+  return {
+    useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+    NavigationContext: createContext(null as unknown),
+    NavigationProvider: ({ children }: { children: unknown }) => children,
+  }
+})
 
 vi.mock('@/components/ui/ModuleHeader', () => ({
   ModuleHeader: ({ title }: { title: string }) => (

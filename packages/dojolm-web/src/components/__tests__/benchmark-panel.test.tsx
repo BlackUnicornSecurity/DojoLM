@@ -6,13 +6,14 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_target, prop) => {
-    if (prop === '__esModule') return true
-    return (props: Record<string, unknown>) => <span data-testid={`icon-${String(prop)}`} {...props} />
-  },
-}))
+// Train 2 regression fix pass: replaced Proxy-based lucide-react mock with an
+// explicit object via the shared `mockLucideIcons` helper. The Proxy pattern
+// hangs under Node 25 / vitest 4.0.18 — vitest's module resolver probes the
+// proxy with Symbol keys that trigger re-entrant mock loading and deadlock the
+// worker pool. Explicit-list mock works fine.
+vi.mock('lucide-react', () => mockLucideIcons(['Download', 'Trophy', 'BarChart3']))
 
 vi.mock('@/lib/utils', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),

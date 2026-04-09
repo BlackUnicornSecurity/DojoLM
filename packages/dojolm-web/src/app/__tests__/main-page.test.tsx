@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 // ---------------------------------------------------------------------------
 // Mocks — must be before imports
@@ -43,6 +44,8 @@ vi.mock('@/lib/ScannerContext', () => ({
 
 vi.mock('@/lib/contexts/ActivityContext', () => ({
   useActivityLogger: () => ({ logEvent: vi.fn() }),
+  // Train 2 regression fix pass: ActivityFeed/TopBar also consume useActivityState.
+  useActivityState: () => ({ events: [], unreadCount: 0 }),
   ActivityProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="activity-provider">{children}</div>
   ),
@@ -194,9 +197,7 @@ vi.mock('@/components/sensei/SenseiDrawer', () => ({
 // Proxy mock covers all icon imports transitively (e.g. new TopBar adds Activity/Bot,
 // Sidebar PR-2 rewrite adds PanelLeft/PanelLeftClose). Prevents "No 'X' export is defined
 // on the 'lucide-react' mock" failures per lessonslearned.md (2026-03-21 / 2026-04-09).
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_target, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 // ---------------------------------------------------------------------------
 // Import under test (after all mocks)

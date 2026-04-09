@@ -3,6 +3,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { mockLucideIcons } from '@/test/mock-lucide-react'
 
 const mockCanAccessProtectedApi = vi.fn()
 vi.mock('@/lib/client-auth-access', () => ({
@@ -19,12 +20,7 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (value: unknown) => String(value ?? ''),
 }))
 
-vi.mock('lucide-react', () => new Proxy({}, {
-  get: (_target, prop) => {
-    if (prop === '__esModule') return true
-    return (props: Record<string, unknown>) => <span data-testid={`icon-${String(prop)}`} {...props} />
-  },
-}))
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 vi.mock('@/components/ui/tabs', () => ({
   Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
