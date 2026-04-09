@@ -40,6 +40,11 @@ export function Sidebar() {
   const renderNavItem = (item: NavItem) => {
     const Icon = item.icon
     const isActive = activeTab === item.id
+    // Optional fields added in Train 2 PR-4b.1 + PR-2.5
+    const functionalLabel = 'functionalLabel' in item ? item.functionalLabel : undefined
+    const brandColor = 'brandColor' in item ? item.brandColor : undefined
+    const hasSubtitle = !!functionalLabel && functionalLabel !== item.label
+
     return (
       <button
         key={item.id}
@@ -49,15 +54,32 @@ export function Sidebar() {
         aria-label={item.label}
         aria-current={isActive ? 'page' : undefined}
         className={cn(
-          'mb-0.5 flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-colors w-full',
+          'mb-0.5 flex items-center gap-3 rounded-lg px-2.5 py-1.5 text-sm transition-colors w-full',
           isActive
             ? 'bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary-lg)]'
             : 'text-[var(--muted-foreground)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--foreground)]',
           collapsed && 'justify-center'
         )}
       >
-        <Icon className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
-        {!collapsed && <span className="flex-1 text-left truncate">{item.label}</span>}
+        {/* Brand-tinted icon (inactive only — active state overrides per M7) */}
+        <Icon
+          className="h-[18px] w-[18px] flex-shrink-0"
+          style={!isActive && brandColor ? { color: brandColor } : undefined}
+          aria-hidden="true"
+        />
+        {!collapsed && (
+          <span className="flex min-w-0 flex-1 flex-col text-left leading-tight">
+            {/* Function headline (big) + codename subtitle (small) per finding N1 */}
+            <span className="truncate text-[13px] font-medium">
+              {functionalLabel ?? item.label}
+            </span>
+            {hasSubtitle && (
+              <span className="truncate text-[10px] text-[var(--text-tertiary)]">
+                {item.label}
+              </span>
+            )}
+          </span>
+        )}
       </button>
     )
   }

@@ -130,11 +130,12 @@ describe('Sidebar', () => {
 
   it('SB-013: renders grouped navigation sections', () => {
     render(<Sidebar />)
-    // Should have nav group labels (updated H6.1)
-    expect(screen.getByText('Attack')).toBeInTheDocument()
-    expect(screen.getByText('Defense')).toBeInTheDocument()
-    expect(screen.getByText('Red Team')).toBeInTheDocument()
-    expect(screen.getByText('Analysis')).toBeInTheDocument()
+    // Train 2 PR-2.5 (2026-04-09): 4 brand-pillar groups (Attack/Defense/
+    // Red Team/Analysis) collapsed to 3 verb-groups (Test/Protect/Intel).
+    // Red Team merged into Test. Labels updated below.
+    expect(screen.getByText('Test')).toBeInTheDocument()
+    expect(screen.getByText('Protect')).toBeInTheDocument()
+    expect(screen.getByText('Intel & Evidence')).toBeInTheDocument()
   })
 
   it('SB-014: non-active nav items do not have aria-current', () => {

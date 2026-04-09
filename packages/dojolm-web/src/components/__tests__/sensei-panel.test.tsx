@@ -104,34 +104,41 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(screen.getByText('Toggle modules on or off')).toBeInTheDocument()
   })
 
-  it('SP-005: shows all group labels (Attack, Defense, Red Team, Analysis)', () => {
+  it('SP-005: shows all group labels (Test, Protect, Intel & Evidence)', () => {
+    // Train 2 PR-2.5 (2026-04-09): 4 brand-pillar groups collapsed to 3 verbs.
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
-    expect(screen.getByText('Attack')).toBeInTheDocument()
-    expect(screen.getByText('Defense')).toBeInTheDocument()
-    expect(screen.getByText('Red Team')).toBeInTheDocument()
-    expect(screen.getByText('Analysis')).toBeInTheDocument()
+    expect(screen.getByText('Test')).toBeInTheDocument()
+    expect(screen.getByText('Protect')).toBeInTheDocument()
+    expect(screen.getByText('Intel & Evidence')).toBeInTheDocument()
   })
 
-  it('SP-006: lists all toggleable modules (excludes dashboard)', () => {
+  it('SP-006: lists all toggleable modules (excludes dashboard + hidden)', () => {
+    // Train 2 PR-4b.1 (2026-04-09): added Mitsuke, Amaterasu DNA, Kagami,
+    // Battle Arena as first-class nav items. Strategic (The Kumite) is
+    // demoted via hidden: true and should NOT appear in SenseiPanel.
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
-    // Testing group
+    // Test group
     expect(screen.getByText('Haiku Scanner')).toBeInTheDocument()
     expect(screen.getByText('Armory')).toBeInTheDocument()
     expect(screen.getByText('LLM Dashboard')).toBeInTheDocument()
-    // Defense group
-    expect(screen.getByText('Hattori Guard')).toBeInTheDocument()
-    expect(screen.getByText('Bushido Book')).toBeInTheDocument()
-    // Analysis group
+    expect(screen.getByText('Battle Arena')).toBeInTheDocument()
     expect(screen.getByText('Atemi Lab')).toBeInTheDocument()
-    expect(screen.getByText('The Kumite')).toBeInTheDocument()
-    expect(screen.getByText('Ronin Hub')).toBeInTheDocument()
-    // Red Team group
     expect(screen.getByText('Sengoku')).toBeInTheDocument()
+    expect(screen.getByText('Ronin Hub')).toBeInTheDocument()
+    // Protect group
+    expect(screen.getByText('Hattori Guard')).toBeInTheDocument()
     expect(screen.getByText('Kotoba')).toBeInTheDocument()
+    // Intel & Evidence group
+    expect(screen.getByText('Mitsuke')).toBeInTheDocument()
+    expect(screen.getByText('Amaterasu DNA')).toBeInTheDocument()
+    expect(screen.getByText('Kagami')).toBeInTheDocument()
+    expect(screen.getByText('Bushido Book')).toBeInTheDocument()
     // Admin (ungrouped)
     expect(screen.getByText('Admin')).toBeInTheDocument()
-    // Dashboard should NOT be listed
+    // Dashboard should NOT be listed (always on)
     expect(screen.queryByText('Dashboard')).toBeNull()
+    // The Kumite should NOT be listed (demoted via hidden: true)
+    expect(screen.queryByText('The Kumite')).toBeNull()
   })
 
   it('SP-007: clicking a module item calls toggle', () => {
@@ -159,19 +166,26 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(mockResetAll).toHaveBeenCalledTimes(1)
   })
 
-  it('SP-010: shows 11 toggleable module items (all except dashboard)', () => {
+  it('SP-010: shows 14 toggleable module items (all except dashboard + hidden)', () => {
+    // Train 2 PR-4b.1 (2026-04-09): 4 new first-class items added
+    // (Mitsuke, Amaterasu DNA, Kagami, Battle Arena); The Kumite demoted
+    // via hidden: true. Net: 11 → 14 (was 12 total, dashboard excluded).
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
-    // Count all module label texts that should be present
     const moduleLabels = [
-      'Haiku Scanner', 'Armory', 'LLM Dashboard',
-      'Hattori Guard', 'Bushido Book',
-      'Atemi Lab', 'The Kumite', 'Ronin Hub',
-      'Sengoku', 'Kotoba', 'Admin',
+      // Test group
+      'Haiku Scanner', 'Armory', 'LLM Dashboard', 'Battle Arena',
+      'Atemi Lab', 'Sengoku', 'Ronin Hub',
+      // Protect group
+      'Hattori Guard', 'Kotoba',
+      // Intel & Evidence group
+      'Mitsuke', 'Amaterasu DNA', 'Kagami', 'Bushido Book',
+      // Admin (ungrouped)
+      'Admin',
     ]
     for (const label of moduleLabels) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
-    expect(moduleLabels.length).toBe(11)
+    expect(moduleLabels.length).toBe(14)
   })
 
   it('SP-011: onClose is callable (dialog close integration)', () => {

@@ -72,6 +72,15 @@ const MODULE_CONTEXT: Readonly<Record<NavId, string>> = {
     'User is on Sengoku — help manage red-team campaigns, review results, schedule runs.',
   kotoba:
     'User is on Kotoba — help optimize prompts, explain prompt engineering, compare variations.',
+  // Train 2 PR-4b.1 (2026-04-09): 4 Kumite children promoted to first-class tabs
+  arena:
+    'User is in Battle Arena — help with multi-agent matches, leaderboards, and warrior rosters.',
+  mitsuke:
+    'User is on Mitsuke — help browse threat feeds, manage ingestion sources, review indicators.',
+  dna:
+    'User is in Amaterasu DNA — help explore attack lineage, mutation trees, and family clusters.',
+  kagami:
+    'User is on Kagami — help run fingerprint probes, compare model behaviors, review drift.',
   admin:
     'User is on Admin Settings — help with configuration, API keys, user management, scoreboard.',
 };

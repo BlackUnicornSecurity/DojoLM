@@ -944,6 +944,31 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'get_guard_audit',
     'get_leaderboard',
   ],
+  // Train 2 PR-4b.1 (2026-04-09): 4 Kumite children promoted to first-class tabs
+  arena: [
+    'get_stats',
+    'get_leaderboard',
+    'navigate_to',
+    'explain_feature',
+  ],
+  mitsuke: [
+    'get_stats',
+    'get_ecosystem_findings',
+    'navigate_to',
+    'explain_feature',
+  ],
+  dna: [
+    'get_stats',
+    'get_ecosystem_findings',
+    'navigate_to',
+    'explain_feature',
+  ],
+  kagami: [
+    'list_models',
+    'get_stats',
+    'navigate_to',
+    'explain_feature',
+  ],
 };
 
 /**

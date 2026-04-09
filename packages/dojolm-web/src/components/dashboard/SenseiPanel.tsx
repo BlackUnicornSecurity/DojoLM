@@ -16,8 +16,14 @@ import {
 import { cn } from '@/lib/utils'
 import { RotateCcw } from 'lucide-react'
 
-/** Toggleable modules — exclude dashboard (always visible) */
-const toggleableItems = NAV_ITEMS.filter(item => item.id !== 'dashboard')
+/**
+ * Toggleable modules — exclude dashboard (always visible) and hidden items.
+ * Train 2 PR-4b.1 (2026-04-09): added `hidden` filter to suppress demoted
+ * 'strategic' (The Kumite) from the module visibility toggles.
+ */
+const toggleableItems = NAV_ITEMS.filter(
+  item => item.id !== 'dashboard' && !('hidden' in item && item.hidden === true)
+)
 const groupedToggleable = toggleableItems.filter(item => 'group' in item)
 const ungroupedToggleable = toggleableItems.filter(item => !('group' in item))
 

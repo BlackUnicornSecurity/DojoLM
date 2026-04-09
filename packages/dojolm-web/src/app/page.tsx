@@ -45,6 +45,13 @@ const AdminPanel = lazy(() => import('@/components/admin').then(m => ({ default:
 const RoninHub = lazy(() => import('@/components/ronin').then(m => ({ default: m.RoninHub })))
 const SengokuDashboard = lazy(() => import('@/components/sengoku').then(m => ({ default: m.SengokuDashboard })))
 const KotobaDashboard = lazy(() => import('@/components/kotoba').then(m => ({ default: m.KotobaDashboard })))
+// Train 2 PR-4b.1 (2026-04-09) — 4 Kumite children promoted to first-class tabs
+const MitsukeLibrary = lazy(() => import('@/components/strategic').then(m => ({ default: m.MitsukeLibrary })))
+const AttackDNAExplorer = lazy(() => import('@/components/attackdna').then(m => ({ default: m.AttackDNAExplorer })))
+const KagamiPanel = lazy(() => import('@/components/kagami').then(m => ({ default: m.KagamiPanel })))
+const ArenaBrowser = lazy(() => import('@/components/strategic').then(m => ({ default: m.ArenaBrowser })))
+// Arena's MatchCreationWizard requires LLMModelProvider context
+import { LLMModelProvider } from '@/lib/contexts/LLMModelContext'
 
 /** Minimal loading fallback for lazy-loaded modules */
 function ModuleLoading() {
@@ -264,6 +271,51 @@ function PageContent() {
           <ErrorBoundary fallbackTitle="Kotoba Error" fallbackDescription="Unable to load Kotoba. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <KotobaDashboard />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Train 2 PR-4b.1 — Kumite children promoted to first-class tabs */}
+      {activeTab === 'mitsuke' && (
+        <div className="motion-safe:animate-fade-in">
+          <ErrorBoundary fallbackTitle="Mitsuke Error" fallbackDescription="Unable to load Mitsuke threat feed. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <MitsukeLibrary />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'dna' && (
+        <div className="motion-safe:animate-fade-in">
+          <ErrorBoundary fallbackTitle="Attack DNA Error" fallbackDescription="Unable to load Amaterasu DNA explorer. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <AttackDNAExplorer />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'kagami' && (
+        <div className="motion-safe:animate-fade-in">
+          <ErrorBoundary fallbackTitle="Kagami Error" fallbackDescription="Unable to load Kagami mirror test. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <KagamiPanel />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {activeTab === 'arena' && (
+        <div className="motion-safe:animate-fade-in">
+          <ErrorBoundary fallbackTitle="Battle Arena Error" fallbackDescription="Unable to load Battle Arena. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              {/* LLMModelProvider is required because MatchCreationWizard
+                  inside ArenaBrowser uses useModelContext() to list models. */}
+              <LLMModelProvider>
+                <ArenaBrowser />
+              </LLMModelProvider>
             </Suspense>
           </ErrorBoundary>
         </div>

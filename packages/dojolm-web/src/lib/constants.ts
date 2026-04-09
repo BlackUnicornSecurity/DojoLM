@@ -23,120 +23,197 @@ import {
   LayoutDashboard,
   Swords,
   PenTool,
+  Radio,
+  Dna,
+  Eye,
 } from 'lucide-react'
 
-/** Navigation group identifiers for sidebar grouping (Story 4.1, updated H6.1) */
-export type NavGroup = 'attack' | 'defense' | 'redteam' | 'analysis'
+/**
+ * Navigation group identifiers for sidebar grouping.
+ * Train 2 PR-2.5 (2026-04-09): renamed from 4 brand pillars
+ * (attack/defense/redteam/analysis) to 3 verb-groups
+ * (test/protect/intel). Red Team merged into Test.
+ */
+export type NavGroup = 'test' | 'protect' | 'intel'
 
 /** Group labels and ordering for sidebar sections */
 export const NAV_GROUPS: ReadonlyArray<{ id: NavGroup; label: string }> = [
-  { id: 'attack', label: 'Attack' },
-  { id: 'defense', label: 'Defense' },
-  { id: 'redteam', label: 'Red Team' },
-  { id: 'analysis', label: 'Analysis' },
+  { id: 'test', label: 'Test' },
+  { id: 'protect', label: 'Protect' },
+  { id: 'intel', label: 'Intel & Evidence' },
 ]
 
 /**
- * Navigation items for sidebar and mobile nav
- * Grouped by function (Story 4.1): Testing, Defense, Analysis
- * Dashboard is ungrouped (always visible at top), Admin is at bottom
+ * Navigation items for sidebar and mobile nav.
+ *
+ * Train 2 PR-4b.1 + PR-2.5 (2026-04-09):
+ * - Added `functionalLabel` field — headline text for the two-line nav row
+ *   (function name big, codename small). If absent, `label` is used as-is.
+ * - Added `brandColor` field — inactive icon tint using --brand-* tokens.
+ *   Active state overrides to --dojo-primary-lg per finding M7.
+ * - Reassigned groups to new 3-verb structure (test/protect/intel).
+ * - Added 4 new first-class nav items promoted from Kumite:
+ *   mitsuke, dna, kagami, arena.
+ * - Demoted strategic (The Kumite) — removed group field so it does NOT
+ *   render in sidebar. Still reachable via #strategic hash for back-compat.
  *
  * `isPrimary: true` marks items shown in the mobile bottom-bar (up to 4).
- * Added 2026-04-09 during Train 1 PR-2 to replace the hardcoded
- * PRIMARY_NAV_IDS set in MobileNav.tsx, which referenced `'llm'` — an ID
- * that will be retired in Train 2. Deriving from NAV_ITEMS prevents
- * silent mobile-nav breakage when Train 2 lands.
  */
 export const NAV_ITEMS = [
   {
     id: 'dashboard',
     label: 'Dashboard',
+    functionalLabel: 'Dashboard',
     icon: LayoutDashboard,
     description: 'System overview and quick actions',
     isPrimary: true,
     mobileLabel: 'Home',
   },
+  // ─── Test ─────────────────────────────────
   {
     id: 'scanner',
     label: 'Haiku Scanner',
+    functionalLabel: 'Scanner',
     icon: Radar,
     description: 'Live prompt-injection detection and triage',
-    group: 'attack' as NavGroup,
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-dojolm)',
     isPrimary: true,
     mobileLabel: 'Scan',
   },
   {
     id: 'armory',
     label: 'Armory',
+    functionalLabel: 'Payload Lab',
     icon: Warehouse,
     description: 'Fixtures, payloads, and comparison workflows',
-    group: 'attack' as NavGroup,
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-dojolm)',
   },
   {
     id: 'llm',
     label: 'LLM Dashboard',
+    functionalLabel: 'Model Lab',
     icon: BrainCircuit,
     description: 'Model testing, results, and Jutsu workflows',
-    group: 'attack' as NavGroup,
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-dojolm)',
     isPrimary: true,
     mobileLabel: 'LLM',
   },
   {
-    id: 'guard',
-    label: 'Hattori Guard',
-    icon: ShieldHalf,
-    description: 'Input, output, and policy protection controls',
-    group: 'defense' as NavGroup,
-    isPrimary: true,
-    mobileLabel: 'Guard',
-  },
-  {
-    id: 'compliance',
-    label: 'Bushido Book',
-    icon: BookOpen,
-    description: 'Compliance workflows, evidence, and audit views',
-    group: 'defense' as NavGroup,
+    id: 'arena',
+    label: 'Battle Arena',
+    functionalLabel: 'Arena',
+    icon: Trophy,
+    description: 'Multi-agent adversarial sandbox and leaderboard',
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-basileak)',
   },
   {
     id: 'adversarial',
     label: 'Atemi Lab',
+    functionalLabel: 'Adversarial',
     icon: Crosshair,
     description: 'Adversarial MCP and tool-integration testing',
-    group: 'redteam' as NavGroup,
-  },
-  {
-    id: 'strategic',
-    label: 'The Kumite',
-    icon: Trophy,
-    description: 'Strategic hub for SAGE, Arena, Mitsuke, and DNA',
-    group: 'analysis' as NavGroup,
-  },
-  {
-    id: 'ronin-hub',
-    label: 'Ronin Hub',
-    icon: Bug,
-    description: 'Bug bounty programs, submissions, and tracking',
-    group: 'analysis' as NavGroup,
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-marfaak)',
   },
   {
     id: 'sengoku',
     label: 'Sengoku',
+    functionalLabel: 'Campaigns',
     icon: Swords,
     description: 'Continuous red teaming campaigns',
-    group: 'redteam' as NavGroup,
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-marfaak)',
+  },
+  {
+    id: 'ronin-hub',
+    label: 'Ronin Hub',
+    functionalLabel: 'Bounty',
+    icon: Bug,
+    description: 'Bug bounty programs, submissions, and tracking',
+    group: 'test' as NavGroup,
+    brandColor: 'var(--brand-bonklm)',
+  },
+  // ─── Protect ──────────────────────────────
+  {
+    id: 'guard',
+    label: 'Hattori Guard',
+    functionalLabel: 'Guard',
+    icon: ShieldHalf,
+    description: 'Input, output, and policy protection controls',
+    group: 'protect' as NavGroup,
+    brandColor: 'var(--brand-pantheonlm)',
+    isPrimary: true,
+    mobileLabel: 'Guard',
   },
   {
     id: 'kotoba',
     label: 'Kotoba',
+    functionalLabel: 'Prompt Hardening',
     icon: PenTool,
     description: 'Prompt scoring, hardening, and optimization',
-    group: 'defense' as NavGroup,
+    group: 'protect' as NavGroup,
+    brandColor: 'var(--brand-pantheonlm)',
   },
+  // ─── Intel & Evidence ─────────────────────
+  {
+    id: 'mitsuke',
+    label: 'Mitsuke',
+    functionalLabel: 'Threat Feed',
+    icon: Radio,
+    description: 'Threat intelligence pipeline, indicators, and sources',
+    group: 'intel' as NavGroup,
+    brandColor: 'var(--brand-basileak)',
+  },
+  {
+    id: 'dna',
+    label: 'Amaterasu DNA',
+    functionalLabel: 'Attack DNA',
+    icon: Dna,
+    description: 'Attack lineage, mutation analysis, and family trees',
+    group: 'intel' as NavGroup,
+    brandColor: 'var(--brand-basileak)',
+  },
+  {
+    id: 'kagami',
+    label: 'Kagami',
+    functionalLabel: 'Mirror Test',
+    icon: Eye,
+    description: 'Model fingerprinting and behavioral consistency analysis',
+    group: 'intel' as NavGroup,
+    brandColor: 'var(--brand-basileak)',
+  },
+  {
+    id: 'compliance',
+    label: 'Bushido Book',
+    functionalLabel: 'Compliance',
+    icon: BookOpen,
+    description: 'Compliance workflows, evidence, coverage, and audit views',
+    group: 'intel' as NavGroup,
+    brandColor: 'var(--brand-pantheonlm)',
+  },
+  // ─── Admin (ungrouped, bottom) ────────────
   {
     id: 'admin',
     label: 'Admin',
+    functionalLabel: 'Admin',
     icon: SlidersHorizontal,
     description: 'Settings, validation, and configuration',
+    brandColor: 'var(--brand-blackunicorn)',
+  },
+  // ─── Demoted (hidden: true → hidden from all nav surfaces) ────
+  // StrategicHub (The Kumite) stays accessible via activeTab='strategic'
+  // for back-compat with deep links. Will be deleted entirely in PR-4b.8.
+  {
+    id: 'strategic',
+    label: 'The Kumite',
+    functionalLabel: 'Kumite',
+    icon: Trophy,
+    description: 'Strategic hub for SAGE, Arena, Mitsuke, and DNA (legacy)',
+    hidden: true,
   },
 ] as const
 
@@ -145,8 +222,12 @@ export type NavItem = typeof NAV_ITEMS[number]
 export type NavId = NavItem['id']
 
 /**
- * NavId aliases for backward compatibility (Story 2.9)
- * Maps retired NavIds to current NavIds for deep-link resolution
+ * NavId aliases for backward compatibility (Story 2.9 + Train 2).
+ * Maps retired NavIds to current NavIds for deep-link resolution.
+ *
+ * Train 2 PR-4b.1 (2026-04-09): added `attackdna` → 'dna' alias since
+ * Amaterasu is now a first-class nav item. The old `attackdna: 'strategic'`
+ * mapping is replaced — `attackdna` now resolves to the new 'dna' tab.
  */
 type RetiredNavId = 'testing' | 'jutsu' | 'llm-jutsu' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
@@ -158,7 +239,7 @@ export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   atemi: 'adversarial',
   kumite: 'strategic',
   'time-chamber': 'sengoku',
-  attackdna: 'strategic',
+  attackdna: 'dna',
 }
 
 /**

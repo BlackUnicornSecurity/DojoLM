@@ -43,14 +43,15 @@ describe('Application Constants', () => {
     expect(ids.has('admin')).toBe(true);
   });
 
-  // CONST-005: NAV_GROUPS has 4 groups (H6.1 restructure)
-  it('CONST-005: NAV_GROUPS has 4 groups', () => {
-    expect(NAV_GROUPS).toHaveLength(4);
+  // CONST-005: NAV_GROUPS has 3 verb-groups (Train 2 PR-2.5, 2026-04-09)
+  it('CONST-005: NAV_GROUPS has 3 verb-groups', () => {
+    // Train 2 collapsed brand pillars (attack/defense/redteam/analysis) to
+    // job verbs (test/protect/intel). Red Team merged into Test.
+    expect(NAV_GROUPS).toHaveLength(3);
     const groupIds = NAV_GROUPS.map(g => g.id);
-    expect(groupIds).toContain('attack');
-    expect(groupIds).toContain('defense');
-    expect(groupIds).toContain('redteam');
-    expect(groupIds).toContain('analysis');
+    expect(groupIds).toContain('test');
+    expect(groupIds).toContain('protect');
+    expect(groupIds).toContain('intel');
   });
 
   // CONST-006: QUICK_PAYLOADS has entries
