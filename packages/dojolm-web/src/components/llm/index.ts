@@ -3,6 +3,10 @@
  */
 
 export { LLMDashboard, LLMDashboardWithProviders } from './LLMDashboard';
+// Train 2 PR-4b.6 (2026-04-09): ModelLab is the decomposed replacement for
+// LLMDashboard. TestExecution/Leaderboard/Analytics moved to Atemi+Bushido.
+export { ModelLab, ModelLabWithProviders } from './ModelLab';
+export type { ModelLabProps } from './ModelLab';
 export { ModelList } from './ModelList';
 export { ModelForm } from './ModelForm';
 export { TestExecution } from './TestExecution';

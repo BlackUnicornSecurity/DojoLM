@@ -36,7 +36,9 @@ import { useScannerMetrics } from '@/lib/hooks'
 import { SenseiDrawer } from '@/components/sensei/SenseiDrawer'
 
 // Lazy-loaded module components (Story 2.5 — C-05 code splitting)
-const LLMDashboardWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.LLMDashboardWithProviders })))
+// Train 2 PR-4b.6 (2026-04-09): ModelLabWithProviders replaces LLMDashboardWithProviders
+// as the Jutsu tab target. LLMDashboardWithProviders kept for back-compat until PR-4b.8.
+const ModelLabWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.ModelLabWithProviders })))
 const AdversarialLab = lazy(() => import('@/components/adversarial').then(m => ({ default: m.AdversarialLab })))
 const ComplianceCenter = lazy(() => import('@/components/compliance').then(m => ({ default: m.ComplianceCenter })))
 const StrategicHub = lazy(() => import('@/components/strategic').then(m => ({ default: m.StrategicHub })))
@@ -200,7 +202,7 @@ function PageContent() {
         <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Model Lab Error" fallbackDescription="Unable to load Model Lab. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
-              <LLMDashboardWithProviders />
+              <ModelLabWithProviders />
             </Suspense>
           </ErrorBoundary>
         </div>
