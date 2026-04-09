@@ -383,6 +383,8 @@ describe('JUT-016: Sort config', () => {
 })
 
 describe('JUT-017: Config save persists to localStorage', () => {
+  // Train 2 PR-4b.8 (2026-04-09): key renamed from 'noda-llm-jutsu-config'
+  // → 'noda-jutsu-config' as part of the llm→jutsu NavId rename.
   it('saves config to localStorage on save click', async () => {
     render(<LLMJutsu />)
     clickSettingsButton()
@@ -390,7 +392,7 @@ describe('JUT-017: Config save persists to localStorage', () => {
       expect(screen.getByTestId('config-panel')).toBeInTheDocument()
     })
     fireEvent.click(screen.getByText('Save'))
-    expect(localStorageMock.getItem('noda-llm-jutsu-config')).not.toBeNull()
+    expect(localStorageMock.getItem('noda-jutsu-config')).not.toBeNull()
   })
 })
 

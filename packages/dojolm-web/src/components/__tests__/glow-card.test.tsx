@@ -121,11 +121,13 @@ describe('GlowCard', () => {
     })
   })
 
-  describe('Card composition (card.tsx not modified)', () => {
+  describe('Card composition (card.tsx lightly updated)', () => {
+    // Train 1 PR-3a (2026-04-09): card.tsx radius updated from rounded-xl
+    // → rounded-lg as part of the chrome sweep. This test updated to match.
     it('renders as a Card element (div with card classes)', () => {
       const { container } = render(<GlowCard>Content</GlowCard>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('rounded-xl')
+      expect(card).toHaveClass('rounded-lg')
       expect(card).toHaveClass('border')
       expect(card.className).toContain('shadow-[var(--shadow-card)]')
     })
@@ -156,9 +158,9 @@ describe('GlowCard', () => {
       const bareCard = cardContainer.firstElementChild as HTMLElement
       const glowCard = glowContainer.firstElementChild as HTMLElement
 
-      // Both should have Card's core classes
-      expect(bareCard).toHaveClass('rounded-xl')
-      expect(glowCard).toHaveClass('rounded-xl')
+      // Both should have Card's core classes (rounded-lg after Train 1 PR-3a)
+      expect(bareCard).toHaveClass('rounded-lg')
+      expect(glowCard).toHaveClass('rounded-lg')
 
       // Only GlowCard adds relative
       expect(glowCard).toHaveClass('relative')
