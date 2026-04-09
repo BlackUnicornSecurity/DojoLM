@@ -40,9 +40,8 @@ export function Sidebar() {
   const renderNavItem = (item: NavItem) => {
     const Icon = item.icon
     const isActive = activeTab === item.id
-    // Optional fields added in Train 2 PR-4b.1 + PR-2.5
+    // Optional field added in Train 2 PR-4b.1
     const functionalLabel = 'functionalLabel' in item ? item.functionalLabel : undefined
-    const brandColor = 'brandColor' in item ? item.brandColor : undefined
     const hasSubtitle = !!functionalLabel && functionalLabel !== item.label
 
     return (
@@ -61,12 +60,9 @@ export function Sidebar() {
           collapsed && 'justify-center'
         )}
       >
-        {/* Brand-tinted icon (inactive only — active state overrides per M7) */}
-        <Icon
-          className="h-[18px] w-[18px] flex-shrink-0"
-          style={!isActive && brandColor ? { color: brandColor } : undefined}
-          aria-hidden="true"
-        />
+        {/* Icon inherits text color (muted inactive, dojo-red active).
+         *  Brand tints removed per stakeholder request (2026-04-09). */}
+        <Icon className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
         {!collapsed && (
           <span className="flex min-w-0 flex-1 flex-col text-left leading-tight">
             {/* Function headline (big) + codename subtitle (small) per finding N1 */}

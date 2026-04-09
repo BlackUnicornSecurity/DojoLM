@@ -49,8 +49,6 @@ export const NAV_GROUPS: ReadonlyArray<{ id: NavGroup; label: string }> = [
  * Train 2 PR-4b.1 + PR-2.5 (2026-04-09):
  * - Added `functionalLabel` field — headline text for the two-line nav row
  *   (function name big, codename small). If absent, `label` is used as-is.
- * - Added `brandColor` field — inactive icon tint using --brand-* tokens.
- *   Active state overrides to --dojo-primary-lg per finding M7.
  * - Reassigned groups to new 3-verb structure (test/protect/intel).
  * - Added 4 new first-class nav items promoted from Kumite:
  *   mitsuke, dna, kagami, arena.
@@ -77,7 +75,6 @@ export const NAV_ITEMS = [
     icon: Radar,
     description: 'Live prompt-injection detection and triage',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-dojolm)',
     isPrimary: true,
     mobileLabel: 'Scan',
   },
@@ -88,7 +85,6 @@ export const NAV_ITEMS = [
     icon: Warehouse,
     description: 'Fixtures, payloads, and comparison workflows',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-dojolm)',
   },
   {
     id: 'llm',
@@ -97,7 +93,6 @@ export const NAV_ITEMS = [
     icon: BrainCircuit,
     description: 'Model testing, results, and Jutsu workflows',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-dojolm)',
     isPrimary: true,
     mobileLabel: 'LLM',
   },
@@ -108,7 +103,6 @@ export const NAV_ITEMS = [
     icon: Trophy,
     description: 'Multi-agent adversarial sandbox and leaderboard',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-basileak)',
   },
   {
     id: 'adversarial',
@@ -117,7 +111,6 @@ export const NAV_ITEMS = [
     icon: Crosshair,
     description: 'Adversarial MCP and tool-integration testing',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-marfaak)',
   },
   {
     id: 'sengoku',
@@ -126,7 +119,6 @@ export const NAV_ITEMS = [
     icon: Swords,
     description: 'Continuous red teaming campaigns',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-marfaak)',
   },
   {
     id: 'ronin-hub',
@@ -135,7 +127,6 @@ export const NAV_ITEMS = [
     icon: Bug,
     description: 'Bug bounty programs, submissions, and tracking',
     group: 'test' as NavGroup,
-    brandColor: 'var(--brand-bonklm)',
   },
   // ─── Protect ──────────────────────────────
   {
@@ -145,7 +136,6 @@ export const NAV_ITEMS = [
     icon: ShieldHalf,
     description: 'Input, output, and policy protection controls',
     group: 'protect' as NavGroup,
-    brandColor: 'var(--brand-pantheonlm)',
     isPrimary: true,
     mobileLabel: 'Guard',
   },
@@ -156,7 +146,6 @@ export const NAV_ITEMS = [
     icon: PenTool,
     description: 'Prompt scoring, hardening, and optimization',
     group: 'protect' as NavGroup,
-    brandColor: 'var(--brand-pantheonlm)',
   },
   // ─── Intel & Evidence ─────────────────────
   {
@@ -166,7 +155,6 @@ export const NAV_ITEMS = [
     icon: Radio,
     description: 'Threat intelligence pipeline, indicators, and sources',
     group: 'intel' as NavGroup,
-    brandColor: 'var(--brand-basileak)',
   },
   {
     id: 'dna',
@@ -175,7 +163,6 @@ export const NAV_ITEMS = [
     icon: Dna,
     description: 'Attack lineage, mutation analysis, and family trees',
     group: 'intel' as NavGroup,
-    brandColor: 'var(--brand-basileak)',
   },
   {
     id: 'kagami',
@@ -184,7 +171,6 @@ export const NAV_ITEMS = [
     icon: Eye,
     description: 'Model fingerprinting and behavioral consistency analysis',
     group: 'intel' as NavGroup,
-    brandColor: 'var(--brand-basileak)',
   },
   {
     id: 'compliance',
@@ -193,7 +179,6 @@ export const NAV_ITEMS = [
     icon: BookOpen,
     description: 'Compliance workflows, evidence, coverage, and audit views',
     group: 'intel' as NavGroup,
-    brandColor: 'var(--brand-pantheonlm)',
   },
   // ─── Admin (ungrouped, bottom) ────────────
   {
@@ -202,7 +187,6 @@ export const NAV_ITEMS = [
     functionalLabel: 'Admin',
     icon: SlidersHorizontal,
     description: 'Settings, validation, and configuration',
-    brandColor: 'var(--brand-blackunicorn)',
   },
   // ─── Demoted (hidden: true → hidden from all nav surfaces) ────
   // StrategicHub (The Kumite) stays accessible via activeTab='strategic'
