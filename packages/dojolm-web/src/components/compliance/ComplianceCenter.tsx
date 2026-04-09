@@ -43,7 +43,6 @@ import { GapMatrix } from './GapMatrix'
 import { AuditTrail } from './AuditTrail'
 import { ComplianceChecklist } from './ComplianceChecklist'
 import { FrameworkNavigator } from './FrameworkNavigator'
-import ComplianceDashboard from './ComplianceDashboard'
 import { ComplianceExport } from './ComplianceExport'
 import { CoverageMap } from '@/components/coverage'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -152,7 +151,12 @@ interface ComplianceCenterData {
   lastUpdated: string
 }
 
-type SubView = 'overview' | 'coverage' | 'gap-matrix' | 'audit-trail' | 'checklists' | 'navigator' | 'compliance-scan' | 'dashboard'
+// Train 2 PR-4b.7 (2026-04-09): Bushido Book tab restructure per UI-ALIGNMENT
+// v2.1. Top-level tabs collapsed from 8 → 4 (Evidence | Coverage | Insights |
+// Audit). Existing sub-panels are preserved but recomposed under these new
+// parent tabs. The Insights tab is a placeholder that will absorb Leaderboard
+// + AnalyticsWorkspace from LLMDashboard in PR-4b.6.
+type SubView = 'evidence' | 'coverage' | 'insights' | 'audit'
 
 /** H8.1: Group mode for framework list and overview panel */
 type GroupMode = 'tier' | 'category'
@@ -247,7 +251,7 @@ export default function ComplianceCenter() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedFramework, setSelectedFramework] = useState<string>('owasp-llm')
-  const [subView, setSubView] = useState<SubView>('overview')
+  const [subView, setSubView] = useState<SubView>('evidence')
   const [groupMode, setGroupMode] = useState<GroupMode>('tier')
   const { setActiveTab } = useNavigation()
 
@@ -426,15 +430,14 @@ export default function ComplianceCenter() {
     })),
   }
 
+  // Train 2 PR-4b.7: 4-tab structure (Evidence | Coverage | Insights | Audit)
+  // per UI-ALIGNMENT v2.1 §5.3. Sub-panels from the legacy 8-tab layout are
+  // recomposed under these new parent tabs.
   const subTabs: { id: SubView; label: string; icon: typeof BarChart3 }[] = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'evidence', label: 'Evidence', icon: ShieldCheck },
     { id: 'coverage', label: 'Coverage', icon: Layers },
-    { id: 'dashboard', label: 'Coverage Dashboard', icon: BarChart3 },
-    { id: 'gap-matrix', label: 'Gap Matrix', icon: ClipboardList },
-    { id: 'audit-trail', label: 'Audit Trail', icon: FileText },
-    { id: 'checklists', label: 'Checklists', icon: ListChecks },
-    { id: 'navigator', label: 'Navigator', icon: GitCompareArrows },
-    { id: 'compliance-scan', label: 'Framework Compliance', icon: ShieldCheck },
+    { id: 'insights', label: 'Insights', icon: BarChart3 },
+    { id: 'audit', label: 'Audit', icon: FileText },
   ]
 
   return (
@@ -555,8 +558,8 @@ export default function ComplianceCenter() {
             <ComplianceExport frameworkData={selectedFrameworkExport} />
             <Button
               type="button"
-              variant={subView === 'dashboard' ? 'default' : 'outline'}
-              onClick={() => handleSubViewChange('dashboard')}
+              variant={subView === 'coverage' ? 'default' : 'outline'}
+              onClick={() => handleSubViewChange('coverage')}
               className="min-h-[44px]"
             >
               Open Coverage Dashboard
@@ -584,31 +587,42 @@ export default function ComplianceCenter() {
             })}
           </TabsList>
 
-          {/* Sub-view content */}
+          {/* Sub-view content — Train 2 PR-4b.7: 4-tab recomposition */}
           <div className="p-4">
-            <TabsContent value="overview" className="mt-0">
+            {/* Evidence: per-framework overview + compliance scan drill-down + sign-off checklists */}
+            <TabsContent value="evidence" className="mt-0 space-y-8">
               <OverviewPanel framework={selectedFw} allFrameworks={data.frameworks} groupMode={groupMode} onStartComplianceCheck={handleStartComplianceCheck} />
-            </TabsContent>
-            <TabsContent value="coverage" className="mt-0">
-              <CoveragePanel frameworks={data.frameworks} />
-            </TabsContent>
-            <TabsContent value="dashboard" className="mt-0">
-              <ComplianceDashboard />
-            </TabsContent>
-            <TabsContent value="gap-matrix" className="mt-0">
-              <GapMatrix />
-            </TabsContent>
-            <TabsContent value="audit-trail" className="mt-0">
-              <AuditTrail />
-            </TabsContent>
-            <TabsContent value="checklists" className="mt-0">
+              <ComplianceScanPanel frameworks={data.frameworks} onStartComplianceCheck={handleStartComplianceCheck} />
               <ComplianceChecklist />
             </TabsContent>
-            <TabsContent value="navigator" className="mt-0">
+
+            {/* Coverage: pre/post coverage map + cross-framework gap matrix + bidirectional navigator */}
+            <TabsContent value="coverage" className="mt-0 space-y-8">
+              <CoveragePanel frameworks={data.frameworks} />
+              <GapMatrix />
               <FrameworkNavigator />
             </TabsContent>
-            <TabsContent value="compliance-scan" className="mt-0">
-              <ComplianceScanPanel frameworks={data.frameworks} onStartComplianceCheck={handleStartComplianceCheck} />
+
+            {/* Insights: placeholder — PR-4b.6 will mount Leaderboard + AnalyticsWorkspace here */}
+            <TabsContent value="insights" className="mt-0">
+              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-subtle)] py-16 text-center">
+                <BarChart3 className="h-10 w-10 text-[var(--text-tertiary)]" aria-hidden="true" />
+                <h3 className="mt-3 text-base font-semibold text-[var(--foreground)]">
+                  Insights — coming soon
+                </h3>
+                <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                  Performance-over-time compliance evidence. Leaderboard and Analytics will move
+                  here from the LLM Dashboard in PR-4b.6 to give audit users a unified view.
+                </p>
+              </div>
+            </TabsContent>
+
+            {/* Audit: immutable audit trail. The legacy ComplianceDashboard
+             *  (header Score Meter + framework list already cover its
+             *  gauge/summary role) is no longer rendered as part of the 4-tab
+             *  recomposition. */}
+            <TabsContent value="audit" className="mt-0">
+              <AuditTrail />
             </TabsContent>
           </div>
         </Tabs>

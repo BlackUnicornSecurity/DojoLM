@@ -172,11 +172,22 @@ describe('H9.4: Bushido Book Framework Compliance Tab', () => {
     vi.clearAllMocks()
   })
 
-  it('H94-001: renders Framework Compliance tab trigger', async () => {
+  it('H94-001: renders ComplianceScanPanel under the Evidence tab (PR-4b.7)', async () => {
+    // Train 2 PR-4b.7 (2026-04-09): Bushido Book tabs collapsed from 8 → 4.
+    // The legacy "Framework Compliance" tab trigger no longer exists as a
+    // top-level tab — ComplianceScanPanel is now rendered inside the
+    // "Evidence" parent tab (which is the default active tab). H94-002..006
+    // continue to validate the panel body via its testId.
     await renderComplianceCenter()
-    const tabTrigger = screen.getByTestId('tab-trigger-compliance-scan')
-    expect(tabTrigger).toBeInTheDocument()
-    expect(tabTrigger).toHaveTextContent('Framework Compliance')
+    // ComplianceScanPanel now renders inside the Evidence parent tab (the
+    // default active tab). Its presence in the DOM confirms the recomposition
+    // is wired correctly; the panel body is validated by H94-002..006.
+    const panel = screen.getByTestId('compliance-scan-panel')
+    expect(panel).toBeInTheDocument()
+    const evidenceTab = screen.getAllByRole('tab').find(
+      (t) => t.getAttribute('data-value') === 'evidence'
+    )
+    expect(evidenceTab).toBeDefined()
   })
 
   it('H94-002: renders compliance scan panel with framework selector', async () => {

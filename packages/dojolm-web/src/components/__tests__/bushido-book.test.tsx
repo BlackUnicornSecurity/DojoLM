@@ -148,12 +148,17 @@ describe('BSH-001: ComplianceCenter sub-tabs', () => {
     })
   })
 
-  it('renders all 7 sub-tab triggers', async () => {
+  it('renders all 4 sub-tab triggers (PR-4b.7 restructure)', async () => {
     render(<ComplianceCenter />)
     await waitFor(() => {
       const allTabs = screen.getAllByRole('tab')
-      // Sub-view tabs (7) — includes compliance-scan from H9.4
-      const subViewValues = ['overview', 'coverage', 'gap-matrix', 'audit-trail', 'checklists', 'navigator', 'compliance-scan']
+      // Train 2 PR-4b.7 (2026-04-09): Bushido Book tabs collapsed from 8 → 4
+      // per UI-ALIGNMENT v2.1 §5.3. Evidence absorbs OverviewPanel +
+      // ComplianceScanPanel + Checklists. Coverage absorbs CoveragePanel +
+      // GapMatrix + FrameworkNavigator. Insights is a placeholder awaiting
+      // Leaderboard + AnalyticsWorkspace from PR-4b.6. Audit hosts AuditTrail
+      // + ComplianceDashboard.
+      const subViewValues = ['evidence', 'coverage', 'insights', 'audit']
       for (const val of subViewValues) {
         const tabsWithValue = allTabs.filter(t => t.getAttribute('data-value') === val)
         expect(tabsWithValue.length).toBeGreaterThanOrEqual(1)

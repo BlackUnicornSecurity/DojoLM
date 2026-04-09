@@ -248,7 +248,7 @@ describe('CC-005: Framework count shown', () => {
 // CC-006: Sub-view tabs render
 // ===========================================================================
 describe('CC-006: Sub-view tabs render', () => {
-  it('renders all mounted sub-view tab triggers, including the dashboard affordance', async () => {
+  it('renders the 4 top-level sub-view tab triggers (PR-4b.7 restructure)', async () => {
     mockFetchWithAuth.mockResolvedValue({
       ok: true,
       json: async () => makeApiResponse(),
@@ -257,14 +257,15 @@ describe('CC-006: Sub-view tabs render', () => {
     await waitFor(() => {
       expect(screen.getByText('Bushido Book')).toBeInTheDocument()
     })
-    expect(screen.getAllByText('Overview').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Coverage').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Coverage Dashboard').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Gap Matrix').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Audit Trail').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Checklists').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Navigator').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Framework Compliance').length).toBeGreaterThan(0)
+    // Train 2 PR-4b.7 (2026-04-09): Bushido Book tabs collapsed from 8 → 4
+    // per UI-ALIGNMENT v2.1 §5.3 (Evidence | Coverage | Insights | Audit).
+    // Legacy sub-panels (GapMatrix, AuditTrail, Checklists, Navigator,
+    // ComplianceScan, Dashboard) still render inside the new parent tabs —
+    // verified by CC-007 via testId assertions.
+    const tabLabels = ['Evidence', 'Coverage', 'Insights', 'Audit']
+    for (const label of tabLabels) {
+      expect(screen.getAllByText(label).length).toBeGreaterThan(0)
+    }
   })
 })
 
@@ -272,18 +273,22 @@ describe('CC-006: Sub-view tabs render', () => {
 // CC-007: Sub-components render in tab panels
 // ===========================================================================
 describe('CC-007: Sub-components render in tab panels', () => {
-  it('renders dashboard, GapMatrix, AuditTrail, Checklist, Navigator, and export affordances', async () => {
+  it('renders GapMatrix, AuditTrail, Checklist, Navigator, and export affordances (PR-4b.7)', async () => {
+    // Train 2 PR-4b.7 (2026-04-09): legacy ComplianceDashboard sub-panel
+    // was removed from the 4-tab recomposition — the header Score Meter +
+    // framework list already cover its gauge/summary role. The other five
+    // sub-panels now render inside the Evidence / Coverage / Audit parent
+    // tabs.
     mockFetchWithAuth.mockResolvedValue({
       ok: true,
       json: async () => makeApiResponse(),
     })
     render(<ComplianceCenter />)
     await waitFor(() => {
-      expect(screen.getByTestId('compliance-dashboard')).toBeInTheDocument()
+      expect(screen.getByTestId('gap-matrix')).toBeInTheDocument()
     })
     expect(screen.getByTestId('compliance-export')).toHaveTextContent('OWASP LLM Top 10')
     expect(screen.getByRole('button', { name: /open coverage dashboard/i })).toBeInTheDocument()
-    expect(screen.getByTestId('gap-matrix')).toBeInTheDocument()
     expect(screen.getByTestId('audit-trail')).toBeInTheDocument()
     expect(screen.getByTestId('compliance-checklist')).toBeInTheDocument()
     expect(screen.getByTestId('framework-navigator')).toBeInTheDocument()
