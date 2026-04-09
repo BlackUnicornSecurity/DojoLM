@@ -36,8 +36,9 @@ import { useScannerMetrics } from '@/lib/hooks'
 import { SenseiDrawer } from '@/components/sensei/SenseiDrawer'
 
 // Lazy-loaded module components (Story 2.5 — C-05 code splitting)
-// Train 2 PR-4b.6 (2026-04-09): ModelLabWithProviders replaces LLMDashboardWithProviders
-// as the Jutsu tab target. LLMDashboardWithProviders kept for back-compat until PR-4b.8.
+// Train 2 PR-4b.6 — PR-4b.8 (2026-04-09): LLMDashboard.tsx decomposed + deleted.
+// ModelLabWithProviders is the canonical Jutsu tab target (Models | Compare | Jutsu | Custom).
+// TestExecution lives in Atemi Test Cases; Leaderboard + Analytics in Bushido Insights.
 const ModelLabWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.ModelLabWithProviders })))
 const AdversarialLab = lazy(() => import('@/components/adversarial').then(m => ({ default: m.AdversarialLab })))
 const ComplianceCenter = lazy(() => import('@/components/compliance').then(m => ({ default: m.ComplianceCenter })))

@@ -107,7 +107,7 @@ vi.mock('@/lib/hooks', () => ({
 
 // Mock all lazy-loaded module components
 vi.mock('@/components/llm', () => ({
-  LLMDashboardWithProviders: () => <div data-testid="llm-dashboard">LLM</div>,
+  ModelLabWithProviders: () => <div data-testid="model-lab">Model Lab</div>,
 }))
 vi.mock('@/components/adversarial', () => ({
   AdversarialLab: () => <div data-testid="adversarial-lab">Adversarial</div>,

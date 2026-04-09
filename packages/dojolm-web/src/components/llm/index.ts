@@ -2,9 +2,9 @@
  * LLM Dashboard Components
  */
 
-export { LLMDashboard, LLMDashboardWithProviders } from './LLMDashboard';
-// Train 2 PR-4b.6 (2026-04-09): ModelLab is the decomposed replacement for
-// LLMDashboard. TestExecution/Leaderboard/Analytics moved to Atemi+Bushido.
+// Train 2 PR-4b.8 (2026-04-09): LLMDashboard.tsx deleted. ModelLab is the
+// decomposed replacement. TestExecution/Leaderboard/Analytics live in
+// Atemi Test Cases and Bushido Insights respectively.
 export { ModelLab, ModelLabWithProviders } from './ModelLab';
 export type { ModelLabProps } from './ModelLab';
 export { ModelList } from './ModelList';
@@ -36,7 +36,6 @@ export { aggregateByModel, calculateTrend } from './JutsuAggregation';
 export type { AggregatedModel, TestExecution as JutsuTestExecution } from './JutsuAggregation';
 
 // Types
-export type { LLMDashboardProps } from './LLMDashboard';
 export type { ModelFormProps } from './ModelForm';
 export type { ChatBubbleProps } from './ChatBubble';
 export type { LocalModelSelectorProps, LocalModelInfo } from './LocalModelSelector';
