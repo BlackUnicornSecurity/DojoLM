@@ -30,7 +30,11 @@ import { SidebarHeader } from './SidebarHeader'
 // Dashboard is ungrouped (top). Admin is ungrouped (bottom, above collapse toggle).
 const dashboardItem = NAV_ITEMS.find(item => item.id === 'dashboard')!
 const adminItem = NAV_ITEMS.find(item => item.id === 'admin')
-const groupedItems = NAV_ITEMS.filter(item => 'group' in item)
+// Train 2 PR-4b.5: also exclude items marked { hidden: true } (demoted but
+// kept in NAV_ITEMS for NavId-type / back-compat activeTab branches).
+const groupedItems = NAV_ITEMS.filter(
+  item => 'group' in item && !('hidden' in item && item.hidden === true)
+)
 
 export function Sidebar() {
   const { activeTab, setActiveTab } = useNavigation()

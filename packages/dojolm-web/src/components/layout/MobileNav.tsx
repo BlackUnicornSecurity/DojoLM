@@ -208,7 +208,12 @@ function MoreDrawer({
 
         <div className="py-2 px-2">
           {NAV_GROUPS.map((group, groupIdx) => {
-            const groupItems = items.filter(item => 'group' in item && item.group === group.id)
+            const groupItems = items.filter(
+              item =>
+                'group' in item &&
+                item.group === group.id &&
+                !('hidden' in item && item.hidden === true)
+            )
             if (groupItems.length === 0) return null
             return (
               <div key={group.id}>

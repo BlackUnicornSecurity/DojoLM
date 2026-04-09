@@ -126,6 +126,10 @@ export const NAV_ITEMS = [
     icon: Swords,
     description: 'Continuous red teaming campaigns',
     group: 'test' as NavGroup,
+    // Train 2 PR-4b.5 (2026-04-09): Sengoku demoted — Campaigns now lives as a
+    // sub-tab inside Atemi Lab (AdversarialLab). hidden: true keeps the NavId
+    // type + back-compat activeTab branch alive but removes the sidebar entry.
+    hidden: true,
   },
   {
     id: 'ronin-hub',

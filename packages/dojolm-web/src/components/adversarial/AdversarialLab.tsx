@@ -16,7 +16,7 @@
 
 'use client'
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect, lazy, Suspense } from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -59,12 +59,16 @@ import { AgenticLab } from '../agentic/AgenticLab'
 import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
+// Train 2 PR-4b.5 — Sengoku relocated into Atemi Lab as Campaigns sub-tab
+const SengokuDashboardLazy = lazy(() =>
+  import('@/components/sengoku').then(m => ({ default: m.SengokuDashboard }))
+)
 
 // ---------------------------------------------------------------------------
 // Types & Configuration
 // ---------------------------------------------------------------------------
 
-type AtemiTab = 'attack-tools' | 'skills' | 'playbooks' | 'mcp' | 'protocol-fuzz' | 'agentic' | 'webmcp'
+type AtemiTab = 'attack-tools' | 'skills' | 'playbooks' | 'mcp' | 'protocol-fuzz' | 'agentic' | 'webmcp' | 'campaigns'
 
 type AttackMode = 'passive' | 'basic' | 'advanced' | 'aggressive'
 
@@ -933,11 +937,11 @@ export function AdversarialLab({
       <Tabs
         value={activeTab}
         onValueChange={(v) => {
-          const valid: AtemiTab[] = ['attack-tools', 'skills', 'playbooks', 'mcp', 'protocol-fuzz', 'agentic', 'webmcp']
+          const valid: AtemiTab[] = ['attack-tools', 'skills', 'playbooks', 'mcp', 'protocol-fuzz', 'agentic', 'webmcp', 'campaigns']
           if (valid.includes(v as AtemiTab)) setActiveTab(v as AtemiTab)
         }}
       >
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
+        <TabsList className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
           <TabsTrigger value="attack-tools" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Swords className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Attack Tools</span>
@@ -967,6 +971,10 @@ export function AdversarialLab({
           <TabsTrigger value="webmcp" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Globe className="h-3 w-3" aria-hidden="true" />
             <span>WebMCP</span>
+          </TabsTrigger>
+          <TabsTrigger value="campaigns" className="gap-1 text-xs min-h-[44px] rounded-md">
+            <Flame className="h-3 w-3" aria-hidden="true" />
+            <span>Campaigns</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1315,6 +1323,19 @@ export function AdversarialLab({
               </Card>
             )}
           </div>
+        </TabsContent>
+
+        {/* Campaigns Tab — Sengoku red-team campaigns (PR-4b.5) */}
+        <TabsContent value="campaigns" className="mt-4">
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-16" aria-busy="true">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+              </div>
+            }
+          >
+            <SengokuDashboardLazy />
+          </Suspense>
         </TabsContent>
       </Tabs>
 
