@@ -16,10 +16,11 @@ import { GlowCard } from '@/components/ui/GlowCard'
 
 describe('Card hover isolation (BMAD review fix #2)', () => {
   describe('Card base classes', () => {
-    it('has rounded-xl border', () => {
+    it('has rounded-lg border', () => {
+      // Train 1 PR-3: rounded-xl → rounded-lg (BUCC-mem0 radius scale)
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('rounded-xl')
+      expect(card).toHaveClass('rounded-lg')
       expect(card).toHaveClass('border')
     })
 
@@ -29,10 +30,12 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       expect(card.className).toContain('shadow-[var(--shadow-card)]')
     })
 
-    it('has motion-safe transition for border-color, transform, and box-shadow', () => {
+    // Train 1 PR-3: multi-property motion stack collapsed to transition-colors
+    // (card lift effect preserved via motion-safe:hover:-translate-y-1)
+    it('has color transition for hover state', () => {
       const { container } = render(<Card>Content</Card>)
       const card = container.firstElementChild as HTMLElement
-      expect(card.className).toContain('motion-safe:transition-[border-color,transform,box-shadow]')
+      expect(card.className).toContain('transition-colors')
     })
 
     it('has hover border color change', () => {
@@ -87,8 +90,8 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       const { container: glowContainer } = render(<GlowCard>Wrapped</GlowCard>)
       const bareCard = bareContainer.firstElementChild as HTMLElement
       const glowCard = glowContainer.firstElementChild as HTMLElement
-      expect(bareCard).toHaveClass('rounded-xl')
-      expect(glowCard).toHaveClass('rounded-xl')
+      expect(bareCard).toHaveClass('rounded-lg')
+      expect(glowCard).toHaveClass('rounded-lg')
       expect(bareCard).toHaveClass('bg-card')
       expect(glowCard).toHaveClass('bg-card')
     })
@@ -107,16 +110,17 @@ describe('Card hover isolation (BMAD review fix #2)', () => {
       expect(card).toHaveClass('glass-card')
     })
 
-    it('hero variant has surface-hero class', () => {
+    // Train 1 PR-3: surface-hero / surface-alert utility classes deleted in PR-1.
+    // Variants kept for API back-compat but render the same as default.
+    // Once variant-specific tinting is reintroduced (if ever), re-add assertions.
+    it('hero variant renders without crashing', () => {
       const { container } = render(<Card variant="hero">Content</Card>)
-      const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('surface-hero')
+      expect(container.firstElementChild).toBeTruthy()
     })
 
-    it('alert variant has surface-alert class', () => {
+    it('alert variant renders without crashing', () => {
       const { container } = render(<Card variant="alert">Content</Card>)
-      const card = container.firstElementChild as HTMLElement
-      expect(card).toHaveClass('surface-alert')
+      expect(container.firstElementChild).toBeTruthy()
     })
 
     it('custom className passes through', () => {

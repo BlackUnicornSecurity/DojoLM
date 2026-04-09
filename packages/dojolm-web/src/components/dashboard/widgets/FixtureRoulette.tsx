@@ -122,7 +122,7 @@ export function FixtureRoulette() {
       <div className="space-y-3">
         {fixture ? (
           <>
-            <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3">
+            <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <span className="text-xs px-1.5 py-0.5 bg-[var(--dojo-subtle)] text-[var(--dojo-primary)] rounded font-medium">
@@ -148,7 +148,7 @@ export function FixtureRoulette() {
 
             {/* Content preview or media */}
             {fixture.isBinary && fixture.mimeType ? (
-              <div className="rounded-xl border border-[var(--border-subtle)] surface-base overflow-hidden">
+              <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] overflow-hidden">
                 {fixture.mimeType.startsWith('image/') && (
                   // SVG via Image with unoptimized — XSS safety (local API route)
                   <Image
@@ -172,12 +172,12 @@ export function FixtureRoulette() {
                 )}
               </div>
             ) : fixture.content ? (
-              <pre className="text-xs font-mono p-3 rounded-xl border border-[var(--border-subtle)] surface-base overflow-hidden whitespace-pre-wrap break-all max-h-28 text-foreground/80">
+              <pre className="text-xs font-mono p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] overflow-hidden whitespace-pre-wrap break-all max-h-28 text-foreground/80">
                 {fixture.content.slice(0, 300)}
                 {fixture.content.length > 300 ? '...' : ''}
               </pre>
             ) : (
-              <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3 text-xs text-muted-foreground">
+              <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-xs text-muted-foreground">
                 Binary file preview ready for scan.
               </div>
             )}
@@ -185,7 +185,7 @@ export function FixtureRoulette() {
             {/* Verdict display */}
             {verdict && (
               <div className={cn(
-                'flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-xs font-medium',
+                'flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-xs font-medium',
                 verdict.verdict === 'BLOCK'
                   ? 'bg-[var(--status-block-bg)] text-[var(--status-block)] border border-[var(--status-block)]/20'
                   : 'bg-[var(--status-allow-bg)] text-[var(--status-allow)] border border-[var(--status-allow)]/20'
@@ -218,9 +218,9 @@ export function FixtureRoulette() {
             </div>
           </>
         ) : (
-          <div className="rounded-xl border border-dashed border-[var(--border)] surface-base p-4">
+          <div className="rounded-lg border border-dashed border-[var(--border)] bg-[var(--bg-secondary)] p-4">
             <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[var(--dojo-subtle)] text-[var(--dojo-primary)]">
                 {loading ? (
                   <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />
                 ) : (

@@ -251,33 +251,16 @@
   --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
 }
 
-/* ===== Title Hierarchy (Hakone SaaS Polish) =====
- * Page titles        = text-page-title
- * Section titles     = text-section-title
- * Card/widget titles = text-card-title
- * Metric labels      = text-label
+/* ===== Title Hierarchy =====
+ * Train 1 PR-3: custom .text-page-title / .text-section-title / .text-card-title
+ * utilities deleted. Migrated to Tailwind defaults at call sites:
+ *   .text-page-title    → text-2xl font-bold tracking-tight
+ *   .text-section-title → text-base font-semibold tracking-tight
+ *   .text-card-title    → text-xl font-semibold tracking-tight
+ *
+ * .text-metric-xl / -lg / -md / .text-label are kept below (domain-specific).
+ * .text-label is kept because its uppercase + muted color styling is specialized.
  */
-
-@utility text-page-title {
-  font-size: 24px;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
-@utility text-section-title {
-  font-size: 16px;
-  line-height: 1.25;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-@utility text-card-title {
-  font-size: 20px;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
 
 /* ===== Dojo Identity ===== */
 .dojo-divider {
@@ -399,19 +382,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Navigation active state (Story 4.4, H3.1 — filled panel, no border-left) ===== */
-.nav-item-active {
-  background: rgba(91, 141, 239, 0.10);
-  color: var(--foreground);
-  border-radius: var(--radius-lg);
-}
-.nav-item-active-icon {
-  color: var(--foreground);
-  opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(91, 141, 239, 0.3));
-}
-
 /* ===== Glassmorphic utilities ===== */
+/* (.nav-item-active / .nav-item-active-icon removed in Train 1 PR-3 —
+    new Sidebar uses inline Tailwind active state) */
 .glass {
   background: rgba(18, 19, 26, 0.6);
   backdrop-filter: blur(12px);

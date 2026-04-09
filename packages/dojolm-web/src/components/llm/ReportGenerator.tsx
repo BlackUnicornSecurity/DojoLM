@@ -140,7 +140,7 @@ export function ReportGenerator({ batchId, compact = false }: ReportGeneratorPro
 
   if (compact) {
     return (
-      <div className="flex items-center gap-2 rounded-full border border-[var(--border-subtle)] surface-interactive px-2 py-1">
+      <div className="flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2 py-1">
         <Select value={format} onValueChange={handleFormatChange}>
           <SelectTrigger className="w-[132px] border-transparent bg-transparent shadow-none hover:bg-[var(--overlay-subtle)] focus:ring-0 focus:ring-offset-0">
             <SelectValue />

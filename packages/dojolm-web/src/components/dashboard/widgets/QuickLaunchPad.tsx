@@ -57,17 +57,17 @@ export function QuickLaunchPad() {
             type="button"
             onClick={() => setActiveTab(action.target)}
             aria-label={action.label}
-            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-xl min-h-[44px]"
+            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded-lg min-h-[44px]"
           >
             <GlowCard glow="subtle" className={cn(
               'p-4 h-full cursor-pointer',
               'hover:bg-[var(--bg-quaternary)]',
-              'motion-safe:transition-[background-color,transform] motion-safe:duration-[var(--transition-fast)]',
+              'transition-colors duration-[var(--transition-fast)]',
               'active:scale-[0.98]'
             )}>
               <div className="flex items-start justify-between gap-3">
                 <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                  className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
                   style={{ backgroundColor: `color-mix(in srgb, ${action.accent} 16%, transparent)` }}
                 >
                   <Icon

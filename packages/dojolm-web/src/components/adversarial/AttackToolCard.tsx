@@ -152,7 +152,7 @@ export function AttackToolCard({
   return (
     <Card
       className={cn(
-        'motion-safe:transition-[opacity,border-color] motion-safe:duration-[var(--transition-normal)]',
+        'transition-colors duration-[var(--transition-normal)]',
         enabled
           ? 'border-[var(--border)] opacity-100'
           : 'border-[var(--border)]/50 opacity-60',

@@ -9,18 +9,25 @@ import { describe, it, expect } from "vitest"
 
 describe("Typography System", () => {
   describe("Metric typography classes", () => {
-    it("renders text-page-title class on elements", () => {
-      render(<span data-testid="page-title" className="text-page-title">Dashboard</span>)
+    // Train 1 PR-3: text-page-title / text-section-title / text-card-title
+    // custom utilities deleted. Call sites migrated to Tailwind defaults:
+    //   text-page-title    → text-2xl font-bold tracking-tight
+    //   text-section-title → text-base font-semibold tracking-tight
+    //   text-card-title    → text-xl font-semibold tracking-tight
+    it("renders migrated page-title classes on elements", () => {
+      render(<span data-testid="page-title" className="text-2xl font-bold tracking-tight">Dashboard</span>)
       const el = screen.getByTestId("page-title")
       expect(el).toBeInTheDocument()
-      expect(el).toHaveClass("text-page-title")
+      expect(el).toHaveClass("text-2xl")
+      expect(el).toHaveClass("font-bold")
     })
 
-    it("renders text-card-title class on elements", () => {
-      render(<span data-testid="card-title" className="text-card-title">Overview</span>)
+    it("renders migrated card-title classes on elements", () => {
+      render(<span data-testid="card-title" className="text-xl font-semibold tracking-tight">Overview</span>)
       const el = screen.getByTestId("card-title")
       expect(el).toBeInTheDocument()
-      expect(el).toHaveClass("text-card-title")
+      expect(el).toHaveClass("text-xl")
+      expect(el).toHaveClass("font-semibold")
     })
 
     it("renders text-metric-xl class on elements", () => {

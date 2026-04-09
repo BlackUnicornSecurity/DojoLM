@@ -15,6 +15,16 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Train 1 PR-3 rewrite (2026-04-09):
+ * - rounded-xl → rounded-lg (per BUCC-mem0 scale)
+ * - Dropped dead `surface-base` class (utility deleted in PR-1)
+ * - Dropped `surface-interactive/-hero/-alert` dead classes (variants kept for
+ *   API back-compat but now visually identical — variant-specific tinting
+ *   can be reintroduced later via Tailwind arbitrary values if needed)
+ * - Collapsed multi-property motion-safe stack to simple `transition-colors`
+ *   (card lift effect preserved via motion-safe:hover:-translate-y-1)
+ */
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { variant?: 'default' | 'glass' | 'interactive' | 'hero' | 'alert' }
@@ -22,12 +32,9 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-[var(--border-subtle)] bg-card text-card-foreground shadow-[var(--shadow-card)] card-gradient surface-base",
-      "motion-safe:transition-[border-color,transform,box-shadow] motion-safe:duration-[var(--transition-normal)]",
-      "motion-safe:hover:border-[var(--overlay-hover)] motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[var(--shadow-card-hover)] backdrop-blur-sm",
-      variant === 'interactive' && "surface-interactive",
-      variant === 'hero' && "surface-hero",
-      variant === 'alert' && "surface-alert",
+      "rounded-lg border border-[var(--border-subtle)] bg-card text-card-foreground shadow-[var(--shadow-card)] card-gradient backdrop-blur-sm",
+      "transition-colors duration-[var(--transition-normal)]",
+      "motion-safe:hover:border-[var(--overlay-hover)] motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[var(--shadow-card-hover)]",
       variant === 'glass' && "glass-card",
       className
     )}
@@ -55,7 +62,8 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "text-card-title text-[var(--foreground)]",
+      // Train 1 PR-3: .text-card-title custom utility deleted, migrated to Tailwind
+      "text-xl font-semibold tracking-tight text-[var(--foreground)]",
       className
     )}
     {...props}

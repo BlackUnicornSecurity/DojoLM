@@ -30,7 +30,7 @@ import { useNavigation } from '@/lib/NavigationContext'
 /** Skeleton placeholder for lazy-loaded widgets */
 function WidgetSkeleton() {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse motion-reduce:animate-none" aria-busy="true" aria-hidden="true">
+    <div className="rounded-lg border border-[var(--border)] bg-card p-4 motion-safe:animate-pulse motion-reduce:animate-none" aria-busy="true" aria-hidden="true">
       <div className="h-4 w-24 bg-muted rounded mb-3" />
       <div className="h-20 bg-muted/50 rounded" />
     </div>
@@ -227,11 +227,11 @@ function DashboardContent({
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
       {/* Hero header — compact command bar */}
-      <section className="glass-card rounded-2xl border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
+      <section className="glass-card rounded-lg border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div>
-              <h2 className="text-page-title text-[var(--foreground)]">Dashboard</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">Dashboard</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {visibleWidgets.length} widgets across {activeSections.length} zones
               </p>
@@ -281,7 +281,7 @@ function DashboardContent({
                   {sectionIdx > 0 && <div className="dojo-divider mb-6" role="separator" aria-label="Section divider" />}
                   <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                     <div>
-                      <h3 className="text-section-title text-[var(--foreground)]">{section.label}</h3>
+                      <h3 className="text-base font-semibold tracking-tight text-[var(--foreground)]">{section.label}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">{section.description}</p>
                     </div>
                     <span className="text-label">{sectionSlots.length} live</span>
@@ -301,7 +301,7 @@ function DashboardContent({
               <div className="mt-8">
                 <div className="mb-4 flex items-end justify-between gap-3">
                   <div>
-                    <h3 className="text-section-title text-[var(--foreground)]">Additional</h3>
+                    <h3 className="text-base font-semibold tracking-tight text-[var(--foreground)]">Additional</h3>
                     <p className="mt-1 text-xs text-muted-foreground">Visible widgets that are not mapped to a primary dashboard lane.</p>
                   </div>
                   <span className="text-label">{unsectionedWidgets.length} live</span>

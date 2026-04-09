@@ -332,10 +332,10 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
       </div>
 
       {/* Engine Filters */}
-      <div className="glass-card rounded-2xl border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
+      <div className="glass-card rounded-lg border border-[var(--border-subtle)] p-4 shadow-[var(--shadow-card)]">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-section-title text-[var(--foreground)]">Engine Stack</h2>
+            <h2 className="text-base font-semibold tracking-tight text-[var(--foreground)]">Engine Stack</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Curate which detectors participate in this scan lane. Keep at least one engine active for meaningful coverage.
             </p>

@@ -15,7 +15,7 @@ function Section({ title, description, children }: { title: string; description:
   return (
     <section className="space-y-4">
       <div className="space-y-1">
-        <h2 className="text-section-title text-[var(--foreground)]">{title}</h2>
+        <h2 className="text-base font-semibold tracking-tight text-[var(--foreground)]">{title}</h2>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       {children}
@@ -25,7 +25,7 @@ function Section({ title, description, children }: { title: string; description:
 
 function ColorSwatch({ name, token, usage }: { name: string; token: string; usage: string }) {
   return (
-    <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-4">
+    <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4">
       <div
         className="h-16 rounded-lg border border-[var(--border-subtle)]"
         style={{ background: `var(${token})` }}
@@ -59,9 +59,9 @@ export default function StyleGuidePage() {
       aria-label="Main content"
       className="mx-auto min-h-screen max-w-6xl space-y-10 p-6 md:p-8"
     >
-      <header className="glass-card rounded-2xl border border-[var(--border-subtle)] p-6 shadow-[var(--shadow-card)]">
+      <header className="glass-card rounded-lg border border-[var(--border-subtle)] p-6 shadow-[var(--shadow-card)]">
         <p className="text-label text-[var(--bu-electric)]">Live Design Reference</p>
-        <h1 className="mt-3 text-page-title text-[var(--foreground)]">DojoLM Style Guide</h1>
+        <h1 className="mt-3 text-2xl font-bold tracking-tight text-[var(--foreground)]">DojoLM Style Guide</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
           This page now reflects the live Dojo SaaS system: real tokens, real component variants, and the current Plus Jakarta Sans plus JetBrains Mono hierarchy.
         </p>
@@ -91,16 +91,16 @@ export default function StyleGuidePage() {
           <Card variant="interactive">
             <CardContent className="space-y-4 p-5">
               <div>
-                <p className="text-page-title text-[var(--foreground)]">Page Title</p>
-                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-page-title`</p>
+                <p className="text-2xl font-bold tracking-tight text-[var(--foreground)]">Page Title</p>
+                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-2xl font-bold tracking-tight`</p>
               </div>
               <div>
-                <p className="text-section-title text-[var(--foreground)]">Section Title</p>
-                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-section-title`</p>
+                <p className="text-base font-semibold tracking-tight text-[var(--foreground)]">Section Title</p>
+                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-base font-semibold tracking-tight`</p>
               </div>
               <div>
-                <p className="text-card-title text-[var(--foreground)]">Card or Widget Title</p>
-                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-card-title`</p>
+                <p className="text-xl font-semibold tracking-tight text-[var(--foreground)]">Card or Widget Title</p>
+                <p className="mt-1 text-xs font-mono text-muted-foreground">`text-xl font-semibold tracking-tight`</p>
               </div>
             </CardContent>
           </Card>

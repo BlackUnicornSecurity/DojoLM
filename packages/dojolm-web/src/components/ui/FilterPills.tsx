@@ -132,7 +132,7 @@ export function FilterPills({
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium',
                 'border cursor-pointer select-none',
-                'motion-safe:transition-[background-color,color,border-color] motion-safe:duration-[var(--transition-normal)]',
+                'transition-colors duration-[var(--transition-normal)]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 filter.enabled
                   ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-sm'

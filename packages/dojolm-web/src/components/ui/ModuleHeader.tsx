@@ -30,7 +30,7 @@ export function ModuleHeader({ title, subtitle, icon: Icon, actions }: ModuleHea
           <Icon className="h-5 w-5 text-[var(--dojo-primary)]" aria-hidden="true" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-page-title text-[var(--foreground)]">{title}</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">{title}</h2>
           <p className="text-sm text-muted-foreground max-w-2xl">{subtitle}</p>
         </div>
       </div>

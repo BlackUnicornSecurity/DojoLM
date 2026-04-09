@@ -120,7 +120,7 @@ export function LLMBatchProgress() {
           const safeTotal = batch.totalTests > 0 ? batch.totalTests : 1
           const pct = Math.round((batch.completedTests / safeTotal) * 100)
           return (
-            <div key={batch.id} className="space-y-2 rounded-xl border border-[var(--border-subtle)] surface-base p-3">
+            <div key={batch.id} className="space-y-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium truncate flex-1">{batch.name || batch.id}</span>
                 <div className="flex items-center gap-1.5">

@@ -115,7 +115,7 @@ export function ModelList() {
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="space-y-3">
           <div>
-            <h3 className="text-page-title text-[var(--foreground)]">Configured Models ({models.length})</h3>
+            <h3 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">Configured Models ({models.length})</h3>
             <p className="text-sm text-muted-foreground">
               Manage provider coverage, test readiness, and risk posture from one command surface.
             </p>
@@ -295,11 +295,11 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-lg border border-[var(--border-subtle)] surface-base p-3">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
             <p className="text-label">Updated</p>
             <p className="mt-2 text-sm font-medium text-[var(--foreground)]">{updatedLabel}</p>
           </div>
-          <div className="rounded-lg border border-[var(--border-subtle)] surface-base p-3">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
             <p className="text-label">Max Tokens</p>
             <p className="mt-2 text-sm font-medium text-[var(--foreground)]">
               {model.maxTokens ? model.maxTokens.toLocaleString() : 'Default'}
@@ -307,7 +307,7 @@ function ModelCard({ model, onEdit, onDelete, onTest, onToggle, isTesting, testR
           </div>
         </div>
 
-        <div className={`rounded-lg border border-[var(--border-subtle)] surface-base p-3 ${!model.enabled ? 'opacity-70' : ''}`}>
+        <div className={`rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 ${!model.enabled ? 'opacity-70' : ''}`}>
           {testResult ? (
             <div className={`flex items-center gap-1 text-xs ${testResult.success ? 'text-green-500' : 'text-red-500'}`}>
               {testResult.success ? (

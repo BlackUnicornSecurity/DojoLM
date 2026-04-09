@@ -101,7 +101,7 @@ export function GuardModeSelector() {
                 glow={isActive ? 'accent' : 'subtle'}
                 className={cn(
                   'p-4 h-full',
-                  'motion-safe:transition-[background-color,border-color]',
+                  'transition-colors duration-[var(--transition-normal)]',
                   isActive
                     ? 'bg-[var(--dojo-primary)]/10 border-[var(--dojo-primary)]/50'
                     : 'hover:bg-[var(--bg-quaternary)]'

@@ -66,8 +66,8 @@ export function MobileNav() {
               >
                 <span
                   className={cn(
-                    'flex h-9 w-9 items-center justify-center rounded-xl border border-transparent',
-                    'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+                    'flex h-9 w-9 items-center justify-center rounded-lg border border-transparent',
+                    'transition-colors duration-[var(--transition-fast)]',
                     isActive
                       ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
                       : 'text-[var(--text-tertiary)]'
@@ -95,8 +95,8 @@ export function MobileNav() {
           >
             <span
               className={cn(
-                'flex h-9 w-9 items-center justify-center rounded-xl border border-transparent',
-                'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+                'flex h-9 w-9 items-center justify-center rounded-lg border border-transparent',
+                'transition-colors duration-[var(--transition-fast)]',
                 (moreOpen || isMoreActive)
                   ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
                   : 'text-[var(--text-tertiary)]'
