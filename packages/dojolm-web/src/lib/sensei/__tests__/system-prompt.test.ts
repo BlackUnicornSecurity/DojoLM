@@ -121,10 +121,15 @@ describe('getSystemMessageBuilder', () => {
 });
 
 describe('MODULE_CONTEXT', () => {
-  it('covers all 12 NavIds', () => {
+  // Train 2 PR-4b.6 (2026-04-09): 'llm' NavId renamed to 'jutsu' as part of the
+  // LLM Dashboard decomposition. MODULE_CONTEXT now has entries for the
+  // promoted NavIds from PR-4b.1 (mitsuke, dna, kagami, arena, buki) too.
+  it('covers all canonical NavIds', () => {
     const expectedIds = [
-      'dashboard', 'scanner', 'armory', 'llm', 'guard', 'compliance',
+      'dashboard', 'scanner', 'armory', 'jutsu', 'guard', 'compliance',
       'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
+      // Train 2 PR-4b.1 + PR-4b.2 additions:
+      'mitsuke', 'dna', 'kagami', 'arena', 'buki',
     ];
     for (const id of expectedIds) {
       expect(MODULE_CONTEXT).toHaveProperty(id);

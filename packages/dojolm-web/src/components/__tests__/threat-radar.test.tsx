@@ -34,6 +34,6 @@ import { ThreatRadar } from '../dashboard/widgets/ThreatRadar'
 
 describe('ThreatRadar', () => {
   it('renders without crashing', () => { expect(render(<ThreatRadar />).container).toBeTruthy() })
-  it('displays title', () => { render(<ThreatRadar />); expect(screen.getByText(/Threat|Radar/i)).toBeInTheDocument() })
+  it('displays title', () => { render(<ThreatRadar />); expect(screen.getAllByText(/Threat|Radar/i).length).toBeGreaterThan(0) })
   it('wraps in WidgetCard', () => { render(<ThreatRadar />); expect(screen.getByTestId('widget-card')).toBeInTheDocument() })
 })

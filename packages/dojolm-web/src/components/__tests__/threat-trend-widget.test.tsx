@@ -34,6 +34,6 @@ import { ThreatTrendWidget } from '../dashboard/widgets/ThreatTrendWidget'
 
 describe('ThreatTrendWidget', () => {
   it('renders without crashing', () => { expect(render(<ThreatTrendWidget />).container).toBeTruthy() })
-  it('displays title', () => { render(<ThreatTrendWidget />); expect(screen.getByText(/Threat|Trend/i)).toBeInTheDocument() })
+  it('displays title', () => { render(<ThreatTrendWidget />); expect(screen.getAllByText(/Threat|Trend/i).length).toBeGreaterThan(0) })
   it('wraps in WidgetCard', () => { render(<ThreatTrendWidget />); expect(screen.getByTestId('widget-card')).toBeInTheDocument() })
 })
