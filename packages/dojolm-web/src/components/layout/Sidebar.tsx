@@ -1,263 +1,129 @@
 /**
  * File: Sidebar.tsx
- * Purpose: Left sidebar navigation with collapse toggle, tooltips, and activity feed
- * Story: TPI-UI-001-03, KASHIWA-P7-S70, TPI-UIP-08, NODA-3 Story 2.2
- * Index:
- * - UnreadBadge component (line 20) — isolated state subscriber
- * - Sidebar component (line 38)
+ * Purpose: Left sidebar navigation — flat BUCC-pattern rewrite.
+ * Story: TPI-UI-001-03, KASHIWA-P7-S70, TPI-UIP-08, NODA-3 Story 2.2,
+ *        Train 1 PR-2 (263 → ~110 lines, BUCC-flat rewrite)
+ *
+ * Rewrite notes (2026-04-09):
+ * - Flat nav items (no icon containers, no per-item shadows, no hover description row)
+ * - Active state: bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary-lg)] (overrides brand tint)
+ * - Activity feed → relocated to TopBar drawer
+ * - Sensei toggle → relocated to TopBar
+ * - Admin → demoted from dedicated bottom button to regular nav item
+ * - BUG-006 --sidebar-current runtime sync → deleted per stakeholder decision
+ *   (new topbar-based shell uses fixed --sidebar-width for content padding)
+ * - md:max-lg:group-hover auto-expand → deleted
+ * - Single icon-only collapse button at bottom
  */
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
+import type { NavId, NavItem } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
-import { useActivityState } from '@/lib/contexts/ActivityContext'
 import { useModuleVisibility } from '@/lib/contexts/ModuleVisibilityContext'
-import { PanelLeftClose, PanelLeft, ChevronDown, Bot } from 'lucide-react'
+import { PanelLeftClose, PanelLeft } from 'lucide-react'
 import { SidebarHeader } from './SidebarHeader'
-import { ActivityFeed } from '@/components/ui/ActivityFeed'
 
-// Dashboard is ungrouped (top), admin excluded (has dedicated button at bottom)
+// Dashboard is ungrouped (top). Admin is ungrouped (bottom, above collapse toggle).
 const dashboardItem = NAV_ITEMS.find(item => item.id === 'dashboard')!
 const adminItem = NAV_ITEMS.find(item => item.id === 'admin')
 const groupedItems = NAV_ITEMS.filter(item => 'group' in item)
-
-/** Isolated component that subscribes to activity state for unread count.
- *  Prevents Sidebar from re-rendering on every activity event. */
-function UnreadBadge() {
-  const { events } = useActivityState()
-  const unreadCount = events.filter(e => !e.read).length
-  if (unreadCount === 0) return null
-  return (
-    <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold bg-[var(--dojo-primary)] text-white rounded-full">
-      {unreadCount > 9 ? '9+' : unreadCount}
-    </span>
-  )
-}
 
 export function Sidebar() {
   const { activeTab, setActiveTab } = useNavigation()
   const { isVisible } = useModuleVisibility()
   const [collapsed, setCollapsed] = useState(false)
-  const [activityExpanded, setActivityExpanded] = useState(true)
 
-  // BUG-006 fix: sync collapsed state to CSS variable so main content
-  // padding can respond to the toggle (not just breakpoints)
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--sidebar-current',
-      collapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)'
-    )
-    return () => {
-      document.documentElement.style.removeProperty('--sidebar-current')
-    }
-  }, [collapsed])
-
-  const renderNavItem = (item: typeof NAV_ITEMS[number]) => {
+  const renderNavItem = (item: NavItem) => {
     const Icon = item.icon
     const isActive = activeTab === item.id
     return (
       <button
         key={item.id}
-        onClick={() => setActiveTab(item.id)}
-        className={cn(
-          "group/nav flex items-center gap-3 px-4 py-3 mx-2 rounded-lg relative w-[calc(100%-16px)]",
-          "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
-          isActive
-            ? "nav-item-active"
-            : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
-        )}
+        onClick={() => setActiveTab(item.id as NavId)}
+        data-nav-id={item.id}
         title={collapsed ? item.label : undefined}
         aria-label={item.label}
         aria-current={isActive ? 'page' : undefined}
-      >
-        <span className={cn(
-          'flex h-9 w-9 items-center justify-center rounded-xl border flex-shrink-0',
-          'motion-safe:transition-[background-color,border-color,color,transform] motion-safe:duration-[var(--transition-fast)]',
+        className={cn(
+          'mb-0.5 flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-colors w-full',
           isActive
-            ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
-            : 'bg-[var(--bg-secondary)] border-transparent text-muted-foreground'
-        )}>
-          <Icon className={cn("w-5 h-5 flex-shrink-0", isActive && "nav-item-active-icon motion-safe:translate-x-[1px]")} aria-hidden="true" />
-        </span>
-        <div
-          aria-hidden="true"
-          className={cn(
-            "min-w-0 overflow-hidden",
-            "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
-            collapsed
-              ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-              : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
-          )}
-        >
-          <div className="font-medium whitespace-nowrap truncate">{item.label}</div>
-          <div className="text-xs text-[var(--text-tertiary)] truncate opacity-0 max-h-0 overflow-hidden group-hover/nav:opacity-100 group-hover/nav:max-h-5 motion-safe:transition-[opacity,max-height] motion-safe:duration-[var(--transition-normal)]">
-            {item.description}
-          </div>
-        </div>
+            ? 'bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary-lg)]'
+            : 'text-[var(--muted-foreground)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--foreground)]',
+          collapsed && 'justify-center'
+        )}
+      >
+        <Icon className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
+        {!collapsed && <span className="flex-1 text-left truncate">{item.label}</span>}
       </button>
     )
   }
 
-  if (!adminItem) return null
-  const AdminIcon = adminItem.icon
-
   return (
-    <aside className={cn(
-      "group hidden md:flex fixed left-0 top-0 h-screen bg-[var(--background)] flex-col z-[var(--z-sidebar)] shadow-[1px_0_0_0_var(--border-subtle)]",
-      "motion-safe:transition-[width] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-in-out",
-      collapsed ? "w-[var(--sidebar-collapsed)]" : "w-[var(--sidebar-width)]",
-      "md:max-lg:w-[var(--sidebar-collapsed)] md:max-lg:hover:w-[var(--sidebar-width)]"
-    )}>
-      {/* Header - co-branded */}
+    <aside
+      className={cn(
+        'fixed left-0 top-0 z-[var(--z-sidebar)] hidden h-screen flex-col border-r border-[var(--border-subtle)] bg-[var(--background)] md:flex',
+        'transition-[width] duration-200 ease-in-out',
+        collapsed ? 'w-[var(--sidebar-collapsed)]' : 'w-[var(--sidebar-width)]'
+      )}
+      aria-label="Primary navigation"
+    >
+      {/* Co-branded flat header */}
       <SidebarHeader collapsed={collapsed} />
 
-      {/* Navigation — grouped by function (Story 4.1) */}
-      <nav className="flex-1 py-4 overflow-y-auto" aria-label="Main navigation">
-        {/* Dashboard — always visible at top, ungrouped */}
+      {/* Main nav — Dashboard ungrouped at top, then groups, then Admin at bottom */}
+      <nav className="flex-1 overflow-y-auto px-2 py-3" aria-label="Main navigation">
+        {/* Dashboard (ungrouped, always visible at top) */}
         {renderNavItem(dashboardItem)}
 
         {/* Grouped sections */}
-        {NAV_GROUPS.map((group) => {
-          const items = groupedItems.filter(item => 'group' in item && item.group === group.id && isVisible(item.id))
+        {NAV_GROUPS.map((group, gi) => {
+          const items = groupedItems.filter(
+            item => 'group' in item && item.group === group.id && isVisible(item.id)
+          )
           if (items.length === 0) return null
           return (
-            <div key={group.id} className="mt-4 first:mt-2">
-              <div className="w-6 h-px bg-[var(--border-subtle)] mx-6 mb-1" aria-hidden="true" />
-              <span
-                aria-hidden={collapsed ? true : undefined}
-                className={cn(
-                  "mx-4 mt-1 inline-flex rounded-full border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-[var(--text-tertiary)] font-semibold overflow-hidden",
-                  "motion-safe:transition-[opacity,max-height] motion-safe:ease-in-out",
-                  collapsed
-                    ? "opacity-0 max-h-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-8 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-8"
-                    : "opacity-100 max-h-8 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
-                )}
-              >
-                {group.label}
-              </span>
+            <div key={group.id}>
+              {/* Group separator + label */}
+              <div className="mx-2 my-2 border-t border-[var(--border-subtle)]" aria-hidden="true" />
+              {!collapsed && (
+                <p className="mb-1 px-2 text-[10px] font-medium uppercase tracking-widest text-[var(--text-tertiary)]">
+                  {group.label}
+                </p>
+              )}
               {items.map(renderNavItem)}
             </div>
           )
         })}
+
+        {/* Admin (ungrouped, always visible at bottom of nav list) */}
+        {adminItem && isVisible('admin') && (
+          <>
+            <div
+              className="mx-2 my-2 border-t border-[var(--border-subtle)]"
+              aria-hidden="true"
+            />
+            {renderNavItem(adminItem)}
+          </>
+        )}
       </nav>
 
-      {/* Activity Feed - collapsible section */}
-      <div className={cn(
-        "border-t border-[var(--overlay-subtle)] overflow-hidden",
-        "motion-safe:transition-[opacity,max-height] motion-safe:duration-[var(--transition-normal)]",
-        collapsed
-          ? "opacity-0 max-h-0 md:max-lg:group-hover:opacity-100 md:max-lg:group-hover:max-h-96 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-focus-within:max-h-96"
-          : "opacity-100 max-h-96"
-      )}>
-        <button
-          onClick={() => setActivityExpanded(!activityExpanded)}
-          className="flex items-center justify-between w-full px-4 py-2 text-xs uppercase tracking-wider text-[var(--text-tertiary)] font-semibold hover:text-muted-foreground motion-safe:transition-colors"
-          aria-expanded={activityExpanded}
-          aria-controls="activity-feed-panel"
-        >
-          <span className="flex items-center gap-2">
-            Activity
-            <UnreadBadge />
-          </span>
-          <ChevronDown
-            className={cn(
-              "w-3 h-3 motion-safe:transition-transform motion-safe:duration-[var(--transition-fast)]",
-              activityExpanded ? "rotate-0" : "-rotate-90"
-            )}
-            aria-hidden="true"
-          />
-        </button>
-        <div
-          id="activity-feed-panel"
-          className={cn(
-            "overflow-hidden motion-safe:transition-[max-height,opacity] motion-safe:duration-[var(--transition-normal)] motion-safe:ease-in-out",
-            activityExpanded ? "max-h-48 opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
-          )}
-        >
-          <ActivityFeed maxVisible={5} />
-        </div>
-      </div>
-
-      {/* Bottom section — Admin + Collapse */}
-      <div className="p-2 border-t border-[var(--overlay-subtle)]">
-        {isVisible('admin') && (
-          <button
-            onClick={() => setActiveTab('admin')}
-            aria-label="Admin"
-            aria-current={activeTab === 'admin' ? 'page' : undefined}
-            title={collapsed ? 'Admin' : undefined}
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
-              "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
-              activeTab === 'admin'
-                ? "nav-item-active"
-                : "text-muted-foreground hover:text-[var(--foreground)] hover:bg-[var(--overlay-subtle)]"
-            )}
-          >
-            <span className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-xl border flex-shrink-0',
-              activeTab === 'admin'
-                ? 'bg-[var(--bu-electric-subtle)] border-[var(--bu-electric-muted)] text-[var(--foreground)] shadow-[0_6px_16px_rgba(91,141,239,0.12)]'
-                : 'bg-[var(--bg-secondary)] border-transparent text-muted-foreground'
-            )}>
-              <AdminIcon className={cn("w-5 h-5 flex-shrink-0", activeTab === 'admin' && "nav-item-active-icon motion-safe:translate-x-[1px]")} aria-hidden="true" />
-            </span>
-            <span
-              aria-hidden="true"
-              className={cn(
-                "font-medium whitespace-nowrap overflow-hidden",
-                "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
-                collapsed
-                  ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-                  : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
-              )}
-            >
-              Admin
-            </span>
-          </button>
+      {/* Collapse toggle (icon-only) */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="flex h-10 items-center justify-center border-t border-[var(--border-subtle)] text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-tertiary)] hover:text-[var(--foreground)]"
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? (
+          <PanelLeft className="h-4 w-4" aria-hidden="true" />
+        ) : (
+          <PanelLeftClose className="h-4 w-4" aria-hidden="true" />
         )}
-        {/* Sensei AI toggle (SH8.1) */}
-        <button
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('sensei-toggle'))
-          }}
-          className={cn(
-            "flex items-center gap-3 px-4 py-3 mx-2 w-[calc(100%-16px)] rounded-lg",
-            "motion-safe:transition-all motion-safe:duration-[var(--transition-normal)]",
-            "text-muted-foreground hover:text-[var(--primary)] hover:bg-[var(--overlay-subtle)]"
-          )}
-          aria-label="Open Sensei AI assistant"
-          title={collapsed ? 'Sensei' : undefined}
-        >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent bg-[var(--bg-secondary)] text-muted-foreground">
-            <Bot className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-          </span>
-          <span
-            aria-hidden="true"
-            className={cn(
-              "font-medium whitespace-nowrap overflow-hidden",
-              "motion-safe:transition-[opacity,width] motion-safe:ease-in-out",
-              collapsed
-                ? "opacity-0 w-0 motion-safe:duration-100 md:max-lg:group-hover:opacity-100 md:max-lg:group-focus-within:opacity-100 md:max-lg:group-hover:w-auto md:max-lg:group-focus-within:w-auto"
-                : "opacity-100 motion-safe:duration-[var(--transition-normal)] motion-safe:delay-75"
-            )}
-          >
-            Sensei
-          </span>
-        </button>
-        {/* Collapse toggle — icon-only with tooltip */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:flex items-center justify-center px-4 py-3 w-full rounded-lg text-[var(--text-tertiary)] hover:text-[var(--foreground)] hover:bg-[var(--bg-quaternary)] motion-safe:transition-colors"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? <PanelLeft className="w-5 h-5 flex-shrink-0" aria-hidden="true" /> : <PanelLeftClose className="w-5 h-5 flex-shrink-0" aria-hidden="true" />}
-        </button>
-      </div>
+      </button>
     </aside>
   )
 }

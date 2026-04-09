@@ -192,12 +192,11 @@ vi.mock('@/components/sensei/SenseiDrawer', () => ({
   SenseiDrawer: () => <div data-testid="sensei-drawer">Sensei</div>,
 }))
 
-vi.mock('lucide-react', () => ({
-  AlertTriangle: () => <span />,
-  ScanLine: () => <span />,
-  ShieldAlert: () => <span />,
-  CheckCircle: () => <span />,
-  Cpu: () => <span />,
+// Proxy mock covers all icon imports transitively (e.g. new TopBar adds Activity/Bot,
+// Sidebar PR-2 rewrite adds PanelLeft/PanelLeftClose). Prevents "No 'X' export is defined
+// on the 'lucide-react' mock" failures per lessonslearned.md (2026-03-21 / 2026-04-09).
+vi.mock('lucide-react', () => new Proxy({}, {
+  get: (_target, name) => (props: Record<string, unknown>) => <span data-testid={`icon-${String(name)}`} {...props} />,
 }))
 
 // ---------------------------------------------------------------------------

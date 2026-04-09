@@ -125,24 +125,8 @@ describe('Sidebar', () => {
     expect(screen.getByRole('button', { name: /expand sidebar/i })).toBeInTheDocument()
   })
 
-  it('SB-010: renders the Activity toggle button with aria-expanded', () => {
-    render(<Sidebar />)
-    const activityBtn = screen.getByRole('button', { name: /activity/i })
-    expect(activityBtn).toHaveAttribute('aria-expanded', 'true')
-  })
-
-  it('SB-011: toggling Activity section collapses the activity feed', () => {
-    render(<Sidebar />)
-    const activityBtn = screen.getByRole('button', { name: /activity/i })
-    fireEvent.click(activityBtn)
-    expect(activityBtn).toHaveAttribute('aria-expanded', 'false')
-  })
-
-  it('SB-012: renders unread badge with count from activity context', () => {
-    render(<Sidebar />)
-    // 2 unread events in our mock
-    expect(screen.getByText('2')).toBeInTheDocument()
-  })
+  // SB-010..SB-012: Activity feed behavior removed from Sidebar and relocated to
+  // TopBar drawer in Train 1 PR-2. New coverage lives in topbar.test.tsx.
 
   it('SB-013: renders grouped navigation sections', () => {
     render(<Sidebar />)
@@ -160,22 +144,7 @@ describe('Sidebar', () => {
     expect(scannerBtn).not.toHaveAttribute('aria-current')
   })
 
-  // ---------------------------------------------------------------------------
-  // BUG-006: Collapsed sidebar sets CSS variable
-  // ---------------------------------------------------------------------------
-
-  it('SB-015: collapsed sidebar sets --sidebar-current CSS variable', () => {
-    render(<Sidebar />)
-    const collapseBtn = screen.getByRole('button', { name: /collapse sidebar/i })
-    fireEvent.click(collapseBtn)
-    const value = document.documentElement.style.getPropertyValue('--sidebar-current')
-    expect(value).toBe('var(--sidebar-collapsed)')
-  })
-
-  it('SB-016: expanded sidebar sets --sidebar-current to full width', () => {
-    render(<Sidebar />)
-    // Default is expanded
-    const value = document.documentElement.style.getPropertyValue('--sidebar-current')
-    expect(value).toBe('var(--sidebar-width)')
-  })
+  // SB-015..SB-016: BUG-006 --sidebar-current runtime CSS variable workaround
+  // removed in Train 1 PR-2 per stakeholder decision. New shell uses fixed
+  // var(--sidebar-width) for content padding, no runtime sync needed.
 })

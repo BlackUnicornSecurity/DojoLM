@@ -13,6 +13,7 @@ import { useActivityLogger } from '@/lib/contexts/ActivityContext'
 import { Providers } from '@/lib/Providers'
 import { NAV_ITEMS } from '@/lib/constants'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { TopBar } from '@/components/layout/TopBar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ScannerInput } from '@/components/scanner'
@@ -612,20 +613,25 @@ export default function Home() {
         {/* Desktop/Tablet Sidebar (hidden on mobile) */}
         <Sidebar />
 
+        {/* Desktop/Tablet TopBar — global chrome (Activity drawer, Sensei, Notifications) */}
+        <TopBar />
+
         {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
         <MobileNav />
 
         {/* Sensei AI Assistant Drawer (SH8.1) */}
         <ConnectedSenseiDrawer />
 
-        {/* Main Content - offset for sidebar */}
+        {/* Main Content — offset for sidebar (left) and top bar (top).
+         *  Train 1 PR-2: removed BUG-006 --sidebar-current runtime variable.
+         *  Fixed sidebar width → fixed content padding, no runtime sync. */}
         <main
           id="main-content"
           aria-label="Main content"
           className={cn(
-            "pt-8 pb-16 md:pb-8 pr-6 pl-6",
-            "md:pl-[calc(var(--sidebar-collapsed)+24px)] lg:pl-[calc(var(--sidebar-current,var(--sidebar-width))+24px)]",
-            "motion-safe:transition-[padding-left] motion-safe:duration-[var(--transition-normal)]"
+            "pb-16 md:pb-8 pr-6 pl-6",
+            "pt-[calc(var(--header-height)+16px)] md:pt-[calc(var(--header-height)+24px)]",
+            "md:pl-[calc(var(--sidebar-width)+24px)]"
           )}
         >
           <ScreenReaderAnnouncer />
