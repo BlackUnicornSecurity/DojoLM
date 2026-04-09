@@ -969,6 +969,13 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'navigate_to',
     'explain_feature',
   ],
+  // Train 2 PR-4b.2: Payload Lab (Buki) scaffolded shell
+  buki: [
+    'scan_format',
+    'scan_text',
+    'explain_feature',
+    'navigate_to',
+  ],
 };
 
 /**

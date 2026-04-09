@@ -81,6 +81,9 @@ const MODULE_CONTEXT: Readonly<Record<NavId, string>> = {
     'User is in Amaterasu DNA — help explore attack lineage, mutation trees, and family clusters.',
   kagami:
     'User is on Kagami — help run fingerprint probes, compare model behaviors, review drift.',
+  // Train 2 PR-4b.2: Payload Lab (Buki) scaffolded shell
+  buki:
+    'User is in Payload Lab (Buki) — help browse payloads, run SAGE generator, run fuzzer.',
   admin:
     'User is on Admin Settings — help with configuration, API keys, user management, scoreboard.',
 };

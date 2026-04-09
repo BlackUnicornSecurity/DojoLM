@@ -81,9 +81,16 @@ export const NAV_ITEMS = [
   {
     id: 'armory',
     label: 'Armory',
+    icon: Warehouse,
+    description: 'Fixtures, payloads, and comparison workflows (legacy — merges into Payload Lab in PR-4b.3)',
+    group: 'test' as NavGroup,
+  },
+  {
+    id: 'buki',
+    label: 'Buki',
     functionalLabel: 'Payload Lab',
     icon: Warehouse,
-    description: 'Fixtures, payloads, and comparison workflows',
+    description: 'Payload catalog, synthetic generator, and fuzzer',
     group: 'test' as NavGroup,
   },
   {

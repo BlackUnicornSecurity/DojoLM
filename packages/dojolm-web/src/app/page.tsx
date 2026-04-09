@@ -50,6 +50,8 @@ const MitsukeLibrary = lazy(() => import('@/components/strategic').then(m => ({ 
 const AttackDNAExplorer = lazy(() => import('@/components/attackdna').then(m => ({ default: m.AttackDNAExplorer })))
 const KagamiPanel = lazy(() => import('@/components/kagami').then(m => ({ default: m.KagamiPanel })))
 const ArenaBrowser = lazy(() => import('@/components/strategic').then(m => ({ default: m.ArenaBrowser })))
+// Train 2 PR-4b.2 — Payload Lab (Buki) scaffolded shell
+const PayloadLab = lazy(() => import('@/components/buki').then(m => ({ default: m.PayloadLab })))
 // Arena's MatchCreationWizard requires LLMModelProvider context
 import { LLMModelProvider } from '@/lib/contexts/LLMModelContext'
 
@@ -316,6 +318,17 @@ function PageContent() {
               <LLMModelProvider>
                 <ArenaBrowser />
               </LLMModelProvider>
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
+
+      {/* Train 2 PR-4b.2 — Payload Lab (Buki) scaffolded shell */}
+      {activeTab === 'buki' && (
+        <div className="motion-safe:animate-fade-in">
+          <ErrorBoundary fallbackTitle="Payload Lab Error" fallbackDescription="Unable to load Payload Lab. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <PayloadLab />
             </Suspense>
           </ErrorBoundary>
         </div>
