@@ -16,7 +16,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import {
@@ -51,6 +51,16 @@ import { COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import { baissControlsToCoverageEntries } from '@/lib/data/baiss-framework'
 import type { CoverageEntry } from '@/lib/types'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+// Train 2 PR-4b.6 part 5 — Leaderboard + AnalyticsWorkspace relocated from LLM
+// Dashboard into Bushido Book Insights tab so audit users see performance-over-time
+// compliance evidence inside their primary workflow.
+import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts'
+const LeaderboardLazy = lazy(() =>
+  import('@/components/llm').then(m => ({ default: m.Leaderboard }))
+)
+const AnalyticsWorkspaceLazy = lazy(() =>
+  import('@/components/llm').then(m => ({ default: m.AnalyticsWorkspace }))
+)
 
 // --- Constants ---
 
@@ -603,18 +613,28 @@ export default function ComplianceCenter() {
               <FrameworkNavigator />
             </TabsContent>
 
-            {/* Insights: placeholder — PR-4b.6 will mount Leaderboard + AnalyticsWorkspace here */}
-            <TabsContent value="insights" className="mt-0">
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[var(--border-subtle)] py-16 text-center">
-                <BarChart3 className="h-10 w-10 text-[var(--text-tertiary)]" aria-hidden="true" />
-                <h3 className="mt-3 text-base font-semibold text-[var(--foreground)]">
-                  Insights — coming soon
-                </h3>
-                <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                  Performance-over-time compliance evidence. Leaderboard and Analytics will move
-                  here from the LLM Dashboard in PR-4b.6 to give audit users a unified view.
-                </p>
-              </div>
+            {/* Insights: Leaderboard + AnalyticsWorkspace relocated from LLM Dashboard
+             *  (PR-4b.6 part 5). Gives audit users performance-over-time evidence
+             *  inside their primary workflow. Wrapped in the LLM provider trio so the
+             *  relocated components can consume their contexts without mounting the
+             *  old LLMDashboard shell. */}
+            <TabsContent value="insights" className="mt-0 space-y-8">
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center py-16" aria-busy="true">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+                  </div>
+                }
+              >
+                <LLMModelProvider>
+                  <LLMExecutionProvider>
+                    <LLMResultsProvider>
+                      <LeaderboardLazy />
+                      <AnalyticsWorkspaceLazy />
+                    </LLMResultsProvider>
+                  </LLMExecutionProvider>
+                </LLMModelProvider>
+              </Suspense>
             </TabsContent>
 
             {/* Audit: immutable audit trail. The legacy ComplianceDashboard
