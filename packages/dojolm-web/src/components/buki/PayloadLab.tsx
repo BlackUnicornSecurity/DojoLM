@@ -14,15 +14,32 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Warehouse, Sparkles, Shuffle } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { useNavigation } from '@/lib/NavigationContext'
+import { Button } from '@/components/ui/button'
+
+// Train 2 PR-4b.3 — SAGE relocated from Kumite into Payload Lab Generator tab
+const SAGEDashboard = lazy(() =>
+  import('@/components/strategic').then(m => ({ default: m.SAGEDashboard }))
+)
 
 type BukiTab = 'payloads' | 'generator' | 'fuzzer'
 
+/** Loading fallback for lazy sub-tabs */
+function TabLoading() {
+  return (
+    <div className="flex items-center justify-center py-16" aria-busy="true">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+    </div>
+  )
+}
+
 export function PayloadLab() {
   const [activeTab, setActiveTab] = useState<BukiTab>('payloads')
+  const { setActiveTab: setNavTab } = useNavigation()
 
   return (
     <div className="space-y-6">
@@ -53,20 +70,25 @@ export function PayloadLab() {
           </TabsTrigger>
         </TabsList>
 
+        {/* Payloads: delegates to the legacy Armory view (back-compat)
+         *  until ArmoryContent is extracted from page.tsx in a follow-up. */}
         <TabsContent value="payloads" className="mt-6">
           <EmptyState
             icon={Warehouse}
-            title="Payloads — coming soon"
-            description="Fixtures, payloads, and comparison workflows will move here from Armory in Train 2 PR-4b.3."
+            title="Payloads live in Armory (for now)"
+            description="Fixtures, payloads, and comparison workflows are currently in the Armory tab. Full merge into Payload Lab requires extracting ArmoryContent from page.tsx — tracked as a PR-4b.3 follow-up."
+            action={{
+              label: 'Open Armory',
+              onClick: () => setNavTab('armory'),
+            }}
           />
         </TabsContent>
 
+        {/* Generator: SAGE Dashboard relocated from Kumite (PR-4b.3) */}
         <TabsContent value="generator" className="mt-6">
-          <EmptyState
-            icon={Sparkles}
-            title="Generator — coming soon"
-            description="SAGE (Synthetic Attack Generator Engine) will move here from Kumite in Train 2 PR-4b.3."
-          />
+          <Suspense fallback={<TabLoading />}>
+            <SAGEDashboard />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="fuzzer" className="mt-6">
