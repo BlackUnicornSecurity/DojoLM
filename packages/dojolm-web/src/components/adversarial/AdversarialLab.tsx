@@ -40,6 +40,7 @@ import {
   ArrowRight,
   BookOpen,
   Bot,
+  FileCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -58,17 +59,23 @@ import { ProtocolFuzzPanel } from '../scanner/ProtocolFuzzPanel'
 import { AgenticLab } from '../agentic/AgenticLab'
 import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
+import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
 // Train 2 PR-4b.5 — Sengoku relocated into Atemi Lab as Campaigns sub-tab
 const SengokuDashboardLazy = lazy(() =>
   import('@/components/sengoku').then(m => ({ default: m.SengokuDashboard }))
+)
+// Train 2 PR-4b.6 part 4 — TestExecution relocated from LLMDashboard → Atemi Test Cases.
+// Wrapped in its required providers so AdversarialLab itself stays provider-free.
+const TestExecutionLazy = lazy(() =>
+  import('@/components/llm').then(m => ({ default: m.TestExecution }))
 )
 
 // ---------------------------------------------------------------------------
 // Types & Configuration
 // ---------------------------------------------------------------------------
 
-type AtemiTab = 'attack-tools' | 'skills' | 'playbooks' | 'mcp' | 'protocol-fuzz' | 'agentic' | 'webmcp' | 'campaigns'
+type AtemiTab = 'attack-tools' | 'skills' | 'playbooks' | 'mcp' | 'protocol-fuzz' | 'agentic' | 'webmcp' | 'campaigns' | 'test-cases'
 
 type AttackMode = 'passive' | 'basic' | 'advanced' | 'aggressive'
 
@@ -937,11 +944,11 @@ export function AdversarialLab({
       <Tabs
         value={activeTab}
         onValueChange={(v) => {
-          const valid: AtemiTab[] = ['attack-tools', 'skills', 'playbooks', 'mcp', 'protocol-fuzz', 'agentic', 'webmcp', 'campaigns']
+          const valid: AtemiTab[] = ['attack-tools', 'skills', 'playbooks', 'mcp', 'protocol-fuzz', 'agentic', 'webmcp', 'campaigns', 'test-cases']
           if (valid.includes(v as AtemiTab)) setActiveTab(v as AtemiTab)
         }}
       >
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 xl:grid-cols-9 w-full h-auto gap-1 bg-muted/50 p-1 rounded-lg" aria-label="Atemi Lab sections">
           <TabsTrigger value="attack-tools" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Swords className="h-3 w-3" aria-hidden="true" />
             <span className="hidden sm:inline">Attack Tools</span>
@@ -975,6 +982,11 @@ export function AdversarialLab({
           <TabsTrigger value="campaigns" className="gap-1 text-xs min-h-[44px] rounded-md">
             <Flame className="h-3 w-3" aria-hidden="true" />
             <span>Campaigns</span>
+          </TabsTrigger>
+          <TabsTrigger value="test-cases" className="gap-1 text-xs min-h-[44px] rounded-md">
+            <FileCheck className="h-3 w-3" aria-hidden="true" />
+            <span className="hidden sm:inline">Test Cases</span>
+            <span className="sm:hidden">Tests</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1335,6 +1347,23 @@ export function AdversarialLab({
             }
           >
             <SengokuDashboardLazy />
+          </Suspense>
+        </TabsContent>
+
+        {/* Test Cases Tab — TestExecution relocated from LLM Dashboard (PR-4b.6 part 4) */}
+        <TabsContent value="test-cases" className="mt-4">
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-16" aria-busy="true">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+              </div>
+            }
+          >
+            <LLMModelProvider>
+              <LLMExecutionProvider>
+                <TestExecutionLazy />
+              </LLMExecutionProvider>
+            </LLMModelProvider>
           </Suspense>
         </TabsContent>
       </Tabs>
