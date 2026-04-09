@@ -2,10 +2,11 @@
  * File: compliance-h83.test.tsx
  * Purpose: Tests for H8.3 — Start Compliance Check Flow
  * Verifies:
- * - "Test in Model Lab" button renders per framework
- * - Clicking stores framework ID in localStorage
- * - Clicking calls setActiveTab('jutsu')
- * - TestExecution reads and cleans up localStorage on mount
+ * - "Test in Atemi Lab" button renders per framework
+ * - Clicking stores framework ID in localStorage (jutsu-compliance-framework)
+ * - Clicking calls setActiveTab('adversarial')
+ * - TestExecution (inside Atemi Test Cases) reads and cleans up localStorage on mount
+ * Note: PR-4b.6 moved TestExecution from LLM Dashboard to Atemi Lab Test Cases tab.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -177,10 +178,10 @@ afterEach(() => {
 import ComplianceCenter from '../compliance/ComplianceCenter'
 
 // ===========================================================================
-// H8.3-01: "Test in Model Lab" button renders per framework
+// H8.3-01: "Test in Atemi Lab" button renders per framework
 // ===========================================================================
 describe('H8.3-01: Button renders in OverviewPanel', () => {
-  it('renders "Test in Model Lab" button for the selected framework', async () => {
+  it('renders "Test in Atemi Lab" button for the selected framework', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
@@ -190,7 +191,7 @@ describe('H8.3-01: Button renders in OverviewPanel', () => {
 
     const btn = screen.getByRole('button', { name: /Start compliance check for OWASP LLM Top 10/i })
     expect(btn).toBeInTheDocument()
-    expect(btn).toHaveTextContent('Test in Model Lab')
+    expect(btn).toHaveTextContent('Test in Atemi Lab')
   })
 
   it('renders with the correct data-testid', async () => {
@@ -209,7 +210,7 @@ describe('H8.3-01: Button renders in OverviewPanel', () => {
 // H8.3-02: Clicking stores framework ID in localStorage
 // ===========================================================================
 describe('H8.3-02: Clicking stores framework ID in localStorage', () => {
-  it('sets llm-compliance-framework in localStorage on click', async () => {
+  it('sets jutsu-compliance-framework in localStorage on click', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
@@ -222,7 +223,7 @@ describe('H8.3-02: Clicking stores framework ID in localStorage', () => {
     // localStorage.setItem was called (setActiveTab will navigate away, but localStorage persists)
     // Note: setActiveTab mock doesn't actually navigate, so localStorage value will be set then
     // read by TestExecution if it were mounted. We verify it was set.
-    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('adversarial')
   })
 })
 
@@ -241,7 +242,7 @@ describe('H8.3-03: Navigation to Model Lab tab', () => {
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
     expect(mockSetActiveTab).toHaveBeenCalledTimes(1)
-    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('adversarial')
   })
 })
 
@@ -260,10 +261,10 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
     // Verify the localStorage key was set with the correct framework ID
-    expect(localStorage.getItem('llm-compliance-framework')).toBe('owasp-llm')
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
   })
 
-  it('localStorage key uses the correct key name "llm-compliance-framework"', async () => {
+  it('localStorage key uses the correct key name "jutsu-compliance-framework"', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
@@ -273,8 +274,8 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
 
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
-    // The key must be exactly 'llm-compliance-framework' for TestExecution to pick it up
-    expect(localStorage.getItem('llm-compliance-framework')).toBe('owasp-llm')
+    // The key must be exactly 'jutsu-compliance-framework' for TestExecution to pick it up
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
     // Verify a different key name does NOT have the value
     expect(localStorage.getItem('compliance-framework')).toBeNull()
   })
@@ -300,7 +301,7 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
 
     // Click the owasp-llm button
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
-    expect(localStorage.getItem('llm-compliance-framework')).toBe('owasp-llm')
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
   })
 
   it('handles localStorage quota errors gracefully', async () => {
@@ -321,7 +322,7 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
     }).not.toThrow()
 
     // Navigation still happens even if localStorage fails
-    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('adversarial')
 
     Storage.prototype.setItem = origSetItem
   })

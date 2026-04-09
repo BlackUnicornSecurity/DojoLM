@@ -164,14 +164,22 @@ export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: (
     loadTestCases();
   }, []);
 
-  // H7.4/H8.3: Read compliance framework from Bushido Book cross-module link
+  // H7.4/H8.3: Read compliance framework from Bushido Book cross-module link.
+  //
+  // Train 2 PR-4b.8 (2026-04-09): migrated key from 'llm-compliance-framework'
+  // → 'jutsu-compliance-framework' (llm NavId retired). We read the new key
+  // first, fall back to the old key for in-flight sessions, and delete both
+  // after consumption so this one-shot bridge stays clean.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      const framework = localStorage.getItem('llm-compliance-framework');
+      const framework =
+        localStorage.getItem('jutsu-compliance-framework') ??
+        localStorage.getItem('llm-compliance-framework');
       if (framework && Object.hasOwn(FRAMEWORK_TEST_MAP, framework)) {
         setActiveCategory('compliance');
         setActiveFramework(framework);
+        localStorage.removeItem('jutsu-compliance-framework');
         localStorage.removeItem('llm-compliance-framework');
       }
     } catch {

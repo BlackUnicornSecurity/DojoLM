@@ -269,7 +269,8 @@ describe('H9.4: Bushido Book Framework Compliance Tab', () => {
 
     fireEvent.click(scanBtn)
 
-    // Should set localStorage and navigate to Model Lab tab
-    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
+    // Should set localStorage and navigate to Atemi Lab tab
+    // (PR-4b.6 moved TestExecution into Atemi Lab → Test Cases sub-tab)
+    expect(mockSetActiveTab).toHaveBeenCalledWith('adversarial')
   })
 })

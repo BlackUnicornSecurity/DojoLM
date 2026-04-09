@@ -122,10 +122,21 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
     onNavigateToTests?.()
   }, [onNavigateToTests])
 
-  // Rehydrate config from localStorage on mount (with schema validation)
+  // Rehydrate config from localStorage on mount (with schema validation).
+  //
+  // Train 2 PR-4b.8 (2026-04-09): key renamed from 'noda-llm-jutsu-config' →
+  // 'noda-jutsu-config' (llm NavId retired). Read new key first, fall back to
+  // old key, then migrate (write new, delete old) in one pass.
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('noda-llm-jutsu-config')
+      const NEW_KEY = 'noda-jutsu-config'
+      const OLD_KEY = 'noda-llm-jutsu-config'
+      let stored = localStorage.getItem(NEW_KEY)
+      let fromLegacy = false
+      if (!stored) {
+        stored = localStorage.getItem(OLD_KEY)
+        fromLegacy = !!stored
+      }
       if (stored) {
         const parsed = JSON.parse(stored, (key, value) => {
           if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
@@ -140,6 +151,13 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
           }
         }
         setConfigValues(prev => ({ ...prev, ...safe }))
+        if (fromLegacy) {
+          // One-shot migration: copy to new key, remove old
+          try {
+            localStorage.setItem(NEW_KEY, JSON.stringify(safe))
+            localStorage.removeItem(OLD_KEY)
+          } catch { /* QuotaExceededError — next load will retry */ }
+        }
       }
     } catch { /* corrupted or unavailable */ }
   }, [])
@@ -331,7 +349,8 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
         onChange={handleConfigChange}
         onSave={() => {
           try {
-            localStorage.setItem('noda-llm-jutsu-config', JSON.stringify(configValues))
+            // PR-4b.8: write new key name; old key is deleted during mount migration.
+            localStorage.setItem('noda-jutsu-config', JSON.stringify(configValues))
           } catch { /* quota */ }
         }}
         onReset={() => setConfigValues({ ...DEFAULT_CONFIG })}

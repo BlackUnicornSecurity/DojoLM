@@ -265,16 +265,21 @@ export default function ComplianceCenter() {
   const [groupMode, setGroupMode] = useState<GroupMode>('tier')
   const { setActiveTab } = useNavigation()
 
-  /** H8.3: Navigate to LLM Dashboard with framework pre-populated */
+  /** H8.3: Navigate to Model Lab with framework pre-populated.
+   *
+   * Train 2 PR-4b.8 (2026-04-09): key renamed from 'llm-compliance-framework'
+   * → 'jutsu-compliance-framework' to track the llm→jutsu NavId rename.
+   * TestExecution (the reader) reads both keys for in-flight migration. */
   const handleStartComplianceCheck = useCallback((frameworkId: string) => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('llm-compliance-framework', frameworkId)
+        localStorage.setItem('jutsu-compliance-framework', frameworkId)
       } catch {
         // QuotaExceededError — silently degrade
       }
     }
-    setActiveTab('jutsu')
+    // Since PR-4b.6 moved TestExecution into Atemi Test Cases, navigate there.
+    setActiveTab('adversarial')
   }, [setActiveTab])
 
   useEffect(() => {
@@ -1374,7 +1379,7 @@ function OverviewPanel({
               data-testid={`compliance-check-${framework.id}`}
             >
               <Play className="h-3.5 w-3.5" aria-hidden="true" />
-              Test in Model Lab
+              Test in Atemi Lab
             </Button>
           </div>
         )}
