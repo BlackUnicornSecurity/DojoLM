@@ -20,6 +20,9 @@ export { VulnerabilityPanel } from './VulnerabilityPanel';
 export { ReportGenerator } from './ReportGenerator';
 export { BenchmarkPanel } from './BenchmarkPanel';
 export { TransferMatrixPanel } from './TransferMatrixPanel';
+// Train 2 PR-4b.6 (2026-04-09): AnalyticsWorkspace extracted from LLMDashboard.tsx
+// so Bushido Book's Insights tab can mount it without importing LLMDashboard shell.
+export { AnalyticsWorkspace } from './AnalyticsWorkspace';
 
 // Jutsu components (merged from components/jutsu/ — DAITENGUYAMA M1)
 export { JutsuTab } from './JutsuTab';
