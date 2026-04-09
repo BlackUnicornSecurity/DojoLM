@@ -59,13 +59,13 @@ export const FindingsList = memo(function FindingsList({ result, className }: Fi
         <CardContent className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
             {EMPTY_GUIDES.map((item) => (
-              <div key={item.title} className="rounded-xl border border-[var(--border-subtle)] surface-base p-3">
+              <div key={item.title} className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--bu-electric)]">{item.title}</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.detail}</p>
               </div>
             ))}
           </div>
-          <div className="rounded-xl border border-[var(--border-subtle)] surface-base">
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
             <EmptyState
               {...emptyStatePresets.noScans}
               hint="Enter text above or load a fixture to begin."
@@ -240,7 +240,7 @@ interface ResultSummaryProps {
 const ResultSummary = memo(function ResultSummary({ result }: ResultSummaryProps) {
   return (
       <div className="flex gap-3 flex-wrap">
-      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] surface-base p-3 text-center">
+      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-center">
         <div className={cn(
           'text-metric-md',
           result.verdict === 'BLOCK' ? 'text-[var(--danger)]' : 'text-[var(--success)]'
@@ -250,28 +250,28 @@ const ResultSummary = memo(function ResultSummary({ result }: ResultSummaryProps
         <div className="text-label mt-1">Verdict</div>
       </div>
 
-      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] surface-base p-3 text-center">
+      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-center">
         <div className="text-metric-md text-[var(--danger)]">
           {result.counts.critical}
         </div>
         <div className="text-label mt-1">Critical</div>
       </div>
 
-      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] surface-base p-3 text-center">
+      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-center">
         <div className="text-metric-md text-[var(--warning)]">
           {result.counts.warning}
         </div>
         <div className="text-label mt-1">Warning</div>
       </div>
 
-      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] surface-base p-3 text-center">
+      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-center">
         <div className="text-metric-md text-[var(--severity-low)]">
           {result.counts.info}
         </div>
         <div className="text-label mt-1">Info</div>
       </div>
 
-      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] surface-base p-3 text-center">
+      <div className="flex-1 min-w-[80px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3 text-center">
         <div className="text-metric-md">
           {result.findings.length}
         </div>

@@ -99,7 +99,7 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
             <div
               key={tab}
               className={cn(
-                'rounded-xl border border-[var(--border-subtle)] surface-base p-4 space-y-3',
+                'rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-3',
                 isActive && 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/5',
               )}
             >
@@ -165,7 +165,7 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
               <ModuleResults findings={moduleScopedResult?.findings ?? []} />
             </>
           ) : (
-            <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-4">
+            <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4">
               <EmptyState
                 icon={Filter}
                 title="No module diagnostics yet"

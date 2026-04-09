@@ -336,7 +336,7 @@ export function ScannerInput({
         />
 
         {/* Multimodal file upload (H26.3) */}
-        <div className="rounded-xl border border-[var(--border-subtle)] surface-base p-3">
+        <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
           <input
             ref={fileInputRef}
             id={fileInputId}
