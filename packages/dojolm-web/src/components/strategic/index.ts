@@ -3,9 +3,12 @@
  * Story: S75, TPI-NODA-6.3
  *
  * Barrel exports for SAGE, Battle Arena, Mitsuke, and Amaterasu DNA subsystem UIs.
+ *
+ * Train 2 PR-4b.8 (2026-04-09): StrategicHub.tsx deleted. The Kumite is now
+ * represented by the standalone children below (Mitsuke, SAGE, Arena, etc.)
+ * which are mounted as first-class nav items.
  */
 
-export { StrategicHub } from './StrategicHub'
 export { SAGEDashboard } from './SAGEDashboard'
 export { ArenaBrowser } from './ArenaBrowser'
 export { ThreatFeedStream } from './ThreatFeedStream'

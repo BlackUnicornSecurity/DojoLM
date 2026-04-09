@@ -41,7 +41,9 @@ import { SenseiDrawer } from '@/components/sensei/SenseiDrawer'
 const ModelLabWithProviders = lazy(() => import('@/components/llm').then(m => ({ default: m.ModelLabWithProviders })))
 const AdversarialLab = lazy(() => import('@/components/adversarial').then(m => ({ default: m.AdversarialLab })))
 const ComplianceCenter = lazy(() => import('@/components/compliance').then(m => ({ default: m.ComplianceCenter })))
-const StrategicHub = lazy(() => import('@/components/strategic').then(m => ({ default: m.StrategicHub })))
+// Train 2 PR-4b.8 (2026-04-09): StrategicHub deleted — The Kumite has been decomposed
+// into first-class Mitsuke / Amaterasu DNA / Kagami / Battle Arena nav items.
+// Back-compat deep-link `activeTab === 'strategic'` renders a KumiteRetiredNotice.
 const GuardDashboard = lazy(() => import('@/components/guard').then(m => ({ default: m.GuardDashboard })))
 const AdminPanel = lazy(() => import('@/components/admin').then(m => ({ default: m.AdminPanel })))
 const RoninHub = lazy(() => import('@/components/ronin').then(m => ({ default: m.RoninHub })))
@@ -64,6 +66,47 @@ function ModuleLoading() {
   return (
     <div className="flex items-center justify-center h-64" aria-busy="true" aria-label="Loading module">
       <div className="w-8 h-8 border-2 border-[var(--dojo-primary)] border-t-transparent rounded-full motion-safe:animate-spin" />
+    </div>
+  )
+}
+
+/**
+ * KumiteRetiredNotice — rendered when a legacy deep link lands on
+ * activeTab='strategic'. The Kumite was split into first-class nav items
+ * in Train 2 PR-4b.1 (Mitsuke, Amaterasu DNA, Kagami, Battle Arena) and
+ * StrategicHub.tsx was deleted in PR-4b.8. This EmptyState points users
+ * to the promoted children instead of 404'ing.
+ */
+function KumiteRetiredNotice() {
+  const { setActiveTab } = useNavigation()
+  const destinations: { id: 'mitsuke' | 'dna' | 'kagami' | 'arena'; label: string; description: string }[] = [
+    { id: 'mitsuke', label: 'Mitsuke', description: 'Threat feed ingestion, indicators, hunting queries' },
+    { id: 'dna', label: 'Amaterasu DNA', description: 'Attack lineage, mutation trees, family clusters' },
+    { id: 'kagami', label: 'Kagami', description: 'Behavioral fingerprinting, drift, mirror probes' },
+    { id: 'arena', label: 'Battle Arena', description: 'Multi-agent matches, leaderboards, warriors' },
+  ]
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-8">
+      <div>
+        <h2 className="text-xl font-semibold text-[var(--foreground)]">The Kumite has been split</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          The Kumite hub is retired. Its modules are now first-class destinations in the sidebar.
+          Choose one below to continue, or pick any other nav item.
+        </p>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {destinations.map(dest => (
+          <button
+            key={dest.id}
+            type="button"
+            onClick={() => setActiveTab(dest.id)}
+            className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-4 text-left transition-colors hover:border-[var(--dojo-primary)] hover:bg-[var(--dojo-primary)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+          >
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">{dest.label}</h3>
+            <p className="mt-1 text-xs text-muted-foreground">{dest.description}</p>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
@@ -245,10 +288,8 @@ function PageContent() {
       )}
       {activeTab === 'strategic' && (
         <div className="motion-safe:animate-fade-in">
-          <ErrorBoundary fallbackTitle="The Kumite Error" fallbackDescription="Unable to load The Kumite. Please try again.">
-            <Suspense fallback={<ModuleLoading />}>
-              <StrategicHub />
-            </Suspense>
+          <ErrorBoundary fallbackTitle="Navigation Error" fallbackDescription="Unable to load redirect notice.">
+            <KumiteRetiredNotice />
           </ErrorBoundary>
         </div>
       )}

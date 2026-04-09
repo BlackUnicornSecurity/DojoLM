@@ -202,14 +202,16 @@ export const NAV_ITEMS = [
     description: 'Settings, validation, and configuration',
   },
   // ─── Demoted (hidden: true → hidden from all nav surfaces) ────
-  // StrategicHub (The Kumite) stays accessible via activeTab='strategic'
-  // for back-compat with deep links. Will be deleted entirely in PR-4b.8.
+  // Train 2 PR-4b.8 (2026-04-09): StrategicHub.tsx deleted. The 'strategic' NavId
+  // stays in the type for back-compat with deep links / stored activeTab values.
+  // The page.tsx activeTab='strategic' branch now renders <KumiteRetiredNotice/>
+  // which redirects users to the promoted children (Mitsuke, DNA, Kagami, Arena).
   {
     id: 'strategic',
     label: 'The Kumite',
     functionalLabel: 'Kumite',
     icon: Trophy,
-    description: 'Strategic hub for SAGE, Arena, Mitsuke, and DNA (legacy)',
+    description: 'Legacy hub — split into Mitsuke, Amaterasu DNA, Kagami, and Battle Arena',
     hidden: true,
   },
 ] as const

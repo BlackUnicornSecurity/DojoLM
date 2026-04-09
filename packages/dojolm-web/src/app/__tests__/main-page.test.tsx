@@ -115,9 +115,8 @@ vi.mock('@/components/adversarial', () => ({
 vi.mock('@/components/compliance', () => ({
   ComplianceCenter: () => <div data-testid="compliance-center">Compliance</div>,
 }))
-vi.mock('@/components/strategic', () => ({
-  StrategicHub: () => <div data-testid="strategic-hub">Strategic</div>,
-}))
+// Train 2 PR-4b.8: StrategicHub deleted. page.tsx no longer imports from
+// @/components/strategic at the top level, so no mock needed.
 vi.mock('@/components/guard', () => ({
   GuardDashboard: () => <div data-testid="guard-dashboard">Guard</div>,
 }))
