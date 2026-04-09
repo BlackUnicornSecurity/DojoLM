@@ -2,12 +2,15 @@
 
 /**
  * File: MobileNav.tsx
- * Purpose: Bottom navigation bar for mobile (<768px) with 6 primary items + More drawer
- * Story: TPI-UIP-13
+ * Purpose: Bottom navigation bar for mobile (<768px) with primary items + More drawer
+ * Story: TPI-UIP-13, Train 1 PR-2 (derive primary from NAV_ITEMS.isPrimary)
  * Index:
- * - PRIMARY_NAV_IDS (line 14)
- * - MobileNav (line 19)
- * - MoreDrawer (line 82)
+ * - MobileNav (line ~18)
+ * - MoreDrawer (line ~80)
+ *
+ * Primary items are derived from NAV_ITEMS.isPrimary (set in constants.ts)
+ * rather than a hardcoded Set of IDs. This prevents silent breakage when
+ * nav IDs are renamed or retired (e.g. 'llm' → 'jutsu' in Train 2).
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react'
@@ -18,17 +21,10 @@ import type { NavId } from '@/lib/constants'
 import { useModuleVisibility } from '@/lib/contexts/ModuleVisibilityContext'
 import { MoreHorizontal, X } from 'lucide-react'
 
-/** Primary nav items shown in bottom bar (4 items + More per Story 4.3) */
-const PRIMARY_NAV_IDS = new Set(['dashboard', 'scanner', 'llm', 'guard'])
-const MOBILE_LABELS: Partial<Record<NavId, string>> = {
-  dashboard: 'Home',
-  scanner: 'Scan',
-  llm: 'LLM',
-  guard: 'Guard',
-}
-
-const allPrimaryItems = NAV_ITEMS.filter(item => PRIMARY_NAV_IDS.has(item.id))
-const allMoreItems = NAV_ITEMS.filter(item => !PRIMARY_NAV_IDS.has(item.id))
+const allPrimaryItems = NAV_ITEMS.filter((item): item is typeof item & { isPrimary: true } =>
+  'isPrimary' in item && item.isPrimary === true
+)
+const allMoreItems = NAV_ITEMS.filter(item => !('isPrimary' in item && item.isPrimary === true))
 
 export function MobileNav() {
   const { activeTab, setActiveTab } = useNavigation()
@@ -80,7 +76,7 @@ export function MobileNav() {
                   <Icon className="w-5 h-5" aria-hidden="true" />
                 </span>
                 <span className={cn('text-[11px] mt-0.5 whitespace-nowrap', isActive ? 'text-[var(--foreground)]' : 'text-[var(--text-tertiary)]')}>
-                  {MOBILE_LABELS[item.id] ?? item.label}
+                  {('mobileLabel' in item && item.mobileLabel) || item.label}
                 </span>
               </button>
             )

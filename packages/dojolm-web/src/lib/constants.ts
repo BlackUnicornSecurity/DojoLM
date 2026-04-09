@@ -40,6 +40,12 @@ export const NAV_GROUPS: ReadonlyArray<{ id: NavGroup; label: string }> = [
  * Navigation items for sidebar and mobile nav
  * Grouped by function (Story 4.1): Testing, Defense, Analysis
  * Dashboard is ungrouped (always visible at top), Admin is at bottom
+ *
+ * `isPrimary: true` marks items shown in the mobile bottom-bar (up to 4).
+ * Added 2026-04-09 during Train 1 PR-2 to replace the hardcoded
+ * PRIMARY_NAV_IDS set in MobileNav.tsx, which referenced `'llm'` — an ID
+ * that will be retired in Train 2. Deriving from NAV_ITEMS prevents
+ * silent mobile-nav breakage when Train 2 lands.
  */
 export const NAV_ITEMS = [
   {
@@ -47,6 +53,8 @@ export const NAV_ITEMS = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     description: 'System overview and quick actions',
+    isPrimary: true,
+    mobileLabel: 'Home',
   },
   {
     id: 'scanner',
@@ -54,6 +62,8 @@ export const NAV_ITEMS = [
     icon: Radar,
     description: 'Live prompt-injection detection and triage',
     group: 'attack' as NavGroup,
+    isPrimary: true,
+    mobileLabel: 'Scan',
   },
   {
     id: 'armory',
@@ -68,6 +78,8 @@ export const NAV_ITEMS = [
     icon: BrainCircuit,
     description: 'Model testing, results, and Jutsu workflows',
     group: 'attack' as NavGroup,
+    isPrimary: true,
+    mobileLabel: 'LLM',
   },
   {
     id: 'guard',
@@ -75,6 +87,8 @@ export const NAV_ITEMS = [
     icon: ShieldHalf,
     description: 'Input, output, and policy protection controls',
     group: 'defense' as NavGroup,
+    isPrimary: true,
+    mobileLabel: 'Guard',
   },
   {
     id: 'compliance',
