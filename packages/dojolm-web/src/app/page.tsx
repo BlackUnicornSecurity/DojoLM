@@ -52,6 +52,8 @@ const KagamiPanel = lazy(() => import('@/components/kagami').then(m => ({ defaul
 const ArenaBrowser = lazy(() => import('@/components/strategic').then(m => ({ default: m.ArenaBrowser })))
 // Train 2 PR-4b.2 — Payload Lab (Buki) scaffolded shell
 const PayloadLab = lazy(() => import('@/components/buki').then(m => ({ default: m.PayloadLab })))
+// Train 2 PR-4b.4 — Shingan relocated from Kumite into Scanner Deep Scan tab
+const ShinganPanel = lazy(() => import('@/components/shingan').then(m => ({ default: m.ShinganPanel })))
 // Arena's MatchCreationWizard requires LLMModelProvider context
 import { LLMModelProvider } from '@/lib/contexts/LLMModelContext'
 
@@ -340,12 +342,16 @@ function PageContent() {
 /**
  * Scanner content
  */
+type ScannerSubTab = 'interactive' | 'deep-scan'
+
 function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; onClear: () => void }) {
   const { scanResult, isScanning, error, engineFilters, toggleFilter, resetFilters } = useScanner()
   const metrics = useScannerMetrics()
   const { logEvent } = useActivityLogger()
   const allEnginesDisabled = engineFilters.every(f => !f.enabled)
   const prevScanResultRef = useRef<ScanResult | null>(null)
+  // Train 2 PR-4b.4 — Shingan merged into Scanner Deep Scan sub-tab
+  const [scannerTab, setScannerTab] = useState<ScannerSubTab>('interactive')
 
   // Log scan events to activity feed — static descriptions only, never user input
   useEffect(() => {
@@ -367,6 +373,13 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
         searchPlaceholder="Search engines, patterns..."
       />
 
+      <Tabs value={scannerTab} onValueChange={(v) => setScannerTab(v as ScannerSubTab)}>
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="interactive">Interactive</TabsTrigger>
+          <TabsTrigger value="deep-scan">Deep Scan</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="interactive" className="mt-6 space-y-6">
       {/* Metric Cards - Display-only metrics, NOT for security decisions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
@@ -434,6 +447,14 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
           <ScannerInsightsPanel result={scanResult} />
         </div>
       </div>
+        </TabsContent>
+
+        <TabsContent value="deep-scan" className="mt-6">
+          <Suspense fallback={<ModuleLoading />}>
+            <ShinganPanel />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
