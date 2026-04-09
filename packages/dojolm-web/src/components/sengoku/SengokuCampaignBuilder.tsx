@@ -244,7 +244,7 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
               <div className="flex gap-2">
                 {([
                   { value: 'external' as const, label: 'External URL' },
-                  { value: 'dashboard' as const, label: 'LLM Dashboard' },
+                  { value: 'dashboard' as const, label: 'Model Lab' },
                   { value: 'local' as const, label: 'Local (Ollama)' },
                 ] as const).map((opt) => (
                   <button
@@ -501,7 +501,7 @@ export function SengokuCampaignBuilder({ onClose, onCreated }: SengokuCampaignBu
             {/* Summary */}
             <div className="p-3 rounded-lg bg-[var(--bg-tertiary)] text-sm space-y-1">
               <p><span className="text-muted-foreground">Name:</span> {campaignName}</p>
-              <p><span className="text-muted-foreground">Source:</span> {targetSource === 'external' ? 'External URL' : targetSource === 'dashboard' ? 'LLM Dashboard' : 'Local (Ollama)'}</p>
+              <p><span className="text-muted-foreground">Source:</span> {targetSource === 'external' ? 'External URL' : targetSource === 'dashboard' ? 'Model Lab' : 'Local (Ollama)'}</p>
               <p><span className="text-muted-foreground">Target:</span> {
                 targetSource === 'dashboard'
                   ? dashboardModels.find((m) => m.id === targetModelId)?.name ?? targetModelId

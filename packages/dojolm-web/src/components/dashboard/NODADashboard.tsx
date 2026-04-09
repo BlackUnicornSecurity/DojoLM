@@ -106,10 +106,10 @@ const WIDGET_NAV_TARGET: Record<string, string> = {
   'arena-leaderboard': 'strategic',
   'sage-status': 'strategic',
   'mitsuke-alerts': 'strategic',
-  'llm-models': 'llm',
-  'llm-quick-test': 'llm',
-  'batch-progress': 'llm',
-  'llm-jutsu': 'llm',
+  'llm-models': 'jutsu',
+  'llm-quick-test': 'jutsu',
+  'batch-progress': 'jutsu',
+  'llm-jutsu': 'jutsu',
   'compliance-bars': 'compliance',
   'coverage-heatmap': 'compliance',
   'engine-grid': 'scanner',
@@ -242,7 +242,7 @@ function DashboardContent({
               <Radar className="w-4 h-4" aria-hidden="true" />
               Scan Text
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setActiveTab('llm')}>
+            <Button variant="outline" size="sm" onClick={() => setActiveTab('jutsu')}>
               <BrainCircuit className="w-4 h-4" aria-hidden="true" />
               Models
             </Button>

@@ -24,7 +24,7 @@ interface LaunchAction {
 
 const LAUNCH_ACTIONS: LaunchAction[] = [
   { label: 'Scan Text', detail: 'Run a live injection verdict on prompt input.', target: 'scanner', icon: Radar, accent: 'var(--dojo-primary)', shortcut: '1' },
-  { label: 'Test LLM', detail: 'Move into model evaluation and quick batch runs.', target: 'llm', icon: BrainCircuit, accent: 'var(--success)', shortcut: '2' },
+  { label: 'Test LLM', detail: 'Move into model evaluation and quick batch runs.', target: 'jutsu', icon: BrainCircuit, accent: 'var(--success)', shortcut: '2' },
   { label: 'Explore Fixtures', detail: 'Sample known attacks and regression payloads.', target: 'armory', icon: Warehouse, accent: 'var(--warning)', shortcut: '3' },
   { label: 'Check Guard', detail: 'Inspect defensive posture and recent blocks.', target: 'guard', icon: ShieldHalf, accent: 'var(--danger)', shortcut: '4' },
   { label: 'Battle Arena', detail: 'Review rankings, strategy, and live telemetry.', target: 'strategic', icon: Trophy, accent: 'var(--warning)', shortcut: '5' },

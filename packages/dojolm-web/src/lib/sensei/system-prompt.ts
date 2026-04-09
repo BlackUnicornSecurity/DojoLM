@@ -56,8 +56,8 @@ const MODULE_CONTEXT: Readonly<Record<NavId, string>> = {
     'User is on Haiku Scanner — help scan prompts for injection, explain findings, suggest hardening.',
   armory:
     'User is in the Armory — help browse fixtures, search payloads, explain attack categories.',
-  llm:
-    'User is on LLM Dashboard — help configure models, run tests, compare results, review scores.',
+  jutsu:
+    'User is on Model Lab (Jutsu) — help configure models, compare providers, review per-model resilience scores.',
   guard:
     'User is on Hattori Guard — help check guard status, change modes, explain guard behavior.',
   compliance:

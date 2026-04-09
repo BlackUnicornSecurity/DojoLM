@@ -25,7 +25,7 @@ interface ReadinessItem {
 
 const READINESS_ITEMS: ReadinessItem[] = [
   { label: 'Run your first scan', description: 'Detect prompt injection threats in text', icon: Radar, target: 'scanner' },
-  { label: 'Configure a model', description: 'Set up an LLM provider for testing', icon: BrainCircuit, target: 'llm' },
+  { label: 'Configure a model', description: 'Set up an LLM provider for testing', icon: BrainCircuit, target: 'jutsu' },
   { label: 'Enable Hattori Guard', description: 'Activate real-time content protection', icon: ShieldHalf, target: 'guard' },
   { label: 'Explore attack fixtures', description: 'Browse categorized test payloads', icon: Warehouse, target: 'armory' },
 ]

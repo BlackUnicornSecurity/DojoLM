@@ -269,7 +269,7 @@ describe('H9.4: Bushido Book Framework Compliance Tab', () => {
 
     fireEvent.click(scanBtn)
 
-    // Should set localStorage and navigate to LLM tab
-    expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+    // Should set localStorage and navigate to Model Lab tab
+    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
   })
 })

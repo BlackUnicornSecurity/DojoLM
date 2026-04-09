@@ -24,7 +24,7 @@ describe('buildClientContext', () => {
 
   it('passes model names through', () => {
     const ctx = buildClientContext({
-      activeModule: 'llm',
+      activeModule: 'jutsu',
       modelNames: ['gpt-4', 'claude-3'],
     });
     expect(ctx.configuredModels).toEqual(['gpt-4', 'claude-3']);

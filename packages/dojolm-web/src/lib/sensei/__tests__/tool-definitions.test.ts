@@ -202,7 +202,7 @@ describe('getToolsForPrompt', () => {
   });
 
   it('returns module-specific tools for LlamaCPP provider', () => {
-    const tools = getToolsForPrompt('llamacpp', 'llm');
+    const tools = getToolsForPrompt('llamacpp', 'jutsu');
     expect(tools.length).toBeGreaterThanOrEqual(5);
     expect(tools.length).toBeLessThanOrEqual(10);
   });
@@ -213,8 +213,8 @@ describe('getToolsForPrompt', () => {
     expect(names).toContain('scan_text');
   });
 
-  it('llm module Ollama tools include run_test and list_models', () => {
-    const tools = getToolsForPrompt('ollama', 'llm');
+  it('jutsu module Ollama tools include run_test and list_models', () => {
+    const tools = getToolsForPrompt('ollama', 'jutsu');
     const names = tools.map((t) => t.name);
     expect(names).toContain('run_test');
     expect(names).toContain('list_models');
@@ -250,7 +250,7 @@ describe('getToolsForPrompt', () => {
 
   it('covers all NavId modules for compact providers', () => {
     const allModules: NavId[] = [
-      'dashboard', 'scanner', 'armory', 'llm', 'guard',
+      'dashboard', 'scanner', 'armory', 'jutsu', 'guard',
       'compliance', 'adversarial', 'strategic', 'ronin-hub',
       'sengoku', 'kotoba', 'admin',
     ];

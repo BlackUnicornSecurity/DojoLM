@@ -50,7 +50,7 @@ describe('sensei system-prompt', () => {
         'dashboard',
         'scanner',
         'armory',
-        'llm',
+        'jutsu',
         'guard',
         'compliance',
         'adversarial',

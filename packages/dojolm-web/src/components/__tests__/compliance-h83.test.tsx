@@ -2,9 +2,9 @@
  * File: compliance-h83.test.tsx
  * Purpose: Tests for H8.3 — Start Compliance Check Flow
  * Verifies:
- * - "Test in LLM Dashboard" button renders per framework
+ * - "Test in Model Lab" button renders per framework
  * - Clicking stores framework ID in localStorage
- * - Clicking calls setActiveTab('llm')
+ * - Clicking calls setActiveTab('jutsu')
  * - TestExecution reads and cleans up localStorage on mount
  */
 
@@ -177,10 +177,10 @@ afterEach(() => {
 import ComplianceCenter from '../compliance/ComplianceCenter'
 
 // ===========================================================================
-// H8.3-01: "Test in LLM Dashboard" button renders per framework
+// H8.3-01: "Test in Model Lab" button renders per framework
 // ===========================================================================
 describe('H8.3-01: Button renders in OverviewPanel', () => {
-  it('renders "Test in LLM Dashboard" button for the selected framework', async () => {
+  it('renders "Test in Model Lab" button for the selected framework', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
@@ -190,7 +190,7 @@ describe('H8.3-01: Button renders in OverviewPanel', () => {
 
     const btn = screen.getByRole('button', { name: /Start compliance check for OWASP LLM Top 10/i })
     expect(btn).toBeInTheDocument()
-    expect(btn).toHaveTextContent('Test in LLM Dashboard')
+    expect(btn).toHaveTextContent('Test in Model Lab')
   })
 
   it('renders with the correct data-testid', async () => {
@@ -222,15 +222,15 @@ describe('H8.3-02: Clicking stores framework ID in localStorage', () => {
     // localStorage.setItem was called (setActiveTab will navigate away, but localStorage persists)
     // Note: setActiveTab mock doesn't actually navigate, so localStorage value will be set then
     // read by TestExecution if it were mounted. We verify it was set.
-    expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
   })
 })
 
 // ===========================================================================
-// H8.3-03: Clicking calls setActiveTab('llm')
+// H8.3-03: Clicking calls setActiveTab('jutsu')
 // ===========================================================================
-describe('H8.3-03: Navigation to LLM tab', () => {
-  it('calls setActiveTab with "llm" on button click', async () => {
+describe('H8.3-03: Navigation to Model Lab tab', () => {
+  it('calls setActiveTab with "jutsu" on button click', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
@@ -241,7 +241,7 @@ describe('H8.3-03: Navigation to LLM tab', () => {
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
     expect(mockSetActiveTab).toHaveBeenCalledTimes(1)
-    expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
   })
 })
 
@@ -321,7 +321,7 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
     }).not.toThrow()
 
     // Navigation still happens even if localStorage fails
-    expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
 
     Storage.prototype.setItem = origSetItem
   })

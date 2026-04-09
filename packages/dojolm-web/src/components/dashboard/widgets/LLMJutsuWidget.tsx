@@ -97,7 +97,7 @@ export function LLMJutsuWidget() {
       title="LLM Jutsu"
       actions={
         <button
-          onClick={() => setActiveTab('llm')}
+          onClick={() => setActiveTab('jutsu')}
           className="text-xs text-[var(--dojo-primary)] hover:underline flex items-center gap-1 min-h-[44px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)]"
           aria-label="Open LLM Jutsu"
         >

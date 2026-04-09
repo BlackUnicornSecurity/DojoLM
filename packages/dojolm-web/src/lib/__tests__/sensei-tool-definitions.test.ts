@@ -115,7 +115,7 @@ describe('sensei tool-definitions', () => {
     });
 
     it('returns compact tools for llamacpp', () => {
-      const tools = getToolsForPrompt('llamacpp', 'llm');
+      const tools = getToolsForPrompt('llamacpp', 'jutsu');
       expect(tools.length).toBeGreaterThanOrEqual(5);
       expect(tools.length).toBeLessThanOrEqual(10);
     });

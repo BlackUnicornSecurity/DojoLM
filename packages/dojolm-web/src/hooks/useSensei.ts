@@ -24,7 +24,7 @@ import type { NavId } from '@/lib/constants'
 // ---------------------------------------------------------------------------
 
 const VALID_NAV_IDS = new Set([
-  'dashboard', 'scanner', 'armory', 'llm', 'guard', 'compliance',
+  'dashboard', 'scanner', 'armory', 'jutsu', 'guard', 'compliance',
   'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
 ])
 

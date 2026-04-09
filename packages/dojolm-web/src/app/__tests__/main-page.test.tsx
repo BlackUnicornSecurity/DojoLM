@@ -80,7 +80,7 @@ vi.mock('@/lib/constants', () => ({
   NAV_ITEMS: [
     { id: 'dashboard', label: 'Dashboard', icon: () => null, description: 'Overview' },
     { id: 'scanner', label: 'Scanner', icon: () => null, description: 'Scan' },
-    { id: 'llm', label: 'LLM Lab', icon: () => null, description: 'LLM' },
+    { id: 'jutsu', label: 'Model Lab', icon: () => null, description: 'Model Lab' },
   ],
   PAYLOAD_CATALOG: [],
 }))

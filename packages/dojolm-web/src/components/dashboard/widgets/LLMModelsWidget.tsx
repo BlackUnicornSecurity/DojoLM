@@ -70,7 +70,7 @@ export function LLMModelsWidget() {
       title="LLM Models"
       actions={
         <button
-          onClick={() => setActiveTab('llm')}
+          onClick={() => setActiveTab('jutsu')}
           className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
           aria-label="Manage LLM Models"
         >
@@ -90,10 +90,10 @@ export function LLMModelsWidget() {
             <Brain className="w-8 h-8 mx-auto text-muted-foreground/50" aria-hidden="true" />
             <p className="text-xs text-muted-foreground">No models configured</p>
             <button
-              onClick={() => setActiveTab('llm')}
+              onClick={() => setActiveTab('jutsu')}
               className="text-xs text-[var(--dojo-primary)] hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--bu-electric)] min-h-[44px] inline-flex items-center"
             >
-              Configure in LLM Dashboard
+              Configure in Model Lab
             </button>
           </div>
         )}

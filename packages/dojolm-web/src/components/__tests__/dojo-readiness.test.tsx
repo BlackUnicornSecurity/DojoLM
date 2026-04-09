@@ -28,7 +28,7 @@ vi.mock('@/lib/NavigationContext', () => {
 })
 
 vi.mock('@/lib/constants', () => ({
-  NAV_ITEMS: [{ id: 'dashboard' }, { id: 'scanner' }, { id: 'llm' }, { id: 'guard' }, { id: 'armory' }],
+  NAV_ITEMS: [{ id: 'dashboard' }, { id: 'scanner' }, { id: 'jutsu' }, { id: 'guard' }, { id: 'armory' }],
 }))
 
 beforeEach(() => {
@@ -115,11 +115,11 @@ describe('DojoReadiness', () => {
       expect(mockSetActiveTab).toHaveBeenCalledWith('scanner')
     })
 
-    it('clicking model item navigates to llm', () => {
+    it('clicking model item navigates to jutsu (Model Lab)', () => {
       render(<DojoReadiness onDismiss={() => {}} />)
       const modelItem = screen.getByLabelText(/Configure a model/)
       fireEvent.click(modelItem)
-      expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+      expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
     })
 
     it('clicking guard item navigates to guard', () => {

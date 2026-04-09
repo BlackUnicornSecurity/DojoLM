@@ -264,7 +264,7 @@ export default function ComplianceCenter() {
         // QuotaExceededError — silently degrade
       }
     }
-    setActiveTab('llm')
+    setActiveTab('jutsu')
   }, [setActiveTab])
 
   useEffect(() => {
@@ -1354,7 +1354,7 @@ function OverviewPanel({
               data-testid={`compliance-check-${framework.id}`}
             >
               <Play className="h-3.5 w-3.5" aria-hidden="true" />
-              Test in LLM Dashboard
+              Test in Model Lab
             </Button>
           </div>
         )}

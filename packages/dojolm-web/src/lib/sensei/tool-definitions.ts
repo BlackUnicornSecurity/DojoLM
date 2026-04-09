@@ -370,7 +370,7 @@ const NAVIGATE_TO: SenseiToolDefinition = {
           'dashboard',
           'scanner',
           'armory',
-          'llm',
+          'jutsu',
           'guard',
           'compliance',
           'adversarial',
@@ -405,7 +405,7 @@ const EXPLAIN_FEATURE: SenseiToolDefinition = {
           'dashboard',
           'scanner',
           'armory',
-          'llm',
+          'jutsu',
           'guard',
           'compliance',
           'adversarial',
@@ -869,7 +869,7 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
     'get_stats',
     'navigate_to',
   ],
-  llm: [
+  jutsu: [
     'list_models',
     'run_test',
     'run_batch',

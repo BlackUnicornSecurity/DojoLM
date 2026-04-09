@@ -196,9 +196,9 @@ function PageContent() {
           </ErrorBoundary>
         </div>
       )}
-      {activeTab === 'llm' && (
+      {activeTab === 'jutsu' && (
         <div className="motion-safe:animate-fade-in">
-          <ErrorBoundary fallbackTitle="LLM Dashboard Error" fallbackDescription="Unable to load LLM dashboard. Please try again.">
+          <ErrorBoundary fallbackTitle="Model Lab Error" fallbackDescription="Unable to load Model Lab. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <LLMDashboardWithProviders />
             </Suspense>

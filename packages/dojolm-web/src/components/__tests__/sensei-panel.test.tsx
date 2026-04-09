@@ -120,7 +120,7 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     // Test group
     expect(screen.getByText('Haiku Scanner')).toBeInTheDocument()
     expect(screen.getByText('Armory')).toBeInTheDocument()
-    expect(screen.getByText('LLM Dashboard')).toBeInTheDocument()
+    expect(screen.getByText('Model Lab')).toBeInTheDocument()
     expect(screen.getByText('Battle Arena')).toBeInTheDocument()
     expect(screen.getByText('Atemi Lab')).toBeInTheDocument()
     // Train 2 PR-4b.5: Sengoku demoted via hidden: true — Campaigns now lives
@@ -180,7 +180,7 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     const moduleLabels = [
       // Test group
-      'Haiku Scanner', 'Armory', 'Buki', 'LLM Dashboard', 'Battle Arena',
+      'Haiku Scanner', 'Armory', 'Buki', 'Model Lab', 'Battle Arena',
       'Atemi Lab', 'Ronin Hub',
       // Protect group
       'Hattori Guard', 'Kotoba',

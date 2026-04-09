@@ -284,10 +284,10 @@ describe('NODADashboard render', () => {
   })
 
   // --- DSH-R-008: Models button triggers navigation ---
-  it('DSH-R-008: Models button navigates to llm', () => {
+  it('DSH-R-008: Models button navigates to jutsu (Model Lab)', () => {
     render(<NODADashboard />)
     screen.getByText('Models').click()
-    expect(mockSetActiveTab).toHaveBeenCalledWith('llm')
+    expect(mockSetActiveTab).toHaveBeenCalledWith('jutsu')
   })
 
   // --- DSH-R-009: Guard button triggers navigation ---

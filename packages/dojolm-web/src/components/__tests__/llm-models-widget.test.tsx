@@ -70,7 +70,7 @@ describe('LLMModelsWidget', () => {
 
   it('shows Configure link in empty state', async () => {
     render(<LLMModelsWidget />)
-    const configLink = await screen.findByText('Configure in LLM Dashboard')
+    const configLink = await screen.findByText('Configure in Model Lab')
     expect(configLink).toBeInTheDocument()
   })
 })

@@ -112,7 +112,7 @@ export function LLMBatchProgress() {
             icon={FlaskConical}
             title="No active tests"
             description="Queued or completed evaluations will appear here. Launch a batch from the LLM dashboard to monitor it live."
-            action={{ label: 'Go to LLM Dashboard', onClick: () => setActiveTab('llm') }}
+            action={{ label: 'Go to Model Lab', onClick: () => setActiveTab('jutsu') }}
           />
         )}
 
@@ -147,7 +147,7 @@ export function LLMBatchProgress() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setActiveTab('llm')}
+            onClick={() => setActiveTab('jutsu')}
             className="w-full text-xs"
           >
             +{overflow} more batch{overflow !== 1 ? 'es' : ''}

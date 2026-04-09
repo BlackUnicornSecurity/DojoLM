@@ -49,11 +49,11 @@ describe('MobileNav', () => {
     expect(nav).toBeInTheDocument()
   })
 
-  it('MN-002: renders primary nav items (dashboard, scanner, llm, guard)', () => {
+  it('MN-002: renders primary nav items (dashboard, scanner, jutsu, guard)', () => {
     render(<MobileNav />)
     expect(screen.getByLabelText('Dashboard')).toBeInTheDocument()
     expect(screen.getByLabelText('Haiku Scanner')).toBeInTheDocument()
-    expect(screen.getByLabelText('LLM Dashboard')).toBeInTheDocument()
+    expect(screen.getByLabelText('Model Lab')).toBeInTheDocument()
     expect(screen.getByLabelText('Hattori Guard')).toBeInTheDocument()
   })
 

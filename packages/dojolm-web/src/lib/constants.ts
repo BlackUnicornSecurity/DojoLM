@@ -94,14 +94,16 @@ export const NAV_ITEMS = [
     group: 'test' as NavGroup,
   },
   {
-    id: 'llm',
-    label: 'LLM Dashboard',
-    functionalLabel: 'Model Lab',
+    // Train 2 PR-4b.6 (2026-04-09): Renamed from 'llm' → 'jutsu' as part of
+    // LLM Dashboard decomposition. 'llm' remains in NAV_ID_ALIASES for back-compat.
+    id: 'jutsu',
+    label: 'Model Lab',
+    functionalLabel: 'Jutsu',
     icon: BrainCircuit,
-    description: 'Model testing, results, and Jutsu workflows',
+    description: 'Model configuration, comparison, and Jutsu model-centric view',
     group: 'test' as NavGroup,
     isPrimary: true,
-    mobileLabel: 'LLM',
+    mobileLabel: 'Jutsu',
   },
   {
     id: 'arena',
@@ -221,15 +223,17 @@ export type NavId = NavItem['id']
  * Maps retired NavIds to current NavIds for deep-link resolution.
  *
  * Train 2 PR-4b.1 (2026-04-09): added `attackdna` → 'dna' alias since
- * Amaterasu is now a first-class nav item. The old `attackdna: 'strategic'`
- * mapping is replaced — `attackdna` now resolves to the new 'dna' tab.
+ * Amaterasu is now a first-class nav item.
+ *
+ * Train 2 PR-4b.6 (2026-04-09): `llm` → 'jutsu' added — LLM Dashboard NavId
+ * was renamed to Jutsu (Model Lab). Old `jutsu`/`llm-jutsu` aliases removed
+ * because 'jutsu' is now the canonical NavId.
  */
-type RetiredNavId = 'testing' | 'jutsu' | 'llm-jutsu' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna'
+type RetiredNavId = 'testing' | 'llm' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   testing: 'scanner',
   attack: 'scanner',
-  jutsu: 'llm',
-  'llm-jutsu': 'llm',
+  llm: 'jutsu',
   ronin: 'ronin-hub',
   atemi: 'adversarial',
   kumite: 'strategic',
