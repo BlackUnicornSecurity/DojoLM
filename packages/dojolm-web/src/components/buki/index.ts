@@ -3,3 +3,5 @@
  * Train 2 PR-4b.2 (2026-04-09)
  */
 export { PayloadLab } from './PayloadLab'
+// Train 3 PR-4f.3: FuzzerPanel wires bu-tpi/src/fuzzing/ engine
+export { FuzzerPanel } from './FuzzerPanel'

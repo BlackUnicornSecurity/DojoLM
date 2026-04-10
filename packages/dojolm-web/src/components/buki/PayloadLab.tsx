@@ -25,6 +25,10 @@ import { Button } from '@/components/ui/button'
 const SAGEDashboard = lazy(() =>
   import('@/components/strategic').then(m => ({ default: m.SAGEDashboard }))
 )
+// Train 3 PR-4f.3 — FuzzerPanel wires bu-tpi/src/fuzzing/ engine
+const FuzzerPanel = lazy(() =>
+  import('./FuzzerPanel').then(m => ({ default: m.FuzzerPanel }))
+)
 
 type BukiTab = 'payloads' | 'generator' | 'fuzzer'
 
@@ -91,12 +95,11 @@ export function PayloadLab() {
           </Suspense>
         </TabsContent>
 
+        {/* Fuzzer: bu-tpi/src/fuzzing/ engine UI (Train 3 PR-4f.3) */}
         <TabsContent value="fuzzer" className="mt-6">
-          <EmptyState
-            icon={Shuffle}
-            title="Fuzzer — coming soon"
-            description="Mutation-based fuzzing engine (bu-tpi/src/fuzzing/) will wire up in Train 3 PR-4f.3."
-          />
+          <Suspense fallback={<TabLoading />}>
+            <FuzzerPanel />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>
