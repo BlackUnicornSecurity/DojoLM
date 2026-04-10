@@ -85,6 +85,12 @@ vi.mock('@/lib/constants', () => ({
     { id: 'scanner', label: 'Scanner', icon: () => null, description: 'Scan' },
     { id: 'jutsu', label: 'Model Lab', icon: () => null, description: 'Model Lab' },
   ],
+  // Train 2 PR-4c.3: CommandPalette (loaded transitively via TopBar) uses NAV_GROUPS.
+  NAV_GROUPS: [
+    { id: 'test', label: 'Test' },
+    { id: 'protect', label: 'Protect' },
+    { id: 'intel', label: 'Intel & Evidence' },
+  ],
   PAYLOAD_CATALOG: [],
 }))
 
@@ -198,6 +204,23 @@ vi.mock('@/components/sensei/SenseiDrawer', () => ({
 // Sidebar PR-2 rewrite adds PanelLeft/PanelLeftClose). Prevents "No 'X' export is defined
 // on the 'lucide-react' mock" failures per lessonslearned.md (2026-03-21 / 2026-04-09).
 vi.mock('lucide-react', () => mockLucideIcons('*'))
+
+// Train 2 PR-4c.3: cmdk is loaded transitively via TopBar→CommandPalette.
+// Mock it to avoid loading the real Radix Dialog in jsdom.
+vi.mock('cmdk', () => ({
+  Command: Object.assign(
+    ({ children }: { children: React.ReactNode }) => <div data-testid="cmdk">{children}</div>,
+    {
+      Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+        open ? <div data-testid="cmdk-dialog">{children}</div> : null,
+      Input: (props: Record<string, unknown>) => <input data-testid="cmdk-input" {...props} />,
+      List: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      Empty: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      Group: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      Item: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    },
+  ),
+}))
 
 // ---------------------------------------------------------------------------
 // Import under test (after all mocks)

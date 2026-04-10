@@ -131,12 +131,8 @@ export function PageToolbar({
                   "motion-safe:transition-all motion-safe:duration-[var(--transition-fast)]"
                 )}
               />
-              <kbd
-                aria-label={isMac ? 'Keyboard shortcut: Command K' : 'Keyboard shortcut: Control K'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs text-[var(--text-tertiary)] bg-[var(--bg-quaternary)] rounded border border-[var(--border)]"
-              >
-                {isMac ? <span className="text-xs">⌘</span> : <span className="text-xs">Ctrl+</span>}K
-              </kbd>
+              {/* PR-4c.3: Cmd+K badge removed — shortcut now opens the global
+               * CommandPalette in TopBar, not this per-page search. */}
             </div>
           )}
 

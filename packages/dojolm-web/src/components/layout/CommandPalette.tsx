@@ -13,7 +13,7 @@
 
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import { Command } from 'cmdk'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
@@ -51,20 +51,6 @@ export interface CommandPaletteProps {
 
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const { setActiveTab } = useNavigation()
-  const [search, setSearch] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  // Focus the search input when the palette opens.
-  useEffect(() => {
-    if (open) {
-      setSearch('')
-      // Small delay to ensure the dialog is mounted and visible.
-      const id = requestAnimationFrame(() => {
-        inputRef.current?.focus()
-      })
-      return () => cancelAnimationFrame(id)
-    }
-  }, [open])
 
   const handleSelect = useCallback(
     (navId: string) => {
@@ -74,56 +60,40 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     [setActiveTab, onOpenChange],
   )
 
-  if (!open) return null
-
+  // Use Command.Dialog for built-in Radix Dialog focus trap + overlay.
+  // The `container` prop isn't needed — Dialog portals to body by default.
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-[var(--z-modal)] bg-black/50 backdrop-blur-sm"
-        onClick={() => onOpenChange(false)}
-        aria-hidden="true"
-      />
-
-      {/* Palette dialog */}
-      <div
-        className="fixed inset-0 z-[calc(var(--z-modal)+1)] flex items-start justify-center pt-[min(20vh,120px)]"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Command palette"
-      >
-        <Command
+    <Command.Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      shouldFilter={true}
+      label="Command palette"
+      className={cn(
+        'fixed left-1/2 top-[min(20vh,120px)] z-[calc(var(--z-modal)+1)]',
+        '-translate-x-1/2 w-[min(calc(100vw-2rem),32rem)]',
+        'rounded-xl border border-[var(--border-subtle)]',
+        'bg-[var(--background)] shadow-2xl',
+        'motion-safe:animate-fade-in',
+      )}
+      overlayClassName="fixed inset-0 z-[var(--z-modal)] bg-black/50 backdrop-blur-sm"
+      contentClassName=""
+    >
+      {/* Search input */}
+      <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] px-4">
+        <Search className="h-4 w-4 shrink-0 text-[var(--text-tertiary)]" aria-hidden="true" />
+        <Command.Input
+          placeholder="Search modules..."
           className={cn(
-            'w-full max-w-lg rounded-xl border border-[var(--border-subtle)]',
-            'bg-[var(--background)] shadow-2xl',
-            'motion-safe:animate-fade-in',
+            'h-12 w-full bg-transparent text-sm text-[var(--foreground)]',
+            'placeholder:text-[var(--text-tertiary)]',
+            'outline-none',
           )}
-          shouldFilter={true}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              e.preventDefault()
-              onOpenChange(false)
-            }
-          }}
-        >
-          {/* Search input */}
-          <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] px-4">
-            <Search className="h-4 w-4 shrink-0 text-[var(--text-tertiary)]" aria-hidden="true" />
-            <Command.Input
-              ref={inputRef}
-              value={search}
-              onValueChange={setSearch}
-              placeholder="Search modules..."
-              className={cn(
-                'h-12 w-full bg-transparent text-sm text-[var(--foreground)]',
-                'placeholder:text-[var(--text-tertiary)]',
-                'outline-none',
-              )}
-            />
-            <kbd className="hidden shrink-0 rounded border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)] sm:inline-block">
-              ESC
-            </kbd>
-          </div>
+          autoFocus
+        />
+        <kbd className="hidden shrink-0 rounded border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-tertiary)] sm:inline-block">
+          ESC
+        </kbd>
+      </div>
 
           {/* Results list */}
           <Command.List className="max-h-[min(50vh,400px)] overflow-y-auto overscroll-contain p-2">
@@ -182,9 +152,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               close
             </span>
           </div>
-        </Command>
-      </div>
-    </>
+    </Command.Dialog>
   )
 }
 
@@ -205,13 +173,13 @@ function PaletteItem({
       value={`${item.id} ${label} ${sublabel ?? ''} ${item.description}`}
       onSelect={() => onSelect(item.id)}
       className={cn(
-        'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm',
+        'group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm',
         'text-[var(--foreground)] transition-colors',
         'aria-selected:bg-[var(--dojo-primary)]/10 aria-selected:text-[var(--dojo-primary)]',
         'hover:bg-[var(--bg-tertiary)]',
       )}
     >
-      <Icon className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] aria-selected:text-[var(--dojo-primary)]" aria-hidden="true" />
+      <Icon className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] group-aria-selected:text-[var(--dojo-primary)]" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="truncate font-medium">{label}</div>
         {sublabel && sublabel !== label && (

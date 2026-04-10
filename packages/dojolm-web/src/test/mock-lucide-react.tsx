@@ -71,7 +71,7 @@ export function mockLucideIcons(
       'Brain', 'BrainCircuit', 'Bug',
       'Calendar', 'Check', 'CheckCheck', 'CheckCircle', 'CheckCircle2',
       'ChevronDown', 'ChevronRight', 'ChevronLeft', 'ChevronUp', 'Circle', 'Clock',
-      'Code', 'Copy', 'Cpu', 'Crosshair', 'Crown',
+      'Code', 'Copy', 'CornerDownLeft', 'Cpu', 'Crosshair', 'Crown',
       'Database', 'Dna', 'DollarSign', 'Download',
       'Edit', 'ExternalLink', 'Eye', 'EyeOff',
       'File', 'FileCheck', 'FileJson', 'FileText', 'Filter', 'Fingerprint', 'Flag',

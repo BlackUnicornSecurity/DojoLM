@@ -53,6 +53,11 @@ export function TopBar() {
   const [activityDrawerOpen, setActivityDrawerOpen] = useState(false)
   // Train 2 PR-4c.3 — Command Palette (Cmd+K)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  // SSR-safe platform detection (avoids hydration mismatch from navigator.userAgent)
+  const [isMac, setIsMac] = useState(false)
+  useEffect(() => {
+    setIsMac(/Mac|iPhone|iPad/.test(navigator.userAgent))
+  }, [])
 
   const toggleActivityDrawer = useCallback(() => {
     setActivityDrawerOpen(prev => !prev)
@@ -102,7 +107,7 @@ export function TopBar() {
           <Search className="h-3.5 w-3.5" aria-hidden="true" />
           <span className="hidden lg:inline">Search...</span>
           <kbd className="hidden rounded border border-[var(--border-subtle)] bg-[var(--bg-primary)] px-1 py-0.5 text-[10px] font-medium lg:inline-block">
-            {typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘K' : 'Ctrl+K'}
+            {isMac ? '⌘K' : 'Ctrl+K'}
           </kbd>
         </button>
 
