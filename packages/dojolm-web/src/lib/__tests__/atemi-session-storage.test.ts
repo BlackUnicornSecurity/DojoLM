@@ -127,6 +127,9 @@ describe('Atemi Session Storage', () => {
       expect(config).toEqual({
         targetModel: '',
         attackMode: 'passive',
+        orchestratorStrategy: '',
+        ragAttackVector: '',
+        ragPipelineStage: '',
         concurrency: 1,
         timeoutMs: 30000,
         autoLog: true,

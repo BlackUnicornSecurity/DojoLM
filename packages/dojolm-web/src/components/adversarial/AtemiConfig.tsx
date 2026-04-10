@@ -24,7 +24,20 @@ import {
   Timer,
   Layers,
   ScrollText,
+  Crosshair,
+  Database,
 } from 'lucide-react'
+import {
+  ORCHESTRATOR_STRATEGIES,
+  ORCHESTRATOR_STRATEGY_INFO,
+  RAG_ATTACK_VECTOR_OPTIONS,
+  RAG_PIPELINE_STAGE_OPTIONS,
+} from '@/lib/atemi-session-types'
+import type {
+  OrchestratorStrategy,
+  RagAttackVectorId,
+  RagPipelineStageId,
+} from '@/lib/atemi-session-types'
 
 const STORAGE_KEY = 'atemi-config'
 const VALID_ATTACK_MODES = ['passive', 'basic', 'advanced', 'aggressive'] as const
@@ -32,6 +45,9 @@ const VALID_ATTACK_MODES = ['passive', 'basic', 'advanced', 'aggressive'] as con
 export interface AtemiConfigData {
   targetModel: string
   attackMode: string
+  orchestratorStrategy: OrchestratorStrategy | ''
+  ragAttackVector: RagAttackVectorId | ''
+  ragPipelineStage: RagPipelineStageId | ''
   concurrency: number
   timeoutMs: number
   autoLog: boolean
@@ -40,6 +56,9 @@ export interface AtemiConfigData {
 const DEFAULT_CONFIG: AtemiConfigData = {
   targetModel: '',
   attackMode: 'passive',
+  orchestratorStrategy: '',
+  ragAttackVector: '',
+  ragPipelineStage: '',
   concurrency: 1,
   timeoutMs: 30000,
   autoLog: true,
@@ -70,9 +89,15 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
           const rawMode = typeof obj.attackMode === 'string' ? obj.attackMode : DEFAULT_CONFIG.attackMode
           const rawConcurrency = typeof obj.concurrency === 'number' ? obj.concurrency : DEFAULT_CONFIG.concurrency
           const rawTimeout = typeof obj.timeoutMs === 'number' ? obj.timeoutMs : DEFAULT_CONFIG.timeoutMs
+          const rawOrchestrator = typeof obj.orchestratorStrategy === 'string' ? obj.orchestratorStrategy : ''
+          const rawRagVector = typeof obj.ragAttackVector === 'string' ? obj.ragAttackVector : ''
+          const rawRagStage = typeof obj.ragPipelineStage === 'string' ? obj.ragPipelineStage : ''
           setConfig({
             targetModel: rawTarget.trim().slice(0, 256),
             attackMode: (VALID_ATTACK_MODES as readonly string[]).includes(rawMode) ? rawMode : DEFAULT_CONFIG.attackMode,
+            orchestratorStrategy: (ORCHESTRATOR_STRATEGIES as readonly string[]).includes(rawOrchestrator) ? rawOrchestrator as OrchestratorStrategy : '',
+            ragAttackVector: RAG_ATTACK_VECTOR_OPTIONS.some(v => v.id === rawRagVector) ? rawRagVector as RagAttackVectorId : '',
+            ragPipelineStage: RAG_PIPELINE_STAGE_OPTIONS.some(s => s.id === rawRagStage) ? rawRagStage as RagPipelineStageId : '',
             concurrency: Math.min(10, Math.max(1, Math.round(rawConcurrency))),
             timeoutMs: Math.min(120000, Math.max(5000, rawTimeout)),
             autoLog: typeof obj.autoLog === 'boolean' ? obj.autoLog : DEFAULT_CONFIG.autoLog,
@@ -205,6 +230,115 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
                   {mode}
                 </button>
               ))}
+            </div>
+          </fieldset>
+
+          {/* Orchestrator Strategy (PR-4f.1) */}
+          <fieldset className="space-y-2">
+            <legend className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]">
+              <Crosshair className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              Orchestrator Strategy
+            </legend>
+            <div className="grid grid-cols-1 gap-2" role="radiogroup" aria-label="Orchestrator strategy">
+              {/* None option */}
+              <button
+                role="radio"
+                aria-checked={config.orchestratorStrategy === ''}
+                onClick={() => updateField('orchestratorStrategy', '')}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-lg border text-left min-h-[44px]',
+                  'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+                  config.orchestratorStrategy === ''
+                    ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10'
+                    : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-quaternary)]'
+                )}
+              >
+                <span className="text-base w-6 text-center" aria-hidden="true">-</span>
+                <div className="min-w-0">
+                  <p className={cn('text-sm font-medium', config.orchestratorStrategy === '' ? 'text-[var(--dojo-primary)]' : 'text-[var(--foreground)]')}>None</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Manual single-turn attacks</p>
+                </div>
+              </button>
+              {ORCHESTRATOR_STRATEGIES.map((strategy) => {
+                const info = ORCHESTRATOR_STRATEGY_INFO[strategy]
+                const isSelected = config.orchestratorStrategy === strategy
+                return (
+                  <button
+                    key={strategy}
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => updateField('orchestratorStrategy', strategy)}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2 rounded-lg border text-left min-h-[44px]',
+                      'motion-safe:transition-colors motion-safe:duration-[var(--transition-fast)]',
+                      isSelected
+                        ? 'border-[var(--dojo-primary)] bg-[var(--dojo-primary)]/10'
+                        : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-quaternary)]'
+                    )}
+                  >
+                    <span className="text-base w-6 text-center" aria-hidden="true">{info.icon}</span>
+                    <div className="min-w-0">
+                      <p className={cn('text-sm font-medium', isSelected ? 'text-[var(--dojo-primary)]' : 'text-[var(--foreground)]')}>{info.name}</p>
+                      <p className="text-xs text-[var(--text-tertiary)]">{info.description}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          {/* RAG Attack Target (PR-4f.2) */}
+          <fieldset className="space-y-2">
+            <legend className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)]">
+              <Database className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              RAG Attack Target
+            </legend>
+            <div className="space-y-3">
+              <div>
+                <label htmlFor="atemi-rag-vector" className="text-xs text-[var(--text-tertiary)] block mb-1">
+                  Attack Vector
+                </label>
+                <select
+                  id="atemi-rag-vector"
+                  value={config.ragAttackVector}
+                  onChange={(e) => updateField('ragAttackVector', e.target.value as RagAttackVectorId | '')}
+                  aria-label="Select RAG attack vector"
+                  className={cn(
+                    'w-full min-h-[44px] rounded-lg border bg-[var(--input)] px-3 py-2 text-sm text-[var(--foreground)]',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                    'border-[var(--border)]',
+                  )}
+                >
+                  <option value="">None (no RAG targeting)</option>
+                  {RAG_ATTACK_VECTOR_OPTIONS.map((v) => (
+                    <option key={v.id} value={v.id}>{v.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="atemi-rag-stage" className="text-xs text-[var(--text-tertiary)] block mb-1">
+                  Pipeline Stage
+                </label>
+                <select
+                  id="atemi-rag-stage"
+                  value={config.ragPipelineStage}
+                  onChange={(e) => updateField('ragPipelineStage', e.target.value as RagPipelineStageId | '')}
+                  aria-label="Select RAG pipeline stage to target"
+                  className={cn(
+                    'w-full min-h-[44px] rounded-lg border bg-[var(--input)] px-3 py-2 text-sm text-[var(--foreground)]',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                    'border-[var(--border)]',
+                  )}
+                >
+                  <option value="">All stages</option>
+                  {RAG_PIPELINE_STAGE_OPTIONS.map((s) => (
+                    <option key={s.id} value={s.id}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-[var(--text-tertiary)]">
+                Target specific RAG pipeline stages with 8 attack vectors from the SUIJUTSU module
+              </p>
             </div>
           </fieldset>
 
