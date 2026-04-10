@@ -16,6 +16,7 @@
 import { useCallback } from 'react'
 import { Command } from 'cmdk'
 import { NAV_ITEMS, NAV_GROUPS } from '@/lib/constants'
+import type { NavId } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
 import { Search, CornerDownLeft, ArrowUp, ArrowDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -54,7 +55,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const handleSelect = useCallback(
     (navId: string) => {
-      setActiveTab(navId)
+      setActiveTab(navId as NavId)
       onOpenChange(false)
     },
     [setActiveTab, onOpenChange],
