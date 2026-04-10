@@ -13,6 +13,7 @@
 import { useCallback, useState, lazy, Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PageToolbar } from '@/components/layout/PageToolbar'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { LLMModelProvider } from '@/lib/contexts'
 import { ApiKeyManager } from './ApiKeyManager'
 import { ScannerConfig } from './ScannerConfig'
@@ -128,11 +129,11 @@ export function AdminPanel() {
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as AdminTabId)}>
         <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 rounded-lg">
           {ADMIN_TABS.map(({ id, label, codename, icon: TabIcon }) => (
-            <TabsTrigger key={id} value={id} className="min-h-[44px] gap-2 text-xs">
+            <TabsTrigger key={id} value={id} aria-label={label} className="min-h-[44px] gap-2 text-xs">
               <TabIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               <span className="flex flex-col items-start leading-tight">
                 <span className="font-medium">{label}</span>
-                <span className="text-[10px] text-muted-foreground">{codename}</span>
+                <span className="text-[10px] text-muted-foreground" aria-hidden="true">{codename}</span>
               </span>
             </TabsTrigger>
           ))}
@@ -183,8 +184,11 @@ export function AdminPanel() {
  * ProvidersTab — LLM endpoint management (Train 2 PR-4d).
  *
  * Lazy-loads CustomProviderBuilder from the llm barrel, wrapped in
- * LLMModelProvider so saveModel() context is available. Also renders
- * the existing ApiKeyManager for credential management alongside.
+ * LLMModelProvider so saveModel() context is available. The local
+ * LLMModelProvider is intentionally isolated — admin saves persist via
+ * the API, and other surfaces (Model Lab, Arena) will pick up the new
+ * provider on their next mount or refresh. Real-time cross-tab
+ * propagation is not required for admin-level configuration changes.
  */
 function ProvidersTab() {
   return (
@@ -195,13 +199,15 @@ function ProvidersTab() {
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
           Register custom LLM providers, test connections, and manage endpoint configurations.
-          Changes here are reflected in Model Lab and all testing surfaces.
+          Changes are persisted immediately and reflected in Model Lab on next load.
         </p>
-        <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" /></div>}>
-          <LLMModelProvider>
-            <CustomProviderBuilderLazy />
-          </LLMModelProvider>
-        </Suspense>
+        <ErrorBoundary fallbackTitle="Provider Builder Error" fallbackDescription="Unable to load the provider builder. Please try again.">
+          <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" /></div>}>
+            <LLMModelProvider>
+              <CustomProviderBuilderLazy />
+            </LLMModelProvider>
+          </Suspense>
+        </ErrorBoundary>
       </div>
 
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4">
@@ -222,8 +228,10 @@ function ProvidersTab() {
  * management is a Train 3 deliverable after the backend Plugin API is
  * ready (blocked on backend readiness matrix).
  */
+/** Plugin type categories from bu-tpi/src/plugins/types.ts */
+const PLUGIN_TYPES = ['scanner', 'transform', 'reporter', 'orchestrator'] as const
+
 function PluginsTab() {
-  const pluginTypes = ['scanner', 'transform', 'reporter', 'orchestrator'] as const
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-6">
@@ -236,7 +244,7 @@ function PluginsTab() {
           when the backend Plugin API ships in Train 3.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {pluginTypes.map(type => (
+          {PLUGIN_TYPES.map(type => (
             <div
               key={type}
               className="rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-center"

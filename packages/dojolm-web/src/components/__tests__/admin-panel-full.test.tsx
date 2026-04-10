@@ -175,7 +175,7 @@ describe('AdminPanel', () => {
 
   it('AP-013: clicking Admin Settings tab shows AdminSettings', () => {
     const { rerender } = render(<AdminPanel />)
-    fireEvent.click(screen.getByRole('tab', { name: /Settings.*Configuration/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Settings/i }))
     rerender(<AdminPanel />)
     expect(screen.getByTestId('admin-settings')).toBeInTheDocument()
   })
