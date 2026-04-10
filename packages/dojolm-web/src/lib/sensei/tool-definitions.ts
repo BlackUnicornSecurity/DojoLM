@@ -358,6 +358,16 @@ const GENERATE_REPORT: SenseiToolDefinition = {
 // Tool Definitions — 2 Client-Side Tools
 // ---------------------------------------------------------------------------
 
+// Full NavId enum for Sensei tools — must include every first-class module.
+// Train 2 audit fix: added arena, mitsuke, dna, kagami, buki (PR-4b.1/4b.2).
+const ALL_MODULE_IDS = [
+  'dashboard', 'scanner', 'armory', 'buki', 'jutsu', 'arena',
+  'adversarial', 'strategic', 'ronin-hub', 'sengoku',
+  'guard', 'kotoba',
+  'mitsuke', 'dna', 'kagami',
+  'compliance', 'admin',
+] as const;
+
 const NAVIGATE_TO: SenseiToolDefinition = {
   name: 'navigate_to',
   description: 'Navigate the user to a specific platform module.',
@@ -366,20 +376,7 @@ const NAVIGATE_TO: SenseiToolDefinition = {
     properties: {
       module: {
         type: 'string',
-        enum: [
-          'dashboard',
-          'scanner',
-          'armory',
-          'jutsu',
-          'guard',
-          'compliance',
-          'adversarial',
-          'strategic',
-          'ronin-hub',
-          'sengoku',
-          'kotoba',
-          'admin',
-        ],
+        enum: [...ALL_MODULE_IDS],
         description: 'Module ID to navigate to.',
       },
     },
@@ -401,20 +398,7 @@ const EXPLAIN_FEATURE: SenseiToolDefinition = {
     properties: {
       module: {
         type: 'string',
-        enum: [
-          'dashboard',
-          'scanner',
-          'armory',
-          'jutsu',
-          'guard',
-          'compliance',
-          'adversarial',
-          'strategic',
-          'ronin-hub',
-          'sengoku',
-          'kotoba',
-          'admin',
-        ],
+        enum: [...ALL_MODULE_IDS],
         description: 'Module ID to explain.',
       },
     },
@@ -946,6 +930,9 @@ const MODULE_TOP_TOOLS: Readonly<Record<NavId, readonly string[]>> = {
   ],
   // Train 2 PR-4b.1 (2026-04-09): 4 Kumite children promoted to first-class tabs
   arena: [
+    'create_arena_match',
+    'list_arena_matches',
+    'get_warriors',
     'get_stats',
     'get_leaderboard',
     'navigate_to',

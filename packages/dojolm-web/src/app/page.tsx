@@ -494,9 +494,11 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
         </TabsContent>
 
         <TabsContent value="deep-scan" className="mt-6">
-          <Suspense fallback={<ModuleLoading />}>
-            <ShinganPanel />
-          </Suspense>
+          <ErrorBoundary fallbackTitle="Deep Scan Error" fallbackDescription="Unable to load Shingan deep scanner. Please try again.">
+            <Suspense fallback={<ModuleLoading />}>
+              <ShinganPanel />
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>

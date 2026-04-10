@@ -60,6 +60,7 @@ import { AgenticLab } from '../agentic/AgenticLab'
 import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
+import { useNavigation } from '@/lib/NavigationContext'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
 // Train 2 PR-4b.5 — Sengoku relocated into Atemi Lab as Campaigns sub-tab
 const SengokuDashboardLazy = lazy(() =>
@@ -581,6 +582,7 @@ export function AdversarialLab({
   connected = false,
   className,
 }: AdversarialLabProps) {
+  const { setActiveTab: setNavTab } = useNavigation()
   const [mode, setMode] = useState<AttackMode>(initialMode)
   const [activeTab, setActiveTab] = useState<AtemiTab>('attack-tools')
   const [configOpen, setConfigOpen] = useState(false)
@@ -1392,8 +1394,8 @@ export function AdversarialLab({
                 size="sm"
                 className="w-full gap-2"
                 onClick={() => {
-                  // Navigate to Kagami tab in StrategicHub
-                  window.dispatchEvent(new CustomEvent('navigate-kumite', { detail: { subsystem: 'kagami' } }))
+                  // Train 2 audit fix: Kagami is now first-class (PR-4b.1).
+                  setNavTab('kagami')
                 }}
                 aria-label="Launch Kagami mirror testing"
               >
@@ -1420,8 +1422,8 @@ export function AdversarialLab({
                 size="sm"
                 className="w-full gap-2"
                 onClick={() => {
-                  // Navigate to Shingan tab in StrategicHub
-                  window.dispatchEvent(new CustomEvent('navigate-kumite', { detail: { subsystem: 'shingan' } }))
+                  // Train 2 audit fix: Shingan now lives as Scanner Deep Scan tab (PR-4b.4).
+                  setNavTab('scanner')
                 }}
                 aria-label="Launch Shingan deep scan"
               >

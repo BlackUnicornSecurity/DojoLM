@@ -14,7 +14,7 @@ import { useCallback, useState, lazy, Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { LLMModelProvider } from '@/lib/contexts'
+import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
 import { ApiKeyManager } from './ApiKeyManager'
 import { ScannerConfig } from './ScannerConfig'
 import { ExportSettings } from './ExportSettings'
@@ -204,7 +204,9 @@ function ProvidersTab() {
         <ErrorBoundary fallbackTitle="Provider Builder Error" fallbackDescription="Unable to load the provider builder. Please try again.">
           <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" /></div>}>
             <LLMModelProvider>
-              <CustomProviderBuilderLazy />
+              <LLMExecutionProvider>
+                <CustomProviderBuilderLazy />
+              </LLMExecutionProvider>
             </LLMModelProvider>
           </Suspense>
         </ErrorBoundary>

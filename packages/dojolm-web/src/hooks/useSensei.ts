@@ -23,10 +23,9 @@ import type { NavId } from '@/lib/constants'
 // Constants
 // ---------------------------------------------------------------------------
 
-const VALID_NAV_IDS = new Set([
-  'dashboard', 'scanner', 'armory', 'jutsu', 'guard', 'compliance',
-  'adversarial', 'strategic', 'ronin-hub', 'sengoku', 'kotoba', 'admin',
-])
+// Derive from NAV_ITEMS to stay in sync — never hardcode NavIds here.
+import { NAV_ITEMS } from '@/lib/constants'
+const VALID_NAV_IDS = new Set<string>(NAV_ITEMS.map(item => item.id))
 
 const STORAGE_KEY_MESSAGES = 'sensei-messages'
 const STORAGE_KEY_MODEL = 'sensei-model'

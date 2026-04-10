@@ -233,10 +233,11 @@ describe('H8.3-02: Clicking stores framework ID in localStorage', () => {
 })
 
 // ===========================================================================
-// H8.3-03: Clicking calls setActiveTab('jutsu')
+// H8.3-03: Clicking calls setActiveTab('adversarial') — navigates to Atemi Lab
+// where TestExecution now lives (Train 2 PR-4b.6 / PR-4b.8.3)
 // ===========================================================================
-describe('H8.3-03: Navigation to Model Lab tab', () => {
-  it('calls setActiveTab with "jutsu" on button click', async () => {
+describe('H8.3-03: Navigation to Atemi Lab tab', () => {
+  it('calls setActiveTab with "adversarial" on button click', async () => {
     mockSuccessfulFetch()
     render(<ComplianceCenter />)
 
