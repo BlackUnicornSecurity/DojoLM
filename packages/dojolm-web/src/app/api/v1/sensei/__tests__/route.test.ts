@@ -152,4 +152,19 @@ describe('POST /api/v1/sensei', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('Allow')).toBe('POST, OPTIONS');
   });
+
+  // SENSEI-012: Valid response includes deprecation headers and body fields
+  it('SENSEI-012: valid response includes deprecation headers and body fields', async () => {
+    const req = createPostRequest({ capability: 'chat' });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Sunset')).toContain('2026');
+    expect(res.headers.get('Deprecation')).toBeDefined();
+    expect(json.deprecated).toBe(true);
+    expect(json.sunset).toBeDefined();
+    expect(json.migration).toBeDefined();
+  });
 });

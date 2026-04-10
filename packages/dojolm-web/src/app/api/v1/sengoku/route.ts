@@ -6,18 +6,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
+import { SUNSET_DATE, deprecationHeaders } from '@/lib/v1-deprecation';
 
-const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
-
-function deprecationHeaders(): Record<string, string> {
-  return {
-    'Content-Type': 'application/json',
-    'X-Content-Type-Options': 'nosniff',
-    'Sunset': SUNSET_DATE,
-    'Deprecation': 'true',
-    'Link': '</api/sengoku/campaigns>; rel="successor-version"',
-  };
-}
+const SUCCESSOR = '/api/sengoku/campaigns';
+const headers = () => deprecationHeaders(SUCCESSOR);
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -27,14 +19,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json(
         { error: 'Request body must be a JSON object' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
@@ -44,14 +36,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (!campaignId || typeof campaignId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: campaignId (string)' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (campaignId.length > 128) {
       return NextResponse.json(
         { error: 'campaignId exceeds maximum length (128)' },
-        { status: 413 }
+        { status: 413, headers: headers() }
       );
     }
 
@@ -61,20 +53,20 @@ export const POST = withAuth(async (request: NextRequest) => {
         success: true,
         deprecated: true,
         sunset: SUNSET_DATE,
-        migration: 'POST /api/sengoku/campaigns',
+        migration: `POST ${SUCCESSOR}`,
         data: {
           campaignId,
           status: 'ready',
-          message: 'DEPRECATED — migrate to /api/sengoku/campaigns before 2026-06-30',
+          message: `DEPRECATED — migrate to ${SUCCESSOR} before 2026-06-30`,
         },
       },
-      { status: 200, headers: deprecationHeaders() }
+      { status: 200, headers: headers() }
     );
   } catch (error) {
     console.error('v1 Sengoku API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: headers() }
     );
   }
 }, { resource: 'executions', action: 'execute' });

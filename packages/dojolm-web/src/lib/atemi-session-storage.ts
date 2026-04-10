@@ -73,7 +73,7 @@ export function loadConfigSnapshot(): AtemiSessionConfig {
     const rawRagVec = typeof obj.ragAttackVector === 'string' ? obj.ragAttackVector : ''
     const rawRagStg = typeof obj.ragPipelineStage === 'string' ? obj.ragPipelineStage : ''
     return {
-      targetModel: typeof obj.targetModel === 'string' ? obj.targetModel.slice(0, 256) : defaults.targetModel,
+      targetModel: typeof obj.targetModel === 'string' ? obj.targetModel.trim().slice(0, 256) : defaults.targetModel,
       attackMode: (VALID_ATTACK_MODES as readonly string[]).includes(rawMode) ? rawMode : defaults.attackMode,
       orchestratorStrategy: (ORCHESTRATOR_STRATEGIES as readonly string[]).includes(rawOrch) ? rawOrch as OrchestratorStrategy : '',
       ragAttackVector: RAG_ATTACK_VECTOR_OPTIONS.some(v => v.id === rawRagVec) ? rawRagVec as RagAttackVectorId : '',

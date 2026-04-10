@@ -6,18 +6,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
+import { SUNSET_DATE, deprecationHeaders } from '@/lib/v1-deprecation';
 
-const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
-
-function deprecationHeaders(): Record<string, string> {
-  return {
-    'Content-Type': 'application/json',
-    'X-Content-Type-Options': 'nosniff',
-    'Sunset': SUNSET_DATE,
-    'Deprecation': 'true',
-    'Link': '</api/orchestrator/run>; rel="successor-version"',
-  };
-}
+const SUCCESSOR = '/api/orchestrator/run';
+const headers = () => deprecationHeaders(SUCCESSOR);
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -27,14 +19,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json(
         { error: 'Request body must be a JSON object' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
@@ -44,14 +36,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (!planId || typeof planId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: planId (string)' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (planId.length > 128) {
       return NextResponse.json(
         { error: 'planId exceeds maximum length (128)' },
-        { status: 413 }
+        { status: 413, headers: headers() }
       );
     }
 
@@ -59,14 +51,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (!modelId || typeof modelId !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: modelId (string)' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (modelId.length > 128) {
       return NextResponse.json(
         { error: 'modelId exceeds maximum length (128)' },
-        { status: 413 }
+        { status: 413, headers: headers() }
       );
     }
 
@@ -79,28 +71,28 @@ export const POST = withAuth(async (request: NextRequest) => {
           success: true,
           deprecated: true,
           sunset: SUNSET_DATE,
-          migration: 'POST /api/orchestrator/run',
+          migration: `POST ${SUCCESSOR}`,
           data: {
             planId,
             modelId,
             availableTypes: [...TEMPORAL_ATTACK_TYPES],
             status: 'ready',
-            message: 'DEPRECATED — migrate to POST /api/orchestrator/run before 2026-06-30',
+            message: `DEPRECATED — migrate to POST ${SUCCESSOR} before 2026-06-30`,
           },
         },
-        { status: 200, headers: deprecationHeaders() }
+        { status: 200, headers: headers() }
       );
     } catch {
       return NextResponse.json(
         { success: false, error: 'TimeChamber unavailable' },
-        { status: 503 }
+        { status: 503, headers: headers() }
       );
     }
   } catch (error) {
     console.error('v1 TimeChamber API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: headers() }
     );
   }
 }, { resource: 'executions', action: 'execute' });

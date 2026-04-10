@@ -129,4 +129,19 @@ describe('POST /api/v1/sengoku', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('Allow')).toBe('POST, OPTIONS');
   });
+
+  // SENGOKU-010: Valid response includes deprecation headers and body fields
+  it('SENGOKU-010: valid response includes deprecation headers and body fields', async () => {
+    const req = createPostRequest({ campaignId: 'test-campaign-1' });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Sunset')).toContain('2026');
+    expect(res.headers.get('Deprecation')).toBeDefined();
+    expect(json.deprecated).toBe(true);
+    expect(json.sunset).toBeDefined();
+    expect(json.migration).toBeDefined();
+  });
 });

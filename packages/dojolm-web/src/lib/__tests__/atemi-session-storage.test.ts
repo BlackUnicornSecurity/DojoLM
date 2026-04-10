@@ -136,7 +136,7 @@ describe('Atemi Session Storage', () => {
       });
     });
 
-    // STO-AS-009: Loads valid config from localStorage
+    // STO-AS-009: Loads valid config from localStorage (missing new fields default to '')
     it('STO-AS-009: loads valid config from localStorage', () => {
       localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
         targetModel: 'gpt-4',
@@ -152,6 +152,9 @@ describe('Atemi Session Storage', () => {
       expect(config.concurrency).toBe(3);
       expect(config.timeoutMs).toBe(60000);
       expect(config.autoLog).toBe(false);
+      expect(config.orchestratorStrategy).toBe('');
+      expect(config.ragAttackVector).toBe('');
+      expect(config.ragPipelineStage).toBe('');
     });
 
     // STO-AS-010: Rejects invalid attackMode, falls back to default
@@ -199,6 +202,64 @@ describe('Atemi Session Storage', () => {
       const config = loadConfigSnapshot();
       expect(config.attackMode).toBe('passive');
       expect(config.concurrency).toBe(1);
+    });
+
+    // STO-AS-NEW-1: valid orchestratorStrategy/ragAttackVector/ragPipelineStage round-trips
+    it('STO-AS-NEW-1: valid new fields round-trip from localStorage', () => {
+      localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
+        orchestratorStrategy: 'crescendo',
+        ragAttackVector: 'retrieval-poisoning',
+        ragPipelineStage: 'reranking',
+      }));
+
+      const config = loadConfigSnapshot();
+      expect(config.orchestratorStrategy).toBe('crescendo');
+      expect(config.ragAttackVector).toBe('retrieval-poisoning');
+      expect(config.ragPipelineStage).toBe('reranking');
+    });
+
+    // STO-AS-NEW-2: invalid orchestratorStrategy falls back to ''
+    it('STO-AS-NEW-2: invalid orchestratorStrategy falls back to empty string', () => {
+      localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
+        orchestratorStrategy: 'invalid-strategy',
+      }));
+
+      const config = loadConfigSnapshot();
+      expect(config.orchestratorStrategy).toBe('');
+    });
+
+    // STO-AS-NEW-3: invalid ragAttackVector falls back to ''
+    it('STO-AS-NEW-3: invalid ragAttackVector falls back to empty string', () => {
+      localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
+        ragAttackVector: 'not-a-real-vector',
+      }));
+
+      const config = loadConfigSnapshot();
+      expect(config.ragAttackVector).toBe('');
+    });
+
+    // STO-AS-NEW-4: invalid ragPipelineStage falls back to ''
+    it('STO-AS-NEW-4: invalid ragPipelineStage falls back to empty string', () => {
+      localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
+        ragPipelineStage: 'fake-stage',
+      }));
+
+      const config = loadConfigSnapshot();
+      expect(config.ragPipelineStage).toBe('');
+    });
+
+    // STO-AS-NEW-5: non-string types for new fields fall back to ''
+    it('STO-AS-NEW-5: non-string types for new fields fall back to empty string', () => {
+      localStorageMock.setItem(CONFIG_KEY, JSON.stringify({
+        orchestratorStrategy: 42,
+        ragAttackVector: true,
+        ragPipelineStage: ['embedding'],
+      }));
+
+      const config = loadConfigSnapshot();
+      expect(config.orchestratorStrategy).toBe('');
+      expect(config.ragAttackVector).toBe('');
+      expect(config.ragPipelineStage).toBe('');
     });
   });
 });

@@ -34,6 +34,7 @@ import {
   RAG_PIPELINE_STAGE_OPTIONS,
 } from '@/lib/atemi-session-types'
 import type {
+  AtemiSessionConfig,
   OrchestratorStrategy,
   RagAttackVectorId,
   RagPipelineStageId,
@@ -42,16 +43,7 @@ import type {
 const STORAGE_KEY = 'atemi-config'
 const VALID_ATTACK_MODES = ['passive', 'basic', 'advanced', 'aggressive'] as const
 
-export interface AtemiConfigData {
-  targetModel: string
-  attackMode: string
-  orchestratorStrategy: OrchestratorStrategy | ''
-  ragAttackVector: RagAttackVectorId | ''
-  ragPipelineStage: RagPipelineStageId | ''
-  concurrency: number
-  timeoutMs: number
-  autoLog: boolean
-}
+export type AtemiConfigData = AtemiSessionConfig
 
 const DEFAULT_CONFIG: AtemiConfigData = {
   targetModel: '',
@@ -112,21 +104,43 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
   // Focus management
   useEffect(() => {
     if (isOpen) {
-      closeButtonRef.current?.focus()
+      requestAnimationFrame(() => closeButtonRef.current?.focus())
     }
   }, [isOpen])
 
-  // Escape to close
-  useEffect(() => {
-    if (!isOpen) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose()
+  // Escape key + focus trap for aria-modal compliance
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') { onClose(); return }
+
+    if (e.key === 'Tab' && panelRef.current) {
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, details > summary, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
       }
     }
+  }, [onClose])
+
+  useEffect(() => {
+    if (!isOpen) return
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen, handleKeyDown])
+
+  // Lock body scroll while panel is open
+  useEffect(() => {
+    if (!isOpen) return
+    document.body.classList.add('overflow-hidden')
+    return () => { document.body.classList.remove('overflow-hidden') }
+  }, [isOpen])
 
   const handleSave = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -197,6 +211,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
               type="text"
               value={config.targetModel}
               onChange={(e) => updateField('targetModel', e.target.value)}
+              maxLength={256}
               placeholder="e.g. gpt-4o, claude-3.5-sonnet"
               className="w-full px-3 py-2 rounded-lg bg-[var(--input)] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--text-tertiary)] min-h-[44px]"
               aria-label="Target model name"
@@ -302,7 +317,6 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
                   id="atemi-rag-vector"
                   value={config.ragAttackVector}
                   onChange={(e) => updateField('ragAttackVector', e.target.value as RagAttackVectorId | '')}
-                  aria-label="Select RAG attack vector"
                   className={cn(
                     'w-full min-h-[44px] rounded-lg border bg-[var(--input)] px-3 py-2 text-sm text-[var(--foreground)]',
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
@@ -323,7 +337,6 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
                   id="atemi-rag-stage"
                   value={config.ragPipelineStage}
                   onChange={(e) => updateField('ragPipelineStage', e.target.value as RagPipelineStageId | '')}
-                  aria-label="Select RAG pipeline stage to target"
                   className={cn(
                     'w-full min-h-[44px] rounded-lg border bg-[var(--input)] px-3 py-2 text-sm text-[var(--foreground)]',
                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',

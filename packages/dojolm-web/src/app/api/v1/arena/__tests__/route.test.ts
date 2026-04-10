@@ -139,4 +139,19 @@ describe('POST /api/v1/arena', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('Allow')).toBe('POST, OPTIONS');
   });
+
+  // ARENA-011: Valid response includes deprecation headers and body fields
+  it('ARENA-011: valid response includes deprecation headers and body fields', async () => {
+    const req = createPostRequest({ mode: 'kunai', modelId: 'gpt-4' });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Sunset')).toContain('2026');
+    expect(res.headers.get('Deprecation')).toBeDefined();
+    expect(json.deprecated).toBe(true);
+    expect(json.sunset).toBeDefined();
+    expect(json.migration).toBeDefined();
+  });
 });

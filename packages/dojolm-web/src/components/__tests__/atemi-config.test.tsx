@@ -195,3 +195,59 @@ describe('ACF-012: Reset button resets to defaults', () => {
     expect(input).toHaveValue('')
   })
 })
+
+// ===========================================================================
+// ACF-013: Orchestrator Strategy radiogroup renders
+// ===========================================================================
+describe('ACF-013: Orchestrator Strategy radiogroup', () => {
+  it('renders radiogroup with None + 5 strategy options', () => {
+    render(<AtemiConfig isOpen={true} onClose={vi.fn()} />)
+    const radiogroup = screen.getByRole('radiogroup', { name: 'Orchestrator strategy' })
+    expect(radiogroup).toBeInTheDocument()
+    // "None" + 5 strategies = 6 radio buttons
+    const radios = screen.getAllByRole('radio').filter(
+      (r) => radiogroup.contains(r),
+    )
+    expect(radios).toHaveLength(6)
+    // Verify each named option exists
+    expect(screen.getByText('None')).toBeInTheDocument()
+    expect(screen.getByText('PAIR')).toBeInTheDocument()
+    expect(screen.getByText('Crescendo')).toBeInTheDocument()
+    expect(screen.getByText('TAP')).toBeInTheDocument()
+    // None is selected by default
+    const noneRadio = radios.find((r) => r.getAttribute('aria-checked') === 'true')
+    expect(noneRadio).toBeDefined()
+  })
+})
+
+// ===========================================================================
+// ACF-016: RAG Attack Vector dropdown
+// ===========================================================================
+describe('ACF-016: RAG Attack Vector dropdown', () => {
+  it('renders dropdown with None default + 8 vector options', () => {
+    render(<AtemiConfig isOpen={true} onClose={vi.fn()} />)
+    const select = screen.getByLabelText('Attack Vector')
+    expect(select).toBeInTheDocument()
+    const options = select.querySelectorAll('option')
+    // "None (no RAG targeting)" + 8 vectors = 9 options
+    expect(options).toHaveLength(9)
+    expect(options[0].textContent).toBe('None (no RAG targeting)')
+    expect(options[0]).toHaveValue('')
+  })
+})
+
+// ===========================================================================
+// ACF-017: RAG Pipeline Stage dropdown
+// ===========================================================================
+describe('ACF-017: RAG Pipeline Stage dropdown', () => {
+  it('renders dropdown with All stages default + 5 stage options', () => {
+    render(<AtemiConfig isOpen={true} onClose={vi.fn()} />)
+    const select = screen.getByLabelText('Pipeline Stage')
+    expect(select).toBeInTheDocument()
+    const options = select.querySelectorAll('option')
+    // "All stages" + 5 stages = 6 options
+    expect(options).toHaveLength(6)
+    expect(options[0].textContent).toBe('All stages')
+    expect(options[0]).toHaveValue('')
+  })
+})
