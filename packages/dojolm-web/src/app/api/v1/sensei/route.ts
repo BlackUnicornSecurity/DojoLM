@@ -1,18 +1,24 @@
 /**
  * File: route.ts
- * Purpose: Public v1 API route for Sensei capabilities
- * Story: MUSUBI Phase 7.3
- *
- * Index:
- * - POST handler for v1 sensei requests (line 10)
- * - Input validation (line 20)
- * - Error handling (line 42)
+ * Purpose: Public v1 API route for Sensei capabilities (DEPRECATED — use /api/sensei)
+ * Story: MUSUBI Phase 7.3, PR-4g.1 Deprecation
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
 
 const MAX_TEXT_SIZE = 10_000;
+const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
+
+function deprecationHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'X-Content-Type-Options': 'nosniff',
+    'Sunset': SUNSET_DATE,
+    'Deprecation': 'true',
+    'Link': '</api/sensei/chat>; rel="successor-version"',
+  };
+}
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -57,13 +63,17 @@ export const POST = withAuth(async (request: NextRequest) => {
       return NextResponse.json(
         {
           success: true,
+          deprecated: true,
+          sunset: SUNSET_DATE,
+          migration: 'POST /api/sensei/{capability}',
           data: {
             capability,
             availableCapabilities: [...SENSEI_CAPABILITIES],
             status: 'ready',
+            message: 'DEPRECATED — migrate to /api/sensei/{capability} before 2026-06-30',
           },
         },
-        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+        { status: 200, headers: deprecationHeaders() }
       );
     } catch {
       return NextResponse.json(

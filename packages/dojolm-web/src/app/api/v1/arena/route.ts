@@ -1,16 +1,31 @@
 /**
  * File: route.ts
- * Purpose: Public v1 API route for Arena mode
- * Story: MUSUBI Phase 7.3
+ * Purpose: Public v1 API route for Arena mode (DEPRECATED — use /api/arena)
+ * Story: MUSUBI Phase 7.3, PR-4g.1 Deprecation
  *
  * Index:
- * - POST handler for v1 arena requests (line 10)
- * - Input validation (line 20)
- * - Error handling (line 48)
+ * - SUNSET_DATE constant (line 14)
+ * - deprecationHeaders helper (line 16)
+ * - POST handler for v1 arena requests (line 24)
+ * - Input validation (line 34)
+ * - Error handling (line 62)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
+
+/** RFC 8594 Sunset date — after this date, endpoint may return 410 Gone */
+const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
+
+function deprecationHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'X-Content-Type-Options': 'nosniff',
+    'Sunset': SUNSET_DATE,
+    'Deprecation': 'true',
+    'Link': '</api/arena>; rel="successor-version"',
+  };
+}
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -64,18 +79,21 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Arena v1 — validated and ready
+    // Arena v1 — DEPRECATED: use /api/arena
     return NextResponse.json(
       {
         success: true,
+        deprecated: true,
+        sunset: SUNSET_DATE,
+        migration: 'POST /api/arena',
         data: {
           mode,
           modelId,
           status: 'ready',
-          message: 'Arena v1 — use /api/arena for full arena functionality',
+          message: 'DEPRECATED — migrate to POST /api/arena before 2026-06-30',
         },
       },
-      { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      { status: 200, headers: deprecationHeaders() }
     );
   } catch (error) {
     console.error('v1 Arena API error:', error);

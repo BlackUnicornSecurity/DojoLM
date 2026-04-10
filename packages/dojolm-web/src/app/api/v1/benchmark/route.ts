@@ -1,16 +1,23 @@
 /**
  * File: route.ts
- * Purpose: Public v1 API route for benchmark execution
- * Story: MUSUBI Phase 7.3
- *
- * Index:
- * - POST handler for v1 benchmark requests (line 10)
- * - Input validation (line 20)
- * - Error handling (line 48)
+ * Purpose: Public v1 API route for benchmark execution (DEPRECATED — use /api/llm/batch-test)
+ * Story: MUSUBI Phase 7.3, PR-4g.1 Deprecation
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
+
+const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
+
+function deprecationHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'X-Content-Type-Options': 'nosniff',
+    'Sunset': SUNSET_DATE,
+    'Deprecation': 'true',
+    'Link': '</api/llm/batch-test>; rel="successor-version"',
+  };
+}
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -70,6 +77,9 @@ export const POST = withAuth(async (request: NextRequest) => {
       return NextResponse.json(
         {
           success: true,
+          deprecated: true,
+          sunset: SUNSET_DATE,
+          migration: 'POST /api/llm/batch-test',
           data: {
             suiteId,
             modelId,
@@ -81,9 +91,10 @@ export const POST = withAuth(async (request: NextRequest) => {
               'strongreject-v1',
             ],
             status: 'ready',
+            message: 'DEPRECATED — migrate to POST /api/llm/batch-test before 2026-06-30',
           },
         },
-        { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+        { status: 200, headers: deprecationHeaders() }
       );
     } catch {
       return NextResponse.json(

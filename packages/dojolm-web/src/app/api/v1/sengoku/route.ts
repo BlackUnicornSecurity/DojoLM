@@ -1,16 +1,23 @@
 /**
  * File: route.ts
- * Purpose: Public v1 API route for Sengoku campaigns
- * Story: MUSUBI Phase 7.3
- *
- * Index:
- * - POST handler for v1 sengoku requests (line 10)
- * - Input validation (line 20)
- * - Error handling (line 42)
+ * Purpose: Public v1 API route for Sengoku campaigns (DEPRECATED — use /api/sengoku)
+ * Story: MUSUBI Phase 7.3, PR-4g.1 Deprecation
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
+
+const SUNSET_DATE = 'Sat, 30 Jun 2026 00:00:00 GMT';
+
+function deprecationHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'X-Content-Type-Options': 'nosniff',
+    'Sunset': SUNSET_DATE,
+    'Deprecation': 'true',
+    'Link': '</api/sengoku/campaigns>; rel="successor-version"',
+  };
+}
 
 export const POST = withAuth(async (request: NextRequest) => {
   try {
@@ -48,17 +55,20 @@ export const POST = withAuth(async (request: NextRequest) => {
       );
     }
 
-    // Sengoku v1 — validated and ready
+    // Sengoku v1 — DEPRECATED: use /api/sengoku
     return NextResponse.json(
       {
         success: true,
+        deprecated: true,
+        sunset: SUNSET_DATE,
+        migration: 'POST /api/sengoku/campaigns',
         data: {
           campaignId,
           status: 'ready',
-          message: 'Sengoku v1 — use /api/sengoku for full campaign management',
+          message: 'DEPRECATED — migrate to /api/sengoku/campaigns before 2026-06-30',
         },
       },
-      { status: 200, headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' } }
+      { status: 200, headers: deprecationHeaders() }
     );
   } catch (error) {
     console.error('v1 Sengoku API error:', error);
