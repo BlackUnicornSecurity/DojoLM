@@ -267,12 +267,13 @@ export function ArenaBrowser() {
         </div>
       </div>
 
+      {/* Train 3 PR-4e.1: tabs aligned to spec — Browser | Matches | Leaderboard | Rules */}
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as typeof activeView)} className="space-y-4">
         <TabsList aria-label="Battle Arena views" className="flex h-auto w-full gap-1 overflow-x-auto rounded-full bg-muted/50 p-1 scrollbar-hide">
-          <TabsTrigger value="matches" className="min-h-[44px] whitespace-nowrap">Matches</TabsTrigger>
-          <TabsTrigger value="roster" className="min-h-[44px] whitespace-nowrap">Roster</TabsTrigger>
+          <TabsTrigger value="matches" className="min-h-[44px] whitespace-nowrap">Browser</TabsTrigger>
+          <TabsTrigger value="roster" className="min-h-[44px] whitespace-nowrap">Matches</TabsTrigger>
+          <TabsTrigger value="stats" className="min-h-[44px] whitespace-nowrap">Leaderboard</TabsTrigger>
           <TabsTrigger value="rules" className="min-h-[44px] whitespace-nowrap">Rules</TabsTrigger>
-          <TabsTrigger value="stats" className="min-h-[44px] whitespace-nowrap">Stats</TabsTrigger>
         </TabsList>
 
         <div className="space-y-4">
