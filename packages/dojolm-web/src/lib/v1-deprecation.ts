@@ -7,8 +7,8 @@
 /** RFC 8594 Sunset date — after this date, endpoints may return 410 Gone */
 export const SUNSET_DATE = 'Tue, 30 Jun 2026 00:00:00 GMT'
 
-/** Unix timestamp for the deprecation date (2026-04-10) */
-const DEPRECATION_TIMESTAMP = '@1744243200'
+/** Unix timestamp for the deprecation date (2026-04-10T00:00:00Z) */
+const DEPRECATION_TIMESTAMP = '@1775779200'
 
 /**
  * Build deprecation response headers for a v1 API stub.
