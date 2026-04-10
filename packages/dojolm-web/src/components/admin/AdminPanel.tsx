@@ -10,9 +10,10 @@
  * - GeneralSettings sub-component (line 116)
  */
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, lazy, Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PageToolbar } from '@/components/layout/PageToolbar'
+import { LLMModelProvider } from '@/lib/contexts'
 import { ApiKeyManager } from './ApiKeyManager'
 import { ScannerConfig } from './ScannerConfig'
 import { ExportSettings } from './ExportSettings'
@@ -24,19 +25,29 @@ import { ValidationManager } from './ValidationManager'
 import { TestRunner } from '@/components/tests/TestRunner'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { TestSuiteResult } from '@/lib/types'
-import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical } from 'lucide-react'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical, Plug, Blocks } from 'lucide-react'
 
+// Lazy-load CustomProviderBuilder to avoid pulling the full LLM barrel eagerly
+const CustomProviderBuilderLazy = lazy(() =>
+  import('@/components/llm').then(m => ({ default: m.CustomProviderBuilder }))
+)
+
+// Train 2 PR-4d (2026-04-10): Apply function/codename pattern to Admin internal
+// sections. Each tab has a functional label (what it does) and a codename (the
+// branded identity), mirroring the sidebar two-line label pattern from PR-4b.1.
 const ADMIN_TABS = [
-  { id: 'general', label: 'General', icon: Settings },
-  { id: 'users', label: 'Users', icon: Users },
-  { id: 'scoreboard', label: 'Scoreboard', icon: Trophy },
-  { id: 'apikeys', label: 'API Keys', icon: Key },
-  { id: 'scanner', label: 'Haiku Scanner & Guard', icon: Shield },
-  { id: 'health', label: 'System Health', icon: Activity },
-  { id: 'export', label: 'Export', icon: FileOutput },
-  { id: 'settings', label: 'Admin Settings', icon: Lock },
-  { id: 'validation', label: 'Validation', icon: ClipboardCheck },
-  { id: 'test-runner', label: 'Test Runner', icon: FlaskConical },
+  { id: 'general', label: 'General', codename: 'Overview', icon: Settings },
+  { id: 'users', label: 'Users', codename: 'Access Control', icon: Users },
+  { id: 'scoreboard', label: 'Scoreboard', codename: 'Leaderboard', icon: Trophy },
+  { id: 'apikeys', label: 'API Keys', codename: 'Credentials', icon: Key },
+  { id: 'scanner', label: 'Scanner & Guard', codename: 'Detection Config', icon: Shield },
+  { id: 'health', label: 'System Health', codename: 'Diagnostics', icon: Activity },
+  { id: 'export', label: 'Export', codename: 'Deliverables', icon: FileOutput },
+  { id: 'providers', label: 'Providers', codename: 'LLM Endpoints', icon: Plug },
+  { id: 'plugins', label: 'Plugins', codename: 'Extensions', icon: Blocks },
+  { id: 'settings', label: 'Settings', codename: 'Configuration', icon: Lock },
+  { id: 'validation', label: 'Validation', codename: 'KATANA Suite', icon: ClipboardCheck },
+  { id: 'test-runner', label: 'Test Runner', codename: 'CI/CD', icon: FlaskConical },
 ] as const
 
 type AdminTabId = typeof ADMIN_TABS[number]['id']
@@ -115,11 +126,14 @@ export function AdminPanel() {
       />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as AdminTabId)}>
-        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto bg-muted/50 rounded-full">
-          {ADMIN_TABS.map(({ id, label, icon: TabIcon }) => (
-            <TabsTrigger key={id} value={id} className="min-h-[44px] gap-2">
-              <TabIcon className="w-4 h-4" aria-hidden="true" />
-              {label}
+        <TabsList aria-label="Admin sections" className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 rounded-lg">
+          {ADMIN_TABS.map(({ id, label, codename, icon: TabIcon }) => (
+            <TabsTrigger key={id} value={id} className="min-h-[44px] gap-2 text-xs">
+              <TabIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span className="flex flex-col items-start leading-tight">
+                <span className="font-medium">{label}</span>
+                <span className="text-[10px] text-muted-foreground">{codename}</span>
+              </span>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -145,6 +159,12 @@ export function AdminPanel() {
         <TabsContent value="export">
           <ExportSettings />
         </TabsContent>
+        <TabsContent value="providers">
+          <ProvidersTab />
+        </TabsContent>
+        <TabsContent value="plugins">
+          <PluginsTab />
+        </TabsContent>
         <TabsContent value="settings">
           <AdminSettings />
         </TabsContent>
@@ -155,6 +175,84 @@ export function AdminPanel() {
           <TestRunner onRunTests={handleRunTests} />
         </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+/**
+ * ProvidersTab — LLM endpoint management (Train 2 PR-4d).
+ *
+ * Lazy-loads CustomProviderBuilder from the llm barrel, wrapped in
+ * LLMModelProvider so saveModel() context is available. Also renders
+ * the existing ApiKeyManager for credential management alongside.
+ */
+function ProvidersTab() {
+  return (
+    <div className="space-y-6">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+          Provider Configuration
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Register custom LLM providers, test connections, and manage endpoint configurations.
+          Changes here are reflected in Model Lab and all testing surfaces.
+        </p>
+        <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" /></div>}>
+          <LLMModelProvider>
+            <CustomProviderBuilderLazy />
+          </LLMModelProvider>
+        </Suspense>
+      </div>
+
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+          API Key Vault
+        </h3>
+        <ApiKeyManager />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * PluginsTab — Extension management (Train 2 PR-4d).
+ *
+ * Scaffolded shell for the bu-tpi plugin system. Shows registered plugin
+ * types and an empty state for the plugin registry. Full CRUD and lifecycle
+ * management is a Train 3 deliverable after the backend Plugin API is
+ * ready (blocked on backend readiness matrix).
+ */
+function PluginsTab() {
+  const pluginTypes = ['scanner', 'transform', 'reporter', 'orchestrator'] as const
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-6">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          Plugin Registry
+        </h3>
+        <p className="text-sm text-muted-foreground mb-6">
+          Extend DojoLM with scanner plugins, result transformers, report generators, and
+          orchestrator extensions. Plugin CRUD and lifecycle management will be available
+          when the backend Plugin API ships in Train 3.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {pluginTypes.map(type => (
+            <div
+              key={type}
+              className="rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-center"
+            >
+              <Blocks className="h-6 w-6 mx-auto text-[var(--text-tertiary)] mb-2" aria-hidden="true" />
+              <p className="text-xs font-semibold capitalize text-[var(--foreground)]">{type}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">0 registered</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-6 text-xs text-muted-foreground italic">
+          Plugin types: scanner (detection engines), transform (result processors), reporter (output
+          formatters), orchestrator (workflow automation). See bu-tpi/src/plugins/ for the type
+          definitions and loader API.
+        </p>
+      </div>
     </div>
   )
 }

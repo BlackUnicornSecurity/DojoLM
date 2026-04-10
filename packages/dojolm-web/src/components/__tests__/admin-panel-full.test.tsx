@@ -113,15 +113,16 @@ describe('AdminPanel', () => {
     expect(screen.getByRole('tablist', { name: /admin sections/i })).toBeInTheDocument()
   })
 
-  it('AP-004: renders all 10 admin tabs', () => {
+  // Train 2 PR-4d: 10 tabs → 12 (added Providers, Plugins)
+  it('AP-004: renders all 12 admin tabs', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(10)
+    expect(tabs).toHaveLength(12)
   })
 
   it('AP-005: General tab is selected by default', () => {
     render(<AdminPanel />)
-    const generalTab = screen.getByRole('tab', { name: /^General$/i })
+    const generalTab = screen.getByRole('tab', { name: /General/i })
     expect(generalTab).toHaveAttribute('data-state', 'active')
   })
 
@@ -132,7 +133,7 @@ describe('AdminPanel', () => {
 
   it('AP-007: clicking Users tab shows UserManagement', () => {
     const { rerender } = render(<AdminPanel />)
-    fireEvent.click(screen.getByRole('tab', { name: /^Users$/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Users/i }))
     rerender(<AdminPanel />)
     expect(screen.getByTestId('user-management')).toBeInTheDocument()
   })
@@ -153,7 +154,7 @@ describe('AdminPanel', () => {
 
   it('AP-010: clicking Export tab shows ExportSettings', () => {
     const { rerender } = render(<AdminPanel />)
-    fireEvent.click(screen.getByRole('tab', { name: /^Export$/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Export/i }))
     rerender(<AdminPanel />)
     expect(screen.getByTestId('export-settings')).toBeInTheDocument()
   })
@@ -167,14 +168,14 @@ describe('AdminPanel', () => {
 
   it('AP-012: clicking Scanner tab shows ScannerConfig', () => {
     const { rerender } = render(<AdminPanel />)
-    fireEvent.click(screen.getByRole('tab', { name: /Haiku Scanner/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Scanner.*Guard/i }))
     rerender(<AdminPanel />)
     expect(screen.getByTestId('scanner-config')).toBeInTheDocument()
   })
 
   it('AP-013: clicking Admin Settings tab shows AdminSettings', () => {
     const { rerender } = render(<AdminPanel />)
-    fireEvent.click(screen.getByRole('tab', { name: /Admin Settings/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Settings.*Configuration/i }))
     rerender(<AdminPanel />)
     expect(screen.getByTestId('admin-settings')).toBeInTheDocument()
   })
@@ -187,22 +188,23 @@ describe('AdminPanel', () => {
     expect(screen.getByText('Dark (default)')).toBeInTheDocument()
   })
 
+  // Train 2 PR-4d: added 'providers' and 'plugins' tabs
   it('AP-015: each tab has the expected data-value attributes', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
     const values = tabs.map(t => t.getAttribute('data-value'))
     expect(values).toEqual([
-      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'settings', 'validation', 'test-runner',
+      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'providers', 'plugins', 'settings', 'validation', 'test-runner',
     ])
   })
 
   it('AP-016: switching tabs updates the active state', () => {
     const { rerender } = render(<AdminPanel />)
-    const usersTab = screen.getByRole('tab', { name: /^Users$/i })
+    const usersTab = screen.getByRole('tab', { name: /Users/i })
     fireEvent.click(usersTab)
     rerender(<AdminPanel />)
-    expect(screen.getByRole('tab', { name: /^Users$/i })).toHaveAttribute('data-state', 'active')
-    expect(screen.getByRole('tab', { name: /^General$/i })).toHaveAttribute('data-state', 'inactive')
+    expect(screen.getByRole('tab', { name: /Users/i })).toHaveAttribute('data-state', 'active')
+    expect(screen.getByRole('tab', { name: /General/i })).toHaveAttribute('data-state', 'inactive')
   })
 
   it('AP-017: clicking Test Runner tab shows the internal test runner', () => {
