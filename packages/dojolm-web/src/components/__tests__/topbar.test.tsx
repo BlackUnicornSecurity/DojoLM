@@ -39,6 +39,13 @@ vi.mock('../layout/NotificationsPanel', () => ({
   ),
 }))
 
+// Train 2 PR-4c.3: Mock CommandPalette (cmdk dependency not available in test env)
+vi.mock('../layout/CommandPalette', () => ({
+  CommandPalette: ({ open }: { open: boolean }) => (
+    open ? <div data-testid="command-palette">CommandPalette</div> : null
+  ),
+}))
+
 import { TopBar } from '../layout/TopBar'
 
 // ---------------------------------------------------------------------------

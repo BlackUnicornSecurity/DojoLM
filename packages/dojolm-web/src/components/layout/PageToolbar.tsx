@@ -54,19 +54,9 @@ export function PageToolbar({
     setIsMac(/Mac|iPhone|iPad/.test(navigator.userAgent))
   }, [])
 
-  // Cmd/Ctrl+K keyboard shortcut to focus search
-  useEffect(() => {
-    if (!searchEnabled) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        searchRef.current?.focus()
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [searchEnabled])
+  // Train 2 PR-4c.3: Cmd+K now owned by the global CommandPalette in TopBar.
+  // Per-page search focus is no longer hotkey-bound. Users reach the palette
+  // via Cmd+K (global), then the per-page search via the toolbar UI itself.
 
   // Breadcrumb truncation for mobile: show first, ellipsis, last when > 2 items
   const visibleBreadcrumbs = breadcrumbs && breadcrumbs.length > 2

@@ -13,12 +13,13 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { Activity, Bot } from 'lucide-react'
+import { Activity, Bot, Search } from 'lucide-react'
 import { NotificationsPanel } from './NotificationsPanel'
 import { useActivityState } from '@/lib/contexts/ActivityContext'
 import { ActivityFeed } from '@/components/ui/ActivityFeed'
+import { CommandPalette } from './CommandPalette'
 
 /**
  * Isolated component that subscribes to activity state for unread count.
@@ -50,6 +51,8 @@ function ActivityButton({ onToggle }: { readonly onToggle: () => void }) {
 
 export function TopBar() {
   const [activityDrawerOpen, setActivityDrawerOpen] = useState(false)
+  // Train 2 PR-4c.3 — Command Palette (Cmd+K)
+  const [paletteOpen, setPaletteOpen] = useState(false)
 
   const toggleActivityDrawer = useCallback(() => {
     setActivityDrawerOpen(prev => !prev)
@@ -61,6 +64,18 @@ export function TopBar() {
 
   const handleSenseiToggle = useCallback(() => {
     window.dispatchEvent(new CustomEvent('sensei-toggle'))
+  }, [])
+
+  // Global Cmd+K / Ctrl+K hotkey for command palette
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setPaletteOpen(prev => !prev)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   return (
@@ -75,6 +90,21 @@ export function TopBar() {
       >
         {/* Spacer — per-page title/breadcrumbs remain rendered by PageToolbar.tsx */}
         <div className="flex-1" />
+
+        {/* Command Palette trigger (Train 2 PR-4c.3) */}
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="flex h-9 items-center gap-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 text-xs text-[var(--text-tertiary)] transition-colors hover:border-[var(--text-tertiary)] hover:text-[var(--foreground)]"
+          aria-label="Open command palette"
+          title="Search modules (Cmd+K)"
+          type="button"
+        >
+          <Search className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="hidden lg:inline">Search...</span>
+          <kbd className="hidden rounded border border-[var(--border-subtle)] bg-[var(--bg-primary)] px-1 py-0.5 text-[10px] font-medium lg:inline-block">
+            {typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘K' : 'Ctrl+K'}
+          </kbd>
+        </button>
 
         {/* Activity drawer trigger (replaces sidebar Activity section) */}
         <ActivityButton onToggle={toggleActivityDrawer} />
@@ -125,6 +155,9 @@ export function TopBar() {
           </aside>
         </>
       )}
+
+      {/* Command Palette — global Cmd+K navigation (PR-4c.3) */}
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </>
   )
 }
