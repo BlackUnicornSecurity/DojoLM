@@ -13,7 +13,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scan } from '@dojolm/scanner';
 import { withAuth } from '@/lib/auth/route-guard';
+import { deprecationHeaders } from '@/lib/v1-deprecation';
 
+const SUCCESSOR = '/api/scan';
+const headers = () => deprecationHeaders(SUCCESSOR);
 const MAX_TEXT_SIZE = 10_000;
 
 export const POST = withAuth(async (request: NextRequest) => {
@@ -24,14 +27,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json(
         { error: 'Request body must be a JSON object' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
@@ -41,14 +44,14 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (!text || typeof text !== 'string') {
       return NextResponse.json(
         { error: 'Missing required field: text (string)' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
     if (text.length > MAX_TEXT_SIZE) {
       return NextResponse.json(
         { error: `Input too large: maximum ${MAX_TEXT_SIZE} characters allowed` },
-        { status: 413 }
+        { status: 413, headers: headers() }
       );
     }
 
@@ -56,7 +59,7 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (/\x00/.test(text)) {
       return NextResponse.json(
         { error: 'Invalid input: null bytes are not allowed' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
@@ -64,7 +67,7 @@ export const POST = withAuth(async (request: NextRequest) => {
     if (trimmedText.length === 0) {
       return NextResponse.json(
         { error: 'Invalid input: text cannot be empty or whitespace only' },
-        { status: 400 }
+        { status: 400, headers: headers() }
       );
     }
 
@@ -73,19 +76,21 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     return NextResponse.json({
       success: true,
+      deprecated: true,
+      migration: `POST ${SUCCESSOR}`,
       data: result,
     }, {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff' },
+      headers: headers(),
     });
   } catch (error) {
     console.error('v1 Scan API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: headers() }
     );
   }
-}, { resource: 'executions', action: 'execute' });
+}, { resource: 'executions', action: 'execute', extraHeaders: headers() });
 
 export async function OPTIONS() {
   return new NextResponse(null, {

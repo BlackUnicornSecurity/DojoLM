@@ -47,6 +47,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     setActiveTabState(tab)
     if (typeof window !== 'undefined') {
       window.history.replaceState(null, '', `#${tab}`)
+      window.scrollTo(0, 0)
     }
   }, [])
 
@@ -54,7 +55,10 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     function handleHashChange() {
       const navId = resolveNavId(window.location.hash)
-      if (navId) setActiveTabState(navId)
+      if (navId) {
+        setActiveTabState(navId)
+        window.scrollTo(0, 0)
+      }
     }
     // Sync on mount to pick up hash present at page load (after hydration)
     handleHashChange()

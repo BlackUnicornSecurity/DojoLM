@@ -60,7 +60,8 @@ export function FuzzerPanel() {
       })
 
       if (!response.ok) {
-        throw new Error(`Fuzz request failed: ${response.status}`)
+        if (response.status === 401) throw new Error('Authentication required — sign in to run fuzzer sessions')
+        throw new Error(`Fuzz request failed (${response.status})`)
       }
 
       const data = await response.json() as { results: FuzzerResult[] }

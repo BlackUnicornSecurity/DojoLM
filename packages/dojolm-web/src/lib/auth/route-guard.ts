@@ -85,6 +85,9 @@ export interface RouteGuardOptions {
   action?: Action;
   /** Skip CSRF check (only for non-state-mutating endpoints). Default: false */
   skipCsrf?: boolean;
+  /** Extra headers to include on ALL responses (including 401/403).
+   *  Use case: v1 deprecated routes need Sunset/Deprecation headers even on auth failure. */
+  extraHeaders?: Record<string, string>;
 }
 
 /** Context shape matching Next.js 16+ route handler second argument */
@@ -159,7 +162,10 @@ export function withAuth(
     }
 
     if (!user) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401, headers: options?.extraHeaders }
+      );
     }
 
     // CSRF validation for state-mutating methods (double-submit cookie pattern)
@@ -172,19 +178,28 @@ export function withAuth(
       const csrfMatch = csrfCookie && csrfHeader && csrfCookie.length === csrfHeader.length &&
         crypto.timingSafeEqual(Buffer.from(csrfCookie), Buffer.from(csrfHeader));
       if (!csrfMatch) {
-        return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
+        return NextResponse.json(
+          { error: 'CSRF validation failed' },
+          { status: 403, headers: options?.extraHeaders }
+        );
       }
     }
 
     // Check role if specified
     if (options?.role && !isAtLeastRole(user.role as UserRole, options.role)) {
-      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403, headers: options?.extraHeaders }
+      );
     }
 
     // Check specific permission if specified (cumulative with role check)
     if (options?.resource && options?.action) {
       if (!hasPermission(user.role as UserRole, options.resource, options.action)) {
-        return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
+        return NextResponse.json(
+          { error: 'Insufficient permissions' },
+          { status: 403, headers: options?.extraHeaders }
+        );
       }
     }
 

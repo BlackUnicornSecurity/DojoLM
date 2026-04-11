@@ -48,6 +48,40 @@ export async function POST(req: NextRequest) {
     return response;
   }
 
+  // Parse JSON body early, before heavy imports, to return 400 on malformed input
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid JSON in request body' },
+      { status: 400 }
+    );
+  }
+
+  const { username, password } = body as { username?: string; password?: string };
+
+  if (!username || !password) {
+    return NextResponse.json(
+      { error: 'Username and password are required' },
+      { status: 400 }
+    );
+  }
+
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    return NextResponse.json(
+      { error: 'Invalid input format' },
+      { status: 400 }
+    );
+  }
+
+  if (username.length > MAX_USERNAME_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+    return NextResponse.json(
+      { error: 'Invalid credentials' },
+      { status: 401 }
+    );
+  }
+
   try {
     // Lazy-import heavy dependencies only in non-demo mode
     const { verifyPassword, generateCsrfToken } = await import('@/lib/auth/auth');
@@ -59,30 +93,6 @@ export async function POST(req: NextRequest) {
       recordLoginRateLimitFailure,
     } = await import('@/lib/auth/login-rate-limit');
     const { userRepo } = await import('@/lib/db/repositories/user.repository');
-
-    const body = await req.json();
-    const { username, password } = body;
-
-    if (!username || !password) {
-      return NextResponse.json(
-        { error: 'Username and password are required' },
-        { status: 400 }
-      );
-    }
-
-    if (typeof username !== 'string' || typeof password !== 'string') {
-      return NextResponse.json(
-        { error: 'Invalid input format' },
-        { status: 400 }
-      );
-    }
-
-    if (username.length > MAX_USERNAME_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
-    }
 
     const rateLimitKey = getLoginRateLimitKey(req, username);
     if (isLoginRateLimited(rateLimitKey)) {

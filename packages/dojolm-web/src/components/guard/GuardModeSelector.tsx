@@ -117,7 +117,7 @@ export function GuardModeSelector() {
                       <span className="text-sm font-medium">{mode.name}</span>
                     </div>
                     <p className="text-label text-muted-foreground mt-0.5">{mode.subtitle}</p>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{mode.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-3">{mode.description}</p>
                     {/* Scan indicators */}
                     <div className="flex gap-2 mt-2">
                       <span className={cn(

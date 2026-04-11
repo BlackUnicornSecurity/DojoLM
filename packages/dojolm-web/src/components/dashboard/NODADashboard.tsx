@@ -22,7 +22,7 @@ import { WidgetMetaProvider } from './WidgetCard'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BrainCircuit, Radar, Settings2, ShieldHalf } from 'lucide-react'
+import { BrainCircuit, ChevronRight, Radar, Settings2, ShieldHalf } from 'lucide-react'
 import type { GlowCardProps } from '@/components/ui/GlowCard'
 import type { NavId } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
@@ -231,24 +231,27 @@ function DashboardContent({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">Dashboard</h2>
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">Dashboard</h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {visibleWidgets.length} widgets across {activeSections.length} zones
               </p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="gradient" size="sm" onClick={() => setActiveTab('scanner')} aria-label="Scan Text">
+            <Button variant="gradient" size="sm" onClick={() => setActiveTab('scanner')} aria-label="Go to Scanner">
               <Radar className="w-4 h-4" aria-hidden="true" />
               Scan Text
+              <ChevronRight className="w-3 h-3 opacity-60" aria-hidden="true" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setActiveTab('jutsu')}>
+            <Button variant="outline" size="sm" onClick={() => setActiveTab('jutsu')} aria-label="Go to Model Lab">
               <BrainCircuit className="w-4 h-4" aria-hidden="true" />
               Models
+              <ChevronRight className="w-3 h-3 opacity-60" aria-hidden="true" />
             </Button>
-            <Button variant="default" size="sm" onClick={() => setActiveTab('guard')}>
+            <Button variant="default" size="sm" onClick={() => setActiveTab('guard')} aria-label="Go to Hattori Guard">
               <ShieldHalf className="w-4 h-4" aria-hidden="true" />
               Guard
+              <ChevronRight className="w-3 h-3 opacity-60" aria-hidden="true" />
             </Button>
             <Button
               ref={triggerRef}

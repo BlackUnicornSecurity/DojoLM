@@ -19,6 +19,7 @@ import { useState, useCallback } from 'react'
 import { LibraryPageTemplate, type LibraryColumn, type LibraryFilterField } from '@/components/ui/LibraryPageTemplate'
 import { SafeCodeBlock } from '@/components/ui/SafeCodeBlock'
 import { cn } from '@/lib/utils'
+import { ModuleHeader } from '@/components/ui/ModuleHeader'
 import { Radio, Shield, Globe, Copy, Check } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -921,6 +922,13 @@ export function MitsukeLibrary() {
 
   return (
     <div className="space-y-4">
+      {/* Page header */}
+      <ModuleHeader
+        title="Mitsuke"
+        subtitle="Threat intelligence feed — indicators, threats, and sources"
+        icon={Radio}
+      />
+
       {/* Tab switcher */}
       <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/30 border border-[var(--border)] w-fit">
         {tabs.map((tab) => {

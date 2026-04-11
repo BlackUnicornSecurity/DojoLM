@@ -79,8 +79,8 @@ export function PayloadLab() {
         <TabsContent value="payloads" className="mt-6">
           <EmptyState
             icon={Warehouse}
-            title="Payloads live in Armory (for now)"
-            description="Fixtures, payloads, and comparison workflows are currently in the Armory tab. Full merge into Payload Lab requires extracting ArmoryContent from page.tsx — tracked as a PR-4b.3 follow-up."
+            title="Payloads live in Armory"
+            description="Fixtures, payloads, and comparison workflows are in the Armory tab. Use the button below to navigate there."
             action={{
               label: 'Open Armory',
               onClick: () => setNavTab('armory'),

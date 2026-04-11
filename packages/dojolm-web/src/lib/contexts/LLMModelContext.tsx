@@ -204,7 +204,8 @@ export function LLMModelProvider({ children }: LLMModelProviderProps) {
     async (id: string) => {
       try {
         return await apiFetch<{ success: boolean; error?: string; durationMs?: number }>(
-          `/models/${id}/test`
+          `/models/${id}/test`,
+          { method: 'POST' }
         );
       } catch (err) {
         return {

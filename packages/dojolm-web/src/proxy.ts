@@ -334,9 +334,19 @@ export async function proxy(request: NextRequest) {
       /* audit logging is best-effort */
     });
 
+    // v1 deprecated routes: include Sunset/Deprecation headers even on auth failure
+    // so unauthenticated API consumers still see the deprecation notice (RFC 8594/9745).
+    const v1Headers = pathname.startsWith('/api/v1/')
+      ? {
+          'Sunset': 'Tue, 30 Jun 2026 00:00:00 GMT',
+          'Deprecation': '@1775779200',
+          'Link': `<${pathname.replace('/api/v1/', '/api/')}>; rel="successor-version"`,
+        }
+      : undefined;
+
     return NextResponse.json(
       { error: 'Authentication required' },
-      { status: 401 }
+      { status: 401, headers: v1Headers }
     );
   }
 

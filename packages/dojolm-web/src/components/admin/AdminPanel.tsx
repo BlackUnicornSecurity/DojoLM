@@ -322,24 +322,9 @@ function GeneralSettings() {
 
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Documentation</h3>
-        <div className="grid gap-2 md:grid-cols-2">
-          <a
-            href="/docs/user/PLATFORM_GUIDE.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs text-[var(--bu-electric)] hover:underline"
-          >
-            Platform Guide →
-          </a>
-          <a
-            href="/docs/user/API_REFERENCE.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-xs text-[var(--bu-electric)] hover:underline"
-          >
-            API Reference →
-          </a>
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Platform Guide and API Reference are available in the <code className="font-mono text-[var(--bu-electric)]">docs/user/</code> directory of the repository.
+        </p>
       </div>
     </div>
   )

@@ -25,6 +25,7 @@ export interface DojoDonutChartProps {
   centerLabel?: string
   centerValue?: string | number
   className?: string
+  height?: number
 }
 
 const DONUT_COLORS = [
@@ -41,10 +42,10 @@ const DONUT_COLORS = [
 const RechartsDonut = dynamic(
   () => import('recharts').then(mod => {
     const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } = mod
-    return function Chart({ data, centerLabel, centerValue }: { data: DonutSegment[]; centerLabel?: string; centerValue?: string | number }) {
+    return function Chart({ data, centerLabel, centerValue, height = 250 }: { data: DonutSegment[]; centerLabel?: string; centerValue?: string | number; height?: number }) {
       return (
         <div className="relative">
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={height}>
             <PieChart>
               <Pie
                 data={data}
@@ -96,14 +97,14 @@ const RechartsDonut = dynamic(
   { ssr: false }
 )
 
-export function DojoDonutChart({ title, data, centerLabel, centerValue, className }: DojoDonutChartProps) {
+export function DojoDonutChart({ title, data, centerLabel, centerValue, className, height }: DojoDonutChartProps) {
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <RechartsDonut data={data} centerLabel={centerLabel} centerValue={centerValue} />
+        <RechartsDonut data={data} centerLabel={centerLabel} centerValue={centerValue} height={height} />
         {/* Legend */}
         <div className="flex flex-wrap gap-3 mt-4 justify-center">
           {data.map((segment, index) => (

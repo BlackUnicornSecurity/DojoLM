@@ -86,7 +86,7 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
 
   return (
     <div className={className}>
-      <div className="grid gap-4 lg:grid-cols-3 mb-4">
+      <div className="grid gap-4 lg:grid-cols-3 xl:grid-cols-1 mb-4">
         {(Object.entries(TAB_COPY) as [InsightsTab, { title: string; description: string }][]).map(([tab, copy]) => {
           const isActive = activeTab === tab
           const count = tab === 'findings'
@@ -120,8 +120,8 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
                 onClick={() => setActiveTab(tab)}
                 aria-label={`Open ${copy.title}`}
               >
-                <span>{isActive ? 'Viewing workspace' : 'Open workspace'}</span>
-                {tab === 'findings' ? 'Verdicts' : tab === 'modules' ? 'Diagnostics' : 'Catalog'}
+                <span className="truncate">{isActive ? 'Viewing workspace' : 'Open workspace'}</span>
+                <span className="flex-shrink-0">{tab === 'findings' ? 'Verdicts' : tab === 'modules' ? 'Diagnostics' : 'Catalog'}</span>
               </Button>
             </div>
           )

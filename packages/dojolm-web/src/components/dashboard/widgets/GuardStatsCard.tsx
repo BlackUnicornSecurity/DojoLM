@@ -37,6 +37,7 @@ export function GuardStatsCard() {
             centerLabel="Block Rate"
             centerValue={`${Math.round(blockRate)}%`}
             className="border-0 shadow-none p-0"
+            height={150}
           />
         ) : (
           <div className="text-center py-4 text-xs text-muted-foreground">

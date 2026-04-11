@@ -623,7 +623,8 @@ export function KagamiPanel() {
       try {
         const response = await fetchWithAuth('/api/llm/fingerprint/signatures')
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
+          if (response.status === 401) throw new Error('Authentication required — sign in to view saved signatures')
+          throw new Error(`Unable to load signatures (${response.status})`)
         }
 
         const data = await response.json() as { signatures?: KagamiSignatureSummary[] }
@@ -671,8 +672,16 @@ export function KagamiPanel() {
       })
 
       if (!response.ok) {
+        if (response.status === 401) throw new Error('Authentication required — sign in to run fingerprint analysis')
         const errText = await response.text()
-        throw new Error(errText || `HTTP ${response.status}`)
+        let message = `Request failed (${response.status})`
+        try {
+          const errJson = JSON.parse(errText)
+          message = errJson.error || errJson.message || message
+        } catch {
+          if (errText) message = errText
+        }
+        throw new Error(message)
       }
 
       const data = await response.json()

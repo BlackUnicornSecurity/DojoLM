@@ -67,7 +67,7 @@ export function useScannerMetrics(): ScannerMetrics {
     const allowCount = history.filter(s => s.threats === 0).length
     const passRate = totalScans > 0
       ? `${Math.round((allowCount / totalScans) * 100)}%`
-      : '-'
+      : 'N/A'
 
     // Sparkline data: last N threat counts
     const threatTrend = history.map(s => s.threats)

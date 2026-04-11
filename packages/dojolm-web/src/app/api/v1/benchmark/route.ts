@@ -94,7 +94,7 @@ export const POST = withAuth(async (request: NextRequest) => {
       { status: 500, headers: headers() }
     );
   }
-}, { resource: 'executions', action: 'execute' });
+}, { resource: 'executions', action: 'execute', extraHeaders: headers() });
 
 export async function OPTIONS() {
   return new NextResponse(null, {

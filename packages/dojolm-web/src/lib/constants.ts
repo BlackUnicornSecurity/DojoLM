@@ -231,12 +231,13 @@ export type NavId = NavItem['id']
  * was renamed to Jutsu (Model Lab). Old `jutsu`/`llm-jutsu` aliases removed
  * because 'jutsu' is now the canonical NavId.
  */
-type RetiredNavId = 'testing' | 'llm' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna'
+type RetiredNavId = 'testing' | 'llm' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna' | 'bounty'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   testing: 'scanner',
   attack: 'scanner',
   llm: 'jutsu',
   ronin: 'ronin-hub',
+  bounty: 'ronin-hub',
   atemi: 'adversarial',
   kumite: 'strategic',
   'time-chamber': 'sengoku',

@@ -30,6 +30,7 @@ function getPhaseColor(source: string): string {
 
 export function ModuleGridWidget() {
   const [modules, setModules] = useState<ScannerPatternGroup[]>([])
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -38,7 +39,9 @@ export function ModuleGridWidget() {
         const data = await getCachedScannerStats()
         if (!cancelled) setModules(data.patternGroups ?? [])
       } catch {
-        // Silent
+        // Fetch failed — show empty state rather than infinite loading
+      } finally {
+        if (!cancelled) setLoaded(true)
       }
     }
     fetchModules()
@@ -62,7 +65,9 @@ export function ModuleGridWidget() {
           </span>
         ))}
         {modules.length === 0 && (
-          <p className="text-xs text-muted-foreground">Loading modules...</p>
+          <p className="text-xs text-muted-foreground">
+            {loaded ? 'No scanner modules available' : 'Loading modules...'}
+          </p>
         )}
       </div>
     </WidgetCard>

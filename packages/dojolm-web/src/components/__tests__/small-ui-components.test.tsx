@@ -333,9 +333,9 @@ describe('ModuleHeader', () => {
     expect(container.querySelectorAll('button')).toHaveLength(0);
   });
 
-  it('MH-006: title is h2', () => {
+  it('MH-006: title is h1', () => {
     render(<ModuleHeader title="My Title" subtitle="Sub" icon={Shield} />);
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('My Title');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('My Title');
   });
 
   it('MH-007: icon has aria-hidden', () => {
