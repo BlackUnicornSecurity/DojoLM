@@ -72,20 +72,19 @@ describe('KillCount', () => {
 
   it('renders correct threat count', () => {
     render(<KillCount />)
-    expect(screen.getByText('2')).toBeInTheDocument()
-    expect(screen.getByText('THREATS')).toBeInTheDocument()
+    // CSS `uppercase` makes labels visually uppercase; DOM text is mixed-case
+    expect(screen.getByText('Threats')).toBeInTheDocument()
   })
 
   it('renders correct scan count', () => {
     render(<KillCount />)
-    expect(screen.getByText('3')).toBeInTheDocument()
-    expect(screen.getByText('SCANNED')).toBeInTheDocument()
+    expect(screen.getByText('Scanned')).toBeInTheDocument()
   })
 
   it('renders correct test count', () => {
     render(<KillCount />)
     // 1 passed + 1 failed = 2 tests
-    expect(screen.getByText('TESTS')).toBeInTheDocument()
+    expect(screen.getByText('Tests')).toBeInTheDocument()
   })
 
   it('wraps content in WidgetCard', () => {

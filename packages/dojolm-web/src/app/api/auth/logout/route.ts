@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   const response = NextResponse.json({ success: true });
 
-  for (const cookie of buildLogoutCookies()) {
+  for (const cookie of buildLogoutCookies(req)) {
     response.headers.append('Set-Cookie', cookie);
   }
 

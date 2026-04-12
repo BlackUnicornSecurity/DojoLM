@@ -155,17 +155,20 @@ describe('checkApiAuth', () => {
     expect(result!.status).toBe(401);
   });
 
-  it('AUTH-010: allows public read routes without API key or session', async () => {
+  // FINDING-005 fix: /api/fixtures removed from PUBLIC_READONLY_API_ROUTES — now requires auth
+  it('AUTH-010: rejects formerly-public read routes without API key or session (FINDING-005)', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     (process.env as Record<string, string>).NODE_ENV = 'production';
     const { checkApiAuth } = await import('../api-auth');
 
     const req = new NextRequest('http://localhost:42001/api/fixtures');
     const result = checkApiAuth(req);
-    expect(result).toBeNull();
+    expect(result).not.toBeNull();
+    expect(result!.status).toBe(401);
   });
 
-  it('AUTH-011: allows trusted same-origin scanner actions without API key or session', async () => {
+  // FINDING-005 fix: /api/scan removed from PUBLIC_BROWSER_ACTION_ROUTES — now requires auth
+  it('AUTH-011: rejects formerly-public scanner actions without session (FINDING-005)', async () => {
     process.env.NODA_API_KEY = 'valid-key-123';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:42001';
     (process.env as Record<string, string>).NODE_ENV = 'production';
@@ -184,6 +187,7 @@ describe('checkApiAuth', () => {
     });
 
     const result = checkApiAuth(req);
-    expect(result).toBeNull();
+    expect(result).not.toBeNull();
+    expect(result!.status).toBe(401);
   });
 });

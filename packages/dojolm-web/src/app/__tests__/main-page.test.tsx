@@ -16,6 +16,41 @@ import { mockLucideIcons } from '@/test/mock-lucide-react'
 const mockSetActiveTab = vi.fn()
 let mockActiveTab = 'dashboard'
 
+// FINDING-001 fix: AuthGate uses useRouter for redirect and useAuth for session check.
+// Mock next/navigation to prevent router errors in jsdom.
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+    push: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+}))
+
+// Mock AuthContext so AuthGate renders children (user is set, loading is false).
+vi.mock('@/lib/auth/AuthContext', () => ({
+  useAuth: () => ({
+    user: {
+      id: 'test-user-1',
+      username: 'test-admin',
+      email: 'admin@test.com',
+      role: 'admin',
+      displayName: 'Test Admin',
+    },
+    loading: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  }),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="auth-provider">{children}</div>
+  ),
+}))
+
 vi.mock('@/lib/NavigationContext', () => ({
   useNavigation: () => ({
     activeTab: mockActiveTab,

@@ -6,7 +6,9 @@
 
 'use client'
 
-import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, useCallback, lazy, Suspense, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth/AuthContext'
 import { useScanner } from '@/lib/ScannerContext'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useActivityLogger } from '@/lib/contexts/ActivityContext'
@@ -735,43 +737,55 @@ function ScreenReaderAnnouncer() {
   )
 }
 
+/** FINDING-001 fix: redirect unauthenticated users to /login. */
+function AuthGate({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+  useEffect(() => { if (!loading && !user) router.replace('/login') }, [loading, user, router])
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" /></div>
+  if (!user) return null
+  return <>{children}</>
+}
+
 /**
  * Main page component with providers and sidebar layout
  */
 export default function Home() {
   return (
     <Providers>
-      <div className="min-h-screen bg-background">
-        {/* Desktop/Tablet Sidebar (hidden on mobile) */}
-        <Sidebar />
+      <AuthGate>
+        <div className="min-h-screen bg-background">
+          {/* Desktop/Tablet Sidebar (hidden on mobile) */}
+          <Sidebar />
 
-        {/* Desktop/Tablet TopBar — global chrome (Activity drawer, Sensei, Notifications) */}
-        <TopBar />
+          {/* Desktop/Tablet TopBar — global chrome (Activity drawer, Sensei, Notifications) */}
+          <TopBar />
 
-        {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
-        <MobileNav />
+          {/* Mobile Bottom Nav (hidden on tablet/desktop) */}
+          <MobileNav />
 
-        {/* Sensei AI Assistant Drawer (SH8.1) */}
-        <ConnectedSenseiDrawer />
+          {/* Sensei AI Assistant Drawer (SH8.1) */}
+          <ConnectedSenseiDrawer />
 
-        {/* Main Content — offset for sidebar (left) and top bar (top).
-         *  Train 1 PR-2: removed BUG-006 --sidebar-current runtime variable.
-         *  Fixed sidebar width → fixed content padding, no runtime sync. */}
-        <main
-          id="main-content"
-          aria-label="Main content"
-          className={cn(
-            "pb-16 md:pb-8 pr-6 pl-6",
-            "pt-[calc(var(--header-height)+16px)] md:pt-[calc(var(--header-height)+24px)]",
-            "md:pl-[calc(var(--sidebar-width)+24px)]"
-          )}
-        >
-          <ScreenReaderAnnouncer />
-          <div className="max-w-7xl mx-auto">
-            <PageContent />
-          </div>
-        </main>
-      </div>
+          {/* Main Content — offset for sidebar (left) and top bar (top).
+           *  Train 1 PR-2: removed BUG-006 --sidebar-current runtime variable.
+           *  Fixed sidebar width → fixed content padding, no runtime sync. */}
+          <main
+            id="main-content"
+            aria-label="Main content"
+            className={cn(
+              "pb-16 md:pb-8 pr-6 pl-6",
+              "pt-[calc(var(--header-height)+16px)] md:pt-[calc(var(--header-height)+24px)]",
+              "md:pl-[calc(var(--sidebar-width)+24px)]"
+            )}
+          >
+            <ScreenReaderAnnouncer />
+            <div className="max-w-7xl mx-auto">
+              <PageContent />
+            </div>
+          </main>
+        </div>
+      </AuthGate>
     </Providers>
   )
 }

@@ -91,9 +91,10 @@ describe('GuardStatsCard', () => {
 
   it('renders donut chart segments for non-zero values', () => {
     render(<GuardStatsCard />)
-    expect(screen.getByText('Blocked: 10')).toBeInTheDocument()
-    expect(screen.getByText('Allowed: 30')).toBeInTheDocument()
-    expect(screen.getByText('Logged: 2')).toBeInTheDocument()
+    // Text appears in both DojoDonutChart mock segments and MetricCard mock
+    expect(screen.getAllByText('Blocked: 10').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Allowed: 30').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Logged: 2').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders three metric cards', () => {

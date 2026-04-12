@@ -147,7 +147,8 @@ describe('Proxy', () => {
     expect(res.status).toBe(200);
   });
 
-  it('MW-005b: allows public read routes without authentication', async () => {
+  // FINDING-005 fix: /api/fixtures removed from PUBLIC_READONLY_API_ROUTES — now requires auth
+  it('MW-005b: rejects formerly-public read routes without authentication (FINDING-005)', async () => {
     process.env.NODA_API_KEY = 'test-key';
     (process.env as Record<string, string>).NODE_ENV = 'production';
 
@@ -157,10 +158,11 @@ describe('Proxy', () => {
     });
 
     const res = await proxy(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(401);
   });
 
-  it('MW-005c: allows trusted same-origin public scanner actions without authentication', async () => {
+  // FINDING-005 fix: /api/scan removed from PUBLIC_BROWSER_ACTION_ROUTES — now requires auth
+  it('MW-005c: rejects formerly-public scanner actions without authentication (FINDING-005)', async () => {
     process.env.NODA_API_KEY = 'test-key';
     (process.env as Record<string, string>).NODE_ENV = 'production';
 
@@ -178,7 +180,7 @@ describe('Proxy', () => {
     });
 
     const res = await proxy(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(401);
   });
 
   // MW-006: Non-API routes pass through without checks

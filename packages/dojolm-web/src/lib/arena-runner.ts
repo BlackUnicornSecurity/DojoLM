@@ -27,6 +27,8 @@ import { getStorage } from './storage/storage-interface';
 
 const DEFAULT_MAX_TOKENS = 4096;
 const SCHEDULE_DELAY_MS = 0;
+const MAX_CONCURRENT_ARENA_MATCHES = 3;
+const runningArenaMatches = new Set<string>();
 const LIVE_PERSIST_EVENTS = new Set<MatchEventType>([
   'match_start',
   'round_start',
@@ -50,6 +52,17 @@ export async function runArenaMatch(matchId: string): Promise<void> {
     return;
   }
 
+  // LOGIC-03: Enforce concurrent arena match limit to prevent resource exhaustion
+  if (runningArenaMatches.size >= MAX_CONCURRENT_ARENA_MATCHES) {
+    await arenaStorage.updateMatch(matchId, {
+      status: 'aborted',
+      completedAt: new Date().toISOString(),
+      winReason: `Aborted: max ${MAX_CONCURRENT_ARENA_MATCHES} concurrent matches reached`,
+    });
+    return;
+  }
+  runningArenaMatches.add(matchId);
+
   const startedAt = pendingMatch.startedAt ?? new Date().toISOString();
   const runningMatch = await arenaStorage.updateMatch(matchId, {
     status: 'running',
@@ -60,6 +73,7 @@ export async function runArenaMatch(matchId: string): Promise<void> {
   });
 
   if (!runningMatch) {
+    runningArenaMatches.delete(matchId);
     throw new Error(`Failed to start arena match: ${matchId}`);
   }
 
@@ -171,10 +185,12 @@ export async function runArenaMatch(matchId: string): Promise<void> {
       },
     });
   } catch (error) {
+    runningArenaMatches.delete(matchId);
     await abortMatchWithError(matchId, error);
     throw error;
   }
 
+  runningArenaMatches.delete(matchId);
   finalMatch = await syncAbortedMatchMetadata(finalMatch);
 
   if (finalMatch.status === 'completed') {

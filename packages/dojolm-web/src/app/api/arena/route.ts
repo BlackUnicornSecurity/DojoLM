@@ -141,8 +141,15 @@ export const GET = createApiHandler(
     const offset = Math.max(parseInt(url.searchParams.get('offset') ?? '0', 10) || 0, 0);
 
     const validStatuses = ['pending', 'running', 'completed', 'aborted'];
+    // Reject invalid status filter instead of silently disabling the filter
+    if (status && !validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: `Invalid status filter. Valid values: ${validStatuses.join(', ')}` },
+        { status: 400 }
+      );
+    }
     const query: arenaStorage.MatchQuery = {
-      status: status && validStatuses.includes(status) ? status as ArenaMatch['status'] : undefined,
+      status: status as ArenaMatch['status'] | undefined,
       limit,
       offset,
     };

@@ -66,29 +66,51 @@ async function delay(ms: number): Promise<void> {
 }
 
 /**
- * Get API key from localStorage.
+ * Get API key from sessionStorage (preferred) or localStorage (legacy fallback).
  * Returns null if not set.
  */
 export function getApiKey(): string | null {
   if (typeof window === 'undefined') return null;
 
   try {
-    return localStorage.getItem(API_KEY_STORAGE_KEY);
+    // Prefer sessionStorage (AUTH-04: shorter-lived, cleared on tab close)
+    const fromSession = sessionStorage.getItem(API_KEY_STORAGE_KEY);
+    if (fromSession) return fromSession;
+    // Legacy fallback: migrate from localStorage to sessionStorage
+    const fromLocal = localStorage.getItem(API_KEY_STORAGE_KEY);
+    if (fromLocal) {
+      try {
+        sessionStorage.setItem(API_KEY_STORAGE_KEY, fromLocal);
+        localStorage.removeItem(API_KEY_STORAGE_KEY);
+      } catch { /* ignore migration failures */ }
+      return fromLocal;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
 /**
- * Store API key in localStorage.
+ * Store API key in sessionStorage (AUTH-04 fix: sessionStorage is cleared on
+ * tab close, reducing the XSS exfiltration window vs localStorage which persists
+ * indefinitely). Falls back to localStorage for backward compatibility if
+ * sessionStorage is unavailable.
  */
 export function setApiKey(key: string): void {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(API_KEY_STORAGE_KEY, key);
+    sessionStorage.setItem(API_KEY_STORAGE_KEY, key);
+    // Clean up any legacy localStorage entry
+    try { localStorage.removeItem(API_KEY_STORAGE_KEY); } catch { /* ignore */ }
   } catch {
-    console.warn('[fetch-with-auth] Failed to save API key to localStorage');
+    // Fallback to localStorage if sessionStorage is blocked (e.g., some privacy modes)
+    try {
+      localStorage.setItem(API_KEY_STORAGE_KEY, key);
+    } catch {
+      console.warn('[fetch-with-auth] Failed to save API key');
+    }
   }
 }
 
@@ -99,6 +121,7 @@ export function clearApiKey(): void {
   if (typeof window === 'undefined') return;
 
   try {
+    sessionStorage.removeItem(API_KEY_STORAGE_KEY);
     localStorage.removeItem(API_KEY_STORAGE_KEY);
   } catch {
     // Ignore

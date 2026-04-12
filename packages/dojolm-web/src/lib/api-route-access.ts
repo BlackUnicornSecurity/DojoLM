@@ -8,19 +8,15 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/setup/admin',
 ]);
 
-const PUBLIC_READONLY_API_ROUTES = new Set([
-  '/api/compliance',
-  '/api/fixtures',
-  '/api/stats',
-]);
+// FINDING-005 fix: removed /api/compliance, /api/fixtures, /api/stats
+// from public access. These endpoints have checkApiAuth() in their handlers
+// but the allowlist was bypassing it, exposing data without auth.
+const PUBLIC_READONLY_API_ROUTES = new Set<string>([]);
 
-const PUBLIC_BROWSER_ACTION_ROUTES = new Set([
-  'GET /api/read-fixture',
-  'GET /api/read-fixture/media',
-  'GET /api/scan-fixture',
-  'POST /api/scan',
-  'POST /api/scan-fixture',
-]);
+// FINDING-005 fix: removed scan/fixture browser actions from public access.
+// These require authentication — browser sessions are validated via
+// isTrustedBrowserSessionRequest() in api-auth.ts instead.
+const PUBLIC_BROWSER_ACTION_ROUTES = new Set<string>([]);
 
 const PUBLIC_READ_METHODS = new Set(['GET', 'HEAD']);
 

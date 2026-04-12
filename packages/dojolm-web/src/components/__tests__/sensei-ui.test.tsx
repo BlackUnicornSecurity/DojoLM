@@ -15,27 +15,9 @@ import '@testing-library/jest-dom'
 // Mocks — set up before component imports
 // ---------------------------------------------------------------------------
 
-// Mock lucide-react icons
-vi.mock('lucide-react', () => {
-  const MockIcon = (props: Record<string, unknown>) => (
-    <svg data-testid={`icon-${props['data-testid'] ?? 'mock'}`} {...props} />
-  )
-  return {
-    Bot: (p: Record<string, unknown>) => <MockIcon data-testid="bot" {...p} />,
-    X: (p: Record<string, unknown>) => <MockIcon data-testid="x" {...p} />,
-    Trash2: (p: Record<string, unknown>) => <MockIcon data-testid="trash2" {...p} />,
-    ChevronDown: (p: Record<string, unknown>) => <MockIcon data-testid="chevron-down" {...p} />,
-    Send: (p: Record<string, unknown>) => <MockIcon data-testid="send" {...p} />,
-    Copy: (p: Record<string, unknown>) => <MockIcon data-testid="copy" {...p} />,
-    Check: (p: Record<string, unknown>) => <MockIcon data-testid="check" {...p} />,
-    CheckCircle: (p: Record<string, unknown>) => <MockIcon data-testid="check-circle" {...p} />,
-    XCircle: (p: Record<string, unknown>) => <MockIcon data-testid="x-circle" {...p} />,
-    Shield: (p: Record<string, unknown>) => <MockIcon data-testid="shield" {...p} />,
-    Eye: (p: Record<string, unknown>) => <MockIcon data-testid="eye" {...p} />,
-    ShieldAlert: (p: Record<string, unknown>) => <MockIcon data-testid="shield-alert" {...p} />,
-    ShieldCheck: (p: Record<string, unknown>) => <MockIcon data-testid="shield-check" {...p} />,
-  }
-})
+// Mock lucide-react icons — includes all icons transitively required by constants.ts / useSensei.ts
+import { mockLucideIcons } from '@/test/mock-lucide-react'
+vi.mock('lucide-react', () => mockLucideIcons('*'))
 
 // Mock fetch-with-auth
 vi.mock('@/lib/fetch-with-auth', () => ({

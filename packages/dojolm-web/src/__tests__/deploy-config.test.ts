@@ -34,8 +34,8 @@ describe('deploy configuration', () => {
   });
 
   // DC-005
-  it('DC-005: NODA_API_KEY_ROLE defaults to admin in docker-compose', () => {
-    expect(dockerCompose).toContain('NODA_API_KEY_ROLE:-admin');
+  it('DC-005: NODA_API_KEY_ROLE defaults to analyst in docker-compose (AUTH-02 fix)', () => {
+    expect(dockerCompose).toContain('NODA_API_KEY_ROLE:-analyst');
   });
 
   // DC-006

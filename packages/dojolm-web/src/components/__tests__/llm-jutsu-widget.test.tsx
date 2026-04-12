@@ -88,7 +88,8 @@ describe('LLMJutsuWidget', () => {
   })
 
   it('shows model count after loading fallback data', async () => {
-    mockCanAccessProtectedApi.mockResolvedValue(false)
+    // canAccessProtectedApi must throw (not resolve false) to hit the catch/fallback path
+    mockCanAccessProtectedApi.mockRejectedValue(new Error('network error'))
     mockFetchWithAuth.mockRejectedValue(new Error('no auth'))
     render(<LLMJutsuWidget />)
     await waitFor(() => {

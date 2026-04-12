@@ -79,7 +79,7 @@ describe('POST /api/agentic', () => {
     const json = await res.json()
     expect(json.success).toBe(true)
     expect(json.data.architecture).toBe('openai-functions')
-    expect(json.data.scenario.scenarioId).toBe('agentic-openai-functions')
+    expect(json.data.scenarioId).toBe('agentic-openai-functions')
     expect(json.data.utilityScore).toBeTypeOf('number')
     expect(json.data.securityScore).toBeTypeOf('number')
   })
@@ -131,7 +131,7 @@ describe('POST /api/agentic', () => {
     const json = await res.json()
     expect(json.data.scenarioId).toBe('scn-42')
     expect(json.data.scenarioName).toBe('Trace prompt pivot')
-    expect(json.data.scenario.scenarioName).toBe('Trace prompt pivot')
+    expect(json.data.scenarioName).toBe('Trace prompt pivot')
   })
 
   it('rejects a non-string scenarioName', async () => {

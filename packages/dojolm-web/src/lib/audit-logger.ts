@@ -14,6 +14,7 @@
  * - Singleton export (line 285)
  */
 
+import crypto from 'node:crypto';
 import { mkdir, readdir, stat, unlink, appendFile, rename } from 'node:fs/promises';
 import path from 'node:path';
 import { resolveDataPath } from '@/lib/runtime-paths';
@@ -41,6 +42,8 @@ export interface AuditLogEntry {
   level: AuditLevel;
   event: AuditEvent;
   details: Record<string, unknown>;
+  /** Per-entry HMAC for tamper detection (LOGIC-07 fix) */
+  hmac?: string;
 }
 
 /** Maximum size of a single log file before rotation (10 MB) */
@@ -181,6 +184,11 @@ async function writeEntry(entry: AuditLogEntry): Promise<void> {
       ...entry,
       details: redactSensitiveFields(entry.details),
     };
+
+    // LOGIC-07: Per-entry HMAC for tamper detection
+    const hmacSecret = process.env.GUARD_CONFIG_SECRET || 'audit-dev-only-key';
+    const entryPayload = JSON.stringify({ t: safeEntry.timestamp, e: safeEntry.event, d: safeEntry.details });
+    safeEntry.hmac = crypto.createHmac('sha256', hmacSecret).update(entryPayload).digest('hex').slice(0, 16);
 
     const line = JSON.stringify(safeEntry) + '\n';
     await appendFile(filePath, line, { encoding: 'utf-8' });

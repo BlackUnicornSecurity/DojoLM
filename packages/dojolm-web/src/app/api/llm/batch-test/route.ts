@@ -58,10 +58,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Reserve slot synchronously BEFORE any async work to prevent TOCTOU race.
+    // Two concurrent POSTs can no longer both pass the size check above because
+    // the add() happens before yielding to the event loop.
+    const reservationId = `reservation-${crypto.randomUUID()}`;
+    runningBatches.add(reservationId);
+
     let body: Record<string, unknown>;
     try {
       body = await request.json();
     } catch {
+      runningBatches.delete(reservationId);
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
         { status: 400 }
@@ -70,6 +77,7 @@ export async function POST(request: NextRequest) {
     const { modelIds, testCaseIds } = body as { modelIds?: string[]; testCaseIds?: string[] };
 
     if (!modelIds?.length || !testCaseIds?.length) {
+      runningBatches.delete(reservationId);
       return NextResponse.json(
         { error: 'Missing required fields: modelIds[], testCaseIds[]' },
         { status: 400 }
@@ -79,27 +87,41 @@ export async function POST(request: NextRequest) {
     const totalTests = modelIds.length * testCaseIds.length;
     const maxBatchSize = getMaxBatchSize();
     if (totalTests > maxBatchSize) {
+      runningBatches.delete(reservationId);
       return NextResponse.json(
         { error: `Batch too large. Max ${maxBatchSize} tests (${modelIds.length} models × ${testCaseIds.length} cases = ${totalTests}).` },
         { status: 400 }
       );
     }
 
-    const storage = await getStorage();
-    const batchId = crypto.randomUUID();
+    let storage;
+    try {
+      storage = await getStorage();
+    } catch (err) {
+      runningBatches.delete(reservationId);
+      throw err;
+    }
     const now = new Date().toISOString();
 
-    const batch = await storage.createBatch({
-      name: `Batch ${batchId.slice(0, 8)}`,
-      testCaseIds,
-      modelConfigIds: modelIds,
-      status: 'running',
-      startedAt: now,
-      completedTests: 0,
-      failedTests: 0,
-      executionIds: [],
-    });
+    let batch;
+    try {
+      batch = await storage.createBatch({
+        name: `Batch ${reservationId.slice(12, 20)}`,
+        testCaseIds,
+        modelConfigIds: modelIds,
+        status: 'running',
+        startedAt: now,
+        completedTests: 0,
+        failedTests: 0,
+        executionIds: [],
+      });
+    } catch (err) {
+      runningBatches.delete(reservationId);
+      throw err;
+    }
 
+    // Swap reservation for real batch ID
+    runningBatches.delete(reservationId);
     runningBatches.add(batch.id);
 
     // Run batch in background (cleanup handled by finally block inside)
@@ -347,31 +369,38 @@ async function executeBatchInBackground(
 // P2: Startup recovery for orphaned batches
 // ===========================================================================
 
-let startupRecoveryDone = false;
+/**
+ * Shared recovery promise — prevents concurrent callers from running recovery
+ * in parallel (LOGIC-02 fix). Subsequent callers await the same promise.
+ */
+let recoveryPromise: Promise<void> | null = null;
 
 /**
  * On first request after container restart, find batches stuck in 'running'
  * state (orphaned by previous container) and mark them as 'interrupted'.
  */
 async function recoverOrphanedBatches(storage: Awaited<ReturnType<typeof getStorage>>): Promise<void> {
-  if (startupRecoveryDone) return;
-  startupRecoveryDone = true;
+  if (recoveryPromise) return recoveryPromise;
 
-  try {
-    const { batches } = await storage.queryBatches({});
-    const orphaned = batches.filter(
-      b => (b.status === 'running' || b.status === 'pending') && !runningBatches.has(b.id)
-    );
-    for (const batch of orphaned) {
-      await storage.updateBatch(batch.id, {
-        status: 'failed',
-        error: 'Interrupted: container restarted while batch was running',
-      });
+  recoveryPromise = (async () => {
+    try {
+      const { batches } = await storage.queryBatches({});
+      const orphaned = batches.filter(
+        b => (b.status === 'running' || b.status === 'pending') && !runningBatches.has(b.id)
+      );
+      for (const batch of orphaned) {
+        await storage.updateBatch(batch.id, {
+          status: 'failed',
+          error: 'Interrupted: container restarted while batch was running',
+        });
+      }
+      if (orphaned.length > 0) {
+        console.log(`[batch-recovery] Marked ${orphaned.length} orphaned batch(es) as failed`);
+      }
+    } catch (err) {
+      console.error('[batch-recovery] Failed to recover orphaned batches:', err);
     }
-    if (orphaned.length > 0) {
-      console.log(`[batch-recovery] Marked ${orphaned.length} orphaned batch(es) as failed`);
-    }
-  } catch (err) {
-    console.error('[batch-recovery] Failed to recover orphaned batches:', err);
-  }
+  })();
+
+  return recoveryPromise;
 }

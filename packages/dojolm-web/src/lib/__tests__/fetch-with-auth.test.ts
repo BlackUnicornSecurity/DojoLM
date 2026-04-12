@@ -7,8 +7,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock localStorage
-const localStorageMock = (() => {
+// Mock both sessionStorage (preferred) and localStorage (legacy fallback)
+function createStorageMock() {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
@@ -18,8 +18,12 @@ const localStorageMock = (() => {
     get length() { return Object.keys(store).length; },
     key: vi.fn((i: number) => Object.keys(store)[i] ?? null),
   };
-})();
+}
 
+const sessionStorageMock = createStorageMock();
+const localStorageMock = createStorageMock();
+
+Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
 // Mock fetch
@@ -30,6 +34,7 @@ import { getApiKey, setApiKey, clearApiKey, fetchWithAuth } from '../fetch-with-
 
 describe('fetch-with-auth', () => {
   beforeEach(() => {
+    sessionStorageMock.clear();
     localStorageMock.clear();
     vi.clearAllMocks();
     mockFetch.mockResolvedValue(new Response('{}', { status: 200 }));
@@ -41,18 +46,18 @@ describe('fetch-with-auth', () => {
       expect(getApiKey()).toBeNull();
     });
 
-    // FWA-002: Returns stored key
+    // FWA-002: Returns stored key (from sessionStorage preferred, or localStorage fallback)
     it('FWA-002: returns stored key', () => {
-      localStorageMock.setItem('noda-api-key', 'test-key-123');
+      sessionStorageMock.setItem('noda-api-key', 'test-key-123');
       expect(getApiKey()).toBe('test-key-123');
     });
   });
 
   describe('setApiKey', () => {
-    // FWA-003: Saves key to localStorage
-    it('FWA-003: saves key to localStorage', () => {
+    // FWA-003: Saves key to sessionStorage (AUTH-04: preferred over localStorage)
+    it('FWA-003: saves key to sessionStorage', () => {
       setApiKey('my-key');
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('noda-api-key', 'my-key');
+      expect(sessionStorageMock.setItem).toHaveBeenCalledWith('noda-api-key', 'my-key');
     });
   });
 
@@ -68,7 +73,7 @@ describe('fetch-with-auth', () => {
   describe('fetchWithAuth', () => {
     // FWA-005: Adds X-API-Key header when key exists
     it('FWA-005: adds X-API-Key header when key exists', async () => {
-      localStorageMock.setItem('noda-api-key', 'test-key');
+      sessionStorageMock.setItem('noda-api-key', 'test-key');
 
       await fetchWithAuth('/api/test');
 

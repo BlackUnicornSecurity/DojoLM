@@ -80,31 +80,50 @@ describe('Security Hardening (Story 8.3)', () => {
       expect(res.headers.get('Retry-After')).toBe('60');
     });
 
-    it('should track auth failures separately (10/min)', async () => {
+    // FINDING-009 fix: auth failure blocking only applies to /api/auth/* routes.
+    // Non-auth routes use the general rate limit even if auth failures are high.
+    // Use a non-public auth path (/api/auth/change-password) so auth failures
+    // are recorded (public auth routes like /api/auth/login return early).
+    it('should track auth failures separately and only block auth routes (FINDING-009)', async () => {
       const mod = await import('@/proxy');
       mod.resetRateLimiter();
       process.env.TRUSTED_PROXY = 'true';
 
+      // Generate 10 auth failures against a non-public auth route
       for (let i = 0; i < 10; i++) {
-        const req = new NextRequest('http://localhost:42001/api/scan', {
-          method: 'GET',
+        const req = new NextRequest('http://localhost:42001/api/auth/change-password', {
+          method: 'POST',
           headers: {
             'x-api-key': 'wrong-key',
             'x-forwarded-for': '10.0.0.200',
+            'content-type': 'application/json',
           },
         });
         await mod.proxy(req);
       }
 
-      const req = new NextRequest('http://localhost:42001/api/scan', {
+      // Auth route should be blocked after 10 auth failures
+      const authReq = new NextRequest('http://localhost:42001/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'x-api-key': 'test-api-key-for-security-tests',
+          'x-forwarded-for': '10.0.0.200',
+          'content-type': 'application/json',
+        },
+      });
+      const authRes = await mod.proxy(authReq);
+      expect(authRes.status).toBe(429);
+
+      // Non-auth route should NOT be blocked by auth failures
+      const nonAuthReq = new NextRequest('http://localhost:42001/api/scan', {
         method: 'GET',
         headers: {
           'x-api-key': 'test-api-key-for-security-tests',
           'x-forwarded-for': '10.0.0.200',
         },
       });
-      const res = await mod.proxy(req);
-      expect(res.status).toBe(429);
+      const nonAuthRes = await mod.proxy(nonAuthReq);
+      expect(nonAuthRes.status).toBe(200);
     });
 
     it('should export resetRateLimiter for test isolation', async () => {
@@ -265,7 +284,9 @@ describe('Security Hardening (Story 8.3)', () => {
       expect(separateRoute.status).toBe(200);
     });
 
-    it('should apply the higher browser read limit to public same-origin GET routes without a session', async () => {
+    // FINDING-005 fix: /api/fixtures is no longer public — unauthenticated
+    // same-origin requests without a session now receive 401.
+    it('should reject formerly-public same-origin GET routes without a session (FINDING-005)', async () => {
       const mod = await import('@/proxy');
       mod.resetRateLimiter();
       delete process.env.TRUSTED_PROXY;
@@ -282,10 +303,8 @@ describe('Security Hardening (Story 8.3)', () => {
           },
         });
 
-      for (let i = 0; i < 101; i++) {
-        const response = await mod.proxy(makeUiRequest());
-        expect(response.status).toBe(200);
-      }
+      const response = await mod.proxy(makeUiRequest());
+      expect(response.status).toBe(401);
     });
 
     it('should apply the higher browser read limit to same-origin dev GET routes when API key auth is disabled', async () => {

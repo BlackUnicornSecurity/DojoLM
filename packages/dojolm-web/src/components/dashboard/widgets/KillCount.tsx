@@ -4,13 +4,17 @@
  * File: KillCount.tsx
  * Purpose: Session scoreboard — threats blocked, fixtures scanned, tests run — with trophy milestones
  * Story: TPI-NODA-1.5.5
+ *
+ * FINDING-003 fix: fetch initial counts from server APIs on mount,
+ * then merge with client-side activity events for real-time updates.
  */
 
-import { useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useActivityState } from '@/lib/contexts/ActivityContext'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
 import { Trophy, ShieldAlert, FlaskConical, Zap } from 'lucide-react'
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 function getTrophy(count: number): { icon: string; color: string } | null {
   if (count >= 100) return { icon: '🏆', color: 'text-[var(--severity-medium)]' }
@@ -40,20 +44,55 @@ function Counter({ label, value, icon: Icon, accent }: CounterProps) {
   )
 }
 
+interface ServerCounts {
+  threats: number
+  scanned: number
+  tests: number
+}
+
 export function KillCount() {
   const { events } = useActivityState()
+  const [serverCounts, setServerCounts] = useState<ServerCounts>({ threats: 0, scanned: 0, tests: 0 })
 
-  const counts = useMemo(() => {
-    let threats = 0
-    let scans = 0
-    let tests = 0
-    for (const event of events) {
-      if (event.type === 'threat_detected') threats++
-      if (event.type === 'scan_complete') scans++
-      if (event.type === 'test_passed' || event.type === 'test_failed') tests++
+  // Fetch initial counts from server on mount
+  useEffect(() => {
+    let cancelled = false
+    async function loadCounts() {
+      try {
+        const res = await fetchWithAuth('/api/llm/guard/stats')
+        if (!cancelled && res.ok) {
+          const json = await res.json()
+          const stats = json.data ?? json
+          setServerCounts({
+            threats: stats.byAction?.block ?? stats.blocked ?? 0,
+            scanned: stats.totalEvents ?? stats.total ?? 0,
+            tests: stats.tests ?? 0,
+          })
+        }
+      } catch {
+        // Silently fail — widget shows session-only data
+      }
     }
-    return { threats, scans, tests }
-  }, [events])
+    loadCounts()
+    return () => { cancelled = true }
+  }, [])
+
+  // Merge server baseline with client-side session events
+  const counts = useMemo(() => {
+    let sessionThreats = 0
+    let sessionScans = 0
+    let sessionTests = 0
+    for (const event of events) {
+      if (event.type === 'threat_detected') sessionThreats++
+      if (event.type === 'scan_complete') sessionScans++
+      if (event.type === 'test_passed' || event.type === 'test_failed') sessionTests++
+    }
+    return {
+      threats: serverCounts.threats + sessionThreats,
+      scans: serverCounts.scanned + sessionScans,
+      tests: serverCounts.tests + sessionTests,
+    }
+  }, [events, serverCounts])
 
   return (
     <WidgetCard title="Kill Count">

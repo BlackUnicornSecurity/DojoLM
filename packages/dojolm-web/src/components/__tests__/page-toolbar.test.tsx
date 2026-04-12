@@ -121,12 +121,12 @@ describe('PageToolbar', () => {
     expect(screen.queryByRole('group', { name: /filters/i })).not.toBeInTheDocument()
   })
 
-  it('PT-014: Cmd+K focuses the search input', () => {
+  it('PT-014: Cmd+K no longer focuses per-page search (owned by global CommandPalette since PR-4c.3)', () => {
     render(<PageToolbar title="Title" onSearch={vi.fn()} />)
     const input = screen.getByRole('textbox', { name: /search/i })
-    // Simulate Cmd+K
+    // Cmd+K now opens the global CommandPalette in TopBar, not per-page search
     fireEvent.keyDown(document, { key: 'k', metaKey: true })
-    expect(document.activeElement).toBe(input)
+    expect(document.activeElement).not.toBe(input)
   })
 
   it('PT-017: Cmd+K does not create a hidden search affordance when search is disabled', () => {

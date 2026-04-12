@@ -36,7 +36,7 @@ describe("useScannerMetrics", () => {
     const { result } = renderHook(() => useScannerMetrics())
 
     expect(result.current.threatsDetected).toBe(0)
-    expect(result.current.passRate).toBe("-")
+    expect(result.current.passRate).toBe("N/A")
     expect(result.current.activeEngines).toBe(2)
     expect(result.current.totalEngines).toBe(3)
   })
@@ -110,7 +110,7 @@ describe("useScannerMetrics", () => {
 
     const { result } = renderHook(() => useScannerMetrics())
 
-    expect(result.current.passRate).toBe("-")
+    expect(result.current.passRate).toBe("N/A")
   })
 
   it("returns all expected metric keys", () => {

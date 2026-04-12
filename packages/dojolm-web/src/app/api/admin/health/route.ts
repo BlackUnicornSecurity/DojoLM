@@ -25,8 +25,10 @@ try {
 
 export async function GET(request: NextRequest) {
   if (isDemoMode()) return demoHealthGet()
-  // ADM-SEC-01: Two-tier response — minimal for unauthenticated, full for authenticated
-  const isAuthenticated = checkApiAuth(request) === null;
+  // ADM-SEC-01: Two-tier response — minimal for unauthenticated, full for authenticated.
+  // Check for actual session cookie, not just checkApiAuth (which passes public routes).
+  const sessionCookie = request.cookies.get('tpi_session')?.value;
+  const isAuthenticated = !!sessionCookie && checkApiAuth(request) === null;
 
   try {
     const startTime = Date.now()

@@ -74,11 +74,34 @@ async function loadAdapters(): Promise<Partial<Record<LLMProvider, LLMProviderAd
   } = sharedProviders;
 
   const presetBackedProvider = (presetId: string): LLMProviderAdapter => {
-    const preset = getPreset(presetId);
-    if (!preset) {
-      throw new Error(`Missing shared provider preset for "${presetId}"`);
-    }
-    return createOpenAICompatibleProvider(preset);
+    // Lazy resolution: defer preset lookup to first use so a missing preset
+    // for one provider (e.g. blackunicorn) doesn't poison the entire adapter map
+    // and block unrelated providers (e.g. ollama). See lessonslearned 2026-04-12.
+    let cached: LLMProviderAdapter | null = null;
+    const resolve = (): LLMProviderAdapter => {
+      if (cached) return cached;
+      const preset = getPreset(presetId);
+      if (!preset) {
+        throw new Error(`Missing shared provider preset for "${presetId}"`);
+      }
+      cached = createOpenAICompatibleProvider(preset);
+      return cached;
+    };
+    // Return a proxy that delegates every method call to the lazily-resolved adapter
+    return new Proxy({} as LLMProviderAdapter, {
+      get(_target, prop) {
+        // Don't resolve for Symbol introspection (vitest/node probes Symbol.toPrimitive etc.)
+        if (typeof prop === 'symbol') return undefined;
+        const resolved = resolve();
+        const value = (resolved as unknown as Record<string | symbol, unknown>)[prop];
+        return typeof value === 'function' ? value.bind(resolved) : value;
+      },
+      has(_target, prop) {
+        if (typeof prop === 'symbol') return false;
+        const resolved = resolve();
+        return prop in resolved;
+      },
+    });
   };
 
   providerAdapters = {

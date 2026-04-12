@@ -15,14 +15,26 @@ const AUTH_TAG_LENGTH = 16;
 const PBKDF2_ITERATIONS = 100_000;
 const PBKDF2_KEY_LENGTH = 32; // 256 bits
 const PBKDF2_DIGEST = 'sha512';
-const DEFAULT_SALT = 'tpi-db-encryption-salt-v1';
-
 /**
- * Get PBKDF2 salt: uses TPI_DB_KDF_SALT env var if set, otherwise falls back
- * to a default. Per-deployment salt is recommended for production security.
+ * Get PBKDF2 salt: uses TPI_DB_KDF_SALT env var if set, otherwise derives a
+ * per-deployment salt from the master key itself. This ensures each deployment
+ * with a unique master key gets a unique salt, preventing precomputed rainbow
+ * tables even without an explicit TPI_DB_KDF_SALT. (AUTH-03 fix)
  */
 function getPbkdf2Salt(): string {
-  return process.env.TPI_DB_KDF_SALT || DEFAULT_SALT;
+  const explicit = process.env.TPI_DB_KDF_SALT;
+  if (explicit) return explicit;
+
+  // Derive a deployment-unique salt from the master key using a fast hash.
+  // Not ideal (salt derived from key), but strictly better than a hardcoded
+  // constant shared across all deployments.
+  const masterKey = process.env.TPI_DB_ENCRYPTION_KEY;
+  if (masterKey) {
+    return crypto.createHash('sha256').update(`tpi-salt-v2:${masterKey}`).digest('hex').slice(0, 32);
+  }
+
+  // Fallback for startup validation (key missing will throw in getDerivedKey)
+  return 'tpi-db-encryption-salt-v2-fallback';
 }
 
 let derivedKey: Buffer | null = null;

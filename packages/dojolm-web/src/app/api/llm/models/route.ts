@@ -21,26 +21,36 @@ import { checkApiAuth } from '@/lib/api-auth';
 /** Detect HTML/script tags in user input (SEC-002). */
 const HTML_TAG_PATTERN = /<[^>]*>/;
 
+/** Detect inline JS event handlers without angle brackets (INPUT-02 fix).
+ *  Matches patterns like: onmouseover=, onclick=, onerror= */
+const EVENT_HANDLER_PATTERN = /\bon[a-z]{2,}\s*=/i;
+
 /**
- * Strip HTML tags and control characters from user-supplied strings.
- * Defense-in-depth against stored XSS (BUG-033).
+ * Strip HTML tags, event handlers, and control characters from user-supplied strings.
+ * Defense-in-depth against stored XSS (BUG-033, INPUT-02).
  */
 function sanitizeString(value: unknown): string {
   if (typeof value !== 'string') return '';
   return value
     .replace(/<[^>]*>/g, '')       // strip HTML tags
+    .replace(/\bon[a-z]{2,}\s*=[^\s]*/gi, '') // strip event handler attributes
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // strip control chars (preserve \t \n \r)
     .trim();
 }
 
 /**
- * Reject if raw input contains HTML tags (SEC-002).
- * Returns an error string if HTML is detected, null otherwise.
+ * Reject if raw input contains HTML tags or JS event handlers (SEC-002, INPUT-02).
+ * Returns an error string if dangerous content is detected, null otherwise.
  */
 function rejectHtmlTags(fields: Record<string, unknown>): string | null {
   for (const [key, value] of Object.entries(fields)) {
-    if (typeof value === 'string' && HTML_TAG_PATTERN.test(value)) {
-      return `Field "${key}" must not contain HTML tags`;
+    if (typeof value === 'string') {
+      if (HTML_TAG_PATTERN.test(value)) {
+        return `Field "${key}" must not contain HTML tags`;
+      }
+      if (EVENT_HANDLER_PATTERN.test(value)) {
+        return `Field "${key}" must not contain JavaScript event handlers`;
+      }
     }
   }
   return null;

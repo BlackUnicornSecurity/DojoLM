@@ -129,7 +129,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "postbuild": "mkdir -p dist/fingerprint && cp src/fingerprint/kagami-signatures.json dist/fingerprint/kagami-signatures.json",
+    "postbuild": "mkdir -p dist/fingerprint dist/llm && cp src/fingerprint/kagami-signatures.json dist/fingerprint/kagami-signatures.json && cp src/llm/llm-presets.json dist/llm/llm-presets.json",
     "start": "npx tsx src/serve.ts",
     "generate": "npx tsx src/generate-fixtures.ts",
     "test": "vitest run",

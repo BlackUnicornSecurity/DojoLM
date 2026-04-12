@@ -7,7 +7,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
-// Auth handled by the API proxy — no per-route checkApiAuth needed
+// Mock checkApiAuth to return null (authenticated) when session cookie present
+vi.mock('@/lib/api-auth', () => ({
+  checkApiAuth: vi.fn((req: NextRequest) => {
+    const session = req.cookies.get('tpi_session')?.value;
+    return session ? null : { status: 401 };
+  }),
+  isDemoMode: vi.fn(() => false),
+}));
 
 // Mock the scanner module (dynamically imported inside the route)
 vi.mock('@dojolm/scanner', () => ({
@@ -27,10 +34,14 @@ vi.mock('@/lib/storage/storage-interface', () => ({
   }),
 }));
 
-function createGetRequest(): NextRequest {
-  return new NextRequest('http://localhost:42001/api/admin/health', {
+function createGetRequest(withSession = false): NextRequest {
+  const req = new NextRequest('http://localhost:42001/api/admin/health', {
     method: 'GET',
   });
+  if (withSession) {
+    req.cookies.set('tpi_session', 'valid-test-session-token');
+  }
+  return req;
 }
 
 describe('GET /api/admin/health', () => {
@@ -38,38 +49,49 @@ describe('GET /api/admin/health', () => {
     vi.clearAllMocks();
   });
 
-  it('returns 200 with health status', async () => {
+  it('returns minimal response for unauthenticated callers', async () => {
     const { GET } = await import('@/app/api/admin/health/route');
 
-    const req = createGetRequest();
+    const req = createGetRequest(false);
     const res = await GET(req);
 
     expect(res.status).toBe(200);
     const body = await res.json();
 
-    // Check top-level health sections
+    // Unauthenticated: only status + timestamp, no internals
+    expect(body).toHaveProperty('status', 'ok');
+    expect(body).toHaveProperty('timestamp');
+    expect(body).not.toHaveProperty('scanner');
+    expect(body).not.toHaveProperty('guard');
+    expect(body).not.toHaveProperty('storage');
+  });
+
+  it('returns full health status for authenticated callers', async () => {
+    const { GET } = await import('@/app/api/admin/health/route');
+
+    const req = createGetRequest(true);
+    const res = await GET(req);
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+
     expect(body).toHaveProperty('scanner');
     expect(body).toHaveProperty('guard');
     expect(body).toHaveProperty('storage');
     expect(body).toHaveProperty('app');
 
-    // Scanner section
     expect(body.scanner).toHaveProperty('reachable');
     expect(typeof body.scanner.reachable).toBe('boolean');
 
-    // Guard section
     expect(body.guard).toHaveProperty('enabled');
     expect(body.guard).toHaveProperty('mode');
     expect(body.guard).toHaveProperty('eventCount');
 
-    // Storage section
     expect(body.storage).toHaveProperty('type');
     expect(body.storage).toHaveProperty('modelsCount');
 
-    // App section
     expect(body.app).toHaveProperty('version');
     expect(typeof body.app.version).toBe('string');
-    // R3-010: nodeVersion removed to prevent fingerprinting
     expect(body.app).not.toHaveProperty('nodeVersion');
     expect(body.app).toHaveProperty('responseTimeMs');
   });
@@ -85,7 +107,6 @@ describe('GET /api/admin/health', () => {
   });
 
   it('returns valid structure even if scanner fails', async () => {
-    // Override scanner mock to throw
     const scanner = await import('@dojolm/scanner');
     vi.mocked(scanner.scan).mockImplementationOnce(() => {
       throw new Error('Scanner unavailable');
@@ -93,7 +114,7 @@ describe('GET /api/admin/health', () => {
 
     const { GET } = await import('@/app/api/admin/health/route');
 
-    const req = createGetRequest();
+    const req = createGetRequest(true);
     const res = await GET(req);
 
     expect(res.status).toBe(200);

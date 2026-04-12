@@ -400,6 +400,100 @@ export async function getGuardStats(): Promise<GuardStats> {
   return stats;
 }
 
+// ===========================================================================
+// Chain Integrity Verification (LOGIC-05 fix)
+// ===========================================================================
+
+export interface ChainVerificationResult {
+  valid: boolean;
+  totalEvents: number;
+  verifiedEvents: number;
+  brokenLinks: Array<{
+    eventId: string;
+    index: number;
+    reason: 'missing_file' | 'content_hash_mismatch' | 'chain_link_mismatch';
+    expected?: string;
+    actual?: string;
+  }>;
+}
+
+/**
+ * Verify the integrity of the guard audit event chain.
+ * Walks all events in order and validates:
+ * 1. Each event file exists and is readable
+ * 2. Each event's contentHash matches the recomputed hash of its content
+ * 3. Each event's previousEventHash matches the prior event's contentHash
+ */
+export async function verifyChain(): Promise<ChainVerificationResult> {
+  const index = (await readJSON<EventIndex>(PATHS.index)) || { eventIds: [] };
+
+  const result: ChainVerificationResult = {
+    valid: true,
+    totalEvents: index.eventIds.length,
+    verifiedEvents: 0,
+    brokenLinks: [],
+  };
+
+  let previousHash: string | undefined;
+
+  for (let i = 0; i < index.eventIds.length; i++) {
+    const eventId = index.eventIds[i];
+    const eventPath = safeResolveEvent(eventId);
+    if (!eventPath) continue;
+
+    const event = await readJSON<GuardAuditEntry>(eventPath);
+    if (!event) {
+      result.valid = false;
+      result.brokenLinks.push({
+        eventId,
+        index: i,
+        reason: 'missing_file',
+      });
+      // Chain is broken — subsequent previousEventHash checks are meaningless
+      // but we continue to report all gaps
+      previousHash = undefined;
+      continue;
+    }
+
+    // Verify contentHash: recompute from event data using the same approach as
+    // saveGuardEvent() — spread all fields except contentHash itself.
+    // Must match line 262-268: { ...event, previousEventHash: ... }
+    const { contentHash: _storedHash, ...eventWithoutHash } = event;
+    const recomputedHash = crypto
+      .createHash('sha256')
+      .update(JSON.stringify(eventWithoutHash))
+      .digest('hex');
+
+    if (event.contentHash !== recomputedHash) {
+      result.valid = false;
+      result.brokenLinks.push({
+        eventId,
+        index: i,
+        reason: 'content_hash_mismatch',
+        expected: recomputedHash,
+        actual: event.contentHash,
+      });
+    }
+
+    // Verify chain link: previousEventHash should match the prior event's contentHash
+    if (previousHash !== undefined && event.previousEventHash !== previousHash) {
+      result.valid = false;
+      result.brokenLinks.push({
+        eventId,
+        index: i,
+        reason: 'chain_link_mismatch',
+        expected: previousHash,
+        actual: event.previousEventHash,
+      });
+    }
+
+    previousHash = event.contentHash;
+    result.verifiedEvents++;
+  }
+
+  return result;
+}
+
 /**
  * Get SHA-256 hash of guard config for cache key inclusion (S3).
  */

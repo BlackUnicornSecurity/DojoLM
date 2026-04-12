@@ -259,7 +259,7 @@ else
     fi
 
     # Check API health
-    API_RESPONSE=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -s -m 5 http://localhost:3001/api/stats 2>/dev/null || echo FAIL")
+    API_RESPONSE=$(ssh "${VOYAGER_USER}@${VOYAGER_IP}" "curl -s -m 5 http://localhost:3001/api/health 2>/dev/null || echo FAIL")
     # Note: Caddy proxies dojo.bucc.internal -> localhost:3001 -> container:42001
     if [[ "${API_RESPONSE}" != "FAIL" ]] && [[ "${API_RESPONSE}" == *"{"* ]]; then
         pass "API responding on :3001"

@@ -8,9 +8,13 @@
  * @description Display-only metrics. NOT for security decisions.
  * Metrics are derived from in-memory session state and reset on refresh.
  * They reflect the current scan result and engine filter state only.
+ *
+ * FINDING-007 fix: use useState for history to trigger re-render when
+ * scan count changes. The prior useRef + useMemo pattern caused totalScans
+ * to always lag by 1 because useEffect runs AFTER render.
  */
 
-import { useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { useScanner } from '@/lib/ScannerContext'
 
 /**
@@ -42,34 +46,28 @@ const MAX_HISTORY = 10
 export function useScannerMetrics(): ScannerMetrics {
   const { scanResult, engineFilters } = useScanner()
 
-  // Track scan history in a ref to avoid side effects in useMemo.
-  // Each entry is keyed by scan identity (scanResult reference) to avoid dedup bugs.
-  const historyRef = useRef<{ threats: number }[]>([])
+  // FINDING-007 fix: use state instead of ref so changes trigger re-render.
+  const [history, setHistory] = useState<{ threats: number }[]>([])
   const lastScanRef = useRef<object | null>(null)
 
-  // Side effect: append to history when scanResult changes (new scan completed)
   useEffect(() => {
     if (scanResult && scanResult !== lastScanRef.current) {
       lastScanRef.current = scanResult
-      const entry = { threats: scanResult.findings.length }
-      historyRef.current = [...historyRef.current, entry].slice(-MAX_HISTORY)
+      setHistory(prev => [...prev, { threats: scanResult.findings.length }].slice(-MAX_HISTORY))
     }
   }, [scanResult])
 
   return useMemo(() => {
-    const history = historyRef.current
     const totalScans = history.length
     const threatsDetected = scanResult ? scanResult.findings.length : 0
     const activeEngines = engineFilters.filter(f => f.enabled).length
     const totalEngines = engineFilters.length
 
-    // Pass rate: scans with zero threats / total scans
     const allowCount = history.filter(s => s.threats === 0).length
     const passRate = totalScans > 0
       ? `${Math.round((allowCount / totalScans) * 100)}%`
       : 'N/A'
 
-    // Sparkline data: last N threat counts
     const threatTrend = history.map(s => s.threats)
 
     return {
@@ -80,11 +78,11 @@ export function useScannerMetrics(): ScannerMetrics {
       totalEngines,
       threatTrend,
     }
-  }, [scanResult, engineFilters])
+  }, [history, scanResult, engineFilters])
 }
 
 /** Reset scan history. Exported for testing only. */
 export function _resetScanHistory(): void {
-  // No-op: history is now per-instance via useRef, not module-level.
+  // No-op: history is now per-instance via useState, not module-level.
   // Kept for API compatibility with existing tests.
 }

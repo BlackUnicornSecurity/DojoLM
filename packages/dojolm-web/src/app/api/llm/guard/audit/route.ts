@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isDemoMode } from '@/lib/demo';
 import { demoGuardAuditGet } from '@/lib/demo/mock-api-handlers';
-import { queryGuardEvents } from '@/lib/storage/guard-storage';
+import { queryGuardEvents, verifyChain } from '@/lib/storage/guard-storage';
 import type { GuardAuditQuery, GuardMode, GuardDirection, GuardAction } from '@/lib/guard-types';
 import { checkApiAuth } from '@/lib/api-auth';
 
@@ -70,12 +70,21 @@ export async function GET(request: NextRequest) {
       query.offset = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
     }
 
+    // Chain verification: include integrity status when ?verify=true
+    const shouldVerify = searchParams.get('verify') === 'true';
+
     const { events, total } = await queryGuardEvents(query);
 
-    return NextResponse.json({
+    const response: Record<string, unknown> = {
       data: events,
       meta: { total },
-    });
+    };
+
+    if (shouldVerify) {
+      response.chainIntegrity = await verifyChain();
+    }
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error querying guard events:', error);
     return NextResponse.json(

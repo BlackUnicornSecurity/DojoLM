@@ -56,19 +56,19 @@ describe('isPublicApiRoute', () => {
     expect(isPublicApiRoute('/api/health/', 'GET')).toBe(false);
   });
 
-  // ARA-009: Public readonly route via GET is public (union with read routes)
-  it('ARA-009: /api/stats via GET is public (readonly)', () => {
-    expect(isPublicApiRoute('/api/stats', 'GET')).toBe(true);
+  // ARA-009: FINDING-005 fix — /api/stats removed from PUBLIC_READONLY_API_ROUTES
+  it('ARA-009: /api/stats via GET is NOT public (auth required after FINDING-005)', () => {
+    expect(isPublicApiRoute('/api/stats', 'GET')).toBe(false);
   });
 
-  // ARA-010: Public readonly route via POST is NOT public
+  // ARA-010: /api/stats via POST is NOT public
   it('ARA-010: /api/stats via POST is NOT public', () => {
     expect(isPublicApiRoute('/api/stats', 'POST')).toBe(false);
   });
 
-  // ARA-011: Case-insensitive method normalisation — lowercase 'get' treated same as 'GET'
-  it('ARA-011: /api/stats via lowercase get is public', () => {
-    expect(isPublicApiRoute('/api/stats', 'get')).toBe(true);
+  // ARA-011: /api/stats is no longer public regardless of method case
+  it('ARA-011: /api/stats via lowercase get is NOT public (auth required after FINDING-005)', () => {
+    expect(isPublicApiRoute('/api/stats', 'get')).toBe(false);
   });
 
   // ARA-012: Arbitrary unknown route is not public
@@ -81,19 +81,19 @@ describe('isPublicApiRoute', () => {
 // isPublicReadApiRoute
 // ---------------------------------------------------------------------------
 describe('isPublicReadApiRoute', () => {
-  // ARA-013: /api/compliance GET is a public read route
-  it('ARA-013: /api/compliance via GET is a public read route', () => {
-    expect(isPublicReadApiRoute('/api/compliance', 'GET')).toBe(true);
+  // ARA-013: FINDING-005 fix — /api/compliance removed from PUBLIC_READONLY_API_ROUTES
+  it('ARA-013: /api/compliance via GET is NOT a public read route (auth required after FINDING-005)', () => {
+    expect(isPublicReadApiRoute('/api/compliance', 'GET')).toBe(false);
   });
 
-  // ARA-014: /api/fixtures GET is a public read route
-  it('ARA-014: /api/fixtures via GET is a public read route', () => {
-    expect(isPublicReadApiRoute('/api/fixtures', 'GET')).toBe(true);
+  // ARA-014: FINDING-005 fix — /api/fixtures removed from PUBLIC_READONLY_API_ROUTES
+  it('ARA-014: /api/fixtures via GET is NOT a public read route (auth required after FINDING-005)', () => {
+    expect(isPublicReadApiRoute('/api/fixtures', 'GET')).toBe(false);
   });
 
-  // ARA-015: /api/stats HEAD is a public read route (HEAD is a read method)
-  it('ARA-015: /api/stats via HEAD is a public read route', () => {
-    expect(isPublicReadApiRoute('/api/stats', 'HEAD')).toBe(true);
+  // ARA-015: FINDING-005 fix — /api/stats removed from PUBLIC_READONLY_API_ROUTES
+  it('ARA-015: /api/stats via HEAD is NOT a public read route (auth required after FINDING-005)', () => {
+    expect(isPublicReadApiRoute('/api/stats', 'HEAD')).toBe(false);
   });
 
   // ARA-016: /api/stats POST is NOT a public read route
@@ -116,29 +116,29 @@ describe('isPublicReadApiRoute', () => {
 // isPublicBrowserActionRoute
 // ---------------------------------------------------------------------------
 describe('isPublicBrowserActionRoute', () => {
-  // ARA-019: POST /api/scan is a browser action route
-  it('ARA-019: POST /api/scan is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/scan', 'POST')).toBe(true);
+  // ARA-019: FINDING-005 fix — POST /api/scan removed from PUBLIC_BROWSER_ACTION_ROUTES
+  it('ARA-019: POST /api/scan is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/scan', 'POST')).toBe(false);
   });
 
-  // ARA-020: POST /api/scan-fixture is a browser action route
-  it('ARA-020: POST /api/scan-fixture is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/scan-fixture', 'POST')).toBe(true);
+  // ARA-020: FINDING-005 fix — POST /api/scan-fixture removed
+  it('ARA-020: POST /api/scan-fixture is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/scan-fixture', 'POST')).toBe(false);
   });
 
-  // ARA-021: GET /api/read-fixture is a browser action route
-  it('ARA-021: GET /api/read-fixture is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/read-fixture', 'GET')).toBe(true);
+  // ARA-021: FINDING-005 fix — GET /api/read-fixture removed
+  it('ARA-021: GET /api/read-fixture is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/read-fixture', 'GET')).toBe(false);
   });
 
-  // ARA-022: GET /api/read-fixture/media is a browser action route
-  it('ARA-022: GET /api/read-fixture/media is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/read-fixture/media', 'GET')).toBe(true);
+  // ARA-022: FINDING-005 fix — GET /api/read-fixture/media removed
+  it('ARA-022: GET /api/read-fixture/media is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/read-fixture/media', 'GET')).toBe(false);
   });
 
-  // ARA-023: GET /api/scan-fixture is a browser action route
-  it('ARA-023: GET /api/scan-fixture is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/scan-fixture', 'GET')).toBe(true);
+  // ARA-023: FINDING-005 fix — GET /api/scan-fixture removed
+  it('ARA-023: GET /api/scan-fixture is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/scan-fixture', 'GET')).toBe(false);
   });
 
   // ARA-024: POST /api/read-fixture is NOT a browser action route (wrong method)
@@ -161,8 +161,8 @@ describe('isPublicBrowserActionRoute', () => {
     expect(isPublicBrowserActionRoute('/api/unknown', 'POST')).toBe(false);
   });
 
-  // ARA-028: Method normalisation — lowercase 'post' is treated same as 'POST'
-  it('ARA-028: lowercase post /api/scan is a public browser action route', () => {
-    expect(isPublicBrowserActionRoute('/api/scan', 'post')).toBe(true);
+  // ARA-028: FINDING-005 fix — set is empty, so method normalisation is moot
+  it('ARA-028: lowercase post /api/scan is NOT a public browser action route (auth required after FINDING-005)', () => {
+    expect(isPublicBrowserActionRoute('/api/scan', 'post')).toBe(false);
   });
 });

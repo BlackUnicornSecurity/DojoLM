@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/route-guard';
 import { userRepo } from '@/lib/db/repositories/user.repository';
+import { destroyUserSessions } from '@/lib/auth/session';
 import type { UserRole } from '@/lib/db/types';
 
 const VALID_ROLES: UserRole[] = ['admin', 'analyst', 'viewer'];
@@ -35,6 +36,8 @@ export const PATCH = withAuth(
       if (body.action === 'disable') {
         const user = userRepo.disable(userId);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        // Revoke all sessions on disable — prevents continued access with old privilege
+        destroyUserSessions(userId);
         return NextResponse.json({ user });
       }
 
@@ -44,6 +47,8 @@ export const PATCH = withAuth(
         }
         const user = userRepo.updateRole(userId, body.role);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        // Revoke all sessions on role change — forces re-auth at new privilege level
+        destroyUserSessions(userId);
         return NextResponse.json({ user });
       }
 

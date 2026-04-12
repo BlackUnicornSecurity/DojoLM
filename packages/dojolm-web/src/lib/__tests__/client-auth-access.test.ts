@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const localStorageMock = (() => {
+function createStorageMock() {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
@@ -8,8 +8,12 @@ const localStorageMock = (() => {
     removeItem: vi.fn((key: string) => { delete store[key]; }),
     clear: vi.fn(() => { store = {}; }),
   };
-})();
+}
 
+const sessionStorageMock = createStorageMock();
+const localStorageMock = createStorageMock();
+
+Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
 const mockFetch = vi.fn();
@@ -21,6 +25,7 @@ describe('client-auth-access', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    sessionStorageMock.clear();
     localStorageMock.clear();
     process.env = { ...originalEnv, NODE_ENV: 'development' };
     mockFetch.mockResolvedValue(new Response(JSON.stringify({ user: null }), { status: 200 }));
@@ -35,7 +40,7 @@ describe('client-auth-access', () => {
   });
 
   it('returns true when an API key is stored locally', async () => {
-    localStorageMock.setItem('noda-api-key', 'dev-key');
+    sessionStorageMock.setItem('noda-api-key', 'dev-key');
     const { canAccessProtectedApi } = await import('../client-auth-access');
 
     await expect(canAccessProtectedApi()).resolves.toBe(true);

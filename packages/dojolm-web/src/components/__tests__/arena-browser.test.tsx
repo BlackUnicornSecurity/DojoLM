@@ -337,10 +337,11 @@ describe('ArenaBrowser', () => {
     setupMockFetch([mockMatch], [{ modelId: 'gpt-4', modelName: 'GPT-4' }])
     render(<ArenaBrowser />)
 
+    // Train 3 PR-4e.1 renamed tabs: Roster→Matches, Stats→Leaderboard
     await waitFor(() => {
-      expect(screen.getByRole('tab', { name: 'Roster' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument()
       expect(screen.getByRole('tab', { name: 'Rules' })).toBeInTheDocument()
-      expect(screen.getByRole('tab', { name: 'Stats' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Leaderboard' })).toBeInTheDocument()
     })
   })
 
@@ -349,10 +350,10 @@ describe('ArenaBrowser', () => {
     render(<ArenaBrowser />)
 
     await waitFor(() => {
-      expect(screen.getByRole('tab', { name: 'Roster' })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Matches' })).toBeInTheDocument()
     })
 
-    fireEvent.click(screen.getByRole('tab', { name: 'Roster' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Matches' }))
     expect(screen.getByTestId('arena-roster')).toBeInTheDocument()
   })
 
@@ -367,7 +368,7 @@ describe('ArenaBrowser', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Rules' }))
     expect(screen.getByTestId('arena-rules')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('tab', { name: 'Stats' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Leaderboard' }))
     expect(screen.getByTestId('arena-stats')).toBeInTheDocument()
   })
 })

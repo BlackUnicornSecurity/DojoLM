@@ -46,6 +46,8 @@ const mockRenameSync = vi.fn()
 const mockMkdirSync = vi.fn()
 const mockReaddirSync = vi.fn()
 const mockUnlinkSync = vi.fn()
+const mockOpenSync = vi.fn(() => 42) // return a file descriptor
+const mockCloseSync = vi.fn()
 
 vi.mock('fs', () => {
   const fsMock = {
@@ -55,9 +57,27 @@ vi.mock('fs', () => {
     mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
     readdirSync: (...args: unknown[]) => mockReaddirSync(...args),
     unlinkSync: (...args: unknown[]) => mockUnlinkSync(...args),
+    openSync: (...args: unknown[]) => mockOpenSync(...args),
+    closeSync: (...args: unknown[]) => mockCloseSync(...args),
   }
   return { ...fsMock, default: fsMock }
 })
+
+// Mock runtime-paths to avoid filesystem access
+vi.mock('@/lib/runtime-paths', () => ({
+  getDataPath: (sub: string) => `/tmp/test-data/${sub}`,
+}))
+
+// Mock validation-executor helpers
+const mockAcquireLock = vi.fn(() => true)
+const mockWriteProgressAtomic = vi.fn()
+
+vi.mock('@/lib/validation-executor', () => ({
+  SAFE_MODULE_ID: /^[a-zA-Z0-9_-]{1,128}$/,
+  acquireLock: (...args: unknown[]) => mockAcquireLock(...args),
+  writeProgressAtomic: (...args: unknown[]) => mockWriteProgressAtomic(...args),
+  executeValidationRun: vi.fn(),
+}))
 
 // Mock crypto for deterministic UUIDs in tests
 vi.mock('node:crypto', () => ({
@@ -104,6 +124,8 @@ describe('POST /api/admin/validation/run', () => {
     mockReadFileSync.mockImplementation(() => {
       throw new Error('ENOENT')
     })
+    // Default: lock acquisition succeeds
+    mockAcquireLock.mockReturnValue(true)
 
     const mod = await import('../../app/api/admin/validation/run/route')
     POST = mod.POST as unknown as typeof POST
@@ -206,8 +228,9 @@ describe('POST /api/admin/validation/run', () => {
   })
 
   it('VAL-009: returns 429 when lock file exists (concurrent run)', async () => {
+    const lockRunId = '11111111-2222-3333-4444-555555555555'
     mockReadFileSync.mockReturnValue(
-      JSON.stringify({ runId: 'existing-run-id', startedAt: new Date().toISOString() })
+      JSON.stringify({ runId: lockRunId, startedAt: new Date().toISOString() })
     )
 
     const req = makeRequest('POST', '/api/admin/validation/run', {
@@ -219,7 +242,7 @@ describe('POST /api/admin/validation/run', () => {
     expect(res.status).toBe(429)
     const json = await res.json()
     expect(json.error).toMatch(/already in progress/)
-    expect(json.runId).toBe('existing-run-id')
+    expect(json.runId).toBe(lockRunId)
   })
 
   it('VAL-010: creates run successfully with valid body', async () => {
@@ -235,9 +258,9 @@ describe('POST /api/admin/validation/run', () => {
     expect(json.runId).toBe('aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
     expect(json.status).toBe('queued')
 
-    // Verify lock and progress files were written
-    expect(mockWriteFileSync).toHaveBeenCalled()
-    expect(mockRenameSync).toHaveBeenCalled()
+    // Verify lock acquisition and progress file were written
+    expect(mockAcquireLock).toHaveBeenCalled()
+    expect(mockWriteProgressAtomic).toHaveBeenCalled()
   })
 
   it('VAL-011: creates run with empty body (defaults)', async () => {

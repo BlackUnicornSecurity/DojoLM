@@ -119,11 +119,11 @@ export function withAuth(
   handler: AuthenticatedHandler,
   options?: RouteGuardOptions
 ): RouteHandler {
-  return async (req: NextRequest, context: RouteContext) => {
+  return async (req: NextRequest, context?: RouteContext) => {
     // Next.js 16+ passes params as a Promise — resolve before forwarding
     let resolvedParams: Record<string, string> | undefined;
     try {
-      resolvedParams = context.params
+      resolvedParams = context?.params
         ? (await context.params) as Record<string, string>
         : undefined;
     } catch {
@@ -214,32 +214,50 @@ export function getSessionToken(req: NextRequest): string | undefined {
   return req.cookies.get(SESSION_COOKIE_NAME)?.value;
 }
 
-/** Secure flag: only set when HTTPS is available (TLS proxy or direct).
- * When accessed directly on HTTP without a TLS-terminating proxy, omit Secure
- * so cookies are sent. Controlled by TPI_COOKIE_SECURE env var (default: true). */
-const SECURE_FLAG = process.env.TPI_COOKIE_SECURE === '0' ? '' : ' Secure;';
+/** FINDING-006 fix: auto-detect TLS from request when available.
+ * Priority: (1) TPI_COOKIE_SECURE env var if explicitly set,
+ * (2) x-forwarded-proto header (set by Caddy/nginx),
+ * (3) request URL protocol,
+ * (4) default to Secure (safe fallback). */
+function getSecureFlag(request?: NextRequest): string {
+  if (process.env.TPI_COOKIE_SECURE === '0') return '';
+  if (process.env.TPI_COOKIE_SECURE === '1') return ' Secure;';
+
+  if (request) {
+    const proto = request.headers.get('x-forwarded-proto');
+    if (proto === 'http') return '';
+    if (proto === 'https') return ' Secure;';
+    if (request.url.startsWith('http://')) return '';
+  }
+
+  return ' Secure;';
+}
 
 /**
  * Cookie helper: builds Set-Cookie header with security attributes.
+ * Pass request to auto-detect Secure flag from protocol.
  */
-export function buildSessionCookie(token: string, maxAgeSeconds: number): string {
-  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+export function buildSessionCookie(token: string, maxAgeSeconds: number, request?: NextRequest): string {
+  return `${SESSION_COOKIE_NAME}=${token}; HttpOnly;${getSecureFlag(request)} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds CSRF Set-Cookie (readable by JS for double-submit).
+ * Pass request to auto-detect Secure flag from protocol.
  */
-export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number): string {
-  return `${CSRF_COOKIE_NAME}=${csrfToken};${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
+export function buildCsrfCookie(csrfToken: string, maxAgeSeconds: number, request?: NextRequest): string {
+  return `${CSRF_COOKIE_NAME}=${csrfToken};${getSecureFlag(request)} SameSite=Strict; Path=/; Max-Age=${maxAgeSeconds}`;
 }
 
 /**
  * Cookie helper: builds expired cookies for logout.
+ * Pass request to auto-detect Secure flag from protocol.
  */
-export function buildLogoutCookies(): string[] {
+export function buildLogoutCookies(request?: NextRequest): string[] {
+  const secureFlag = getSecureFlag(request);
   return [
-    `${SESSION_COOKIE_NAME}=; HttpOnly;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=0`,
-    `${CSRF_COOKIE_NAME}=;${SECURE_FLAG} SameSite=Strict; Path=/; Max-Age=0`,
+    `${SESSION_COOKIE_NAME}=; HttpOnly;${secureFlag} SameSite=Strict; Path=/; Max-Age=0`,
+    `${CSRF_COOKIE_NAME}=;${secureFlag} SameSite=Strict; Path=/; Max-Age=0`,
   ];
 }
 

@@ -41,8 +41,25 @@ export const DEMO_USER: DemoSessionUser = {
 /** Demo session TTL in seconds (24 hours). */
 export const DEMO_SESSION_TTL_SECONDS = 86400;
 
-/** Demo session token used for cookie simulation. */
-export const DEMO_SESSION_TOKEN = 'demo-session-v1';
+/**
+ * Demo session/CSRF tokens generated at module load (AUTH-05 fix).
+ * Unique per process lifecycle — prevents attackers from pre-knowing the token
+ * if demo mode is accidentally enabled in production.
+ */
+function generateDemoToken(length: number): string {
+  // Works in both Node.js and browser environments
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    // Use Web Crypto API (available in Node 19+ and all modern browsers)
+    return Array.from({ length: Math.ceil(length / 16) }, () =>
+      globalThis.crypto.randomUUID().replace(/-/g, '')
+    ).join('').slice(0, length * 2);
+  }
+  // Fallback: timestamp + Math.random (weaker but non-static)
+  return `demo-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
 
-/** Demo CSRF token for form submissions. */
-export const DEMO_CSRF_TOKEN = 'demo-csrf-v1';
+/** Demo session token — unique per process lifecycle. */
+export const DEMO_SESSION_TOKEN = generateDemoToken(32);
+
+/** Demo CSRF token — unique per process lifecycle. */
+export const DEMO_CSRF_TOKEN = generateDemoToken(16);

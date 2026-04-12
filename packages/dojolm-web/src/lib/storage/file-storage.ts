@@ -131,6 +131,45 @@ async function writeJSON<T>(filePath: string, data: T): Promise<void> {
 }
 
 // ===========================================================================
+// File-Level Async Mutex (LOGIC-06 fix: prevents lost updates on shared JSON)
+// ===========================================================================
+
+/**
+ * Per-file async mutex to prevent concurrent read-modify-write lost updates.
+ * Atomic writes (temp+rename) prevent corruption, but without a lock two
+ * concurrent reads can lead to one overwriting the other's changes.
+ */
+const fileLocks = new Map<string, Promise<void>>();
+const FILE_LOCK_MAP_CAP = 200;
+
+async function withFileLock<T>(filePath: string, fn: () => Promise<T>): Promise<T> {
+  const key = path.resolve(filePath);
+
+  // Wait for any existing lock on this file
+  while (fileLocks.has(key)) {
+    await fileLocks.get(key);
+  }
+
+  // Cap lock map size (evict oldest by iteration order)
+  if (fileLocks.size >= FILE_LOCK_MAP_CAP) {
+    const firstKey = fileLocks.keys().next().value;
+    if (firstKey) fileLocks.delete(firstKey);
+  }
+
+  // Create and register our lock
+  let releaseLock: () => void;
+  const lockPromise = new Promise<void>((resolve) => { releaseLock = resolve; });
+  fileLocks.set(key, lockPromise);
+
+  try {
+    return await fn();
+  } finally {
+    fileLocks.delete(key);
+    releaseLock!();
+  }
+}
+
+// ===========================================================================
 // Content Hashing
 // ===========================================================================
 
@@ -246,38 +285,42 @@ export class FileStorage implements IStorageBackend {
   }
 
   async saveModelConfig(config: LLMModelConfig): Promise<LLMModelConfig> {
-    const configs = await this.getModelConfigs();
-    const index = configs.findIndex(c => c.id === config.id);
+    return withFileLock(PATHS.models, async () => {
+      const configs = await this.getModelConfigs();
+      const index = configs.findIndex(c => c.id === config.id);
 
-    const now = new Date().toISOString();
-    const updatedConfig: LLMModelConfig = {
-      ...config,
-      updatedAt: now,
-    };
+      const now = new Date().toISOString();
+      const updatedConfig: LLMModelConfig = {
+        ...config,
+        updatedAt: now,
+      };
 
-    if (index >= 0) {
-      configs[index] = updatedConfig;
-    } else {
-      updatedConfig.createdAt = now;
-      configs.push(updatedConfig);
-    }
+      if (index >= 0) {
+        configs[index] = updatedConfig;
+      } else {
+        updatedConfig.createdAt = now;
+        configs.push(updatedConfig);
+      }
 
-    await writeJSON(PATHS.models, configs.map(serializeModelConfig));
+      await writeJSON(PATHS.models, configs.map(serializeModelConfig));
 
-    return updatedConfig;
+      return updatedConfig;
+    });
   }
 
   async deleteModelConfig(id: string): Promise<boolean> {
-    const configs = await this.getModelConfigs();
-    const filtered = configs.filter(c => c.id !== id);
+    return withFileLock(PATHS.models, async () => {
+      const configs = await this.getModelConfigs();
+      const filtered = configs.filter(c => c.id !== id);
 
-    if (filtered.length === configs.length) {
-      return false; // Not found
-    }
+      if (filtered.length === configs.length) {
+        return false; // Not found
+      }
 
-    await writeJSON(PATHS.models, filtered.map(serializeModelConfig));
+      await writeJSON(PATHS.models, filtered.map(serializeModelConfig));
 
-    return true;
+      return true;
+    });
   }
 
   async setModelConfigEnabled(id: string, enabled: boolean): Promise<boolean> {
@@ -350,57 +393,60 @@ export class FileStorage implements IStorageBackend {
   }
 
   async saveTestCase(testCase: LLMPromptTestCase): Promise<LLMPromptTestCase> {
-    const cases = await this.getTestCases();
-    const index = cases.findIndex(c => c.id === testCase.id);
+    return withFileLock(PATHS.testCases, async () => {
+      const cases = await this.getTestCases();
+      const index = cases.findIndex(c => c.id === testCase.id);
 
-    if (index >= 0) {
-      cases[index] = testCase;
-    } else {
-      cases.push(testCase);
-    }
+      if (index >= 0) {
+        cases[index] = testCase;
+      } else {
+        cases.push(testCase);
+      }
 
-    await writeJSON(PATHS.testCases, cases);
+      await writeJSON(PATHS.testCases, cases);
 
-    return testCase;
+      return testCase;
+    });
   }
 
   async deleteTestCase(id: string): Promise<boolean> {
-    const cases = await this.getTestCases();
-    const filtered = cases.filter(c => c.id !== id);
+    return withFileLock(PATHS.testCases, async () => {
+      const cases = await this.getTestCases();
+      const filtered = cases.filter(c => c.id !== id);
 
-    if (filtered.length === cases.length) {
-      return false;
-    }
+      if (filtered.length === cases.length) {
+        return false;
+      }
 
-    await writeJSON(PATHS.testCases, filtered);
+      await writeJSON(PATHS.testCases, filtered);
 
-    return true;
+      return true;
+    });
   }
 
   async importTestCases(testCases: LLMPromptTestCase[]): Promise<{ imported: number; failed: number }> {
-    let imported = 0;
-    let failed = 0;
+    return withFileLock(PATHS.testCases, async () => {
+      let imported = 0;
+      let failed = 0;
 
-    const existingCases = await this.getTestCases();
-    const existingIds = new Set(existingCases.map(c => c.id));
+      const existingCases = await this.getTestCases();
+      const existingIds = new Set(existingCases.map(c => c.id));
 
-    for (const testCase of testCases) {
-      try {
-        // Skip duplicates
+      for (const testCase of testCases) {
         if (existingIds.has(testCase.id)) {
           failed++;
           continue;
         }
-
-        await this.saveTestCase(testCase);
+        existingCases.push(testCase);
+        existingIds.add(testCase.id);
         imported++;
-      } catch (error) {
-        console.error(`Failed to import test case ${testCase.id}:`, error);
-        failed++;
       }
-    }
 
-    return { imported, failed };
+      // Single bulk write — avoids nested lock and N individual writes
+      await writeJSON(PATHS.testCases, existingCases);
+
+      return { imported, failed };
+    });
   }
 
   // -----------------------------------------------------------------------

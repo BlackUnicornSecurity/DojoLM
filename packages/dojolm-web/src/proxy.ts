@@ -117,7 +117,10 @@ function cleanupRateLimiter() {
   }
 }
 
-function checkRateLimit(ip: string, limit: number = RATE_LIMIT_GENERAL): { limited: boolean; remaining: number; retryAfter?: number } {
+/** FINDING-009 fix: auth failure blocking only applies to auth routes.
+ * Non-auth routes use the general rate limit even if auth failures are high.
+ * This prevents login brute-force from cascading into a full API DoS. */
+function checkRateLimit(ip: string, limit: number = RATE_LIMIT_GENERAL, isAuthRoute: boolean = false): { limited: boolean; remaining: number; retryAfter?: number } {
   cleanupRateLimiter();
   const now = Date.now();
   const cutoff = now - RATE_LIMIT_WINDOW_MS;
@@ -135,7 +138,8 @@ function checkRateLimit(ip: string, limit: number = RATE_LIMIT_GENERAL): { limit
   if (entry.timestamps.length >= limit) {
     return { limited: true, remaining: 0, retryAfter: 60 };
   }
-  if (entry.authFailures.length >= RATE_LIMIT_AUTH_FAILURE) {
+  // Auth failure lockout only blocks auth routes, not the entire API
+  if (isAuthRoute && entry.authFailures.length >= RATE_LIMIT_AUTH_FAILURE) {
     return { limited: true, remaining: 0, retryAfter: 60 };
   }
 
@@ -238,12 +242,13 @@ export async function proxy(request: NextRequest) {
 
   // Rate limiting (R2-S3)
   const ip = getClientIp(request);
+  const isAuthRoute = pathname.startsWith('/api/auth/');
   const rateLimitKey = isTrustedBrowser
     ? `${ip}:${pathname}`
     : ip;
   const rateCheck = isTrustedBrowser
-    ? checkRateLimit(rateLimitKey, RATE_LIMIT_SAME_ORIGIN)
-    : checkRateLimit(ip, RATE_LIMIT_GENERAL);
+    ? checkRateLimit(rateLimitKey, RATE_LIMIT_SAME_ORIGIN, isAuthRoute)
+    : checkRateLimit(ip, RATE_LIMIT_GENERAL, isAuthRoute);
   if (rateCheck.limited) {
     return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
       status: 429,

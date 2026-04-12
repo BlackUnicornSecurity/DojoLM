@@ -87,8 +87,8 @@ export async function POST(req: NextRequest) {
       { user: { id: DEMO_USER.id, username: DEMO_USER.username, role: DEMO_USER.role } },
       { status: 201 }
     );
-    response.headers.append('Set-Cookie', buildSessionCookie(DEMO_SESSION_TOKEN, DEMO_SESSION_TTL_SECONDS));
-    response.headers.append('Set-Cookie', buildCsrfCookie(DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS));
+    response.headers.append('Set-Cookie', buildSessionCookie(DEMO_SESSION_TOKEN, DEMO_SESSION_TTL_SECONDS, req));
+    response.headers.append('Set-Cookie', buildCsrfCookie(DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS, req));
     return response;
   }
 
@@ -278,8 +278,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-    response.headers.append('Set-Cookie', buildSessionCookie(sessionToken, sessionTtl));
-    response.headers.append('Set-Cookie', buildCsrfCookie(csrfToken, sessionTtl));
+    response.headers.append('Set-Cookie', buildSessionCookie(sessionToken, sessionTtl, req));
+    response.headers.append('Set-Cookie', buildCsrfCookie(csrfToken, sessionTtl, req));
 
     return response;
   } catch {

@@ -254,14 +254,17 @@ export const MAX_CONCURRENT_REQUESTS: Partial<Record<LLMProvider, number>> = {
 // ===========================================================================
 
 /**
- * Default timeout for API requests in milliseconds
+ * Default timeout for API requests in milliseconds.
+ * 90s accommodates 14B models under moderate GPU load.
+ * Per-model override via config.requestTimeout (recommended for 32B+: 180000, 70B+: 300000).
  */
-export const DEFAULT_REQUEST_TIMEOUT_MS = 30000; // 30 seconds
+export const DEFAULT_REQUEST_TIMEOUT_MS = 90000; // 90 seconds
 
 /**
- * Maximum timeout for API requests in milliseconds
+ * Maximum timeout for API requests in milliseconds.
+ * 10 minutes supports 122B models and fingerprinting sessions under load.
  */
-export const MAX_REQUEST_TIMEOUT_MS = 300000; // 5 minutes (supports large models like Qwen3-VL 8B)
+export const MAX_REQUEST_TIMEOUT_MS = 600000; // 10 minutes
 
 /**
  * Timeout for batch execution

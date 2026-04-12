@@ -22,6 +22,10 @@ vi.mock('@/lib/contexts/EcosystemContext', () => ({
   useEcosystemEmit: () => ({ emitFinding: vi.fn() }),
 }))
 
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ setActiveTab: vi.fn() }),
+}))
+
 vi.mock('@/lib/adversarial-skill-engine', () => ({
   executeSkill: vi.fn().mockResolvedValue({
     skillId: 'test-skill',
