@@ -245,7 +245,7 @@ export function ArenaBrowser() {
         <div className="flex items-center gap-3">
           <Swords className="w-6 h-6 text-[var(--warning)]" aria-hidden="true" />
           <div>
-            <h3 className="text-lg font-semibold text-[var(--foreground)]">Battle Arena</h3>
+            <h1 className="text-lg font-semibold text-[var(--foreground)]">Battle Arena</h1>
             <p className="text-sm text-muted-foreground">
               Multi-agent adversarial sandbox
             </p>
