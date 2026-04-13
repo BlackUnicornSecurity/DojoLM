@@ -166,7 +166,7 @@ interface ComplianceCenterData {
 // Audit). Existing sub-panels are preserved but recomposed under these new
 // parent tabs. The Insights tab is a placeholder that will absorb Leaderboard
 // + AnalyticsWorkspace from LLMDashboard in PR-4b.6.
-type SubView = 'evidence' | 'coverage' | 'insights' | 'audit'
+type SubView = 'evidence' | 'coverage' | 'results' | 'audit'
 
 /** H8.1: Group mode for framework list and overview panel */
 type GroupMode = 'tier' | 'category'
@@ -451,7 +451,7 @@ export default function ComplianceCenter() {
   const subTabs: { id: SubView; label: string; icon: typeof BarChart3 }[] = [
     { id: 'evidence', label: 'Evidence', icon: ShieldCheck },
     { id: 'coverage', label: 'Coverage', icon: Layers },
-    { id: 'insights', label: 'Insights', icon: BarChart3 },
+    { id: 'results', label: 'Results', icon: BarChart3 },
     { id: 'audit', label: 'Audit', icon: FileText },
   ]
 
@@ -623,7 +623,7 @@ export default function ComplianceCenter() {
              *  inside their primary workflow. Wrapped in the LLM provider trio so the
              *  relocated components can consume their contexts without mounting the
              *  old LLMDashboard shell. */}
-            <TabsContent value="insights" className="mt-0 space-y-8">
+            <TabsContent value="results" className="mt-0 space-y-8">
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center py-16" aria-busy="true">

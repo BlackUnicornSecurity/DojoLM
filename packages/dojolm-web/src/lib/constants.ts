@@ -84,13 +84,14 @@ export const NAV_ITEMS = [
     icon: Warehouse,
     description: 'Fixtures, payloads, and comparison workflows (legacy — merges into Payload Lab in PR-4b.3)',
     group: 'test' as NavGroup,
+    hidden: true,
   },
   {
     id: 'buki',
     label: 'Buki',
-    functionalLabel: 'Payload Lab',
+    functionalLabel: 'Payloads & Fixtures',
     icon: Warehouse,
-    description: 'Payload catalog, synthetic generator, and fuzzer',
+    description: 'Fixtures, payloads, synthetic generator, and fuzzer',
     group: 'test' as NavGroup,
   },
   {
@@ -112,6 +113,7 @@ export const NAV_ITEMS = [
     icon: Trophy,
     description: 'Multi-agent adversarial sandbox and leaderboard',
     group: 'test' as NavGroup,
+    hidden: true,
   },
   {
     id: 'adversarial',
@@ -231,7 +233,7 @@ export type NavId = NavItem['id']
  * was renamed to Jutsu (Model Lab). Old `jutsu`/`llm-jutsu` aliases removed
  * because 'jutsu' is now the canonical NavId.
  */
-type RetiredNavId = 'testing' | 'llm' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna' | 'bounty'
+type RetiredNavId = 'testing' | 'llm' | 'ronin' | 'atemi' | 'kumite' | 'attack' | 'time-chamber' | 'attackdna' | 'bounty' | 'armory' | 'arena-standalone'
 export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   testing: 'scanner',
   attack: 'scanner',
@@ -242,6 +244,8 @@ export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   kumite: 'strategic',
   'time-chamber': 'sengoku',
   attackdna: 'dna',
+  armory: 'buki',
+  'arena-standalone': 'adversarial',
 }
 
 /**

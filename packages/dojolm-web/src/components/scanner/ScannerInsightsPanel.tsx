@@ -14,7 +14,9 @@ import { ModuleLegend } from './ModuleLegend'
 import { ModuleResults } from './ModuleResults'
 import { PatternReference } from '@/components/reference/PatternReference'
 import { SCANNER_PATTERN_REFERENCE_GROUPS } from '@/components/reference/pattern-reference-data'
-import { BookOpen, Filter, ShieldAlert } from 'lucide-react'
+import { BookOpen, Filter, ShieldAlert, BrainCircuit } from 'lucide-react'
+import { TestFlowBanner } from '@/components/ui/TestFlowBanner'
+import { useNavigation } from '@/lib/NavigationContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -42,6 +44,7 @@ const TAB_COPY: Record<InsightsTab, { title: string; description: string }> = {
 }
 
 export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanelProps) {
+  const { setActiveTab: setNavTab } = useNavigation()
   const [activeTab, setActiveTab] = useState<InsightsTab>('findings')
   const [activeModules, setActiveModules] = useState<string[]>([])
 
@@ -179,6 +182,22 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
           <PatternReference patternGroups={SCANNER_PATTERN_REFERENCE_GROUPS} />
         </TabsContent>
       </Tabs>
+
+      <TestFlowBanner
+        show={!!result && result.findings.length > 0}
+        message="Findings detected. Test model resilience against these patterns?"
+        actionLabel="Open Model Lab"
+        targetNavId="jutsu"
+        storageKey="flow-scanner-to-jutsu"
+        icon={BrainCircuit}
+      />
+
+      <button
+        onClick={() => setNavTab('compliance')}
+        className="text-xs text-muted-foreground hover:text-[var(--dojo-primary)] hover:underline mt-2"
+      >
+        View full results in Bushido Book &rarr;
+      </button>
     </div>
   )
 }

@@ -78,6 +78,14 @@ vi.mock('@/components/ui/EmptyState', () => ({
   EmptyState: ({ title }: { title: string }) => <div data-testid="empty-state">{title}</div>,
 }))
 
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ activeTab: 'scanner', setActiveTab: vi.fn() }),
+}))
+
+vi.mock('@/components/ui/TestFlowBanner', () => ({
+  TestFlowBanner: () => <div data-testid="test-flow-banner" />,
+}))
+
 import { ScannerInsightsPanel } from '../scanner/ScannerInsightsPanel'
 
 function makeResult() {

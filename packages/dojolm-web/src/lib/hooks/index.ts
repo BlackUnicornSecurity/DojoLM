@@ -7,3 +7,5 @@
 export { useToast } from './useToast'
 export { useScannerMetrics } from './useScannerMetrics'
 export type { ScannerMetrics } from './useScannerMetrics'
+export { useFixtureManagement } from './useFixtureManagement'
+export type { UseFixtureManagementReturn, SelectedFixture } from './useFixtureManagement'

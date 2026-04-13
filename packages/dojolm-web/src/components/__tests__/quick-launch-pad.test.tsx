@@ -46,42 +46,38 @@ describe('QuickLaunchPad', () => {
     expect(container.firstChild).toBeInTheDocument()
   })
 
-  it('renders all 6 launch action cards', () => {
+  it('renders all 4 testing journey cards', () => {
     render(<QuickLaunchPad />)
-    expect(screen.getByLabelText('Scan Text')).toBeInTheDocument()
-    expect(screen.getByLabelText('Test LLM')).toBeInTheDocument()
-    expect(screen.getByLabelText('Explore Fixtures')).toBeInTheDocument()
-    expect(screen.getByLabelText('Check Guard')).toBeInTheDocument()
-    expect(screen.getByLabelText('Battle Arena')).toBeInTheDocument()
-    expect(screen.getByLabelText('Run Evolution')).toBeInTheDocument()
+    expect(screen.getByLabelText('Scan')).toBeInTheDocument()
+    expect(screen.getByLabelText('Test Model')).toBeInTheDocument()
+    expect(screen.getByLabelText('Red Team')).toBeInTheDocument()
+    expect(screen.getByLabelText('Report')).toBeInTheDocument()
   })
 
   it('displays action labels', () => {
     render(<QuickLaunchPad />)
-    expect(screen.getByText('Scan Text')).toBeInTheDocument()
-    expect(screen.getByText('Test LLM')).toBeInTheDocument()
-    expect(screen.getByText('Explore Fixtures')).toBeInTheDocument()
-    expect(screen.getByText('Check Guard')).toBeInTheDocument()
-    expect(screen.getByText('Battle Arena')).toBeInTheDocument()
-    expect(screen.getByText('Run Evolution')).toBeInTheDocument()
+    expect(screen.getByText('Scan')).toBeInTheDocument()
+    expect(screen.getByText('Test Model')).toBeInTheDocument()
+    expect(screen.getByText('Red Team')).toBeInTheDocument()
+    expect(screen.getByText('Report')).toBeInTheDocument()
   })
 
-  it('displays keyboard shortcuts 1-6', () => {
+  it('displays keyboard shortcuts 1-4', () => {
     render(<QuickLaunchPad />)
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 4; i++) {
       expect(screen.getByText(String(i))).toBeInTheDocument()
     }
   })
 
   it('displays action detail descriptions', () => {
     render(<QuickLaunchPad />)
-    expect(screen.getByText('Run a live injection verdict on prompt input.')).toBeInTheDocument()
-    expect(screen.getByText('Move into model evaluation and quick batch runs.')).toBeInTheDocument()
+    expect(screen.getByText('Quick prompt-injection scan')).toBeInTheDocument()
+    expect(screen.getByText('Configure and test model resilience')).toBeInTheDocument()
   })
 
-  it('displays "Jump to module" text on each card', () => {
+  it('displays step numbers on each card', () => {
     render(<QuickLaunchPad />)
-    const jumpTexts = screen.getAllByText('Jump to module')
-    expect(jumpTexts).toHaveLength(6)
+    const stepTexts = screen.getAllByText(/^Step /)
+    expect(stepTexts).toHaveLength(4)
   })
 })

@@ -14,6 +14,7 @@ export { SessionHistory } from './SessionHistory'
 export { SkillCard } from './SkillCard'
 export { SkillsLibrary } from './SkillsLibrary'
 export { PlaybookRunner } from './PlaybookRunner'
+export { PlaybooksComposite } from './PlaybooksComposite'
 
 // Types
 export type { AdversarialLabProps } from './AdversarialLab'

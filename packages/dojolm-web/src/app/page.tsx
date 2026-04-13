@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState, useEffect, useRef, useCallback, lazy, Suspense, type ReactNode } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/AuthContext'
 import { useScanner } from '@/lib/ScannerContext'
@@ -20,16 +20,10 @@ import { MobileNav } from '@/components/layout/MobileNav'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ScannerInput } from '@/components/scanner'
 import { ScannerInsightsPanel } from '@/components/scanner'
-import { FixtureDetail, FixtureComparison, FixtureExplorer } from '@/components/fixtures'
-import type { ComparisonItem } from '@/components/fixtures/FixtureComparison'
-import { PayloadCard } from '@/components/payloads'
 import { NODADashboard } from '@/components/dashboard'
-import { scanFixture, readFixture } from '@/lib/api'
-import { getCachedFixtureManifest } from '@/lib/client-data-cache'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-import { PAYLOAD_CATALOG } from '@/lib/constants'
-import type { ScanResult, TextFixtureResponse, BinaryFixtureResponse, FixtureManifest } from '@/lib/types'
+import type { ScanResult } from '@/lib/types'
 import { AlertTriangle, ScanLine, ShieldAlert, CheckCircle, Cpu } from 'lucide-react'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { FilterPills } from '@/components/ui/FilterPills'
@@ -118,95 +112,8 @@ function KumiteRetiredNotice() {
  * Page content - routes activeTab from NavigationContext to the correct content section
  */
 function PageContent() {
-  const { activeTab, setActiveTab } = useNavigation()
+  const { activeTab } = useNavigation()
   const { scanText, clear } = useScanner()
-
-  // Fixtures state (shared between scanner and armory)
-  const [fixtureManifest, setFixtureManifest] = useState<FixtureManifest | null>(null)
-  const [isLoadingFixtures, setIsLoadingFixtures] = useState(false)
-  const [fixtureError, setFixtureError] = useState<string | null>(null)
-  const [selectedFixture, setSelectedFixture] = useState<{
-    path: string
-    content: TextFixtureResponse | BinaryFixtureResponse
-    scanResult: ScanResult | null
-  } | null>(null)
-  const fixtureLoadAttemptedRef = useRef(false)
-  // Comparison state (Story 3.3)
-  const [comparisonItems, setComparisonItems] = useState<[ComparisonItem, ComparisonItem] | null>(null)
-
-  const loadFixtures = useCallback(async (options?: { force?: boolean }) => {
-    if (isLoadingFixtures) return
-    if (!options?.force && (fixtureManifest || fixtureLoadAttemptedRef.current)) {
-      return
-    }
-
-    fixtureLoadAttemptedRef.current = true
-    setIsLoadingFixtures(true)
-    setFixtureError(null)
-    try {
-      const manifest = await getCachedFixtureManifest()
-      setFixtureManifest(manifest)
-    } catch {
-      setFixtureError('Could not load fixtures. Check connection and try again.')
-    } finally {
-      setIsLoadingFixtures(false)
-    }
-  }, [fixtureManifest, isLoadingFixtures])
-
-  useEffect(() => {
-    if (activeTab !== 'armory' || fixtureManifest || fixtureLoadAttemptedRef.current) {
-      return
-    }
-    void loadFixtures()
-  }, [activeTab, fixtureManifest, loadFixtures])
-
-  const handleScanFixture = async (category: string, file: string) => {
-    const path = `${category}/${file}`
-    try {
-      const result = await scanFixture(path)
-      const content = await readFixture(path)
-      setSelectedFixture({ path, content, scanResult: result })
-      setActiveTab('armory')
-    } catch {
-      setFixtureError('Unable to scan fixture. Check connection and try again.')
-    }
-  }
-
-  const handleViewFixture = async (category: string, file: string) => {
-    const path = `${category}/${file}`
-    try {
-      const content = await readFixture(path)
-      setSelectedFixture({ path, content, scanResult: null })
-      setActiveTab('armory')
-    } catch {
-      setFixtureError('Unable to load fixture. Check connection and try again.')
-    }
-  }
-
-  const handleCompare = async (selections: [{ category: string; file: string }, { category: string; file: string }]) => {
-    const loadItem = async (sel: { category: string; file: string }): Promise<ComparisonItem> => {
-      const path = `${sel.category}/${sel.file}`
-      try {
-        const [content, scanResult] = await Promise.all([
-          readFixture(path),
-          scanFixture(path).catch(() => null),
-        ])
-        return { path, content, scanResult }
-      } catch {
-        return { path, content: null, scanResult: null }
-      }
-    }
-
-    const [left, right] = await Promise.all([
-      loadItem(selections[0]),
-      loadItem(selections[1]),
-    ])
-    if (left.content === null && right.content === null) {
-      setFixtureError('Unable to load fixtures for comparison. Check connection and try again.')
-      return
-    }
-    setComparisonItems([left, right])
-  }
 
   return (
     <>
@@ -221,26 +128,6 @@ function PageContent() {
         <div className="motion-safe:animate-fade-in">
           <ErrorBoundary fallbackTitle="Scanner Error" fallbackDescription="Unable to load scanner. Please try again.">
             <ScannerContent onScan={scanText} onClear={clear} />
-          </ErrorBoundary>
-        </div>
-      )}
-      {activeTab === 'armory' && (
-        <div className="motion-safe:animate-fade-in">
-          <ErrorBoundary fallbackTitle="Armory Error" fallbackDescription="Unable to load Armory. Please try again.">
-            <ArmoryContent
-              manifest={fixtureManifest}
-              isLoading={isLoadingFixtures}
-              fixtureError={fixtureError}
-              onRetryFixtures={() => loadFixtures({ force: true })}
-              onScanFixture={handleScanFixture}
-              onViewFixture={handleViewFixture}
-              selectedFixture={selectedFixture}
-              onCloseFixtureDetail={() => setSelectedFixture(null)}
-              onScan={scanText}
-              comparisonItems={comparisonItems}
-              onCloseComparison={() => setComparisonItems(null)}
-              onCompare={handleCompare}
-            />
           </ErrorBoundary>
         </div>
       )}
@@ -503,214 +390,6 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
           </ErrorBoundary>
         </TabsContent>
       </Tabs>
-    </div>
-  )
-}
-
-/**
- * Armory content - combines Fixtures + Test Payloads with sub-navigation
- */
-function ArmoryContent({
-  manifest,
-  isLoading,
-  fixtureError,
-  onRetryFixtures,
-  onScanFixture,
-  onViewFixture,
-  selectedFixture,
-  onCloseFixtureDetail,
-  onScan,
-  comparisonItems,
-  onCloseComparison,
-  onCompare,
-}: {
-  manifest: FixtureManifest | null
-  isLoading: boolean
-  fixtureError: string | null
-  onRetryFixtures: () => void
-  onScanFixture: (category: string, file: string) => void
-  onViewFixture: (category: string, file: string) => void
-  selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
-  onCloseFixtureDetail: () => void
-  onScan: (text: string) => void
-  comparisonItems: [ComparisonItem, ComparisonItem] | null
-  onCloseComparison: () => void
-  onCompare: (selections: [{ category: string; file: string }, { category: string; file: string }]) => void
-}) {
-  const [subTab, setSubTab] = useState<'fixtures' | 'payloads'>('fixtures')
-
-  return (
-    <div className="space-y-6">
-      <PageToolbar
-        title="Armory"
-        subtitle="Fixtures and test payloads"
-        searchPlaceholder="Search fixtures, payloads..."
-      />
-
-      {/* Sub-navigation */}
-      <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'fixtures' | 'payloads')}>
-        <TabsList aria-label="Armory sections" className="bg-muted/50">
-          <TabsTrigger value="fixtures" className="min-h-[44px]">
-            Fixtures
-          </TabsTrigger>
-          <TabsTrigger value="payloads" className="min-h-[44px]">
-            Test Payloads
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="fixtures">
-          <FixturesSection
-            manifest={manifest}
-            isLoading={isLoading}
-            fixtureError={fixtureError}
-            onRetryFixtures={onRetryFixtures}
-            onScanFixture={onScanFixture}
-            onViewFixture={onViewFixture}
-            selectedFixture={selectedFixture}
-            onCloseFixtureDetail={onCloseFixtureDetail}
-            comparisonItems={comparisonItems}
-            onCloseComparison={onCloseComparison}
-            onCompare={onCompare}
-          />
-        </TabsContent>
-
-        <TabsContent value="payloads">
-          <PayloadsSection onScan={onScan} />
-        </TabsContent>
-      </Tabs>
-    </div>
-  )
-}
-
-/**
- * Fixtures section within Armory
- */
-function FixturesSection({
-  manifest,
-  isLoading,
-  fixtureError,
-  onRetryFixtures,
-  onScanFixture,
-  onViewFixture,
-  selectedFixture,
-  onCloseFixtureDetail,
-  comparisonItems,
-  onCloseComparison,
-  onCompare,
-}: {
-  manifest: FixtureManifest | null
-  isLoading: boolean
-  fixtureError: string | null
-  onRetryFixtures: () => void
-  onScanFixture: (category: string, file: string) => void
-  onViewFixture: (category: string, file: string) => void
-  selectedFixture: { path: string; content: TextFixtureResponse | BinaryFixtureResponse; scanResult: ScanResult | null } | null
-  onCloseFixtureDetail: () => void
-  comparisonItems: [ComparisonItem, ComparisonItem] | null
-  onCloseComparison: () => void
-  onCompare: (selections: [{ category: string; file: string }, { category: string; file: string }]) => void
-}) {
-  return (
-    <div className="space-y-6">
-      {/* Error state — generic message, no server details */}
-      {fixtureError && (
-        <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" aria-hidden="true" />
-          <span className="text-sm text-red-500">{fixtureError}</span>
-          <button
-            onClick={onRetryFixtures}
-            className="ml-auto text-sm text-[var(--dojo-primary)] hover:underline font-medium"
-          >
-            Retry
-          </button>
-        </div>
-      )}
-
-      <FixtureExplorer
-        manifest={manifest}
-        isLoading={isLoading}
-        onScanFixture={onScanFixture}
-        onViewFixture={onViewFixture}
-        onCompare={onCompare}
-      />
-
-      {selectedFixture && (
-        <FixtureDetail
-          path={selectedFixture.path}
-          content={selectedFixture.content}
-          scanResult={selectedFixture.scanResult}
-          onClose={onCloseFixtureDetail}
-          autoScrollRef={(el: HTMLDivElement | null) => {
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }}
-        />
-      )}
-
-      {comparisonItems && (
-        <FixtureComparison
-          items={comparisonItems}
-          onClose={onCloseComparison}
-        />
-      )}
-    </div>
-  )
-}
-
-/**
- * Payloads section within Armory
- */
-function PayloadsSection({ onScan }: { onScan: (text: string) => void }) {
-  const [showCurrent, setShowCurrent] = useState(true)
-  const [showPlanned, setShowPlanned] = useState(false)
-  const { loadPayload } = useScanner()
-  const { setActiveTab } = useNavigation()
-
-  const filteredPayloads = PAYLOAD_CATALOG.filter((payload) => {
-    if (payload.status === 'current' && showCurrent) return true
-    if (payload.status === 'planned' && showPlanned) return true
-    return false
-  })
-
-  const handleLoadToScanner = useCallback((example: string) => {
-    loadPayload(example)
-    setActiveTab('scanner')
-  }, [loadPayload, setActiveTab])
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-4 p-4 bg-muted/50 rounded-lg">
-        <span className="text-sm font-semibold">Show:</span>
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showCurrent}
-            onChange={(e) => setShowCurrent(e.target.checked)}
-            className="accent-primary w-4 h-4"
-          />
-          Current Detection
-        </label>
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showPlanned}
-            onChange={(e) => setShowPlanned(e.target.checked)}
-            className="accent-primary w-4 h-4"
-          />
-          TPI Planned
-        </label>
-      </div>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filteredPayloads.map((payload) => (
-          <PayloadCard
-            key={payload.title}
-            payload={payload}
-            onClick={() => {
-              handleLoadToScanner(payload.example)
-            }}
-          />
-        ))}
-      </div>
     </div>
   )
 }

@@ -271,45 +271,40 @@ describe('AL-006: Active tools count changes with mode', () => {
 describe('AL-007: Tabbed interface renders', () => {
   it('renders tab triggers and default attack-tools tab content', () => {
     render(<AdversarialLab />)
-    // Tab triggers are present
+    // Tab triggers are present — 5 tabs after Testing UX Consolidation
     expect(screen.getByRole('tablist')).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /Attack Tools/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /Skills/i })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: /Playbooks/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /^MCP$/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /Agentic/i })).toBeInTheDocument()
-    // Tool-type card visible in default tab (Browser Exploitation has minMode 'basic' but is type 'tool')
+    expect(screen.getByRole('tab', { name: /Campaigns/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Arena/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /Test Cases/i })).toBeInTheDocument()
+    // Tool-type card visible in default tab
     expect(screen.getByTestId('tab-content-attack-tools')).toBeInTheDocument()
   })
 
-  it('switches to the MCP tab when clicked', () => {
+  it('shows both tool and MCP attacks in the Attack Tools tab', () => {
     render(<AdversarialLab />)
-    fireEvent.click(screen.getByRole('tab', { name: /^MCP$/i }))
-    expect(screen.getByTestId('tab-content-mcp')).toBeInTheDocument()
+    // Attack Tools tab (default) now shows both tool-type and MCP-type attacks
+    expect(screen.getByText('Tool Integration Attacks')).toBeInTheDocument()
+    expect(screen.getByText('MCP Protocol Attacks')).toBeInTheDocument()
   })
 
-  it('switches to the hidden workspaces from tab triggers', () => {
+  it('switches between tabs', () => {
     render(<AdversarialLab />)
 
     fireEvent.click(screen.getByRole('tab', { name: /Playbooks/i }))
-    expect(screen.getByTestId('playbook-runner')).toBeInTheDocument()
+    expect(screen.getByTestId('tab-content-playbooks')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('tab', { name: /Protocol Fuzz|Fuzz/i }))
-    expect(screen.getByTestId('protocol-fuzz-panel')).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('tab', { name: /Agentic/i }))
-    expect(screen.getByTestId('agentic-lab')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('tab', { name: /Campaigns/i }))
+    expect(screen.getByTestId('tab-content-campaigns')).toBeInTheDocument()
   })
 
-  it('surfaces quick-launch cards for advanced Atemi workspaces', () => {
+  it('surfaces quick-launch cards for Atemi workspaces', () => {
     render(<AdversarialLab />)
 
     expect(screen.getByText('Run Guided Playbooks')).toBeInTheDocument()
-    expect(screen.getByText('Open Protocol Fuzz')).toBeInTheDocument()
-    expect(screen.getByText('Explore Agentic Lab')).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: /Open Explore Agentic Lab/i }))
-    expect(screen.getByTestId('agentic-lab')).toBeInTheDocument()
+    expect(screen.getByText('Start Campaign')).toBeInTheDocument()
+    expect(screen.getByText('Open Battle Arena')).toBeInTheDocument()
   })
 })
 

@@ -17,7 +17,8 @@ import { ComparisonView } from './ComparisonView';
 import { CustomProviderBuilder } from './CustomProviderBuilder';
 import { JutsuTab } from './JutsuTab';
 import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
-import { Brain, GitCompare, Wrench, ScrollText } from 'lucide-react';
+import { Brain, GitCompare, Wrench, ScrollText, Crosshair } from 'lucide-react';
+import { TestFlowBanner } from '@/components/ui/TestFlowBanner';
 import { GuardBadge } from '@/components/guard';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
 import { ConsolidatedReportButton } from '@/components/reports/ConsolidatedReportButton';
@@ -104,6 +105,15 @@ export function ModelLab({ initialTab = 'models' }: ModelLabProps) {
           <CustomProviderBuilder />
         </TabsContent>
       </Tabs>
+
+      <TestFlowBanner
+        show={true}
+        message="Model configured. Run adversarial attacks against it?"
+        actionLabel="Open Atemi Lab"
+        targetNavId="adversarial"
+        storageKey="flow-jutsu-to-atemi"
+        icon={Crosshair}
+      />
     </div>
   );
 }

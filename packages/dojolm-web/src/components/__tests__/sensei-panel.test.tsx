@@ -119,9 +119,10 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     // Test group
     expect(screen.getByText('Haiku Scanner')).toBeInTheDocument()
-    expect(screen.getByText('Armory')).toBeInTheDocument()
+    // Armory and Battle Arena demoted via hidden: true (Testing UX Consolidation)
+    expect(screen.queryByText('Armory')).toBeNull()
     expect(screen.getByText('Model Lab')).toBeInTheDocument()
-    expect(screen.getByText('Battle Arena')).toBeInTheDocument()
+    expect(screen.queryByText('Battle Arena')).toBeNull()
     expect(screen.getByText('Atemi Lab')).toBeInTheDocument()
     // Train 2 PR-4b.5: Sengoku demoted via hidden: true — Campaigns now lives
     // as a sub-tab inside Atemi Lab (AdversarialLab).
@@ -170,17 +171,14 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(mockResetAll).toHaveBeenCalledTimes(1)
   })
 
-  it('SP-010: shows 14 toggleable module items (all except dashboard + hidden)', () => {
-    // Train 2 PR-4b.1: 4 new first-class items (Mitsuke, DNA, Kagami, Arena);
-    //   The Kumite demoted via hidden: true. 11 → 14.
-    // Train 2 PR-4b.2: Payload Lab (Buki) scaffolded alongside Armory
-    //   (Armory will merge into Buki in PR-4b.3). 14 → 15.
-    // Train 2 PR-4b.5: Sengoku demoted via hidden: true — Campaigns now lives
-    //   as a sub-tab inside Atemi Lab. 15 → 14.
+  it('SP-010: shows 12 toggleable module items (all except dashboard + hidden)', () => {
+    // Testing UX Consolidation: Armory + Battle Arena demoted via hidden: true.
+    // Armory absorbed into Buki (Payload Lab), Arena absorbed into Atemi Lab.
+    // 14 → 12.
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     const moduleLabels = [
-      // Test group
-      'Haiku Scanner', 'Armory', 'Buki', 'Model Lab', 'Battle Arena',
+      // Test group (Armory + Battle Arena removed — hidden: true)
+      'Haiku Scanner', 'Buki', 'Model Lab',
       'Atemi Lab', 'Ronin Hub',
       // Protect group
       'Hattori Guard', 'Kotoba',
@@ -192,7 +190,7 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     for (const label of moduleLabels) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
-    expect(moduleLabels.length).toBe(14)
+    expect(moduleLabels.length).toBe(12)
   })
 
   it('SP-011: onClose is callable (dialog close integration)', () => {

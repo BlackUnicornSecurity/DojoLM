@@ -164,7 +164,7 @@ describe('BSH-001: ComplianceCenter sub-tabs', () => {
       // GapMatrix + FrameworkNavigator. Insights is a placeholder awaiting
       // Leaderboard + AnalyticsWorkspace from PR-4b.6. Audit hosts AuditTrail
       // + ComplianceDashboard.
-      const subViewValues = ['evidence', 'coverage', 'insights', 'audit']
+      const subViewValues = ['evidence', 'coverage', 'results', 'audit']
       for (const val of subViewValues) {
         const tabsWithValue = allTabs.filter(t => t.getAttribute('data-value') === val)
         expect(tabsWithValue.length).toBeGreaterThanOrEqual(1)

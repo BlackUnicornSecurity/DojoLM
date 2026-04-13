@@ -270,7 +270,7 @@ describe('CC-006: Sub-view tabs render', () => {
     // Legacy sub-panels (GapMatrix, AuditTrail, Checklists, Navigator,
     // ComplianceScan, Dashboard) still render inside the new parent tabs —
     // verified by CC-007 via testId assertions.
-    const tabLabels = ['Evidence', 'Coverage', 'Insights', 'Audit']
+    const tabLabels = ['Evidence', 'Coverage', 'Results', 'Audit']
     for (const label of tabLabels) {
       expect(screen.getAllByText(label).length).toBeGreaterThan(0)
     }
