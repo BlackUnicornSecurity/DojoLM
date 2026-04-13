@@ -28,6 +28,18 @@ export type {
   SEVERITY
 } from '@dojolm/scanner'
 
+// OBL behavioral-metrics types (from bu-tpi subpath export)
+export type {
+  BehavioralMetrics,
+  DefenseRobustness,
+  AlignmentImprint,
+  TransferScore,
+  ConceptGeometry,
+  RefusalDepthProfile,
+  AlignmentMethod,
+  OBLAnalysisResult,
+} from 'bu-tpi/behavioral-metrics'
+
 // Additional UI-specific types
 export interface EngineFilter {
   id: string

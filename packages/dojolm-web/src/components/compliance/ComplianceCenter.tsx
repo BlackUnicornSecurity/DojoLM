@@ -153,6 +153,8 @@ interface ComplianceControlData {
   confidence?: 'high' | 'medium' | 'low'
   /** Story 8.5: Number of test cases covering this control */
   testCaseCount?: number
+  /** OBL: behavioral evidence from OBL analysis */
+  behavioralEvidence?: { refusalRate: number; coherenceScore: number; drift: number }
 }
 
 interface ComplianceCenterData {
@@ -1630,6 +1632,11 @@ function ComplianceScanPanel({
                           >
                             {getStatusLabel(control.status)}
                           </span>
+                          {control.behavioralEvidence && (
+                            <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
+                              OBL {Math.round(control.behavioralEvidence.refusalRate * 100)}%
+                            </span>
+                          )}
                         </span>
                         <span className="flex items-center gap-2">
                           <div className="flex-1 h-2 bg-[var(--bg-quaternary)] rounded-full overflow-hidden">

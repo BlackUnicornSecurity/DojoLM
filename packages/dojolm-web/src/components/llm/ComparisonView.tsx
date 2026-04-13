@@ -10,6 +10,8 @@
 import React, { useState, useMemo } from 'react';
 import { useResultsContext } from '@/lib/contexts';
 import { useModelContext } from '@/lib/contexts';
+import { computeTransferScores } from 'bu-tpi/behavioral-metrics';
+import { TransferMatrix } from './TransferMatrix';
 
 interface ComparisonData {
   modelId: string;
@@ -25,6 +27,7 @@ export function ComparisonView() {
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [comparisonData, setComparisonData] = useState<ComparisonData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [transferScores, setTransferScores] = useState<ReturnType<typeof computeTransferScores>>([]);
 
   const enabledModels = useMemo(
     () => models.filter(m => m.enabled),
@@ -52,6 +55,16 @@ export function ComparisonView() {
         });
       }
       setComparisonData(data);
+
+      // Compute transfer scores from report data
+      const reports: { modelConfigId: string; byCategory: { category: string; passRate: number }[] }[] = [];
+      for (const modelId of selectedModels) {
+        const report = await getModelReport(modelId);
+        if (report) {
+          reports.push({ modelConfigId: report.modelConfigId, byCategory: report.byCategory });
+        }
+      }
+      setTransferScores(computeTransferScores(reports));
     } finally {
       setLoading(false);
     }
@@ -155,6 +168,15 @@ export function ComparisonView() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {transferScores.length > 0 && (
+        <div className="p-4 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-secondary)]">
+          <TransferMatrix
+            scores={transferScores}
+            modelNames={Object.fromEntries(comparisonData.map(d => [d.modelId, d.modelName]))}
+          />
         </div>
       )}
 

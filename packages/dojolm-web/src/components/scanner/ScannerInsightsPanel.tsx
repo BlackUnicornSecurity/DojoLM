@@ -15,6 +15,9 @@ import { ModuleResults } from './ModuleResults'
 import { PatternReference } from '@/components/reference/PatternReference'
 import { SCANNER_PATTERN_REFERENCE_GROUPS } from '@/components/reference/pattern-reference-data'
 import { BookOpen, Filter, ShieldAlert, BrainCircuit } from 'lucide-react'
+import { useBehavioralAnalysis } from '@/lib/contexts'
+import { EnsoGauge } from '@/components/ui/EnsoGauge'
+import { RefusalDepthChart } from './RefusalDepthChart'
 import { TestFlowBanner } from '@/components/ui/TestFlowBanner'
 import { useNavigation } from '@/lib/NavigationContext'
 import { Button } from '@/components/ui/button'
@@ -45,6 +48,8 @@ const TAB_COPY: Record<InsightsTab, { title: string; description: string }> = {
 
 export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanelProps) {
   const { setActiveTab: setNavTab } = useNavigation()
+  const { getActiveResult, activeModelName } = useBehavioralAnalysis()
+  const oblResult = getActiveResult()
   const [activeTab, setActiveTab] = useState<InsightsTab>('findings')
   const [activeModules, setActiveModules] = useState<string[]>([])
 
@@ -149,6 +154,30 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
 
         <TabsContent value="findings">
           <FindingsList result={result} />
+
+          {/* OBL: Behavioral Metrics (Module 3 — edit 1/3) */}
+          {oblResult?.behavioral && (
+            <div className="mt-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-2">
+              <p className="text-xs text-muted-foreground">OBL Analysis: {activeModelName}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <EnsoGauge value={Math.round(oblResult.behavioral.refusalRate * 100)} label="Refusal Rate" />
+                <EnsoGauge value={Math.round(oblResult.behavioral.coherenceScore * 100)} label="Coherence" />
+                <EnsoGauge value={Math.round(oblResult.behavioral.behavioralDrift * 100)} label="Drift" />
+              </div>
+            </div>
+          )}
+
+          {/* OBL: Defense Robustness (Module 2 — edit 2/3) */}
+          {oblResult?.robustness && (
+            <div className="mt-4 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-2">
+              <p className="text-xs text-muted-foreground">Defense Robustness: {activeModelName}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <EnsoGauge value={Math.round(oblResult.robustness.baselineRefusalRate * 100)} label="Baseline" />
+                <EnsoGauge value={Math.round(oblResult.robustness.pressuredRefusalRate * 100)} label="Pressured" />
+                <EnsoGauge value={Math.round(oblResult.robustness.recoveryRate * 100)} label="Recovery" />
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="modules" className="space-y-4">
@@ -174,6 +203,13 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
                 title="No module diagnostics yet"
                 description="Run a scan to inspect which engines produced findings and how they contributed."
               />
+            </div>
+          )}
+
+          {/* OBL: Refusal Depth Profile (Module 7 — edit 3/3, renders independently of scanner findings) */}
+          {oblResult?.refusalDepth && (
+            <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4">
+              <RefusalDepthChart profile={oblResult.refusalDepth} />
             </div>
           )}
         </TabsContent>

@@ -22,6 +22,8 @@ import { JutsuModelCard } from './JutsuModelCard'
 import { ModelDetailView } from './ModelDetailView'
 import { aggregateByModel, type AggregatedModel, type TestExecution } from './JutsuAggregation'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { useBehavioralAnalysis } from '@/lib/contexts'
+import type { AlignmentMethod } from '@/lib/types'
 
 /** Human-readable provider display names */
 const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
@@ -90,6 +92,13 @@ const CONFIG_SECTIONS: ConfigSection[] = [
         { value: 'Meta', label: 'Meta' },
         { value: 'Cohere', label: 'Cohere' },
       ] },
+      { type: 'dropdown', key: 'alignmentFilter', label: 'Alignment Method Filter', options: [
+        { value: 'all', label: 'All Alignments' },
+        { value: 'DPO', label: 'DPO' },
+        { value: 'RLHF', label: 'RLHF' },
+        { value: 'CAI', label: 'CAI' },
+        { value: 'SFT', label: 'SFT' },
+      ] },
     ],
   },
 ]
@@ -117,6 +126,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
   const [configValues, setConfigValues] = useState<Record<string, unknown>>(DEFAULT_CONFIG)
+  const { getResult } = useBehavioralAnalysis()
 
   const handleRunTest = useCallback(() => {
     onNavigateToTests?.()
@@ -204,11 +214,20 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
 
   const minScore = typeof configValues.minScore === 'number' ? configValues.minScore : 0
   const sortBy = typeof configValues.sortBy === 'string' ? configValues.sortBy : 'score'
+  const alignmentFilter = typeof configValues.alignmentFilter === 'string' ? configValues.alignmentFilter : 'all'
 
   const filteredModels = useMemo(() => {
     const filtered = aggregatedModels.filter(m => {
       if (minScore > 0 && m.latestScore < minScore) return false
       if (providerFilter !== 'all' && m.provider !== providerFilter) return false
+      if (alignmentFilter !== 'all') {
+        const alignment = getResult(m.modelId)?.alignment
+        if (alignment) {
+          const entries = Object.entries(alignment.methodProbabilities) as [AlignmentMethod, number][]
+          const topMethod = entries.reduce((a, b) => b[1] > a[1] ? b : a)[0]
+          if (topMethod !== alignmentFilter) return false
+        }
+      }
       if (search) {
         const s = search.toLowerCase()
         return m.modelName.toLowerCase().includes(s) || m.provider.toLowerCase().includes(s)
@@ -223,7 +242,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
       default: sorted.sort((a, b) => b.latestScore - a.latestScore); break
     }
     return sorted
-  }, [aggregatedModels, providerFilter, search, minScore, sortBy])
+  }, [aggregatedModels, providerFilter, search, minScore, sortBy, alignmentFilter, getResult])
 
   const handleConfigChange = useCallback((key: string, value: unknown) => {
     setConfigValues(prev => ({ ...prev, [key]: value }))

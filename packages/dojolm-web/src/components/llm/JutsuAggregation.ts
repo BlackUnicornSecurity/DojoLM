@@ -38,6 +38,10 @@ export interface AggregatedModel {
   totalTests: number
   lastTestedAt: string
   scoreTrend: number[]  // last N scores for sparkline
+  /** OBL: alignment imprint from behavioral analysis (optional, merged externally) */
+  alignmentImprint?: import('../../lib/types').AlignmentImprint
+  /** OBL: defense robustness from behavioral analysis (optional, merged externally) */
+  defenseRobustness?: import('../../lib/types').DefenseRobustness
   vulnerabilities: { category: string; count: number }[]
   executions: TestExecution[]
 }

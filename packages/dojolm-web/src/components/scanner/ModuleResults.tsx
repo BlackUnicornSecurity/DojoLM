@@ -50,6 +50,8 @@ const MODULE_PHASE_MAP: Record<string, { phase: string; label: string }> = {
   'deepfake-detector':       { phase: 'P3', label: 'P3 Compliance' },
   'session-bypass':          { phase: 'P3', label: 'P3 Compliance' },
   'core-patterns':           { phase: 'P1', label: 'P1 Core' },
+  'obl-behavioral':          { phase: 'OBL', label: 'OBL Analysis' },
+  'obl-depth-profiler':      { phase: 'OBL', label: 'OBL Analysis' },
 }
 
 function getModulePhaseLabel(engine: string): string {

@@ -37,13 +37,13 @@ test.describe('Atemi Lab', () => {
     // In Passive mode, only notification-flood (minMode=passive) is enabled = 1 tool
     const passiveRadio = page.getByRole('radio', { name: /Passive mode/i });
     await passiveRadio.click();
-    await expect(page.getByText('of 17 total').first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('of 18 total').first()).toBeVisible({ timeout: 5000 });
 
-    // Switch to Aggressive — all 17 tools should be active
+    // Switch to Aggressive — all 18 tools should be active
     const aggressiveRadio = page.getByRole('radio', { name: /Aggressive mode/i });
     await aggressiveRadio.click();
-    // The active tools count should show 17
-    await expect(page.locator('text=17').first()).toBeVisible({ timeout: 5000 });
+    // The active tools count should show 18
+    await expect(page.locator('text=18').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('attack categories are visible on the Attack Tools tab', async ({ page }) => {

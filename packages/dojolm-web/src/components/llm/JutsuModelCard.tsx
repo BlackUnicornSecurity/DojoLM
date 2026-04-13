@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge'
 import { Eye, RefreshCw, Download, TrendingUp, TrendingDown, Minus, Clock, FlaskConical } from 'lucide-react'
 import type { AggregatedModel } from './JutsuAggregation'
 import { calculateTrend } from './JutsuAggregation'
+import { AlignmentBadge } from './AlignmentBadge'
+import { useBehavioralAnalysis } from '@/lib/contexts'
 
 interface JutsuModelCardProps {
   model: AggregatedModel
@@ -32,6 +34,8 @@ export const JutsuModelCard = memo(function JutsuModelCard({
 }: JutsuModelCardProps) {
   const belt = getBeltRank(model.latestScore)
   const trend = calculateTrend(model.scoreTrend)
+  const { getResult } = useBehavioralAnalysis()
+  const alignment = getResult(model.modelId)?.alignment ?? null
 
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus
   const trendColor = trend === 'up' ? 'var(--success)' : trend === 'down' ? 'var(--danger)' : 'var(--muted-foreground)'
@@ -59,7 +63,10 @@ export const JutsuModelCard = memo(function JutsuModelCard({
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold truncate">{model.modelName}</h3>
-            <Badge variant="outline" className="text-[10px] mt-1">{model.provider}</Badge>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Badge variant="outline" className="text-[10px]">{model.provider}</Badge>
+              {alignment && <AlignmentBadge imprint={alignment} />}
+            </div>
           </div>
           <BeltBadge score={model.latestScore} size="md" />
         </div>

@@ -267,3 +267,18 @@ export interface TestSuiteResult {
   results: TestResult[];
   timestamp: string;
 }
+
+// ---------------------------------------------------------------------------
+// OBL Behavioral Metrics (OBLITERATUS)
+// ---------------------------------------------------------------------------
+
+export type {
+  BehavioralMetrics,
+  DefenseRobustness,
+  AlignmentImprint,
+  TransferScore,
+  ConceptGeometry,
+  RefusalDepthProfile,
+  AlignmentMethod,
+  OBLAnalysisResult,
+} from './behavioral-metrics/types.js';

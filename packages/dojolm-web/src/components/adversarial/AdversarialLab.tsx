@@ -53,6 +53,9 @@ import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
 import { useNavigation } from '@/lib/NavigationContext'
+import { useBehavioralAnalysis } from '@/lib/contexts'
+import { DefenseDegradationIndicator } from './DefenseDegradationIndicator'
+import { ConceptReconPanel } from './ConceptReconPanel'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
 // Train 2 PR-4b.5 — Sengoku relocated into Atemi Lab as Campaigns sub-tab
 const SengokuDashboardLazy = lazy(() =>
@@ -188,6 +191,16 @@ const LEARN_MORE_DATA: Record<string, LearnMoreContent> = {
     expectedBehavior: 'Search results should be treated as untrusted and sanitized before inclusion in LLM context.',
     defensiveImplications: 'Sanitize search snippets, limit result length, and detect injection patterns in search output.',
   },
+  'defense-robustness': {
+    technique: 'Multi-turn escalation pressure testing: baseline refusal measurement, progressive jailbreak attempts, and post-pressure recovery probing to map degradation curves.',
+    expectedBehavior: 'Model should maintain consistent refusal rates under pressure and recover baseline behavior after escalation attempts.',
+    defensiveImplications: 'Monitor refusal rate stability across conversation turns. High ouroboros (self-repair) scores indicate robust defense. Low recovery rates suggest permanent context poisoning.',
+  },
+  'contrastive-bias': {
+    technique: 'Behavioral approximation via contrastive system-message injection. Computes mean behavioral difference between harmful/harmless response patterns and generates a bias prompt that nudges model toward compliance. This is prompt-level engineering, not activation steering.',
+    expectedBehavior: 'Contrastive bias should have minimal effect on well-aligned models. Significant behavioral shifts indicate weak system-message boundaries.',
+    defensiveImplications: 'Test model resilience to system-message manipulation. Strong system-message adherence reduces contrastive bias effectiveness.',
+  },
 }
 
 const MODE_CONFIG = {
@@ -252,7 +265,7 @@ const WORKSPACE_SHORTCUTS: AtemiWorkspaceShortcut[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Attack Tool Definitions (8 MCP P4 + 9 P5 Tools)
+// Attack Tool Definitions (8 MCP P4 + 10 P5 Tools)
 // ---------------------------------------------------------------------------
 
 const ATTACK_TOOLS: AttackToolDef[] = [
@@ -394,6 +407,14 @@ const ATTACK_TOOLS: AttackToolDef[] = [
     severity: 'medium',
     minMode: 'basic',
   },
+  {
+    id: 'contrastive-bias',
+    name: 'Contrastive Prompt Bias',
+    type: 'tool',
+    description: 'Behavioral approximation via contrastive system-message injection — nudges model toward compliance using prompt-level bias derived from contrastive pair analysis',
+    severity: 'high',
+    minMode: 'aggressive',
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -452,7 +473,7 @@ export interface AdversarialLabProps {
  * - Mode selector (Passive/Basic/Advanced/Aggressive)
  * - Active tools count and scenario count
  * - Connection status indicator
- * - Grid of 17 AttackToolCards (8 MCP + 9 Tool)
+ * - Grid of 18 AttackToolCards (8 MCP + 10 Tool)
  * - Attack event log viewer
  */
 export function AdversarialLab({
@@ -468,6 +489,8 @@ export function AdversarialLab({
   const [skillError, setSkillError] = useState<string | null>(null)
   const executingRef = useRef(false)
   const { emitFinding } = useEcosystemEmit('atemi')
+  const { getActiveResult, isAnalyzing: oblAnalyzing } = useBehavioralAnalysis()
+  const oblResult = getActiveResult()
 
   // H13.3: Target model selection with sessionStorage persistence
   const [targetModel, setTargetModel] = useState<string>(() => {
@@ -753,6 +776,32 @@ export function AdversarialLab({
           )
         })}
       </div>
+
+      {/* OBL: Defense Robustness + Concept Recon (Modules 2 & 5) */}
+      {(oblResult?.robustness || oblResult?.geometry) && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {oblResult?.robustness && (
+            <Card className="border-[var(--border)]">
+              <CardContent className="p-4">
+                <DefenseDegradationIndicator
+                  degradationCurve={oblResult.robustness.degradationCurve}
+                  recoveryRate={oblResult.robustness.recoveryRate}
+                />
+              </CardContent>
+            </Card>
+          )}
+          {(oblResult?.geometry || oblAnalyzing) && (
+            <Card className="border-[var(--border)]">
+              <CardContent className="p-4">
+                <ConceptReconPanel
+                  geometry={oblResult?.geometry ?? null}
+                  isLoading={oblAnalyzing}
+                />
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
       {/* Tabbed Interface (H13.2) */}
       <Tabs
