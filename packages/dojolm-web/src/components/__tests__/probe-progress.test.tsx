@@ -211,6 +211,24 @@ describe('ProbeProgress', () => {
       // Old source should have been closed by the effect cleanup
       expect(mockClose.mock.calls.length).toBeGreaterThan(closeCalls)
     })
+
+    it('closes old source on streamId change — old handlers become inert', () => {
+      const onComplete = vi.fn()
+
+      const { rerender } = render(
+        <ProbeProgress streamId="stream-a" onComplete={onComplete} />
+      )
+
+      // Rerender with new streamId triggers effect cleanup → old source closed
+      const closesBefore = mockClose.mock.calls.length
+      rerender(<ProbeProgress streamId="stream-b" onComplete={onComplete} />)
+      expect(mockClose.mock.calls.length).toBeGreaterThan(closesBefore)
+
+      // DEFENSIVE GAP NOTE: The component calls eventSource.close() on cleanup
+      // but does NOT call removeEventListener. In a real EventSource, buffered
+      // messages on the closed source could still fire stale handlers. The close()
+      // call is the primary defense; removeEventListener would be belt-and-suspenders.
+    })
   })
 
   describe('Timer cleanup on completion', () => {

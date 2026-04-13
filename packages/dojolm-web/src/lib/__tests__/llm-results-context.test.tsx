@@ -253,6 +253,27 @@ describe('LLMResultsContext', () => {
       const leaderboard = await act(async () => result.current.getLeaderboard())
       expect(leaderboard).toEqual([])
     })
+
+    it('ranks reflect sorted order, not insertion order', async () => {
+      // Insert Low first, High second — ranks must reflect score, not push order
+      mockFetchWithAuth
+        .mockReturnValueOnce(mockApiResponse([
+          { id: 'm1', name: 'Low' },
+          { id: 'm2', name: 'High' },
+        ]))
+        .mockReturnValueOnce(mockApiResponse({ modelId: 'm1', avgResilienceScore: 40 }))
+        .mockReturnValueOnce(mockApiResponse({ modelId: 'm2', avgResilienceScore: 90 }))
+
+      const { result } = renderHook(() => useResultsContext(), { wrapper })
+      const leaderboard = await act(async () => result.current.getLeaderboard())
+
+      const high = leaderboard.find(e => e.modelName === 'High')
+      const low = leaderboard.find(e => e.modelName === 'Low')
+      expect(high?.rank).toBe(1)
+      expect(high?.score).toBe(90)
+      expect(low?.rank).toBe(2)
+      expect(low?.score).toBe(40)
+    })
   })
 
   describe('getCoverageMap', () => {

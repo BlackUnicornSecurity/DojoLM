@@ -477,19 +477,40 @@ describe('PATCH /api/ronin/submissions', () => {
     expect(body.submission.status).toBe('draft');
   });
 
-  it('PATCH does not normalize status case (case-sensitive)', async () => {
+  it('PATCH silently ignores mixed-case status (asymmetric with POST which normalizes)', async () => {
     const { POST, PATCH } = await import('@/app/api/ronin/submissions/route');
 
     await POST(createPostRequest(validSubmissionBody()));
 
-    // 'Draft' with capital D is not in VALID_STATUSES ('draft')
+    // BUG DOCUMENTATION: POST normalizes status via .toLowerCase() (line 107),
+    // but PATCH does not (line 180). Sending 'Draft' or 'SUBMITTED' in PATCH
+    // silently no-ops the status field — returns 200 with stale status, no error.
+    // This is a consistency bug: POST rejects invalid statuses with 400,
+    // PATCH silently drops them. Callers get false 200 success.
     const res = await PATCH(createPatchRequest({
       id: TEST_UUID,
       status: 'Draft',
     }));
     const body = await res.json();
-    // Status stays at 'draft' because 'Draft' is not in the Set
+    // Status stays unchanged — the mixed-case value was silently ignored
     expect(body.submission.status).toBe('draft');
+    // This SHOULD be a 400 like POST does, but current behavior is 200 no-op
+    expect(res.status).toBe(200);
+  });
+
+  it('PATCH silently ignores uppercase status SUBMITTED (false success)', async () => {
+    const { POST, PATCH } = await import('@/app/api/ronin/submissions/route');
+
+    await POST(createPostRequest(validSubmissionBody()));
+
+    const res = await PATCH(createPatchRequest({
+      id: TEST_UUID,
+      status: 'SUBMITTED',
+    }));
+    const body = await res.json();
+    // Caller intended to move to 'submitted' but sent wrong case → silently ignored
+    expect(body.submission.status).toBe('draft');
+    expect(res.status).toBe(200);
   });
 
   it('PATCH clamps negative payout to 0', async () => {
