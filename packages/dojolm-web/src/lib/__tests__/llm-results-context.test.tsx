@@ -354,6 +354,24 @@ describe('LLMResultsContext', () => {
       await act(async () => { await result.current.refresh() })
       expect(result.current.error).toBe('Server down')
     })
+
+    it('DESIGN NOTE: refresh() calls getExecutions but discards return value', async () => {
+      // refresh() at source line 311-322 calls `await getExecutions(filter)` but
+      // does NOT store the result in any useState slot. The context has no persistent
+      // "current executions" state — getExecutions returns data as a function return
+      // value only. So refresh() updates isLoading/error but leaves no data footprint.
+      // Consumers must call getExecutions() directly to retrieve results.
+      mockFetchWithAuth.mockReturnValue(mockApiResponse({ executions: [{ id: 'x' }] }))
+      const { result } = renderHook(() => useResultsContext(), { wrapper })
+
+      await act(async () => { await result.current.refresh() })
+
+      // refresh completed — isLoading is false, no error
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBeNull()
+      // But the context does NOT expose the fetched data — it's fire-and-forget.
+      // Consumers must call getExecutions() to actually get the data.
+    })
   })
 
   describe('exportReport', () => {
