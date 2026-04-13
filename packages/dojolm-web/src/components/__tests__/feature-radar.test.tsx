@@ -146,6 +146,36 @@ describe('FeatureRadar', () => {
       expect(groups.length).toBe(10)
     })
 
+    it('renders without crash when axes is empty', () => {
+      const { container } = render(
+        <FeatureRadar axes={[]} targetValues={{}} candidateValues={{}} />
+      )
+      // SVG should still render
+      expect(container.querySelector('svg')).toBeInTheDocument()
+      // Two empty polygons (no points)
+      const polygons = container.querySelectorAll('polygon')
+      expect(polygons.length).toBe(2)
+      for (const p of polygons) {
+        expect(p.getAttribute('points')).toBe('')
+      }
+    })
+
+    it('all-zero values produce degenerate but valid polygons', () => {
+      const zeroValues = { style: 0, knowledge: 0, safety: 0, capability: 0 }
+      const { container } = render(
+        <FeatureRadar axes={baseAxes} targetValues={zeroValues} candidateValues={zeroValues} />
+      )
+      const polygons = container.querySelectorAll('polygon')
+      expect(polygons.length).toBe(2)
+      // All points should be at center (same coordinate repeated)
+      for (const p of polygons) {
+        const points = (p.getAttribute('points') ?? '').split(' ')
+        const uniquePoints = new Set(points)
+        // All points collapse to center = 1 unique coordinate
+        expect(uniquePoints.size).toBe(1)
+      }
+    })
+
     it('renders with 2 axes (minimum)', () => {
       const twoAxes = [
         { label: 'A', key: 'a' },

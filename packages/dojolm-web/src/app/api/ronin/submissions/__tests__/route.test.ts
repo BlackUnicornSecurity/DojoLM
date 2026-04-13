@@ -77,6 +77,10 @@ function validSubmissionBody(overrides: Record<string, unknown> = {}) {
   };
 }
 
+// Each describe block resets the module registry to get a fresh in-memory Map.
+// vi.resetModules() in beforeEach ensures each test gets its own store instance.
+// IMPORTANT: always re-import the route after resetModules to avoid stale closures.
+
 describe('GET /api/ronin/submissions', () => {
   beforeEach(async () => {
     vi.clearAllMocks();

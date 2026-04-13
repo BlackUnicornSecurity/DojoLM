@@ -184,28 +184,38 @@ describe("isSafeHref", () => {
     expect(isSafeHref("mailto:user@example.com")).toBe(true)
   })
 
-  it("relative paths: result depends on base URL protocol", () => {
-    // In vitest, globalThis.location.href is http://localhost:xxx
-    // So relative paths resolve to http: which is NOT in the allowed list (only https:, mailto:)
-    // This means relative paths return false in http contexts — a known security-conservative behavior
+  it("relative paths return false in HTTP base contexts (known behavior)", () => {
+    // BUG DOCUMENTATION: JSDoc says "Allows relative paths" but implementation
+    // resolves them via new URL(path, base) which inherits the base protocol.
+    // In HTTP contexts (test env, internal tools), base is http: which is NOT allowed.
+    // The catch-block fallback (line 102-103) handles relative paths, but new URL()
+    // never throws for valid paths — so the fallback is dead code when location exists.
     const result = isSafeHref("/about")
-    // In an http: base context, relative paths are blocked (only https: allowed)
-    // In an https: context, they would pass
-    expect(typeof result).toBe("boolean")
-    // Verify the function doesn't throw
-    expect(() => isSafeHref("/api/data")).not.toThrow()
+    // In vitest env, globalThis.location is http:// → resolves to http: → blocked
+    expect(result).toBe(false)
+    expect(isSafeHref("/api/data")).toBe(false)
+    expect(isSafeHref("#section")).toBe(false)
   })
 
-  it("hash links: result depends on base URL protocol", () => {
-    const result = isSafeHref("#section")
-    expect(typeof result).toBe("boolean")
-    expect(() => isSafeHref("#top")).not.toThrow()
-  })
-
-  it("relative paths return true when base URL is https", () => {
-    // Directly test the URL resolution logic
+  it("relative paths would return true with https base (URL resolution proof)", () => {
+    // Proves the fix: if deployed on HTTPS, relative paths resolve correctly
     const url = new URL("/about", "https://localhost")
     expect(url.protocol).toBe("https:")
+    const hash = new URL("#section", "https://localhost")
+    expect(hash.protocol).toBe("https:")
+  })
+
+  it("blocks tab injection within protocol string", () => {
+    // Tab/newline within protocol can bypass naive checks in some parsers
+    expect(isSafeHref("java\tscript:alert(1)")).toBe(false)
+  })
+
+  it("blocks newline injection within protocol string", () => {
+    expect(isSafeHref("java\nscript:alert(1)")).toBe(false)
+  })
+
+  it("blocks carriage return injection within protocol string", () => {
+    expect(isSafeHref("java\rscript:alert(1)")).toBe(false)
   })
 
   it("blocks JAVASCRIPT: with mixed case", () => {

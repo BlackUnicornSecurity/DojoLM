@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { renderHook, act, waitFor } from '@testing-library/react'
 import { type ReactNode } from 'react'
 
 const mockFetchWithAuth = vi.fn()
@@ -356,6 +356,194 @@ describe('LLMResultsContext', () => {
       expect(url).toContain('includeExecutions=true')
       expect(url).toContain('minSeverity=high')
       expect(url).toContain('categoryFilter=injection%2Cxss')
+    })
+  })
+
+  describe('getComparisonReport error propagation', () => {
+    it('rejects when any model report fetch fails', async () => {
+      mockFetchWithAuth
+        .mockReturnValueOnce(mockApiResponse({ modelId: 'a', avgResilienceScore: 70 }))
+        .mockReturnValueOnce(mockApiError(500, 'Server error'))
+
+      const { result } = renderHook(() => useResultsContext(), { wrapper })
+
+      await expect(
+        act(async () => result.current.getComparisonReport(['a', 'bad']))
+      ).rejects.toThrow()
+    })
+  })
+})
+
+// ===========================================================================
+// Hook tests (useModelReport, useLeaderboard, useCoverageMap)
+// ===========================================================================
+
+import { useModelReport, useLeaderboard, useCoverageMap } from '@/lib/contexts/LLMResultsContext'
+
+describe('useModelReport', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockCanAccess.mockResolvedValue(true)
+  })
+
+  it('starts loading then resolves with report', async () => {
+    const mockReport = { modelId: 'm1', avgResilienceScore: 85, categories: [] }
+    mockFetchWithAuth.mockReturnValue(mockApiResponse(mockReport))
+
+    const { result } = renderHook(() => useModelReport('m1'), { wrapper })
+
+    // Initially loading
+    expect(result.current.isLoading).toBe(true)
+    expect(result.current.report).toBeNull()
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.report).toEqual(mockReport)
+  })
+
+  it('sets report to null on fetch error', async () => {
+    mockFetchWithAuth.mockReturnValue(mockApiError(500, 'Server error'))
+
+    const { result } = renderHook(() => useModelReport('bad-id'), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.report).toBeNull()
+  })
+
+  it('refetches when modelId changes', async () => {
+    const report1 = { modelId: 'm1', avgResilienceScore: 80 }
+    const report2 = { modelId: 'm2', avgResilienceScore: 90 }
+    mockFetchWithAuth
+      .mockReturnValueOnce(mockApiResponse(report1))
+      .mockReturnValueOnce(mockApiResponse(report2))
+
+    const { result, rerender } = renderHook(
+      ({ id }: { id: string }) => useModelReport(id),
+      { wrapper, initialProps: { id: 'm1' } },
+    )
+
+    await waitFor(() => {
+      expect(result.current.report?.modelId).toBe('m1')
+    })
+
+    rerender({ id: 'm2' })
+
+    await waitFor(() => {
+      expect(result.current.report?.modelId).toBe('m2')
+    })
+  })
+})
+
+describe('useLeaderboard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockCanAccess.mockResolvedValue(true)
+  })
+
+  it('loads leaderboard with ranked entries', async () => {
+    mockFetchWithAuth
+      .mockReturnValueOnce(mockApiResponse([
+        { id: 'm1', name: 'GPT-4' },
+        { id: 'm2', name: 'Claude' },
+      ]))
+      .mockReturnValueOnce(mockApiResponse({ modelId: 'm1', avgResilienceScore: 70 }))
+      .mockReturnValueOnce(mockApiResponse({ modelId: 'm2', avgResilienceScore: 92 }))
+
+    const { result } = renderHook(() => useLeaderboard(), { wrapper })
+
+    expect(result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.leaderboard).not.toBeNull()
+    expect(result.current.leaderboard!.length).toBe(2)
+    expect(result.current.leaderboard![0].rank).toBe(1)
+  })
+
+  it('sets leaderboard to null on error', async () => {
+    mockFetchWithAuth.mockReturnValue(mockApiError(500, 'Down'))
+
+    const { result } = renderHook(() => useLeaderboard(), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.leaderboard).toBeNull()
+  })
+})
+
+describe('useCoverageMap', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockCanAccess.mockResolvedValue(true)
+  })
+
+  it('loads coverage map without model filter', async () => {
+    const mockCoverage = { total: 100, covered: 75 }
+    mockFetchWithAuth.mockReturnValue(mockApiResponse(mockCoverage))
+
+    const { result } = renderHook(() => useCoverageMap(), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.coverage).toEqual(mockCoverage)
+  })
+
+  it('loads coverage map with model filter', async () => {
+    mockFetchWithAuth.mockReturnValue(mockApiResponse({ total: 50, covered: 40 }))
+
+    const { result } = renderHook(() => useCoverageMap('m1'), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.coverage).toEqual({ total: 50, covered: 40 })
+    expect(mockFetchWithAuth).toHaveBeenCalledWith(
+      expect.stringContaining('modelId=m1'), expect.anything(),
+    )
+  })
+
+  it('sets coverage to null on error', async () => {
+    mockFetchWithAuth.mockReturnValue(mockApiError(500, 'Error'))
+
+    const { result } = renderHook(() => useCoverageMap(), { wrapper })
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+
+    expect(result.current.coverage).toBeNull()
+  })
+
+  it('refetches when modelId changes', async () => {
+    mockFetchWithAuth
+      .mockReturnValueOnce(mockApiResponse({ total: 100, covered: 75 }))
+      .mockReturnValueOnce(mockApiResponse({ total: 50, covered: 40 }))
+
+    const { result, rerender } = renderHook(
+      ({ id }: { id?: string }) => useCoverageMap(id),
+      { wrapper, initialProps: { id: undefined as string | undefined } },
+    )
+
+    await waitFor(() => {
+      expect(result.current.coverage?.total).toBe(100)
+    })
+
+    rerender({ id: 'm1' })
+
+    await waitFor(() => {
+      expect(result.current.coverage?.total).toBe(50)
     })
   })
 })

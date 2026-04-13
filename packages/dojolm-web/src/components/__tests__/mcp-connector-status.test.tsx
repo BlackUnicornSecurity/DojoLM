@@ -256,6 +256,69 @@ describe('McpConnectorStatus', () => {
     })
   })
 
+  describe('Restart', () => {
+    it('renders restart button when connected', async () => {
+      render(<McpConnectorStatus />)
+      await waitFor(() => {
+        expect(screen.getByText('Connected')).toBeInTheDocument()
+      })
+      expect(screen.getByRole('button', { name: /restart/i })).toBeInTheDocument()
+    })
+
+    it('restart button triggers POST call', async () => {
+      render(<McpConnectorStatus />)
+      await waitFor(() => {
+        expect(screen.getByText('Connected')).toBeInTheDocument()
+      })
+
+      const callsBefore = mockFetchWithAuth.mock.calls.length
+
+      // Click restart — triggers the async handler
+      fireEvent.click(screen.getByRole('button', { name: /restart/i }))
+
+      // Allow the first fetch (stop) to resolve
+      await act(async () => { vi.advanceTimersByTime(100) })
+
+      // Should have made at least one new POST call (the stop)
+      const postCalls = mockFetchWithAuth.mock.calls.filter(
+        (call: unknown[]) => (call[1] as Record<string, unknown>)?.method === 'POST'
+      )
+      expect(postCalls.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('Auto-refresh interval', () => {
+    it('issues health check on initial mount', async () => {
+      render(<McpConnectorStatus />)
+
+      // Initial health check should fire
+      await waitFor(() => {
+        expect(mockFetchWithAuth).toHaveBeenCalled()
+      })
+
+      // Verify the status endpoint was called
+      const statusCalls = mockFetchWithAuth.mock.calls.filter(
+        (call: unknown[]) => (call[0] as string)?.includes('/api/mcp/status')
+      )
+      expect(statusCalls.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('schedules periodic refresh (interval is set up)', async () => {
+      render(<McpConnectorStatus />)
+      await waitFor(() => {
+        expect(screen.getByText('Connected')).toBeInTheDocument()
+      })
+
+      const callsBefore = mockFetchWithAuth.mock.calls.length
+
+      // Advance past one interval period (10s)
+      await act(async () => { vi.advanceTimersByTime(10_500) })
+
+      // Should have made additional calls
+      expect(mockFetchWithAuth.mock.calls.length).toBeGreaterThan(callsBefore)
+    })
+  })
+
   describe('Cleanup', () => {
     it('does not update state after unmount', async () => {
       const { unmount } = render(<McpConnectorStatus />)

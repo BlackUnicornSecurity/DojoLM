@@ -120,6 +120,27 @@ describe('AttackModeStep', () => {
     })
   })
 
+  describe('Rerender with selectedMode change', () => {
+    it('updates aria-checked when selectedMode prop changes', () => {
+      const handler = vi.fn()
+      const { rerender } = render(<AttackModeStep selectedMode="kunai" onSelectMode={handler} />)
+
+      // Kunai is selected
+      const radios = screen.getAllByRole('radio')
+      const kunai = radios.find(r => r.textContent?.includes('Kunai'))
+      expect(kunai?.getAttribute('aria-checked')).toBe('true')
+
+      // Rerender with shuriken selected
+      rerender(<AttackModeStep selectedMode="shuriken" onSelectMode={handler} />)
+
+      const radiosAfter = screen.getAllByRole('radio')
+      const kunaiAfter = radiosAfter.find(r => r.textContent?.includes('Kunai'))
+      const shurikenAfter = radiosAfter.find(r => r.textContent?.includes('Shuriken'))
+      expect(kunaiAfter?.getAttribute('aria-checked')).toBe('false')
+      expect(shurikenAfter?.getAttribute('aria-checked')).toBe('true')
+    })
+  })
+
   describe('Weight Distribution', () => {
     it('displays weight percentages for Musashi mode', () => {
       render(<AttackModeStep selectedMode={null} onSelectMode={vi.fn()} />)
