@@ -112,6 +112,8 @@ export function ProbeProgress({ streamId, onComplete, onError }: ProbeProgressPr
     eventSource.addEventListener('error', handleError)
 
     return () => {
+      eventSource.removeEventListener('message', handleMessage)
+      eventSource.removeEventListener('error', handleError)
       eventSource.close()
     }
   }, [streamId, onComplete, onError])

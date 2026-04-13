@@ -35,6 +35,11 @@ vi.mock('@/lib/authenticated-event-stream', () => ({
       if (!capturedHandlers[type]) capturedHandlers[type] = []
       capturedHandlers[type].push(handler)
     },
+    removeEventListener: (type: string, handler: (event: MessageEvent) => void) => {
+      if (capturedHandlers[type]) {
+        capturedHandlers[type] = capturedHandlers[type].filter(h => h !== handler)
+      }
+    },
     close: mockClose,
   }),
 }))
@@ -212,22 +217,18 @@ describe('ProbeProgress', () => {
       expect(mockClose.mock.calls.length).toBeGreaterThan(closeCalls)
     })
 
-    it('closes old source on streamId change — old handlers become inert', () => {
+    it('closes old source and detaches listeners on streamId change', () => {
       const onComplete = vi.fn()
 
       const { rerender } = render(
         <ProbeProgress streamId="stream-a" onComplete={onComplete} />
       )
 
-      // Rerender with new streamId triggers effect cleanup → old source closed
+      // Rerender with new streamId triggers effect cleanup →
+      // removeEventListener + close on old source
       const closesBefore = mockClose.mock.calls.length
       rerender(<ProbeProgress streamId="stream-b" onComplete={onComplete} />)
       expect(mockClose.mock.calls.length).toBeGreaterThan(closesBefore)
-
-      // DEFENSIVE GAP NOTE: The component calls eventSource.close() on cleanup
-      // but does NOT call removeEventListener. In a real EventSource, buffered
-      // messages on the closed source could still fire stale handlers. The close()
-      // call is the primary defense; removeEventListener would be belt-and-suspenders.
     })
   })
 

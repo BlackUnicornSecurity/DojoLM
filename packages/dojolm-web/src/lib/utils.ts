@@ -92,13 +92,19 @@ export function isSafeHref(href: string): boolean {
     return false
   }
 
+  // Allow relative paths and hash links before URL parse — new URL() inherits
+  // the base protocol, so /about in an HTTP context would resolve to http:
+  // and be blocked. These are always safe regardless of base protocol.
+  if (trimmed.startsWith('/') || trimmed.startsWith('#')) {
+    return true
+  }
+
   try {
     const url = new URL(trimmed, globalThis.location?.href ?? 'https://localhost')
     const protocol = url.protocol.toLowerCase()
     // Only allow safe protocols explicitly
     return protocol === 'https:' || protocol === 'mailto:'
   } catch {
-    // For relative paths and hash links only
-    return trimmed.startsWith('/') || trimmed.startsWith('#')
+    return false
   }
 }

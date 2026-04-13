@@ -114,9 +114,10 @@ export function McpConnectorStatus({
       }
       return false
     } finally {
-      if (!mountedRef.current) return false
-      setIsChecking(false)
-      setLastChecked(new Date())
+      if (mountedRef.current) {
+        setIsChecking(false)
+        setLastChecked(new Date())
+      }
     }
   }, [connectedProp, latencyProp])
 

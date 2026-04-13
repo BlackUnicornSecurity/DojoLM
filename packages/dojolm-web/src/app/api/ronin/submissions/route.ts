@@ -176,9 +176,12 @@ export async function PATCH(request: NextRequest) {
     const existing = submissions.get(id)!
     const updated = { ...existing }
 
-    // Patchable fields whitelist
-    if (typeof body.status === 'string' && VALID_STATUSES.has(body.status)) {
-      updated.status = body.status
+    // Patchable fields whitelist — normalize status case like POST handler (line 107)
+    if (typeof body.status === 'string') {
+      const normalizedStatus = body.status.trim().toLowerCase()
+      if (VALID_STATUSES.has(normalizedStatus)) {
+        updated.status = normalizedStatus
+      }
     }
     if (typeof body.title === 'string') {
       updated.title = sanitizeText(body.title.trim().slice(0, 500))

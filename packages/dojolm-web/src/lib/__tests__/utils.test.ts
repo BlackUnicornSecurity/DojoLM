@@ -184,25 +184,17 @@ describe("isSafeHref", () => {
     expect(isSafeHref("mailto:user@example.com")).toBe(true)
   })
 
-  it("relative paths return false in HTTP base contexts (known behavior)", () => {
-    // BUG DOCUMENTATION: JSDoc says "Allows relative paths" but implementation
-    // resolves them via new URL(path, base) which inherits the base protocol.
-    // In HTTP contexts (test env, internal tools), base is http: which is NOT allowed.
-    // The catch-block fallback (line 102-103) handles relative paths, but new URL()
-    // never throws for valid paths — so the fallback is dead code when location exists.
-    const result = isSafeHref("/about")
-    // In vitest env, globalThis.location is http:// → resolves to http: → blocked
-    expect(result).toBe(false)
-    expect(isSafeHref("/api/data")).toBe(false)
-    expect(isSafeHref("#section")).toBe(false)
+  it("allows relative paths regardless of base URL protocol", () => {
+    // Fixed: relative paths are checked before URL parse, so they work
+    // in both HTTP and HTTPS contexts
+    expect(isSafeHref("/about")).toBe(true)
+    expect(isSafeHref("/api/data")).toBe(true)
+    expect(isSafeHref("/")).toBe(true)
   })
 
-  it("relative paths would return true with https base (URL resolution proof)", () => {
-    // Proves the fix: if deployed on HTTPS, relative paths resolve correctly
-    const url = new URL("/about", "https://localhost")
-    expect(url.protocol).toBe("https:")
-    const hash = new URL("#section", "https://localhost")
-    expect(hash.protocol).toBe("https:")
+  it("allows hash links regardless of base URL protocol", () => {
+    expect(isSafeHref("#section")).toBe(true)
+    expect(isSafeHref("#top")).toBe(true)
   })
 
   it("blocks tab injection within protocol string", () => {

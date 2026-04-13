@@ -330,29 +330,23 @@ describe('McpConnectorStatus', () => {
     })
 
     it('handles unmount during in-flight health check without error', async () => {
-      // DEFENSIVE GAP NOTE: checkHealth has `return false` inside finally block
-      // (source line ~117). A return in finally overrides the try block's return value.
-      // If component unmounts after fetch resolves but before finally completes,
-      // the finally guard returns false even though the check succeeded.
-      // This test documents the pattern and verifies no error is thrown.
+      // Fixed: finally block now uses if(mounted) guard instead of return,
+      // so the try block's return value is preserved correctly.
       let resolveResponse!: (v: unknown) => void
       mockFetchWithAuth.mockReturnValueOnce(new Promise(r => { resolveResponse = r }))
 
       const { unmount } = render(<McpConnectorStatus />)
 
-      // Let canAccessProtectedApi resolve
       await act(async () => { await Promise.resolve() })
 
-      // Unmount while fetch is pending
       unmount()
 
-      // Resolve the fetch after unmount — finally block runs with mountedRef=false
       resolveResponse({
         ok: true,
         json: () => Promise.resolve({ connected: true, latency: 10 }),
       })
 
-      // No errors should be thrown
+      // No errors or state updates on unmounted component
       await act(async () => { await Promise.resolve() })
     })
   })
