@@ -593,6 +593,49 @@ describe('POST /api/ronin/submissions — Security', () => {
   });
 });
 
+describe('TRACE method blocking (Bug #9 / Story 13.4)', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    vi.resetModules();
+  });
+
+  it('POST blocks TRACE with 405', async () => {
+    const { POST } = await import('@/app/api/ronin/submissions/route');
+    const req = new NextRequest('http://localhost:42001/api/ronin/submissions', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    Object.defineProperty(req, 'method', { value: 'TRACE' });
+    const res = await POST(req);
+    expect(res.status).toBe(405);
+    const body = await res.json();
+    expect(body.error).toContain('Method not allowed');
+  });
+
+  it('PATCH blocks TRACE with 405', async () => {
+    const { PATCH } = await import('@/app/api/ronin/submissions/route');
+    const req = new NextRequest('http://localhost:42001/api/ronin/submissions', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    Object.defineProperty(req, 'method', { value: 'TRACE' });
+    const res = await PATCH(req);
+    expect(res.status).toBe(405);
+    const body = await res.json();
+    expect(body.error).toContain('Method not allowed');
+  });
+
+  it('GET blocks TRACE with 405 (non-demo mode)', async () => {
+    const { GET } = await import('@/app/api/ronin/submissions/route');
+    const req = new NextRequest('http://localhost:42001/api/ronin/submissions');
+    Object.defineProperty(req, 'method', { value: 'TRACE' });
+    const res = await GET(req);
+    expect(res.status).toBe(405);
+  });
+});
+
 describe('Auth validation', () => {
   it('returns auth error when checkApiAuth returns an error response', async () => {
     vi.resetModules();
