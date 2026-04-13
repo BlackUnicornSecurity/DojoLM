@@ -1,6 +1,6 @@
 /**
  * File: launch-step.test.tsx
- * Purpose: Unit tests for LaunchStep component
+ * Purpose: Unit tests for LaunchStep arena wizard summary component
  */
 
 import { describe, it, expect, vi } from 'vitest'
@@ -21,9 +21,13 @@ vi.mock('@/components/ui/badge', () => ({
 vi.mock('@/lib/arena-types', () => ({
   GAME_MODE_CONFIGS: {
     CTF: { id: 'CTF', name: 'Capture the Flag', supportsRoleSwap: false },
+    KOTH: { id: 'KOTH', name: 'King of the Hill', supportsRoleSwap: true },
+    RvB: { id: 'RvB', name: 'Red vs Blue', supportsRoleSwap: true },
   },
   ATTACK_MODE_CONFIGS: {
-    kunai: { id: 'kunai', name: 'Kunai', description: 'Single-source attacks' },
+    kunai: { id: 'kunai', name: 'Kunai', description: 'Single-source template attacks' },
+    shuriken: { id: 'shuriken', name: 'Shuriken', description: 'SAGE-powered mutations' },
+    musashi: { id: 'musashi', name: 'Musashi', description: 'Multi-source blended' },
   },
 }))
 
@@ -31,13 +35,15 @@ vi.mock('../MatchCreationWizard', () => ({}))
 
 import { LaunchStep } from '@/components/strategic/arena/steps/LaunchStep'
 
-const mockFormData = {
+const baseFighters = [
+  { modelId: 'm1', modelName: 'GPT-4', provider: 'OpenAI', initialRole: 'attacker' as const, temperature: 0.7, maxTokens: 1024 },
+  { modelId: 'm2', modelName: 'Claude 3', provider: 'Anthropic', initialRole: 'defender' as const, temperature: 0.7, maxTokens: 1024 },
+]
+
+const baseFormData = {
   gameMode: 'CTF' as const,
   attackMode: 'kunai' as const,
-  fighters: [
-    { modelId: 'm1', modelName: 'GPT-4', provider: 'OpenAI', initialRole: 'attacker' as const, temperature: 0.7, maxTokens: 1024 },
-    { modelId: 'm2', modelName: 'Claude 3', provider: 'Anthropic', initialRole: 'defender' as const, temperature: 0.7, maxTokens: 1024 },
-  ],
+  fighters: baseFighters,
   maxRounds: 10,
   victoryPoints: 100,
   temperature: 0.7,
@@ -46,29 +52,122 @@ const mockFormData = {
 }
 
 describe('LaunchStep', () => {
-  it('renders without crashing', () => {
-    const { container } = render(<LaunchStep formData={mockFormData as never} />)
-    expect(container).toBeTruthy()
+  describe('Rendering', () => {
+    it('displays Battle Summary heading', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Battle Summary')).toBeInTheDocument()
+    })
+
+    it('displays Fighters heading', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Fighters')).toBeInTheDocument()
+    })
+
+    it('displays Model Settings heading', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Model Settings')).toBeInTheDocument()
+    })
   })
 
-  it('displays Battle Summary heading', () => {
-    render(<LaunchStep formData={mockFormData as never} />)
-    expect(screen.getByText('Battle Summary')).toBeInTheDocument()
+  describe('Game Mode', () => {
+    it('displays the game mode name from config', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Capture the Flag')).toBeInTheDocument()
+    })
+
+    it('displays game mode type label', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('CTF')).toBeInTheDocument()
+    })
+
+    it('displays max rounds value', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('10')).toBeInTheDocument()
+      expect(screen.getByText('Rounds')).toBeInTheDocument()
+    })
+
+    it('displays victory points value', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('100')).toBeInTheDocument()
+      expect(screen.getByText('VP')).toBeInTheDocument()
+    })
+
+    it('hides swap interval when game mode does not support role swap', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.queryByText('Swap')).not.toBeInTheDocument()
+    })
+
+    it('shows swap interval when game mode supports role swap', () => {
+      const data = { ...baseFormData, gameMode: 'KOTH' as const }
+      render(<LaunchStep formData={data as never} />)
+      expect(screen.getByText('3')).toBeInTheDocument()
+      expect(screen.getByText('Swap')).toBeInTheDocument()
+    })
+
+    it('shows "Not selected" when gameMode is null', () => {
+      const data = { ...baseFormData, gameMode: null as unknown as 'CTF' }
+      render(<LaunchStep formData={data as never} />)
+      expect(screen.getByText('Not selected')).toBeInTheDocument()
+    })
   })
 
-  it('displays the game mode name', () => {
-    render(<LaunchStep formData={mockFormData as never} />)
-    expect(screen.getByText('Capture the Flag')).toBeInTheDocument()
+  describe('Fighters', () => {
+    it('displays both fighter model names', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('GPT-4')).toBeInTheDocument()
+      expect(screen.getByText('Claude 3')).toBeInTheDocument()
+    })
+
+    it('displays fighter roles', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('attacker')).toBeInTheDocument()
+      expect(screen.getByText('defender')).toBeInTheDocument()
+    })
+
+    it('displays fighter provider badges', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('OpenAI')).toBeInTheDocument()
+      expect(screen.getByText('Anthropic')).toBeInTheDocument()
+    })
   })
 
-  it('displays Fighters heading', () => {
-    render(<LaunchStep formData={mockFormData as never} />)
-    expect(screen.getByText('Fighters')).toBeInTheDocument()
+  describe('Attack Mode', () => {
+    it('displays the attack mode name from config', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Kunai')).toBeInTheDocument()
+    })
+
+    it('displays attack mode description', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('Single-source template attacks')).toBeInTheDocument()
+    })
+
+    it('shows "Not selected" when attackMode is null', () => {
+      const data = { ...baseFormData, attackMode: null as unknown as 'kunai' }
+      render(<LaunchStep formData={data as never} />)
+      expect(screen.getAllByText('Not selected').length).toBeGreaterThanOrEqual(1)
+    })
   })
 
-  it('displays fighter model names', () => {
-    render(<LaunchStep formData={mockFormData as never} />)
-    expect(screen.getByText('GPT-4')).toBeInTheDocument()
-    expect(screen.getByText('Claude 3')).toBeInTheDocument()
+  describe('Empty Fighters', () => {
+    it('renders Fighters heading with empty list', () => {
+      const data = { ...baseFormData, fighters: [] }
+      render(<LaunchStep formData={data as never} />)
+      expect(screen.getByText('Fighters')).toBeInTheDocument()
+      // No fighter names should appear
+      expect(screen.queryByText('GPT-4')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Model Settings', () => {
+    it('displays temperature value', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('0.7')).toBeInTheDocument()
+    })
+
+    it('displays max tokens value', () => {
+      render(<LaunchStep formData={baseFormData as never} />)
+      expect(screen.getByText('1024')).toBeInTheDocument()
+    })
   })
 })

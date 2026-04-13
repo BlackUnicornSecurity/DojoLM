@@ -69,7 +69,7 @@ export function mockLucideIcons(
       'ArrowUp', 'ArrowDown', 'ArrowUpRight', 'ArrowDownRight', 'Award',
       'Ban', 'BarChart3', 'Bell', 'Bot', 'BookOpen',
       'Brain', 'BrainCircuit', 'Bug',
-      'Calendar', 'Check', 'CheckCheck', 'CheckCircle', 'CheckCircle2',
+      'Calculator', 'Calendar', 'Check', 'CheckCheck', 'CheckCircle', 'CheckCircle2',
       'ChevronDown', 'ChevronRight', 'ChevronLeft', 'ChevronUp', 'Circle', 'Clock',
       'Code', 'Copy', 'CornerDownLeft', 'Cpu', 'Crosshair', 'Crown',
       'Database', 'Dna', 'DollarSign', 'Download',
@@ -94,7 +94,7 @@ export function mockLucideIcons(
       'Trash', 'Trash2', 'TrendingDown', 'TrendingUp', 'Trophy',
       'Upload', 'User', 'UserCheck', 'Users',
       'Video', 'Volume2',
-      'Warehouse', 'Webhook', 'Wifi', 'Wrench',
+      'Warehouse', 'Webhook', 'Wifi', 'WifiOff', 'Wrench',
       'X', 'XCircle',
       'Zap', 'ZoomIn', 'ZoomOut',
     ]
