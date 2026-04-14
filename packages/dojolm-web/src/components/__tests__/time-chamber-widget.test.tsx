@@ -27,4 +27,11 @@ import { TimeChamberWidget } from '../dashboard/widgets/TimeChamberWidget'
 describe('TimeChamberWidget', () => {
   it('renders without crashing', () => { expect(render(<TimeChamberWidget />).container).toBeTruthy() })
   it('wraps in WidgetCard', () => { render(<TimeChamberWidget />); expect(screen.getByTestId('widget-card')).toBeInTheDocument() })
+  // Story 2.1.3: No mock data — shows "not yet available" state
+  it('shows not-yet-available state', () => { render(<TimeChamberWidget />); expect(screen.getByText('Not yet available')).toBeInTheDocument() })
+  it('does not render old mock plan values', () => {
+    render(<TimeChamberWidget />)
+    expect(screen.queryByText('20')).not.toBeInTheDocument()
+    expect(screen.queryByText('Replay Attack')).not.toBeInTheDocument()
+  })
 })

@@ -20,13 +20,20 @@ vi.mock('@/lib/NavigationContext', async () => {
     NavigationProvider: ({ children }: { children: unknown }) => children,
   }
 })
-vi.mock('@/components/ui/MetricCard', () => ({ MetricCard: ({ label, value }: { label: string; value: unknown }) => <div data-testid="metric-card">{label}: {String(value)}</div> }))
 vi.mock('../dashboard/WidgetCard', () => ({ WidgetCard: ({ title, children }: { title: string; children: React.ReactNode }) => <div data-testid="widget-card"><h3>{title}</h3>{children}</div> }))
 
 import { SAGEStatusWidget } from '../dashboard/widgets/SAGEStatusWidget'
 
 describe('SAGEStatusWidget', () => {
   it('renders without crashing', () => { expect(render(<SAGEStatusWidget />).container).toBeTruthy() })
-  it('displays SAGE title', () => { render(<SAGEStatusWidget />); expect(screen.getByText(/SAGE/i)).toBeInTheDocument() })
+  it('displays SAGE title', () => { render(<SAGEStatusWidget />); expect(screen.getByText('SAGE Evolution')).toBeInTheDocument() })
   it('wraps in WidgetCard', () => { render(<SAGEStatusWidget />); expect(screen.getByTestId('widget-card')).toBeInTheDocument() })
+  // Story 2.1.3: No mock data — shows "not yet available" state
+  it('shows not-yet-available state', () => { render(<SAGEStatusWidget />); expect(screen.getByText('Not yet available')).toBeInTheDocument() })
+  it('does not render old mock generation/fitness values', () => {
+    render(<SAGEStatusWidget />)
+    expect(screen.queryByText('142')).not.toBeInTheDocument()
+    expect(screen.queryByText('0.94')).not.toBeInTheDocument()
+    expect(screen.queryByText('RUNNING')).not.toBeInTheDocument()
+  })
 })

@@ -67,14 +67,8 @@ export function LLMJutsuWidget() {
           setModels(Array.from(byModel.values()))
         }
       } catch {
-        // Demo fallback
-        setModels([
-          { name: 'GPT-4', score: 78 },
-          { name: 'Claude 3.5', score: 91 },
-          { name: 'Gemini 1.5', score: 72 },
-          { name: 'Mistral Large', score: 65 },
-          { name: 'Llama 3', score: 58 },
-        ])
+        // Network error — leave models empty (no mock fallback per Fixed Decision 6)
+        if (!cancelled) setModels([])
       }
     }
     load()

@@ -1,10 +1,11 @@
 /**
  * File: kotoba-widget.test.tsx
  * Purpose: Unit tests for KotobaWidget dashboard widget
+ * Story 2.1.3: Mock data removed — shows "not yet available" state
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -21,7 +22,6 @@ vi.mock('@/lib/NavigationContext', async () => {
   const { createContext } = await import('react')
   return {
     useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
-    // WidgetCard.tsx imports the React Context itself.
     NavigationContext: createContext(null as unknown),
     NavigationProvider: ({ children }: { children: unknown }) => children,
   }
@@ -54,25 +54,27 @@ describe('KotobaWidget', () => {
     expect(screen.getByText('Kotoba Studio')).toBeInTheDocument()
   })
 
-  it('shows rule count of 24', () => {
+  it('shows not-yet-available state (no mock data)', () => {
     render(<KotobaWidget />)
-    expect(screen.getByText('24')).toBeInTheDocument()
-    expect(screen.getByText('rules')).toBeInTheDocument()
+    expect(screen.getByText('Not yet available')).toBeInTheDocument()
+    expect(screen.getByText(/Kotoba backend/)).toBeInTheDocument()
   })
 
-  it('displays grade badge B+', () => {
+  it('does not render old mock data values', () => {
     render(<KotobaWidget />)
-    expect(screen.getByText('B+')).toBeInTheDocument()
-  })
-
-  it('shows average score of 78%', () => {
-    render(<KotobaWidget />)
-    expect(screen.getByText('Avg Score')).toBeInTheDocument()
-    expect(screen.getByText('78%')).toBeInTheDocument()
+    expect(screen.queryByText('24')).not.toBeInTheDocument()
+    expect(screen.queryByText('B+')).not.toBeInTheDocument()
+    expect(screen.queryByText('78%')).not.toBeInTheDocument()
   })
 
   it('renders "Open" action button', () => {
     render(<KotobaWidget />)
     expect(screen.getByText('Open')).toBeInTheDocument()
+  })
+
+  it('"Open" button navigates to kotoba', () => {
+    render(<KotobaWidget />)
+    fireEvent.click(screen.getByLabelText('Open Kotoba Studio'))
+    expect(mockSetActiveTab).toHaveBeenCalledWith('kotoba')
   })
 })

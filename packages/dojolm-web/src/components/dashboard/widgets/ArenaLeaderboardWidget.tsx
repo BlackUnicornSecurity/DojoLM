@@ -3,29 +3,16 @@
 /**
  * File: ArenaLeaderboardWidget.tsx
  * Purpose: Top 5 agents from Arena leaderboard with rank, name, win rate, score
- * Story: TPI-NODA-1.5.8
+ * Story: TPI-NODA-1.5.8; Story 2.1.3 — wired to /api/arena/warriors (no mock data)
  */
 
+import { useState, useEffect } from 'react'
 import { useNavigation } from '@/lib/NavigationContext'
 import { WidgetCard } from '../WidgetCard'
 import { cn } from '@/lib/utils'
 import { Trophy } from 'lucide-react'
-
-interface LeaderboardAgent {
-  rank: number
-  name: string
-  winRate: number
-  score: number
-}
-
-// MOCK DATA — not wired to API. Replace with live data when backend integration is available.
-const MOCK_LEADERBOARD: LeaderboardAgent[] = [
-  { rank: 1, name: 'Sentinel-v4', winRate: 87.5, score: 2450 },
-  { rank: 2, name: 'Guardian-Pro', winRate: 82.3, score: 2180 },
-  { rank: 3, name: 'Aegis-Net', winRate: 79.1, score: 1950 },
-  { rank: 4, name: 'ShieldWall-2', winRate: 71.4, score: 1720 },
-  { rank: 5, name: 'Bastion-ML', winRate: 68.9, score: 1580 },
-]
+import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import type { WarriorCard } from '@/lib/arena-types'
 
 const RANK_STYLES: Record<number, string> = {
   1: 'text-[var(--severity-medium)]',
@@ -35,6 +22,31 @@ const RANK_STYLES: Record<number, string> = {
 
 export function ArenaLeaderboardWidget() {
   const { setActiveTab } = useNavigation()
+  const [warriors, setWarriors] = useState<WarriorCard[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetchWithAuth('/api/arena/warriors')
+        if (!res.ok || cancelled) return
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data.warriors)) {
+          const sorted = [...data.warriors]
+            .sort((a: WarriorCard, b: WarriorCard) => b.winRate - a.winRate)
+            .slice(0, 5)
+          setWarriors(sorted)
+        }
+      } catch {
+        // Network error — leave warriors empty
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <WidgetCard
@@ -49,18 +61,34 @@ export function ArenaLeaderboardWidget() {
         </button>
       }
     >
-      <div className="space-y-1">
-        {MOCK_LEADERBOARD.map(agent => (
-          <div key={agent.name} className="flex items-center gap-2 py-1 text-xs">
-            <span className={cn('w-5 text-center font-bold', RANK_STYLES[agent.rank] ?? 'text-muted-foreground')}>
-              {agent.rank <= 3 ? <Trophy className="w-3.5 h-3.5 inline" aria-hidden="true" /> : agent.rank}
-            </span>
-            <span className="flex-1 font-medium truncate" title={agent.name}>{agent.name}</span>
-            <span className="text-muted-foreground tabular-nums">{agent.winRate}%</span>
-            <span className="text-muted-foreground tabular-nums w-12 text-right">{agent.score}</span>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="space-y-1" aria-busy="true" aria-label="Loading leaderboard">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-5 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
+          ))}
+        </div>
+      ) : warriors.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">
+          <p className="text-xs text-muted-foreground">No matches recorded yet</p>
+          <p className="text-xs text-muted-foreground/60">Run Arena matches to populate the leaderboard</p>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {warriors.map((warrior, idx) => {
+            const rank = idx + 1
+            return (
+              <div key={warrior.modelId} className="flex items-center gap-2 py-1 text-xs">
+                <span className={cn('w-5 text-center font-bold', RANK_STYLES[rank] ?? 'text-muted-foreground')}>
+                  {rank <= 3 ? <Trophy className="w-3.5 h-3.5 inline" aria-hidden="true" /> : rank}
+                </span>
+                <span className="flex-1 font-medium truncate" title={warrior.modelName}>{warrior.modelName}</span>
+                <span className="text-muted-foreground tabular-nums">{warrior.winRate.toFixed(1)}%</span>
+                <span className="text-muted-foreground tabular-nums w-12 text-right">{warrior.bestScore}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </WidgetCard>
   )
 }

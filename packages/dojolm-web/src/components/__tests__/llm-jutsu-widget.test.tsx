@@ -87,15 +87,15 @@ describe('LLMJutsuWidget', () => {
     expect(screen.getByText('Open')).toBeInTheDocument()
   })
 
-  it('shows model count after loading fallback data', async () => {
-    // canAccessProtectedApi must throw (not resolve false) to hit the catch/fallback path
+  it('shows 0 models on error (no mock fallback per Fixed Decision 6)', async () => {
+    // canAccessProtectedApi throws — hits the catch path
     mockCanAccessProtectedApi.mockRejectedValue(new Error('network error'))
     mockFetchWithAuth.mockRejectedValue(new Error('no auth'))
     render(<LLMJutsuWidget />)
     await waitFor(() => {
       expect(screen.getByText('Models Tested')).toBeInTheDocument()
-      // Fallback data has 5 models
-      expect(screen.getByText('5')).toBeInTheDocument()
+      // No fallback mock data — shows 0
+      expect(screen.getByText('0')).toBeInTheDocument()
     })
   })
 
