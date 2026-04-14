@@ -118,7 +118,7 @@ Run this sequence at the start and end of every phase:
 | 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy | ✅ CLOSED 2026-04-14 |
 | 5 | Results, Analytics, and Export Contract Alignment | Navigation dead-ends wired; mock matrix removed; export bugs fixed; SSRF + rate limiting | ✅ CLOSED 2026-04-14 |
 | 5 | Results, Analytics, and Export Contract Alignment | Bushido/Jutsu/reporting surfaces become discoverable and contract-correct |
-| 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei |
+| 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei | ✅ CLOSED 2026-04-14 |
 | 7 | Final Adversarial Audit and Review | 100% pass target, code review complete, docs updated, no unresolved findings |
 
 ## Phase 0: Program Baseline
@@ -807,7 +807,7 @@ Exit:
 
 - Compliance export and framework routes are no longer weakly surfaced or contract-divergent.
 
-## Phase 6: Sensei Discoverability and Tool Parity
+## Phase 6: Sensei Discoverability and Tool Parity ✅ CLOSED 2026-04-14
 
 ### Epic 6.1: Make Assistant-Only Capability Legible
 
@@ -887,6 +887,45 @@ Validation:
 Exit:
 
 - Sensei prompt/tool behavior matches the post-remediation UI reality.
+
+### Phase 6 Implementation Notes (2026-04-14)
+
+**Story 6.1.1 — SenseiCapabilityPanel** ✅
+- Created `src/components/sensei/SenseiCapabilityPanel.tsx`
+- Reads `SENSEI_TOOLS` (33 tools) and classifies into 4 groups using registry flags:
+  - Navigate (endpoint=`__client__`): 2 tools
+  - Query (mutating:false, requiresConfirmation:false): 19 tools
+  - Write (mutating:true): 8 tools
+  - Confirm (requiresConfirmation:true, not mutating): 4 tools
+- Collapsed by default; header shows total count + per-group counts with color coding
+- Expanded view shows tool name pills grouped by category
+- Inserted in `SenseiDrawer.tsx` between model picker strip and SenseiChat
+- Tests: SCP-001–007 (new), SD-008 (added to existing sensei-drawer suite)
+
+**Story 6.2.1 — navigate_to / explain_feature dead-ends fixed** ✅
+- `SenseiToolResultCard` gains `onNavigate?: (module: NavId) => void` prop
+- `renderNavigate`: now renders "Go to [Module] →" button alongside passive text when `onNavigate` present
+- `renderExplain`: now uses `d.module` field (was discarded) to render "Open [Module] →" CTA
+- Threading: `SenseiDrawer.onNavigate` → `SenseiChat.onNavigate` → `SenseiToolResultCard.onNavigate`
+- Both CTAs are conditional on `onNavigate` being present — backward-compatible
+- Tests: STR-009–012
+
+**Story 6.3.1 — prompt contract** ✅
+- Added `Sengoku` and `The Kumite` to CORE_SYSTEM_PROMPT Layer 1 Platform Modules list
+- Both were already in `MODULE_CONTEXT` but absent from the static module description block
+- Tests: two new assertions in `sensei-system-prompt.test.ts`
+
+**Adversarial audit (Phase 6)**: Clean — zero findings. Specific checks:
+- No XSS: `formatToolName(moduleName)` renders as React text node, not innerHTML
+- No open redirect: `onNavigate` calls `setActiveTab` (React state only, no URL manipulation)
+- No data exposure: `SenseiCapabilityPanel` renders only tool names, not endpoints or auth details
+- Group classification logic verified correct for all 33 tools
+
+**Commit**: `825075a36` — `feat(sensei): Phase 6 — registry capability panel, tool result CTAs, prompt contract`
+
+**Test count change**: +27 new tests (SCP: 7, SD: +1, STR: +4, prompt: +2)
+
+---
 
 ## Phase 7: Final Adversarial Audit and Review
 
