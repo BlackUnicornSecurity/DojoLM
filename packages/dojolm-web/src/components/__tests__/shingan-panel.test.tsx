@@ -1,11 +1,11 @@
 /**
  * File: shingan-panel.test.tsx
  * Purpose: Unit tests for ShinganPanel component
- * Test IDs: SHP-001 to SHP-007
+ * Test IDs: SHP-001 to SHP-013
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -20,6 +20,7 @@ vi.mock('lucide-react', () => ({
   AlertTriangle: (props: Record<string, unknown>) => <svg data-testid="alert-icon" {...props} />,
   ChevronDown: (props: Record<string, unknown>) => <svg data-testid="chevron-down-icon" {...props} />,
   ChevronRight: (props: Record<string, unknown>) => <svg data-testid="chevron-right-icon" {...props} />,
+  Globe: (props: Record<string, unknown>) => <svg data-testid="globe-icon" {...props} />,
 }))
 
 vi.mock('@/lib/utils', () => ({
@@ -61,7 +62,7 @@ import { ShinganPanel } from '../shingan/ShinganPanel'
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('ShinganPanel (SHP-001 to SHP-007)', () => {
+describe('ShinganPanel (SHP-001 to SHP-013)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -83,10 +84,18 @@ describe('ShinganPanel (SHP-001 to SHP-007)', () => {
     expect(screen.getByTestId('eye-icon')).toBeInTheDocument()
   })
 
-  it('SHP-004: renders batch mode toggle checkbox', () => {
+  it('SHP-004: renders scan mode radiogroup with Single/Batch/URL options', () => {
     render(<ShinganPanel />)
-    expect(screen.getByText('Batch mode')).toBeInTheDocument()
-    expect(screen.getByRole('checkbox')).not.toBeChecked()
+    const group = screen.getByRole('radiogroup', { name: 'Select scan mode' })
+    expect(group).toBeInTheDocument()
+    const radios = screen.getAllByRole('radio')
+    const labels = radios.map((r) => r.textContent)
+    expect(labels).toContain('Single')
+    expect(labels).toContain('Batch')
+    expect(labels).toContain('URL')
+    // Single selected by default
+    const single = radios.find((r) => r.textContent === 'Single')
+    expect(single).toHaveAttribute('aria-checked', 'true')
   })
 
   it('SHP-005: renders upload zone with drop instructions', () => {
@@ -104,5 +113,58 @@ describe('ShinganPanel (SHP-001 to SHP-007)', () => {
     const buttons = screen.getAllByTestId('button')
     const scanButton = buttons.find((b) => b.textContent?.includes('Scan'))
     expect(scanButton).toBeInTheDocument()
+  })
+
+  // ===========================================================================
+  // URL mode tests (SHP-008 to SHP-013)
+  // ===========================================================================
+
+  it('SHP-008: switching to URL mode sets URL radio as checked', () => {
+    render(<ShinganPanel />)
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')
+    expect(urlRadio).toBeDefined()
+    fireEvent.click(urlRadio!)
+    expect(urlRadio).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('SHP-009: URL mode renders URL input field', () => {
+    render(<ShinganPanel />)
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')!
+    fireEvent.click(urlRadio)
+    expect(screen.getByLabelText('GitHub raw URL')).toBeInTheDocument()
+  })
+
+  it('SHP-010: URL mode hides upload zone', () => {
+    render(<ShinganPanel />)
+    expect(screen.getByText('Drop a skill file here or click to browse')).toBeInTheDocument()
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')!
+    fireEvent.click(urlRadio)
+    expect(screen.queryByText('Drop a skill file here or click to browse')).not.toBeInTheDocument()
+  })
+
+  it('SHP-011: URL input has correct placeholder mentioning raw.githubusercontent.com', () => {
+    render(<ShinganPanel />)
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')!
+    fireEvent.click(urlRadio)
+    const input = screen.getByLabelText('GitHub raw URL')
+    expect(input).toHaveAttribute('placeholder', expect.stringContaining('raw.githubusercontent.com'))
+  })
+
+  it('SHP-012: Scan URL button has aria-label and is disabled when input empty', () => {
+    render(<ShinganPanel />)
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')!
+    fireEvent.click(urlRadio)
+    const scanBtn = screen.getByRole('button', { name: 'Scan URL' })
+    expect(scanBtn).toBeDisabled()
+  })
+
+  it('SHP-013: Scan URL button enabled when URL input has value', () => {
+    render(<ShinganPanel />)
+    const urlRadio = screen.getAllByRole('radio').find((r) => r.textContent === 'URL')!
+    fireEvent.click(urlRadio)
+    const input = screen.getByLabelText('GitHub raw URL')
+    fireEvent.change(input, { target: { value: 'https://raw.githubusercontent.com/owner/repo/main/skill.md' } })
+    const scanBtn = screen.getByRole('button', { name: 'Scan URL' })
+    expect(scanBtn).not.toBeDisabled()
   })
 })

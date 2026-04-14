@@ -25,7 +25,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import {
-  Shield, Eye, Upload, Download, AlertTriangle, ChevronDown, ChevronRight,
+  Shield, Eye, Upload, Download, AlertTriangle, ChevronDown, ChevronRight, Globe,
 } from 'lucide-react'
 import type { SkillTrustScore, SkillFormat } from 'bu-tpi/shingan'
 
@@ -420,8 +420,11 @@ export function ShinganPanel() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Batch mode
-  const [batchMode, setBatchMode] = useState(false)
+  // Scan mode: single paste/upload, batch upload, or URL scan
+  type ScanMode = 'single' | 'batch' | 'url'
+  const [scanMode, setScanMode] = useState<ScanMode>('single')
+  const batchMode = scanMode === 'batch'
+  const [urlInput, setUrlInput] = useState('')
   const [batchEntries, setBatchEntries] = useState<readonly BatchEntry[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const batchFileInputRef = useRef<HTMLInputElement>(null)
@@ -466,54 +469,30 @@ export function ShinganPanel() {
     }
   }, [content, formatOverride, filename])
 
-  // ---- File upload (single) ----
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setFilename(file.name)
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      const text = ev.target?.result
-      if (typeof text === 'string') {
-        setContent(text)
+  // ---- URL scan (GitHub only, via /api/shingan/url) ----
+  const handleUrlScan = useCallback(async () => {
+    if (!urlInput.trim()) return
+    setLoading(true)
+    setError(null)
+    setResult(null)
+    try {
+      const res = await fetch('/api/shingan/url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: urlInput.trim() }),
+      })
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({})) as { error?: string }
+        throw new Error(errBody.error || `HTTP ${res.status}`)
       }
+      const data = await res.json() as { trustScore: SkillTrustScore }
+      setResult({ trustScore: data.trustScore, detectedFormat: data.trustScore.format })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'URL scan failed')
+    } finally {
+      setLoading(false)
     }
-    reader.readAsText(file)
-  }, [])
-
-  // ---- Drag-and-drop ----
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      e.stopPropagation()
-
-      if (batchMode) {
-        const files = Array.from(e.dataTransfer.files)
-        handleBatchFiles(files)
-        return
-      }
-
-      const file = e.dataTransfer.files[0]
-      if (!file) return
-
-      setFilename(file.name)
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        const text = ev.target?.result
-        if (typeof text === 'string') {
-          setContent(text)
-        }
-      }
-      reader.readAsText(file)
-    },
-    [batchMode], // eslint-disable-line react-hooks/exhaustive-deps
-  )
-
-  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
+  }, [urlInput])
 
   // ---- Batch mode — reads all files then sends one request to /api/shingan/batch ----
   const handleBatchFiles = useCallback(async (files: File[]) => {
@@ -570,6 +549,55 @@ export function ShinganPanel() {
     }
   }, [])
 
+  // ---- File upload (single) ----
+  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setFilename(file.name)
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const text = ev.target?.result
+      if (typeof text === 'string') {
+        setContent(text)
+      }
+    }
+    reader.readAsText(file)
+  }, [])
+
+  // ---- Drag-and-drop ----
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      if (scanMode === 'batch') {
+        const files = Array.from(e.dataTransfer.files)
+        void handleBatchFiles(files)
+        return
+      }
+
+      const file = e.dataTransfer.files[0]
+      if (!file) return
+
+      setFilename(file.name)
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        const text = ev.target?.result
+        if (typeof text === 'string') {
+          setContent(text)
+        }
+      }
+      reader.readAsText(file)
+    },
+    [scanMode, handleBatchFiles], // eslint-disable-line react-hooks/exhaustive-deps
+  )
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
   const handleBatchFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(e.target.files ?? [])
@@ -621,21 +649,30 @@ export function ShinganPanel() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {/* Batch mode toggle */}
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={batchMode}
-              onChange={(e) => {
-                setBatchMode(e.target.checked)
-                setResult(null)
-                setBatchEntries([])
-                setError(null)
-              }}
-              className="rounded border-input"
-            />
-            Batch mode
-          </label>
+          {/* Scan mode selector */}
+          <div
+            className="flex items-center gap-0.5 rounded-lg border border-[var(--border-subtle)] p-0.5"
+            role="radiogroup"
+            aria-label="Select scan mode"
+          >
+            {(['single', 'batch', 'url'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                role="radio"
+                aria-checked={scanMode === mode}
+                onClick={() => { setScanMode(mode); setResult(null); setBatchEntries([]); setError(null) }}
+                className={cn(
+                  'px-2.5 py-1 rounded-md text-xs font-medium motion-safe:transition-colors',
+                  scanMode === mode
+                    ? 'bg-[var(--dojo-primary)] text-white'
+                    : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {mode === 'single' ? 'Single' : mode === 'batch' ? 'Batch' : 'URL'}
+              </button>
+            ))}
+          </div>
 
           {/* Export button */}
           {canExport && (
@@ -648,6 +685,7 @@ export function ShinganPanel() {
       </div>
 
       {/* Upload Zone */}
+      {scanMode !== 'url' && (
       <Card>
         <CardContent className="p-4 space-y-4">
           <div
@@ -755,6 +793,51 @@ export function ShinganPanel() {
           )}
         </CardContent>
       </Card>
+      )}
+
+      {/* URL Scan Input */}
+      {scanMode === 'url' && (
+        <Card>
+          <CardContent className="p-4 space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="shingan-url-input" className="text-sm font-medium">
+                GitHub raw URL
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Only <code>raw.githubusercontent.com</code> URLs are accepted
+              </p>
+              <input
+                id="shingan-url-input"
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') void handleUrlScan() }}
+                placeholder="https://raw.githubusercontent.com/owner/repo/branch/skill.md"
+                className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                aria-label="GitHub raw URL"
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button
+                variant="gradient"
+                size="sm"
+                onClick={() => void handleUrlScan()}
+                disabled={loading || !urlInput.trim()}
+                aria-label="Scan URL"
+              >
+                {loading ? (
+                  <>Scanning...</>
+                ) : (
+                  <>
+                    <Globe className="w-4 h-4" aria-hidden="true" />
+                    Scan URL
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Error */}
       {error && (
