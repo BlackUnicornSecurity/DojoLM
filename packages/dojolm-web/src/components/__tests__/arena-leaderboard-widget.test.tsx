@@ -3,8 +3,8 @@
  * Purpose: Unit tests for ArenaLeaderboardWidget dashboard widget
  */
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { mockLucideIcons } from '@/test/mock-lucide-react'
 
@@ -50,6 +50,10 @@ import { ArenaLeaderboardWidget } from '../dashboard/widgets/ArenaLeaderboardWid
 // ---------------------------------------------------------------------------
 
 describe('ArenaLeaderboardWidget', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('renders without crashing', () => {
     const { container } = render(<ArenaLeaderboardWidget />)
     expect(container).toBeTruthy()
@@ -84,6 +88,12 @@ describe('ArenaLeaderboardWidget', () => {
   it('renders "View Arena" action button', () => {
     render(<ArenaLeaderboardWidget />)
     expect(screen.getByText('View Arena')).toBeInTheDocument()
+  })
+
+  it('clicking "View Arena" navigates to arena (not adversarial)', () => {
+    render(<ArenaLeaderboardWidget />)
+    fireEvent.click(screen.getByText('View Arena'))
+    expect(mockSetActiveTab).toHaveBeenCalledWith('arena')
   })
 
   it('renders Trophy icons for top 3 ranks', () => {

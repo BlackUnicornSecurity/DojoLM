@@ -350,4 +350,25 @@ describe('Home (main page)', () => {
     const boundaries = screen.getAllByTestId('error-boundary')
     expect(boundaries.length).toBeGreaterThan(0)
   })
+
+  // --- MP-013: strategic deep link renders KumiteRetiredNotice ---
+  it('MP-013: activeTab=strategic renders KumiteRetiredNotice heading', () => {
+    mockActiveTab = 'strategic'
+    render(<Home />)
+    expect(screen.getByText('The Kumite has been split')).toBeInTheDocument()
+    expect(screen.getByText(/The Kumite hub is retired/)).toBeInTheDocument()
+  })
+
+  // --- MP-014: KumiteRetiredNotice exposes all 4 promoted destinations ---
+  it('MP-014: KumiteRetiredNotice shows Mitsuke, DNA, Kagami, and Battle Arena buttons', () => {
+    mockActiveTab = 'strategic'
+    render(<Home />)
+    // All 4 promoted children must be reachable from the retired-notice
+    expect(screen.getByText('Mitsuke')).toBeInTheDocument()
+    expect(screen.getByText('Amaterasu DNA')).toBeInTheDocument()
+    expect(screen.getByText('Kagami')).toBeInTheDocument()
+    expect(screen.getByText('Battle Arena')).toBeInTheDocument()
+    // Dashboard (default tab) must not appear simultaneously
+    expect(screen.queryByTestId('noda-dashboard')).not.toBeInTheDocument()
+  })
 })
