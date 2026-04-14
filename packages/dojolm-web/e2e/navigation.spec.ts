@@ -1,6 +1,10 @@
 /**
  * E2E Test: Navigation & Module Switching
- * Verifies all 10 modules are accessible from sidebar navigation.
+ * Verifies all visible modules are accessible from sidebar navigation.
+ *
+ * Phase 1 remediation (2026-04-14): Battle Arena + Sengoku added (now visible).
+ * Removed stale entries: Armory (hidden), LLM Dashboard (renamed → Model Lab),
+ * The Kumite (retired → strategic).
  */
 
 import { test, expect, type Locator } from '@playwright/test';
@@ -8,14 +12,13 @@ import { test, expect, type Locator } from '@playwright/test';
 const MODULES = [
   { name: 'Dashboard', readyText: /Dashboard|System Health|Scan Text/i, timeout: 10000 },
   { name: 'Haiku Scanner', readyText: 'Input Text', timeout: 10000 },
-  { name: 'Armory', readyText: 'Fixture Explorer', timeout: 10000 },
-  { name: 'LLM Dashboard', readyText: 'LLM Testing Dashboard', timeout: 10000 },
+  { name: 'Model Lab', readyText: /Model|Jutsu|Testing/i, timeout: 10000 },
+  { name: 'Battle Arena', readyText: /Battle Arena|Matches|Warriors/i, timeout: 15000 },
   { name: 'Hattori Guard', readyText: 'Guard Mode', timeout: 10000 },
   { name: 'Bushido Book', readyText: 'Framework Coverage', timeout: 35000 },
   { name: 'Atemi Lab', readyText: 'Attack Tools', timeout: 10000 },
-  { name: 'The Kumite', readyText: 'SAGE', timeout: 10000 },
-  { name: 'Ronin Hub', readyText: 'Programs', timeout: 10000 },
   { name: 'Sengoku', readyText: 'Campaigns', timeout: 10000 },
+  { name: 'Ronin Hub', readyText: 'Programs', timeout: 10000 },
   { name: 'Kotoba', readyText: 'Prompt Text', timeout: 10000 },
   { name: 'Admin', readyText: 'General', timeout: 10000 },
 ];

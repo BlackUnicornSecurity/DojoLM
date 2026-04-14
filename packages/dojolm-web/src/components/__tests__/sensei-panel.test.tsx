@@ -119,14 +119,14 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     // Test group
     expect(screen.getByText('Haiku Scanner')).toBeInTheDocument()
-    // Armory and Battle Arena demoted via hidden: true (Testing UX Consolidation)
+    // Armory permanently demoted via hidden: true (absorbed into Buki)
     expect(screen.queryByText('Armory')).toBeNull()
     expect(screen.getByText('Model Lab')).toBeInTheDocument()
-    expect(screen.queryByText('Battle Arena')).toBeNull()
+    // Phase 1 remediation: Battle Arena now first-class visible nav item
+    expect(screen.getByText('Battle Arena')).toBeInTheDocument()
     expect(screen.getByText('Atemi Lab')).toBeInTheDocument()
-    // Train 2 PR-4b.5: Sengoku demoted via hidden: true — Campaigns now lives
-    // as a sub-tab inside Atemi Lab (AdversarialLab).
-    expect(screen.queryByText('Sengoku')).toBeNull()
+    // Phase 1 remediation: Sengoku restored to first-class nav
+    expect(screen.getByText('Sengoku')).toBeInTheDocument()
     expect(screen.getByText('Ronin Hub')).toBeInTheDocument()
     // Protect group
     expect(screen.getByText('Hattori Guard')).toBeInTheDocument()
@@ -140,10 +140,8 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(screen.getByText('Admin')).toBeInTheDocument()
     // Dashboard should NOT be listed (always on)
     expect(screen.queryByText('Dashboard')).toBeNull()
-    // The Kumite should NOT be listed (demoted via hidden: true)
+    // The Kumite should NOT be listed (permanently retired, hidden: true)
     expect(screen.queryByText('The Kumite')).toBeNull()
-    // Sengoku should NOT be listed (demoted via hidden: true in PR-4b.5)
-    expect(screen.queryByText('Sengoku')).toBeNull()
   })
 
   it('SP-007: clicking a module item calls toggle', () => {
@@ -171,15 +169,15 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     expect(mockResetAll).toHaveBeenCalledTimes(1)
   })
 
-  it('SP-010: shows 12 toggleable module items (all except dashboard + hidden)', () => {
-    // Testing UX Consolidation: Armory + Battle Arena demoted via hidden: true.
-    // Armory absorbed into Buki (Payload Lab), Arena absorbed into Atemi Lab.
-    // 14 → 12.
+  it('SP-010: shows 14 toggleable module items (all except dashboard + hidden)', () => {
+    // Phase 1 remediation: Battle Arena + Sengoku restored to first-class nav.
+    // Only armory (absorbed into Buki) and strategic (retired) remain hidden: true.
+    // 12 → 14.
     render(<SenseiPanel open={true} onClose={vi.fn()} />)
     const moduleLabels = [
-      // Test group (Armory + Battle Arena removed — hidden: true)
+      // Test group (Armory removed — hidden: true; Battle Arena + Sengoku restored)
       'Haiku Scanner', 'Buki', 'Model Lab',
-      'Atemi Lab', 'Ronin Hub',
+      'Battle Arena', 'Atemi Lab', 'Sengoku', 'Ronin Hub',
       // Protect group
       'Hattori Guard', 'Kotoba',
       // Intel & Evidence group
@@ -190,7 +188,7 @@ describe('SenseiPanel (SP-001 to SP-012)', () => {
     for (const label of moduleLabels) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
-    expect(moduleLabels.length).toBe(12)
+    expect(moduleLabels.length).toBe(14)
   })
 
   it('SP-011: onClose is callable (dialog close integration)', () => {

@@ -55,6 +55,11 @@ export const NAV_GROUPS: ReadonlyArray<{ id: NavGroup; label: string }> = [
  * - Demoted strategic (The Kumite) — removed group field so it does NOT
  *   render in sidebar. Still reachable via #strategic hash for back-compat.
  *
+ * HIDDEN-FEATURE-REMEDIATION-PLAN-2026-04-13 Phase 1:
+ * - arena: promoted to visible (hidden: true removed). Live API at /api/arena.
+ * - sengoku: restored to first-class nav (hidden: true removed). Live API at /api/sengoku/campaigns.
+ *   Campaigns sub-tab in Atemi Lab remains as a secondary access path.
+ *
  * `isPrimary: true` marks items shown in the mobile bottom-bar (up to 4).
  */
 export const NAV_ITEMS = [
@@ -113,7 +118,6 @@ export const NAV_ITEMS = [
     icon: Trophy,
     description: 'Multi-agent adversarial sandbox and leaderboard',
     group: 'test' as NavGroup,
-    hidden: true,
   },
   {
     id: 'adversarial',
@@ -130,10 +134,6 @@ export const NAV_ITEMS = [
     icon: Swords,
     description: 'Continuous red teaming campaigns',
     group: 'test' as NavGroup,
-    // Train 2 PR-4b.5 (2026-04-09): Sengoku demoted — Campaigns now lives as a
-    // sub-tab inside Atemi Lab (AdversarialLab). hidden: true keeps the NavId
-    // type + back-compat activeTab branch alive but removes the sidebar entry.
-    hidden: true,
   },
   {
     id: 'ronin-hub',
@@ -203,11 +203,13 @@ export const NAV_ITEMS = [
     icon: SlidersHorizontal,
     description: 'Settings, validation, and configuration',
   },
-  // ─── Demoted (hidden: true → hidden from all nav surfaces) ────
-  // Train 2 PR-4b.8 (2026-04-09): StrategicHub.tsx deleted. The 'strategic' NavId
-  // stays in the type for back-compat with deep links / stored activeTab values.
-  // The page.tsx activeTab='strategic' branch now renders <KumiteRetiredNotice/>
-  // which redirects users to the promoted children (Mitsuke, DNA, Kagami, Arena).
+  // ─── Permanently demoted (hidden: true → never rendered in nav) ────
+  // armory: legacy back-compat alias, absorbed into Buki (Payload Lab).
+  //   hidden: true is permanent — use id: 'buki' for all new references.
+  // strategic: Train 2 PR-4b.8 (2026-04-09): StrategicHub.tsx deleted. The
+  //   'strategic' NavId stays in the type for back-compat with deep links /
+  //   stored activeTab values. page.tsx activeTab='strategic' branch renders
+  //   <KumiteRetiredNotice/> which redirects to Mitsuke, DNA, Kagami, Arena.
   {
     id: 'strategic',
     label: 'The Kumite',

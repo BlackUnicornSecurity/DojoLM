@@ -24,7 +24,12 @@ import { MoreHorizontal, X } from 'lucide-react'
 const allPrimaryItems = NAV_ITEMS.filter((item): item is typeof item & { isPrimary: true } =>
   'isPrimary' in item && item.isPrimary === true
 )
-const allMoreItems = NAV_ITEMS.filter(item => !('isPrimary' in item && item.isPrimary === true))
+// Exclude primary items and permanently-demoted (hidden: true) items so retired
+// surfaces like 'strategic' and 'armory' never appear in the More drawer.
+const allMoreItems = NAV_ITEMS.filter(item =>
+  !('isPrimary' in item && item.isPrimary === true) &&
+  !('hidden' in item && item.hidden === true)
+)
 
 export function MobileNav() {
   const { activeTab, setActiveTab } = useNavigation()
@@ -250,8 +255,8 @@ function MoreDrawer({
               </div>
             )
           })}
-          {/* Ungrouped more items (e.g., admin) */}
-          {items.filter(item => !('group' in item)).map((item) => {
+          {/* Ungrouped more items (e.g., admin) — double-guard hidden flag */}
+          {items.filter(item => !('group' in item) && !('hidden' in item && item.hidden === true)).map((item) => {
             const Icon = item.icon
             const isActive = activeTab === item.id
             return (
