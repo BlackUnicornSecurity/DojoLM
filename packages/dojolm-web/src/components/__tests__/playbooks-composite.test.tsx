@@ -110,12 +110,10 @@ describe('PlaybooksComposite (PBC-001 to PBC-008)', () => {
     expect(screen.getByText('WebMCP Attack Testing')).toBeInTheDocument()
   })
 
-  it('PBC-004: WebMCP Execute Tests button is disabled', () => {
+  it('PBC-004: WebMCP shows "WebMCP Attack Testing" heading', () => {
     render(<PlaybooksComposite />)
     switchToWebMCP()
-    const btn = screen.getAllByTestId('button').find((b) => b.textContent?.includes('Execute Tests'))
-    expect(btn).toBeInTheDocument()
-    expect(btn).toBeDisabled()
+    expect(screen.getByText('WebMCP Attack Testing')).toBeInTheDocument()
   })
 
   it('PBC-005: WebMCP shows not-yet-available notice with role="status"', () => {
@@ -131,17 +129,18 @@ describe('PlaybooksComposite (PBC-001 to PBC-008)', () => {
     expect(screen.queryByText(/Findings \(/)).not.toBeInTheDocument()
   })
 
-  it('PBC-007: no consent dialog rendered initially', () => {
+  it('PBC-007: no consent dialog, form inputs, or Execute button rendered', () => {
     render(<PlaybooksComposite />)
     switchToWebMCP()
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Target MCP server URL')).not.toBeInTheDocument()
+    expect(screen.queryByText('Execute Tests')).not.toBeInTheDocument()
   })
 
-  it('PBC-008: WebMCP target URL input accepts text', () => {
+  it('PBC-008: WebMCP not-yet-available notice mentions backend', () => {
     render(<PlaybooksComposite />)
     switchToWebMCP()
-    const input = screen.getByLabelText('Target MCP server URL')
-    fireEvent.change(input, { target: { value: 'https://example.com/mcp' } })
-    expect(input).toHaveValue('https://example.com/mcp')
+    const notice = screen.getByRole('status')
+    expect(notice.textContent).toMatch(/backend route/i)
   })
 })

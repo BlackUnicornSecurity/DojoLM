@@ -483,7 +483,9 @@ export function ShinganPanel() {
       })
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({})) as { error?: string }
-        throw new Error(errBody.error || `HTTP ${res.status}`)
+        // Truncate server error to avoid leaking internal details
+        const serverMsg = typeof errBody.error === 'string' ? errBody.error.slice(0, 200) : null
+        throw new Error(serverMsg || `HTTP ${res.status}`)
       }
       const data = await res.json() as { trustScore: SkillTrustScore }
       setResult({ trustScore: data.trustScore, detectedFormat: data.trustScore.format })
