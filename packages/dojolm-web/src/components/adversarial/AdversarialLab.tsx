@@ -36,6 +36,7 @@ import {
   BookOpen,
   FileCheck,
   Trophy,
+  BrainCircuit,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -489,8 +490,7 @@ export function AdversarialLab({
   const [skillError, setSkillError] = useState<string | null>(null)
   const executingRef = useRef(false)
   const { emitFinding } = useEcosystemEmit('atemi')
-  const { getActiveResult, isAnalyzing: oblAnalyzing } = useBehavioralAnalysis()
-  const oblResult = getActiveResult()
+  const { getResult, runRobustness, runGeometry, isAnalyzing: oblAnalyzing } = useBehavioralAnalysis()
 
   // H13.3: Target model selection with sessionStorage persistence
   const [targetModel, setTargetModel] = useState<string>(() => {
@@ -503,6 +503,11 @@ export function AdversarialLab({
     }
     return AVAILABLE_MODELS[0].id
   })
+
+  // Story 3.3.1: use getResult(targetModel) so panels always show data for the selected model
+  const targetModelEntry = AVAILABLE_MODELS.find(m => m.id === targetModel)
+  const targetModelName = targetModelEntry?.name ?? targetModel
+  const oblResult = getResult(targetModel)
 
   const handleModelChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
@@ -706,6 +711,26 @@ export function AdversarialLab({
               </option>
             ))}
           </select>
+          {/* Story 3.2.2: Run OBL behavioral analysis for selected model */}
+          <button
+            type="button"
+            onClick={() => {
+              runRobustness(targetModel, targetModelName)
+              runGeometry(targetModel, targetModelName)
+            }}
+            disabled={oblAnalyzing}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium min-h-[44px] flex-shrink-0',
+              'border border-[var(--dojo-primary)] text-[var(--dojo-primary)]',
+              'hover:bg-[var(--dojo-primary)]/10 motion-safe:transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
+              oblAnalyzing && 'opacity-50 pointer-events-none',
+            )}
+            aria-label="Run OBL behavioral analysis for selected model"
+          >
+            <BrainCircuit className="h-3.5 w-3.5" aria-hidden="true" />
+            {oblAnalyzing ? 'Analyzing…' : 'Analyze'}
+          </button>
         </CardContent>
       </Card>
 
@@ -777,29 +802,42 @@ export function AdversarialLab({
         })}
       </div>
 
-      {/* OBL: Defense Robustness + Concept Recon (Modules 2 & 5) */}
-      {(oblResult?.robustness || oblResult?.geometry) && (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {oblResult?.robustness && (
-            <Card className="border-[var(--border)]">
-              <CardContent className="p-4">
-                <DefenseDegradationIndicator
-                  degradationCurve={oblResult.robustness.degradationCurve}
-                  recoveryRate={oblResult.robustness.recoveryRate}
-                />
-              </CardContent>
-            </Card>
-          )}
-          {(oblResult?.geometry || oblAnalyzing) && (
-            <Card className="border-[var(--border)]">
-              <CardContent className="p-4">
-                <ConceptReconPanel
-                  geometry={oblResult?.geometry ?? null}
-                  isLoading={oblAnalyzing}
-                />
-              </CardContent>
-            </Card>
-          )}
+      {/* OBL: Defense Robustness + Concept Recon (Modules 2 & 5) — Story 3.3.1: always shows selected model's data */}
+      {(oblResult?.robustness || oblResult?.geometry || oblAnalyzing) ? (
+        <div className="space-y-2">
+          <p className="text-xs text-muted-foreground">OBL Analysis — {targetModelName}</p>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {oblResult?.robustness && (
+              <Card className="border-[var(--border)]">
+                <CardContent className="p-4">
+                  <DefenseDegradationIndicator
+                    degradationCurve={oblResult.robustness.degradationCurve}
+                    recoveryRate={oblResult.robustness.recoveryRate}
+                  />
+                </CardContent>
+              </Card>
+            )}
+            {(oblResult?.geometry || oblAnalyzing) && (
+              <Card className="border-[var(--border)]">
+                <CardContent className="p-4">
+                  <ConceptReconPanel
+                    geometry={oblResult?.geometry ?? null}
+                    isLoading={oblAnalyzing}
+                  />
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-2">
+          <p className="text-xs font-semibold flex items-center gap-1.5">
+            <BrainCircuit className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+            OBL Behavioral Analysis
+          </p>
+          <p className="text-xs text-muted-foreground">
+            No OBL data for {targetModelName}. Select a model above and click Analyze to run behavioral analysis.
+          </p>
         </div>
       )}
 

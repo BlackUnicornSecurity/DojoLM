@@ -22,6 +22,27 @@ vi.mock('@/lib/contexts/EcosystemContext', () => ({
   useEcosystemEmit: () => ({ emitFinding: vi.fn() }),
 }))
 
+const mockRunRobustness = vi.fn().mockResolvedValue(undefined)
+const mockRunGeometry = vi.fn().mockResolvedValue(undefined)
+vi.mock('@/lib/contexts', () => ({
+  useBehavioralAnalysis: () => ({
+    getResult: () => null,
+    getActiveResult: () => null,
+    runRobustness: mockRunRobustness,
+    runGeometry: mockRunGeometry,
+    runAlignment: vi.fn().mockResolvedValue(undefined),
+    runDepthProfile: vi.fn().mockResolvedValue(undefined),
+    isAnalyzing: false,
+    activeModelId: null,
+    activeModelName: null,
+    error: null,
+    results: {},
+    setActiveModel: vi.fn(),
+  }),
+  LLMModelProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  LLMExecutionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+}))
+
 vi.mock('@/lib/NavigationContext', () => ({
   useNavigation: () => ({ setActiveTab: vi.fn() }),
 }))
@@ -251,14 +272,14 @@ describe('AL-006: Active tools count changes with mode', () => {
   it('shows more active tools in aggressive mode than passive', () => {
     const { unmount } = render(<AdversarialLab initialMode="passive" />)
     // In passive mode, only 1 tool enabled (notification-flood with minMode passive)
-    // The "of 17 total" text is always present, and the count changes with mode
-    const passiveText = screen.getByText('of 17 total')
+    // The "of 18 total" text is always present, and the count changes with mode
+    const passiveText = screen.getByText('of 18 total')
     const passiveCountEl = passiveText.previousElementSibling
     const passiveCount = Number(passiveCountEl?.textContent ?? '0')
     unmount()
 
     render(<AdversarialLab initialMode="aggressive" />)
-    const aggressiveText = screen.getByText('of 17 total')
+    const aggressiveText = screen.getByText('of 18 total')
     const aggressiveCountEl = aggressiveText.previousElementSibling
     const aggressiveCount = Number(aggressiveCountEl?.textContent ?? '0')
     expect(aggressiveCount).toBeGreaterThan(passiveCount)
@@ -359,5 +380,33 @@ describe('AL-012: Session history renders', () => {
   it('renders the session history component', () => {
     render(<AdversarialLab />)
     expect(screen.getByTestId('session-history')).toBeInTheDocument()
+  })
+})
+
+// ===========================================================================
+// AL-013: OBL Analyze button renders (Story 3.2.2)
+// ===========================================================================
+describe('AL-013: OBL Analyze button renders', () => {
+  it('renders "Analyze" button next to target model selector', () => {
+    render(<AdversarialLab />)
+    expect(screen.getByLabelText('Run OBL behavioral analysis for selected model')).toBeInTheDocument()
+  })
+
+  it('shows OBL empty state when no data for selected model', () => {
+    render(<AdversarialLab />)
+    expect(screen.getByText('OBL Behavioral Analysis')).toBeInTheDocument()
+    expect(screen.getByText(/No OBL data for/)).toBeInTheDocument()
+  })
+})
+
+// ===========================================================================
+// AL-014: OBL Analyze button calls run functions (Story 3.2.2)
+// ===========================================================================
+describe('AL-014: OBL Analyze button triggers analysis', () => {
+  it('calls runRobustness and runGeometry when Analyze button clicked', () => {
+    render(<AdversarialLab />)
+    fireEvent.click(screen.getByLabelText('Run OBL behavioral analysis for selected model'))
+    expect(mockRunRobustness).toHaveBeenCalledWith('gpt-4o', 'GPT-4o')
+    expect(mockRunGeometry).toHaveBeenCalledWith('gpt-4o', 'GPT-4o')
   })
 })
