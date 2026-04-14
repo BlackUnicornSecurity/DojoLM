@@ -108,6 +108,17 @@ describe('sensei system-prompt', () => {
       expect(msg).toContain('scanned prompt');
     });
 
+    // Story 6.3.1 — sengoku and strategic present in Layer 1 static module list
+    it('includes Sengoku in platform module list (6.3.1)', () => {
+      const msg = buildSystemMessage(mockContext);
+      expect(msg).toContain('Sengoku');
+    });
+
+    it('includes The Kumite in platform module list (6.3.1)', () => {
+      const msg = buildSystemMessage(mockContext);
+      expect(msg).toContain('The Kumite');
+    });
+
     it('shows guard=OFF when guard is disabled', () => {
       const msg = buildSystemMessage(disabledGuardContext);
       expect(msg).toContain('guard=OFF');

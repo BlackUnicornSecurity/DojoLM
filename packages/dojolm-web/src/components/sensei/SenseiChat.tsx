@@ -32,6 +32,7 @@ interface SenseiChatProps {
   readonly onSend: (text: string) => void
   readonly onConfirm: (callId: string) => void
   readonly onReject: (callId: string) => void
+  readonly onNavigate?: (module: NavId) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -46,6 +47,7 @@ export function SenseiChat({
   onSend,
   onConfirm,
   onReject,
+  onNavigate,
 }: SenseiChatProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -122,6 +124,7 @@ export function SenseiChat({
                     data={result.data}
                     error={result.error}
                     durationMs={result.durationMs}
+                    onNavigate={onNavigate}
                   />
                 ))}
               </div>

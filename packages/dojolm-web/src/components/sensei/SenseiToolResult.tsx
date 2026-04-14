@@ -21,6 +21,7 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react'
+import type { NavId } from '@/lib/constants'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,6 +33,7 @@ interface SenseiToolResultProps {
   readonly data: unknown
   readonly error?: string
   readonly durationMs: number
+  readonly onNavigate?: (module: NavId) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -44,6 +46,7 @@ export function SenseiToolResultCard({
   data,
   error,
   durationMs,
+  onNavigate,
 }: SenseiToolResultProps) {
   const [expanded, setExpanded] = useState(false)
 
@@ -69,7 +72,7 @@ export function SenseiToolResultCard({
         {!success && error ? (
           <p className="text-red-400 text-xs">{error}</p>
         ) : (
-          renderToolData(tool, data)
+          renderToolData(tool, data, onNavigate)
         )}
       </div>
 
@@ -131,7 +134,7 @@ function filterRecords(arr: unknown[]): Record<string, unknown>[] {
 // Specialized renderers
 // ---------------------------------------------------------------------------
 
-function renderToolData(tool: string, data: unknown): React.ReactNode {
+function renderToolData(tool: string, data: unknown, onNavigate?: (module: NavId) => void): React.ReactNode {
   if (data === null || data === undefined) {
     return <p className="text-xs text-[var(--text-tertiary)]">No data returned</p>
   }
@@ -153,9 +156,9 @@ function renderToolData(tool: string, data: unknown): React.ReactNode {
     case 'get_compliance':
       return renderCompliance(data)
     case 'navigate_to':
-      return renderNavigate(data)
+      return renderNavigate(data, onNavigate)
     case 'explain_feature':
-      return renderExplain(data)
+      return renderExplain(data, onNavigate)
     case 'create_arena_match':
       return renderArenaCreated(data)
     case 'list_arena_matches':
@@ -364,23 +367,46 @@ function renderCompliance(data: unknown): React.ReactNode {
 }
 
 // --- Navigate result ---
-function renderNavigate(data: unknown): React.ReactNode {
+function renderNavigate(data: unknown, onNavigate?: (module: NavId) => void): React.ReactNode {
   const d = asRecord(data)
   if (!d) return renderGeneric(data)
   const moduleName = typeof d.module === 'string' ? d.module : 'unknown'
   return (
-    <p className="text-xs text-[var(--text-secondary)]">
-      Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(moduleName)}</span>
-    </p>
+    <div className="space-y-1.5">
+      <p className="text-xs text-[var(--text-secondary)]">
+        Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(moduleName)}</span>
+      </p>
+      {onNavigate && moduleName !== 'unknown' && (
+        <button
+          onClick={() => onNavigate(moduleName as NavId)}
+          className="px-2 py-1 rounded text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)]/20 focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-safe:transition-colors"
+        >
+          Go to {formatToolName(moduleName)} →
+        </button>
+      )}
+    </div>
   )
 }
 
 // --- Explain feature ---
-function renderExplain(data: unknown): React.ReactNode {
+function renderExplain(data: unknown, onNavigate?: (module: NavId) => void): React.ReactNode {
   const d = asRecord(data)
   if (!d) return renderGeneric(data)
   const description = typeof d.description === 'string' ? d.description : ''
-  return <p className="text-xs text-[var(--foreground)] whitespace-pre-wrap">{description}</p>
+  const moduleName = typeof d.module === 'string' ? d.module : null
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-[var(--foreground)] whitespace-pre-wrap">{description}</p>
+      {onNavigate && moduleName && (
+        <button
+          onClick={() => onNavigate(moduleName as NavId)}
+          className="px-2 py-1 rounded text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)]/20 focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-safe:transition-colors"
+        >
+          Open {formatToolName(moduleName)} →
+        </button>
+      )}
+    </div>
+  )
 }
 
 // --- Arena match created ---

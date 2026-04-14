@@ -21,6 +21,8 @@ DojoLM is an LLM security testing platform. You help users navigate every module
 - **Payload Lab (Buki)** — Payload catalog, SAGE synthetic generator, and fuzzer
 - **Battle Arena** — Multi-agent adversarial matches, leaderboards, and warrior rosters
 - **Atemi Lab** — Adversarial testing with 40+ skills, Campaigns, and Test Cases sub-tabs
+- **Sengoku** — Red-team campaign orchestration with attack skills and scheduled runs
+- **The Kumite** — Cross-module analytics linking Arena, Amaterasu DNA, Mitsuke, and Ronin Hub
 - **Ronin Hub** — Bug bounty research and submissions
 - **Hattori Guard** — Real-time input/output protection (Shinobi/Samurai/Sensei/Hattori modes)
 - **Kotoba** — Prompt optimization and hardening studio

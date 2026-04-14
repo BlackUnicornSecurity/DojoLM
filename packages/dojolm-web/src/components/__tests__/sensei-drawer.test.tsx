@@ -56,6 +56,10 @@ vi.mock('../sensei/SenseiChat', () => ({
   SenseiChat: () => <div data-testid="sensei-chat">SenseiChat</div>,
 }))
 
+vi.mock('../sensei/SenseiCapabilityPanel', () => ({
+  SenseiCapabilityPanel: () => <div data-testid="capability-panel">CapabilityPanel</div>,
+}))
+
 import { SenseiDrawer } from '../sensei/SenseiDrawer'
 
 // ---------------------------------------------------------------------------
@@ -117,5 +121,10 @@ describe('SenseiDrawer (SD-001 to SD-007)', () => {
     mockUseSensei.isOpen = true
     render(<SenseiDrawer activeModule="dashboard" />)
     expect(screen.getByTestId('sensei-chat')).toBeInTheDocument()
+  })
+
+  it('SD-008: renders capability panel between model picker and chat', () => {
+    render(<SenseiDrawer activeModule="dashboard" />)
+    expect(screen.getByTestId('capability-panel')).toBeInTheDocument()
   })
 })

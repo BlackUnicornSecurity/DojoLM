@@ -1,7 +1,8 @@
 /**
  * File: sensei-tool-result.test.tsx
  * Purpose: Unit tests for SenseiToolResultCard component
- * Test IDs: STR-001 to STR-008
+ * Test IDs: STR-001 to STR-012
+ * Story: 6.2.1 — navigate_to/explain_feature dead-end fixes (STR-009–012)
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -107,5 +108,66 @@ describe('SenseiToolResultCard (STR-001 to STR-008)', () => {
       <SenseiToolResultCard tool="unknown_tool" success={true} data={null} durationMs={10} />,
     )
     expect(screen.getByText('No data returned')).toBeInTheDocument()
+  })
+
+  it('STR-009: navigate_to renders passive text and no button without onNavigate', () => {
+    render(
+      <SenseiToolResultCard
+        tool="navigate_to"
+        success={true}
+        data={{ module: 'scanner', action: 'navigate' }}
+        durationMs={10}
+      />,
+    )
+    expect(screen.getByText(/Navigating to/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Go to Scanner/ })).not.toBeInTheDocument()
+  })
+
+  it('STR-010: navigate_to renders Go-to button and fires onNavigate on click', () => {
+    const mockNavigate = vi.fn()
+    render(
+      <SenseiToolResultCard
+        tool="navigate_to"
+        success={true}
+        data={{ module: 'scanner', action: 'navigate' }}
+        durationMs={10}
+        onNavigate={mockNavigate}
+      />,
+    )
+    const btn = screen.getByRole('button', { name: /Go to Scanner →/ })
+    expect(btn).toBeInTheDocument()
+    fireEvent.click(btn)
+    expect(mockNavigate).toHaveBeenCalledWith('scanner')
+  })
+
+  it('STR-011: explain_feature renders description without CTA when onNavigate absent', () => {
+    render(
+      <SenseiToolResultCard
+        tool="explain_feature"
+        success={true}
+        data={{ description: 'The Haiku Scanner detects threats.', module: 'scanner' }}
+        durationMs={10}
+      />,
+    )
+    expect(screen.getByText('The Haiku Scanner detects threats.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Open Scanner/ })).not.toBeInTheDocument()
+  })
+
+  it('STR-012: explain_feature renders Open-module button and fires onNavigate on click', () => {
+    const mockNavigate = vi.fn()
+    render(
+      <SenseiToolResultCard
+        tool="explain_feature"
+        success={true}
+        data={{ description: 'The Haiku Scanner detects threats.', module: 'scanner' }}
+        durationMs={10}
+        onNavigate={mockNavigate}
+      />,
+    )
+    expect(screen.getByText('The Haiku Scanner detects threats.')).toBeInTheDocument()
+    const btn = screen.getByRole('button', { name: /Open Scanner →/ })
+    expect(btn).toBeInTheDocument()
+    fireEvent.click(btn)
+    expect(mockNavigate).toHaveBeenCalledWith('scanner')
   })
 })

@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { Bot, X, Trash2, ChevronDown } from 'lucide-react'
 import { useSensei } from '@/hooks/useSensei'
 import { SenseiChat } from './SenseiChat'
+import { SenseiCapabilityPanel } from './SenseiCapabilityPanel'
 import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { NavId } from '@/lib/constants'
@@ -154,6 +155,9 @@ export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
           />
         </div>
 
+        {/* Capability summary — exposes existing tool registry, no new features */}
+        <SenseiCapabilityPanel />
+
         {/* F-R3-02: Error banner for missing model or other errors */}
         {error && (
           <div
@@ -180,6 +184,7 @@ export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
           onSend={sendMessage}
           onConfirm={confirmToolCall}
           onReject={rejectToolCall}
+          onNavigate={onNavigate}
         />
       </div>
     </>
