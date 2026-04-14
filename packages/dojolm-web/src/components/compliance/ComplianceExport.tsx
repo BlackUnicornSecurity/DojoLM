@@ -36,7 +36,7 @@ export type ExportFormat = 'markdown' | 'json' | 'csv'
 export interface ComplianceControl {
   id: string
   name: string
-  status: string
+  status: 'covered' | 'partial' | 'gap'
   coverage: number
 }
 

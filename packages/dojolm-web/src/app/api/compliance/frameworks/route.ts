@@ -3,14 +3,35 @@
  * Purpose: GET /api/compliance/frameworks — List all compliance frameworks with metadata
  * Proxies the framework list from /api/compliance, adding OPTIONS preflight support.
  * Index:
- * - OPTIONS handler (line 15)
- * - GET handler (line 22)
+ * - OPTIONS handler (line ~30)
+ * - GET handler (line ~36)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isDemoMode } from '@/lib/demo'
 import { demoComplianceFrameworksGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
+import { getConfiguredAppOrigin } from '@/lib/request-origin'
+
+// In-memory rate limiter — 30 requests per minute per IP
+const rateLimiter = new Map<string, number[]>();
+const RATE_LIMIT = 30;
+const RATE_WINDOW_MS = 60_000;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  if (rateLimiter.size > 10_000) {
+    for (const [key, ts] of rateLimiter) {
+      if (ts.every((t) => now - t >= RATE_WINDOW_MS)) rateLimiter.delete(key);
+    }
+  }
+  const timestamps = rateLimiter.get(ip) ?? [];
+  const recent = timestamps.filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT) return false;
+  recent.push(now);
+  rateLimiter.set(ip, recent);
+  return true;
+}
 
 export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
@@ -26,10 +47,29 @@ export async function GET(request: NextRequest) {
   const authError = checkApiAuth(request)
   if (authError) return authError
 
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
+    request.headers.get('x-real-ip')?.trim() ||
+    'unknown';
+
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded — try again later' },
+      { status: 429 },
+    )
+  }
+
   try {
-    // Delegate to the main compliance route to get the full framework list
-    const baseUrl = new URL(request.url)
-    const complianceUrl = new URL('/api/compliance', baseUrl.origin)
+    // Use the configured app origin (server env var) — never trust the Host header
+    const appOrigin = getConfiguredAppOrigin()
+    if (!appOrigin) {
+      return NextResponse.json(
+        { error: 'Service unavailable' },
+        { status: 503 }
+      )
+    }
+
+    const complianceUrl = new URL('/api/compliance', appOrigin)
 
     // Forward baiss and dynamic query params if provided
     const baiss = request.nextUrl.searchParams.get('baiss')
@@ -50,9 +90,8 @@ export async function GET(request: NextRequest) {
     })
 
     if (!complianceRes.ok) {
-      const body = await complianceRes.text()
       return NextResponse.json(
-        { error: 'Failed to load compliance data', detail: body },
+        { error: 'Failed to load compliance data' },
         { status: complianceRes.status }
       )
     }
