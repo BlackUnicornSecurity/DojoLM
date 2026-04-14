@@ -6,10 +6,13 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import type { ReactNode } from 'react'
 import type { LLMBatchExecution } from '@/lib/llm-types'
+
+// Captured Select onValueChange — allows tests to simulate format changes
+let capturedSelectOnValueChange: ((v: string) => void) | undefined
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -30,9 +33,10 @@ vi.mock('@/components/ui/card', () => ({
 }))
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, value, onValueChange }: { children: ReactNode; value: string; onValueChange: (v: string) => void }) => (
-    <div data-testid="select" data-value={value}>{children}</div>
-  ),
+  Select: ({ children, value, onValueChange }: { children: ReactNode; value: string; onValueChange: (v: string) => void }) => {
+    capturedSelectOnValueChange = onValueChange
+    return <div data-testid="select" data-value={value}>{children}</div>
+  },
   SelectContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   SelectItem: ({ children, value }: { children: ReactNode; value: string }) => <div data-value={value}>{children}</div>,
   SelectTrigger: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -94,6 +98,7 @@ const runningBatch: LLMBatchExecution = {
 describe('TestExporter', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    capturedSelectOnValueChange = undefined
   })
 
   // TE-001
@@ -192,5 +197,65 @@ describe('TestExporter', () => {
     expect(screen.getAllByText('JSON').length).toBeGreaterThan(0)
     expect(screen.getByText('PDF')).toBeInTheDocument()
     expect(screen.getByText('Markdown')).toBeInTheDocument()
+  })
+
+  // TE-013: 'md' format is sent as 'markdown' in the API URL
+  it('TE-013: sends format=markdown in URL when format is md', async () => {
+    mockedFetch.mockResolvedValueOnce({
+      ok: true,
+      text: () => Promise.resolve('# Markdown content'),
+    } as any)
+
+    render(<TestExporter batch={completedBatch} />)
+
+    // Stub DOM download side-effects AFTER render so mounting works
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock')
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+    vi.spyOn(document.body, 'appendChild').mockImplementation((el) => el)
+    vi.spyOn(document.body, 'removeChild').mockImplementation((el) => el)
+
+    act(() => { capturedSelectOnValueChange?.('md') })
+
+    fireEvent.click(screen.getByRole('button', { name: /export/i }))
+
+    await waitFor(() => {
+      expect(mockedFetch).toHaveBeenCalled()
+    })
+
+    const calledUrl = mockedFetch.mock.calls[0][0] as string
+    const params = new URLSearchParams(calledUrl.split('?')[1])
+    expect(params.get('format')).toBe('markdown')
+
+    vi.restoreAllMocks()
+  })
+
+  // TE-014: PDF export calls response.json() (not response.text()) for atob decode
+  it('TE-014: PDF export reads response as JSON for base64 decode', async () => {
+    const mockJson = vi.fn().mockResolvedValue({
+      data: btoa('fake-pdf-bytes'),
+      filename: 'test-report.pdf',
+    })
+    mockedFetch.mockResolvedValueOnce({
+      ok: true,
+      json: mockJson,
+    } as any)
+
+    render(<TestExporter batch={completedBatch} />)
+
+    // Stub DOM download side-effects AFTER render so mounting works
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock')
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+    vi.spyOn(document.body, 'appendChild').mockImplementation((el) => el)
+    vi.spyOn(document.body, 'removeChild').mockImplementation((el) => el)
+
+    act(() => { capturedSelectOnValueChange?.('pdf') })
+
+    fireEvent.click(screen.getByRole('button', { name: /export/i }))
+
+    await waitFor(() => {
+      expect(mockJson).toHaveBeenCalled()
+    })
+
+    vi.restoreAllMocks()
   })
 })

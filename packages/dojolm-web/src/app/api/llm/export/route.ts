@@ -10,6 +10,28 @@ import { checkApiAuth } from '@/lib/api-auth';
 import { fileStorage } from '@/lib/storage/file-storage';
 import type { ReportFormat, LLMTestExecution } from '@/lib/llm-types';
 
+// In-memory rate limiter — 10 export requests per minute per IP
+const rateLimiter = new Map<string, number[]>();
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60_000;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  if (rateLimiter.size > 10_000) {
+    for (const [key, ts] of rateLimiter) {
+      if (ts.every((t) => now - t >= RATE_WINDOW_MS)) rateLimiter.delete(key);
+    }
+  }
+  const timestamps = rateLimiter.get(ip) ?? [];
+  const recent = timestamps.filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT) return false;
+  recent.push(now);
+  rateLimiter.set(ip, recent);
+  return true;
+}
+
+const VALID_FORMATS = new Set<string>(['json', 'pdf', 'markdown', 'csv', 'sarif']);
+
 // PDF generation utilities
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -38,9 +60,25 @@ export async function GET(request: NextRequest) {
     const authResult = checkApiAuth(request);
     if (authResult) return authResult;
 
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
+      request.headers.get('x-real-ip')?.trim() ||
+      'unknown';
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded — try again later' },
+        { status: 429 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const batchId = searchParams.get('batchId');
-    const format = (searchParams.get('format') || 'json') as ReportFormat;
+    const rawFormat = searchParams.get('format') || 'json';
+    if (!VALID_FORMATS.has(rawFormat)) {
+      return NextResponse.json({ error: 'Unsupported export format' }, { status: 400 });
+    }
+    const format = rawFormat as ReportFormat;
     const includeResponses = searchParams.get('includeResponses') !== 'false';
 
     const mode = searchParams.get('mode');
@@ -123,7 +161,7 @@ export async function GET(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: `Unsupported format: ${format}` },
+          { error: 'Unsupported export format' },
           { status: 400 }
         );
     }
@@ -575,6 +613,7 @@ function exportAsMarkdown(report: any, includeResponses: boolean): NextResponse 
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Content-Disposition': `attachment; filename="${filename}"`,
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 }

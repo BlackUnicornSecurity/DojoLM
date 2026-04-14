@@ -39,9 +39,11 @@ export function TestExporter({ batch, executions = [] }: TestExporterProps) {
     setIsExporting(true);
 
     try {
+      // Map internal 'md' format to the API's 'markdown' parameter value
+      const apiFormat = format === 'md' ? 'markdown' : format;
       const params = new URLSearchParams({
         batchId: batch.id,
-        format,
+        format: apiFormat,
       });
 
       const response = await fetchWithAuth(`/api/llm/export?${params.toString()}`);
@@ -50,29 +52,27 @@ export function TestExporter({ batch, executions = [] }: TestExporterProps) {
         throw new Error('Export failed');
       }
 
-      // Get the content based on format
-      let content: string;
+      let blob: Blob;
       let filename: string;
-      let mimeType: string;
 
       if (format === 'json') {
-        content = await response.text();
+        const text = await response.text();
+        blob = new Blob([text], { type: 'application/json' });
         filename = `llm-test-results-${batch.id}.json`;
-        mimeType = 'application/json';
       } else if (format === 'pdf') {
-        content = await response.text(); // PDF is base64 encoded from server
-        filename = `llm-test-results-${batch.id}.pdf`;
-        mimeType = 'application/pdf';
-      } else if (format === 'md') {
-        content = await response.text();
-        filename = `llm-test-results-${batch.id}.md`;
-        mimeType = 'text/markdown';
+        // API returns { data: base64String, filename: string }
+        const json = await response.json() as { data: string; filename?: string };
+        const pdfBytes = Uint8Array.from(atob(json.data), (c) => c.charCodeAt(0));
+        blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        filename = json.filename ?? `llm-test-results-${batch.id}.pdf`;
       } else {
-        throw new Error('Unsupported format');
+        // 'md' — API returns plain text markdown
+        const text = await response.text();
+        blob = new Blob([text], { type: 'text/markdown' });
+        filename = `llm-test-results-${batch.id}.md`;
       }
 
       // Create download link
-      const blob = new Blob([content], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -83,7 +83,6 @@ export function TestExporter({ batch, executions = [] }: TestExporterProps) {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Export error:', error);
-      // Could show a toast notification here
     } finally {
       setIsExporting(false);
     }

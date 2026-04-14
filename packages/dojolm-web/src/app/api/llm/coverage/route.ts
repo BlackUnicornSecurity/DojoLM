@@ -12,6 +12,26 @@ import { apiError } from '@/lib/api-error';
 import { fetchCoverageMap } from '@/lib/llm-server-utils';
 import { checkApiAuth } from '@/lib/api-auth';
 
+// In-memory rate limiter — 30 coverage requests per minute per IP
+const rateLimiter = new Map<string, number[]>();
+const RATE_LIMIT = 30;
+const RATE_WINDOW_MS = 60_000;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  if (rateLimiter.size > 10_000) {
+    for (const [key, ts] of rateLimiter) {
+      if (ts.every((t) => now - t >= RATE_WINDOW_MS)) rateLimiter.delete(key);
+    }
+  }
+  const timestamps = rateLimiter.get(ip) ?? [];
+  const recent = timestamps.filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT) return false;
+  recent.push(now);
+  rateLimiter.set(ip, recent);
+  return true;
+}
+
 // ===========================================================================
 // GET /api/llm/coverage - Get coverage metrics
 // ===========================================================================
@@ -20,6 +40,18 @@ export async function GET(request: NextRequest) {
   if (isDemoMode()) return demoCoverageGet();
   const authError = checkApiAuth(request);
   if (authError) return authError;
+
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
+    request.headers.get('x-real-ip')?.trim() ||
+    'unknown';
+
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded — try again later' },
+      { status: 429 },
+    );
+  }
 
   try {
     const { searchParams } = new URL(request.url);
