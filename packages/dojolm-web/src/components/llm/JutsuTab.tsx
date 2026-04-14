@@ -126,11 +126,21 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
   const [guideOpen, setGuideOpen] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
   const [configValues, setConfigValues] = useState<Record<string, unknown>>(DEFAULT_CONFIG)
-  const { getResult } = useBehavioralAnalysis()
+  const { getResult, runAlignment, runRobustness, runGeometry, runDepthProfile } = useBehavioralAnalysis()
 
   const handleRunTest = useCallback(() => {
     onNavigateToTests?.()
   }, [onNavigateToTests])
+
+  /** Run all 4 OBL modules for a model. Concurrent — each settles independently. */
+  const handleAnalyze = useCallback(async (modelId: string, modelName: string) => {
+    await Promise.allSettled([
+      runAlignment(modelId, modelName),
+      runRobustness(modelId, modelName),
+      runGeometry(modelId, modelName),
+      runDepthProfile(modelId, modelName),
+    ])
+  }, [runAlignment, runRobustness, runGeometry, runDepthProfile])
 
   // Rehydrate config from localStorage on mount (with schema validation).
   //
@@ -330,6 +340,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
               model={model}
               onView={setSelectedModel}
               onRetest={handleRunTest}
+              onAnalyze={handleAnalyze}
             />
           ))}
         </div>
@@ -346,6 +357,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
         <ModelDetailView
           model={selectedModel}
           onClose={() => setSelectedModel(null)}
+          onAnalyze={handleAnalyze}
         />
       )}
 

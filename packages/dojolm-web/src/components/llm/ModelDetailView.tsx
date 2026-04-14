@@ -15,20 +15,23 @@ import { cn, formatDate } from '@/lib/utils'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { BeltBadge, getBeltRank } from '@/components/ui/BeltBadge'
-import { X, BarChart3, Clock, FileText, GraduationCap, Activity, TrendingUp, TrendingDown, Minus, Shield, AlertTriangle, Download } from 'lucide-react'
+import { X, BarChart3, Clock, FileText, GraduationCap, Activity, TrendingUp, TrendingDown, Minus, Shield, AlertTriangle, Download, BrainCircuit } from 'lucide-react'
 import { ExpandableCard } from '@/components/ui/ExpandableCard'
 import { SafeCodeBlock } from '@/components/ui/SafeCodeBlock'
 import type { AggregatedModel, TestExecution } from './JutsuAggregation'
 import { calculateTrend } from './JutsuAggregation'
+import { useBehavioralAnalysis } from '@/lib/contexts'
 
 type DetailTab = 'overview' | 'history' | 'deliverables' | 'training' | 'metrics'
 
 interface ModelDetailViewProps {
   model: AggregatedModel
   onClose: () => void
+  /** Run OBL behavioral analysis for this model. Displayed in the Training tab. */
+  onAnalyze?: (modelId: string, modelName: string) => void
 }
 
-export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
+export function ModelDetailView({ model, onClose, onAnalyze }: ModelDetailViewProps) {
   const [activeTab, setActiveTab] = useState<DetailTab>('overview')
   const belt = getBeltRank(model.latestScore)
   const trend = calculateTrend(model.scoreTrend)
@@ -147,7 +150,7 @@ export function ModelDetailView({ model, onClose }: ModelDetailViewProps) {
               <DeliverablesTab model={model} />
             </TabsContent>
             <TabsContent value="training" className="mt-0">
-              <TrainingTab model={model} />
+              <TrainingTab model={model} onAnalyze={onAnalyze} />
             </TabsContent>
             <TabsContent value="metrics" className="mt-0">
               <MetricsTab model={model} />
@@ -496,15 +499,59 @@ function DeliverablesTab({ model }: { model: AggregatedModel }) {
   )
 }
 
-function TrainingTab({ model }: { model: AggregatedModel }) {
+function TrainingTab({ model, onAnalyze }: { model: AggregatedModel; onAnalyze?: (modelId: string, modelName: string) => void }) {
+  const { getResult, isAnalyzing } = useBehavioralAnalysis()
+  const oblResult = getResult(model.modelId)
+  const hasOBLData = !!(oblResult?.alignment || oblResult?.robustness || oblResult?.geometry || oblResult?.refusalDepth)
+
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <GraduationCap className="h-8 w-8 text-muted-foreground mb-3" aria-hidden="true" />
-      <p className="text-sm font-medium">Hardening Sessions</p>
-      <p className="text-xs text-muted-foreground mt-1">
-        No hardening data available yet for {model.modelName}.
-        Run adversarial training sessions from the Atemi Lab to populate this view.
-      </p>
+    <div className="space-y-4">
+      {/* OBL Behavioral Analysis */}
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-3">
+        <p className="text-xs font-semibold flex items-center gap-1.5">
+          <BrainCircuit className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+          OBL Behavioral Analysis
+        </p>
+        {hasOBLData ? (
+          <ul className="space-y-0.5 text-xs text-muted-foreground list-none">
+            {oblResult?.alignment && <li>✓ Alignment imprint analyzed</li>}
+            {oblResult?.robustness && <li>✓ Defense robustness analyzed</li>}
+            {oblResult?.geometry && <li>✓ Concept geometry analyzed</li>}
+            {oblResult?.refusalDepth && <li>✓ Refusal depth profiled</li>}
+          </ul>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            No OBL data for {model.modelName} yet.
+          </p>
+        )}
+        {onAnalyze && (
+          <button
+            onClick={() => onAnalyze(model.modelId, model.modelName)}
+            disabled={isAnalyzing}
+            className={cn(
+              'flex items-center gap-2 px-3 py-2 w-full rounded-lg border text-xs font-medium',
+              'border-[var(--dojo-primary)] text-[var(--dojo-primary)]',
+              'hover:bg-[var(--dojo-primary)]/10 motion-safe:transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]',
+              isAnalyzing && 'opacity-50 pointer-events-none',
+            )}
+            aria-label={`Run OBL analysis for ${model.modelName}`}
+          >
+            <BrainCircuit className="h-3.5 w-3.5" aria-hidden="true" />
+            {isAnalyzing ? 'Analyzing...' : hasOBLData ? 'Re-analyze with OBL' : 'Analyze with OBL'}
+          </button>
+        )}
+      </div>
+
+      {/* Hardening Sessions placeholder */}
+      <div className="flex flex-col items-center justify-center py-6 text-center">
+        <GraduationCap className="h-8 w-8 text-muted-foreground mb-3" aria-hidden="true" />
+        <p className="text-sm font-medium">Hardening Sessions</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          No hardening data available yet for {model.modelName}.
+          Run adversarial training sessions from the Atemi Lab to populate this view.
+        </p>
+      </div>
     </div>
   )
 }

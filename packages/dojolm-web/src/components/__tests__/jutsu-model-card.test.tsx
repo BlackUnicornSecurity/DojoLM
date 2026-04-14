@@ -44,8 +44,25 @@ vi.mock('../jutsu/JutsuAggregation', () => ({
   },
 }))
 
+vi.mock('./AlignmentBadge', () => ({
+  AlignmentBadge: () => null,
+}))
+
+vi.mock('../llm/AlignmentBadge', () => ({
+  AlignmentBadge: () => null,
+}))
+
+const mockIsAnalyzing = { value: false }
+vi.mock('@/lib/contexts', () => ({
+  useBehavioralAnalysis: () => ({
+    getResult: () => null,
+    isAnalyzing: mockIsAnalyzing.value,
+  }),
+}))
+
 beforeEach(() => {
   vi.clearAllMocks()
+  mockIsAnalyzing.value = false
 })
 
 // ---------------------------------------------------------------------------
@@ -232,5 +249,44 @@ describe('JMC-012: Sparkline renders', () => {
   it('does not render sparkline with single score', () => {
     render(<JutsuModelCard model={createModel({ scoreTrend: [78] })} onView={vi.fn()} />)
     expect(screen.queryByLabelText(/Score trend/)).not.toBeInTheDocument()
+  })
+})
+
+// ===========================================================================
+// JMC-013: Analyze button renders (Story 3.1.1)
+// ===========================================================================
+describe('JMC-013: Analyze button renders when onAnalyze provided', () => {
+  it('renders Analyze button when onAnalyze prop is provided', () => {
+    render(<JutsuModelCard model={createModel()} onView={vi.fn()} onAnalyze={vi.fn()} />)
+    expect(screen.getByLabelText('Analyze GPT-4 with OBL')).toBeInTheDocument()
+  })
+
+  it('does NOT render Analyze button when onAnalyze is not provided', () => {
+    render(<JutsuModelCard model={createModel()} onView={vi.fn()} />)
+    expect(screen.queryByLabelText('Analyze GPT-4 with OBL')).not.toBeInTheDocument()
+  })
+})
+
+// ===========================================================================
+// JMC-014: Analyze button calls onAnalyze (Story 3.1.1)
+// ===========================================================================
+describe('JMC-014: Analyze button calls onAnalyze with modelId and modelName', () => {
+  it('calls onAnalyze with modelId and modelName on click', () => {
+    const onAnalyze = vi.fn()
+    render(<JutsuModelCard model={createModel()} onView={vi.fn()} onAnalyze={onAnalyze} />)
+    fireEvent.click(screen.getByLabelText('Analyze GPT-4 with OBL'))
+    expect(onAnalyze).toHaveBeenCalledWith('gpt-4', 'GPT-4')
+  })
+})
+
+// ===========================================================================
+// JMC-015: Analyze button disabled when isAnalyzing (Story 3.1.1)
+// ===========================================================================
+describe('JMC-015: Analyze button disabled when isAnalyzing', () => {
+  it('is disabled while analysis is in flight', () => {
+    mockIsAnalyzing.value = true
+    render(<JutsuModelCard model={createModel()} onView={vi.fn()} onAnalyze={vi.fn()} />)
+    const btn = screen.getByLabelText('Analyze GPT-4 with OBL')
+    expect(btn).toBeDisabled()
   })
 })

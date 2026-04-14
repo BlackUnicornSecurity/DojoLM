@@ -13,7 +13,7 @@ import { memo, useCallback } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 import { BeltBadge, getBeltRank } from '@/components/ui/BeltBadge'
 import { Badge } from '@/components/ui/badge'
-import { Eye, RefreshCw, Download, TrendingUp, TrendingDown, Minus, Clock, FlaskConical } from 'lucide-react'
+import { Eye, RefreshCw, Download, TrendingUp, TrendingDown, Minus, Clock, FlaskConical, BrainCircuit } from 'lucide-react'
 import type { AggregatedModel } from './JutsuAggregation'
 import { calculateTrend } from './JutsuAggregation'
 import { AlignmentBadge } from './AlignmentBadge'
@@ -24,6 +24,8 @@ interface JutsuModelCardProps {
   onView: (model: AggregatedModel) => void
   onRetest?: (modelId: string) => void
   onDownload?: (modelId: string) => void
+  /** Run OBL behavioral analysis for this model. Disabled while any analysis is in flight. */
+  onAnalyze?: (modelId: string, modelName: string) => void
 }
 
 export const JutsuModelCard = memo(function JutsuModelCard({
@@ -31,10 +33,11 @@ export const JutsuModelCard = memo(function JutsuModelCard({
   onView,
   onRetest,
   onDownload,
+  onAnalyze,
 }: JutsuModelCardProps) {
   const belt = getBeltRank(model.latestScore)
   const trend = calculateTrend(model.scoreTrend)
-  const { getResult } = useBehavioralAnalysis()
+  const { getResult, isAnalyzing } = useBehavioralAnalysis()
   const alignment = getResult(model.modelId)?.alignment ?? null
 
   const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus
@@ -147,6 +150,21 @@ export const JutsuModelCard = memo(function JutsuModelCard({
             >
               <RefreshCw className="h-3 w-3" aria-hidden="true" />
               Re-Test
+            </button>
+          )}
+          {onAnalyze && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onAnalyze(model.modelId, model.modelName) }}
+              disabled={isAnalyzing}
+              className={cn(
+                'flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium motion-safe:transition-colors min-h-[44px]',
+                'text-muted-foreground hover:text-foreground hover:bg-[var(--bg-tertiary)]',
+                isAnalyzing && 'opacity-50 pointer-events-none',
+              )}
+              aria-label={`Analyze ${model.modelName} with OBL`}
+            >
+              <BrainCircuit className="h-3 w-3" aria-hidden="true" />
+              Analyze
             </button>
           )}
           {onDownload && (
