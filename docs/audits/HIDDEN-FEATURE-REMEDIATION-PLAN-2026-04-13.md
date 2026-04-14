@@ -113,8 +113,8 @@ Run this sequence at the start and end of every phase:
 | --- | --- | --- | --- |
 | 0 | Program Baseline | Working docs linked, baseline test inventory captured, execution rules locked | ✅ CLOSED 2026-04-14 |
 | 1 | Navigation and Route Truth | Hidden live modules become discoverable; retired legacy routes become consistent | ✅ CLOSED 2026-04-14 |
-| 2 | Dashboard and Widget Surfacing | Dashboard becomes a clear surfacing mechanism instead of a hidden-control cluster | 🔄 NEXT |
-| 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident |
+| 2 | Dashboard and Widget Surfacing | Dashboard becomes a clear surfacing mechanism instead of a hidden-control cluster | ✅ CLOSED 2026-04-14 |
+| 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident | 🔄 NEXT |
 | 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy |
 | 5 | Results, Analytics, and Export Contract Alignment | Bushido/Jutsu/reporting surfaces become discoverable and contract-correct |
 | 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei |
@@ -263,7 +263,22 @@ Exit:
 
 - No active UI control routes users into retired Kumite unless they intentionally open a legacy deep link.
 
-## Phase 2: Dashboard and Widget Surfacing
+## Phase 2: Dashboard and Widget Surfacing ✅ CLOSED 2026-04-14
+
+### Phase 2 Implementation Notes
+
+Commits:
+- `feat: story 2.1.1+2.1.2 — dashboard customizer discoverability` — Modules button, widget count label, DashboardCustomizer Module Visibility prominence
+- `feat: story 2.1.3 — remove mock data from all widgets; wire to live APIs` — All 7 widgets de-mocked; Arena/Sengoku/Mitsuke wired to live APIs; SAGE/TimeChamber/Kotoba show "not yet available"
+- `feat: story 2.2.1 — WidgetCard keyboard navigation and WIDGET_NAV_TARGET type safety` — role=button, tabIndex=0, Enter/Space, VALID_NAV_IDS runtime guard, Partial<Record<string, NavId>> type
+- `test: story 2.2.2 — config sanitization tests for loadConfig` — 5 sanitization tests; existing loadConfig implementation confirmed correct
+- `fix: phase 2 adversarial audit — error states, type safety, loading state` — H-1: WidgetCard undefined guard, H-2: LLMJutsuWidget loading skeleton, H-3: error state for Arena/Sengoku/Mitsuke, M-1: MitsukeAlertWidget runtime entry validation
+
+Adversarial audit findings resolved:
+- H-1: WidgetCard `handleNavigate` — add `resolvedNavTarget &&` guard before `setActiveTab` call
+- H-2: LLMJutsuWidget — no loading state (rendered "0" immediately with layout shift); fixed with loading skeleton + finally block
+- H-3: ArenaLeaderboardWidget, SengokuWidget, MitsukeAlertWidget — `!res.ok` and catch both produce identical "no data" state; fixed with `error` state + distinct "Could not load data/alerts" message
+- M-1: MitsukeAlertWidget — raw JSON fields rendered without runtime type validation; fixed with type guard filter before `setEntries`
 
 ### Epic 2.1: Make Dashboard Personalization Discoverable
 
