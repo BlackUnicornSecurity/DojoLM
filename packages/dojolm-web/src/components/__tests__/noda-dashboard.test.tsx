@@ -633,3 +633,132 @@ describe('localStorage migration (KASHIWA-1.1)', () => {
     })
   })
 })
+
+// ---------------------------------------------------------------------------
+// Story 2.2.2: Config sanitization — stale IDs, invalid fields, mixed config
+// ---------------------------------------------------------------------------
+
+describe('config sanitization (story 2.2.2)', () => {
+  beforeEach(() => {
+    localStorage.removeItem('noda-dashboard-config')
+  })
+  afterEach(() => {
+    localStorage.removeItem('noda-dashboard-config')
+    vi.restoreAllMocks()
+  })
+
+  it('drops widget IDs not in the catalog', async () => {
+    const savedConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 12 },
+        { id: 'stale-deleted-widget', visible: true, order: 1, size: 6 },
+        { id: 'another-unknown-widget', visible: false, order: 2, size: 4 },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(savedConfig))
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      const ids = Array.from(document.querySelectorAll('[data-testid="widget-ids"] li')).map(el => el.textContent)
+      expect(ids).toContain('quick-launch')
+      expect(ids).not.toContain('stale-deleted-widget')
+      expect(ids).not.toContain('another-unknown-widget')
+    })
+  })
+
+  it('drops widget with non-boolean visible field', async () => {
+    const savedConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 12 },
+        { id: 'health-gauge', visible: 'yes', order: 1, size: 4 }, // invalid visible
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(savedConfig))
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      // Only quick-launch should be present (health-gauge has invalid visible)
+      expect(Number(screen.getByTestId('total-count').textContent)).toBe(1)
+    })
+  })
+
+  it('drops widget with non-finite order field', async () => {
+    const savedConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 12 },
+        { id: 'health-gauge', visible: false, order: null, size: 4 }, // invalid order
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(savedConfig))
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      expect(Number(screen.getByTestId('total-count').textContent)).toBe(1)
+    })
+  })
+
+  it('returns DEFAULT_DASHBOARD_CONFIG when all saved widget IDs are unknown', async () => {
+    const savedConfig = {
+      widgets: [
+        { id: 'ghost-widget-a', visible: true, order: 0, size: 6 },
+        { id: 'ghost-widget-b', visible: true, order: 1, size: 6 },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(savedConfig))
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      const defaultVisibleCount = DEFAULT_DASHBOARD_CONFIG.widgets.filter(w => w.visible).length
+      expect(Number(screen.getByTestId('visible-count').textContent)).toBe(defaultVisibleCount)
+    })
+  })
+
+  it('preserves valid widgets when mixed with stale IDs', async () => {
+    const savedConfig = {
+      widgets: [
+        { id: 'quick-launch', visible: true, order: 0, size: 12 },
+        { id: 'stale-widget', visible: true, order: 1, size: 6 },
+        { id: 'engine-grid', visible: false, order: 2, size: 12 },
+      ],
+      layout: 'default',
+    }
+    localStorage.setItem('noda-dashboard-config', JSON.stringify(savedConfig))
+
+    render(
+      <DashboardConfigProvider>
+        <TestConsumer />
+      </DashboardConfigProvider>
+    )
+
+    await waitFor(() => {
+      // 2 valid widgets remain (stale-widget dropped)
+      expect(Number(screen.getByTestId('total-count').textContent)).toBe(2)
+      // Only quick-launch is visible
+      expect(Number(screen.getByTestId('visible-count').textContent)).toBe(1)
+    })
+  })
+})
