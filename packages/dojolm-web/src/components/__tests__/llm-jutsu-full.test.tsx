@@ -34,6 +34,17 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
+vi.mock('@/lib/contexts', () => ({
+  useBehavioralAnalysis: () => ({
+    getResult: () => null,
+    isAnalyzing: false,
+    runAlignment: vi.fn().mockResolvedValue(undefined),
+    runRobustness: vi.fn().mockResolvedValue(undefined),
+    runGeometry: vi.fn().mockResolvedValue(undefined),
+    runDepthProfile: vi.fn().mockResolvedValue(undefined),
+  }),
+}))
+
 vi.mock('@/components/ui/ModuleHeader', () => ({
   ModuleHeader: ({ title, subtitle, actions }: { title: string; subtitle: string; actions?: ReactNode }) => (
     <div data-testid="module-header"><h1>{title}</h1><p>{subtitle}</p>{actions}</div>
