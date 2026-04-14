@@ -247,7 +247,10 @@ export const NAV_ID_ALIASES: Record<RetiredNavId, NavId> = {
   'time-chamber': 'sengoku',
   attackdna: 'dna',
   armory: 'buki',
-  'arena-standalone': 'adversarial',
+  // arena-standalone was the old Atemi-embedded alias. Now that arena is a
+  // first-class visible nav item, deep links using #arena-standalone resolve
+  // directly to arena instead of adversarial.
+  'arena-standalone': 'arena',
 }
 
 /**

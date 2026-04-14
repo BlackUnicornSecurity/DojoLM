@@ -116,7 +116,7 @@ const WIDGET_NAV_TARGET: Record<string, string> = {
   'module-grid': 'scanner',
   'fixture-roulette': 'buki',
   'attack-of-day': 'buki',
-  'ecosystem-pulse': 'attackdna',
+  'ecosystem-pulse': 'dna',
   'ronin-hub': 'ronin-hub',
   'health-gauge': 'admin',
   'platform-stats': 'admin',
