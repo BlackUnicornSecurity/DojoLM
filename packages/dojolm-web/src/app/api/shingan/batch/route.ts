@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip')?.trim() || 'unknown';
+  const ip = request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() || request.headers.get('x-real-ip')?.trim() || 'unknown';
   if (!checkRateLimit(ip)) {
     return NextResponse.json({ error: 'Rate limit exceeded — try again later' }, { status: 429 });
   }

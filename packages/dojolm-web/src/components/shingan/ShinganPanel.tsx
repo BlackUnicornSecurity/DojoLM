@@ -515,62 +515,60 @@ export function ShinganPanel() {
     e.stopPropagation()
   }, [])
 
-  // ---- Batch mode ----
-  const handleBatchFiles = useCallback((files: File[]) => {
-    const entries: BatchEntry[] = files.map((f) => ({
-      filename: f.name,
-      content: '',
-      result: null,
-      loading: true,
-      error: null,
-    }))
-    setBatchEntries(entries)
+  // ---- Batch mode — reads all files then sends one request to /api/shingan/batch ----
+  const handleBatchFiles = useCallback(async (files: File[]) => {
+    // Show loading state for all entries immediately
+    setBatchEntries(
+      files.map((f) => ({ filename: f.name, content: '', result: null, loading: true, error: null }))
+    )
 
-    files.forEach((file, idx) => {
-      const reader = new FileReader()
-      reader.onload = async (ev) => {
-        const text = ev.target?.result
-        if (typeof text !== 'string') return
-
-        try {
-          const body: Record<string, unknown> = { content: text, filename: file.name }
-          if (formatOverride !== 'auto') {
-            body.format = formatOverride
-          }
-
-          const res = await fetch('/api/shingan/scan', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          })
-
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`)
-          }
-
-          const data: ScanResponse = await res.json()
-
-          setBatchEntries((prev) => {
-            const next = [...prev]
-            next[idx] = { ...next[idx], content: text, result: data, loading: false }
-            return next
-          })
-        } catch (err) {
-          setBatchEntries((prev) => {
-            const next = [...prev]
-            next[idx] = {
-              ...next[idx],
-              content: text,
-              loading: false,
-              error: err instanceof Error ? err.message : 'Scan failed',
+    try {
+      // Read all files in parallel
+      const skills = await Promise.all(
+        files.map((file) =>
+          new Promise<{ content: string; filename: string }>((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = (ev) => {
+              const text = ev.target?.result
+              if (typeof text === 'string') resolve({ content: text, filename: file.name })
+              else reject(new Error(`Failed to read ${file.name}`))
             }
-            return next
+            reader.onerror = () => reject(new Error(`Failed to read ${file.name}`))
+            reader.readAsText(file)
           })
-        }
+        )
+      )
+
+      const res = await fetch('/api/shingan/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ skills }),
+      })
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
       }
-      reader.readAsText(file)
-    })
-  }, [formatOverride])
+
+      const data = await res.json() as { results: SkillTrustScore[] }
+
+      setBatchEntries(
+        files.map((file, idx) => ({
+          filename: file.name,
+          content: skills[idx].content,
+          result: data.results[idx]
+            ? { trustScore: data.results[idx], detectedFormat: data.results[idx].format }
+            : null,
+          loading: false,
+          error: null,
+        }))
+      )
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Batch scan failed'
+      setBatchEntries(
+        files.map((f) => ({ filename: f.name, content: '', result: null, loading: false, error: message }))
+      )
+    }
+  }, [])
 
   const handleBatchFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
