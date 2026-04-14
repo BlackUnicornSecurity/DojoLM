@@ -72,7 +72,7 @@ export function WidgetCard({ title, children, actions, className, contentClassNa
   const isClickable = resolvedNavTarget && VALID_NAV_IDS.has(resolvedNavTarget)
 
   function handleNavigate() {
-    if (isClickable) setActiveTab(resolvedNavTarget)
+    if (resolvedNavTarget && isClickable) setActiveTab(resolvedNavTarget)
   }
 
   return (

@@ -45,19 +45,30 @@ export function MitsukeAlertWidget() {
   const { setActiveTab } = useNavigation()
   const [entries, setEntries] = useState<ThreatEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       try {
         const res = await fetchWithAuth('/api/mitsuke/entries?limit=4')
-        if (!res.ok || cancelled) return
+        if (cancelled) return
+        if (!res.ok) { if (!cancelled) setError(true); return }
         const data = await res.json()
         if (!cancelled && Array.isArray(data.entries)) {
-          setEntries(data.entries.slice(0, 4))
+          // Runtime validation — drop entries with missing required fields
+          const validated = (data.entries as unknown[]).filter(
+            (e): e is ThreatEntry =>
+              e !== null &&
+              typeof e === 'object' &&
+              typeof (e as ThreatEntry).id === 'string' &&
+              typeof (e as ThreatEntry).title === 'string' &&
+              typeof (e as ThreatEntry).severity === 'string'
+          )
+          setEntries(validated.slice(0, 4))
         }
       } catch {
-        // Network error — leave entries empty
+        if (!cancelled) setError(true)
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -99,6 +110,11 @@ export function MitsukeAlertWidget() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-8 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
           ))}
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">
+          <p className="text-xs text-muted-foreground">Could not load alerts</p>
+          <p className="text-xs text-muted-foreground/60">Check your connection and try again</p>
         </div>
       ) : entries.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">

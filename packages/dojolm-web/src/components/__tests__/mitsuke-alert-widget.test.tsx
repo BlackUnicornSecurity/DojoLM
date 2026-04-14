@@ -73,11 +73,11 @@ describe('MitsukeAlertWidget', () => {
     expect(mockSetActiveTab).toHaveBeenCalledWith('mitsuke')
   })
 
-  it('shows empty state on network error', async () => {
+  it('shows error state on network error', async () => {
     mockFetchWithAuth.mockRejectedValue(new Error('network'))
     render(<MitsukeAlertWidget />)
     await waitFor(() => {
-      expect(screen.getByText('No alerts')).toBeInTheDocument()
+      expect(screen.getByText('Could not load alerts')).toBeInTheDocument()
     })
   })
 

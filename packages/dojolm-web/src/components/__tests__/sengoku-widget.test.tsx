@@ -86,11 +86,11 @@ describe('SengokuWidget', () => {
     expect(mockSetActiveTab).toHaveBeenCalledWith('sengoku')
   })
 
-  it('shows empty state on network error', async () => {
+  it('shows error state on network error', async () => {
     mockFetchWithAuth.mockRejectedValue(new Error('network'))
     render(<SengokuWidget />)
     await waitFor(() => {
-      expect(screen.getByText('No campaigns yet')).toBeInTheDocument()
+      expect(screen.getByText('Could not load data')).toBeInTheDocument()
     })
   })
 })

@@ -17,19 +17,21 @@ export function SengokuWidget() {
   const { setActiveTab } = useNavigation()
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       try {
         const res = await fetchWithAuth('/api/sengoku/campaigns')
-        if (!res.ok || cancelled) return
+        if (cancelled) return
+        if (!res.ok) { if (!cancelled) setError(true); return }
         const data = await res.json()
         if (!cancelled && Array.isArray(data.campaigns)) {
           setCampaigns(data.campaigns)
         }
       } catch {
-        // Network error — leave campaigns empty
+        if (!cancelled) setError(true)
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -59,6 +61,11 @@ export function SengokuWidget() {
         <div className="space-y-2" aria-busy="true" aria-label="Loading campaigns">
           <div className="h-8 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
           <div className="h-4 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">
+          <p className="text-xs text-muted-foreground">Could not load data</p>
+          <p className="text-xs text-muted-foreground/60">Check your connection and try again</p>
         </div>
       ) : total === 0 ? (
         <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">

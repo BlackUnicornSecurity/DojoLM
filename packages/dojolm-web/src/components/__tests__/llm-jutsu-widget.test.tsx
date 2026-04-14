@@ -87,6 +87,12 @@ describe('LLMJutsuWidget', () => {
     expect(screen.getByText('Open')).toBeInTheDocument()
   })
 
+  it('shows loading skeleton initially', () => {
+    mockCanAccessProtectedApi.mockReturnValue(new Promise(() => {}))
+    render(<LLMJutsuWidget />)
+    expect(document.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+  })
+
   it('shows 0 models on error (no mock fallback per Fixed Decision 6)', async () => {
     // canAccessProtectedApi throws — hits the catch path
     mockCanAccessProtectedApi.mockRejectedValue(new Error('network error'))

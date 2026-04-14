@@ -24,13 +24,15 @@ export function ArenaLeaderboardWidget() {
   const { setActiveTab } = useNavigation()
   const [warriors, setWarriors] = useState<WarriorCard[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       try {
         const res = await fetchWithAuth('/api/arena/warriors')
-        if (!res.ok || cancelled) return
+        if (cancelled) return
+        if (!res.ok) { if (!cancelled) setError(true); return }
         const data = await res.json()
         if (!cancelled && Array.isArray(data.warriors)) {
           const sorted = [...data.warriors]
@@ -39,7 +41,7 @@ export function ArenaLeaderboardWidget() {
           setWarriors(sorted)
         }
       } catch {
-        // Network error — leave warriors empty
+        if (!cancelled) setError(true)
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -66,6 +68,11 @@ export function ArenaLeaderboardWidget() {
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="h-5 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
           ))}
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">
+          <p className="text-xs text-muted-foreground">Could not load data</p>
+          <p className="text-xs text-muted-foreground/60">Check your connection and try again</p>
         </div>
       ) : warriors.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-4 gap-1 text-center">

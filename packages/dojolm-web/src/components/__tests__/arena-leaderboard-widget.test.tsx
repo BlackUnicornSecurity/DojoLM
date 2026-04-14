@@ -115,11 +115,11 @@ describe('ArenaLeaderboardWidget', () => {
     })
   })
 
-  it('shows empty state on network error', async () => {
+  it('shows error state on network error', async () => {
     mockNetworkError()
     render(<ArenaLeaderboardWidget />)
     await waitFor(() => {
-      expect(screen.getByText('No matches recorded yet')).toBeInTheDocument()
+      expect(screen.getByText('Could not load data')).toBeInTheDocument()
     })
   })
 

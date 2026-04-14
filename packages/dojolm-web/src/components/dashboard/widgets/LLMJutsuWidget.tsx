@@ -41,13 +41,13 @@ const BELT_COLORS: Record<string, string> = {
 export function LLMJutsuWidget() {
   const { setActiveTab } = useNavigation()
   const [models, setModels] = useState<ModelSummary[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       try {
         if (!(await canAccessProtectedApi())) {
-          if (!cancelled) setModels([])
           return
         }
 
@@ -68,7 +68,8 @@ export function LLMJutsuWidget() {
         }
       } catch {
         // Network error — leave models empty (no mock fallback per Fixed Decision 6)
-        if (!cancelled) setModels([])
+      } finally {
+        if (!cancelled) setLoading(false)
       }
     }
     load()
@@ -100,6 +101,12 @@ export function LLMJutsuWidget() {
         </button>
       }
     >
+      {loading ? (
+        <div className="space-y-2" aria-busy="true" aria-label="Loading model data">
+          <div className="h-12 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
+          <div className="h-4 bg-muted/50 rounded motion-safe:animate-pulse motion-reduce:animate-none" />
+        </div>
+      ) : (
       <div className="space-y-3">
         {/* Model Count */}
         <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--bg-tertiary)]">
@@ -147,6 +154,7 @@ export function LLMJutsuWidget() {
           </div>
         )}
       </div>
+      )}
     </WidgetCard>
   )
 }
