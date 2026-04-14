@@ -715,8 +715,8 @@ export function AdversarialLab({
           <button
             type="button"
             onClick={() => {
-              runRobustness(targetModel, targetModelName)
-              runGeometry(targetModel, targetModelName)
+              void runRobustness(targetModel, targetModelName)
+              void runGeometry(targetModel, targetModelName)
             }}
             disabled={oblAnalyzing}
             className={cn(
