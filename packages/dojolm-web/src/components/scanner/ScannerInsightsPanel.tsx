@@ -178,6 +178,28 @@ export function ScannerInsightsPanel({ result, className }: ScannerInsightsPanel
               </div>
             </div>
           )}
+
+          {/* OBL: Empty-state guidance when no behavioral or robustness data present */}
+          {!oblResult?.behavioral && !oblResult?.robustness && (
+            <div className="mt-4 rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 space-y-2">
+              <p className="text-xs font-semibold flex items-center gap-1.5">
+                <BrainCircuit className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                OBL Behavioral Analysis
+              </p>
+              <p className="text-xs text-muted-foreground">
+                No OBL data available. Analyze a model in Model Lab to see behavioral metrics alongside scanner findings.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setNavTab('jutsu')}
+                aria-label="Open Model Lab to run OBL analysis"
+              >
+                Open Model Lab
+              </Button>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="modules" className="space-y-4">

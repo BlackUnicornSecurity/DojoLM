@@ -82,6 +82,13 @@ vi.mock('@/lib/NavigationContext', () => ({
   useNavigation: () => ({ activeTab: 'scanner', setActiveTab: vi.fn() }),
 }))
 
+vi.mock('@/lib/contexts', () => ({
+  useBehavioralAnalysis: () => ({
+    getActiveResult: () => null,
+    activeModelName: null,
+  }),
+}))
+
 vi.mock('@/components/ui/TestFlowBanner', () => ({
   TestFlowBanner: () => <div data-testid="test-flow-banner" />,
 }))
@@ -140,6 +147,13 @@ describe('ScannerInsightsPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: /Open Pattern Reference/i }))
 
     expect(screen.getByTestId('pattern-reference')).toBeInTheDocument()
+  })
+
+  it('shows OBL empty-state guidance when no behavioral or robustness data (Story 3.2.1)', () => {
+    render(<ScannerInsightsPanel result={null} />)
+    expect(screen.getByText('OBL Behavioral Analysis')).toBeInTheDocument()
+    expect(screen.getByText(/No OBL data available/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Open Model Lab to run OBL analysis')).toBeInTheDocument()
   })
 
   it('shows an empty diagnostics state when there are no findings', () => {
