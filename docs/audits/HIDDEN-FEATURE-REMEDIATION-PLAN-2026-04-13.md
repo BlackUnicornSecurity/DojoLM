@@ -114,8 +114,8 @@ Run this sequence at the start and end of every phase:
 | 0 | Program Baseline | Working docs linked, baseline test inventory captured, execution rules locked | ✅ CLOSED 2026-04-14 |
 | 1 | Navigation and Route Truth | Hidden live modules become discoverable; retired legacy routes become consistent | ✅ CLOSED 2026-04-14 |
 | 2 | Dashboard and Widget Surfacing | Dashboard becomes a clear surfacing mechanism instead of a hidden-control cluster | ✅ CLOSED 2026-04-14 |
-| 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident | 🔄 NEXT |
-| 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy |
+| 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident | ✅ CLOSED 2026-04-14 |
+| 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy | 🔄 NEXT |
 | 5 | Results, Analytics, and Export Contract Alignment | Bushido/Jutsu/reporting surfaces become discoverable and contract-correct |
 | 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei |
 | 7 | Final Adversarial Audit and Review | 100% pass target, code review complete, docs updated, no unresolved findings |
@@ -413,7 +413,20 @@ Exit:
 
 - Old dashboard state cannot break or regress the new surfacing rules.
 
-## Phase 3: OBL Activation and State-Gated Analytics
+## Phase 3: OBL Activation and State-Gated Analytics ✅ CLOSED 2026-04-14
+
+### Phase 3 Implementation Notes
+
+Commits:
+- `feat: story 3.1.1 — OBL Analyze button in JutsuModelCard + ModelDetailView` (`e6f5fc4e9`) — Analyze button in JutsuModelCard (JMC-013/014/015), TrainingTab OBL panel in ModelDetailView, `handleAnalyze` in JutsuTab (Promise.allSettled over 4 OBL modules)
+- `feat: story 3.2.1 — Scanner OBL empty-state guidance` (`8005f4b1f`) — ScannerInsightsPanel OBL empty-state with "Open Model Lab" CTA when no behavioral/robustness data
+- `feat: stories 3.2.2+3.3.1 — Atemi OBL run/refresh + model identity` (`15772e864`) — AdversarialLab Analyze button wired to selected model, `getResult(targetModel)` replacing `getActiveResult()`, OBL empty-state with model name
+- `fix: add useBehavioralAnalysis mock to llm-jutsu-full tests` (`370bcca62`) — JutsuTab added run functions; test file needed the context mock
+- `fix: phase 3 adversarial audit — OBL TrainingTab tests + void promises` (`aee387731`) — M-1: new model-detail-view-obl.test.tsx (MDV-OBL-001..006), L-1: void promises in AdversarialLab Analyze onClick
+
+Adversarial audit findings resolved:
+- M-1: ModelDetailView.TrainingTab OBL Analyze button had no test coverage — added `model-detail-view-obl.test.tsx` (7 tests: empty state, section heading, module list, button render, call args, disabled state)
+- L-1: AdversarialLab Analyze button called `runRobustness`/`runGeometry` as floating promises — added explicit `void` keyword
 
 ### Epic 3.1: Make OBL Runnable from Jutsu
 
