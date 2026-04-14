@@ -14,7 +14,7 @@
  */
 
 import { Suspense, useState, useRef, useEffect, lazy, type ComponentType } from 'react'
-import { DashboardConfigProvider, useDashboardConfig, type WidgetSlot, type WidgetSize } from './DashboardConfigContext'
+import { DashboardConfigProvider, useDashboardConfig, WIDGET_CATALOG, type WidgetSlot, type WidgetSize } from './DashboardConfigContext'
 import { DashboardCustomizer } from './DashboardCustomizer'
 import { SenseiPanel } from './SenseiPanel'
 import { useSenseiScroll } from '@/hooks/useSenseiScroll'
@@ -22,7 +22,7 @@ import { WidgetMetaProvider } from './WidgetCard'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BrainCircuit, ChevronRight, Radar, Settings2, ShieldHalf } from 'lucide-react'
+import { BrainCircuit, ChevronRight, Layers2, Radar, Settings2, ShieldHalf } from 'lucide-react'
 import type { GlowCardProps } from '@/components/ui/GlowCard'
 import type { NavId } from '@/lib/constants'
 import { useNavigation } from '@/lib/NavigationContext'
@@ -254,13 +254,26 @@ function DashboardContent({
               <ChevronRight className="w-3 h-3 opacity-60" aria-hidden="true" />
             </Button>
             <Button
+              variant="ghost"
+              size="sm"
+              onClick={onOpenModuleVisibility}
+              aria-label="Manage module visibility"
+            >
+              <Layers2 className="w-4 h-4" aria-hidden="true" />
+              Modules
+            </Button>
+            <Button
               ref={triggerRef}
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => setCustomizerOpen(true)}
-              aria-label="Customize Dashboard"
+              aria-label={`Customize Dashboard — ${visibleWidgets.length} of ${WIDGET_CATALOG.length} widgets active`}
             >
               <Settings2 className="w-4 h-4" aria-hidden="true" />
+              Customize
+              <span className="ml-1 text-xs opacity-60" aria-hidden="true">
+                {visibleWidgets.length}/{WIDGET_CATALOG.length}
+              </span>
             </Button>
           </div>
         </div>

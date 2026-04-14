@@ -14,7 +14,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useDashboardConfig, WIDGET_CATALOG, type WidgetCatalogEntry, type WidgetSize } from './DashboardConfigContext'
 import { cn } from '@/lib/utils'
-import { X, RotateCcw, ChevronUp, ChevronDown } from 'lucide-react'
+import { X, RotateCcw, ChevronUp, ChevronDown, Layers2 } from 'lucide-react'
 
 const SIZE_OPTIONS: { value: WidgetSize; label: string }[] = [
   { value: 3, label: 'Quarter' },
@@ -259,9 +259,14 @@ export function DashboardCustomizer({ open, onClose, onOpenModuleVisibility }: D
           {onOpenModuleVisibility ? (
             <button
               onClick={onOpenModuleVisibility}
-              className="flex items-center gap-1.5 mt-2 px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground rounded border border-[var(--border)] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+              className="flex items-center gap-2 mt-2 px-3 py-2 w-full text-xs font-semibold rounded-lg border border-[var(--dojo-primary)] text-[var(--dojo-primary)] hover:bg-[var(--dojo-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)]"
+              aria-label="Manage which modules appear in the sidebar"
             >
-              Module Visibility
+              <Layers2 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              <span>
+                <span className="block">Module Visibility</span>
+                <span className="block font-normal text-muted-foreground">Show or hide sidebar modules</span>
+              </span>
             </button>
           ) : null}
         </div>

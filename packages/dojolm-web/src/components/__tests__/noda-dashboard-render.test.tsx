@@ -309,11 +309,34 @@ describe('NODADashboard render', () => {
     expect(boundaries.length).toBeGreaterThan(0)
   })
 
+  // Story 2.1.1: Customize button is now labeled (not icon-only)
   it('DSH-R-011: visible dashboard settings can open module visibility controls', () => {
     render(<NODADashboard />)
-    fireEvent.click(screen.getByLabelText('Customize Dashboard'))
+    // aria-label is dynamic: "Customize Dashboard — X of Y widgets active"
+    fireEvent.click(screen.getByLabelText(/Customize Dashboard/))
     expect(screen.getByTestId('dashboard-customizer')).toBeInTheDocument()
     fireEvent.click(screen.getByText('Module Visibility'))
+    expect(screen.getByTestId('sensei-panel')).toBeInTheDocument()
+  })
+
+  // Story 2.1.1: Customize button has visible text label
+  it('DSH-R-012: customize button has visible text label "Customize"', () => {
+    render(<NODADashboard />)
+    const btn = screen.getByLabelText(/Customize Dashboard/)
+    expect(btn.textContent).toMatch(/Customize/)
+  })
+
+  // Story 2.1.2: Modules button is present in the header
+  it('DSH-R-013: Modules button is present in hero header', () => {
+    render(<NODADashboard />)
+    expect(screen.getByLabelText('Manage module visibility')).toBeInTheDocument()
+    expect(screen.getByText('Modules')).toBeInTheDocument()
+  })
+
+  // Story 2.1.2: Modules button directly opens SenseiPanel
+  it('DSH-R-014: Modules button directly opens module visibility (SenseiPanel)', () => {
+    render(<NODADashboard />)
+    fireEvent.click(screen.getByLabelText('Manage module visibility'))
     expect(screen.getByTestId('sensei-panel')).toBeInTheDocument()
   })
 })
