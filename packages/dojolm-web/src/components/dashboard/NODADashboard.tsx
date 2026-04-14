@@ -95,8 +95,9 @@ const WIDGET_META: Record<string, { priority: 'hero' | 'standard' | 'compact'; g
 
 const DEFAULT_META = { priority: 'standard' as const, glow: 'none' as const }
 
-/** Widget → module navigation targets. Clicking widget header navigates to the corresponding module. */
-const WIDGET_NAV_TARGET: Record<string, string> = {
+/** Widget → module navigation targets. Clicking widget header navigates to the corresponding module.
+ *  Typed as Partial so missing entries return undefined rather than requiring an unsafe cast. */
+const WIDGET_NAV_TARGET: Partial<Record<string, NavId>> = {
   'guard-controls': 'guard',
   'guard-stats': 'guard',
   'guard-audit': 'guard',
@@ -191,7 +192,7 @@ function WidgetShell({ slot, mountIndex }: { slot: WidgetSlot; mountIndex: numbe
       >
         {ready ? (
           <Suspense fallback={<WidgetSkeleton />}>
-            <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2} navigateTo={WIDGET_NAV_TARGET[slot.id] as NavId}>
+            <WidgetMetaProvider priority={meta.priority} glow={meta.glow} tall={slot.rowSpan === 2} navigateTo={WIDGET_NAV_TARGET[slot.id]}>
               <Widget />
             </WidgetMetaProvider>
           </Suspense>

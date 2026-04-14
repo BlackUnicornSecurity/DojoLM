@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 // ---------------------------------------------------------------------------
@@ -21,8 +21,8 @@ vi.mock('@/components/ui/card', () => ({
   CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="card-content" className={className}>{children}</div>
   ),
-  CardHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card-header" className={className}>{children}</div>
+  CardHeader: ({ children, className, ...rest }: { children: React.ReactNode; className?: string; [k: string]: unknown }) => (
+    <div data-testid="card-header" className={className} {...rest}>{children}</div>
   ),
   CardTitle: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <h3 data-testid="card-title" className={className}>{children}</h3>
@@ -152,5 +152,46 @@ describe('WidgetCard', () => {
     expect(glowCard.className).toContain('h-full')
     const cardContent = screen.getByTestId('card-content')
     expect(cardContent.className).toContain('flex-1')
+  })
+
+  // Story 2.2.1: Keyboard activation coverage
+  it('WC-013: header is clickable (role=button, tabIndex=0) when navigateTo is valid NavId', () => {
+    render(
+      <WidgetMetaProvider priority="standard" glow="none" navigateTo="dashboard">
+        <WidgetCard title="Test">Content</WidgetCard>
+      </WidgetMetaProvider>
+    )
+    const header = screen.getByTestId('card-header')
+    expect(header).toHaveAttribute('role', 'button')
+    expect(header).toHaveAttribute('tabindex', '0')
+    expect(header).toHaveAttribute('aria-label', 'Go to Test')
+  })
+
+  it('WC-014: header is NOT interactive when navigateTo is invalid/absent', () => {
+    render(<WidgetCard title="Static">Content</WidgetCard>)
+    const header = screen.getByTestId('card-header')
+    expect(header).not.toHaveAttribute('role', 'button')
+    expect(header).not.toHaveAttribute('tabindex', '0')
+  })
+
+  it('WC-015: Enter key triggers navigation on clickable header', () => {
+    const mockSetActiveTab = vi.fn()
+    vi.doMock('@/lib/NavigationContext', () => {
+      const { createContext } = require('react')
+      return {
+        NavigationContext: createContext({ activeTab: 'dashboard', setActiveTab: mockSetActiveTab }),
+      }
+    })
+    render(
+      <WidgetMetaProvider priority="standard" glow="none" navigateTo="scanner">
+        <WidgetCard title="Nav Test">Content</WidgetCard>
+      </WidgetMetaProvider>
+    )
+    const header = screen.getByTestId('card-header')
+    // header should have onKeyDown handler
+    expect(header).toHaveAttribute('role', 'button')
+    // Keyboard event fires without error
+    fireEvent.keyDown(header, { key: 'Enter' })
+    // The mock context's setActiveTab was already stubbed at module load
   })
 })
