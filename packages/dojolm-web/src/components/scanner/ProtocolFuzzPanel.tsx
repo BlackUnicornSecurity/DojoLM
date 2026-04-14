@@ -7,18 +7,16 @@
  * Index:
  * - PROTOCOLS constant (line 17)
  * - MUTATION_TYPES constant (line 19)
- * - FuzzResult interface (line 28)
- * - MOCK_RESULTS data (line 35)
- * - ProtocolFuzzPanel component (line 80)
+ * - ProtocolFuzzPanel component (line 30)
+ *
+ * Note: Backend route not yet available. Start Fuzz button is disabled.
  */
 
 import { useState, useCallback } from 'react'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Zap, Loader2 } from 'lucide-react'
-
-// MOCK DATA — replace with live data when backend is available
+import { Zap, Clock } from 'lucide-react'
 
 const PROTOCOLS = ['MCP', 'HTTP API', 'JSON-RPC'] as const
 type Protocol = (typeof PROTOCOLS)[number]
@@ -32,65 +30,9 @@ const MUTATION_TYPES = [
 ] as const
 type MutationType = (typeof MUTATION_TYPES)[number]
 
-interface FuzzResult {
-  id: string
-  protocol: Protocol
-  type: MutationType
-  severity: 'critical' | 'high' | 'medium' | 'low' | 'info'
-  description: string
-}
-
-const MOCK_RESULTS: FuzzResult[] = [
-  {
-    id: 'FUZZ-001',
-    protocol: 'MCP',
-    type: 'field-injection',
-    severity: 'critical',
-    description: 'Tool name field accepts arbitrary code injection via nested JSON payload.',
-  },
-  {
-    id: 'FUZZ-002',
-    protocol: 'HTTP API',
-    type: 'type-coercion',
-    severity: 'high',
-    description: 'Integer parameter coerced to string bypasses input validation on /api/execute.',
-  },
-  {
-    id: 'FUZZ-003',
-    protocol: 'JSON-RPC',
-    type: 'malformed-structure',
-    severity: 'medium',
-    description: 'Missing "jsonrpc" version field accepted without error, violating spec compliance.',
-  },
-  {
-    id: 'FUZZ-004',
-    protocol: 'MCP',
-    type: 'boundary-values',
-    severity: 'high',
-    description: 'Context window overflow via 128K token payload causes unhandled memory allocation.',
-  },
-  {
-    id: 'FUZZ-005',
-    protocol: 'HTTP API',
-    type: 'parameter-pollution',
-    severity: 'medium',
-    description: 'Duplicate query parameters merged inconsistently, enabling filter bypass.',
-  },
-]
-
-const SEVERITY_BADGE: Record<string, string> = {
-  critical: 'bg-[var(--status-block)]/15 text-[var(--status-block)]',
-  high: 'bg-[var(--dojo-primary)]/15 text-[var(--dojo-primary)]',
-  medium: 'bg-[var(--severity-medium)]/15 text-[var(--severity-medium)]',
-  low: 'bg-[var(--status-allow)]/15 text-[var(--status-allow)]',
-  info: 'bg-[var(--bu-electric)]/15 text-[var(--bu-electric)]',
-}
-
 export function ProtocolFuzzPanel() {
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol>('MCP')
   const [selectedTypes, setSelectedTypes] = useState<Set<MutationType>>(new Set(MUTATION_TYPES))
-  const [fuzzing, setFuzzing] = useState(false)
-  const [results, setResults] = useState<FuzzResult[] | null>(null)
 
   const toggleType = useCallback((type: MutationType) => {
     setSelectedTypes((prev) => {
@@ -102,16 +44,6 @@ export function ProtocolFuzzPanel() {
       }
       return next
     })
-  }, [])
-
-  const handleFuzz = useCallback(() => {
-    setFuzzing(true)
-    setResults(null)
-    // Mock async fuzz run
-    setTimeout(() => {
-      setFuzzing(false)
-      setResults(MOCK_RESULTS)
-    }, 2000)
   }, [])
 
   return (
@@ -168,49 +100,26 @@ export function ProtocolFuzzPanel() {
         </div>
       </div>
 
-      {/* Start Button */}
-      <Button variant="gradient" onClick={handleFuzz} disabled={fuzzing} className="mb-5">
-        {fuzzing ? (
-          <>
-            <Loader2 className="w-4 h-4 motion-safe:animate-spin" aria-hidden="true" />
-            Fuzzing...
-          </>
-        ) : (
-          'Start Fuzz'
-        )}
+      {/* Start Button — disabled: backend not yet available */}
+      <Button
+        variant="gradient"
+        disabled
+        aria-disabled="true"
+        aria-describedby="protocol-fuzz-unavailable"
+        className="mb-5"
+      >
+        Start Fuzz
       </Button>
 
-      {/* Results Table */}
-      {results && (
-        <div className="overflow-x-auto -mx-2">
-          <table className="w-full text-sm border-collapse min-w-[560px]">
-            <thead>
-              <tr className="border-b border-[var(--border-subtle)]">
-                <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">ID</th>
-                <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Protocol</th>
-                <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Type</th>
-                <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Severity</th>
-                <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.map((r) => (
-                <tr key={r.id} className="border-b border-[var(--border-subtle)]/50 hover:bg-[var(--overlay-subtle)]">
-                  <td className="py-2.5 px-2 font-mono text-xs">{r.id}</td>
-                  <td className="py-2.5 px-2 text-xs">{r.protocol}</td>
-                  <td className="py-2.5 px-2 text-xs whitespace-nowrap">{r.type}</td>
-                  <td className="py-2.5 px-2">
-                    <span className={cn('text-xs font-semibold px-2 py-0.5 rounded uppercase', SEVERITY_BADGE[r.severity])}>
-                      {r.severity}
-                    </span>
-                  </td>
-                  <td className="py-2.5 px-2 text-xs text-muted-foreground">{r.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Not-yet-available notice */}
+      <div
+        id="protocol-fuzz-unavailable"
+        role="status"
+        className="flex items-center gap-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-4 py-3 text-sm text-muted-foreground"
+      >
+        <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <span>Protocol fuzzing is not yet available. The backend route is under development.</span>
+      </div>
     </GlowCard>
   )
 }
