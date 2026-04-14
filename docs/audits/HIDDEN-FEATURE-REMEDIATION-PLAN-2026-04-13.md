@@ -116,6 +116,7 @@ Run this sequence at the start and end of every phase:
 | 2 | Dashboard and Widget Surfacing | Dashboard becomes a clear surfacing mechanism instead of a hidden-control cluster | ✅ CLOSED 2026-04-14 |
 | 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident | ✅ CLOSED 2026-04-14 |
 | 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy | ✅ CLOSED 2026-04-14 |
+| 5 | Results, Analytics, and Export Contract Alignment | Navigation dead-ends wired; mock matrix removed; export bugs fixed; SSRF + rate limiting | ✅ CLOSED 2026-04-14 |
 | 5 | Results, Analytics, and Export Contract Alignment | Bushido/Jutsu/reporting surfaces become discoverable and contract-correct |
 | 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei |
 | 7 | Final Adversarial Audit and Review | 100% pass target, code review complete, docs updated, no unresolved findings |
@@ -660,7 +661,40 @@ Exit:
 
 - WebMCP testing either runs against a real backend or is explicitly disabled. No mock data remains.
 
-## Phase 5: Results, Analytics, and Export Contract Alignment
+## Phase 5: Results, Analytics, and Export Contract Alignment ✅ CLOSED 2026-04-14
+
+### Phase 5 Implementation Notes
+
+**Story 5.1.1** — Wire dead navigation callbacks; fix dead-end text
+- `ModelLab.tsx`: imported `useNavigation`; `setActiveTab: navigateTo`; `<JutsuTab onNavigateToTests={() => navigateTo('adversarial')} />` (was `<JutsuTab />` with no prop — dead callback)
+- `AnalyticsWorkspace.tsx`: imported `useNavigation`, `Button`, `ArrowRight`; replaced dead-end "Run or reconnect to a batch from the Tests tab" `<p>` with updated text + "Go to Atemi Lab" `<Button>` that calls `setActiveTab('adversarial')`
+- `ActivityFeed.tsx`: imported `useNavigation`; added `action={{ label: 'Open Shingan Scanner', onClick: () => setActiveTab('scanner') }}` to empty-state `EmptyState`
+- Tests: `model-lab.test.tsx` (new, ML-001–004), `analytics-workspace.test.tsx` (new, AW-001–004), `activity-feed.test.tsx` updated (added AF-016)
+
+**Story 5.2.1** — Remove mock-backed TransferMatrixPanel
+- `TransferMatrixPanel.tsx`: removed `MODELS`, `MOCK_MATRIX`, `heatColor`, `LEGEND_STOPS`, full table/legend JSX; replaced with `role="status"` "not yet available" notice matching protocol-fuzz pattern
+- Tests: `transfer-matrix-panel.test.tsx` updated (TMP-001–006 replacing old mock-data assertions)
+
+**Story 5.3.1** — Fix TestExporter export bugs + rate limit llm routes
+- `TestExporter.tsx`:
+  - Fixed `format=md` → `format=markdown` mapping (`const apiFormat = format === 'md' ? 'markdown' : format`)
+  - Fixed PDF blob: `response.json()` → `atob(json.data)` → `Uint8Array` → `Blob` (was `response.text()` → raw base64 string blob = corrupt PDF)
+- `/api/llm/export/route.ts`: added 10/min rate limiter; added `VALID_FORMATS` whitelist validation before switch; fixed default case to not reflect raw user input
+- `/api/llm/coverage/route.ts`: added 30/min rate limiter
+- Tests: `test-exporter.test.tsx` updated (added TE-013 format mapping, TE-014 PDF json path)
+
+**Story 5.3.2** — Type fix + SSRF fix + rate limit compliance routes
+- `ComplianceExport.tsx`: narrowed `ComplianceControl.status: string` → `'covered' | 'partial' | 'gap'`
+- `/api/compliance/frameworks/route.ts`: replaced `new URL(request.url).origin` with `getConfiguredAppOrigin()` (SSRF fix); removed `detail: body` from upstream-error response (leakage fix); added 30/min rate limiter
+- `/api/compliance/export/route.ts`: added 10/min rate limiter; added `isDemoMode()` early-exit guard (was inconsistent with all other routes); fixed format reflection in 400 error
+- Tests: `compliance-export.test.tsx` (new, CE-001–007); `compliance-h95.test.tsx` verified still passing
+
+**Phase 5 Adversarial Audit findings + fixes:**
+- H-1 (MEDIUM→fixed): Missing `X-Content-Type-Options: nosniff` on Markdown response in `llm/export` — added header to match CSV/SARIF paths
+- H-2 (HIGH→fixed): Missing `isDemoMode()` guard in `compliance/export` GET handler — added import + early-exit
+
+**Commits:** 6 (one per story + 1 for audit fixes)
+**Tests added/updated:** 87 passing (model-lab ×4, analytics-workspace ×4, activity-feed ×16, transfer-matrix-panel ×6, test-exporter ×14, compliance-export ×7, compliance-h95 ×20, playbooks-composite ×8, protocol-fuzz-panel ×8)
 
 ### Epic 5.1: Make Bushido/Jutsu Result Handoffs Explicit
 

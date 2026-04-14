@@ -11,8 +11,10 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download } from 'lucide-react';
+import { Download, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ConsolidatedReportButton } from '@/components/reports/ConsolidatedReportButton';
+import { useNavigation } from '@/lib/NavigationContext';
 import { BenchmarkPanel } from './BenchmarkPanel';
 import { TransferMatrixPanel } from './TransferMatrixPanel';
 import { TestExporter } from './TestExporter';
@@ -31,6 +33,7 @@ import type { LLMBatchExecution, LLMTestExecution } from '@/lib/llm-types';
  */
 export function AnalyticsWorkspace() {
   const { activeBatchId, getBatch, getBatchExecutions } = useExecutionContext();
+  const { setActiveTab } = useNavigation();
   const [batch, setBatch] = useState<LLMBatchExecution | null>(null);
   const [executions, setExecutions] = useState<LLMTestExecution[]>([]);
   const [isLoadingBatch, setIsLoadingBatch] = useState(false);
@@ -106,12 +109,23 @@ export function AnalyticsWorkspace() {
                 Export the currently active LLM test batch in JSON, PDF, or Markdown.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 {isLoadingBatch
                   ? 'Loading the active batch export surface...'
-                  : 'Run or reconnect to a batch from the Tests tab to unlock the richer export panel.'}
+                  : 'Run a test batch to unlock the richer export panel.'}
               </p>
+              {!isLoadingBatch && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setActiveTab('adversarial')}
+                  className="gap-1.5"
+                >
+                  Go to Atemi Lab
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}

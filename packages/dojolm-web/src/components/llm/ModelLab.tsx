@@ -23,6 +23,7 @@ import { GuardBadge } from '@/components/guard';
 import { ModuleHeader } from '@/components/ui/ModuleHeader';
 import { ConsolidatedReportButton } from '@/components/reports/ConsolidatedReportButton';
 import { ReportGenerator } from './ReportGenerator';
+import { useNavigation } from '@/lib/NavigationContext';
 
 type ModelLabTab = 'models' | 'compare' | 'jutsu' | 'custom';
 
@@ -48,6 +49,7 @@ const VALID_TABS: readonly ModelLabTab[] = ['models', 'compare', 'jutsu', 'custo
  */
 export function ModelLab({ initialTab = 'models' }: ModelLabProps) {
   const [activeTab, setActiveTab] = useState<ModelLabTab>(initialTab);
+  const { setActiveTab: navigateTo } = useNavigation();
 
   return (
     <div className="space-y-6">
@@ -99,7 +101,7 @@ export function ModelLab({ initialTab = 'models' }: ModelLabProps) {
           <ComparisonView />
         </TabsContent>
         <TabsContent value="jutsu">
-          <JutsuTab />
+          <JutsuTab onNavigateToTests={() => navigateTo('adversarial')} />
         </TabsContent>
         <TabsContent value="custom">
           <CustomProviderBuilder />

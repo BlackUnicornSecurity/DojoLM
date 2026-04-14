@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { Shield, CheckCircle, XCircle, Brain, AlertTriangle, CheckCheck, type LucideIcon } from 'lucide-react'
 import { useActivityState, useActivityDispatch, type EventType, type ActivityEvent } from '@/lib/contexts/ActivityContext'
 import { EmptyState, emptyStatePresets } from '@/components/ui/EmptyState'
+import { useNavigation } from '@/lib/NavigationContext'
 
 /** Format ISO timestamp for display */
 function formatTimestamp(timestamp: string): string {
@@ -45,6 +46,7 @@ interface ActivityFeedProps {
 
 export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) {
   const { events } = useActivityState()
+  const { setActiveTab } = useNavigation()
   const dispatch = useActivityDispatch()
   const [undoSnapshot, setUndoSnapshot] = useState<ActivityEvent[] | null>(null)
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -89,7 +91,13 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
 
   if (events.length === 0) {
     return (
-      <EmptyState {...emptyStatePresets.noData} title="No sessions yet" description="Run a scan or test to see activity here." className={cn("py-4", className)} />
+      <EmptyState
+        {...emptyStatePresets.noData}
+        title="No sessions yet"
+        description="Run a scan or test to see activity here."
+        action={{ label: 'Open Shingan Scanner', onClick: () => setActiveTab('scanner') }}
+        className={cn("py-4", className)}
+      />
     )
   }
 

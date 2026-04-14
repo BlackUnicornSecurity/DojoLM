@@ -10,6 +10,7 @@ import type { ActivityEvent, EventType } from '@/components/ui/ActivityFeed'
 
 // Mock state and dispatch
 const mockDispatch = vi.fn()
+const mockSetActiveTab = vi.fn()
 let mockEvents: ActivityEvent[] = []
 
 vi.mock('@/lib/contexts/ActivityContext', () => ({
@@ -17,9 +18,16 @@ vi.mock('@/lib/contexts/ActivityContext', () => ({
   useActivityDispatch: () => mockDispatch,
 }))
 
+vi.mock('@/lib/NavigationContext', () => ({
+  useNavigation: () => ({ setActiveTab: mockSetActiveTab }),
+}))
+
 vi.mock('@/components/ui/EmptyState', () => ({
-  EmptyState: ({ description }: { description: string }) => (
-    <div data-testid="empty-state">{description}</div>
+  EmptyState: ({ description, action }: { description: string; action?: { label: string; onClick: () => void } }) => (
+    <div data-testid="empty-state">
+      {description}
+      {action && <button onClick={action.onClick}>{action.label}</button>}
+    </div>
   ),
   emptyStatePresets: { noData: { title: 'No Data', description: 'No data' } },
 }))
@@ -168,5 +176,13 @@ describe('ActivityFeed', () => {
     mockEvents = [makeEvent({ read: true })]
     render(<ActivityFeed />)
     expect(screen.queryByRole('button', { name: /mark all as read/i })).not.toBeInTheDocument()
+  })
+
+  // AF-016: Empty state CTA navigates to scanner
+  it('AF-016: empty state CTA calls setActiveTab with "scanner"', () => {
+    mockEvents = []
+    render(<ActivityFeed />)
+    fireEvent.click(screen.getByText('Open Shingan Scanner'))
+    expect(mockSetActiveTab).toHaveBeenCalledWith('scanner')
   })
 })
