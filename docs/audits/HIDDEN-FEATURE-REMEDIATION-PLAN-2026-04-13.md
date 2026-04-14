@@ -115,7 +115,7 @@ Run this sequence at the start and end of every phase:
 | 1 | Navigation and Route Truth | Hidden live modules become discoverable; retired legacy routes become consistent | ✅ CLOSED 2026-04-14 |
 | 2 | Dashboard and Widget Surfacing | Dashboard becomes a clear surfacing mechanism instead of a hidden-control cluster | ✅ CLOSED 2026-04-14 |
 | 3 | OBL Activation and State-Gated Analytics | OBL becomes runnable and visible by intent, not by accident | ✅ CLOSED 2026-04-14 |
-| 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy | 🔄 NEXT |
+| 4 | Deep Scan, Fuzzer, and Playbook Truthfulness | Hidden or misleading scan/fuzz/playbook surfaces become explicit and trustworthy | ✅ CLOSED 2026-04-14 |
 | 5 | Results, Analytics, and Export Contract Alignment | Bushido/Jutsu/reporting surfaces become discoverable and contract-correct |
 | 6 | Sensei Discoverability and Tool Parity | Assistant-only capability becomes legible and actionable inside Sensei |
 | 7 | Final Adversarial Audit and Review | 100% pass target, code review complete, docs updated, no unresolved findings |
@@ -523,7 +523,23 @@ Exit:
 
 - OBL results cannot appear to belong to the wrong model.
 
-## Phase 4: Deep Scan, Fuzzer, and Playbook Truthfulness
+## Phase 4: Deep Scan, Fuzzer, and Playbook Truthfulness ✅ CLOSED 2026-04-14
+
+### Phase 4 Implementation Notes
+
+Commits:
+- `feat: story 4.1.1 — ShinganPanel batch mode uses single /api/shingan/batch call` (`c7c29b67c`) — Replaced per-file loop over /api/shingan/scan with Promise.all read + single POST to /api/shingan/batch. Fixed IP extraction bug (.pop() not [0]).
+- `feat: story 4.1.2 — ShinganPanel URL scan mode via /api/shingan/url` (`21d0d3bd7`) — Added URL scan mode with radiogroup selector (Single/Batch/URL). URL mode hides upload zone, shows GitHub-only URL input card. SHP-001–013 passing.
+- `feat: story 4.2.1 — /api/buki/fuzz route wiring bu-tpi fuzzing engine` (`4013e4fe2`) — POST /api/buki/fuzz with createFuzzSession+fuzz+scanSkill, rate limit 3/min/IP, grammar enum + mutationCount validation. Added bu-tpi/fuzzing export entry. FZP-001–007 passing.
+- `feat: story 4.3.1 — ProtocolFuzzPanel remove mock, disable button` (`93226b4d5`) — Removed MOCK_RESULTS array and setTimeout. Disabled Start Fuzz button. Added "not yet available" status notice. PFP-001–008 passing.
+- `feat: story 4.3.2 — PlaybooksComposite remove mock findings/setTimeout` (`9d7bc4d63`) — Removed generateMockFindings, WebMcpFinding, wmcpTimerRef, all WebMCP state/callbacks, consent dialog, results area. Disabled Execute Tests. PBC-001–008 passing.
+- `fix: phase 4 audit — DoS cap, concurrency guard, dead code removal, error normalization` (`269ad671c`) — CRITICAL: FUZZ_TIMEOUT_MS=25s cap; HIGH: MAX_CONCURRENT_SESSIONS=5 guard + finally decrement; HIGH: remove isUrlSafe dead code + WebMCP form; MEDIUM: truncate server error to 200 chars in handleUrlScan.
+
+Adversarial audit findings resolved:
+- CRITICAL: /api/buki/fuzz — DEFAULT_FUZZ_CONFIG.timeoutMs=600s caused event-loop stall. Fixed: override timeoutMs to 25s.
+- HIGH-1: Rate limiter allowed 3 in-flight sessions simultaneously. Fixed: activeSessionCount concurrency guard with finally decrement.
+- HIGH-2: isUrlSafe() in PlaybooksComposite was active dead code (called on every keystroke but Execute Tests always disabled). Fixed: removed all WebMCP form state/UI, replaced with simple unavailable notice.
+- MEDIUM: handleUrlScan exposed raw server error strings to UI. Fixed: truncate errBody.error to 200 chars.
 
 ### Epic 4.1: Surface Hidden Shingan Workflows
 
