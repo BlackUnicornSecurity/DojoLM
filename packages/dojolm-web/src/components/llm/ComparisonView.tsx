@@ -39,9 +39,12 @@ export function ComparisonView() {
     setLoading(true);
     try {
       const data: ComparisonData[] = [];
+      // Cache reports to avoid fetching each model twice
+      const reportCache = new Map<string, Awaited<ReturnType<typeof getModelReport>>>();
       for (const modelId of selectedModels) {
         const report = await getModelReport(modelId);
         if (!report) continue;
+        reportCache.set(modelId, report);
         const categories: Record<string, { passRate: number; count: number }> = {};
         for (const cat of report.byCategory) {
           categories[cat.category] = { passRate: cat.passRate, count: cat.count };
@@ -56,10 +59,10 @@ export function ComparisonView() {
       }
       setComparisonData(data);
 
-      // Compute transfer scores from report data
+      // Compute transfer scores from cached report data (no second fetch)
       const reports: { modelConfigId: string; byCategory: { category: string; passRate: number }[] }[] = [];
       for (const modelId of selectedModels) {
-        const report = await getModelReport(modelId);
+        const report = reportCache.get(modelId);
         if (report) {
           reports.push({ modelConfigId: report.modelConfigId, byCategory: report.byCategory });
         }

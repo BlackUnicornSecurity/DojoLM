@@ -370,13 +370,16 @@ function renderCompliance(data: unknown): React.ReactNode {
 function renderNavigate(data: unknown, onNavigate?: (module: NavId) => void): React.ReactNode {
   const d = asRecord(data)
   if (!d) return renderGeneric(data)
-  const moduleName = typeof d.module === 'string' ? d.module : 'unknown'
+  const moduleName = typeof d.module === 'string' ? d.module : null
   return (
     <div className="space-y-1.5">
       <p className="text-xs text-[var(--text-secondary)]">
-        Navigating to <span className="font-medium text-[var(--primary)]">{formatToolName(moduleName)}</span>
+        Navigating to{' '}
+        <span className="font-medium text-[var(--primary)]">
+          {moduleName ? formatToolName(moduleName) : 'module'}
+        </span>
       </p>
-      {onNavigate && moduleName !== 'unknown' && (
+      {onNavigate && moduleName && (
         <button
           onClick={() => onNavigate(moduleName as NavId)}
           className="px-2 py-1 rounded text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)]/20 focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-safe:transition-colors"

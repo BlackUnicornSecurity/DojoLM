@@ -11,7 +11,6 @@
 
 export { SAGEDashboard } from './SAGEDashboard'
 export { ArenaBrowser } from './ArenaBrowser'
-export { ThreatFeedStream } from './ThreatFeedStream'
 export { AmaterasuSubsystem } from './AmaterasuSubsystem'
 export { SAGEConfig, ArenaConfig, MitsukeConfig } from './KumiteConfig'
 export { MitsukeSourceConfig } from './MitsukeSourceConfig'

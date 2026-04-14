@@ -119,7 +119,7 @@ interface JutsuTabProps {
  * JutsuTab — Model-centric testing command center, embedded as tab inside LLM Dashboard
  */
 export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
-  const [executions, setExecutions] = useState<TestExecution[]>(DEMO_EXECUTIONS)
+  const [executions, setExecutions] = useState<TestExecution[]>([])
   const [search, setSearch] = useState('')
   const [providerFilter, setProviderFilter] = useState<string>('all')
   const [selectedModel, setSelectedModel] = useState<AggregatedModel | null>(null)
@@ -190,7 +190,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
         const res = await fetchWithAuth('/api/llm/results')
         if (!res.ok || cancelled) return
         const data = await res.json()
-        if (!cancelled && Array.isArray(data.results) && data.results.length > 0) {
+        if (!cancelled && Array.isArray(data.results)) {
           const mapped: TestExecution[] = data.results.map((r: Record<string, unknown>, i: number) => ({
             id: String(r.id ?? `res-${i}`),
             modelId: String(r.modelId ?? ''),
@@ -208,7 +208,7 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
           setExecutions(mapped)
         }
       } catch {
-        // Use demo data (already set)
+        // API unavailable — show empty state
       }
     }
     loadResults()

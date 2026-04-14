@@ -122,8 +122,16 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock, writabl
 beforeEach(() => {
   vi.clearAllMocks()
   localStorageMock.clear()
-  // API returns no real results so demo data is used
-  mockFetchWithAuth.mockResolvedValue({ ok: false })
+  // API returns test model data (GPT-4 and Claude)
+  mockFetchWithAuth.mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      results: [
+        { id: 'e1', modelId: 'gpt-4', modelName: 'GPT-4', provider: 'OpenAI', resilienceScore: 78, passRate: 78, totalTests: 50, passed: 39, failed: 11, categoriesFailed: ['Prompt Injection'], timestamp: '2026-03-05T10:00:00Z' },
+        { id: 'e2', modelId: 'claude-3.5', modelName: 'Claude 3.5 Sonnet', provider: 'Anthropic', resilienceScore: 91, passRate: 91, totalTests: 50, passed: 45, failed: 5, categoriesFailed: ['Encoding'], timestamp: '2026-03-05T11:00:00Z' },
+      ],
+    }),
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -182,10 +190,13 @@ describe('LJF-004: Provider filter', () => {
     await waitFor(() => {
       expect(screen.getByTestId('model-card-gpt-4')).toBeInTheDocument()
     })
+    // Models are loaded — 'Anthropic' is now a valid select option
     const providerSelect = screen.getByLabelText('Filter by provider')
     fireEvent.change(providerSelect, { target: { value: 'Anthropic' } })
-    expect(screen.queryByTestId('model-card-gpt-4')).not.toBeInTheDocument()
-    expect(screen.getByTestId('model-card-claude-3.5')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByTestId('model-card-gpt-4')).not.toBeInTheDocument()
+      expect(screen.getByTestId('model-card-claude-3.5')).toBeInTheDocument()
+    })
   })
 })
 

@@ -96,6 +96,23 @@ vi.mock('@/components/ui/card', () => ({
   CardTitle: ({ children, className }: { children: ReactNode; className?: string }) => <h3 className={className}>{children}</h3>,
 }))
 
+vi.mock('@/lib/contexts', () => ({
+  useBehavioralAnalysis: () => ({
+    results: {},
+    isAnalyzing: false,
+    activeModelId: null,
+    activeModelName: null,
+    error: null,
+    getResult: vi.fn().mockReturnValue(null),
+    getActiveResult: vi.fn().mockReturnValue(null),
+    runAlignment: vi.fn().mockResolvedValue(undefined),
+    runRobustness: vi.fn().mockResolvedValue(undefined),
+    runGeometry: vi.fn().mockResolvedValue(undefined),
+    runDepthProfile: vi.fn().mockResolvedValue(undefined),
+    setActiveModel: vi.fn(),
+  }),
+}))
+
 // localStorage mock
 const localStorageMock = (() => {
   let store: Record<string, string> = {}
@@ -111,8 +128,18 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock, writabl
 beforeEach(() => {
   vi.clearAllMocks()
   localStorageMock.clear()
-  // API returns no results so demo data is used
-  mockFetchWithAuth.mockResolvedValue({ ok: false })
+  // Default: API returns test model data (3 unique models)
+  mockFetchWithAuth.mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      results: [
+        { id: 'e1', modelId: 'gpt-4', modelName: 'GPT-4', provider: 'OpenAI', resilienceScore: 78, passRate: 78, totalTests: 50, passed: 39, failed: 11, categoriesFailed: ['Prompt Injection', 'Jailbreak'], timestamp: '2026-03-05T10:00:00Z', batchId: 'b1' },
+        { id: 'e2', modelId: 'gpt-4', modelName: 'GPT-4', provider: 'OpenAI', resilienceScore: 82, passRate: 82, totalTests: 50, passed: 41, failed: 9, categoriesFailed: ['Prompt Injection'], timestamp: '2026-03-04T10:00:00Z' },
+        { id: 'e3', modelId: 'claude-3.5', modelName: 'Claude 3.5 Sonnet', provider: 'Anthropic', resilienceScore: 91, passRate: 91, totalTests: 50, passed: 45, failed: 5, categoriesFailed: ['Encoding'], timestamp: '2026-03-05T11:00:00Z' },
+        { id: 'e4', modelId: 'llama-3', modelName: 'Llama 3 70B', provider: 'Meta', resilienceScore: 58, passRate: 58, totalTests: 50, passed: 29, failed: 21, categoriesFailed: ['Prompt Injection', 'Jailbreak', 'Social Engineering'], timestamp: '2026-03-05T08:00:00Z' },
+      ],
+    }),
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -162,13 +189,13 @@ function createAggregatedModel(overrides: Partial<AggregatedModel> = {}): Aggreg
 // JUT-001: Model grid renders cards
 // ===========================================================================
 describe('JUT-001: Model grid renders cards', () => {
-  it('renders model cards from demo data', async () => {
+  it('renders model cards from API data', async () => {
     render(<LLMJutsu />)
     await waitFor(() => {
-      // Demo data has 6 unique models
+      // API fixture has 3 unique models
       expect(screen.getByText('GPT-4')).toBeInTheDocument()
       expect(screen.getByText('Claude 3.5 Sonnet')).toBeInTheDocument()
-      expect(screen.getByText('Gemini 1.5 Pro')).toBeInTheDocument()
+      expect(screen.getByText('Llama 3 70B')).toBeInTheDocument()
     })
   })
 
@@ -246,6 +273,10 @@ describe('JUT-005: Provider dropdown filter', () => {
 
   it('filters by provider selection', async () => {
     render(<LLMJutsu />)
+    // Wait for models to load so 'Anthropic' is a valid select option
+    await waitFor(() => {
+      expect(screen.getByText('Claude 3.5 Sonnet')).toBeInTheDocument()
+    })
     const dropdown = screen.getByLabelText('Filter by provider')
     fireEvent.change(dropdown, { target: { value: 'Anthropic' } })
 

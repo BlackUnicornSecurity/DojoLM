@@ -170,7 +170,9 @@ describe('CV-009: Table renders after compare', () => {
     fireEvent.click(screen.getByLabelText('Compare selected models'))
 
     await waitFor(() => {
-      expect(screen.getByRole('table')).toBeInTheDocument()
+      // Use aria-label to target the comparison table specifically
+      // (TransferMatrix may also render a table when transfer scores are present)
+      expect(screen.getByRole('table', { name: 'Model compliance comparison' })).toBeInTheDocument()
     })
   })
 })
@@ -195,7 +197,8 @@ describe('CV-010: Table accessibility', () => {
     fireEvent.click(screen.getByLabelText('Compare selected models'))
 
     await waitFor(() => {
-      expect(screen.getByRole('table')).toHaveAttribute('aria-label', 'Model compliance comparison')
+      const table = screen.getByRole('table', { name: 'Model compliance comparison' })
+      expect(table).toHaveAttribute('aria-label', 'Model compliance comparison')
     })
   })
 })

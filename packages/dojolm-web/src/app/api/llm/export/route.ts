@@ -43,7 +43,7 @@ const SAFE_ID = /^[\w-]{1,128}$/;
  *
  * Query parameters:
  * - batchId: The batch execution ID to export
- * - format: 'json' | 'pdf' | 'md' | 'csv' | 'sarif'
+ * - format: 'json' | 'pdf' | 'markdown' | 'csv' | 'sarif'
  * - includeResponses: Include full response text (default: true)
  *
  * Returns exported test results
