@@ -1,19 +1,19 @@
 /**
  * File: adversarial-skills-extended.ts
- * Purpose: 20 additional adversarial skill definitions (evasion, tool-abuse, compliance, audio-voice)
- * Story: 12.2c — Execution Engine + Remaining 20 Skills
+ * Purpose: 22 additional adversarial skill definitions (evasion, tool-abuse, compliance, audio-voice, supply-chain)
+ * Story: 12.2c — Execution Engine + Remaining Skills
  * Index:
- * - EXTENDED_SKILLS array (line 12) — 20 skills
- * - Categories: evasion (5), tool-abuse (5), compliance (5), audio-voice (5)
+ * - EXTENDED_SKILLS array (line 12) — 22 skills
+ * - Categories: evasion (5), tool-abuse (5), compliance (5), audio-voice (5), supply-chain (2)
  * - ADVANCED_SKILLS import (line 13) — 10 skills from adversarial-skills-advanced.ts
- * - ALL_SKILLS combined export (line 366) — 50 total (20 core + 20 extended + 10 advanced)
+ * - ALL_SKILLS combined export — 53 total (20 core + 22 extended + 10 advanced + 1 OBL Contrastive Bias)
  */
 
 import type { AdversarialSkill, OwaspLlmMapping } from './adversarial-skills-types'
 import { CORE_SKILLS } from './adversarial-skills-data'
 import { ADVANCED_SKILLS } from './adversarial-skills-advanced'
 
-/** 20 extended adversarial skills — evasion, tool-abuse, compliance, audio-voice */
+/** 22 extended adversarial skills — evasion, tool-abuse, compliance, audio-voice, supply-chain */
 export const EXTENDED_SKILLS: AdversarialSkill[] = [
   // =========================================================================
   // EVASION (5 skills)
@@ -417,7 +417,7 @@ const CONTRASTIVE_BIAS_SKILL: AdversarialSkill = {
   ],
 }
 
-/** All 51 adversarial skills (20 core + 20 extended + 10 advanced + 1 OBL) */
+/** All 53 adversarial skills (20 core + 22 extended + 10 advanced + 1 OBL Contrastive Bias) */
 export const ALL_SKILLS: AdversarialSkill[] = [...CORE_SKILLS, ...EXTENDED_SKILLS, ...ADVANCED_SKILLS, CONTRASTIVE_BIAS_SKILL]
 
 /** Look up any skill by its unique ID across all skills */

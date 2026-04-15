@@ -9,12 +9,35 @@
  * - No database, filesystem, or external LLM provider calls
  */
 
+let __demoProdGuardWarned = false;
+
 /**
  * Returns true when the app is running in demo mode.
  * Uses NEXT_PUBLIC_ prefix so it's available on both server and client.
+ *
+ * Fail-safe: demo mode is refused in production (NODE_ENV==='production' and
+ * TPI_ALLOW_DEMO_IN_PROD !== 'true'). This prevents an accidentally set
+ * NEXT_PUBLIC_DEMO_MODE=true build-arg from silently disabling all auth on a
+ * real deployment.
  */
 export function isDemoMode(): boolean {
-  return process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  const requested = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  if (!requested) return false;
+  if (
+    process.env.NODE_ENV === 'production' &&
+    process.env.TPI_ALLOW_DEMO_IN_PROD !== 'true'
+  ) {
+    if (!__demoProdGuardWarned) {
+      // eslint-disable-next-line no-console
+      console.error(
+        '[demo] NEXT_PUBLIC_DEMO_MODE=true is set in production — refusing. ' +
+          'Set TPI_ALLOW_DEMO_IN_PROD=true to override (ONLY for staging preview).'
+      );
+      __demoProdGuardWarned = true;
+    }
+    return false;
+  }
+  return true;
 }
 
 /**

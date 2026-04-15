@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isDemoMode } from '@/lib/demo'
 import { demoComplianceFrameworksGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
+import { getClientIp } from '@/lib/api-handler'
 import { getConfiguredAppOrigin } from '@/lib/request-origin'
 
 // In-memory rate limiter — 30 requests per minute per IP
@@ -47,10 +48,8 @@ export async function GET(request: NextRequest) {
   const authError = checkApiAuth(request)
   if (authError) return authError
 
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
-    request.headers.get('x-real-ip')?.trim() ||
-    'unknown';
+  // TRUSTED_PROXY-gated IP extraction — prevents XFF spoofing in non-proxy topologies.
+  const ip = getClientIp(request);
 
   if (!checkRateLimit(ip)) {
     return NextResponse.json(

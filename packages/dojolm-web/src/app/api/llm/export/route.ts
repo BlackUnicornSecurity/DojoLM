@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkApiAuth } from '@/lib/api-auth';
+import { getClientIp } from '@/lib/api-handler';
 import { fileStorage } from '@/lib/storage/file-storage';
 import type { ReportFormat, LLMTestExecution } from '@/lib/llm-types';
 
@@ -60,10 +61,7 @@ export async function GET(request: NextRequest) {
     const authResult = checkApiAuth(request);
     if (authResult) return authResult;
 
-    const ip =
-      request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
-      request.headers.get('x-real-ip')?.trim() ||
-      'unknown';
+    const ip = getClientIp(request);
 
     if (!checkRateLimit(ip)) {
       return NextResponse.json(

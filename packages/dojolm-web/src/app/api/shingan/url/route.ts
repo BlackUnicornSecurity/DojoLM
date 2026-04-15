@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkApiAuth } from '@/lib/api-auth';
+import { getClientIp } from '@/lib/api-handler';
 import { scanSkill, computeTrustScore } from 'bu-tpi/shingan';
 
 const ALLOWED_HOSTS = new Set(['github.com', 'raw.githubusercontent.com']);
@@ -40,9 +41,8 @@ export async function POST(request: NextRequest) {
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
-  // Use last IP in X-Forwarded-For chain (appended by trusted proxy) to resist spoofing
-  const xff = request.headers.get('x-forwarded-for');
-  const clientIp = xff ? (xff.split(',').pop()?.trim() ?? 'unknown') : 'unknown';
+  // TRUSTED_PROXY-gated IP extraction — prevents XFF spoofing in non-proxy topologies.
+  const clientIp = getClientIp(request);
   if (!checkRateLimit(clientIp)) {
     return NextResponse.json({ error: 'Rate limit exceeded (10 req/min)' }, { status: 429 });
   }

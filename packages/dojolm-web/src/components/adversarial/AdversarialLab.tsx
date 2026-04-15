@@ -1057,6 +1057,10 @@ export function AdversarialLab({
                 className="w-full gap-2"
                 onClick={() => {
                   // Train 2 audit fix: Shingan now lives as Scanner Deep Scan tab (PR-4b.4).
+                  // Set hash so ScannerContent pre-selects the deep-scan sub-tab.
+                  if (typeof window !== 'undefined') {
+                    window.location.hash = 'deep-scan'
+                  }
                   setNavTab('scanner')
                 }}
                 aria-label="Launch Shingan deep scan"

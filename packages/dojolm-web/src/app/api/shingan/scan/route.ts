@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isDemoMode } from '@/lib/demo';
 import { demoShinganScansGet } from '@/lib/demo/mock-api-handlers';
 import { checkApiAuth } from '@/lib/api-auth';
+import { getClientIp } from '@/lib/api-handler';
 import { scanSkill, computeTrustScore } from 'bu-tpi/shingan';
 
 const MAX_CONTENT_SIZE = 512_000; // 500KB
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
   const authResult = checkApiAuth(request);
   if (authResult) return authResult;
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip')?.trim() || 'unknown';
+  const ip = getClientIp(request);
   if (!checkRateLimit(ip)) {
     return NextResponse.json({ error: 'Rate limit exceeded — try again later' }, { status: 429 });
   }

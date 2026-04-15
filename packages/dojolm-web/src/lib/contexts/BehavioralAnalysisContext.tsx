@@ -115,11 +115,11 @@ export function BehavioralAnalysisProvider({ children }: { children: ReactNode }
     setResults(prev => {
       const existing = prev[modelId]
       const merged: OBLAnalysisResult = {
-        schemaVersion: SCHEMA_VERSION,
-        modelId,
-        timestamp: new Date().toISOString(),
         ...existing,
         ...partial,
+        modelId,
+        timestamp: new Date().toISOString(),
+        schemaVersion: SCHEMA_VERSION,
       }
       return { ...prev, [modelId]: merged }
     })

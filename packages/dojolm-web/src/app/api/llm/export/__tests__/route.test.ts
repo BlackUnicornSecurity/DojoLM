@@ -34,6 +34,9 @@ vi.mock('jspdf', () => {
   };
 });
 
+// jspdf-autotable return value is unused by the export route (only its side
+// effect of rendering into the pdf instance matters). If the route ever starts
+// reading the return value, this mock must return a shape the route expects.
 vi.mock('jspdf-autotable', () => ({
   default: vi.fn(),
 }));
@@ -44,10 +47,20 @@ import { fileStorage } from '@/lib/storage/file-storage';
 
 // --- Helpers ---
 
+// Counter to give each test request a unique IP so the module-level rate
+// limiter in route.ts doesn't trip across tests.
+let __exportTestRequestCounter = 0;
 function createGetRequest(params: Record<string, string>): NextRequest {
   const url = new URL('http://localhost:42001/api/llm/export');
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  return new NextRequest(url);
+  __exportTestRequestCounter += 1;
+  // Build a valid IPv4 to survive future IP-validation on the route.
+  const oct3 = __exportTestRequestCounter % 250;
+  const oct4 = Math.floor(__exportTestRequestCounter / 250) % 250;
+  const uniqueIp = `10.0.${oct3}.${oct4 + 1}`;
+  return new NextRequest(url, {
+    headers: { 'x-forwarded-for': uniqueIp },
+  });
 }
 
 function makeMockExecution(overrides: Partial<any> = {}): any {
@@ -97,7 +110,10 @@ const mockExec2 = makeMockExecution({
 
 describe('GET /api/llm/export', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    // resetAllMocks clears call history AND queued mockResolvedValueOnce/mockRejectedValueOnce
+    // implementations — needed because EXP-001 queues two `mockResolvedValueOnce` but subsequent
+    // tests only queue one, and any leftover queue leaks into later tests.
+    vi.resetAllMocks();
     (checkApiAuth as any).mockReturnValue(null);
   });
 
@@ -335,7 +351,7 @@ describe('GET /api/llm/export', () => {
     expect(res.status).toBe(400);
 
     const data = await res.json();
-    expect(data.error).toContain('Unsupported format');
+    expect(data.error).toContain('Unsupported export format');
   });
 
   // EXP-013: Internal error returns 500

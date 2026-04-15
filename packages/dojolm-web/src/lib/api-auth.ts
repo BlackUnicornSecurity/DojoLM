@@ -15,6 +15,12 @@ import { isPublicApiRoute, isPublicBrowserActionRoute } from '@/lib/api-route-ac
 import { isTrustedBrowserOriginRequest, isTrustedBrowserSessionRequest } from '@/lib/request-origin';
 import { isDemoMode } from '@/lib/demo';
 
+// Per-process random HMAC key. Used only as a length-normalizer so timingSafeEqual
+// can compare variable-length inputs of equal hash length; the key itself carries
+// no secret, but randomizing per-process removes any offline HMAC pre-computation
+// surface that a hardcoded constant would leave behind.
+const API_KEY_HMAC_KEY = crypto.randomBytes(32);
+
 /**
  * Check API authentication via X-API-Key header.
  * Returns null if authenticated, or a 401 NextResponse if not.
@@ -65,8 +71,8 @@ export function checkApiAuth(request: NextRequest): NextResponse | null {
   // HMAC-based timing-safe comparison (C10 fix: eliminates length-based oracle)
   const expected = Buffer.from(apiKey, 'utf-8');
   const provided = Buffer.from(providedKey, 'utf-8');
-  const expectedHash = crypto.createHmac('sha256', 'noda-key-compare').update(expected).digest();
-  const providedHash = crypto.createHmac('sha256', 'noda-key-compare').update(provided).digest();
+  const expectedHash = crypto.createHmac('sha256', API_KEY_HMAC_KEY).update(expected).digest();
+  const providedHash = crypto.createHmac('sha256', API_KEY_HMAC_KEY).update(provided).digest();
 
   if (!crypto.timingSafeEqual(expectedHash, providedHash)) {
     return NextResponse.json(

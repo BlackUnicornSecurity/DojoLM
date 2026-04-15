@@ -27,16 +27,16 @@ describe('Adversarial Skills Data', () => {
     expect(EXTENDED_SKILLS).toHaveLength(22);
   });
 
-  // SKL-D-003: ALL_SKILLS combines to 40 total
-  it('SKL-D-003: ALL_SKILLS has 52 entries', () => {
-    expect(ALL_SKILLS).toHaveLength(52);
+  // SKL-D-003: ALL_SKILLS combines to 53 total (20 core + 22 extended + 10 advanced + 1 OBL)
+  it('SKL-D-003: ALL_SKILLS has 53 entries', () => {
+    expect(ALL_SKILLS).toHaveLength(53);
   });
 
   // SKL-D-004: All skill IDs are unique
   it('SKL-D-004: all skill IDs are unique', () => {
     const ids = ALL_SKILLS.map(s => s.id);
     const unique = new Set(ids);
-    expect(unique.size).toBe(52);
+    expect(unique.size).toBe(53);
   });
 
   // SKL-D-005: Each skill has required fields

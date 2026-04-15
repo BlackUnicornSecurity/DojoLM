@@ -97,12 +97,22 @@ import { fileStorage } from '@/lib/storage/file-storage'
 // Helpers
 // ---------------------------------------------------------------------------
 
+// Counter ensures each test request gets a unique IP so the module-level rate
+// limiter (10 req/min/IP) cannot cause cross-test contamination.
+let __ceTestRequestCounter = 0
 function createGetRequest(params: Record<string, string> = {}): NextRequest {
   const url = new URL('http://localhost:42001/api/compliance/export')
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(k, v)
   }
-  return new NextRequest(url.toString(), { method: 'GET' })
+  __ceTestRequestCounter += 1
+  const oct3 = __ceTestRequestCounter % 250
+  const oct4 = Math.floor(__ceTestRequestCounter / 250) % 250
+  const uniqueIp = `10.0.${oct3}.${oct4 + 1}`
+  return new NextRequest(url.toString(), {
+    method: 'GET',
+    headers: { 'x-forwarded-for': uniqueIp },
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -179,8 +189,9 @@ describe('GET /api/compliance/export', () => {
 
     expect(res.status).toBe(400)
     const body = await res.json()
-    expect(body.error).toContain('Unsupported format')
-    expect(body.error).toContain('xml')
+    expect(body.error).toContain('Unsupported export format')
+    // Note: the actual format token is not echoed back, valid formats are listed instead
+    expect(body.error).toContain('json')
   })
 
   // CE-006: Unauthorized request returns 401

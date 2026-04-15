@@ -57,12 +57,18 @@ export async function GET(
     return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
   }
 
-  // Include run history
+  // Include run history — bounded to prevent unbounded memory growth (H-05).
+  // Filenames are validated with SAFE_ID before being joined to the runs dir,
+  // defense-in-depth against path-traversal via crafted filenames.
+  const MAX_RUNS = 200;
+  const SAFE_RUN_FILE = /^[\w-]{1,128}\.json$/;
   let runs: unknown[] = [];
   try {
     const runsDir = path.join(RUNS_DIR, id);
-    const files = await fs.promises.readdir(runsDir);
-    for (const f of files.filter((f) => f.endsWith('.json'))) {
+    const files = (await fs.promises.readdir(runsDir))
+      .filter((f) => SAFE_RUN_FILE.test(f))
+      .slice(0, MAX_RUNS);
+    for (const f of files) {
       const content = await fs.promises.readFile(path.join(runsDir, f), 'utf-8');
       runs.push(JSON.parse(content));
     }
@@ -117,6 +123,18 @@ export async function PATCH(
     }
     if (body.selectedSkillIds.length > MAX_SKILLS) {
       return NextResponse.json({ error: `Maximum ${MAX_SKILLS} skills per campaign` }, { status: 400 });
+    }
+  }
+
+  // Validate targetUrl if provided (SSRF hardening — parity with POST handler)
+  if (body.targetUrl !== undefined && body.targetUrl !== null) {
+    try {
+      const parsed = new URL(String(body.targetUrl));
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        return NextResponse.json({ error: 'targetUrl must use http or https' }, { status: 400 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'targetUrl must be a valid URL' }, { status: 400 });
     }
   }
 

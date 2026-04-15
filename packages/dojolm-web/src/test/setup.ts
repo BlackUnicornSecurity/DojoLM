@@ -11,6 +11,11 @@ import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
+// Trust the X-Forwarded-For header in tests so route rate limiters can see the
+// unique IPs test helpers inject. Without this, getClientIp() falls back to a
+// fingerprint of headers which collapses all test requests into a single bucket.
+process.env.TRUSTED_PROXY = process.env.TRUSTED_PROXY ?? 'test';
+
 const SUPPRESSED_CONSOLE_ERROR_PATTERNS = [
   'Not implemented: navigation to another Document',
   // React act() warnings from components with async state updates on mount

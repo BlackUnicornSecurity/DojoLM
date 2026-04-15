@@ -49,7 +49,7 @@ function getApiKeyPermissions(): Map<string, UserRole> {
 }
 
 /** Get role for API key: check specific mapping first, then fall back to API_KEY_ROLE env var */
-function getApiKeyRole(apiKey: string): UserRole {
+export function getApiKeyRole(apiKey: string): UserRole {
   // Check for key-specific role mapping
   const permissionsMap = getApiKeyPermissions();
   if (permissionsMap.size > 0) {

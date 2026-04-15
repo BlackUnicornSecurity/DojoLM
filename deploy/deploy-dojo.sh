@@ -222,8 +222,8 @@ else
 
     info "Building Docker image on Voyager (SHA: ${BUILD_SHA})..."
     ssh "${VOYAGER_USER}@${VOYAGER_IP}" "cd ${REMOTE_DIR}/app && docker build \
-        --build-arg BUILD_SHA=${BUILD_SHA} \
-        --build-arg BUILD_DATE=${BUILD_DATE} \
+        --build-arg BUILD_SHA=\"${BUILD_SHA}\" \
+        --build-arg BUILD_DATE=\"${BUILD_DATE}\" \
         --build-arg NEXT_PUBLIC_APP_URL=https://dojo.bucc.internal \
         --build-arg NEXT_PUBLIC_API_URL=https://dojo.bucc.internal \
         -t dojolm-web:latest \

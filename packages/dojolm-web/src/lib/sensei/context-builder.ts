@@ -44,7 +44,7 @@ export async function buildSenseiContext(
   activeModule: NavId,
   request: NextRequest,
 ): Promise<SenseiContext> {
-  const [{ getGuardConfig }, { getStorage }, { validateSession }, { SESSION_COOKIE_NAME }] = await Promise.all([
+  const [{ getGuardConfig }, { getStorage }, { validateSession }, { SESSION_COOKIE_NAME, getApiKeyRole }] = await Promise.all([
     import('../storage/guard-storage'),
     import('../storage/storage-interface'),
     import('../auth/session'),
@@ -64,11 +64,16 @@ export async function buildSenseiContext(
   const recentActivity = await getRecentActivity(storage);
   const sessionToken = getCookieValue(request, SESSION_COOKIE_NAME);
   const sessionUser = sessionToken ? validateSession(sessionToken) : null;
-  const userRole = request.headers.get('x-api-key')
-    ? 'admin'
-    : sessionUser?.role === 'admin'
+  const apiKey = request.headers.get('x-api-key');
+  // Resolve caller role. An API key must be mapped through getApiKeyRole so
+  // viewer-scoped keys cannot obtain admin tool access inside Sensei.
+  const resolvedRole = apiKey
+    ? getApiKeyRole(apiKey)
+    : sessionUser?.role ?? 'viewer';
+  const userRole: SenseiContext['userRole'] =
+    resolvedRole === 'admin'
       ? 'admin'
-      : sessionUser?.role === 'analyst'
+      : resolvedRole === 'analyst'
         ? 'user'
         : 'viewer';
 

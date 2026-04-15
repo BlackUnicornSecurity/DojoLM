@@ -22,7 +22,9 @@ import { NAV_ITEMS } from '@/lib/constants'
 import type { NavId } from '@/lib/constants'
 
 /** Set of valid NavIds for security validation — excludes hidden/retired items */
-const VALID_NAV_IDS = new Set<string>(NAV_ITEMS.filter(item => !item.hidden).map(item => item.id))
+const VALID_NAV_IDS = new Set<string>(
+  NAV_ITEMS.filter(item => !('hidden' in item && item.hidden === true)).map(item => item.id)
+)
 
 /** Safe navigation hook — returns no-op when NavigationProvider is not available (e.g., tests) */
 function useSafeNavigation() {

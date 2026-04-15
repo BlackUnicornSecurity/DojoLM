@@ -117,7 +117,7 @@ function getRateLimitScope(request: RateLimitRequest, tier: RateLimitTier): stri
 // PT-RATELIM-M01 fix: Only trust proxy headers when TRUSTED_PROXY is set.
 // When running without a trusted proxy, fall back to a stable browser/API-key
 // fingerprint so one local client does not consume the whole in-memory bucket.
-function getClientIp(request: RateLimitRequest): string {
+export function getClientIp(request: RateLimitRequest): string {
   if (process.env.TRUSTED_PROXY) {
     return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       ?? request.headers.get('x-real-ip')

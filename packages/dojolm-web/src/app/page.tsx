@@ -283,8 +283,23 @@ function ScannerContent({ onScan, onClear }: { onScan: (text: string) => void; o
   const { logEvent } = useActivityLogger()
   const allEnginesDisabled = engineFilters.every(f => !f.enabled)
   const prevScanResultRef = useRef<ScanResult | null>(null)
-  // Train 2 PR-4b.4 — Shingan merged into Scanner Deep Scan sub-tab
-  const [scannerTab, setScannerTab] = useState<ScannerSubTab>('interactive')
+  // Train 2 PR-4b.4 — Shingan merged into Scanner Deep Scan sub-tab.
+  // Honor `#deep-scan` hash so AdversarialLab's "Launch Shingan" deep-link lands
+  // on the correct sub-tab instead of the default Interactive tab.
+  const [scannerTab, setScannerTab] = useState<ScannerSubTab>(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#deep-scan') {
+      return 'deep-scan'
+    }
+    return 'interactive'
+  })
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onHash = () => {
+      if (window.location.hash === '#deep-scan') setScannerTab('deep-scan')
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   // Log scan events to activity feed — static descriptions only, never user input
   useEffect(() => {

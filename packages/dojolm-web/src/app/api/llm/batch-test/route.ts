@@ -10,7 +10,7 @@ import { getStorage } from '@/lib/storage/storage-interface';
 import { executeSingleTestWithRetry } from '@/lib/llm-execution';
 import { getConcurrentLimit, getMaxBatchSize, getPerHostLimit, LOCAL_GPU_PROVIDERS } from '@/lib/llm-constants';
 import type { LLMModelConfig } from '@/lib/llm-types';
-import { checkApiAuth } from '@/lib/api-auth';
+import { withAuth } from '@/lib/auth/route-guard';
 
 const MAX_CONCURRENT_BATCHES = 3;
 
@@ -40,10 +40,7 @@ async function reconcileRunningBatches(storage: Awaited<ReturnType<typeof getSto
   }
 }
 
-export async function POST(request: NextRequest) {
-  const authError = checkApiAuth(request);
-  if (authError) return authError;
-
+async function handlePost(request: NextRequest): Promise<NextResponse> {
   try {
     // BUG-001/002: Reconcile in-memory state before checking limit
     const storageForReconcile = await getStorage();
@@ -144,10 +141,7 @@ export async function POST(request: NextRequest) {
 const BATCH_LIST_DEFAULT_LIMIT = 50;
 const BATCH_LIST_MAX_LIMIT = 200;
 
-export async function GET(request: NextRequest) {
-  const authError = checkApiAuth(request);
-  if (authError) return authError;
-
+async function handleGet(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = request.nextUrl;
     const rawLimit = searchParams.get('limit');
@@ -190,6 +184,17 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// RBAC-gated exports — analyst and above can execute batches; viewers can read.
+export const POST = withAuth(async (request) => handlePost(request), {
+  resource: 'batches',
+  action: 'execute',
+});
+
+export const GET = withAuth(async (request) => handleGet(request), {
+  resource: 'batches',
+  action: 'read',
+});
 
 // ===========================================================================
 // Per-host concurrency tracking

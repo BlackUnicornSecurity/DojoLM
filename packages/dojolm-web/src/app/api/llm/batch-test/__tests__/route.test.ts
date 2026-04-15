@@ -43,6 +43,19 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: () => null,
 }));
 
+// C-02 fix wrapped POST/GET with withAuth — bypass for unit tests by invoking
+// the inner handler directly with a synthetic admin user.
+vi.mock('@/lib/auth/route-guard', () => ({
+  withAuth: (handler: (req: NextRequest, ctx: { params?: Record<string, string>; user: { id: string; role: string; username: string } }) => Promise<Response> | Response) => {
+    return async (req: NextRequest, ctx?: { params?: Record<string, string> }) => {
+      return handler(req, {
+        params: ctx?.params,
+        user: { id: 'admin-1', role: 'admin', username: 'admin' },
+      });
+    };
+  },
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

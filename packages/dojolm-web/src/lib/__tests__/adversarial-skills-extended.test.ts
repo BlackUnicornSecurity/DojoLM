@@ -21,12 +21,15 @@ describe('EXTENDED_SKILLS', () => {
     expect(EXTENDED_SKILLS).toHaveLength(22);
   });
 
-  it('ASX-002: covers extended categories (5 each)', () => {
+  it('ASX-002: covers extended categories (5 each for primary + 2 supply-chain)', () => {
     const cats = ['evasion', 'tool-abuse', 'compliance', 'audio-voice'];
     for (const cat of cats) {
       const count = EXTENDED_SKILLS.filter((s) => s.category === cat).length;
       expect(count).toBe(5);
     }
+    // Supply-chain skills round EXTENDED_SKILLS out to 22.
+    const supplyChain = EXTENDED_SKILLS.filter((s) => s.category === 'supply-chain').length;
+    expect(supplyChain).toBe(2);
   });
 
   it('ASX-003: all extended skill IDs are unique', () => {
@@ -42,10 +45,11 @@ describe('ADVANCED_SKILLS', () => {
 });
 
 describe('ALL_SKILLS', () => {
-  it('ASX-005: combines all 52 skills', () => {
-    expect(ALL_SKILLS).toHaveLength(52);
+  it('ASX-005: combines all 53 skills (includes OBL Contrastive Bias)', () => {
+    expect(ALL_SKILLS).toHaveLength(53);
+    // CORE (20) + EXTENDED (22) + ADVANCED (10) + CONTRASTIVE_BIAS (1) = 53
     expect(ALL_SKILLS.length).toBe(
-      CORE_SKILLS.length + EXTENDED_SKILLS.length + ADVANCED_SKILLS.length
+      CORE_SKILLS.length + EXTENDED_SKILLS.length + ADVANCED_SKILLS.length + 1
     );
   });
 
@@ -75,8 +79,9 @@ describe('getAllSkillsByCategory', () => {
   it('ASX-010: returns skills across all collections', () => {
     const recon = getAllSkillsByCategory('reconnaissance');
     expect(recon).toHaveLength(5);
+    // evasion has 6 items (5 base + 1 OBL Contrastive Bias skill)
     const evasion = getAllSkillsByCategory('evasion');
-    expect(evasion).toHaveLength(5);
+    expect(evasion).toHaveLength(6);
   });
 });
 

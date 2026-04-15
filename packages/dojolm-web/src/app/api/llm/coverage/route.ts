@@ -11,6 +11,7 @@ import { demoCoverageGet } from '@/lib/demo/mock-api-handlers';
 import { apiError } from '@/lib/api-error';
 import { fetchCoverageMap } from '@/lib/llm-server-utils';
 import { checkApiAuth } from '@/lib/api-auth';
+import { getClientIp } from '@/lib/api-handler';
 
 // In-memory rate limiter — 30 coverage requests per minute per IP
 const rateLimiter = new Map<string, number[]>();
@@ -41,10 +42,7 @@ export async function GET(request: NextRequest) {
   const authError = checkApiAuth(request);
   if (authError) return authError;
 
-  const ip =
-    request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ||
-    request.headers.get('x-real-ip')?.trim() ||
-    'unknown';
+  const ip = getClientIp(request);
 
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
