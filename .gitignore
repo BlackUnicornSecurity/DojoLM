@@ -92,3 +92,17 @@ presentation/
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Runtime / local environment files (never commit)
+deploy/.env
+*.env.e2e.prod
+*.env.e2e.local
+
+# Historical backups (2GB+ of pre-QA snapshots; never commit). Root-anchored.
+/archive/
+
+# Root-level coverage output (package-scoped entries above cover package dirs)
+/coverage/
+
+# Claude Code skill packages belong in ~/.claude/skills/, not repo root
+*.skill

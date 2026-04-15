@@ -12,7 +12,16 @@ ecosystem/findings/
 validation/
 compliance-evidence/
 sengoku/runs/
+
+# --- Sengoku campaigns: ignore runtime records, keep seed index ---
+# Must stay as a paired block — inserting any line between these two lines
+# will cause `index.json` to be re-ignored by the wildcard above it.
+sengoku/campaigns/*.json
+!sengoku/campaigns/index.json
+# --- end sengoku campaigns block ---
+
 arena/matches/
 amaterasu-master/
-amaterasu-dna/ingest-meta.json
+# Full amaterasu-dna runtime tree (nodes/, ingest-meta.json, etc.)
+amaterasu-dna/
 admin-settings.json

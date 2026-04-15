@@ -29,6 +29,19 @@ vi.mock('@/lib/db/repositories/user.repository', () => ({
   },
 }));
 
+// Route calls destroyUserSessions() on disable and role-update actions (route.ts:40,51).
+// Mock the session module so the test never touches the real SQLite DB. Without this,
+// the test becomes cwd-dependent: running under packages/dojolm-web/ finds migrations and
+// passes, but running from the monorepo root has no migrations dir, so the sessions table
+// is never created and DELETE throws "no such table" — swallowed by route.ts:56 → 500.
+// Local-var + forwarding-arrow style matches `login/__tests__/route.test.ts` so tests
+// can assert the session revocation fired on sensitive role/disable changes.
+const mockDestroyUserSessions = vi.fn();
+
+vi.mock('@/lib/auth/session', () => ({
+  destroyUserSessions: (...args: unknown[]) => mockDestroyUserSessions(...args),
+}));
+
 vi.mock('@/lib/db/types', () => ({}));
 
 // --- Helpers ---
@@ -82,6 +95,8 @@ describe('PATCH /api/auth/users/[id]', () => {
     const body = await res.json();
     expect(body.user).toEqual(disabledUser);
     expect(mockDisable).toHaveBeenCalledWith('user-1');
+    // Disable must revoke the user's sessions (security-relevant side effect).
+    expect(mockDestroyUserSessions).toHaveBeenCalledWith('user-1');
   });
 
   // UID-003: Update role to admin
@@ -96,6 +111,8 @@ describe('PATCH /api/auth/users/[id]', () => {
     const body = await res.json();
     expect(body.user.role).toBe('admin');
     expect(mockUpdateRole).toHaveBeenCalledWith('user-1', 'admin');
+    // Role change must revoke the user's sessions so old tokens don't retain the old role.
+    expect(mockDestroyUserSessions).toHaveBeenCalledWith('user-1');
   });
 
   // UID-004: Update role to viewer
@@ -110,6 +127,7 @@ describe('PATCH /api/auth/users/[id]', () => {
     const body = await res.json();
     expect(body.user.role).toBe('viewer');
     expect(mockUpdateRole).toHaveBeenCalledWith('user-1', 'viewer');
+    expect(mockDestroyUserSessions).toHaveBeenCalledWith('user-1');
   });
 
   // UID-005: Update role to analyst
