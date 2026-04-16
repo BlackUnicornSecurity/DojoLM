@@ -199,6 +199,7 @@ describe('POST /api/auth/login', () => {
     ));
     expect(limited.status).toBe(429);
     expect((await limited.json()).error).toMatch(/too many login attempts/i);
+    expect(limited.headers.get('Retry-After')).toBe('60');
   });
 
   it('AUTH-012: clears failed-attempt state after a successful login', async () => {

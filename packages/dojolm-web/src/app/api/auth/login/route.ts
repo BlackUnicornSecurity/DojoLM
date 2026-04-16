@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     if (isLoginRateLimited(rateLimitKey)) {
       return NextResponse.json(
         { error: 'Too many login attempts, please try again later' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': '60' } }
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       const limited = recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
         { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
-        { status: limited ? 429 : 401 }
+        { status: limited ? 429 : 401, ...(limited && { headers: { 'Retry-After': '60' } }) }
       );
     }
 
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
       const limited = recordLoginRateLimitFailure(rateLimitKey);
       return NextResponse.json(
         { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
-        { status: limited ? 429 : 401 }
+        { status: limited ? 429 : 401, ...(limited && { headers: { 'Retry-After': '60' } }) }
       );
     }
 
