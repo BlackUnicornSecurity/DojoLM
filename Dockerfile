@@ -24,8 +24,10 @@ COPY packages/dojolm-mcp/package.json ./packages/dojolm-mcp/
 
 # Install ALL dependencies (including dev for build step)
 # Use npm install instead of npm ci — lockfile generated with npm 11 is incompatible with npm 10 in node:22
-# Force install platform-specific optional deps for linux (Tailwind 4 oxide)
-RUN npm install && npm install @tailwindcss/oxide-linux-x64-gnu 2>/dev/null || true
+# Force install platform-specific optional deps for linux (Tailwind 4 oxide) — detect arch at build time
+RUN npm install && \
+    ARCH=$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/') && \
+    npm install @tailwindcss/oxide-linux-${ARCH}-gnu 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # Stage 2: builder — compile TypeScript + Next.js build
@@ -71,7 +73,7 @@ ARG NEXT_PUBLIC_API_URL=""
 ARG NEXT_PUBLIC_APP_URL=""
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
-RUN cd packages/dojolm-web && npx next build --webpack
+RUN cd packages/dojolm-web && NODE_OPTIONS="--max-old-space-size=4096" npx next build --webpack
 
 # ---------------------------------------------------------------------------
 # Stage 3: runner — production runtime

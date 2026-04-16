@@ -31,7 +31,12 @@
     "session:show": "tsx team/QA-tools/session-manager.ts show",
     "session:update": "tsx team/QA-tools/session-manager.ts update",
     "session:close": "tsx team/QA-tools/session-manager.ts close",
-    "report:generate": "tsx team/QA-tools/generate-report.ts"
+    "report:generate": "tsx team/QA-tools/generate-report.ts",
+    "push:dev": "bash deploy/deploy-challenger.sh",
+    "push:dev:dry": "bash deploy/deploy-challenger.sh --dry-run",
+    "push:prod": "bash deploy/deploy-dojo.sh",
+    "push:prod:dry": "bash deploy/deploy-dojo.sh --dry-run",
+    "deploy:status": "make status"
   },
   "keywords": [
     "dojolm",
