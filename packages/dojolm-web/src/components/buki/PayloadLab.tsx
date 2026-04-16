@@ -88,8 +88,8 @@ export function PayloadLab() {
   return (
     <div className="space-y-6">
       <ModuleHeader
-        title="Payload Lab"
-        subtitle="武器 (Buki) — fixtures, payloads, synthetic generator, and fuzzer"
+        title="Buki"
+        subtitle="武器 — Payloads, fixtures, synthetic generator, and fuzzer"
         icon={Warehouse}
       />
 

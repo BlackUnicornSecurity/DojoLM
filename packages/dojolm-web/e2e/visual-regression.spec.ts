@@ -70,16 +70,20 @@ test.describe('Visual Regression — Module Screens', () => {
     });
   });
 
-  test('Armory module', async ({ page }) => {
-    await navigateToModule(page, 'Armory', /Armory|Fixtures/i);
+  test('Buki module', async ({ page }) => {
+    // Armory absorbed into Buki (2026-04-13 Testing UX Consolidation).
+    // Baseline file kept as armory.png for now — rename tracked in TI-007.
+    await navigateToModule(page, 'Buki', /Payload Lab|Buki|Fixtures/i);
     await expect(page).toHaveScreenshot('armory.png', {
       maxDiffPixelRatio: 0.03,
       timeout: VISUAL_TIMEOUT,
     });
   });
 
-  test('LLM Dashboard module', async ({ page }) => {
-    await navigateToModule(page, 'LLM', /LLM|Models/i);
+  test('Model Lab module', async ({ page }) => {
+    // LLM Dashboard renamed to Model Lab (Train-2 PR-4b.6, 2026-04-09).
+    // Baseline file kept as llm-dashboard.png for now — rename tracked in TI-007.
+    await navigateToModule(page, 'Model Lab', /Model Lab|Models/i);
     await expect(page).toHaveScreenshot('llm-dashboard.png', {
       maxDiffPixelRatio: 0.03,
       timeout: VISUAL_TIMEOUT,

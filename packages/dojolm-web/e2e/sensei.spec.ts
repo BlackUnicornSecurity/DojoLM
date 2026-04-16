@@ -21,6 +21,16 @@ test.describe('Sensei Chat', () => {
     await expect(senseiBtn).toBeVisible({ timeout: 10000 });
   });
 
+  test('drawer is closed by default on first load (VIS-01 guard)', async ({ page }) => {
+    // Regression guard for VIS-01 (2026-04-15 audit): drawer must NOT auto-open.
+    // `useSensei.ts` defaults `isOpen=false`; drawer is `translate-x-full` + aria-hidden
+    // when closed. The FAB "Open Sensei" button must be the visible entry point.
+    const drawer = page.locator('[role="dialog"][aria-label="Sensei AI Assistant"]');
+    await expect(drawer).toHaveAttribute('aria-hidden', 'true');
+    const openBtn = page.getByRole('button', { name: 'Open Sensei' }).first();
+    await expect(openBtn).toBeVisible({ timeout: 5000 });
+  });
+
   test('clicking Sensei button opens the chat drawer', async ({ page }) => {
     const senseiBtn = page.getByRole('button', { name: /Sensei|Open Sensei|Chat/i }).first();
     await expect(senseiBtn).toBeVisible({ timeout: 10000 });

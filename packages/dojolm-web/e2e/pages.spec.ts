@@ -42,6 +42,12 @@ test.describe('Error Boundary', () => {
 });
 
 test.describe('Login Page', () => {
+  /* Login-form tests need an UNAUTHENTICATED session. `global-setup.ts`
+     (added 2026-04-15) pre-authenticates every test via storageState by
+     default. Override with an empty storageState so `/login` shows the
+     form instead of redirecting to the dashboard. */
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('renders login form with username and password inputs', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('input#username')).toBeVisible({ timeout: 10000 });

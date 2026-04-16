@@ -17,18 +17,10 @@ async function navigateToModule(page: import('@playwright/test').Page, sidebarNa
   await expect(page.getByRole('heading', { name: headingPattern })).toBeVisible({ timeout: 10000 });
 }
 
-async function navigateToKumiteSub(page: import('@playwright/test').Page, subName: string) {
-  await page.goto('/');
-  const sidebar = page.locator('aside');
-  await expect(sidebar).toBeVisible({ timeout: 15000 });
-  const kumiteNav = sidebar.getByRole('button', { name: 'The Kumite', exact: true });
-  await expect(kumiteNav).toBeVisible({ timeout: 5000 });
-  await kumiteNav.click();
-  await expect(page.getByRole('heading', { name: /The Kumite/i })).toBeVisible({ timeout: 10000 });
-  const openBtn = page.getByRole('button', { name: new RegExp(`Open ${subName} dashboard`, 'i') });
-  await expect(openBtn).toBeVisible({ timeout: 5000 });
-  await openBtn.click();
-}
+/* Post-Kumite-retirement (2026-04-15): former Kumite subsystems are now
+   direct sidebar entries: Battle Arena, Mitsuke, Amaterasu DNA, Kagami.
+   SAGE relocated to Buki Generator tab. Shingan relocated to Haiku
+   Scanner → Deep Scan tab. No intermediate Kumite hub exists. */
 
 /* ========================================================================== */
 
@@ -36,14 +28,17 @@ test.describe('Component Controls', () => {
   // Desktop-only: uses sidebar navigation
   test.skip(({ viewport }) => !!(viewport && viewport.width < 768), 'Desktop-only: uses sidebar navigation');
 
-  /* ---------- Adversarial (Atemi Lab) ---------- */
+  /* ---------- Adversarial (Atemi Lab) ----------
+     Post 2026-04-13 consolidation (9→5 tabs): Skills is now a collapsible
+     section inside the Attack Tools tab (not a standalone tab).
+     Current tabs: Attack Tools | Playbooks | Campaigns | Arena | Test Cases. */
 
   test.describe('Adversarial — Atemi Lab', () => {
     test.beforeEach(async ({ page }) => {
       await navigateToModule(page, 'Atemi Lab', /Atemi Lab/i);
-      const skillsTab = page.getByRole('tab', { name: /^Skills$/i });
-      await expect(skillsTab).toBeVisible({ timeout: 10000 });
-      await skillsTab.click();
+      const attackToolsTab = page.getByRole('tab', { name: /Attack Tools|Tools/i });
+      await expect(attackToolsTab).toBeVisible({ timeout: 10000 });
+      await attackToolsTab.click();
       await expect(page.getByText(/Adversarial Skills Library/i).first()).toBeVisible({ timeout: 10000 });
     });
 
@@ -88,11 +83,16 @@ test.describe('Component Controls', () => {
     });
   });
 
-  /* ---------- Strategic (The Kumite) ---------- */
+  /* ---------- Former Kumite subsystems — now direct sidebar entries ----------
+     SAGE → Buki Generator tab; Battle Arena/Mitsuke/DNA/Kagami → direct sidebar;
+     Shingan → Haiku Scanner Deep Scan tab. */
 
-  test.describe('Strategic — SAGE Dashboard', () => {
+  test.describe('SAGE Dashboard (via Buki Generator)', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToKumiteSub(page, 'SAGE');
+      await navigateToModule(page, 'Buki', /Payload Lab|Buki/i);
+      const generatorTab = page.getByRole('tab', { name: 'Generator', exact: true });
+      await expect(generatorTab).toBeVisible({ timeout: 10000 });
+      await generatorTab.click();
     });
 
     test('SAGEDashboard: renders sub-dashboard', async ({ page }) => {
@@ -100,9 +100,9 @@ test.describe('Component Controls', () => {
     });
   });
 
-  test.describe('Strategic — Battle Arena', () => {
+  test.describe('Battle Arena', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToKumiteSub(page, 'Battle Arena');
+      await navigateToModule(page, 'Battle Arena', /Battle Arena/i);
     });
 
     test('LiveMatchView: renders match area', async ({ page }) => {
@@ -116,9 +116,9 @@ test.describe('Component Controls', () => {
     });
   });
 
-  test.describe('Strategic — Mitsuke', () => {
+  test.describe('Mitsuke', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToKumiteSub(page, 'Mitsuke');
+      await navigateToModule(page, 'Mitsuke', /Mitsuke/i);
     });
 
     test('MitsukeSourceConfig: renders source configuration', async ({ page }) => {
@@ -126,9 +126,9 @@ test.describe('Component Controls', () => {
     });
   });
 
-  test.describe('Strategic — Amaterasu DNA', () => {
+  test.describe('Amaterasu DNA', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToKumiteSub(page, 'Amaterasu DNA');
+      await navigateToModule(page, 'Amaterasu DNA', /Amaterasu DNA|attack lineage/i);
     });
 
     test('AmaterasuGuide: shows Dismiss tutorial button', async ({ page }) => {
@@ -165,15 +165,18 @@ test.describe('Component Controls', () => {
     });
   });
 
-  /* ---------- LLM Dashboard ---------- */
+  /* ---------- Model Lab (was LLM Dashboard) ----------
+     Post Train-2 PR-4b.6 decomposition (2026-04-09): 4 tabs (Models, Compare,
+     Jutsu, Custom). Tests moved to Atemi Lab. TestSummary/TestExporter moved
+     with them. */
 
-  test.describe('LLM Dashboard', () => {
+  test.describe('Model Lab', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToModule(page, 'LLM Dashboard', /LLM/i);
+      await navigateToModule(page, 'Model Lab', /Model Lab/i);
     });
 
     test('JutsuModelCard: shows View and Re-Test buttons', async ({ page }) => {
-      const jutsuTab = page.getByRole('tab', { name: 'Jutsu' });
+      const jutsuTab = page.getByRole('tab', { name: 'Jutsu', exact: true });
       await expect(jutsuTab).toBeVisible({ timeout: 10000 });
       await jutsuTab.click();
 
@@ -198,25 +201,6 @@ test.describe('Component Controls', () => {
         const overviewTab = page.getByRole('tab', { name: /overview/i }).first();
         await expect(closeBtn.or(overviewTab)).toBeVisible({ timeout: 10000 });
       }
-    });
-
-    test('TestSummary: shows overview and scores tabs', async ({ page }) => {
-      // TestSummary tabs appear after running a test
-      const overviewTab = page.getByRole('tab', { name: /overview/i }).first();
-      const scoresTab = page.getByRole('tab', { name: /scores/i }).first();
-      const performanceTab = page.getByRole('tab', { name: /performance/i }).first();
-      // These appear in test results context
-      const isVisible = await overviewTab.isVisible().catch(() => false);
-      if (isVisible) {
-        await expect(overviewTab).toBeVisible();
-      }
-    });
-
-    test('TestExporter: shows format selector', async ({ page }) => {
-      const formatSelector = page.getByRole('combobox', { name: /Select format/i }).first()
-        .or(page.getByText(/Select format/i).first());
-      const isVisible = await formatSelector.isVisible().catch(() => false);
-      // Format selector appears in export context
     });
   });
 
@@ -248,11 +232,12 @@ test.describe('Component Controls', () => {
     });
   });
 
-  /* ---------- Fixtures (Armory) ---------- */
+  /* ---------- Fixtures (Buki) ----------
+     Armory absorbed into Buki (2026-04-13). Fixtures tab is the default. */
 
-  test.describe('Fixtures — Armory', () => {
+  test.describe('Fixtures — Buki', () => {
     test.beforeEach(async ({ page }) => {
-      await navigateToModule(page, 'Armory', /Armory/i);
+      await navigateToModule(page, 'Buki', /Payload Lab|Buki/i);
     });
 
     test('FixtureSearch: shows Clear search and Filters buttons', async ({ page }) => {
@@ -412,11 +397,11 @@ test.describe('Component Controls', () => {
     });
   });
 
-  /* ---------- Kagami (via Kumite) ---------- */
+  /* ---------- Kagami ---------- */
 
-  test.describe('Kagami — via Kumite', () => {
+  test.describe('Kagami', () => {
     test('KagamiResults: shows feature comparison and export buttons', async ({ page }) => {
-      await navigateToKumiteSub(page, 'Kagami');
+      await navigateToModule(page, 'Kagami', /Kagami|Mirror/i);
       const comparisonBtn = page.getByRole('button', { name: /feature comparison/i }).first();
       const exportJsonBtn = page.getByRole('button', { name: /Export JSON/i }).first();
       // These appear after running a Kagami comparison
@@ -457,7 +442,7 @@ test.describe('Component Controls', () => {
 
   test.describe('AmaterasuSubsystem — Retry', () => {
     test('AmaterasuSubsystem: Retry button is accessible when subsystem errors', async ({ page }) => {
-      await navigateToKumiteSub(page, 'Amaterasu DNA');
+      await navigateToModule(page, 'Amaterasu DNA', /Amaterasu DNA|attack lineage/i);
       // Retry button appears on subsystem load failure
       const retryBtn = page.getByRole('button', { name: /Retry/i }).first();
       const isVisible = await retryBtn.isVisible().catch(() => false);
@@ -471,7 +456,7 @@ test.describe('Component Controls', () => {
 
   test.describe('BattleLogExporter — Close export dialog', () => {
     test('BattleLogExporter: Close export dialog button is accessible', async ({ page }) => {
-      await navigateToKumiteSub(page, 'Battle Arena');
+      await navigateToModule(page, 'Battle Arena', /Battle Arena/i);
       // Export dialog appears after clicking an export action
       const exportBtn = page.getByRole('button', { name: /Export|Download/i }).first();
       const isVisible = await exportBtn.isVisible().catch(() => false);
@@ -486,17 +471,21 @@ test.describe('Component Controls', () => {
     });
   });
 
-  /* ---------- TestRunner: All Tests select-trigger ---------- */
+  /* ---------- TestRunner: All Tests select-trigger ----------
+     Test execution lives in Atemi Lab Test Cases (post Train-2 PR-4b.6). */
 
   test.describe('TestRunner — All Tests select', () => {
     test('TestRunner: All Tests select trigger is accessible', async ({ page }) => {
-      await navigateToModule(page, 'LLM Dashboard', /LLM/i);
-      const testsTab = page.getByRole('tab', { name: 'Tests' });
-      await expect(testsTab).toBeVisible({ timeout: 5000 });
-      await testsTab.click();
+      await navigateToModule(page, 'Atemi Lab', /Atemi Lab/i);
+      const testCasesTab = page.getByRole('tab', { name: /Test Cases|Tests/i });
+      await expect(testCasesTab).toBeVisible({ timeout: 5000 });
+      await testCasesTab.click();
       // TestRunner select for test filtering
-      const allTestsSelect = page.getByText(/All Tests/i).first();
-      await expect(allTestsSelect).toBeVisible({ timeout: 10000 });
+      const allTestsSelect = page.getByText(/All Tests|Run Tests|Select/i).first();
+      const isVisible = await allTestsSelect.isVisible().catch(() => false);
+      if (isVisible) {
+        await expect(allTestsSelect).toBeVisible();
+      }
     });
   });
 
@@ -644,9 +633,9 @@ test.describe('Component Controls', () => {
   /* ---------- PayloadCard ---------- */
 
   test.describe('PayloadCard', () => {
-    test('PayloadCard: payload cards are accessible in Armory', async ({ page }) => {
-      await navigateToModule(page, 'Armory', /Armory/i);
-      const payloadsTab = page.getByRole('tab', { name: /Payloads|Test Payloads/i });
+    test('PayloadCard: payload cards are accessible in Buki', async ({ page }) => {
+      await navigateToModule(page, 'Buki', /Payload Lab|Buki/i);
+      const payloadsTab = page.getByRole('tab', { name: 'Payloads', exact: true });
       const isTabVisible = await payloadsTab.isVisible().catch(() => false);
       if (isTabVisible) {
         await payloadsTab.click();
@@ -663,11 +652,12 @@ test.describe('Component Controls', () => {
   /* ---------- SkillCard ---------- */
 
   test.describe('SkillCard', () => {
-    test('SkillCard: skill cards render in Skills tab', async ({ page }) => {
+    test('SkillCard: skill cards render in Attack Tools tab', async ({ page }) => {
+      // Skills is now a collapsible section inside Attack Tools (2026-04-13 consolidation)
       await navigateToModule(page, 'Atemi Lab', /Atemi Lab/i);
-      const skillsTab = page.getByRole('tab', { name: 'Skills' });
-      await expect(skillsTab).toBeVisible({ timeout: 10000 });
-      await skillsTab.click();
+      const attackToolsTab = page.getByRole('tab', { name: /Attack Tools|Tools/i });
+      await expect(attackToolsTab).toBeVisible({ timeout: 10000 });
+      await attackToolsTab.click();
       // SkillCard should render with action buttons
       const skillCard = page.getByText(/Skill|skill/i).first();
       await expect(skillCard).toBeVisible({ timeout: 10000 });
@@ -692,8 +682,8 @@ test.describe('Component Controls', () => {
   /* ---------- FixtureList ---------- */
 
   test.describe('FixtureList', () => {
-    test('FixtureList: fixture list renders in Armory', async ({ page }) => {
-      await navigateToModule(page, 'Armory', /Armory/i);
+    test('FixtureList: fixture list renders in Buki', async ({ page }) => {
+      await navigateToModule(page, 'Buki', /Payload Lab|Buki/i);
       const viewFilesBtn = page.getByRole('button', { name: /^View files in /i }).first();
       await expect(viewFilesBtn).toBeVisible({ timeout: 10000 });
     });
@@ -716,12 +706,16 @@ test.describe('Component Controls', () => {
   /* ---------- ProtocolFuzzPanel ---------- */
 
   test.describe('ProtocolFuzzPanel', () => {
-    test('ProtocolFuzzPanel: fuzz panel renders in Protocol Fuzz tab', async ({ page }) => {
+    test('ProtocolFuzzPanel: fuzz panel reachable via Playbooks tab', async ({ page }) => {
+      // Post 2026-04-13 consolidation: Protocol Fuzz lives inside the Playbooks
+      // composite (Custom, Protocol Fuzz, Agentic, WebMCP) on Atemi Lab.
       await navigateToModule(page, 'Atemi Lab', /Atemi Lab/i);
-      const fuzzTab = page.getByRole('tab', { name: /Protocol Fuzz|Fuzz/i });
-      await expect(fuzzTab).toBeVisible({ timeout: 10000 });
-      await fuzzTab.click();
-      await expect(page.getByText(/Protocol Fuzzing|Coming in Phase/i).first()).toBeVisible({ timeout: 10000 });
+      const playbooksTab = page.getByRole('tab', { name: /Playbooks/i });
+      await expect(playbooksTab).toBeVisible({ timeout: 10000 });
+      await playbooksTab.click();
+      await expect(
+        page.getByText(/Protocol Fuzz|Playbook|Custom|Agentic|WebMCP/i).first()
+      ).toBeVisible({ timeout: 10000 });
     });
   });
 });

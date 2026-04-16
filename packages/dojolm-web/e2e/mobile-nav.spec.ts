@@ -25,13 +25,14 @@ test.describe('Mobile Navigation', () => {
     await expect(sidebar).not.toBeVisible();
   });
 
-  test('bottom nav shows Home, Scan, LLM, Guard, and More buttons', async ({ page }) => {
+  test('bottom nav shows Home, Scan, Model Lab, Guard, and More buttons', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    // Buttons use aria-label from the full nav item label; use exact:true to avoid
-    // substring collisions (e.g. "Dashboard" also matches "LLM Dashboard").
+    // Buttons use aria-label from the full `label` nav item field (not `mobileLabel`);
+    // see src/components/layout/MobileNav.tsx:64. Use exact:true to avoid substring
+    // collisions (e.g. "Dashboard" also matches other labels).
     await expect(mobileNav.getByRole('button', { name: 'Dashboard', exact: true })).toBeVisible();
     await expect(mobileNav.getByRole('button', { name: 'Haiku Scanner', exact: true })).toBeVisible();
-    await expect(mobileNav.getByRole('button', { name: 'LLM Dashboard', exact: true })).toBeVisible();
+    await expect(mobileNav.getByRole('button', { name: 'Model Lab', exact: true })).toBeVisible();
     await expect(mobileNav.getByRole('button', { name: 'Hattori Guard', exact: true })).toBeVisible();
     await expect(mobileNav.getByRole('button', { name: /More navigation options/i })).toBeVisible();
   });
@@ -43,11 +44,11 @@ test.describe('Mobile Navigation', () => {
     await expect(page.getByText('Input Text').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('tapping LLM navigates to LLM Dashboard', async ({ page }) => {
+  test('tapping Model Lab navigates to Model Lab', async ({ page }) => {
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
-    // Button aria-label is the full name as shown in the "bottom nav shows" test
-    await mobileNav.getByRole('button', { name: 'LLM Dashboard', exact: true }).click();
-    await expect(page.getByText('LLM Testing Dashboard').first()).toBeVisible({ timeout: 10000 });
+    // Button aria-label is the full `label` (Model Lab), visible text is `mobileLabel` (Jutsu).
+    await mobileNav.getByRole('button', { name: 'Model Lab', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Model Lab' }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('tapping Guard navigates to Hattori Guard', async ({ page }) => {
@@ -102,14 +103,15 @@ test.describe('Mobile Navigation', () => {
     await expect(drawer).not.toBeVisible({ timeout: 3000 });
   });
 
-  test('can navigate to Armory from More drawer', async ({ page }) => {
+  test('can navigate to Buki from More drawer', async ({ page }) => {
+    // Armory absorbed into Buki (2026-04-13 Testing UX Consolidation).
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
     await mobileNav.getByRole('button', { name: /More navigation options/i }).click();
 
     const drawer = page.getByRole('dialog', { name: 'More navigation options' });
     await expect(drawer).toBeVisible({ timeout: 3000 });
 
-    await drawer.getByRole('button', { name: /Armory/i }).click();
+    await drawer.getByRole('button', { name: 'Buki', exact: true }).click();
     await expect(page.getByText('Fixture Explorer').first()).toBeVisible({ timeout: 10000 });
   });
 });

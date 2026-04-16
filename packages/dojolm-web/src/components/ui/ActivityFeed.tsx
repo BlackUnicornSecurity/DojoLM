@@ -95,7 +95,7 @@ export function ActivityFeed({ className, maxVisible = 10 }: ActivityFeedProps) 
         {...emptyStatePresets.noData}
         title="No sessions yet"
         description="Run a scan or test to see activity here."
-        action={{ label: 'Open Shingan Scanner', onClick: () => setActiveTab('scanner') }}
+        action={{ label: 'Open Haiku Scanner', onClick: () => setActiveTab('scanner') }}
         className={cn("py-4", className)}
       />
     )

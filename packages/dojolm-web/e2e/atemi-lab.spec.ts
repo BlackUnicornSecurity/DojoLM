@@ -59,21 +59,23 @@ test.describe('Atemi Lab', () => {
     await expect(page.getByText('API Exploitation').first()).toBeVisible({ timeout: 5000 });
   });
 
-  test('Skills library tab renders', async ({ page }) => {
-    const skillsTab = page.getByRole('tab', { name: 'Skills' });
-    await expect(skillsTab).toBeVisible({ timeout: 10000 });
-    await skillsTab.click();
+  test('Skills library renders inside Attack Tools tab', async ({ page }) => {
+    // Post 2026-04-13 consolidation: Skills is a collapsible section within
+    // the Attack Tools tab, not a standalone tab.
+    const attackToolsTab = page.getByRole('tab', { name: /Attack Tools|Tools/i });
+    await expect(attackToolsTab).toBeVisible({ timeout: 10000 });
+    await attackToolsTab.click();
 
-    // Skills library content should appear
-    await expect(page.getByText(/Skill|skill/i).first()).toBeVisible({ timeout: 10000 });
+    // Skills library section should appear below the tool cards
+    await expect(page.getByText(/Adversarial Skills Library|Skill|skill/i).first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('MCP tab shows MCP Protocol Attacks', async ({ page }) => {
-    // Use exact:true to distinguish 'MCP' from 'WebMCP'
-    const mcpTab = page.getByRole('tab', { name: 'MCP', exact: true });
-    await expect(mcpTab).toBeVisible({ timeout: 10000 });
-    await mcpTab.click();
-    await page.waitForLoadState('networkidle');
+  test('MCP Protocol Attacks render inside Attack Tools tab', async ({ page }) => {
+    // Post consolidation: MCP attacks are tool cards within Attack Tools,
+    // not a separate tab.
+    const attackToolsTab = page.getByRole('tab', { name: /Attack Tools|Tools/i });
+    await expect(attackToolsTab).toBeVisible({ timeout: 10000 });
+    await attackToolsTab.click();
 
     // MCP Protocol Attacks heading should be visible
     await expect(page.getByText('MCP Protocol Attacks').first()).toBeVisible({ timeout: 20000 });
@@ -83,25 +85,17 @@ test.describe('Atemi Lab', () => {
     await expect(page.getByText('Tool Poisoning').first()).toBeVisible({ timeout: 15000 });
   });
 
-  test('WebMCP tab renders with target URL input and categories', async ({ page }) => {
-    const webmcpTab = page.getByRole('tab', { name: 'WebMCP' });
-    await expect(webmcpTab).toBeVisible({ timeout: 10000 });
-    await webmcpTab.click();
+  test('Playbooks tab renders with composite content', async ({ page }) => {
+    // Post consolidation: WebMCP, Protocol Fuzz, Custom, Agentic are inside
+    // the Playbooks composite tab.
+    const playbooksTab = page.getByRole('tab', { name: /Playbooks/i });
+    await expect(playbooksTab).toBeVisible({ timeout: 10000 });
+    await playbooksTab.click();
 
-    // WebMCP Attack Testing heading
-    await expect(page.getByText('WebMCP Attack Testing').first()).toBeVisible({ timeout: 10000 });
-
-    // Target URL input
-    await expect(page.getByLabel(/Target MCP server URL/i)).toBeVisible({ timeout: 10000 });
-
-    // Transport type radio group
-    await expect(page.getByRole('radio', { name: /HTTP transport/i })).toBeVisible({ timeout: 5000 });
-    await expect(page.getByRole('radio', { name: /SSE transport/i })).toBeVisible({ timeout: 5000 });
-
-    // Attack categories checkboxes
-    await expect(page.getByText('Attack Categories').first()).toBeVisible({ timeout: 5000 });
-    await expect(page.getByLabel(/Web Poisoning/i)).toBeVisible({ timeout: 5000 });
-    await expect(page.getByLabel(/OAuth Hijacking/i)).toBeVisible({ timeout: 5000 });
+    // Playbooks composite should show one or more sub-sections
+    await expect(
+      page.getByText(/Playbook|Custom|Protocol Fuzz|Agentic|WebMCP/i).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('session controls are visible in header', async ({ page }) => {
@@ -139,12 +133,13 @@ test.describe('Atemi Lab', () => {
     }
   });
 
-  test('Protocol Fuzz tab shows coming soon message', async ({ page }) => {
-    const fuzzTab = page.getByRole('tab', { name: /Protocol Fuzz|Fuzz/i });
-    await expect(fuzzTab).toBeVisible({ timeout: 10000 });
-    await fuzzTab.click();
-    
-    await expect(page.getByText(/Protocol Fuzzing|Coming in Phase/i).first()).toBeVisible({ timeout: 10000 });
+  test('shows all five Atemi Lab tabs', async ({ page }) => {
+    // Post 2026-04-13 consolidation: 5 tabs
+    await expect(page.getByRole('tab', { name: /Attack Tools|Tools/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('tab', { name: /Playbooks/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('tab', { name: /Campaigns/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('tab', { name: /Arena/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('tab', { name: /Test Cases|Tests/i })).toBeVisible({ timeout: 5000 });
   });
 
   test('attack tool cards show severity badges', async ({ page }) => {

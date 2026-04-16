@@ -69,8 +69,9 @@ test.describe('Widget Controls', () => {
       await expect(page.getByRole('button', { name: /Manage LLM Models/i }).first()).toBeVisible({ timeout: 10000 });
     });
 
-    test('shows Configure in LLM Dashboard button', async ({ page }) => {
-      await expect(page.getByRole('button', { name: /Configure in LLM Dashboard/i }).first()).toBeVisible({ timeout: 10000 });
+    test('shows Configure in Model Lab button', async ({ page }) => {
+      // LLM Dashboard renamed to Model Lab (Train-2 PR-4b.6, 2026-04-09)
+      await expect(page.getByRole('button', { name: /Configure in Model Lab/i }).first()).toBeVisible({ timeout: 10000 });
     });
   });
 

@@ -29,12 +29,12 @@ test.describe('Admin Controls', () => {
     });
   });
 
-  test.describe('AdminSettings (Admin Settings tab)', () => {
+  test.describe('AdminSettings (Settings tab)', () => {
     test.beforeEach(async ({ page }) => {
-      const settingsTab = page.getByRole('tab', { name: 'Admin Settings' });
+      const settingsTab = page.getByRole('tab', { name: 'Settings' });
       await expect(settingsTab).toBeVisible({ timeout: 5000 });
       await settingsTab.click();
-      await expect(page.getByText('Admin Settings').first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('Settings').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('shows edit settings button', async ({ page }) => {

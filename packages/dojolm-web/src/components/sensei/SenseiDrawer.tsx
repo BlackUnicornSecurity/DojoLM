@@ -280,7 +280,7 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
     : selectedModel
       ? selectedModel.name
       : models.length === 0
-        ? 'No models configured'
+        ? 'No models — configure in Admin → Providers'
         : 'Select a model'
 
   // Group models by provider

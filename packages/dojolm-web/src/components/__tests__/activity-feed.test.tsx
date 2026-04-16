@@ -182,7 +182,7 @@ describe('ActivityFeed', () => {
   it('AF-016: empty state CTA calls setActiveTab with "scanner"', () => {
     mockEvents = []
     render(<ActivityFeed />)
-    fireEvent.click(screen.getByText('Open Shingan Scanner'))
+    fireEvent.click(screen.getByText('Open Haiku Scanner'))
     expect(mockSetActiveTab).toHaveBeenCalledWith('scanner')
   })
 })

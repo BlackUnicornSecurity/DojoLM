@@ -261,7 +261,7 @@ function PageContent() {
       {/* Train 2 PR-4b.2 — Payload Lab (Buki) scaffolded shell */}
       {activeTab === 'buki' && (
         <div className="motion-safe:animate-fade-in">
-          <ErrorBoundary fallbackTitle="Payload Lab Error" fallbackDescription="Unable to load Payload Lab. Please try again.">
+          <ErrorBoundary fallbackTitle="Buki Error" fallbackDescription="Unable to load Buki. Please try again.">
             <Suspense fallback={<ModuleLoading />}>
               <PayloadLab />
             </Suspense>

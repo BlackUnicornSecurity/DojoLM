@@ -77,8 +77,9 @@ test.describe('Hattori Guard', () => {
       await page.waitForTimeout(500);
     }
     // Look for block threshold controls (only rendered when guard is enabled)
-    const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
-    const criticalBtn = page.getByRole('button', { name: /CRITICAL only/i });
+    // aria-label on these buttons is the full description, not the visible text
+    const warningBtn = page.getByRole('button', { name: /Block on WARNING/i });
+    const criticalBtn = page.getByRole('button', { name: /Block on CRITICAL/i });
     if (isProd && isDisabled) {
       await expect(toggleBtn).toBeVisible({ timeout: 5000 });
       return;
