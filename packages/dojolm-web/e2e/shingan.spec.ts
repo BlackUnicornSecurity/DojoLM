@@ -3,6 +3,10 @@
  * Verifies upload, format detection, scan execution, trust gauge,
  * layer breakdown, findings table, batch mode, and export.
  * Backend API: POST /api/shingan/scan, POST /api/shingan/batch, POST /api/shingan/url
+ *
+ * Post-Kumite-retirement (2026-04-15): Shingan lives as the `Deep Scan` tab
+ * inside Haiku Scanner. Deep-link hash `#deep-scan` sets the tab on mount.
+ * See `app/page.tsx:56-57, 278-298, 327, 400-403` and `constants.ts` Kumite note.
  */
 
 import { test, expect } from '@playwright/test';
@@ -12,19 +16,14 @@ test.describe('Shingan Scanner', () => {
     await page.goto('/');
     const sidebar = page.locator('aside');
     await expect(sidebar).toBeVisible({ timeout: 15000 });
-    // Navigate via The Kumite -> Shingan tab
-    const kumiteNav = sidebar.getByRole('button', { name: 'The Kumite', exact: true });
-    await expect(kumiteNav).toBeVisible({ timeout: 5000 });
-    await kumiteNav.click();
-    await expect(page.getByRole('heading', { name: 'The Kumite' })).toBeVisible({ timeout: 10000 });
+    // Navigate via Haiku Scanner → Deep Scan tab (post-Kumite-retirement path)
+    const scannerNav = sidebar.getByRole('button', { name: 'Haiku Scanner', exact: true });
+    await expect(scannerNav).toBeVisible({ timeout: 5000 });
+    await scannerNav.click();
 
-    // Open Shingan subsystem
-    const openShingan = page.getByRole('button', { name: /Open Shingan dashboard/i });
-    await expect(openShingan).toBeVisible({ timeout: 10000 });
-    await openShingan.click();
-
-    const shinganTab = page.getByRole('tab', { name: /Shingan/i });
-    await expect(shinganTab).toBeVisible({ timeout: 10000 });
+    const deepScanTab = page.getByRole('tab', { name: /Deep Scan/i });
+    await expect(deepScanTab).toBeVisible({ timeout: 10000 });
+    await deepScanTab.click();
   });
 
   test('Shingan panel loads with scanner heading and description', async ({ page }) => {
@@ -143,13 +142,5 @@ test.describe('Shingan Scanner', () => {
     await expect(
       page.getByText(/Critical|Warning|Finding|Severity/i).first()
     ).toBeVisible({ timeout: 70000 });
-  });
-
-  test('return to Kumite overview from Shingan', async ({ page }) => {
-    const overviewBtn = page.getByRole('button', { name: /Return to The Kumite overview/i });
-    await expect(overviewBtn).toBeVisible({ timeout: 10000 });
-    await overviewBtn.click();
-
-    await expect(page.getByRole('button', { name: /Open SAGE dashboard/i })).toBeVisible({ timeout: 10000 });
   });
 });

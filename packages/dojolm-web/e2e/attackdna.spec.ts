@@ -3,6 +3,9 @@
  * Verifies family tree, clusters, timeline, analysis, X-Ray tabs,
  * data source selection, search, and zoom controls.
  * Backend API: POST /api/attackdna/ingest
+ *
+ * Post-Kumite-retirement (2026-04-15): Amaterasu DNA is now a direct
+ * sidebar entry in the `intel` nav group. `constants.ts:174-181`.
  */
 
 import { test, expect } from '@playwright/test';
@@ -12,19 +15,13 @@ test.describe('Amaterasu DNA', () => {
     await page.goto('/');
     const sidebar = page.locator('aside');
     await expect(sidebar).toBeVisible({ timeout: 15000 });
-    // Navigate via The Kumite → DNA tab
-    const kumiteNav = sidebar.getByRole('button', { name: 'The Kumite', exact: true });
-    await expect(kumiteNav).toBeVisible({ timeout: 5000 });
-    await kumiteNav.click();
-    await expect(page.getByRole('heading', { name: 'The Kumite' })).toBeVisible({ timeout: 10000 });
-
-    // Open DNA subsystem
-    const openDna = page.getByRole('button', { name: /Open Amaterasu DNA dashboard/i });
-    await expect(openDna).toBeVisible({ timeout: 10000 });
-    await openDna.click();
-
-    const dnaTab = page.getByRole('tab', { name: /DNA/i });
-    await expect(dnaTab).toBeVisible({ timeout: 10000 });
+    // Direct sidebar navigation (Kumite intermediate step retired)
+    const dnaNav = sidebar.getByRole('button', { name: 'Amaterasu DNA', exact: true });
+    await expect(dnaNav).toBeVisible({ timeout: 5000 });
+    await dnaNav.click();
+    await expect(
+      page.getByText(/Amaterasu DNA|attack lineage|mutation families|embedding clusters/i).first()
+    ).toBeVisible({ timeout: 15000 });
   });
 
   test('DNA panel loads with title and description', async ({ page }) => {
@@ -156,13 +153,5 @@ test.describe('Amaterasu DNA', () => {
         page.getByText(/Family Trees|Embedding Clusters|Mutation Timeline/i).first()
       ).toBeVisible({ timeout: 5000 });
     }
-  });
-
-  test('return to Kumite overview from DNA', async ({ page }) => {
-    const overviewBtn = page.getByRole('button', { name: /Return to The Kumite overview/i });
-    await expect(overviewBtn).toBeVisible({ timeout: 10000 });
-    await overviewBtn.click();
-
-    await expect(page.getByRole('button', { name: /Open SAGE dashboard/i })).toBeVisible({ timeout: 10000 });
   });
 });

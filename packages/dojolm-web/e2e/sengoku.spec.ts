@@ -35,8 +35,12 @@ test.describe('Sengoku', () => {
   });
 
   test('shows New Campaign button', async ({ page }) => {
-    const newCampaignBtn = page.getByRole('button', { name: /New Campaign/i });
+    const newCampaignBtn = page.getByRole('button', { name: 'New Campaign', exact: true });
     await expect(newCampaignBtn).toBeVisible({ timeout: 10000 });
+    // Regression guard (BUG-PROD-001, 2026-04-15): strict-mode violation when
+    // the page contains a campaign named "New Campaign Draft" and the spec
+    // uses a regex. Exact-match resolves to exactly one element.
+    await expect(newCampaignBtn).toHaveCount(1);
     await newCampaignBtn.click();
     // Campaign builder dialog should appear
     await expect(page.getByText(/Campaign Name|Create Campaign|campaign/i).first()).toBeVisible({ timeout: 10000 });
@@ -165,7 +169,7 @@ test.describe('Sengoku', () => {
 
   test('campaign builder dialog can be closed', async ({ page }) => {
     // Open builder
-    await page.getByRole('button', { name: /New Campaign/i }).click();
+    await page.getByRole('button', { name: 'New Campaign', exact: true }).click();
     await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
 
     // Close it (look for close button or backdrop)
@@ -185,7 +189,7 @@ test.describe('Sengoku', () => {
   test.describe('OrchestratorBuilder', () => {
     test('OrchestratorBuilder: orchestrator builder controls are accessible', async ({ page }) => {
       // OrchestratorBuilder appears in campaign creation flow
-      await page.getByRole('button', { name: /New Campaign/i }).click();
+      await page.getByRole('button', { name: 'New Campaign', exact: true }).click();
       await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
       // OrchestratorBuilder has step configuration, target, and schedule fields
       const orchestratorField = page.getByText(/Target|Schedule|Step|Orchestrat/i).first();

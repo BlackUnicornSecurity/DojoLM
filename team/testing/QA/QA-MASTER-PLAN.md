@@ -310,33 +310,26 @@ Apply the following minimum QA set when the change touches shared visual languag
 
 ### The Kumite
 
-- `KUM-001 | Module shell and subsystem navigation`
-  Steps: cover overview cards, subsystem entry, tabbed subsystem view, guide drawers, onboarding drawers, configuration drawers, back navigation, and refresh behavior.
-  Expected outcome: every subsystem card opens the correct workspace, subsystem-specific guidance matches the active subsystem, and returning to overview does not lose state unexpectedly.
-- `KUM-SAGE-001 | SAGE evolution workflow`
-  Steps: cover seed prompt entry or selection, mutation operators, mutation weights or strategy controls where present, evolution launch, fitness-score review, quarantine review, and recovery after a failed generation step.
-  Expected outcome: SAGE runs produce actual mutation output and fitness signals, quarantined items are clearly separated from normal output, and failure states are actionable.
-- `KUM-ARENA-001 | Battle Arena wizard shell`
-  Steps: cover wizard progression through `Battle Mode`, `Fighters`, `Attack Mode`, and `Launch`, including back, next, validation, cancel, restart, and resume behavior.
-  Expected outcome: the wizard enforces prerequisites in the right order, selections persist across steps, and the launch step summarizes the exact match configuration about to run.
-- `KUM-ARENA-002 | Battle mode x attack mode matrix`
-  Steps: create explicit child stories for every supported combination: `CTF` x `kunai`, `CTF` x `shuriken`, `CTF` x `naginata`, `CTF` x `musashi`, `KOTH` x `kunai`, `KOTH` x `shuriken`, `KOTH` x `naginata`, `KOTH` x `musashi`, `RvB` x `kunai`, `RvB` x `shuriken`, `RvB` x `naginata`, and `RvB` x `musashi`; apply each supported fighter pairing and roster validation rule exposed by the current build.
-  Expected outcome: every supported combination can be launched from the wizard without configuration drift, and unsupported fighter or mode combinations are blocked clearly before launch.
-- `KUM-ARENA-003 | Match-result integrity`
-  Steps: after each Arena launch, inspect scoreboard, replay, verdict, per-round detail, and post-run navigation or download controls where present.
-  Expected outcome: a launched match returns actual results rather than a blank state or generic success, `RvB` applies its documented role-swap behavior, and errors are surfaced as match errors with recoverable next steps.
-- `[MOCK-DATA] KUM-MITSUKE-001 | Threat-feed and indicator workflow`
-  Steps: cover threat-feed ingestion, alert review, indicator extraction, detail drill-down, and empty or degraded-feed conditions.
-  Expected outcome: Mitsuke surfaces current indicators truthfully, alerts map back to their feed or source metadata, and an unavailable feed is shown as unavailable rather than simply empty.
-- `KUM-DNA-001 | Amaterasu DNA analysis matrix`
-  Steps: cover family trees, embedding clusters, mutation timeline, search or X-ray actions where present, and data-source tier filtering.
-  Expected outcome: lineage views stay internally consistent, selecting one analysis dimension updates the related panels appropriately, and empty tiers or filtered-out states are clearly communicated.
-- `KUM-KAGAMI-001 | Mirror testing and comparison`
-  Steps: cover version selection, mirror comparison, behavioral consistency review, difference inspection, and recovery after one side of the comparison becomes unavailable.
-  Expected outcome: Kagami comparisons stay tied to the selected versions, differences are explained rather than implied, and one missing side does not masquerade as a clean match.
-- `KUM-SHINGAN-001 | Trust-boundary and supply-chain assessment`
-  Steps: cover prompt-injection detection, trust-boundary analysis, supply-chain-oriented assessment, result drill-down, and error recovery.
-  Expected outcome: Shingan produces analyzable assessment output, findings are attributable to the inspected boundary or dependency, and incomplete scans are surfaced honestly.
+> **[RETIRED — 2026-04-15]** The Kumite module was retired in the 2026-04-13 testing-UX consolidation.
+> `constants.ts:213-219` marks the `strategic` NavItem as `hidden: true`; `page.tsx` `activeTab='strategic'`
+> renders `<KumiteRetiredNotice/>` which redirects to Mitsuke, Amaterasu DNA, Kagami, and Battle Arena.
+>
+> Epics below are **superseded** — track-forward targets for each sub-system:
+>
+> | Retired epic | Successor |
+> |---|---|
+> | `KUM-001` | Covered by successor module shells (no longer needed as a hub) |
+> | `KUM-SAGE-001` | Covered by Atemi Lab (SAGE surfaced there) |
+> | `KUM-ARENA-001` | → `ARENA-001` (Battle Arena wizard) |
+> | `KUM-ARENA-002` | → `ARENA-002` (battle-mode x attack-mode matrix in Battle Arena) |
+> | `KUM-ARENA-003` | → `ARENA-003` (match-result integrity in Battle Arena) |
+> | `[MOCK-DATA] KUM-MITSUKE-001` | Covered by `intel` group `Mitsuke` module epics |
+> | `KUM-DNA-001` | Covered by `intel` group `Amaterasu DNA` module epics |
+> | `KUM-KAGAMI-001` | Covered by `intel` group `Kagami` module epics |
+> | `KUM-SHINGAN-001` | Covered by Haiku Scanner → Deep Scan tab (`#deep-scan` hash) |
+>
+> Spec `e2e/kumite.spec.ts` deleted 2026-04-15; back-compat redirect behaviour
+> (direct-link to `strategic` tab → `KumiteRetiredNotice`) asserted in `e2e/navigation.spec.ts`.
 
 ### Ronin Hub
 

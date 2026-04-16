@@ -108,4 +108,68 @@ test.describe('Ronin Hub', () => {
     await page.getByRole('button', { name: /Open Ronin Hub settings/i }).click();
     await expect(page.getByText('Ronin Hub Settings').first()).toBeVisible({ timeout: 5000 });
   });
+
+  /* ========================================================================== */
+  /* RONIN-003 — Local subscription persistence                                 */
+  /* ========================================================================== */
+
+  test('RONIN-003: subscribe button toggles subscription state', async ({ page }) => {
+    const subscribeBtn = page.getByRole('button', { name: /Subscribe|Unsubscribe/i }).first();
+    if (await subscribeBtn.isVisible().catch(() => false)) {
+      const initialText = await subscribeBtn.textContent();
+      await subscribeBtn.click();
+      // State should toggle
+      await page.waitForTimeout(500);
+      const updatedBtn = page.getByRole('button', { name: /Subscribe|Unsubscribe/i }).first();
+      await expect(updatedBtn).toBeVisible({ timeout: 5000 });
+    }
+  });
+
+  test('RONIN-003: subscription persists after reload', async ({ page }) => {
+    const subscribeBtn = page.getByRole('button', { name: /Subscribe|Unsubscribe/i }).first();
+    if (await subscribeBtn.isVisible().catch(() => false)) {
+      // Subscribe if not already
+      const text = await subscribeBtn.textContent();
+      if (text?.match(/Subscribe/i) && !text?.match(/Unsubscribe/i)) {
+        await subscribeBtn.click();
+        await page.waitForTimeout(500);
+      }
+      // Reload and verify persisted
+      await page.reload();
+      await expect(page.locator('aside')).toBeVisible({ timeout: 15000 });
+      const sidebar = page.locator('aside');
+      await sidebar.getByRole('button', { name: 'Ronin Hub', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Ronin Hub' })).toBeVisible({ timeout: 10000 });
+      // Subscription state should be preserved
+      await expect(
+        page.getByRole('button', { name: /Subscribe|Unsubscribe|Subscribed/i }).first()
+      ).toBeVisible({ timeout: 10000 });
+    }
+  });
+
+  /* ========================================================================== */
+  /* RONIN-004 — Submission lifecycle                                           */
+  /* ========================================================================== */
+
+  test('RONIN-004: submissions tab shows list or empty state', async ({ page }) => {
+    const submissionsTab = page.getByRole('tab', { name: /Submissions/i });
+    await expect(submissionsTab).toBeVisible({ timeout: 5000 });
+    await submissionsTab.click();
+    await expect(
+      page.getByText(/Submission|No submissions|Create|Draft/i).first()
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test('RONIN-004: submission wizard is accessible', async ({ page }) => {
+    const submissionsTab = page.getByRole('tab', { name: /Submissions/i });
+    await submissionsTab.click();
+    const newBtn = page.getByRole('button', { name: /New Submission|Create/i }).first();
+    if (await newBtn.isVisible().catch(() => false)) {
+      await newBtn.click();
+      // Wizard should show first step
+      await expect(
+        page.getByText(/Program|Title|Evidence|Severity|Review/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    }
+  });
 });

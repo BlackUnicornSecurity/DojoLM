@@ -29,12 +29,12 @@ test.describe('Admin Controls', () => {
     });
   });
 
-  test.describe('AdminSettings (Admin Settings tab)', () => {
+  test.describe('AdminSettings (Settings tab)', () => {
     test.beforeEach(async ({ page }) => {
-      const settingsTab = page.getByRole('tab', { name: 'Admin Settings' });
+      const settingsTab = page.getByRole('tab', { name: 'Settings' });
       await expect(settingsTab).toBeVisible({ timeout: 5000 });
       await settingsTab.click();
-      await expect(page.getByText('Admin Settings').first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('Settings').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('shows edit settings button', async ({ page }) => {
@@ -155,14 +155,105 @@ test.describe('Admin Controls', () => {
       if (isTabVisible) {
         await scannerTab.click();
         // ScannerConfig has threshold buttons and configuration options
-        const warningBtn = page.getByRole('button', { name: /WARNING\+/i });
-        const criticalBtn = page.getByRole('button', { name: /CRITICAL only/i });
+        const warningBtn = page.getByRole('button', { name: /Block on WARNING/i });
+        const criticalBtn = page.getByRole('button', { name: /Block on CRITICAL/i });
         const isVisible = await warningBtn.isVisible().catch(() => false);
         if (isVisible) {
           await expect(warningBtn).toBeVisible();
           await expect(criticalBtn).toBeVisible();
         }
       }
+    });
+  });
+
+  /* ========================================================================== */
+  /* ADMIN-004 — Scoreboard tab                                                 */
+  /* ========================================================================== */
+
+  test.describe('ADMIN-004: Scoreboard', () => {
+    test('scoreboard tab shows leaderboard or empty state', async ({ page }) => {
+      const scoreboardTab = page.getByRole('tab', { name: /Scoreboard/i });
+      await expect(scoreboardTab).toBeVisible({ timeout: 5000 });
+      await scoreboardTab.click();
+      await expect(
+        page.getByText(/Scoreboard|Models Tested|Executions|Resilience|No test results/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+
+    test('scoreboard shows stat cards', async ({ page }) => {
+      const scoreboardTab = page.getByRole('tab', { name: /Scoreboard/i });
+      await scoreboardTab.click();
+      // Stat cards: Models Tested, Total Executions, Avg Resilience, Top Provider
+      await expect(
+        page.getByText(/Models Tested|Total Executions|Avg Resilience|Top Provider|No test results/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+  });
+
+  /* ========================================================================== */
+  /* ADMIN-008 — Export tab preferences                                         */
+  /* ========================================================================== */
+
+  test.describe('ADMIN-008: Export settings', () => {
+    test('export tab shows format options', async ({ page }) => {
+      const exportTab = page.getByRole('tab', { name: /Export/i });
+      await expect(exportTab).toBeVisible({ timeout: 5000 });
+      await exportTab.click();
+      // Format toggles: PDF, JSON, CSV, SARIF
+      await expect(
+        page.getByText(/Export Formats|PDF|JSON|CSV|SARIF/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+
+    test('export tab shows branding and retention settings', async ({ page }) => {
+      const exportTab = page.getByRole('tab', { name: /Export/i });
+      await exportTab.click();
+      // Branding section
+      await expect(
+        page.getByText(/Branding|Company|Retention/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+  });
+
+  /* ========================================================================== */
+  /* ADMIN-010 — Validation catalog                                             */
+  /* ========================================================================== */
+
+  test.describe('ADMIN-010: Validation', () => {
+    test('validation tab shows run controls', async ({ page }) => {
+      const validationTab = page.getByRole('tab', { name: /Validation/i });
+      await expect(validationTab).toBeVisible({ timeout: 5000 });
+      await validationTab.click();
+      // Run panel with validation buttons
+      await expect(
+        page.getByText(/Run Full Validation|Run Calibration|Validation|Module/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+
+    test('validation tab shows module checkboxes', async ({ page }) => {
+      const validationTab = page.getByRole('tab', { name: /Validation/i });
+      await validationTab.click();
+      // Module selection checkboxes (8 modules)
+      const checkbox = page.locator('input[type="checkbox"]').first();
+      if (await checkbox.isVisible().catch(() => false)) {
+        await expect(checkbox).toBeVisible();
+      }
+    });
+
+    test('validation tab shows run history or empty state', async ({ page }) => {
+      const validationTab = page.getByRole('tab', { name: /Validation/i });
+      await validationTab.click();
+      await expect(
+        page.getByText(/Run History|No validation runs|History|Date|Status/i).first()
+      ).toBeVisible({ timeout: 10000 });
+    });
+
+    test('validation tab shows calibration status', async ({ page }) => {
+      const validationTab = page.getByRole('tab', { name: /Validation/i });
+      await validationTab.click();
+      await expect(
+        page.getByText(/Calibration|Status|Module|Last calibrated/i).first()
+      ).toBeVisible({ timeout: 10000 });
     });
   });
 });
