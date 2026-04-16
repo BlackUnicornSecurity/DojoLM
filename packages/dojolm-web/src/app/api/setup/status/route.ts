@@ -10,10 +10,10 @@
  * been provisioned.
  */
 
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { isDemoMode } from '@/lib/demo';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   // Demo mode: always show setup wizard on page load
   if (isDemoMode()) {
     return NextResponse.json({ needsSetup: true });
@@ -29,8 +29,16 @@ export async function GET(req: Request) {
     }
 
     // Setup complete — gate behind auth to prevent unauthenticated recon (F-5)
-    const { getSessionFromRequest } = await import('@/lib/auth/session');
-    const session = getSessionFromRequest(req);
+    const sessionCookie = req.cookies.get('tpi_session')?.value;
+    if (!sessionCookie) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const { validateSession } = await import('@/lib/auth/session');
+    const session = validateSession(sessionCookie);
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
