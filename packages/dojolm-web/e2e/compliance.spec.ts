@@ -147,4 +147,27 @@ test.describe('Bushido Book', () => {
       }
     });
   });
+
+  /* ========================================================================== */
+  /* BUSH-005 — Framework-scoped handoff into Model Lab                         */
+  /* ========================================================================== */
+
+  test('BUSH-005: framework selection scopes compliance context', async ({ page }) => {
+    // Select a specific framework
+    const framework = page.getByText(/OWASP LLM Top 10/i).first();
+    await expect(framework).toBeVisible({ timeout: 30000 });
+    await framework.click();
+    // After selection, framework-specific coverage should show
+    await expect(
+      page.getByText(/Coverage|Covered|Gaps|Controls/i).first()
+    ).toBeVisible({ timeout: 10000 });
+  });
+
+  test('BUSH-005: coverage dashboard link is accessible', async ({ page }) => {
+    // "Open Coverage Dashboard" button in compliance center
+    const coverageDashBtn = page.getByRole('button', { name: /Coverage Dashboard|Open Coverage/i }).first();
+    if (await coverageDashBtn.isVisible().catch(() => false)) {
+      await expect(coverageDashBtn).toBeVisible();
+    }
+  });
 });

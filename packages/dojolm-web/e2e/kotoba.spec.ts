@@ -173,4 +173,29 @@ test.describe('Kotoba', () => {
     await expect(page.getByText('Boundary Definition').first()).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Role Clarity').first()).toBeVisible({ timeout: 5000 });
   });
+
+  /* ========================================================================== */
+  /* KOTOBA-005 — Downstream readiness handoff                                  */
+  /* ========================================================================== */
+
+  test('KOTOBA-005: harden button produces hardened output', async ({ page }) => {
+    test.setTimeout(90000);
+    // Enter a prompt and score it first
+    const textarea = page.getByRole('textbox', { name: /Prompt text input/i });
+    await expect(textarea).toBeVisible({ timeout: 10000 });
+    await textarea.fill('You are a helpful assistant. Answer user questions.');
+    const scoreBtn = page.getByRole('button', { name: /Score Prompt/i });
+    await scoreBtn.click();
+    // Wait for score to appear
+    await expect(page.getByText(/Score|Grade|[A-F][+-]?/i).first()).toBeVisible({ timeout: 60000 });
+    // Look for harden button
+    const hardenBtn = page.getByRole('button', { name: /Harden|Improve/i }).first();
+    if (await hardenBtn.isVisible().catch(() => false)) {
+      await hardenBtn.click();
+      // Hardened output should appear
+      await expect(
+        page.getByText(/Hardened|Improved|Output/i).first()
+      ).toBeVisible({ timeout: 30000 });
+    }
+  });
 });

@@ -174,4 +174,15 @@ test.describe('Model Lab', () => {
       await expect(page.getByText(/Temperature/i).first()).toBeVisible({ timeout: 15000 });
     });
   });
+
+  /* ========================================================================== */
+  /* LLM-008 — Guard badge state under guard-on/off                             */
+  /* ========================================================================== */
+
+  test('LLM-008: guard badge is visible in Model Lab header', async ({ page }) => {
+    // GuardBadge renders in the ModuleHeader actions area
+    const badge = page.locator('[role="status"]').first()
+      .or(page.getByText(/Guard|Off|Shinobi|Samurai|Sensei|Hattori/i).first());
+    await expect(badge).toBeVisible({ timeout: 10000 });
+  });
 });
