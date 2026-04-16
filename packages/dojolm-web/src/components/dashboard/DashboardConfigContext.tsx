@@ -17,6 +17,7 @@
  */
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from 'react'
+import { getStorage } from '@/lib/client-storage'
 
 /** Valid column span sizes for the 12-column bento grid */
 export type WidgetSize = 3 | 4 | 6 | 8 | 12
@@ -131,9 +132,10 @@ const STORAGE_KEY = 'noda-dashboard-config'
 const BACKUP_KEY = 'noda-dashboard-config-backup'
 
 function loadConfig(): DashboardConfig {
-  if (typeof window === 'undefined') return DEFAULT_DASHBOARD_CONFIG
+  const storage = getStorage('local')
+  if (!storage) return DEFAULT_DASHBOARD_CONFIG
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = storage.getItem(STORAGE_KEY)
     if (!raw) return DEFAULT_DASHBOARD_CONFIG
     // Reviver strips dangerous keys at parse time to prevent prototype pollution
     const parsed = JSON.parse(raw, (key, value) => {
@@ -147,7 +149,7 @@ function loadConfig(): DashboardConfig {
     const needsMigration = parsed.widgets.some((w: Record<string, unknown>) => typeof w.size === 'string')
     if (needsMigration) {
       try {
-        localStorage.setItem(BACKUP_KEY, JSON.stringify(parsed))
+        storage.setItem(BACKUP_KEY, JSON.stringify(parsed))
         console.debug('Dashboard config migrated v1->v2')
       } catch { /* backup is best-effort */ }
     }
@@ -182,9 +184,10 @@ function loadConfig(): DashboardConfig {
 }
 
 function saveConfig(config: DashboardConfig): void {
-  if (typeof window === 'undefined') return
+  const storage = getStorage('local')
+  if (!storage) return
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
+    storage.setItem(STORAGE_KEY, JSON.stringify(config))
   } catch {
     // Silently handle QuotaExceededError or private browsing
   }

@@ -9,26 +9,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { DojoReadiness } from './DojoReadiness'
 import { QuickLaunchPad } from './QuickLaunchPad'
-
-const STORAGE_KEY = 'dojo-onboarding-dismissed'
+import { onboardingDismissedStore } from '@/lib/stores'
 
 export function QuickLaunchOrOnboarding() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    const dismissed = localStorage.getItem(STORAGE_KEY) === 'true'
-    setShowOnboarding(!dismissed)
+    setShowOnboarding(!onboardingDismissedStore.get())
     setHydrated(true)
   }, [])
 
   const handleDismiss = useCallback(() => {
     setShowOnboarding(false)
-    try {
-      localStorage.setItem(STORAGE_KEY, 'true')
-    } catch {
-      // Silently handle QuotaExceededError
-    }
+    onboardingDismissedStore.set(true)
   }, [])
 
   // Avoid flash — render skeleton until hydrated

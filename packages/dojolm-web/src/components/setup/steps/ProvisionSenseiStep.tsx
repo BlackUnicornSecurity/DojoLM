@@ -12,8 +12,7 @@ import { Button } from '@/components/ui/button';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
 import type { ConfiguredModel } from '../SetupWizard';
 import { Bot, ChevronRight, Loader2 } from 'lucide-react';
-
-const SENSEI_MODEL_STORAGE_KEY = 'sensei-model';
+import { senseiModelStore } from '@/lib/stores';
 
 interface ModelInfo {
   id: string;
@@ -68,12 +67,7 @@ export function ProvisionSenseiStep({ configuredModels, onComplete }: ProvisionS
 
   const handleContinue = useCallback(() => {
     if (selectedId) {
-      // Persist selection to localStorage (same key Sensei uses)
-      try {
-        localStorage.setItem(SENSEI_MODEL_STORAGE_KEY, selectedId);
-      } catch {
-        // Ignore QuotaExceededError
-      }
+      senseiModelStore.set(selectedId);
       const model = models.find(m => m.id === selectedId);
       onComplete(selectedId, model?.name ?? null);
     } else {

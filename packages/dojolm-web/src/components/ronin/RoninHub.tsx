@@ -11,6 +11,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
+import { roninConfigStore } from '@/lib/stores'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Bug, Search, Send, Brain, Radio, HelpCircle, Settings } from 'lucide-react'
@@ -97,9 +98,7 @@ export function RoninHub() {
   }, [])
 
   const handleConfigSave = useCallback(() => {
-    try {
-      localStorage.setItem('noda-ronin-config', JSON.stringify(configValues))
-    } catch { /* quota */ }
+    roninConfigStore.set(configValues)
   }, [configValues])
 
   const handleConfigReset = useCallback(() => {

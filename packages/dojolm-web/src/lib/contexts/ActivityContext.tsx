@@ -20,6 +20,7 @@
 
 import { createContext, useContext, useReducer, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import { safeUUID } from '@/lib/utils'
+import { activityEventsStore } from '@/lib/stores'
 
 export type EventType = 'scan_complete' | 'threat_detected' | 'test_passed' | 'test_failed' | 'model_added'
 
@@ -36,7 +37,6 @@ export interface ActivityState {
 }
 
 const MAX_EVENTS = 50
-const STORAGE_KEY = 'dojolm-activity-events'
 
 const VALID_EVENT_TYPES = new Set<string>(['scan_complete', 'threat_detected', 'test_passed', 'test_failed', 'model_added'])
 
@@ -104,44 +104,20 @@ const ActivityDispatchContext = createContext<React.Dispatch<ActivityAction> | u
 const INITIAL_STATE: ActivityState = { events: [] }
 
 /**
- * Safely read from sessionStorage with try-catch for QuotaExceededError and private browsing.
- * Validates type, description, and structure of each stored event.
+ * Read from sessionStorage via typed store.
+ * Store validates basic shape; we additionally filter by isStaticDescription.
  */
 function loadFromStorage(): ActivityEvent[] {
-  try {
-    const stored = sessionStorage.getItem(STORAGE_KEY)
-    if (!stored) return []
-    const parsed = JSON.parse(stored)
-    if (!Array.isArray(parsed)) return []
-    return parsed.filter(
-      (e: unknown): e is ActivityEvent => {
-        if (typeof e !== 'object' || e === null) return false
-        const evt = e as Record<string, unknown>
-        return (
-          typeof evt.id === 'string' &&
-          typeof evt.type === 'string' &&
-          VALID_EVENT_TYPES.has(evt.type) &&
-          typeof evt.description === 'string' &&
-          isStaticDescription(evt.description) &&
-          typeof evt.timestamp === 'string' &&
-          typeof evt.read === 'boolean'
-        )
-      }
-    )
-  } catch {
-    return []
-  }
+  return activityEventsStore.get().filter(
+    (e): e is ActivityEvent =>
+      VALID_EVENT_TYPES.has(e.type) &&
+      isStaticDescription(e.description),
+  )
 }
 
-/**
- * Safely write to sessionStorage with try-catch.
- */
+/** Write to sessionStorage via typed store. */
 function saveToStorage(events: ActivityEvent[]): void {
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(events))
-  } catch {
-    // QuotaExceededError or private browsing — silently degrade
-  }
+  activityEventsStore.set(events)
 }
 
 export function ActivityProvider({ children }: { children: ReactNode }) {

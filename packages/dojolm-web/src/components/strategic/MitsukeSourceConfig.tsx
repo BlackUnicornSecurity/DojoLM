@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Plus, Trash2, Globe, Rss, Webhook, AlertTriangle, CheckCircle, X, Shield } from 'lucide-react'
+import { mitsukeUserSourcesStore } from '@/lib/stores'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -103,28 +104,14 @@ export function validateSourceUrl(urlStr: string): { valid: boolean; error?: str
 // NOTE: Production should use encrypted storage (e.g., server-side with AES)
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = 'mitsuke-user-sources'
 const MAX_SOURCES = 20
 
 function loadSources(): UserSource[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed.slice(0, MAX_SOURCES)
-  } catch {
-    return []
-  }
+  return mitsukeUserSourcesStore.get().slice(0, MAX_SOURCES) as UserSource[]
 }
 
 function saveSources(sources: UserSource[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sources.slice(0, MAX_SOURCES)))
-  } catch {
-    // QuotaExceededError — ignore silently
-  }
+  mitsukeUserSourcesStore.set(sources.slice(0, MAX_SOURCES))
 }
 
 // ---------------------------------------------------------------------------

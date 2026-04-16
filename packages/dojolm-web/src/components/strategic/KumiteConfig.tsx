@@ -16,12 +16,14 @@ import { useState, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Plus, Trash2 } from 'lucide-react'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
+import { kumiteSageStore, kumiteArenaStore, kumiteMitsukeStore } from '@/lib/stores'
+import type { ClientStore } from '@/lib/client-storage'
 
-const STORAGE_KEYS = {
-  sage: 'kumite-sage-config',
-  arena: 'kumite-arena-config',
-  mitsuke: 'kumite-mitsuke-config',
-} as const
+const KUMITE_STORES: Record<'sage' | 'arena' | 'mitsuke', ClientStore<Record<string, unknown>>> = {
+  sage: kumiteSageStore,
+  arena: kumiteArenaStore,
+  mitsuke: kumiteMitsukeStore,
+}
 
 // --- Config Data Types ---
 
@@ -83,27 +85,19 @@ const DEFAULT_MITSUKE: MitsukeConfigData = {
   retentionDays: 90,
 }
 
-// --- Helper: Load from localStorage with validation ---
+// --- Helper: Load/save via typed stores ---
 
-function loadConfig<T>(key: string, defaults: T): T {
-  if (typeof window === 'undefined') return defaults
-  try {
-    const stored = localStorage.getItem(key)
-    if (!stored) return defaults
-    const parsed: unknown = JSON.parse(stored)
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return { ...defaults, ...(parsed as Partial<T>) }
-    }
-  } catch { /* use defaults */ }
-  return defaults
+function loadConfig<T>(
+  store: ClientStore<Record<string, unknown>>,
+  defaults: T,
+): T {
+  const parsed = store.get()
+  if (Object.keys(parsed).length === 0) return defaults
+  return { ...defaults, ...parsed } as T
 }
 
-function saveConfig(key: string, data: unknown) {
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.setItem(key, JSON.stringify(data))
-    } catch { /* QuotaExceededError — silently ignore */ }
-  }
+function saveConfig(store: ClientStore<Record<string, unknown>>, data: unknown): void {
+  store.set(data as Record<string, unknown>)
 }
 
 // --- Reusable dynamic list renderer ---
@@ -174,7 +168,7 @@ export function SAGEConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const [config, setConfig] = useState<SAGEConfigData>(DEFAULT_SAGE)
 
   useEffect(() => {
-    const loaded = loadConfig(STORAGE_KEYS.sage, DEFAULT_SAGE)
+    const loaded = loadConfig(KUMITE_STORES.sage, DEFAULT_SAGE)
     const requiredKeys: (keyof SAGEConfigData['mutationWeights'])[] = ['substitution', 'insertion', 'deletion', 'encoding', 'structural', 'semantic']
     const w = loaded.mutationWeights
     const validWeights = w && typeof w === 'object' && !Array.isArray(w) &&
@@ -200,7 +194,7 @@ export function SAGEConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   }, [])
 
   const handleSave = useCallback(() => {
-    saveConfig(STORAGE_KEYS.sage, config)
+    saveConfig(KUMITE_STORES.sage, config)
   }, [config])
 
   const handleReset = useCallback(() => setConfig(DEFAULT_SAGE), [])
@@ -283,7 +277,7 @@ export function ArenaConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   const [config, setConfig] = useState<ArenaConfigData>(DEFAULT_ARENA)
 
   useEffect(() => {
-    const loaded = loadConfig(STORAGE_KEYS.arena, DEFAULT_ARENA)
+    const loaded = loadConfig(KUMITE_STORES.arena, DEFAULT_ARENA)
     if (!Array.isArray(loaded.agents) || !loaded.agents.every((a: unknown) => typeof a === 'string')) {
       loaded.agents = [...DEFAULT_ARENA.agents]
     }
@@ -301,7 +295,7 @@ export function ArenaConfig({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   }, [])
 
   const handleSave = useCallback(() => {
-    saveConfig(STORAGE_KEYS.arena, config)
+    saveConfig(KUMITE_STORES.arena, config)
   }, [config])
 
   const handleReset = useCallback(() => setConfig(DEFAULT_ARENA), [])
@@ -427,7 +421,7 @@ export function MitsukeConfig({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const [config, setConfig] = useState<MitsukeConfigData>(DEFAULT_MITSUKE)
 
   useEffect(() => {
-    const loaded = loadConfig(STORAGE_KEYS.mitsuke, DEFAULT_MITSUKE)
+    const loaded = loadConfig(KUMITE_STORES.mitsuke, DEFAULT_MITSUKE)
     if (
       !Array.isArray(loaded.sources) ||
       !loaded.sources.every((s: unknown) =>
@@ -451,7 +445,7 @@ export function MitsukeConfig({ isOpen, onClose }: { isOpen: boolean; onClose: (
   }, [])
 
   const handleSave = useCallback(() => {
-    saveConfig(STORAGE_KEYS.mitsuke, config)
+    saveConfig(KUMITE_STORES.mitsuke, config)
   }, [config])
 
   const handleReset = useCallback(() => setConfig(DEFAULT_MITSUKE), [])

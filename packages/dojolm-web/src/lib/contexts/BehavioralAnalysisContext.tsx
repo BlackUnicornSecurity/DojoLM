@@ -20,9 +20,8 @@ import {
   type ReactNode,
 } from 'react'
 import type { OBLAnalysisResult } from '../types'
+import { oblCacheStore, oblActiveModelStore } from '@/lib/stores'
 
-const CACHE_KEY = 'obl-analysis-v1'
-const ACTIVE_MODEL_KEY = 'obl-active-model'
 const SCHEMA_VERSION = 1
 
 interface BehavioralAnalysisContextValue {
@@ -55,33 +54,20 @@ interface BehavioralAnalysisContextValue {
 const BehavioralAnalysisContext = createContext<BehavioralAnalysisContextValue | undefined>(undefined)
 
 function loadCachedResults(): Record<string, OBLAnalysisResult> {
-  if (typeof window === 'undefined') return {}
-  try {
-    const raw = localStorage.getItem(CACHE_KEY)
-    if (!raw) return {}
-    const parsed = JSON.parse(raw) as Record<string, OBLAnalysisResult>
-    // Discard stale schema versions
-    const valid: Record<string, OBLAnalysisResult> = {}
-    for (const [key, value] of Object.entries(parsed)) {
-      if (value.schemaVersion === SCHEMA_VERSION) {
-        valid[key] = value
-      }
+  const parsed = oblCacheStore.get() as Record<string, OBLAnalysisResult>
+  // Discard stale schema versions
+  const valid: Record<string, OBLAnalysisResult> = {}
+  for (const [key, value] of Object.entries(parsed)) {
+    if (value?.schemaVersion === SCHEMA_VERSION) {
+      valid[key] = value
     }
-    return valid
-  } catch {
-    return {}
   }
+  return valid
 }
 
 function loadActiveModel(): { id: string | null; name: string | null } {
-  if (typeof window === 'undefined') return { id: null, name: null }
-  try {
-    const raw = localStorage.getItem(ACTIVE_MODEL_KEY)
-    if (!raw) return { id: null, name: null }
-    return JSON.parse(raw)
-  } catch {
-    return { id: null, name: null }
-  }
+  const stored = oblActiveModelStore.get()
+  return stored ?? { id: null, name: null }
 }
 
 export function BehavioralAnalysisProvider({ children }: { children: ReactNode }) {
@@ -93,22 +79,14 @@ export function BehavioralAnalysisProvider({ children }: { children: ReactNode }
   const [activeModelName, setActiveModelName] = useState<string | null>(activeModel.name)
   const [error, setError] = useState<string | null>(null)
 
-  // Persist results to localStorage on change
+  // Persist results to localStorage on change (quota handled by store)
   useEffect(() => {
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify(results))
-    } catch {
-      // localStorage quota exceeded — non-critical
-    }
+    oblCacheStore.set(results as Record<string, unknown>)
   }, [results])
 
-  // Persist active model to localStorage
+  // Persist active model to localStorage (quota handled by store)
   useEffect(() => {
-    try {
-      localStorage.setItem(ACTIVE_MODEL_KEY, JSON.stringify({ id: activeModelId, name: activeModelName }))
-    } catch {
-      // non-critical
-    }
+    oblActiveModelStore.set(activeModelId && activeModelName ? { id: activeModelId, name: activeModelName } : null)
   }, [activeModelId, activeModelName])
 
   const mergeResult = useCallback((modelId: string, partial: Partial<OBLAnalysisResult>) => {

@@ -17,8 +17,7 @@ import { SubmissionWizard } from './SubmissionWizard'
 import { SubmissionDetail } from './SubmissionDetail'
 import type { BountySubmission, SubmissionStatus } from '@/lib/data/ronin-seed-programs'
 import { Plus, FileText, Clock, CheckCircle, DollarSign, XCircle, Filter } from 'lucide-react'
-
-const STORAGE_KEY = 'noda-ronin-submissions'
+import { roninSubmissionsRawStore } from '@/lib/stores'
 
 const STATUS_CONFIG: Record<SubmissionStatus, { label: string; color: string; icon: typeof FileText }> = {
   draft: { label: 'Draft', color: 'var(--muted-foreground)', icon: FileText },
@@ -29,31 +28,18 @@ const STATUS_CONFIG: Record<SubmissionStatus, { label: string; color: string; ic
   rejected: { label: 'Rejected', color: 'var(--danger)', icon: XCircle },
 }
 
+const VALID_SUB_STATUSES = new Set(['draft', 'submitted', 'triaged', 'validated', 'paid', 'rejected'])
+
 function loadSubmissions(): BountySubmission[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    const VALID_SUB_STATUSES = new Set(['draft', 'submitted', 'triaged', 'validated', 'paid', 'rejected'])
-    return parsed.filter((s: unknown) => {
-      if (!s || typeof s !== 'object') return false
-      const sub = s as Record<string, unknown>
-      return typeof sub.id === 'string' && typeof sub.title === 'string' && typeof sub.status === 'string' && VALID_SUB_STATUSES.has(sub.status as string)
-    })
-  } catch {
-    return []
-  }
+  return roninSubmissionsRawStore.get().filter((s: unknown): s is BountySubmission => {
+    if (!s || typeof s !== 'object') return false
+    const sub = s as Record<string, unknown>
+    return typeof sub.id === 'string' && typeof sub.title === 'string' && typeof sub.status === 'string' && VALID_SUB_STATUSES.has(sub.status as string)
+  })
 }
 
 function saveSubmissions(subs: BountySubmission[]): void {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(subs))
-  } catch {
-    // Quota or private mode
-  }
+  roninSubmissionsRawStore.set(subs)
 }
 
 export function SubmissionsTab() {

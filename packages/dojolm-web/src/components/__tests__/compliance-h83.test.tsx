@@ -266,8 +266,8 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
 
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
-    // Verify the localStorage key was set with the correct framework ID
-    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
+    // Verify the localStorage key was set with the correct framework ID (JSON-encoded by createRawStringStore)
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('"owasp-llm"')
   })
 
   it('localStorage key uses the correct key name "jutsu-compliance-framework"', async () => {
@@ -280,8 +280,8 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
 
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
 
-    // The key must be exactly 'jutsu-compliance-framework' for TestExecution to pick it up
-    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
+    // The key must be exactly 'jutsu-compliance-framework' for TestExecution to pick it up (JSON-encoded by createRawStringStore)
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('"owasp-llm"')
     // Verify a different key name does NOT have the value
     expect(localStorage.getItem('compliance-framework')).toBeNull()
   })
@@ -307,7 +307,7 @@ describe('H8.3-04: localStorage contract for LLM Dashboard integration', () => {
 
     // Click the owasp-llm button
     fireEvent.click(screen.getByTestId('compliance-check-owasp-llm'))
-    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('owasp-llm')
+    expect(localStorage.getItem('jutsu-compliance-framework')).toBe('"owasp-llm"')
   })
 
   it('handles localStorage quota errors gracefully', async () => {

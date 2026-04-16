@@ -22,12 +22,12 @@ import type {
 } from '../llm-types';
 import { canAccessProtectedApi } from '../client-auth-access';
 import { fetchWithAuth } from '../fetch-with-auth';
+import { activeBatchStore } from '@/lib/stores';
 
 // ===========================================================================
 // Batch ID Persistence (H1.5)
 // ===========================================================================
 
-const BATCH_STORAGE_KEY = 'llm-active-batch';
 const BATCH_ID_REGEX = /^[a-zA-Z0-9_-]{1,64}$/;
 
 /** Validate batch ID format */
@@ -35,36 +35,20 @@ function isValidBatchId(id: unknown): id is string {
   return typeof id === 'string' && BATCH_ID_REGEX.test(id);
 }
 
-/** Safely read active batch ID from sessionStorage */
+/** Read active batch ID from sessionStorage via typed store */
 function loadActiveBatchId(): string | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = sessionStorage.getItem(BATCH_STORAGE_KEY);
-    if (stored && isValidBatchId(stored)) return stored;
-    return null;
-  } catch {
-    return null;
-  }
+  const stored = activeBatchStore.get();
+  return stored && isValidBatchId(stored) ? stored : null;
 }
 
-/** Safely write active batch ID to sessionStorage */
+/** Write active batch ID to sessionStorage via typed store */
 function saveActiveBatchId(batchId: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    sessionStorage.setItem(BATCH_STORAGE_KEY, batchId);
-  } catch {
-    // QuotaExceededError or private browsing — silently degrade
-  }
+  activeBatchStore.set(batchId);
 }
 
-/** Clear active batch ID from sessionStorage */
+/** Clear active batch ID from sessionStorage via typed store */
 function clearActiveBatchId(): void {
-  if (typeof window === 'undefined') return;
-  try {
-    sessionStorage.removeItem(BATCH_STORAGE_KEY);
-  } catch {
-    // Silently degrade
-  }
+  activeBatchStore.remove();
 }
 
 // ===========================================================================

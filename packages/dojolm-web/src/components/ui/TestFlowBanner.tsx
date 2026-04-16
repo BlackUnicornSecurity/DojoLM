@@ -9,8 +9,9 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { createDismissedStore } from '@/lib/stores'
 import { useNavigation } from '@/lib/NavigationContext'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -42,21 +43,18 @@ export function TestFlowBanner({
   icon: Icon,
 }: TestFlowBannerProps) {
   const { setActiveTab } = useNavigation()
-  // Start dismissed to avoid SSR flash; useEffect reads localStorage
+  const store = useMemo(() => createDismissedStore(storageKey), [storageKey])
+  // Start dismissed to avoid SSR flash; useEffect reads storage
   const [dismissed, setDismissed] = useState(true)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = localStorage.getItem(storageKey)
-    setDismissed(stored === 'true')
-  }, [storageKey])
+    setDismissed(store.get())
+  }, [store])
 
   const handleDismiss = useCallback(() => {
     setDismissed(true)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(storageKey, 'true')
-    }
-  }, [storageKey])
+    store.set(true)
+  }, [store])
 
   const handleAction = useCallback(() => {
     setActiveTab(targetNavId)

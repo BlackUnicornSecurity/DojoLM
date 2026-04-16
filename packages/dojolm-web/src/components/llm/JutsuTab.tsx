@@ -23,6 +23,8 @@ import { ModelDetailView } from './ModelDetailView'
 import { aggregateByModel, type AggregatedModel, type TestExecution } from './JutsuAggregation'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { useBehavioralAnalysis } from '@/lib/contexts'
+import { getStorage } from '@/lib/client-storage'
+import { jutsuConfigStore, jutsuComplianceFrameworkStore } from '@/lib/stores'
 import type { AlignmentMethod } from '@/lib/types'
 
 /** Human-readable provider display names */
@@ -148,20 +150,24 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
   // 'noda-jutsu-config' (llm NavId retired). Read new key first, fall back to
   // old key, then migrate (write new, delete old) in one pass.
   useEffect(() => {
+    const storage = getStorage('local')
+    if (!storage) return
     try {
-      const NEW_KEY = 'noda-jutsu-config'
       const OLD_KEY = 'noda-llm-jutsu-config'
-      let stored = localStorage.getItem(NEW_KEY)
+      // New key via typed store; fallback to legacy raw read for one-shot migration
+      let parsed: Record<string, unknown> = jutsuConfigStore.get()
       let fromLegacy = false
-      if (!stored) {
-        stored = localStorage.getItem(OLD_KEY)
-        fromLegacy = !!stored
+      if (Object.keys(parsed).length === 0) {
+        const legacyRaw = storage.getItem(OLD_KEY)
+        if (legacyRaw) {
+          fromLegacy = true
+          parsed = JSON.parse(legacyRaw, (key, value) => {
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
+            return value
+          }) as Record<string, unknown>
+        }
       }
-      if (stored) {
-        const parsed = JSON.parse(stored, (key, value) => {
-          if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
-          return value
-        }) as Record<string, unknown>
+      if (Object.keys(parsed).length > 0) {
         // Only pick known config keys with type validation
         const VALID_KEYS = new Set(Object.keys(DEFAULT_CONFIG))
         const safe: Record<string, unknown> = {}
@@ -173,10 +179,8 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
         setConfigValues(prev => ({ ...prev, ...safe }))
         if (fromLegacy) {
           // One-shot migration: copy to new key, remove old
-          try {
-            localStorage.setItem(NEW_KEY, JSON.stringify(safe))
-            localStorage.removeItem(OLD_KEY)
-          } catch { /* QuotaExceededError — next load will retry */ }
+          jutsuConfigStore.set(safe)
+          try { storage.removeItem(OLD_KEY) } catch { /* QuotaExceededError — next load will retry */ }
         }
       }
     } catch { /* corrupted or unavailable */ }
@@ -379,10 +383,8 @@ export function JutsuTab({ onNavigateToTests }: JutsuTabProps) {
         values={configValues}
         onChange={handleConfigChange}
         onSave={() => {
-          try {
-            // PR-4b.8: write new key name; old key is deleted during mount migration.
-            localStorage.setItem('noda-jutsu-config', JSON.stringify(configValues))
-          } catch { /* quota */ }
+          // PR-4b.8: write new key name; old key is deleted during mount migration.
+          jutsuConfigStore.set(configValues)
         }}
         onReset={() => setConfigValues({ ...DEFAULT_CONFIG })}
       />

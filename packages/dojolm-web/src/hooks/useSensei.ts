@@ -27,72 +27,43 @@ import type { NavId } from '@/lib/constants'
 import { NAV_ITEMS } from '@/lib/constants'
 const VALID_NAV_IDS = new Set<string>(NAV_ITEMS.map(item => item.id))
 
-const STORAGE_KEY_MESSAGES = 'sensei-messages'
-const STORAGE_KEY_MODEL = 'sensei-model'
+import { senseiMessagesStore, senseiModelStore } from '@/lib/stores'
+import type { SenseiMessageStored } from '@/lib/stores'
+
 const MAX_STORED_MESSAGES = 100
 const API_ENDPOINT = '/api/sensei/chat'
 
 // ---------------------------------------------------------------------------
-// localStorage helpers
+// Storage helpers (delegate to typed stores)
 // ---------------------------------------------------------------------------
 
 function loadMessages(): readonly SenseiMessage[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_MESSAGES)
-    if (!raw) return []
-    const parsed: unknown = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    // CR-2: Validate fields and strip untrusted toolResults/toolCalls from localStorage
-    return parsed
-      .filter(
-        (m: unknown) =>
-          typeof m === 'object' &&
-          m !== null &&
-          typeof (m as Record<string, unknown>).id === 'string' &&
-          typeof (m as Record<string, unknown>).role === 'string' &&
-          ['user', 'assistant'].includes((m as Record<string, unknown>).role as string) &&
-          typeof (m as Record<string, unknown>).content === 'string',
-      )
-      .map((m: Record<string, unknown>) => ({
-        id: String(m.id),
-        role: m.role as SenseiMessage['role'],
-        content: String(m.content),
-        timestamp: typeof m.timestamp === 'number' ? m.timestamp : Date.now(),
-      })) as SenseiMessage[]
-  } catch {
-    return []
-  }
+  // CR-2: Store schema already validates id/role/content/timestamp and strips
+  // toolResults/toolCalls (those fields are not in SenseiMessageStored).
+  return senseiMessagesStore.get().map((m: SenseiMessageStored) => ({
+    id: m.id,
+    role: m.role as SenseiMessage['role'],
+    content: m.content,
+    timestamp: m.timestamp,
+  }))
 }
 
 function saveMessages(messages: readonly SenseiMessage[]): void {
-  if (typeof window === 'undefined') return
-  try {
-    const capped = messages.length > MAX_STORED_MESSAGES
-      ? messages.slice(messages.length - MAX_STORED_MESSAGES)
-      : messages
-    localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(capped))
-  } catch {
-    // QuotaExceededError — ignore
-  }
+  const capped = messages.length > MAX_STORED_MESSAGES
+    ? messages.slice(messages.length - MAX_STORED_MESSAGES)
+    : messages
+  // Strip toolCalls/toolResults before persisting (only save serialisable fields)
+  senseiMessagesStore.set(
+    capped.map(m => ({ id: m.id, role: m.role as 'user' | 'assistant', content: m.content, timestamp: m.timestamp }))
+  )
 }
 
 function loadModelId(): string | null {
-  if (typeof window === 'undefined') return null
-  try {
-    return localStorage.getItem(STORAGE_KEY_MODEL)
-  } catch {
-    return null
-  }
+  return senseiModelStore.get()
 }
 
 function saveModelId(modelId: string): void {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY_MODEL, modelId)
-  } catch {
-    // ignore
-  }
+  senseiModelStore.set(modelId)
 }
 
 // ---------------------------------------------------------------------------
@@ -151,9 +122,7 @@ export function useSensei(activeModule: NavId, onNavigate?: (module: NavId) => v
     setMessages([])
     setPendingConfirmations([])
     handledNavigationIds.current.clear()
-    if (typeof window !== 'undefined') {
-      try { localStorage.removeItem(STORAGE_KEY_MESSAGES) } catch { /* ignore */ }
-    }
+    senseiMessagesStore.remove()
   }, [])
 
   // F-R3-02: Error state for missing model feedback

@@ -17,6 +17,7 @@
 import type { GuardConfig } from '../guard-types';
 import type { SenseiToolDefinition } from './types';
 import { getToolByName } from './tool-definitions';
+import { createRateLimitStore, type RateLimitStore } from '../rate-limit-store';
 
 // ---------------------------------------------------------------------------
 // SH4.1 Step 4 — System Prompt Extraction Patterns
@@ -129,58 +130,24 @@ const SYSTEM_PROMPT_FRAGMENTS: readonly string[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Rate Limiting (per-tool, in-memory)
+// Rate Limiting (per-tool, backed by RateLimitStore)
 // ---------------------------------------------------------------------------
 
-interface RateLimitEntry {
-  readonly count: number;
-  readonly windowStart: number;
-}
+export const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+export const RATE_LIMIT_MAX_PER_TOOL = 10;  // 10 calls/min per tool
 
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX_PER_TOOL = 10; // 10 calls/min per tool
+// Token bucket config: RATE_LIMIT_MAX_PER_TOOL tokens, fully refilled per RATE_LIMIT_WINDOW_MS.
+const TOOL_RATE_CONFIG = {
+  maxTokens: RATE_LIMIT_MAX_PER_TOOL,
+  refillRate: RATE_LIMIT_MAX_PER_TOOL / (RATE_LIMIT_WINDOW_MS / 1000),
+} as const;
 
-const rateLimitMap = new Map<string, RateLimitEntry>();
+// Module-level store — InMemoryStore by default, RedisStore if RATE_LIMIT_BACKEND=redis.
+let toolRateLimitStore: RateLimitStore = createRateLimitStore();
 
-function checkRateLimit(toolName: string, identifier: string): boolean {
-  const key = `${toolName}:${identifier}`;
-  const now = Date.now();
-  const entry = rateLimitMap.get(key);
-
-  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-    rateLimitMap.set(key, { count: 1, windowStart: now });
-    return true;
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX_PER_TOOL) {
-    return false;
-  }
-
-  rateLimitMap.set(key, { count: entry.count + 1, windowStart: entry.windowStart });
-  return true;
-}
-
-// Cap rate limit map size to prevent unbounded growth
-const MAX_RATE_LIMIT_ENTRIES = 1000;
-
-function pruneRateLimitMap(): void {
-  if (rateLimitMap.size <= MAX_RATE_LIMIT_ENTRIES) return;
-  const now = Date.now();
-  for (const [key, entry] of rateLimitMap) {
-    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-      rateLimitMap.delete(key);
-    }
-  }
-  // If still over limit after pruning expired, remove oldest entries
-  if (rateLimitMap.size > MAX_RATE_LIMIT_ENTRIES) {
-    const entries = [...rateLimitMap.entries()].sort(
-      (a, b) => a[1].windowStart - b[1].windowStart,
-    );
-    const toRemove = entries.slice(0, rateLimitMap.size - MAX_RATE_LIMIT_ENTRIES);
-    for (const [key] of toRemove) {
-      rateLimitMap.delete(key);
-    }
-  }
+function checkToolRateLimit(toolName: string, identifier: string): boolean {
+  const key = `tool:${toolName}:${identifier}`;
+  return toolRateLimitStore.consume(key, TOOL_RATE_CONFIG).allowed;
 }
 
 // ---------------------------------------------------------------------------
@@ -342,8 +309,7 @@ export function guardToolExecution(
   }
 
   // Rate limit check
-  pruneRateLimitMap();
-  if (!checkRateLimit(toolName, identifier)) {
+  if (!checkToolRateLimit(toolName, identifier)) {
     return {
       allowed: false,
       reason: `Rate limit exceeded for tool "${toolDef.name}". Try again in a minute.`,
@@ -398,13 +364,11 @@ export {
   SYSTEM_PROMPT_EXTRACTION_PATTERNS,
   TOOL_INJECTION_PATTERNS,
   SYSTEM_PROMPT_FRAGMENTS,
-  RATE_LIMIT_WINDOW_MS,
-  RATE_LIMIT_MAX_PER_TOOL,
 };
 
 /** Reset rate limit state — for tests only. */
 export function _resetRateLimits(): void {
-  rateLimitMap.clear();
+  toolRateLimitStore.clear();
 }
 
 /** Override guard middleware — for tests only. */

@@ -51,6 +51,8 @@ import { COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import { baissControlsToCoverageEntries } from '@/lib/data/baiss-framework'
 import type { CoverageEntry } from '@/lib/types'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { getStorage } from '@/lib/client-storage'
+import { jutsuComplianceFrameworkStore } from '@/lib/stores'
 // Train 2 PR-4b.6 part 5 — Leaderboard + AnalyticsWorkspace relocated from LLM
 // Dashboard into Bushido Book Insights tab so audit users see performance-over-time
 // compliance evidence inside their primary workflow.
@@ -273,13 +275,7 @@ export default function ComplianceCenter() {
    * → 'jutsu-compliance-framework' to track the llm→jutsu NavId rename.
    * TestExecution (the reader) reads both keys for in-flight migration. */
   const handleStartComplianceCheck = useCallback((frameworkId: string) => {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('jutsu-compliance-framework', frameworkId)
-      } catch {
-        // QuotaExceededError — silently degrade
-      }
-    }
+    jutsuComplianceFrameworkStore.set(frameworkId)
     // Since PR-4b.6 moved TestExecution into Atemi Test Cases, navigate there.
     setActiveTab('adversarial')
   }, [setActiveTab])
@@ -805,13 +801,14 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
 
   const frameworkLabel = coverageOptions.find((f) => f.id === selectedCovFw)?.name ?? selectedCovFw
 
-  // Save current snapshot to localStorage whenever coverage data changes
+  // Save current snapshot whenever coverage data changes
   useEffect(() => {
-    if (typeof window === 'undefined') return
     if (coverageDataForFramework.length === 0) return
+    const storage = getStorage('local')
+    if (!storage) return
     const key = `bushido-coverage-snapshot-${selectedCovFw}`
     try {
-      const existing = localStorage.getItem(key)
+      const existing = storage.getItem(key)
       let parsed: { data?: unknown; timestamp?: string } | null = null
       if (existing) {
         const raw = JSON.parse(existing)
@@ -829,10 +826,10 @@ function CoveragePanel({ frameworks }: { frameworks: ComplianceFrameworkData[] }
           data: coverageDataForFramework,
           previous: parsed ?? null,
         }
-        localStorage.setItem(key, JSON.stringify(snapshot))
+        storage.setItem(key, JSON.stringify(snapshot))
       }
     } catch {
-      // localStorage unavailable or corrupted — gracefully ignore
+      // storage unavailable or corrupted — gracefully ignore
     }
   }, [coverageDataForFramework, selectedCovFw])
 
@@ -987,11 +984,10 @@ function CoverageDeltaView({
   onBack: () => void
 }) {
   const deltaEntries = useMemo((): DeltaEntry[] => {
-    if (typeof window === 'undefined') return []
     const key = `bushido-coverage-snapshot-${frameworkId}`
     let previousData: CoverageEntry[] | null = null
     try {
-      const stored = localStorage.getItem(key)
+      const stored = getStorage('local')?.getItem(key)
       if (stored) {
         const parsed = JSON.parse(stored)
         // Validate shape: must have previous.data as array
@@ -1000,7 +996,7 @@ function CoverageDeltaView({
         }
       }
     } catch {
-      // localStorage unavailable or corrupted
+      // storage unavailable or corrupted
     }
 
     if (!previousData || previousData.length === 0) {

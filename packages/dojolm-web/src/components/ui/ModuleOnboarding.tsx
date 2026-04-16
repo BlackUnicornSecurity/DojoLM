@@ -10,8 +10,9 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { createDismissedStore } from '@/lib/stores'
 import { ChevronRight, ChevronLeft, X, Sparkles } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -34,21 +35,18 @@ export function ModuleOnboarding({
   accentColor = 'var(--dojo-primary)',
   className,
 }: ModuleOnboardingProps) {
+  const store = useMemo(() => createDismissedStore(storageKey), [storageKey])
   const [dismissed, setDismissed] = useState(true)
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = localStorage.getItem(storageKey)
-    setDismissed(stored === 'true')
-  }, [storageKey])
+    setDismissed(store.get())
+  }, [store])
 
   const handleDismiss = useCallback(() => {
     setDismissed(true)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(storageKey, 'true')
-    }
-  }, [storageKey])
+    store.set(true)
+  }, [store])
 
   const nextStep = useCallback(() => {
     setActiveStep((prev) => {
@@ -170,7 +168,5 @@ export function ModuleOnboarding({
  * Programmatically reset onboarding for a module (e.g., from Help button)
  */
 export function resetOnboarding(storageKey: string): void {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(storageKey)
-  }
+  createDismissedStore(storageKey).remove()
 }

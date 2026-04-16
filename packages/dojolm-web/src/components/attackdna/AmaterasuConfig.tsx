@@ -19,8 +19,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ConfigPanel, type ConfigSection } from '@/components/ui/ConfigPanel'
 import { formatDate } from '@/lib/utils'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
-
-const STORAGE_KEY = 'amaterasu-config'
+import { amaterasuConfigStore } from '@/lib/stores'
 const VALID_CLUSTER_ALGORITHMS = ['kmeans', 'dbscan', 'hierarchical'] as const
 const VALID_TIMELINE_GROUPINGS = ['hour', 'day', 'week'] as const
 const VALID_SYNC_SCHEDULES = ['daily', 'weekly', 'monthly', 'manual'] as const
@@ -46,25 +45,18 @@ const DEFAULT_CONFIG: AmaterasuConfigData = {
 }
 
 function loadConfig(): AmaterasuConfigData {
-  if (typeof window === 'undefined') return DEFAULT_CONFIG
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) return DEFAULT_CONFIG
-    const parsed: unknown = JSON.parse(stored)
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      const merged = { ...DEFAULT_CONFIG, ...(parsed as Partial<AmaterasuConfigData>) }
-      merged.similarityThreshold = Math.min(1, Math.max(0.1, merged.similarityThreshold))
-      merged.maxTreeDepth = Math.min(25, Math.max(3, Math.round(merged.maxTreeDepth)))
-      if (!(VALID_CLUSTER_ALGORITHMS as readonly string[]).includes(merged.clusterAlgorithm)) {
-        merged.clusterAlgorithm = DEFAULT_CONFIG.clusterAlgorithm
-      }
-      if (!(VALID_TIMELINE_GROUPINGS as readonly string[]).includes(merged.timelineGrouping)) {
-        merged.timelineGrouping = DEFAULT_CONFIG.timelineGrouping
-      }
-      return merged
-    }
-  } catch { /* use defaults */ }
-  return DEFAULT_CONFIG
+  const stored = amaterasuConfigStore.get()
+  if (Object.keys(stored).length === 0) return DEFAULT_CONFIG
+  const merged = { ...DEFAULT_CONFIG, ...(stored as Partial<AmaterasuConfigData>) }
+  merged.similarityThreshold = Math.min(1, Math.max(0.1, merged.similarityThreshold))
+  merged.maxTreeDepth = Math.min(25, Math.max(3, Math.round(merged.maxTreeDepth)))
+  if (!(VALID_CLUSTER_ALGORITHMS as readonly string[]).includes(merged.clusterAlgorithm)) {
+    merged.clusterAlgorithm = DEFAULT_CONFIG.clusterAlgorithm
+  }
+  if (!(VALID_TIMELINE_GROUPINGS as readonly string[]).includes(merged.timelineGrouping)) {
+    merged.timelineGrouping = DEFAULT_CONFIG.timelineGrouping
+  }
+  return merged
 }
 
 // ===========================================================================
@@ -421,11 +413,7 @@ export function AmaterasuConfig({ isOpen, onClose }: AmaterasuConfigProps) {
   }, [])
 
   const handleSave = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(values))
-      } catch { /* QuotaExceededError */ }
-    }
+    amaterasuConfigStore.set(values)
   }, [values])
 
   const handleReset = useCallback(() => {

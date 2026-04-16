@@ -77,7 +77,7 @@ describe('useSensei (USH-001 to USH-008)', () => {
     const { result } = renderHook(() => useSensei('dashboard'))
     act(() => { result.current.setSelectedModelId('model-abc') })
     expect(result.current.selectedModelId).toBe('model-abc')
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('sensei-model', 'model-abc')
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('sensei-model', '"model-abc"')
   })
 
   it('USH-005: sendMessage sets error when no model is selected', async () => {

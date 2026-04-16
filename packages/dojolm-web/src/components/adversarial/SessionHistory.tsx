@@ -28,7 +28,8 @@ import {
   Settings,
 } from 'lucide-react'
 import type { AtemiSession } from '@/lib/atemi-session-types'
-import { loadSessions, saveSessions, SESSIONS_KEY } from '@/lib/atemi-session-storage'
+import { loadSessions, saveSessions } from '@/lib/atemi-session-storage'
+import { atemiSessionsRawStore } from '@/lib/stores'
 
 function formatDuration(ms: number): string {
   if (ms < 1000) return '<1s'
@@ -56,10 +57,10 @@ export function SessionHistory({ className }: SessionHistoryProps) {
     setSessions(loadSessions())
   }, [])
 
-  // Listen for storage events (new sessions added by SessionRecorder)
+  // Listen for storage events (new sessions added by SessionRecorder, cross-tab)
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === SESSIONS_KEY) {
+      if (e.key === 'atemi-sessions') {
         setSessions(loadSessions())
       }
     }
@@ -72,7 +73,7 @@ export function SessionHistory({ className }: SessionHistoryProps) {
   const prevRawRef = useRef<string | null>(null)
   useEffect(() => {
     const interval = setInterval(() => {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem(SESSIONS_KEY) : null
+      const raw = JSON.stringify(atemiSessionsRawStore.get())
       if (raw !== prevRawRef.current) {
         prevRawRef.current = raw
         setSessions(loadSessions())

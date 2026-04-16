@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
+import { amaterasuGuideDismissedStore } from '@/lib/stores'
 import {
   GitBranch,
   Layers,
@@ -27,8 +28,6 @@ import {
   HelpCircle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-
-const STORAGE_KEY = 'amaterasu-guide-dismissed'
 
 interface TutorialStep {
   title: string
@@ -124,16 +123,12 @@ export function AmaterasuGuide({ className }: AmaterasuGuideProps) {
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = localStorage.getItem(STORAGE_KEY)
-    setDismissed(stored === 'true')
+    setDismissed(amaterasuGuideDismissedStore.get())
   }, [])
 
   const handleDismiss = useCallback(() => {
     setDismissed(true)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, 'true')
-    }
+    amaterasuGuideDismissedStore.set(true)
   }, [])
 
   const nextStep = useCallback(() => {
@@ -240,9 +235,7 @@ export function AmaterasuGuide({ className }: AmaterasuGuideProps) {
  * Programmatically reset the Amaterasu guide (e.g. from Help button)
  */
 export function resetAmaterasuGuide(): void {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEY)
-  }
+  amaterasuGuideDismissedStore.remove()
 }
 
 // --- Tab-specific "What am I looking at?" button ---

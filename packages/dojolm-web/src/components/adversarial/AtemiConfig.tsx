@@ -33,6 +33,7 @@ import {
   RAG_ATTACK_VECTOR_OPTIONS,
   RAG_PIPELINE_STAGE_OPTIONS,
 } from '@/lib/atemi-session-types'
+import { atemiConfigRawStore } from '@/lib/stores'
 import type {
   AtemiSessionConfig,
   OrchestratorStrategy,
@@ -40,7 +41,6 @@ import type {
   RagPipelineStageId,
 } from '@/lib/atemi-session-types'
 
-const STORAGE_KEY = 'atemi-config'
 const VALID_ATTACK_MODES = ['passive', 'basic', 'advanced', 'aggressive'] as const
 
 export type AtemiConfigData = AtemiSessionConfig
@@ -68,37 +68,27 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
   const panelRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
-  // Load config from localStorage
+  // Load config from store
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed: unknown = JSON.parse(stored)
-        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-          const obj = parsed as Record<string, unknown>
-          const rawTarget = typeof obj.targetModel === 'string' ? obj.targetModel : DEFAULT_CONFIG.targetModel
-          const rawMode = typeof obj.attackMode === 'string' ? obj.attackMode : DEFAULT_CONFIG.attackMode
-          const rawConcurrency = typeof obj.concurrency === 'number' ? obj.concurrency : DEFAULT_CONFIG.concurrency
-          const rawTimeout = typeof obj.timeoutMs === 'number' ? obj.timeoutMs : DEFAULT_CONFIG.timeoutMs
-          const rawOrchestrator = typeof obj.orchestratorStrategy === 'string' ? obj.orchestratorStrategy : ''
-          const rawRagVector = typeof obj.ragAttackVector === 'string' ? obj.ragAttackVector : ''
-          const rawRagStage = typeof obj.ragPipelineStage === 'string' ? obj.ragPipelineStage : ''
-          setConfig({
-            targetModel: rawTarget.trim().slice(0, 256),
-            attackMode: (VALID_ATTACK_MODES as readonly string[]).includes(rawMode) ? rawMode : DEFAULT_CONFIG.attackMode,
-            orchestratorStrategy: (ORCHESTRATOR_STRATEGIES as readonly string[]).includes(rawOrchestrator) ? rawOrchestrator as OrchestratorStrategy : '',
-            ragAttackVector: RAG_ATTACK_VECTOR_OPTIONS.some(v => v.id === rawRagVector) ? rawRagVector as RagAttackVectorId : '',
-            ragPipelineStage: RAG_PIPELINE_STAGE_OPTIONS.some(s => s.id === rawRagStage) ? rawRagStage as RagPipelineStageId : '',
-            concurrency: Math.min(10, Math.max(1, Math.round(rawConcurrency))),
-            timeoutMs: Math.min(120000, Math.max(5000, rawTimeout)),
-            autoLog: typeof obj.autoLog === 'boolean' ? obj.autoLog : DEFAULT_CONFIG.autoLog,
-          })
-        }
-      }
-    } catch {
-      // Invalid stored data, use defaults
-    }
+    const obj = atemiConfigRawStore.get()
+    if (!obj) return
+    const rawTarget = typeof obj.targetModel === 'string' ? obj.targetModel : DEFAULT_CONFIG.targetModel
+    const rawMode = typeof obj.attackMode === 'string' ? obj.attackMode : DEFAULT_CONFIG.attackMode
+    const rawConcurrency = typeof obj.concurrency === 'number' ? obj.concurrency : DEFAULT_CONFIG.concurrency
+    const rawTimeout = typeof obj.timeoutMs === 'number' ? obj.timeoutMs : DEFAULT_CONFIG.timeoutMs
+    const rawOrchestrator = typeof obj.orchestratorStrategy === 'string' ? obj.orchestratorStrategy : ''
+    const rawRagVector = typeof obj.ragAttackVector === 'string' ? obj.ragAttackVector : ''
+    const rawRagStage = typeof obj.ragPipelineStage === 'string' ? obj.ragPipelineStage : ''
+    setConfig({
+      targetModel: rawTarget.trim().slice(0, 256),
+      attackMode: (VALID_ATTACK_MODES as readonly string[]).includes(rawMode) ? rawMode : DEFAULT_CONFIG.attackMode,
+      orchestratorStrategy: (ORCHESTRATOR_STRATEGIES as readonly string[]).includes(rawOrchestrator) ? rawOrchestrator as OrchestratorStrategy : '',
+      ragAttackVector: RAG_ATTACK_VECTOR_OPTIONS.some(v => v.id === rawRagVector) ? rawRagVector as RagAttackVectorId : '',
+      ragPipelineStage: RAG_PIPELINE_STAGE_OPTIONS.some(s => s.id === rawRagStage) ? rawRagStage as RagPipelineStageId : '',
+      concurrency: Math.min(10, Math.max(1, Math.round(rawConcurrency))),
+      timeoutMs: Math.min(120000, Math.max(5000, rawTimeout)),
+      autoLog: typeof obj.autoLog === 'boolean' ? obj.autoLog : DEFAULT_CONFIG.autoLog,
+    })
   }, [])
 
   // Focus management
@@ -143,9 +133,7 @@ export function AtemiConfig({ isOpen, onClose, onSave, className }: AtemiConfigP
   }, [isOpen])
 
   const handleSave = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-    }
+    atemiConfigRawStore.set(config as unknown as Record<string, unknown>)
     onSave?.(config)
     onClose()
   }, [config, onSave, onClose])

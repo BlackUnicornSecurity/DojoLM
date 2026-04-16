@@ -11,8 +11,7 @@
 
 import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 import type { NavId } from '@/lib/constants'
-
-const STORAGE_KEY = 'noda-module-vis'
+import { moduleVisibilityStore } from '@/lib/stores'
 
 /** Modules that cannot be toggled off */
 const ALWAYS_VISIBLE: ReadonlySet<NavId> = new Set(['dashboard'])
@@ -33,25 +32,11 @@ interface ModuleVisibilityContextValue {
 const ModuleVisibilityContext = createContext<ModuleVisibilityContextValue | null>(null)
 
 function loadState(): ModuleVisibilityState {
-  if (typeof window === 'undefined') return {}
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return {}
-    return JSON.parse(raw, (_key, value) => {
-      if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-        return Object.assign(Object.create(null), value)
-      }
-      return value
-    }) as ModuleVisibilityState
-  } catch {
-    return {}
-  }
+  return moduleVisibilityStore.get()
 }
 
-function saveState(state: ModuleVisibilityState) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch { /* quota exceeded — silently ignore */ }
+function saveState(state: ModuleVisibilityState): void {
+  moduleVisibilityStore.set(state)
 }
 
 export function ModuleVisibilityProvider({ children }: { children: ReactNode }) {
@@ -73,7 +58,7 @@ export function ModuleVisibilityProvider({ children }: { children: ReactNode }) 
 
   const resetAll = useCallback(() => {
     setVisibility({})
-    try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+    moduleVisibilityStore.remove()
   }, [])
 
   const value = useMemo(() => ({

@@ -26,6 +26,7 @@ import {
   type AuthenticatedEventStream,
 } from '@/lib/authenticated-event-stream';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
+import { jutsuComplianceFrameworkStore, llmComplianceFrameworkStore } from '@/lib/stores';
 
 // ===========================================================================
 // H7.4: Test Case Categorization
@@ -171,19 +172,14 @@ export function TestExecution({ onNavigateToResults }: { onNavigateToResults?: (
   // first, fall back to the old key for in-flight sessions, and delete both
   // after consumption so this one-shot bridge stays clean.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const framework =
-        localStorage.getItem('jutsu-compliance-framework') ??
-        localStorage.getItem('llm-compliance-framework');
-      if (framework && Object.hasOwn(FRAMEWORK_TEST_MAP, framework)) {
-        setActiveCategory('compliance');
-        setActiveFramework(framework);
-        localStorage.removeItem('jutsu-compliance-framework');
-        localStorage.removeItem('llm-compliance-framework');
-      }
-    } catch {
-      // localStorage may be unavailable
+    const framework =
+      jutsuComplianceFrameworkStore.get() ??
+      llmComplianceFrameworkStore.get();
+    if (framework && Object.hasOwn(FRAMEWORK_TEST_MAP, framework)) {
+      setActiveCategory('compliance');
+      setActiveFramework(framework);
+      jutsuComplianceFrameworkStore.remove();
+      llmComplianceFrameworkStore.remove();
     }
   }, []);
 

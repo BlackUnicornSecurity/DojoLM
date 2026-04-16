@@ -18,29 +18,14 @@ import { PLATFORM_META, STATUS_META } from '@/lib/data/ronin-seed-programs'
 import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { Search, Filter, Star } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
-
-const STORAGE_KEY = 'noda-ronin-subscriptions'
+import { roninSubscriptionsStore } from '@/lib/stores'
 
 function loadSubscriptions(): Set<string> {
-  if (typeof window === 'undefined') return new Set()
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return new Set()
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return new Set()
-    return new Set(parsed.filter((id: unknown) => typeof id === 'string'))
-  } catch {
-    return new Set()
-  }
+  return new Set(roninSubscriptionsStore.get())
 }
 
 function saveSubscriptions(subs: Set<string>): void {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...subs]))
-  } catch {
-    // Quota or private mode
-  }
+  roninSubscriptionsStore.set([...subs])
 }
 
 export function ProgramsTab() {

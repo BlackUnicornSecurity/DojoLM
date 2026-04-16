@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useLeaderboard as useLeaderboardHook, useModelContext } from '@/lib/contexts';
+import { scoreHistoryStore } from '@/lib/stores';
 import type { LLMModelConfig } from '@/lib/llm-types';
 import { PROVIDER_INFO } from '@/lib/llm-constants';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,15 +69,6 @@ function getScoreBgColor(score: number): string {
   return 'bg-[var(--status-block-bg)]';
 }
 
-function isValidHistoryEntry(e: unknown): e is ScoreHistoryEntry {
-  return (
-    e !== null &&
-    typeof e === 'object' &&
-    typeof (e as ScoreHistoryEntry).score === 'number' &&
-    typeof (e as ScoreHistoryEntry).timestamp === 'string'
-  );
-}
-
 /**
  * Model Leaderboard Component
  *
@@ -93,26 +85,11 @@ export function Leaderboard() {
   const [retesting, setRetesting] = useState<Set<string>>(new Set());
   const retestingRef = useRef<Set<string>>(new Set());
 
-  // Load score history from localStorage
+  // Load score history from storage
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = localStorage.getItem('dojolm-score-history');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-          // Validate per-entry schema
-          const validated: Record<string, ScoreHistoryEntry[]> = {};
-          for (const [key, val] of Object.entries(parsed)) {
-            if (Array.isArray(val) && val.every(isValidHistoryEntry)) {
-              validated[key] = val;
-            }
-          }
-          setHistoryData(validated);
-        }
-      }
-    } catch {
-      // Ignore parse errors
+    const data = scoreHistoryStore.get() as Record<string, ScoreHistoryEntry[]>;
+    if (Object.keys(data).length > 0) {
+      setHistoryData(data);
     }
   }, []);
 
@@ -149,13 +126,7 @@ export function Leaderboard() {
       }
 
       if (changed) {
-        if (typeof window !== 'undefined') {
-          try {
-            localStorage.setItem('dojolm-score-history', JSON.stringify(updated));
-          } catch {
-            // QuotaExceededError — graceful degradation
-          }
-        }
+        scoreHistoryStore.set(updated as unknown as Parameters<(typeof scoreHistoryStore)['set']>[0]);
         return updated;
       }
       return prev; // referential stability — no re-render

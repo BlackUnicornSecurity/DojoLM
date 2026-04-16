@@ -132,7 +132,7 @@ describe('LLM Execution Persistence (H1.5)', () => {
       })
 
       expect(screen.getByTestId('active-batch-id')).toHaveTextContent('test-batch-123')
-      expect(mockStorage.get('llm-active-batch')).toBe('test-batch-123')
+      expect(mockStorage.get('llm-active-batch')).toBe('"test-batch-123"')
     })
 
     it('rejects invalid batch IDs', async () => {

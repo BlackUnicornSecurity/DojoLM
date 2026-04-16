@@ -431,7 +431,7 @@ const AVAILABLE_MODELS = [
   { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google' },
 ] as const
 
-const SESSION_STORAGE_KEY = 'atemi-target-model'
+import { atemiTargetModelStore } from '@/lib/stores'
 
 // WebMCP types, WEBMCP_CATEGORIES, isUrlSafe, generateMockFindings
 // moved to PlaybooksComposite.tsx (Testing UX Consolidation)
@@ -494,13 +494,8 @@ export function AdversarialLab({
 
   // H13.3: Target model selection with sessionStorage persistence
   const [targetModel, setTargetModel] = useState<string>(() => {
-    if (typeof window === 'undefined') return AVAILABLE_MODELS[0].id
-    try {
-      const stored = sessionStorage.getItem(SESSION_STORAGE_KEY)
-      if (stored && AVAILABLE_MODELS.some((m) => m.id === stored)) return stored
-    } catch {
-      // sessionStorage may be unavailable
-    }
+    const stored = atemiTargetModelStore.get()
+    if (stored && AVAILABLE_MODELS.some((m) => m.id === stored)) return stored
     return AVAILABLE_MODELS[0].id
   })
 
@@ -512,11 +507,7 @@ export function AdversarialLab({
   const handleModelChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
     setTargetModel(value)
-    try {
-      sessionStorage.setItem(SESSION_STORAGE_KEY, value)
-    } catch {
-      // sessionStorage may throw QuotaExceededError
-    }
+    atemiTargetModelStore.set(value)
   }, [])
 
   /** Map skill severity to ecosystem severity */

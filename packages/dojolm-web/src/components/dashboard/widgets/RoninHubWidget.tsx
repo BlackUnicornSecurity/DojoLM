@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { useNavigation } from '@/lib/NavigationContext'
 import { Bug, Send, Star, AlertTriangle, DollarSign, ExternalLink } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { roninSubmissionsRawStore, roninSubscriptionsStore } from '@/lib/stores'
 
 interface WidgetData {
   submissions: number
@@ -22,37 +23,15 @@ interface WidgetData {
   totalRewards: number
 }
 
-const SUBS_KEY = 'noda-ronin-submissions'
-const PROGS_KEY = 'noda-ronin-subscriptions'
-
 function loadLocalData(): WidgetData {
   const data: WidgetData = { submissions: 0, subscribed: 0, latestCve: null, totalRewards: 0 }
-  if (typeof window === 'undefined') return data
-  try {
-    const subs = localStorage.getItem(SUBS_KEY)
-    if (subs) {
-      const parsed = JSON.parse(subs, (key, value) => {
-        if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
-        return value
-      })
-      if (Array.isArray(parsed)) {
-        data.submissions = parsed.length
-        data.totalRewards = parsed.reduce((sum: number, s: { payout?: number }) => sum + (s.payout ?? 0), 0)
-      }
-    }
-    const progs = localStorage.getItem(PROGS_KEY)
-    if (progs) {
-      const parsed = JSON.parse(progs, (key, value) => {
-        if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined
-        return value
-      })
-      if (Array.isArray(parsed)) {
-        data.subscribed = parsed.length
-      }
-    }
-  } catch {
-    // Ignore
-  }
+  const subs = roninSubmissionsRawStore.get()
+  data.submissions = subs.length
+  data.totalRewards = subs.reduce<number>((sum, s) => {
+    const payout = typeof (s as Record<string, unknown>).payout === 'number' ? (s as { payout: number }).payout : 0
+    return sum + payout
+  }, 0)
+  data.subscribed = roninSubscriptionsStore.get().length
   return data
 }
 

@@ -15,6 +15,9 @@
 
 'use client';
 
+import { getStorage } from '@/lib/client-storage'
+import { apiKeySessionStore, apiKeyLocalStore } from '@/lib/stores'
+
 const API_KEY_STORAGE_KEY = 'noda-api-key';
 const SAFE_RETRY_METHODS = new Set(['GET', 'HEAD']);
 const NETWORK_RETRY_DELAYS_MS = [150, 400];
@@ -70,25 +73,19 @@ async function delay(ms: number): Promise<void> {
  * Returns null if not set.
  */
 export function getApiKey(): string | null {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    // Prefer sessionStorage (AUTH-04: shorter-lived, cleared on tab close)
-    const fromSession = sessionStorage.getItem(API_KEY_STORAGE_KEY);
-    if (fromSession) return fromSession;
-    // Legacy fallback: migrate from localStorage to sessionStorage
-    const fromLocal = localStorage.getItem(API_KEY_STORAGE_KEY);
-    if (fromLocal) {
-      try {
-        sessionStorage.setItem(API_KEY_STORAGE_KEY, fromLocal);
-        localStorage.removeItem(API_KEY_STORAGE_KEY);
-      } catch { /* ignore migration failures */ }
-      return fromLocal;
-    }
-    return null;
-  } catch {
-    return null;
+  // Prefer sessionStorage (AUTH-04: shorter-lived, cleared on tab close)
+  const fromSession = apiKeySessionStore.get();
+  if (fromSession) return fromSession;
+  // Legacy fallback: migrate from localStorage to sessionStorage
+  const fromLocal = apiKeyLocalStore.get();
+  if (fromLocal) {
+    try {
+      apiKeySessionStore.set(fromLocal);
+      apiKeyLocalStore.remove();
+    } catch { /* ignore migration failures */ }
+    return fromLocal;
   }
+  return null;
 }
 
 /**
@@ -100,15 +97,22 @@ export function getApiKey(): string | null {
 export function setApiKey(key: string): void {
   if (typeof window === 'undefined') return;
 
+  const sessionStorage = getStorage('session');
+  const localStorageRef = getStorage('local');
   try {
-    sessionStorage.setItem(API_KEY_STORAGE_KEY, key);
+    if (!sessionStorage) throw new Error('session storage unavailable');
+    sessionStorage.setItem(API_KEY_STORAGE_KEY, JSON.stringify(key));
     // Clean up any legacy localStorage entry
-    try { localStorage.removeItem(API_KEY_STORAGE_KEY); } catch { /* ignore */ }
+    try { localStorageRef?.removeItem(API_KEY_STORAGE_KEY); } catch { /* ignore */ }
   } catch {
     // Fallback to localStorage if sessionStorage is blocked (e.g., some privacy modes)
-    try {
-      localStorage.setItem(API_KEY_STORAGE_KEY, key);
-    } catch {
+    if (localStorageRef) {
+      try {
+        localStorageRef.setItem(API_KEY_STORAGE_KEY, JSON.stringify(key));
+      } catch {
+        console.warn('[fetch-with-auth] Failed to save API key');
+      }
+    } else {
       console.warn('[fetch-with-auth] Failed to save API key');
     }
   }
@@ -118,14 +122,8 @@ export function setApiKey(key: string): void {
  * Clear stored API key.
  */
 export function clearApiKey(): void {
-  if (typeof window === 'undefined') return;
-
-  try {
-    sessionStorage.removeItem(API_KEY_STORAGE_KEY);
-    localStorage.removeItem(API_KEY_STORAGE_KEY);
-  } catch {
-    // Ignore
-  }
+  apiKeySessionStore.remove();
+  apiKeyLocalStore.remove();
 }
 
 /**

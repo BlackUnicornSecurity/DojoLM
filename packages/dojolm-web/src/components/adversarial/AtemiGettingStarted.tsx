@@ -11,12 +11,12 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { atemiGettingStartedDismissedStore } from '@/lib/stores'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ChevronDown, ChevronUp, CheckCircle, Circle, X, Swords, Target, Zap } from 'lucide-react'
 
-const STORAGE_KEY = 'atemi-getting-started-dismissed'
 
 const STEPS = [
   {
@@ -52,20 +52,12 @@ export function AtemiGettingStarted({ completedSteps = [], className }: AtemiGet
   const [expanded, setExpanded] = useState(true)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'true') {
-      setDismissed(true)
-    } else {
-      setDismissed(false)
-    }
+    setDismissed(atemiGettingStartedDismissedStore.get())
   }, [])
 
   const handleDismiss = useCallback(() => {
     setDismissed(true)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, 'true')
-    }
+    atemiGettingStartedDismissedStore.set(true)
   }, [])
 
   const handleToggle = useCallback(() => {

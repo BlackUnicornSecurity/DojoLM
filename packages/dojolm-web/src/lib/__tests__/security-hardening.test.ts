@@ -334,9 +334,30 @@ describe('Security Hardening (Story 8.3)', () => {
   });
 
   describe('CSP configuration', () => {
-    it('production CSP should not contain unsafe-inline in script-src', () => {
-      const productionCSP = "script-src 'self'";
-      expect(productionCSP).not.toContain('unsafe-inline');
-    });
+    it('production CSP should not contain unsafe-inline in script-src', async () => {
+      const { buildCsp } = await import('@/lib/csp')
+      const testNonce = 'dGVzdG5vbmNl'
+      const csp = buildCsp(testNonce, /* isDev */ false, /* forceHttps */ false)
+      const scriptSrcDirective = csp.split(';').find(d => d.trim().startsWith('script-src'))
+      expect(scriptSrcDirective).toBeDefined()
+      expect(scriptSrcDirective).not.toContain('unsafe-inline')
+      expect(scriptSrcDirective).toContain(`'nonce-${testNonce}'`)
+    })
+
+    it('development CSP includes unsafe-eval for HMR but still uses nonce', async () => {
+      const { buildCsp } = await import('@/lib/csp')
+      const testNonce = 'dGVzdG5vbmNl'
+      const csp = buildCsp(testNonce, /* isDev */ true, /* forceHttps */ false)
+      const scriptSrcDirective = csp.split(';').find(d => d.trim().startsWith('script-src'))
+      expect(scriptSrcDirective).toContain("'unsafe-eval'")
+      expect(scriptSrcDirective).toContain(`'nonce-${testNonce}'`)
+      expect(scriptSrcDirective).not.toContain('unsafe-inline')
+    })
+
+    it('forceHttps adds upgrade-insecure-requests directive', async () => {
+      const { buildCsp } = await import('@/lib/csp')
+      const csp = buildCsp('abc', false, /* forceHttps */ true)
+      expect(csp).toContain('upgrade-insecure-requests')
+    })
   });
 });

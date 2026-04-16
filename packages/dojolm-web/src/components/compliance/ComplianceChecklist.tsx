@@ -15,6 +15,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { getStorage } from '@/lib/client-storage'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -202,11 +203,12 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set())
   const [frameworkSelectorOpen, setFrameworkSelectorOpen] = useState(false)
 
-  // Load checklist data from localStorage for selected framework
+  // Load checklist data for selected framework
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    const storage = getStorage('local')
+    if (!storage) { setItems({}); return }
     try {
-      const stored = localStorage.getItem(getStorageKey(selectedFramework))
+      const stored = storage.getItem(getStorageKey(selectedFramework))
       if (stored) {
         const parsed: unknown = JSON.parse(stored)
         if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
@@ -238,12 +240,10 @@ export function ComplianceChecklist({ className }: ComplianceChecklistProps) {
         notes: '',
       }
       const updated = { ...prev, [controlId]: { ...existing, [field]: value } }
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem(getStorageKey(selectedFramework), JSON.stringify(updated))
-        } catch {
-          // QuotaExceededError — gracefully degrade
-        }
+      try {
+        getStorage('local')?.setItem(getStorageKey(selectedFramework), JSON.stringify(updated))
+      } catch {
+        // QuotaExceededError — gracefully degrade
       }
       return updated
     })
