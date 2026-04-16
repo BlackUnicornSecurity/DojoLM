@@ -29,6 +29,8 @@ const baseURL =
 
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: require.resolve('./e2e/global-setup'),
+  globalTeardown: require.resolve('./e2e/global-teardown'),
   fullyParallel: isProd,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : isProd ? 1 : 0,
@@ -52,18 +54,31 @@ export default defineConfig({
     viewport: { width: 1920, height: 1080 },
     // Accept self-signed certs on internal prod (Caddy with internal CA)
     ignoreHTTPSErrors: isProd,
+    // Use storageState saved by global-setup (logged in as E2E_ADMIN_USERNAME).
+    // The login spec itself ignores this in its own beforeEach if needed.
+    storageState: require('node:fs').existsSync('./e2e/.auth/state.json')
+      ? './e2e/.auth/state.json'
+      : undefined,
   },
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // Mobile viewport for prod + CI smoke validation (or explicit local opt-in)
+    // Mobile + tablet viewports for prod + CI smoke validation (or explicit local opt-in)
     ...(includeMobileProject
       ? [
           {
             name: 'mobile-chrome',
             use: { ...devices['Pixel 5'] },
+          },
+          {
+            name: 'iphone-12',
+            use: { ...devices['iPhone 12'] },
+          },
+          {
+            name: 'ipad',
+            use: { ...devices['iPad (gen 7)'] },
           },
         ]
       : []),
