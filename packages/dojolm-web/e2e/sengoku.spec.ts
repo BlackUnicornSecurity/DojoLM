@@ -34,8 +34,8 @@ test.describe('Sengoku', () => {
     await expect(campaignsTab).toHaveAttribute('aria-selected', 'true');
   });
 
-  test('shows New Campaign button', async ({ page }) => {
-    const newCampaignBtn = page.getByRole('button', { name: 'New Campaign', exact: true });
+  test('shows Start Campaign button', async ({ page }) => {
+    const newCampaignBtn = page.getByRole('button', { name: 'Start Campaign', exact: true });
     await expect(newCampaignBtn).toBeVisible({ timeout: 10000 });
     // Regression guard (BUG-PROD-001, 2026-04-15): strict-mode violation when
     // the page contains a campaign named "New Campaign Draft" and the spec
@@ -75,11 +75,11 @@ test.describe('Sengoku', () => {
 
     // Switch back to Campaigns
     await campaignsTab.click();
-    // Should show campaigns content again (loading, list, or empty state)
+    // Should show campaigns content again (loading, list, empty state, or ghost card)
     await expect(
-      page.getByText(/Loading campaigns|No campaigns yet|Authentication required|Campaign Overview/i).first()
+      page.getByText(/Loading campaigns|No campaigns yet|Authentication required|Campaign Overview|Create new campaign/i).first()
         .or(page.locator('button[aria-label^="Campaign:"]').first())
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 15000 });
   });
 
   test('Temporal tab shows demo attack plans', async ({ page }) => {
@@ -169,7 +169,7 @@ test.describe('Sengoku', () => {
 
   test('campaign builder dialog can be closed', async ({ page }) => {
     // Open builder
-    await page.getByRole('button', { name: 'New Campaign', exact: true }).click();
+    await page.getByRole('button', { name: 'Start Campaign', exact: true }).click();
     await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
 
     // Close it (look for close button or backdrop)
@@ -189,7 +189,7 @@ test.describe('Sengoku', () => {
   test.describe('OrchestratorBuilder', () => {
     test('OrchestratorBuilder: orchestrator builder controls are accessible', async ({ page }) => {
       // OrchestratorBuilder appears in campaign creation flow
-      await page.getByRole('button', { name: 'New Campaign', exact: true }).click();
+      await page.getByRole('button', { name: 'Start Campaign', exact: true }).click();
       await expect(page.getByText(/Campaign Name|Create Campaign/i).first()).toBeVisible({ timeout: 10000 });
       // OrchestratorBuilder has step configuration, target, and schedule fields
       const orchestratorField = page.getByText(/Target|Schedule|Step|Orchestrat/i).first();

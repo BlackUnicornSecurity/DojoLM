@@ -321,7 +321,7 @@ export function SengokuDashboard() {
             onClick={() => setShowBuilder(true)}
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
-            New Campaign
+            Start Campaign
           </Button>
         }
       />

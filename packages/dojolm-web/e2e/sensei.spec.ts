@@ -46,10 +46,12 @@ test.describe('Sensei Chat', () => {
     const senseiBtn = page.getByRole('button', { name: /Sensei|Open Sensei|Chat/i }).first();
     await senseiBtn.click();
 
-    // Model picker dropdown
-    await expect(
-      page.getByText(/Select a model|Loading models|No models configured/i).first()
-    ).toBeVisible({ timeout: 10000 });
+    // Model picker: a button with aria-label="Select model". Its visible text varies:
+    // "Loading models...", "Select a model", "No models ...", or an actual model name.
+    // Match the picker button itself rather than its transient text content.
+    const pickerBtn = page.getByRole('button', { name: /Select model/i });
+    const pickerText = page.getByText(/Select a model|Loading models|No models/i).first();
+    await expect(pickerBtn.or(pickerText)).toBeVisible({ timeout: 15000 });
   });
 
   test('chat drawer shows welcome message with suggestions', async ({ page }) => {
@@ -217,15 +219,18 @@ test.describe('Sensei Chat', () => {
       await senseiBtn.click();
       await expect(page.getByText(/Welcome to Sensei/i)).toBeVisible({ timeout: 10000 });
 
-      // Structural check — the confirm/reject buttons render when a tool call
+      // Structural check -- the confirm/reject buttons render when a tool call
       // is pending. We can't trigger a real tool call in E2E without a model,
       // but verify the chat infrastructure is present.
       const chatInput = page.getByPlaceholder(/Ask Sensei/i);
       await expect(chatInput).toBeVisible({ timeout: 5000 });
-      // Message list area should be present
-      const messageLog = page.locator('[role="log"]').first()
-        .or(page.getByText(/Welcome to Sensei/i));
-      await expect(messageLog).toBeVisible({ timeout: 5000 });
+      // Message list area: role="log" on SenseiChat scroll area.
+      // Use a CSS locator (not getByRole) because the dialog parent may have
+      // transient aria-hidden state during animation.
+      const messageLog = page.locator('[role="log"][aria-label="Sensei conversation"]');
+      const welcomeText = page.getByText(/Welcome to Sensei/i);
+      // At least one of these should be visible inside the open drawer
+      await expect(welcomeText.or(messageLog)).toBeVisible({ timeout: 10000 });
     });
   });
 });

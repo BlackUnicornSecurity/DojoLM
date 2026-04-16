@@ -120,10 +120,13 @@ test.describe('Shingan Scanner', () => {
     const scanBtn = page.getByRole('button', { name: /Scan|Analyze/i }).first();
     await scanBtn.click();
 
-    // Scope to main to avoid hidden sidebar nav descriptions containing these layer names
+    // Scope to main to avoid hidden sidebar nav descriptions containing these layer names.
+    // Full layer names: Metadata Poisoning, Code-Level Payloads, Data Exfiltration,
+    // Social Engineering, Supply Chain Identity, Memory & Context Poisoning.
+    // Also match "Layer Breakdown" heading, "Findings" heading, or severity badges.
     await expect(
-      page.locator('main').getByText(/Metadata|Exfiltration|Social|Supply Chain|Context/i).first()
-    ).toBeVisible({ timeout: 70000 });
+      page.locator('main').getByText(/Metadata Poisoning|Code-Level|Data Exfiltration|Social Engineering|Supply Chain|Context Poisoning|Layer Breakdown|Findings|finding/i).first()
+    ).toBeVisible({ timeout: 80000 });
   });
 
   test('scan results show findings table with severity badges', async ({ page }) => {

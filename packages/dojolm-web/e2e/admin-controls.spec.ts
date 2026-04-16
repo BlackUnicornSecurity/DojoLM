@@ -25,7 +25,7 @@ test.describe('Admin Controls', () => {
       await expect(generalTab).toBeVisible({ timeout: 5000 });
       await generalTab.click();
       await expect(page.getByText('Platform Information')).toBeVisible({ timeout: 10000 });
-      await expect(page.getByText('Modules')).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText('Modules').first()).toBeVisible({ timeout: 10000 });
     });
   });
 

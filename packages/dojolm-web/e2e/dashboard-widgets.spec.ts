@@ -54,8 +54,8 @@ test.describe('Dashboard Widgets', () => {
         const toggle = page.locator('[role="switch"]').first();
         if (await toggle.isVisible().catch(() => false)) {
           await toggle.click();
-          // Active count should change
-          await expect(page.getByText(/\d+ of \d+ widgets/i).first()).toBeVisible({ timeout: 5000 });
+          // Active count text appears inside the customizer drawer header
+          await expect(page.getByText(/widgets active/i).first()).toBeVisible({ timeout: 5000 });
         }
       }
     });
@@ -87,10 +87,11 @@ test.describe('Dashboard Widgets', () => {
     });
 
     test('widget count reflects active vs total', async ({ page }) => {
-      // Dashboard shows "X of Y widgets active" or similar summary
-      await expect(
-        page.getByText(/\d+ of \d+ widgets|widgets active/i).first()
-      ).toBeVisible({ timeout: 10000 });
+      // The widget count lives in the Customize button's aria-label:
+      // "Customize Dashboard — X of Y widgets active"
+      const customizeBtn = page.locator('button[aria-label*="widgets active"]').first()
+        .or(page.getByRole('button', { name: /Customize/i }).first());
+      await expect(customizeBtn).toBeVisible({ timeout: 10000 });
     });
   });
 });

@@ -91,11 +91,18 @@ test.describe('Style Guide', () => {
   });
 
   test('renders button variants', async ({ page }) => {
-    await page.goto('/style-guide');
+    // Style guide may not exist in production; skip early if 404 or redirect.
+    // Increase test timeout since this page can be slow or absent on prod.
+    test.setTimeout(90000);
+    await page.goto('/style-guide', { waitUntil: 'domcontentloaded' });
+    // Wait for content or 404 to appear
     const heading = page.getByText('DojoLM Style Guide');
-    const visible = await heading.isVisible().catch(() => false);
-    if (!visible) {
-      test.skip(true, 'Style guide disabled in production');
+    const notFound = page.getByText('Page Not Found');
+    const fourOhFour = page.getByText('404');
+    await expect(heading.or(notFound).or(fourOhFour)).toBeVisible({ timeout: 30000 });
+
+    if (await notFound.isVisible().catch(() => false) || await fourOhFour.isVisible().catch(() => false)) {
+      test.skip(true, 'Style guide not available on prod');
       return;
     }
 
