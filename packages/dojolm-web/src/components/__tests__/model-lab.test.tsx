@@ -80,6 +80,7 @@ vi.mock('@/lib/contexts', () => ({
   LLMModelProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   LLMExecutionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   LLMResultsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useModelContext: () => ({ models: [{ id: 'test-model' }], error: null, isLoading: false }),
 }))
 
 vi.mock('@/components/reports/ConsolidatedReportButton', () => ({

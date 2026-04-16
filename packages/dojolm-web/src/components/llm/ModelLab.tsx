@@ -16,7 +16,7 @@ import { ModelList } from './ModelList';
 import { ComparisonView } from './ComparisonView';
 import { CustomProviderBuilder } from './CustomProviderBuilder';
 import { JutsuTab } from './JutsuTab';
-import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider } from '@/lib/contexts';
+import { LLMModelProvider, LLMExecutionProvider, LLMResultsProvider, useModelContext } from '@/lib/contexts';
 import { Brain, GitCompare, Wrench, ScrollText, Crosshair } from 'lucide-react';
 import { TestFlowBanner } from '@/components/ui/TestFlowBanner';
 import { GuardBadge } from '@/components/guard';
@@ -50,6 +50,7 @@ const VALID_TABS: readonly ModelLabTab[] = ['models', 'compare', 'jutsu', 'custo
 export function ModelLab({ initialTab = 'models' }: ModelLabProps) {
   const [activeTab, setActiveTab] = useState<ModelLabTab>(initialTab);
   const { setActiveTab: navigateTo } = useNavigation();
+  const { models, error: modelError } = useModelContext();
 
   return (
     <div className="space-y-6">
@@ -109,7 +110,7 @@ export function ModelLab({ initialTab = 'models' }: ModelLabProps) {
       </Tabs>
 
       <TestFlowBanner
-        show={true}
+        show={models.length > 0 && !modelError}
         message="Model configured. Run adversarial attacks against it?"
         actionLabel="Open Atemi Lab"
         targetNavId="adversarial"
