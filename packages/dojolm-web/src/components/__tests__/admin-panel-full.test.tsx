@@ -113,11 +113,11 @@ describe('AdminPanel', () => {
     expect(screen.getByRole('tablist', { name: /admin sections/i })).toBeInTheDocument()
   })
 
-  // Train 2 PR-4d: 10 tabs → 12 (added Providers, Plugins)
-  it('AP-004: renders all 12 admin tabs', () => {
+  // Plugins tab removed; 12 → 11.
+  it('AP-004: renders all 11 admin tabs', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(12)
+    expect(tabs).toHaveLength(11)
   })
 
   it('AP-005: General tab is selected by default', () => {
@@ -188,13 +188,13 @@ describe('AdminPanel', () => {
     expect(screen.getByText('Dark (default)')).toBeInTheDocument()
   })
 
-  // Train 2 PR-4d: added 'providers' and 'plugins' tabs
+  // Plugins tab removed (Plugin Registry was mock-only, no backend)
   it('AP-015: each tab has the expected data-value attributes', () => {
     render(<AdminPanel />)
     const tabs = screen.getAllByRole('tab')
     const values = tabs.map(t => t.getAttribute('data-value'))
     expect(values).toEqual([
-      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'providers', 'plugins', 'settings', 'validation', 'test-runner',
+      'general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'providers', 'settings', 'validation', 'test-runner',
     ])
   })
 

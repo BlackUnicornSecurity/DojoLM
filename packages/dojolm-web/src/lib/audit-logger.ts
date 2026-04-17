@@ -30,11 +30,17 @@ export type AuditLevel = 'info' | 'warn' | 'error';
 export type AuditEvent =
   | 'AUTH_FAILURE'
   | 'AUTH_SUCCESS'
+  | 'AUTH_LOGOUT'
   | 'RATE_LIMIT_HIT'
   | 'CONFIG_CHANGE'
   | 'GUARD_MODE_CHANGE'
   | 'EXPORT_ACTION'
-  | 'INPUT_VALIDATION_FAILURE';
+  | 'INPUT_VALIDATION_FAILURE'
+  | 'SCAN_EXECUTED'
+  | 'COMPLIANCE_CHECK'
+  | 'FRAMEWORK_UPDATE'
+  | 'MODEL_CONFIG_CHANGE'
+  | 'MCP_LIFECYCLE';
 
 /** Structured log entry written to file */
 export interface AuditLogEntry {
@@ -331,6 +337,138 @@ class AuditLogger {
       details: {
         endpoint: params.endpoint,
         reason: params.reason,
+      },
+    });
+  }
+
+  /**
+   * Log a successful logout.
+   */
+  async authLogout(params: {
+    userId: string;
+    username: string;
+    ip: string;
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'AUTH_LOGOUT',
+      details: {
+        userId: params.userId,
+        username: params.username,
+        ip: params.ip,
+      },
+    });
+  }
+
+  /**
+   * Log a scan run (Haiku / Shingan / Deep Scan).
+   */
+  async scanExecuted(params: {
+    endpoint: string;
+    user: string;
+    scanType: string;
+    findings: number;
+    durationMs?: number;
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'SCAN_EXECUTED',
+      details: {
+        endpoint: params.endpoint,
+        user: params.user,
+        scanType: params.scanType,
+        findings: params.findings,
+        durationMs: params.durationMs,
+      },
+    });
+  }
+
+  /**
+   * Log a compliance check / gap assessment / remediation run.
+   */
+  async complianceCheck(params: {
+    endpoint: string;
+    user: string;
+    action: 'check' | 'gap_assessment' | 'remediation';
+    framework?: string;
+    result: 'pass' | 'fail' | 'info';
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'COMPLIANCE_CHECK',
+      details: {
+        endpoint: params.endpoint,
+        user: params.user,
+        action: params.action,
+        framework: params.framework,
+        result: params.result,
+      },
+    });
+  }
+
+  /**
+   * Log a compliance framework definition update.
+   */
+  async frameworkUpdate(params: {
+    endpoint: string;
+    user: string;
+    framework: string;
+    operation: 'create' | 'update' | 'delete';
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'FRAMEWORK_UPDATE',
+      details: {
+        endpoint: params.endpoint,
+        user: params.user,
+        framework: params.framework,
+        operation: params.operation,
+      },
+    });
+  }
+
+  /**
+   * Log a model configuration change (Jutsu-managed models).
+   */
+  async modelConfigChange(params: {
+    endpoint: string;
+    user: string;
+    modelId: string;
+    operation: 'create' | 'update' | 'delete' | 'toggle';
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'MODEL_CONFIG_CHANGE',
+      details: {
+        endpoint: params.endpoint,
+        user: params.user,
+        modelId: params.modelId,
+        operation: params.operation,
+      },
+    });
+  }
+
+  /**
+   * Log an MCP server lifecycle event (start / stop).
+   */
+  async mcpLifecycle(params: {
+    user: string;
+    action: 'start' | 'stop' | 'mode_change';
+    detail?: string;
+  }): Promise<void> {
+    await writeEntry({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      event: 'MCP_LIFECYCLE',
+      details: {
+        user: params.user,
+        action: params.action,
+        detail: params.detail,
       },
     });
   }

@@ -56,6 +56,7 @@ import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
 import { useNavigation } from '@/lib/NavigationContext'
 import { useBehavioralAnalysis } from '@/lib/contexts'
+import { useJutsuModels } from '@/hooks/useJutsuModels'
 import { DefenseDegradationIndicator } from './DefenseDegradationIndicator'
 import { ConceptReconPanel } from './ConceptReconPanel'
 import type { EcosystemSeverity } from '@/lib/ecosystem-types'
@@ -420,17 +421,9 @@ const ATTACK_TOOLS: AttackToolDef[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Available Models (H13.3 - mock data)
+// Target-model list comes from Jutsu (Admin → Providers / API Keys) via
+// useJutsuModels(); there is no hardcoded AVAILABLE_MODELS here anymore.
 // ---------------------------------------------------------------------------
-
-const AVAILABLE_MODELS = [
-  { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai' },
-  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'openai' },
-  { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', provider: 'anthropic' },
-  { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5', provider: 'anthropic' },
-  { id: 'llama-3.1-8b', name: 'Llama 3.1 8B', provider: 'ollama' },
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'google' },
-] as const
 
 import { atemiTargetModelStore } from '@/lib/stores'
 
@@ -493,15 +486,26 @@ export function AdversarialLab({
   const { emitFinding } = useEcosystemEmit('atemi')
   const { getResult, runRobustness, runGeometry, isAnalyzing: oblAnalyzing } = useBehavioralAnalysis()
 
-  // H13.3: Target model selection with sessionStorage persistence
-  const [targetModel, setTargetModel] = useState<string>(() => {
-    const stored = atemiTargetModelStore.get()
-    if (stored && AVAILABLE_MODELS.some((m) => m.id === stored)) return stored
-    return AVAILABLE_MODELS[0].id
-  })
+  // Single source of truth — pulls enabled models from Jutsu config.
+  const { models: jutsuModels, isLoading: modelsLoading, error: modelsError } = useJutsuModels()
+
+  // H13.3: Target model selection with sessionStorage persistence.
+  // Starts empty until models load; then defaults to the first enabled model
+  // (or the persisted one if still present in Jutsu config).
+  const [targetModel, setTargetModel] = useState<string>(() => atemiTargetModelStore.get() ?? '')
+
+  useEffect(() => {
+    if (jutsuModels.length === 0) return
+    setTargetModel((current) => {
+      if (current && jutsuModels.some((m) => m.id === current)) return current
+      const next = jutsuModels[0].id
+      atemiTargetModelStore.set(next)
+      return next
+    })
+  }, [jutsuModels])
 
   // Story 3.3.1: use getResult(targetModel) so panels always show data for the selected model
-  const targetModelEntry = AVAILABLE_MODELS.find(m => m.id === targetModel)
+  const targetModelEntry = jutsuModels.find((m) => m.id === targetModel)
   const targetModelName = targetModelEntry?.name ?? targetModel
   const oblResult = getResult(targetModel)
 
@@ -590,7 +594,7 @@ export function AdversarialLab({
       <AtemiGettingStarted />
 
       {/* MCP Connection Status (Story 6.1) */}
-      <McpConnectorStatus connected={connected} modelName={AVAILABLE_MODELS.find(m => m.id === targetModel)?.name ?? targetModel} />
+      <McpConnectorStatus connected={connected} modelName={targetModelName} />
 
       {/* Config Panel (Story 6.1) */}
       <AtemiConfig isOpen={configOpen} onClose={handleCloseConfig} />
@@ -692,14 +696,20 @@ export function AdversarialLab({
             id="atemi-target-model-select"
             value={targetModel}
             onChange={handleModelChange}
+            disabled={modelsLoading || jutsuModels.length === 0}
             aria-label="Select target model for attack execution"
             className={cn(
               'flex-1 min-h-[44px] rounded-md border border-[var(--border)] bg-[var(--bg-secondary)]',
               'px-3 py-2 text-sm text-[var(--foreground)]',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--background)]',
+              'disabled:opacity-60 disabled:cursor-not-allowed',
             )}
           >
-            {AVAILABLE_MODELS.map((model) => (
+            {modelsLoading && <option value="">Loading models…</option>}
+            {!modelsLoading && jutsuModels.length === 0 && (
+              <option value="">No models configured — add one in Admin → Providers</option>
+            )}
+            {jutsuModels.map((model) => (
               <option key={model.id} value={model.id}>
                 {model.name} ({model.provider})
               </option>
@@ -712,7 +722,7 @@ export function AdversarialLab({
               void runRobustness(targetModel, targetModelName)
               void runGeometry(targetModel, targetModelName)
             }}
-            disabled={oblAnalyzing}
+            disabled={oblAnalyzing || !targetModel}
             className={cn(
               'flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium min-h-[44px] flex-shrink-0',
               'border border-[var(--dojo-primary)] text-[var(--dojo-primary)]',

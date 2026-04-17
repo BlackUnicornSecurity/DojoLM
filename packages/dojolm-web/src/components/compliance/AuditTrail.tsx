@@ -24,11 +24,15 @@ import { fetchWithAuth } from '@/lib/fetch-with-auth'
 interface AuditEntry {
   id: string
   timestamp: string
+  /** Server-side event type (AUTH_SUCCESS, SCAN_EXECUTED, …). */
   action: string
   user: string
   resource: string
   result: string
+  /** Stringified details blob from the audit entry. */
   details?: string
+  /** Raw details object for extracting user/resource in the summary stats. */
+  raw?: Record<string, unknown>
 }
 
 export interface AuditTrailProps {
@@ -36,20 +40,46 @@ export interface AuditTrailProps {
 }
 
 // --- Constants ---
+//
+// Matches AuditEvent in src/lib/audit-logger.ts. The list is kept in sync
+// with what the server writes so the filter never offers a category that
+// produces zero hits.
 
 const ACTION_TYPES = [
   'all',
-  'scan',
-  'compliance_check',
-  'gap_assessment',
-  'remediation',
-  'export',
-  'login',
-  'config_change',
-  'framework_update',
+  'AUTH_SUCCESS',
+  'AUTH_FAILURE',
+  'AUTH_LOGOUT',
+  'RATE_LIMIT_HIT',
+  'CONFIG_CHANGE',
+  'GUARD_MODE_CHANGE',
+  'EXPORT_ACTION',
+  'INPUT_VALIDATION_FAILURE',
+  'SCAN_EXECUTED',
+  'COMPLIANCE_CHECK',
+  'FRAMEWORK_UPDATE',
+  'MODEL_CONFIG_CHANGE',
+  'MCP_LIFECYCLE',
 ] as const
 
 type ActionType = (typeof ACTION_TYPES)[number]
+
+const ACTION_LABELS: Record<ActionType, string> = {
+  all: 'All Events',
+  AUTH_SUCCESS: 'Login',
+  AUTH_FAILURE: 'Login Failed',
+  AUTH_LOGOUT: 'Logout',
+  RATE_LIMIT_HIT: 'Rate Limit Hit',
+  CONFIG_CHANGE: 'Config Change',
+  GUARD_MODE_CHANGE: 'Guard Mode Change',
+  EXPORT_ACTION: 'Export',
+  INPUT_VALIDATION_FAILURE: 'Input Validation Failure',
+  SCAN_EXECUTED: 'Scan',
+  COMPLIANCE_CHECK: 'Compliance Check',
+  FRAMEWORK_UPDATE: 'Framework Update',
+  MODEL_CONFIG_CHANGE: 'Model Config Change',
+  MCP_LIFECYCLE: 'MCP Lifecycle',
+}
 
 // --- Result Badge ---
 
@@ -105,15 +135,32 @@ export function AuditTrail({ className }: AuditTrailProps) {
         if (cancelled) return
         const rawEntries = Array.isArray(data) ? data : data.entries ?? data.log ?? []
         const parsed: AuditEntry[] = rawEntries.map(
-          (e: Record<string, unknown>, idx: number) => ({
-            id: String(e.id ?? `audit-${idx}`),
-            timestamp: String(e.timestamp ?? e.time ?? ''),
-            action: String(e.action ?? e.type ?? 'unknown'),
-            user: String(e.user ?? e.actor ?? 'system'),
-            resource: String(e.resource ?? e.target ?? ''),
-            result: String(e.result ?? e.status ?? e.outcome ?? 'info'),
-            details: e.details ? String(e.details) : undefined,
-          })
+          (e: Record<string, unknown>, idx: number) => {
+            const rawDetails = (e.details && typeof e.details === 'object')
+              ? e.details as Record<string, unknown>
+              : {}
+            return {
+              id: String(e.id ?? `audit-${idx}`),
+              timestamp: String(e.timestamp ?? e.time ?? ''),
+              action: String(e.event ?? e.action ?? e.type ?? 'unknown'),
+              user: String(
+                rawDetails.user ?? rawDetails.username ?? rawDetails.actor ??
+                e.user ?? e.actor ?? 'system',
+              ),
+              resource: String(
+                rawDetails.endpoint ?? rawDetails.resource ?? rawDetails.target ??
+                rawDetails.field ?? e.resource ?? e.target ?? '',
+              ),
+              result: String(
+                rawDetails.result ?? rawDetails.status ?? rawDetails.outcome ??
+                e.result ?? e.level ?? 'info',
+              ),
+              details: Object.keys(rawDetails).length > 0
+                ? JSON.stringify(rawDetails)
+                : (e.details ? String(e.details) : undefined),
+              raw: rawDetails,
+            }
+          },
         )
         setEntries(parsed)
       })
@@ -238,7 +285,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
           >
             {ACTION_TYPES.map((type) => (
               <option key={type} value={type}>
-                {type === 'all' ? 'All Actions' : type.replace(/_/g, ' ')}
+                {ACTION_LABELS[type]}
               </option>
             ))}
           </select>
@@ -326,6 +373,9 @@ export function AuditTrail({ className }: AuditTrailProps) {
         </button>
       </div>
 
+      {/* Summary stats — gives the audit view actual analytic value */}
+      <AuditSummaryStats entries={entries} />
+
       {/* Results count */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground">
@@ -401,7 +451,7 @@ export function AuditTrail({ className }: AuditTrailProps) {
                   <td className="px-3 py-2 text-[var(--foreground)]">
                     {/* Plain text only - security requirement */}
                     <span className="font-medium">
-                      {entry.action.replace(/_/g, ' ')}
+                      {ACTION_LABELS[entry.action as ActionType] ?? entry.action.replace(/_/g, ' ')}
                     </span>
                   </td>
                   <td className="px-3 py-2 text-muted-foreground">
@@ -428,6 +478,61 @@ export function AuditTrail({ className }: AuditTrailProps) {
           </table>
         </div>
       )}
+    </div>
+  )
+}
+
+/**
+ * Summary strip for the audit trail — totals, last 24h activity, top events,
+ * and last successful login. Renders plain text only (security requirement).
+ */
+function AuditSummaryStats({ entries }: { entries: readonly AuditEntry[] }) {
+  const stats = useMemo(() => {
+    const now = Date.now()
+    const dayAgo = now - 24 * 60 * 60 * 1000
+    let last24h = 0
+    let failures = 0
+    let lastLogin: string | null = null
+    const eventCounts = new Map<string, number>()
+
+    for (const entry of entries) {
+      const ts = new Date(entry.timestamp).getTime()
+      if (Number.isFinite(ts) && ts >= dayAgo) last24h += 1
+      if (entry.result === 'warn' || entry.result === 'error' || entry.action === 'AUTH_FAILURE') {
+        failures += 1
+      }
+      if (entry.action === 'AUTH_SUCCESS' && (!lastLogin || entry.timestamp > lastLogin)) {
+        lastLogin = entry.timestamp
+      }
+      eventCounts.set(entry.action, (eventCounts.get(entry.action) ?? 0) + 1)
+    }
+
+    const topEvent = [...eventCounts.entries()].sort((a, b) => b[1] - a[1])[0] ?? null
+    return { total: entries.length, last24h, failures, lastLogin, topEvent }
+  }, [entries])
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total entries</p>
+        <p className="text-lg font-semibold text-[var(--foreground)]">{stats.total}</p>
+      </div>
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Last 24h</p>
+        <p className="text-lg font-semibold text-[var(--foreground)]">{stats.last24h}</p>
+      </div>
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Warn/Error</p>
+        <p className="text-lg font-semibold text-[var(--severity-high)]">{stats.failures}</p>
+      </div>
+      <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-3">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Top event</p>
+        <p className="text-sm font-semibold text-[var(--foreground)]">
+          {stats.topEvent
+            ? `${ACTION_LABELS[stats.topEvent[0] as ActionType] ?? stats.topEvent[0]} (${stats.topEvent[1]})`
+            : '—'}
+        </p>
+      </div>
     </div>
   )
 }

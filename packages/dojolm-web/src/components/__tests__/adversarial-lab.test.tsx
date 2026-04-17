@@ -47,6 +47,20 @@ vi.mock('@/lib/NavigationContext', () => ({
   useNavigation: () => ({ setActiveTab: vi.fn() }),
 }))
 
+// Target-model list now comes from Jutsu via useJutsuModels. Provide a fixed
+// stub so tests can drive the dropdown deterministically.
+vi.mock('@/hooks/useJutsuModels', () => ({
+  useJutsuModels: () => ({
+    models: [
+      { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai' },
+      { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'openai' },
+    ],
+    isLoading: false,
+    error: null,
+    refresh: vi.fn(),
+  }),
+}))
+
 vi.mock('@/lib/adversarial-skill-engine', () => ({
   executeSkill: vi.fn().mockResolvedValue({
     skillId: 'test-skill',

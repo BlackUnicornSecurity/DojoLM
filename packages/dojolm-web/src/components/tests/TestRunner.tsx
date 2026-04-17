@@ -64,9 +64,6 @@ export function TestRunner({ onRunTests, className }: TestRunnerProps) {
                 <SelectItem value="typecheck">Type Check Only</SelectItem>
                 <SelectItem value="regression">Regression Tests</SelectItem>
                 <SelectItem value="regression,false-positive">Core Tests</SelectItem>
-                <SelectItem value="epic4">EPIC 4</SelectItem>
-                <SelectItem value="epic8-session">EPIC 8 (Session)</SelectItem>
-                <SelectItem value="epic8-tool-output">EPIC 8 (Tool Output)</SelectItem>
               </SelectContent>
             </Select>
 

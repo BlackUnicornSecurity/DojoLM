@@ -19,6 +19,7 @@ import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { Card, CardContent } from '@/components/ui/card'
 import { SafeCodeBlock } from '@/components/ui/SafeCodeBlock'
 import { TabHelpButton } from './AmaterasuGuide'
+import { useJutsuModels, type JutsuModelOption } from '@/hooks/useJutsuModels'
 import {
   Microscope,
   Target,
@@ -83,12 +84,7 @@ const SAMPLE_ATTACKS = [
   },
 ]
 
-const AVAILABLE_MODELS = [
-  { id: 'gpt-4o', label: 'GPT-4o' },
-  { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6' },
-  { id: 'gemini-pro', label: 'Gemini Pro' },
-  { id: 'llama-3-70b', label: 'Llama 3 70B' },
-]
+// Models come from Jutsu config (Admin → Providers) via useJutsuModels().
 
 // ---------------------------------------------------------------------------
 // Main Component
@@ -102,6 +98,7 @@ export function BlackBoxAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const { models: jutsuModels, isLoading: modelsLoading, error: modelsError } = useJutsuModels()
 
   const getAttackContent = useCallback((): string => {
     if (customAttack.trim()) return customAttack.trim()
@@ -253,6 +250,9 @@ export function BlackBoxAnalysis() {
           selectedModel={selectedModel}
           onSelect={setSelectedModel}
           attackContent={getAttackContent()}
+          models={jutsuModels}
+          modelsLoading={modelsLoading}
+          modelsError={modelsError}
         />
       )}
 
@@ -381,10 +381,16 @@ function StepSelectModel({
   selectedModel,
   onSelect,
   attackContent,
+  models,
+  modelsLoading,
+  modelsError,
 }: {
   selectedModel: string | null
   onSelect: (id: string) => void
   attackContent: string
+  models: readonly JutsuModelOption[]
+  modelsLoading: boolean
+  modelsError: string | null
 }) {
   return (
     <div className="space-y-4">
@@ -403,8 +409,20 @@ function StepSelectModel({
         </div>
       </div>
 
+      {modelsLoading && (
+        <p className="text-xs text-muted-foreground">Loading models from Jutsu config…</p>
+      )}
+      {modelsError && (
+        <p className="text-xs text-[var(--severity-high)]">Unable to load models: {modelsError}</p>
+      )}
+      {!modelsLoading && !modelsError && models.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          No models configured. Add one in Admin → Providers or Admin → API Keys.
+        </p>
+      )}
+
       <div className="grid grid-cols-2 gap-2">
-        {AVAILABLE_MODELS.map((model) => (
+        {models.map((model) => (
           <button
             key={model.id}
             onClick={() => onSelect(model.id)}
@@ -416,7 +434,7 @@ function StepSelectModel({
                 : 'border-[var(--border)] text-muted-foreground hover:bg-[var(--bg-quaternary)]',
             )}
           >
-            {model.label}
+            {model.name}
           </button>
         ))}
       </div>

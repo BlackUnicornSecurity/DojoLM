@@ -7,8 +7,10 @@
  * Index:
  * - PRESET_META config (line ~35)
  * - ALL_CATEGORIES list (line ~60)
- * - MODEL_OPTIONS (line ~80)
  * - KagamiPanel component (line ~120)
+ *
+ * Target-model dropdown is sourced from Jutsu (Admin → Providers / API Keys)
+ * via useJutsuModels(). No hardcoded model list.
  */
 
 import { useState, useCallback, useEffect, useMemo } from 'react'
@@ -24,6 +26,7 @@ import { cn } from '@/lib/utils'
 import { KagamiResults } from './KagamiResults'
 import { ProbeProgress } from './ProbeProgress'
 import { FeatureRadar, type RadarAxis } from './FeatureRadar'
+import { useJutsuModels, type JutsuModelOption } from '@/hooks/useJutsuModels'
 import type {
   KagamiResult,
   VerificationResult,
@@ -68,16 +71,12 @@ const ALL_CATEGORIES: readonly { readonly id: ProbeCategory; readonly label: str
   { id: 'model-lineage', label: 'Model Lineage' },
 ] as const
 
-const MODEL_OPTIONS: readonly { readonly id: string; readonly label: string }[] = [
-  { id: 'target-api', label: 'Target API Endpoint' },
-  { id: 'openai-gpt4', label: 'OpenAI GPT-4' },
-  { id: 'openai-gpt4o', label: 'OpenAI GPT-4o' },
-  { id: 'anthropic-claude3', label: 'Anthropic Claude 3' },
-  { id: 'anthropic-claude35', label: 'Anthropic Claude 3.5' },
-  { id: 'google-gemini', label: 'Google Gemini Pro' },
-  { id: 'meta-llama3', label: 'Meta Llama 3' },
-  { id: 'mistral-large', label: 'Mistral Large' },
-] as const
+/**
+ * Sentinel option shown while models are loading or none are configured.
+ * Kept separate from real Jutsu entries so downstream probe calls can
+ * detect the "not ready" state.
+ */
+const NO_MODEL_OPTION = { id: '', name: 'No models configured — add one in Admin → Providers', provider: '' } as const
 
 interface KagamiSignatureSummary {
   readonly modelId: string
@@ -113,6 +112,9 @@ function FingerprintWorkspace({
   verification,
   error,
   activePreset,
+  modelOptions,
+  modelsLoading,
+  modelsError,
   onSetMode,
   onSetSelectedModel,
   onSetSelectedPreset,
@@ -133,6 +135,9 @@ function FingerprintWorkspace({
   readonly verification: VerificationResult | null
   readonly error: string | null
   readonly activePreset?: PresetMeta
+  readonly modelOptions: readonly JutsuModelOption[]
+  readonly modelsLoading: boolean
+  readonly modelsError: string | null
   readonly onSetMode: (mode: KagamiMode) => void
   readonly onSetSelectedModel: (modelId: string) => void
   readonly onSetSelectedPreset: (preset: ProbePresetName) => void
@@ -142,6 +147,7 @@ function FingerprintWorkspace({
   readonly onStreamComplete: (streamResult?: unknown) => void
   readonly onStreamError: (message: string) => void
 }) {
+  const hasModels = modelOptions.length > 0
   return (
     <>
       <Card>
@@ -178,16 +184,29 @@ function FingerprintWorkspace({
               id="kagami-model-select"
               value={selectedModel}
               onChange={(event) => onSetSelectedModel(event.target.value)}
+              disabled={modelsLoading || !hasModels}
               className={cn(
                 'w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)]',
                 'px-3 py-2 text-sm text-[var(--foreground)]',
                 'focus:outline-none focus:ring-2 focus:ring-[var(--dojo-primary)]',
+                'disabled:opacity-60 disabled:cursor-not-allowed',
               )}
             >
-              {MODEL_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>{option.label}</option>
+              {modelsLoading && (
+                <option value="">Loading models…</option>
+              )}
+              {!modelsLoading && !hasModels && (
+                <option value={NO_MODEL_OPTION.id}>{NO_MODEL_OPTION.name}</option>
+              )}
+              {hasModels && modelOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name} ({option.provider})
+                </option>
               ))}
             </select>
+            {modelsError && (
+              <p className="text-xs text-[var(--severity-high)]">{modelsError}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -582,9 +601,10 @@ function RadarWorkspace({
 }
 
 export function KagamiPanel() {
+  const { models: jutsuModels, isLoading: modelsLoading, error: modelsError } = useJutsuModels()
   const [activeView, setActiveView] = useState<'fingerprint' | 'signatures' | 'radar'>('fingerprint')
   const [mode, setMode] = useState<KagamiMode>('identify')
-  const [selectedModel, setSelectedModel] = useState(MODEL_OPTIONS[0].id)
+  const [selectedModel, setSelectedModel] = useState<string>('')
   const [selectedPreset, setSelectedPreset] = useState<ProbePresetName>('standard')
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [customCategories, setCustomCategories] = useState<ReadonlySet<ProbeCategory>>(new Set())
@@ -600,6 +620,14 @@ export function KagamiPanel() {
   const [selectedProvider, setSelectedProvider] = useState('all')
   const [selectedFamily, setSelectedFamily] = useState('all')
   const [selectedSignatureId, setSelectedSignatureId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (jutsuModels.length === 0) return
+    setSelectedModel((current) => {
+      if (current && jutsuModels.some((m) => m.id === current)) return current
+      return jutsuModels[0].id
+    })
+  }, [jutsuModels])
 
   const toggleCategory = useCallback((category: ProbeCategory) => {
     setCustomCategories((prev) => {
@@ -806,6 +834,9 @@ export function KagamiPanel() {
           verification={verification}
           error={error}
           activePreset={activePreset}
+          modelOptions={jutsuModels}
+          modelsLoading={modelsLoading}
+          modelsError={modelsError}
           onSetMode={setMode}
           onSetSelectedModel={setSelectedModel}
           onSetSelectedPreset={setSelectedPreset}

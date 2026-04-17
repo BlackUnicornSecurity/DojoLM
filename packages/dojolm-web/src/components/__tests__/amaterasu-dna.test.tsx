@@ -17,6 +17,19 @@ vi.mock('@/lib/utils', () => ({
   formatDate: (input: unknown) => String(input),
 }))
 
+// BlackBoxAnalysis model list now comes from Jutsu via useJutsuModels.
+vi.mock('@/hooks/useJutsuModels', () => ({
+  useJutsuModels: () => ({
+    models: [
+      { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai' },
+      { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', provider: 'anthropic' },
+    ],
+    isLoading: false,
+    error: null,
+    refresh: vi.fn(),
+  }),
+}))
+
 vi.mock('@/lib/fetch-with-auth', () => ({
   fetchWithAuth: vi.fn().mockImplementation(async (url: URL | RequestInfo) => {
     const urlStr = String(url)

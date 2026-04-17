@@ -10,9 +10,18 @@ import { NextRequest } from 'next/server';
 // --- Mocks ---
 
 const mockDestroySession = vi.fn();
+const mockValidateSession = vi.fn().mockReturnValue(null);
 
 vi.mock('@/lib/auth/session', () => ({
   destroySession: (...args: unknown[]) => mockDestroySession(...args),
+  validateSession: (...args: unknown[]) => mockValidateSession(...args),
+}));
+
+// Audit logger is fire-and-forget; stub to keep tests hermetic.
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    authLogout: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
 const mockGetSessionToken = vi.fn();

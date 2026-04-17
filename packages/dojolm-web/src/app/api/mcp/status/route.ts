@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isDemoMode } from '@/lib/demo'
 import { demoMcpStatusGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
+import { auditLog } from '@/lib/audit-logger'
 
 // SME HIGH-14: MCP server must only bind to loopback addresses
 const ALLOWED_MCP_HOSTS = new Set(['127.0.0.1', '::1', 'localhost'])
@@ -31,8 +32,15 @@ const VALID_MODES = new Set(['basic', 'passive', 'prompt-injection', 'tool-poiso
 // In production this would be persisted to disk/DB; in-memory is acceptable for
 // a single-instance dev deployment (lessons learned: module-level let resets on restart).
 let mcpEnabled = false
-let mcpStartPromise: Promise<boolean> | null = null
+let mcpStartPromise: Promise<StartResult> | null = null
 let mcpChildProcess: ReturnType<typeof import('node:child_process').spawn> | null = null
+/** Last startup error surfaced to the UI so the user can see WHY MCP failed. */
+let mcpLastError: string | null = null
+
+interface StartResult {
+  readonly ok: boolean
+  readonly error?: string
+}
 
 /**
  * GET /api/mcp/status — probe the real MCP server on localhost:18000/health
@@ -71,6 +79,7 @@ export async function GET(request: NextRequest) {
       connected: false,
       enabled: mcpEnabled,
       message: `MCP server responded with ${res.status}`,
+      lastError: mcpLastError,
     })
   } catch {
     // Server unreachable
@@ -80,6 +89,7 @@ export async function GET(request: NextRequest) {
       message: mcpEnabled
         ? 'MCP server enabled but unreachable. It may still be starting.'
         : 'MCP server is not running. Click Start Server to launch it.',
+      lastError: mcpLastError,
     })
   }
 }
@@ -130,6 +140,7 @@ export async function POST(request: NextRequest) {
           { status: 502 }
         )
       }
+      void auditLog.mcpLifecycle({ user: 'admin', action: 'mode_change', detail: mode })
     } catch {
       return NextResponse.json(
         { error: 'Cannot switch mode — MCP server unreachable' },
@@ -143,28 +154,36 @@ export async function POST(request: NextRequest) {
     mcpEnabled = enabled
 
     if (enabled) {
+      mcpLastError = null
       // Attempt to start MCP server as child process
       const started = await startMcpServer()
-      if (!started) {
+      if (!started.ok) {
+        mcpLastError = started.error ?? 'unknown spawn failure'
+        mcpEnabled = false
         return NextResponse.json({
           connected: false,
-          enabled: true,
-          message: 'MCP server process could not be spawned. Start it manually: npx tsx packages/dojolm-mcp/src/main.ts',
-        })
+          enabled: false,
+          message: 'MCP server process could not be spawned.',
+          lastError: mcpLastError,
+        }, { status: 500 })
       }
 
       // Wait briefly for the server to become reachable
       const reachable = await waitForServer(5000)
+      void auditLog.mcpLifecycle({ user: 'admin', action: 'start', detail: reachable ? 'reachable' : 'pending' })
       return NextResponse.json({
         connected: reachable,
         enabled: true,
         message: reachable
           ? 'MCP server started successfully'
           : 'MCP server started but not yet reachable. It may need a few more seconds.',
+        lastError: reachable ? null : mcpLastError,
       })
     } else {
       // Stop the MCP server
       await stopMcpServer()
+      mcpLastError = null
+      void auditLog.mcpLifecycle({ user: 'admin', action: 'stop' })
       return NextResponse.json({
         connected: false,
         enabled: false,
@@ -184,7 +203,7 @@ export async function POST(request: NextRequest) {
 // Server lifecycle helpers
 // ---------------------------------------------------------------------------
 
-function startMcpServer(): Promise<boolean> {
+function startMcpServer(): Promise<StartResult> {
   // Shared promise: concurrent callers await the same spawn result
   if (mcpStartPromise) return mcpStartPromise
   mcpStartPromise = doStartMcpServer().finally(() => {
@@ -193,35 +212,61 @@ function startMcpServer(): Promise<boolean> {
   return mcpStartPromise
 }
 
-async function doStartMcpServer(): Promise<boolean> {
-  // If already running, just return true
+/**
+ * Resolve the MCP entry file by trying several candidate roots.
+ * Works from monorepo root, from packages/dojolm-web (dev npm run dev),
+ * and from the Docker standalone runtime where the bundle is at /app.
+ */
+async function resolveMcpEntries(): Promise<{ distEntry: string | null; srcEntry: string | null }> {
+  const { resolve } = await import('node:path')
+  const { existsSync } = await import('node:fs')
+
+  const candidates = [
+    process.cwd(),                              // monorepo root (most common)
+    resolve(process.cwd(), '..', '..'),         // running from packages/dojolm-web
+    resolve(process.cwd(), '..'),               // running from packages/*
+    '/app',                                     // Docker standalone
+  ]
+
+  let distEntry: string | null = null
+  let srcEntry: string | null = null
+  for (const root of candidates) {
+    const distCandidate = resolve(root, 'packages/dojolm-mcp/dist/main.js')
+    const srcCandidate = resolve(root, 'packages/dojolm-mcp/src/main.ts')
+    if (!distEntry && existsSync(distCandidate)) distEntry = distCandidate
+    if (!srcEntry && existsSync(srcCandidate)) srcEntry = srcCandidate
+    if (distEntry && srcEntry) break
+  }
+  return { distEntry, srcEntry }
+}
+
+async function doStartMcpServer(): Promise<StartResult> {
+  // If already running, just return ok
   if (mcpChildProcess && !mcpChildProcess.killed) {
-    return true
+    return { ok: true }
   }
 
   // Check if server is already running externally
   const alreadyUp = await probeHealth()
-  if (alreadyUp) return true
+  if (alreadyUp) return { ok: true }
 
   try {
-    // Dynamic import to avoid bundling issues in edge runtime
     const { spawn } = await import('node:child_process')
-    const { resolve } = await import('node:path')
+    const { distEntry, srcEntry } = await resolveMcpEntries()
 
-    // Locate the MCP server entry point relative to the monorepo root.
-    // In production (Docker), use compiled JS; in dev, fall back to tsx.
-    const distEntry = resolve(process.cwd(), 'packages/dojolm-mcp/dist/main.js')
-    const srcEntry = resolve(process.cwd(), 'packages/dojolm-mcp/src/main.ts')
+    if (!distEntry && !srcEntry) {
+      const msg = `MCP entry not found under any candidate root (cwd=${process.cwd()}). Run "npx tsc -b packages/dojolm-mcp" or ensure the Docker image was rebuilt.`
+      console.error('[mcp]', msg)
+      return { ok: false, error: msg }
+    }
 
-    const { existsSync } = await import('node:fs')
-    const useCompiled = existsSync(distEntry)
-
+    const useCompiled = !!distEntry
     if (!useCompiled) {
       console.warn('[mcp] dist/main.js not found, falling back to tsx + src/main.ts')
     }
 
     const cmd = useCompiled ? 'node' : 'npx'
-    const args = useCompiled ? [distEntry] : ['tsx', srcEntry]
+    const args = useCompiled ? [distEntry as string] : ['tsx', srcEntry as string]
 
     // Consent: web UI click is the consent gate; respect env override if set
     mcpChildProcess = spawn(cmd, args, {
@@ -237,20 +282,34 @@ async function doStartMcpServer(): Promise<boolean> {
 
     if (mcpChildProcess.stderr) {
       mcpChildProcess.stderr.on('data', (d: Buffer) => {
-        console.error('[mcp]', d.toString().trimEnd())
+        const line = d.toString().trimEnd()
+        console.error('[mcp]', line)
+        // Surface the latest stderr line so the UI can report root cause
+        mcpLastError = line.slice(-500)
       })
     } else {
       console.warn('[mcp] stderr pipe not available — child process output will be lost')
     }
 
-    mcpChildProcess.on('exit', (code, signal) => {
-      console.error(`[mcp] process exited code=${code} signal=${signal}`)
+    mcpChildProcess.on('error', (err: Error) => {
+      console.error('[mcp] spawn error:', err.message)
+      mcpLastError = `spawn error: ${err.message}`
       mcpChildProcess = null
     })
 
-    return true
-  } catch {
-    return false
+    mcpChildProcess.on('exit', (code, signal) => {
+      console.error(`[mcp] process exited code=${code} signal=${signal}`)
+      if (code !== 0 && !mcpLastError) {
+        mcpLastError = `process exited with code=${code} signal=${signal}`
+      }
+      mcpChildProcess = null
+    })
+
+    return { ok: true }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[mcp] doStartMcpServer failed:', msg)
+    return { ok: false, error: msg }
   }
 }
 

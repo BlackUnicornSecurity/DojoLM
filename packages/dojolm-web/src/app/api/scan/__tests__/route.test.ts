@@ -24,6 +24,13 @@ vi.mock('@/lib/auth/route-guard', () => ({
   withAuth: (handler: Function, _opts: unknown) => handler,
 }));
 
+// Audit logger is fire-and-forget; stub it so the tests don't touch the FS.
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    scanExecuted: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 function createPostRequest(body: unknown, contentType = 'application/json'): NextRequest {
   return new NextRequest('http://localhost:42001/api/scan', {
     method: 'POST',

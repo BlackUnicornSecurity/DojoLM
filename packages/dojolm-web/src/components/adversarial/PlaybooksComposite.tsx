@@ -20,19 +20,7 @@ import {
 import { PlaybookRunner } from './PlaybookRunner'
 import { ProtocolFuzzPanel } from '../scanner/ProtocolFuzzPanel'
 import { AgenticLab } from '../agentic/AgenticLab'
-
-// ---------------------------------------------------------------------------
-// Available models for agentic lab
-// ---------------------------------------------------------------------------
-
-const AVAILABLE_MODELS = [
-  { id: 'gpt-4o', name: 'GPT-4o' },
-  { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
-  { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
-  { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5' },
-  { id: 'llama-3.1-8b', name: 'Llama 3.1 8B' },
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-] as const
+import { useJutsuModels } from '@/hooks/useJutsuModels'
 
 // ---------------------------------------------------------------------------
 // Sub-panel type
@@ -53,6 +41,7 @@ const PANELS: ReadonlyArray<{ id: PlaybookPanel; label: string; icon: typeof Boo
 
 export function PlaybooksComposite() {
   const [activePanel, setActivePanel] = useState<PlaybookPanel>('custom')
+  const { models: jutsuModels } = useJutsuModels()
 
   return (
     <div className="space-y-4">
@@ -81,7 +70,7 @@ export function PlaybooksComposite() {
       {activePanel === 'protocol-fuzz' && <ProtocolFuzzPanel />}
       {activePanel === 'agentic' && (
         <AgenticLab
-          availableModels={AVAILABLE_MODELS.map((model) => ({
+          availableModels={jutsuModels.map((model) => ({
             id: model.id,
             name: model.name,
           }))}

@@ -17,6 +17,7 @@ import { getStorage } from '@/lib/storage/storage-interface';
 import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
+import { auditLog } from '@/lib/audit-logger';
 
 /** Detect HTML/script tags in user input (SEC-002). */
 const HTML_TAG_PATTERN = /<[^>]*>/;
@@ -217,6 +218,13 @@ export async function POST(request: NextRequest) {
     const storage = await getStorage();
     const saved = await storage.saveModelConfig(newModel);
 
+    void auditLog.modelConfigChange({
+      endpoint: '/api/llm/models',
+      user: 'admin',
+      modelId: saved.id,
+      operation: 'create',
+    });
+
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
     return NextResponse.json({ model: toSafeModelResponse(saved) }, { status: 201 });
   } catch (error) {
@@ -252,6 +260,13 @@ export async function DELETE(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    void auditLog.modelConfigChange({
+      endpoint: '/api/llm/models',
+      user: 'admin',
+      modelId: id,
+      operation: 'delete',
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -348,6 +363,13 @@ export async function PATCH(request: NextRequest) {
 
     // Save updated model
     const saved = await storage.saveModelConfig(updated);
+
+    void auditLog.modelConfigChange({
+      endpoint: '/api/llm/models',
+      user: 'admin',
+      modelId: saved.id,
+      operation: 'enabled' in patch ? 'toggle' : 'update',
+    });
 
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
     return NextResponse.json({ model: toSafeModelResponse(saved) });

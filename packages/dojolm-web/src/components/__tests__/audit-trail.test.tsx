@@ -33,12 +33,15 @@ vi.mock('@/components/ui/EmptyState', () => ({
 // Test data
 // ---------------------------------------------------------------------------
 
+// Mock entries now mirror what the server writes: top-level `event` plus a
+// `details` object containing user/endpoint/result — matching AuditLogEntry
+// from src/lib/audit-logger.ts.
 const MOCK_ENTRIES = [
-  { id: 'a1', timestamp: '2026-03-01T10:00:00Z', action: 'scan', user: 'admin', resource: '/api/scan', result: 'success', details: 'Full scan completed' },
-  { id: 'a2', timestamp: '2026-03-01T11:00:00Z', action: 'compliance_check', user: 'reviewer', resource: 'OWASP', result: 'pass' },
-  { id: 'a3', timestamp: '2026-03-02T09:00:00Z', action: 'login', user: 'admin', resource: 'dashboard', result: 'success' },
-  { id: 'a4', timestamp: '2026-03-02T10:00:00Z', action: 'export', user: 'admin', resource: 'report.pdf', result: 'warning' },
-  { id: 'a5', timestamp: '2026-03-02T11:00:00Z', action: 'config_change', user: 'admin', resource: 'guard-mode', result: 'error' },
+  { id: 'a1', timestamp: '2026-03-01T10:00:00Z', event: 'SCAN_EXECUTED', level: 'info', details: { user: 'admin', endpoint: '/api/scan', result: 'success', detail: 'Full scan completed' } },
+  { id: 'a2', timestamp: '2026-03-01T11:00:00Z', event: 'COMPLIANCE_CHECK', level: 'info', details: { user: 'reviewer', endpoint: 'OWASP', result: 'pass' } },
+  { id: 'a3', timestamp: '2026-03-02T09:00:00Z', event: 'AUTH_SUCCESS', level: 'info', details: { user: 'admin', endpoint: 'dashboard', result: 'success' } },
+  { id: 'a4', timestamp: '2026-03-02T10:00:00Z', event: 'EXPORT_ACTION', level: 'warn', details: { user: 'admin', endpoint: 'report.pdf', result: 'warning' } },
+  { id: 'a5', timestamp: '2026-03-02T11:00:00Z', event: 'CONFIG_CHANGE', level: 'error', details: { user: 'admin', endpoint: 'guard-mode', result: 'error' } },
 ]
 
 beforeEach(() => {
@@ -130,7 +133,7 @@ describe('AT-005: Action type filter', () => {
       expect(screen.getByText(/5 of 5 entries/)).toBeInTheDocument()
     })
     const selectEl = screen.getByLabelText('Action Type')
-    fireEvent.change(selectEl, { target: { value: 'scan' } })
+    fireEvent.change(selectEl, { target: { value: 'SCAN_EXECUTED' } })
     expect(screen.getByText(/1 of 5 entries/)).toBeInTheDocument()
   })
 })

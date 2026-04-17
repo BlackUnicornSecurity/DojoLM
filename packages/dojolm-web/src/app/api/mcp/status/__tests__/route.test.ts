@@ -42,6 +42,14 @@ vi.mock('node:fs', () => ({
   existsSync: () => true,
 }));
 
+// Audit logger is fire-and-forget; stub it so the tests don't touch the
+// real filesystem or pull in runtime-paths.
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    mcpLifecycle: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

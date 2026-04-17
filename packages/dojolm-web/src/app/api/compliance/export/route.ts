@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkApiAuth } from '@/lib/api-auth'
 import { getClientIp } from '@/lib/api-handler'
 import { isDemoMode } from '@/lib/demo'
+import { auditLog } from '@/lib/audit-logger'
 import { fileStorage } from '@/lib/storage/file-storage'
 import { BAISS_CONTROLS, getBAISSSummary } from '@/lib/data/baiss-framework'
 import {
@@ -749,6 +750,14 @@ export async function GET(request: NextRequest) {
 
     const format = formatParam as ExportFormat
     const data = await assembleComplianceData()
+
+    void auditLog.exportAction({ format, endpoint: '/api/compliance/export' })
+    void auditLog.complianceCheck({
+      endpoint: '/api/compliance/export',
+      user: 'admin',
+      action: 'check',
+      result: 'info',
+    })
 
     switch (format) {
       case 'json':

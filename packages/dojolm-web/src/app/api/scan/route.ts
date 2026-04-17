@@ -15,8 +15,10 @@ import { scan } from '@dojolm/scanner';
 import type { ScanOptions } from '@dojolm/scanner';
 import { withAuth } from '@/lib/auth/route-guard';
 import { emitScannerFindings } from '@/lib/ecosystem-emitters';
+import { auditLog } from '@/lib/audit-logger';
 
-export const POST = withAuth(async (request: NextRequest) => {
+export const POST = withAuth(async (request: NextRequest, context) => {
+  const username = context?.user?.username ?? 'system';
   if (isDemoMode()) return await demoScanPost(request);
   try {
     let body: Record<string, unknown>;
@@ -84,12 +86,23 @@ export const POST = withAuth(async (request: NextRequest) => {
     // F-06/F-08: 10K char limit above is the primary DoS protection.
     // scan() is synchronous — cannot be interrupted by setTimeout on the same thread.
     const scanOptions: ScanOptions = (engines && engines.length > 0) ? { engines } : {};
+    const scanStart = Date.now();
     const result = scan(trimmedText, scanOptions);
+    const durationMs = Date.now() - scanStart;
 
     // Fire-and-forget: emit ecosystem findings for scanner results (Story 10.2)
     if (result.findings.length > 0) {
       emitScannerFindings(result.findings, trimmedText);
     }
+
+    // Audit trail — fire-and-forget
+    void auditLog.scanExecuted({
+      endpoint: '/api/scan',
+      user: username,
+      scanType: (engines && engines.length > 0) ? engines.join(',') : 'all',
+      findings: result.findings.length,
+      durationMs,
+    });
 
     // Return scan result
     return NextResponse.json(result, {

@@ -26,7 +26,7 @@ import { ValidationManager } from './ValidationManager'
 import { TestRunner } from '@/components/tests/TestRunner'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { TestSuiteResult } from '@/lib/types'
-import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical, Plug, Blocks } from 'lucide-react'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical, Plug } from 'lucide-react'
 
 // Lazy-load CustomProviderBuilder to avoid pulling the full LLM barrel eagerly
 const CustomProviderBuilderLazy = lazy(() =>
@@ -45,7 +45,6 @@ const ADMIN_TABS = [
   { id: 'health', label: 'System Health', codename: 'Diagnostics', icon: Activity },
   { id: 'export', label: 'Export', codename: 'Deliverables', icon: FileOutput },
   { id: 'providers', label: 'Providers', codename: 'LLM Endpoints', icon: Plug },
-  { id: 'plugins', label: 'Plugins', codename: 'Extensions', icon: Blocks },
   { id: 'settings', label: 'Settings', codename: 'Configuration', icon: Lock },
   { id: 'validation', label: 'Validation', codename: 'KATANA Suite', icon: ClipboardCheck },
   { id: 'test-runner', label: 'Test Runner', codename: 'CI/CD', icon: FlaskConical },
@@ -189,17 +188,24 @@ export function AdminPanel() {
         <TabsContent value="providers">
           <ProvidersTab />
         </TabsContent>
-        <TabsContent value="plugins">
-          <PluginsTab />
-        </TabsContent>
         <TabsContent value="settings">
           <AdminSettings />
         </TabsContent>
         <TabsContent value="validation">
-          <ValidationManager />
+          <ErrorBoundary
+            fallbackTitle="KATANA Validation unavailable"
+            fallbackDescription="The validation manager failed to load. Open the browser console for details, then reload."
+          >
+            <ValidationManager />
+          </ErrorBoundary>
         </TabsContent>
         <TabsContent value="test-runner">
-          <TestRunner onRunTests={handleRunTests} />
+          <ErrorBoundary
+            fallbackTitle="Test Runner unavailable"
+            fallbackDescription="The test runner failed to load. Open the browser console for details, then reload."
+          >
+            <TestRunner onRunTests={handleRunTests} />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>
@@ -243,51 +249,6 @@ function ProvidersTab() {
           API Key Vault
         </h3>
         <ApiKeyManager />
-      </div>
-    </div>
-  )
-}
-
-/**
- * PluginsTab — Extension management (Train 2 PR-4d).
- *
- * Scaffolded shell for the bu-tpi plugin system. Shows registered plugin
- * types and an empty state for the plugin registry. Full CRUD and lifecycle
- * management is a Train 3 deliverable after the backend Plugin API is
- * ready (blocked on backend readiness matrix).
- */
-/** Plugin type categories from bu-tpi/src/plugins/types.ts */
-const PLUGIN_TYPES = ['scanner', 'transform', 'reporter', 'orchestrator'] as const
-
-function PluginsTab() {
-  return (
-    <div className="space-y-4">
-      <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-6">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-          Plugin Registry
-        </h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          Extend DojoLM with scanner plugins, result transformers, report generators, and
-          orchestrator extensions. Plugin CRUD and lifecycle management will be available
-          when the backend Plugin API ships in Train 3.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {PLUGIN_TYPES.map(type => (
-            <div
-              key={type}
-              className="rounded-lg border border-dashed border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-4 text-center"
-            >
-              <Blocks className="h-6 w-6 mx-auto text-[var(--text-tertiary)] mb-2" aria-hidden="true" />
-              <p className="text-xs font-semibold capitalize text-[var(--foreground)]">{type}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">0 registered</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-6 text-xs text-muted-foreground italic">
-          Plugin types: scanner (detection engines), transform (result processors), reporter (output
-          formatters), orchestrator (workflow automation). See bu-tpi/src/plugins/ for the type
-          definitions and loader API.
-        </p>
       </div>
     </div>
   )

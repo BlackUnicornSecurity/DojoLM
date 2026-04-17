@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildSessionCookie, buildCsrfCookie } from '@/lib/auth/route-guard';
 import { isDemoMode, DEMO_USER, DEMO_SESSION_TOKEN, DEMO_CSRF_TOKEN, DEMO_SESSION_TTL_SECONDS } from '@/lib/demo';
+import { auditLog } from '@/lib/audit-logger';
 
 const SESSION_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 const MAX_USERNAME_LENGTH = 128;
@@ -108,6 +109,7 @@ export async function POST(req: NextRequest) {
       // Constant-time: run bcrypt against dummy hash to prevent timing-based enumeration
       await verifyPassword(password, DUMMY_HASH);
       const limited = recordLoginRateLimitFailure(rateLimitKey);
+      void auditLog.authFailure({ endpoint: '/api/auth/login', ip: getSessionIpAddress(req) ?? 'unknown' });
       return NextResponse.json(
         { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
         { status: limited ? 429 : 401, ...(limited && { headers: { 'Retry-After': '60' } }) }
@@ -118,6 +120,7 @@ export async function POST(req: NextRequest) {
     const passwordValid = await verifyPassword(password, user.password_hash);
     if (!passwordValid || !user.enabled) {
       const limited = recordLoginRateLimitFailure(rateLimitKey);
+      void auditLog.authFailure({ endpoint: '/api/auth/login', ip: getSessionIpAddress(req) ?? 'unknown' });
       return NextResponse.json(
         { error: limited ? 'Too many login attempts, please try again later' : 'Invalid credentials' },
         { status: limited ? 429 : 401, ...(limited && { headers: { 'Retry-After': '60' } }) }
@@ -150,6 +153,8 @@ export async function POST(req: NextRequest) {
 
     response.headers.append('Set-Cookie', buildSessionCookie(sessionToken, SESSION_TTL_SECONDS, req));
     response.headers.append('Set-Cookie', buildCsrfCookie(csrfToken, SESSION_TTL_SECONDS, req));
+
+    void auditLog.authSuccess({ endpoint: '/api/auth/login', ip: clientIp ?? 'unknown' });
 
     return response;
   } catch {
