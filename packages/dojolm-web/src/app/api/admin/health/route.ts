@@ -13,8 +13,49 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isDemoMode } from '@/lib/demo'
 import { demoHealthGet } from '@/lib/demo/mock-api-handlers'
 import { readFileSync } from 'fs'
+import { readFile } from 'node:fs/promises'
 import { join } from 'path'
 import { checkApiAuth } from '@/lib/api-auth'
+import { getDataPath } from '@/lib/runtime-paths'
+
+const ALLOWED_MCP_HOSTS = new Set(['127.0.0.1', '::1', 'localhost'])
+const MCP_HOST = ALLOWED_MCP_HOSTS.has(process.env.MCP_HOST ?? '127.0.0.1')
+  ? (process.env.MCP_HOST ?? '127.0.0.1')
+  : '127.0.0.1'
+const MCP_PORT = Number.parseInt(process.env.MCP_PORT ?? '18000', 10)
+const MCP_PROBE_TIMEOUT_MS = 1500
+
+interface McpHealth {
+  readonly expected: boolean
+  readonly reachable: boolean
+  readonly latencyMs?: number
+}
+
+async function probeMcpHealth(): Promise<McpHealth> {
+  // Was MCP ever turned on? Read persisted state written by /api/mcp/status.
+  let expected = false
+  try {
+    const raw = await readFile(getDataPath('mcp-state.json'), 'utf-8')
+    const parsed = JSON.parse(raw) as { enabled?: unknown }
+    expected = parsed.enabled === true
+  } catch {
+    // No state file — MCP was never enabled, treat as not expected.
+  }
+
+  if (!expected) {
+    return { expected: false, reachable: false }
+  }
+
+  try {
+    const start = Date.now()
+    const res = await fetch(`http://${MCP_HOST}:${MCP_PORT}/health`, {
+      signal: AbortSignal.timeout(MCP_PROBE_TIMEOUT_MS),
+    })
+    return { expected: true, reachable: res.ok, latencyMs: Date.now() - start }
+  } catch {
+    return { expected: true, reachable: false }
+  }
+}
 
 // Read version at module load — safe for server-side API route
 let appVersion = '0.1.0';
@@ -33,10 +74,18 @@ export async function GET(request: NextRequest) {
   try {
     const startTime = Date.now()
 
-    // Unauthenticated callers get minimal health status only
+    // Unauthenticated callers get minimal health status plus MCP liveness
+    // so Docker healthchecks can see — in a single unauthenticated call —
+    // whether the web container AND the subprocess MCP server are running.
+    // We keep the HTTP status at 200 (web is healthy) but include a
+    // `status: 'degraded'` field when MCP was enabled and is unreachable,
+    // so ops tooling can decide whether to page without triggering a
+    // restart loop on a transient MCP hiccup.
     if (!isAuthenticated) {
+      const mcp = await probeMcpHealth()
+      const status = mcp.expected && !mcp.reachable ? 'degraded' : 'ok'
       return NextResponse.json(
-        { status: 'ok', timestamp: Date.now() },
+        { status, timestamp: Date.now(), mcp },
         {
           status: 200,
           headers: {
@@ -91,9 +140,11 @@ export async function GET(request: NextRequest) {
       // Storage may fail — return defaults
     }
 
+    const mcp = await probeMcpHealth()
+
     return NextResponse.json(
       {
-        status: 'ok',
+        status: mcp.expected && !mcp.reachable ? 'degraded' : 'ok',
         scanner: {
           reachable: scannerReachable,
           responseTimeMs: scannerResponseTime,
@@ -104,6 +155,7 @@ export async function GET(request: NextRequest) {
           mode: guardMode,
           eventCount: guardEventCount,
         },
+        mcp,
         storage: {
           type: storageType,
           modelsCount,

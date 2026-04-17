@@ -16,6 +16,7 @@ import { getStorage } from '@/lib/storage/storage-interface';
 import { validateModelConfig } from '@/lib/llm-providers';
 import { apiError } from '@/lib/api-error';
 import { checkApiAuth } from '@/lib/api-auth';
+import { auditLog } from '@/lib/audit-logger';
 
 function sanitizeString(value: unknown): string {
   if (typeof value !== 'string') return '';
@@ -141,6 +142,13 @@ export async function PATCH(
     // Save updated model
     const saved = await storage.saveModelConfig(updated);
 
+    void auditLog.modelConfigChange({
+      endpoint: `/api/llm/models/${id}`,
+      user: 'admin',
+      modelId: id,
+      operation: 'enabled' in patch ? 'toggle' : 'update',
+    });
+
     // Redact API key from response — wrap in { model } to match frontend expectations (BUG-002)
     return NextResponse.json({ model: toSafeModelResponse(saved) });
   } catch (error) {
@@ -173,6 +181,13 @@ export async function DELETE(
         { status: 404 }
       );
     }
+
+    void auditLog.modelConfigChange({
+      endpoint: `/api/llm/models/${id}`,
+      user: 'admin',
+      modelId: id,
+      operation: 'delete',
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

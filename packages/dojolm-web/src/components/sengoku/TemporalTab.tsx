@@ -22,7 +22,12 @@ import { TemporalConversation } from './TemporalConversation'
 import type { AttackType, AttackPlan } from './temporal-types'
 
 // ---------------------------------------------------------------------------
-// Demo Data
+// Reference Templates
+//
+// These are curated attack-pattern references, not live runs. They give
+// operators a starting point for temporal-attack design. The underlying
+// execution engine is tracked in the "Interactive Run" backlog and
+// currently only surfaces these templates read-only.
 // ---------------------------------------------------------------------------
 
 const ATTACK_TYPE_CONFIG: Record<AttackType, { label: string; color: string; icon: typeof Zap }> = {
@@ -33,7 +38,7 @@ const ATTACK_TYPE_CONFIG: Record<AttackType, { label: string; color: string; ico
   'persona-drift':      { label: 'Persona Drift',       color: 'text-[var(--dojo-primary)]',    icon: MessageSquare },
 }
 
-const DEMO_PLANS: AttackPlan[] = [
+const REFERENCE_PLANS: AttackPlan[] = [
   {
     id: 'plan-1',
     name: 'Gradual Jailbreak Escalation',
@@ -93,7 +98,7 @@ const DEMO_PLANS: AttackPlan[] = [
 // ---------------------------------------------------------------------------
 
 export function TemporalTab() {
-  const [plans] = useState<AttackPlan[]>(DEMO_PLANS)
+  const [plans] = useState<AttackPlan[]>(REFERENCE_PLANS)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState(4)
   const selected = plans.find((p) => p.id === selectedId)
@@ -156,7 +161,13 @@ export function TemporalTab() {
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-bold">{plan.name}</h3>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="gap-1" disabled title="Simulation coming soon">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            disabled
+                            title="Reference-only template. Use Atemi Lab → Campaigns to run a live temporal attack."
+                          >
                             <Zap className="w-3.5 h-3.5" aria-hidden="true" /> Simulate
                           </Button>
                         </div>
@@ -164,7 +175,7 @@ export function TemporalTab() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm mb-4">
                         <div><span className="text-muted-foreground">Type:</span> {typeConfig.label}</div>
                         <div><span className="text-muted-foreground">Turns:</span> {plan.turns.length}</div>
-                        <div><span className="text-muted-foreground">Status:</span> Demo</div>
+                        <div><span className="text-muted-foreground">Status:</span> Reference</div>
                       </div>
                       <TemporalConversation turns={plan.turns} />
                     </GlowCard>

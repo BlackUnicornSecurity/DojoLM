@@ -15,6 +15,12 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: vi.fn().mockReturnValue(null),
 }));
 
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    modelConfigChange: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 vi.mock('@/lib/api-error', () => ({
   apiError: vi.fn().mockImplementation((msg: string, status: number) => {
     const { NextResponse } = require('next/server');

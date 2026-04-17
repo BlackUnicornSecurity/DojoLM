@@ -12,6 +12,7 @@ import { checkApiAuth } from '@/lib/api-auth'
 import { promises as fs } from 'node:fs'
 import { join } from 'node:path'
 import { getDataPath } from '@/lib/runtime-paths'
+import { auditLog } from '@/lib/audit-logger'
 
 const EVIDENCE_DIR = getDataPath('compliance-evidence')
 const MAX_TITLE_LENGTH = 500
@@ -63,6 +64,14 @@ export async function POST(request: NextRequest) {
     const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`
     await fs.writeFile(tmpPath, JSON.stringify(evidenceEntry, null, 2), 'utf-8')
     await fs.rename(tmpPath, filePath)
+
+    void auditLog.complianceCheck({
+      endpoint: '/api/compliance/evidence',
+      user: 'system',
+      action: 'check',
+      framework: sourceModule,
+      result: severity === 'critical' || severity === 'high' ? 'fail' : 'info',
+    })
 
     return NextResponse.json({ id: evidenceEntry.id, status: 'accepted' }, { status: 201 })
   } catch {

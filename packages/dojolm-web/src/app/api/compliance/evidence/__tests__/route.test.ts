@@ -23,6 +23,12 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: (...args: unknown[]) => (mockCheckApiAuth as (...a: unknown[]) => unknown)(...args),
 }));
 
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    complianceCheck: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 const mockMkdir = vi.fn().mockResolvedValue(undefined);
 const mockReaddir = vi.fn();
 const mockReadFile = vi.fn();
