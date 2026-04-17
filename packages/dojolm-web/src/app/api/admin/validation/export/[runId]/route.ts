@@ -12,6 +12,7 @@ import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { withAuth } from '@/lib/auth/route-guard'
 import { getDataPath } from '@/lib/runtime-paths'
+import { auditLog } from '@/lib/audit-logger'
 
 const DATA_DIR = getDataPath('validation')
 
@@ -267,6 +268,8 @@ export const GET = withAuth(async (
     }
 
     const dateStr = formatDateForFilename(report.generated_at)
+
+    void auditLog.exportAction({ format, endpoint: `/api/admin/validation/export/${runId}` })
 
     if (format === 'json') {
       const filename = sanitizeFilename(`katana-report-${runId}-${dateStr}.json`)

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkApiAuth } from '@/lib/api-auth';
 import { getClientIp } from '@/lib/api-handler';
 import { fileStorage } from '@/lib/storage/file-storage';
+import { auditLog } from '@/lib/audit-logger';
 import type { ReportFormat, LLMTestExecution } from '@/lib/llm-types';
 
 // In-memory rate limiter — 10 export requests per minute per IP
@@ -139,6 +140,8 @@ export async function GET(request: NextRequest) {
 
     // Build model report for export
     const report = buildModelReport(batch, executions, includeResponses);
+
+    void auditLog.exportAction({ format, endpoint: '/api/llm/export' });
 
     // Generate export based on format
     switch (format) {

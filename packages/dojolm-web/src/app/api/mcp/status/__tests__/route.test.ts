@@ -34,12 +34,32 @@ vi.mock('node:child_process', () => ({
   spawn: (...args: unknown[]) => mockSpawn(...args),
 }));
 
-vi.mock('node:path', () => ({
-  resolve: (...parts: string[]) => parts.join('/'),
-}));
+vi.mock('node:path', () => {
+  const join = (...parts: string[]) => parts.filter(Boolean).join('/');
+  return {
+    default: { join, resolve: join, dirname: (p: string) => p.split('/').slice(0, -1).join('/') },
+    join,
+    resolve: join,
+    dirname: (p: string) => p.split('/').slice(0, -1).join('/'),
+  };
+});
 
 vi.mock('node:fs', () => ({
   existsSync: () => true,
+}));
+
+// Filesystem mutations from the persisted-state helper — stub them.
+vi.mock('node:fs/promises', () => ({
+  readFile: vi.fn().mockRejectedValue(new Error('no-state-file')),
+  writeFile: vi.fn().mockResolvedValue(undefined),
+  mkdir: vi.fn().mockResolvedValue(undefined),
+}));
+
+// runtime-paths internally uses path.resolve; stub the data dir directly so we
+// don't depend on the filesystem for MCP-state persistence in tests.
+vi.mock('@/lib/runtime-paths', () => ({
+  getDataPath: (...segments: string[]) => ['/tmp/test-mcp', ...segments].join('/'),
+  resolveDataPath: (...segments: string[]) => ['/tmp/test-mcp', ...segments].join('/'),
 }));
 
 // Audit logger is fire-and-forget; stub it so the tests don't touch the

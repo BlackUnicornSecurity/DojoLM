@@ -33,6 +33,13 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: vi.fn().mockReturnValue(null),
 }));
 
+// Audit logger — stub fire-and-forget guardModeChange.
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    guardModeChange: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 function createGetRequest(): NextRequest {
   return new NextRequest('http://localhost:42001/api/llm/guard', {
     method: 'GET',

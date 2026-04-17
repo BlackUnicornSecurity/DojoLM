@@ -12,6 +12,7 @@ import { getGuardConfig, saveGuardConfig } from '@/lib/storage/guard-storage';
 import { VALID_GUARD_MODES, VALID_BLOCK_THRESHOLDS, DEFAULT_GUARD_CONFIG } from '@/lib/guard-constants';
 import type { GuardConfig } from '@/lib/guard-types';
 import { checkApiAuth } from '@/lib/api-auth';
+import { auditLog } from '@/lib/audit-logger';
 
 // ===========================================================================
 // OPTIONS /api/llm/guard - CORS preflight
@@ -127,7 +128,15 @@ export async function PUT(request: NextRequest) {
       persist: typeof config.persist === 'boolean' ? config.persist : false,
     };
 
+    const previous = await getGuardConfig().catch(() => DEFAULT_GUARD_CONFIG);
     await saveGuardConfig(validatedConfig);
+
+    if (previous.mode !== validatedConfig.mode) {
+      void auditLog.guardModeChange({
+        oldMode: previous.mode,
+        newMode: validatedConfig.mode,
+      });
+    }
 
     return NextResponse.json({ data: validatedConfig });
   } catch (error) {

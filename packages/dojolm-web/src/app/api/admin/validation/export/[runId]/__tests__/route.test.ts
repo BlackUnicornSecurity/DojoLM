@@ -16,7 +16,10 @@ vi.mock('@/lib/auth/route-guard', () => ({
 }));
 
 vi.mock('@/lib/audit-logger', () => ({
-  auditLog: { configChange: vi.fn() },
+  auditLog: {
+    configChange: vi.fn(),
+    exportAction: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
 vi.mock('@/lib/runtime-paths', () => ({

@@ -14,6 +14,7 @@ import { isDemoMode } from '@/lib/demo'
 import { demoMcpStatusGet } from '@/lib/demo/mock-api-handlers'
 import { checkApiAuth } from '@/lib/api-auth'
 import { auditLog } from '@/lib/audit-logger'
+import { getDataPath } from '@/lib/runtime-paths'
 
 // SME HIGH-14: MCP server must only bind to loopback addresses
 const ALLOWED_MCP_HOSTS = new Set(['127.0.0.1', '::1', 'localhost'])
@@ -29,17 +30,47 @@ const PROBE_TIMEOUT_MS = 3000
 const VALID_MODES = new Set(['basic', 'passive', 'prompt-injection', 'tool-poisoning', 'exfiltration', 'confused-deputy', 'advanced', 'aggressive'])
 
 // Module-level state: tracks whether the user has toggled "enabled" via POST.
-// In production this would be persisted to disk/DB; in-memory is acceptable for
-// a single-instance dev deployment (lessons learned: module-level let resets on restart).
+// Persisted to `data/mcp-state.json` so the flag survives a container restart —
+// before this, a web-container reboot would silently flip MCP back to disabled
+// and leave Guard defenses offline until someone clicked Start Server again.
 let mcpEnabled = false
 let mcpStartPromise: Promise<StartResult> | null = null
 let mcpChildProcess: ReturnType<typeof import('node:child_process').spawn> | null = null
 /** Last startup error surfaced to the UI so the user can see WHY MCP failed. */
 let mcpLastError: string | null = null
+/** One-shot load guard so we don't hit the filesystem on every GET. */
+let mcpStateHydrated = false
 
 interface StartResult {
   readonly ok: boolean
   readonly error?: string
+}
+
+const MCP_STATE_FILE = getDataPath('mcp-state.json')
+
+async function hydrateMcpState(): Promise<void> {
+  if (mcpStateHydrated) return
+  mcpStateHydrated = true
+  try {
+    const { readFile } = await import('node:fs/promises')
+    const raw = await readFile(MCP_STATE_FILE, 'utf-8')
+    const parsed = JSON.parse(raw) as { enabled?: unknown }
+    if (typeof parsed.enabled === 'boolean') mcpEnabled = parsed.enabled
+  } catch {
+    // No state file yet — stay at default `false`.
+  }
+}
+
+async function persistMcpState(): Promise<void> {
+  try {
+    const { writeFile, mkdir } = await import('node:fs/promises')
+    const { dirname } = await import('node:path')
+    await mkdir(dirname(MCP_STATE_FILE), { recursive: true })
+    await writeFile(MCP_STATE_FILE, JSON.stringify({ enabled: mcpEnabled }), 'utf-8')
+  } catch (err) {
+    // Persistence failure is non-fatal — the process still works in-memory.
+    console.error('[mcp] failed to persist state:', err)
+  }
 }
 
 /**
@@ -50,6 +81,8 @@ export async function GET(request: NextRequest) {
 
   const authResult = checkApiAuth(request)
   if (authResult) return authResult
+
+  await hydrateMcpState()
 
   // Attempt to reach the running MCP server
   try {
@@ -103,6 +136,8 @@ export async function POST(request: NextRequest) {
   const authResult = checkApiAuth(request)
   if (authResult) return authResult
 
+  await hydrateMcpState()
+
   let body: Record<string, unknown>
   try {
     body = await request.json()
@@ -152,6 +187,7 @@ export async function POST(request: NextRequest) {
   // Handle enable/disable
   if (enabled !== undefined) {
     mcpEnabled = enabled
+    void persistMcpState()
 
     if (enabled) {
       mcpLastError = null

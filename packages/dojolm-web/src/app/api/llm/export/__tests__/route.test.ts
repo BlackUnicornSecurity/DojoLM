@@ -13,6 +13,13 @@ vi.mock('@/lib/api-auth', () => ({
   checkApiAuth: vi.fn().mockReturnValue(null),
 }));
 
+// Audit logger — stub fire-and-forget exportAction.
+vi.mock('@/lib/audit-logger', () => ({
+  auditLog: {
+    exportAction: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 vi.mock('@/lib/storage/file-storage', () => ({
   fileStorage: {
     getBatch: vi.fn(),
