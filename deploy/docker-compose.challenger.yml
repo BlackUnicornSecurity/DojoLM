@@ -25,6 +25,12 @@ services:
       NEXT_PUBLIC_MAX_TEXT_LENGTH: "10000"
       NEXT_PUBLIC_ENABLE_ANALYTICS: "false"
       NEXT_PUBLIC_ENABLE_ERROR_REPORTING: "false"
+      # Demo mode — Challenger is DEV/QA only. Mock data enabled for pitch /
+      # onboarding demos. Production failsafe in src/lib/demo/index.ts is
+      # overridden here by TPI_ALLOW_DEMO_IN_PROD. Do NOT copy these two
+      # variables to deploy/docker-compose.yml (Voyager / real PROD).
+      NEXT_PUBLIC_DEMO_MODE: "${NEXT_PUBLIC_DEMO_MODE:-true}"
+      TPI_ALLOW_DEMO_IN_PROD: "${TPI_ALLOW_DEMO_IN_PROD:-true}"
       NODA_API_KEY: "${NODA_API_KEY}"
       NODA_API_KEY_ROLE: "${NODA_API_KEY_ROLE:-analyst}"
       TPI_DB_ENCRYPTION_KEY: "${TPI_DB_ENCRYPTION_KEY}"
