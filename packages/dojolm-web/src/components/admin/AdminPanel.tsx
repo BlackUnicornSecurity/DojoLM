@@ -23,10 +23,11 @@ import { UserManagement } from './UserManagement'
 import { Scoreboard } from './Scoreboard'
 import { AdminSettings } from './AdminSettings'
 import { ValidationManager } from './ValidationManager'
+import { PluginsTab } from './PluginsTab'
 import { TestRunner } from '@/components/tests/TestRunner'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { TestSuiteResult } from '@/lib/types'
-import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical, Plug } from 'lucide-react'
+import { Settings, Key, Shield, Activity, FileOutput, Users, Trophy, Lock, ClipboardCheck, FlaskConical, Plug, Blocks } from 'lucide-react'
 
 // Lazy-load CustomProviderBuilder to avoid pulling the full LLM barrel eagerly
 const CustomProviderBuilderLazy = lazy(() =>
@@ -45,6 +46,7 @@ const ADMIN_TABS = [
   { id: 'health', label: 'System Health', codename: 'Diagnostics', icon: Activity },
   { id: 'export', label: 'Export', codename: 'Deliverables', icon: FileOutput },
   { id: 'providers', label: 'Providers', codename: 'LLM Endpoints', icon: Plug },
+  { id: 'plugins', label: 'Plugins', codename: 'Extensions', icon: Blocks },
   { id: 'settings', label: 'Settings', codename: 'Configuration', icon: Lock },
   { id: 'validation', label: 'Validation', codename: 'KATANA Suite', icon: ClipboardCheck },
   { id: 'test-runner', label: 'Test Runner', codename: 'CI/CD', icon: FlaskConical },
@@ -187,6 +189,9 @@ export function AdminPanel() {
         </TabsContent>
         <TabsContent value="providers">
           <ProvidersTab />
+        </TabsContent>
+        <TabsContent value="plugins">
+          <PluginsTab active={activeTab === 'plugins'} />
         </TabsContent>
         <TabsContent value="settings">
           <AdminSettings />

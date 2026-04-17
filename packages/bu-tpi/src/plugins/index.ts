@@ -18,3 +18,9 @@ export {
 } from './types.js';
 
 export { validateManifest, PluginRegistry } from './loader.js';
+export {
+  validatePluginSecurity,
+  validatePluginDependencies,
+  CAPABILITY_ALLOWLIST,
+  BLOCKED_PATTERNS,
+} from './validator.js';

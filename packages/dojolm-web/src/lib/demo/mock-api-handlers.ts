@@ -209,6 +209,89 @@ export function demoUsersGet() {
   return NextResponse.json({ users: DEMO_USERS });
 }
 
+// Plugin Registry (Train 3) — demo mode returns a small curated list so the
+// PluginsTab UI shows real structure without persisting anything to disk.
+const DEMO_PLUGINS = [
+  {
+    manifest: {
+      id: 'demo-prompt-shield',
+      name: 'Prompt Shield',
+      version: '1.0.0',
+      type: 'scanner' as const,
+      description: 'Demo scanner that blocks prompt-injection attempts.',
+      author: 'BU-TPI Team',
+      dependencies: [],
+      capabilities: ['scan', 'detect'],
+    },
+    enabled: true,
+    registeredAt: '2026-04-01T00:00:00.000Z',
+    state: 'loaded' as const,
+    lastError: null,
+  },
+  {
+    manifest: {
+      id: 'demo-markdown-reporter',
+      name: 'Markdown Reporter',
+      version: '0.9.2',
+      type: 'reporter' as const,
+      description: 'Demo reporter that renders scan results as Markdown.',
+      author: 'BU-TPI Team',
+      dependencies: [],
+      capabilities: ['report'],
+    },
+    enabled: false,
+    registeredAt: '2026-04-03T00:00:00.000Z',
+    state: 'disabled' as const,
+    lastError: null,
+  },
+]
+
+export function demoPluginsGet() {
+  return NextResponse.json({
+    plugins: DEMO_PLUGINS,
+    counts: { scanner: 1, transform: 0, reporter: 1, orchestrator: 0 },
+  })
+}
+
+export function demoPluginsPost() {
+  return NextResponse.json(
+    { error: 'Plugin registration is disabled in demo mode' },
+    { status: 403 },
+  )
+}
+
+export function demoPluginsDelete() {
+  return NextResponse.json(
+    { error: 'Plugin unregistration is disabled in demo mode' },
+    { status: 403 },
+  )
+}
+
+export async function demoPluginsPatch(req: NextRequest) {
+  // Demo PATCH echoes a 200 with the requested enabled flag so the optimistic
+  // UI path does not error. The returned body is discarded by the PluginsTab
+  // caller (which always re-fetches via `load()`), so the canned DEMO_PLUGINS
+  // list is what actually renders. Nothing is persisted — demos are read-only.
+  let enabled = false
+  try {
+    const body = (await req.json()) as { enabled?: boolean }
+    if (typeof body.enabled === 'boolean') enabled = body.enabled
+  } catch {
+    /* fall through with default */
+  }
+  const template = DEMO_PLUGINS[0]
+  if (!template) {
+    // Defensive: the demo fixture should never be empty, but spreading
+    // `undefined` would silently truncate the response shape.
+    return NextResponse.json({ error: 'Demo plugins fixture is empty' }, { status: 500 })
+  }
+  return NextResponse.json({
+    ...template,
+    enabled,
+    state: enabled ? 'loaded' : 'disabled',
+  })
+}
+
 export function demoTestsGet() {
   return NextResponse.json({
     summary: { total: 60, passed: 54, failed: 4, skipped: 2, duration: 12400 },
