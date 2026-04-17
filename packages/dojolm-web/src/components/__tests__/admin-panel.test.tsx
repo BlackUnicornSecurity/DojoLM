@@ -177,14 +177,14 @@ describe('AdminPanel', () => {
   });
 
   // ADM-001: AdminPanel renders with all tabs/sections
-  // Plugins tab removed (Plugin Registry was mock-only, no backend) → 11 tabs
-  it('ADM-001: renders with page toolbar and all 11 admin tabs', () => {
+  // Plugins tab re-added (backend shipped) → 12 tabs
+  it('ADM-001: renders with page toolbar and all 12 admin tabs', () => {
     render(<AdminPanel />);
 
     expect(screen.getByText('Admin & Settings')).toBeInTheDocument();
     // Check tab triggers by role
     const tabs = screen.getAllByRole('tab');
-    expect(tabs).toHaveLength(11);
+    expect(tabs).toHaveLength(12);
     expect(tabs[0]).toHaveTextContent('General');
     expect(tabs[1]).toHaveTextContent('Users');
     expect(tabs[2]).toHaveTextContent('Scoreboard');
@@ -193,9 +193,10 @@ describe('AdminPanel', () => {
     expect(tabs[5]).toHaveTextContent('System Health');
     expect(tabs[6]).toHaveTextContent('Export');
     expect(tabs[7]).toHaveTextContent('Providers');
-    expect(tabs[8]).toHaveTextContent('Settings');
-    expect(tabs[9]).toHaveTextContent('Validation');
-    expect(tabs[10]).toHaveTextContent('Test Runner');
+    expect(tabs[8]).toHaveTextContent('Plugins');
+    expect(tabs[9]).toHaveTextContent('Settings');
+    expect(tabs[10]).toHaveTextContent('Validation');
+    expect(tabs[11]).toHaveTextContent('Test Runner');
   });
 
   // ADM-009: Panel navigation between sections
@@ -204,9 +205,9 @@ describe('AdminPanel', () => {
 
     // All TabsContent are rendered with data-tab attribute
     const panels = container.querySelectorAll('[data-tab]');
-    expect(panels).toHaveLength(11);
+    expect(panels).toHaveLength(12);
     const tabIds = Array.from(panels).map(p => p.getAttribute('data-tab'));
-    expect(tabIds).toEqual(['general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'providers', 'settings', 'validation', 'test-runner']);
+    expect(tabIds).toEqual(['general', 'users', 'scoreboard', 'apikeys', 'scanner', 'health', 'export', 'providers', 'plugins', 'settings', 'validation', 'test-runner']);
   });
 
   // ADM-010: General settings section renders content
