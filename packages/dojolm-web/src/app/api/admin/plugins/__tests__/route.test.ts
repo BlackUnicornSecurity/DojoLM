@@ -223,13 +223,13 @@ describe('POST /api/admin/plugins', () => {
     }))
   })
 
-  it('PLUG-015: returns 429 when plugin limit is reached + audit-logs rejection', async () => {
+  it('PLUG-015: returns 507 when plugin limit is reached + audit-logs rejection', async () => {
     mockRegisterPlugin.mockRejectedValue(new PluginLimitException())
 
     const { POST } = await import('@/app/api/admin/plugins/route')
     const res = await POST(makeRequest('POST', '/api/admin/plugins', validManifest), emptyCtx())
 
-    expect(res.status).toBe(429)
+    expect(res.status).toBe(507)
     expect(mockConfigChange).toHaveBeenCalledWith(expect.objectContaining({
       newValue: expect.stringContaining('rejected:limit'),
     }))

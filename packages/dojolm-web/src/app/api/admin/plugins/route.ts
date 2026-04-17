@@ -72,7 +72,7 @@ export const GET = withAuth(async () => {
     return NextResponse.json({ plugins, counts }, { headers: SECURITY_HEADERS })
   } catch (error) {
     console.error('Plugins GET error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: SECURITY_HEADERS })
   }
 }, { role: 'admin', skipCsrf: true })
 
@@ -142,9 +142,11 @@ export const POST = withAuth(async (request: NextRequest) => {
         oldValue: '',
         newValue: 'rejected:limit',
       })
-      return NextResponse.json({ error: error.message }, { status: 429, headers: SECURITY_HEADERS })
+      // 507 Insufficient Storage: capacity constraint on the registry, not a
+      // rate limit. 429 would mislead clients into automatic retry loops.
+      return NextResponse.json({ error: error.message }, { status: 507, headers: SECURITY_HEADERS })
     }
     console.error('Plugins POST error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: SECURITY_HEADERS })
   }
 }, { role: 'admin' })

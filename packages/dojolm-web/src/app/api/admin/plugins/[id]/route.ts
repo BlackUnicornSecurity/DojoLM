@@ -89,7 +89,7 @@ export const DELETE = withAuth(async (
       )
     }
     console.error('Plugin DELETE error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: SECURITY_HEADERS })
   }
 }, { role: 'admin' })
 
@@ -154,6 +154,6 @@ export const PATCH = withAuth(async (
       )
     }
     console.error('Plugin PATCH error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: SECURITY_HEADERS })
   }
 }, { role: 'admin' })

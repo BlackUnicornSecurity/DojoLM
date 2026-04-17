@@ -147,7 +147,7 @@ describe('plugin-registry store', () => {
     expect(updated.state).toBe('disabled')
   })
 
-  it('STORE-009b: setPluginEnabled re-enabling an errored plugin preserves state=error', async () => {
+  it('STORE-010: setPluginEnabled re-enabling an errored plugin preserves state=error', async () => {
     stubStoreWith([{ manifest: validManifest, enabled: false, state: 'error', registeredAt: 'x', lastError: 'boom' }])
     const { setPluginEnabled } = await import('@/lib/plugins/store')
     const { updated } = await setPluginEnabled('my-scanner', true)
@@ -156,13 +156,13 @@ describe('plugin-registry store', () => {
     expect(updated.lastError).toBe('boom')
   })
 
-  it('STORE-009c: setPluginEnabled throws PluginNotFoundException for missing id', async () => {
+  it('STORE-011: setPluginEnabled throws PluginNotFoundException for missing id', async () => {
     stubEmptyStore()
     const { setPluginEnabled, PluginNotFoundException } = await import('@/lib/plugins/store')
     await expect(setPluginEnabled('missing', true)).rejects.toBeInstanceOf(PluginNotFoundException)
   })
 
-  it('STORE-010: readStore strips __proto__ keys on disk read (flat)', async () => {
+  it('STORE-012: readStore strips __proto__ keys on disk read (flat)', async () => {
     mockExistsSync.mockReturnValue(true)
     // Craft a payload that would pollute Object.prototype if the reviver
     // were absent. The store must drop the __proto__ entries entirely.
@@ -175,7 +175,7 @@ describe('plugin-registry store', () => {
     expect((Object.prototype as unknown as { polluted?: boolean }).polluted).toBeUndefined()
   })
 
-  it('STORE-010b: readStore strips nested __proto__ keys', async () => {
+  it('STORE-013: readStore strips nested __proto__ keys', async () => {
     mockExistsSync.mockReturnValue(true)
     // Nested case: attacker hides __proto__ inside a manifest-shaped object.
     // JSON.parse treats __proto__ as a plain own property (not the prototype
@@ -189,7 +189,7 @@ describe('plugin-registry store', () => {
     expect((Object.prototype as unknown as { polluted?: boolean }).polluted).toBeUndefined()
   })
 
-  it('STORE-011: countByType returns zero-initialized record', async () => {
+  it('STORE-014: countByType returns zero-initialized record', async () => {
     stubEmptyStore()
     const { countByType } = await import('@/lib/plugins/store')
     expect(countByType()).toEqual({ scanner: 0, transform: 0, reporter: 0, orchestrator: 0 })
