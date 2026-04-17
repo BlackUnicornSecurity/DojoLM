@@ -162,11 +162,25 @@ describe('plugin-registry store', () => {
     await expect(setPluginEnabled('missing', true)).rejects.toBeInstanceOf(PluginNotFoundException)
   })
 
-  it('STORE-010: readStore strips __proto__ keys on disk read', async () => {
+  it('STORE-010: readStore strips __proto__ keys on disk read (flat)', async () => {
     mockExistsSync.mockReturnValue(true)
     // Craft a payload that would pollute Object.prototype if the reviver
     // were absent. The store must drop the __proto__ entries entirely.
     const polluted = '{"plugins":[], "__proto__": {"polluted": true}}'
+    mockReadFileSync.mockReturnValue(polluted)
+
+    const { listPlugins } = await import('@/lib/plugins/store')
+    listPlugins()
+
+    expect((Object.prototype as unknown as { polluted?: boolean }).polluted).toBeUndefined()
+  })
+
+  it('STORE-010b: readStore strips nested __proto__ keys', async () => {
+    mockExistsSync.mockReturnValue(true)
+    // Nested case: attacker hides __proto__ inside a manifest-shaped object.
+    // JSON.parse treats __proto__ as a plain own property (not the prototype
+    // setter) per ECMA-262, and our reviver removes it — double defense.
+    const polluted = '{"plugins":[{"manifest":{"__proto__":{"polluted":true}}}]}'
     mockReadFileSync.mockReturnValue(polluted)
 
     const { listPlugins } = await import('@/lib/plugins/store')

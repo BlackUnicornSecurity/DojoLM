@@ -61,9 +61,11 @@ vi.mock('@/lib/demo', () => ({
   DEMO_USER: { id: 'demo', username: 'demo', role: 'admin' },
 }))
 
-// Audit logger — no-op
+// Audit logger — spy on configChange so failure-path tests can assert the
+// rejection reason makes it into the audit trail.
+const { mockConfigChange } = vi.hoisted(() => ({ mockConfigChange: vi.fn() }))
 vi.mock('@/lib/audit-logger', () => ({
-  auditLog: { configChange: vi.fn() },
+  auditLog: { configChange: mockConfigChange },
 }))
 
 // --- helpers ---
@@ -176,6 +178,29 @@ describe('POST /api/admin/plugins', () => {
     expect(Array.isArray(body.errors)).toBe(true)
   })
 
+  it('PLUG-012b: returns 400 when a capability contains control characters', async () => {
+    const { POST } = await import('@/app/api/admin/plugins/route')
+    const res = await POST(
+      makeRequest('POST', '/api/admin/plugins', {
+        ...validManifest,
+        capabilities: ['scan\nX-Injected: evil'],
+      }),
+      emptyCtx(),
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('PLUG-012c: returns 413 when content-length exceeds cap', async () => {
+    const req = new NextRequest('http://localhost:42001/api/admin/plugins', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'content-length': String(100_000) },
+      body: JSON.stringify(validManifest),
+    })
+    const { POST } = await import('@/app/api/admin/plugins/route')
+    const res = await POST(req, emptyCtx())
+    expect(res.status).toBe(413)
+  })
+
   it('PLUG-013: returns 400 when type is not in enum', async () => {
     const { POST } = await import('@/app/api/admin/plugins/route')
     const res = await POST(makeRequest('POST', '/api/admin/plugins', {
@@ -186,25 +211,31 @@ describe('POST /api/admin/plugins', () => {
     expect(res.status).toBe(400)
   })
 
-  it('PLUG-014: returns 409 on duplicate id', async () => {
+  it('PLUG-014: returns 409 on duplicate id + audit-logs rejection reason', async () => {
     mockRegisterPlugin.mockRejectedValue(new PluginDuplicateException('my-scanner'))
 
     const { POST } = await import('@/app/api/admin/plugins/route')
     const res = await POST(makeRequest('POST', '/api/admin/plugins', validManifest), emptyCtx())
 
     expect(res.status).toBe(409)
+    expect(mockConfigChange).toHaveBeenCalledWith(expect.objectContaining({
+      newValue: expect.stringContaining('rejected:duplicate'),
+    }))
   })
 
-  it('PLUG-015: returns 429 when plugin limit is reached', async () => {
+  it('PLUG-015: returns 429 when plugin limit is reached + audit-logs rejection', async () => {
     mockRegisterPlugin.mockRejectedValue(new PluginLimitException())
 
     const { POST } = await import('@/app/api/admin/plugins/route')
     const res = await POST(makeRequest('POST', '/api/admin/plugins', validManifest), emptyCtx())
 
     expect(res.status).toBe(429)
+    expect(mockConfigChange).toHaveBeenCalledWith(expect.objectContaining({
+      newValue: expect.stringContaining('rejected:limit'),
+    }))
   })
 
-  it('PLUG-016: returns 400 with field errors on server-side validation failure', async () => {
+  it('PLUG-016: returns 400 with field errors + audit-logs validation rejection', async () => {
     mockRegisterPlugin.mockRejectedValue(
       new PluginValidationException([{ field: 'capabilities', message: 'not allowed' }]),
     )
@@ -215,6 +246,9 @@ describe('POST /api/admin/plugins', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.errors).toEqual([{ field: 'capabilities', message: 'not allowed' }])
+    expect(mockConfigChange).toHaveBeenCalledWith(expect.objectContaining({
+      newValue: expect.stringContaining('rejected:validation'),
+    }))
   })
 })
 
@@ -255,7 +289,7 @@ describe('DELETE /api/admin/plugins/[id]', () => {
     expect(res.status).toBe(404)
   })
 
-  it('PLUG-023: returns 409 when dependents exist', async () => {
+  it('PLUG-023: returns 409 when dependents exist + audit-logs rejection', async () => {
     mockUnregisterPlugin.mockRejectedValue(
       new PluginDependentException('my-scanner', ['other']),
     )
@@ -267,6 +301,9 @@ describe('DELETE /api/admin/plugins/[id]', () => {
     expect(res.status).toBe(409)
     const body = await res.json()
     expect(body.dependents).toEqual(['other'])
+    expect(mockConfigChange).toHaveBeenCalledWith(expect.objectContaining({
+      newValue: expect.stringContaining('rejected:dependents'),
+    }))
   })
 })
 

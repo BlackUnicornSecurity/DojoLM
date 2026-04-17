@@ -224,14 +224,6 @@ export function listPlugins(): readonly StoredPlugin[] {
   return readStore().plugins
 }
 
-export function getPlugin(id: string): StoredPlugin | null {
-  return readStore().plugins.find(p => p.manifest.id === id) ?? null
-}
-
-export function listPluginsByType(type: PluginType): readonly StoredPlugin[] {
-  return readStore().plugins.filter(p => p.enabled && p.manifest.type === type)
-}
-
 export function registerPlugin(manifest: PluginManifest): Promise<StoredPlugin> {
   return serializeWrite(() => {
     const store = readStore()

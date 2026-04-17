@@ -32,6 +32,26 @@ const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
 }
 
+/** Max accepted body size for POST. Manifests are tiny; cap at 16 KB. */
+const MAX_BODY_BYTES = 16 * 1024
+
+function rejectIfBodyTooLarge(request: NextRequest): NextResponse | null {
+  const len = request.headers.get('content-length')
+  if (len && Number(len) > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { error: 'Request body too large' },
+      { status: 413, headers: SECURITY_HEADERS },
+    )
+  }
+  return null
+}
+
+// Capability names are echoed back in error messages when rejected by the
+// security validator. Restricting to the same alphabet as `id` prevents
+// newline/control-char injection into logs or downstream consumers that
+// render the error body without escaping.
+const CAPABILITY_PATTERN = /^[a-z0-9][a-z0-9_-]*$/
+
 const ManifestSchema = z.object({
   id: z.string().min(1).max(100),
   name: z.string().min(1).max(100),
@@ -40,7 +60,7 @@ const ManifestSchema = z.object({
   description: z.string().min(1).max(500),
   author: z.string().min(1).max(100),
   dependencies: z.array(z.string().min(1).max(100)).max(20),
-  capabilities: z.array(z.string().min(1).max(50)).max(10),
+  capabilities: z.array(z.string().min(1).max(50).regex(CAPABILITY_PATTERN)).max(10),
 })
 
 export const GET = withAuth(async () => {
@@ -59,11 +79,17 @@ export const GET = withAuth(async () => {
 export const POST = withAuth(async (request: NextRequest) => {
   if (isDemoMode()) return demoPluginsPost()
 
+  const tooLarge = rejectIfBodyTooLarge(request)
+  if (tooLarge) return tooLarge
+
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Invalid JSON in request body' },
+      { status: 400, headers: SECURITY_HEADERS },
+    )
   }
 
   const parsed = ManifestSchema.safeParse(body)

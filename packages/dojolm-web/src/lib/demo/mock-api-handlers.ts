@@ -272,6 +272,11 @@ export async function demoPluginsPatch(req: NextRequest) {
   // UI path does not error. The returned body is discarded by the PluginsTab
   // caller (which always re-fetches via `load()`), so the canned DEMO_PLUGINS
   // list is what actually renders. Nothing is persisted — demos are read-only.
+  const len = req.headers.get('content-length')
+  if (len && Number(len) > 1024) {
+    return NextResponse.json({ error: 'Request body too large' }, { status: 413 })
+  }
+
   let enabled = false
   try {
     const body = (await req.json()) as { enabled?: boolean }

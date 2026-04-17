@@ -119,7 +119,7 @@ export function PluginsTab({ active = true }: PluginsTabProps = {}) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ enabled }),
     })
-    if (!res.ok) {
+    if (!res || typeof res.ok !== 'boolean' || !res.ok) {
       setError(`Failed to ${enabled ? 'enable' : 'disable'} plugin`)
       return
     }
@@ -131,6 +131,10 @@ export function PluginsTab({ active = true }: PluginsTabProps = {}) {
     const res = await fetchWithAuth(`/api/admin/plugins/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     })
+    if (!res || typeof res.ok !== 'boolean') {
+      setError('Failed to delete plugin')
+      return
+    }
     if (!res.ok) {
       const body = await res.json().catch(() => ({ error: 'Failed to delete plugin' })) as { error?: string }
       setError(body.error ?? 'Failed to delete plugin')

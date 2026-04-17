@@ -29,6 +29,9 @@ const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
 }
 
+/** PATCH body is `{enabled: boolean}` — a few bytes. Cap at 1 KB. */
+const MAX_BODY_BYTES = 1024
+
 const ID_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/
 
 const PatchSchema = z.object({
@@ -101,11 +104,22 @@ export const PATCH = withAuth(async (
     return NextResponse.json({ error: 'Invalid plugin id' }, { status: 400, headers: SECURITY_HEADERS })
   }
 
+  const len = request.headers.get('content-length')
+  if (len && Number(len) > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { error: 'Request body too large' },
+      { status: 413, headers: SECURITY_HEADERS },
+    )
+  }
+
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Invalid JSON in request body' },
+      { status: 400, headers: SECURITY_HEADERS },
+    )
   }
 
   const parsed = PatchSchema.safeParse(body)
@@ -121,11 +135,14 @@ export const PATCH = withAuth(async (
 
   try {
     const { previous, updated } = await setPluginEnabled(id, parsed.data.enabled)
+    // Normalized audit field: every plugin mutation uses `plugin:${id}`. The
+    // operation is encoded in oldValue/newValue so consumers can filter by
+    // `field LIKE 'plugin:%'` uniformly across register/unregister/toggle.
     await auditLog.configChange({
       endpoint: `/api/admin/plugins/${id}`,
-      field: `plugin:${id}:enabled`,
-      oldValue: String(previous.enabled),
-      newValue: String(updated.enabled),
+      field: `plugin:${id}`,
+      oldValue: `enabled:${previous.enabled}`,
+      newValue: `enabled:${updated.enabled}`,
     })
 
     return NextResponse.json(updated, { headers: SECURITY_HEADERS })
