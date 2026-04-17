@@ -145,9 +145,9 @@ const TOOL_RATE_CONFIG = {
 // Module-level store — InMemoryStore by default, RedisStore if RATE_LIMIT_BACKEND=redis.
 let toolRateLimitStore: RateLimitStore = createRateLimitStore();
 
-function checkToolRateLimit(toolName: string, identifier: string): boolean {
+async function checkToolRateLimit(toolName: string, identifier: string): Promise<boolean> {
   const key = `tool:${toolName}:${identifier}`;
-  return toolRateLimitStore.consume(key, TOOL_RATE_CONFIG).allowed;
+  return (await toolRateLimitStore.consume(key, TOOL_RATE_CONFIG)).allowed;
 }
 
 // ---------------------------------------------------------------------------
@@ -286,11 +286,11 @@ export interface GuardToolResult {
  * 2. User role meets minRole requirement
  * 3. Rate limit per tool per identifier
  */
-export function guardToolExecution(
+export async function guardToolExecution(
   toolName: string,
   userRole: 'viewer' | 'user' | 'admin',
   identifier: string,
-): GuardToolResult {
+): Promise<GuardToolResult> {
   // Validate tool exists in whitelist
   const toolDef = getToolByName(toolName);
   if (!toolDef) {
@@ -309,7 +309,7 @@ export function guardToolExecution(
   }
 
   // Rate limit check
-  if (!checkToolRateLimit(toolName, identifier)) {
+  if (!await checkToolRateLimit(toolName, identifier)) {
     return {
       allowed: false,
       reason: `Rate limit exceeded for tool "${toolDef.name}". Try again in a minute.`,

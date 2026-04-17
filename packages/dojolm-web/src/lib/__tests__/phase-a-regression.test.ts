@@ -419,7 +419,7 @@ describe('Security: Rate limiter (checkRateLimit)', () => {
       headers: { 'x-forwarded-for': uniqueIp },
     });
 
-    const result = checkRateLimit(request as any, 'read');
+    const result = await checkRateLimit(request as any, 'read');
 
     expect(result.allowed).toBe(true);
     expect(result.remaining).toBeGreaterThanOrEqual(0);
@@ -435,14 +435,14 @@ describe('Security: Rate limiter (checkRateLimit)', () => {
       const req = new Request('http://localhost/api/test', {
         headers: { 'x-forwarded-for': uniqueIp },
       });
-      checkRateLimit(req as any, 'read');
+      await checkRateLimit(req as any, 'read');
     }
 
     // The 61st request should be blocked
     const blockedReq = new Request('http://localhost/api/test', {
       headers: { 'x-forwarded-for': uniqueIp },
     });
-    const result = checkRateLimit(blockedReq as any, 'read');
+    const result = await checkRateLimit(blockedReq as any, 'read');
 
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
@@ -458,14 +458,14 @@ describe('Security: Rate limiter (checkRateLimit)', () => {
       const req = new Request('http://localhost/api/test', {
         headers: { 'x-forwarded-for': uniqueIp },
       });
-      checkRateLimit(req as any, 'execute');
+      await checkRateLimit(req as any, 'execute');
     }
 
     // 6th request should be blocked for 'execute'
     const blockedReq = new Request('http://localhost/api/test', {
       headers: { 'x-forwarded-for': uniqueIp },
     });
-    const result = checkRateLimit(blockedReq as any, 'execute');
+    const result = await checkRateLimit(blockedReq as any, 'execute');
 
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);

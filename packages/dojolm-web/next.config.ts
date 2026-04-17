@@ -92,33 +92,8 @@ const nextConfig: NextConfig = withBundleAnalyzer({
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              // F-06 fix: unsafe-inline required for Next.js hydration scripts in production
-              // unsafe-eval only needed for Next.js dev server HMR
-              process.env.NODE_ENV === "development"
-                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
-                : "script-src 'self' 'unsafe-inline'",
-              // style-src 'unsafe-inline' required: Next.js/Tailwind injects inline styles at runtime
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob:",
-              "font-src 'self'",
-              // All LLM API calls are server-side proxied; browser only talks to local server
-              "connect-src 'self'",
-              // Story 13.7: frame-ancestors 'none' to prevent clickjacking
-              "frame-ancestors 'none'",
-              "frame-src 'self'",
-              "worker-src 'self' blob:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              // Story 13.7: upgrade-insecure-requests — only when explicitly enabled via NODA_FORCE_HTTPS
-              // BUG-031 fix: was NODE_ENV-gated, breaking HTTP deployments
-              ...(process.env.NODA_FORCE_HTTPS === "true" ? ["upgrade-insecure-requests"] : []),
-            ].join("; "),
-          },
+          // H-04: Content-Security-Policy is now set per-request by middleware.ts
+          // with a cryptographic nonce — static CSP here has been removed.
         ],
       },
       // BUG-020 / Story 13.3: Cache-Control on API responses

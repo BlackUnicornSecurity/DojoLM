@@ -32,6 +32,30 @@ import {
   isTrustedBrowserOriginRequest,
   isTrustedBrowserSessionRequest,
 } from '@/lib/request-origin';
+import { buildCsp } from '@/lib/csp';
+
+/** H-04: Generate a cryptographically random base64 nonce (128 bits). */
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Buffer.from(bytes).toString('base64');
+}
+
+/** H-04: Apply CSP nonce + header to page responses (non-API). */
+function applyCspHeaders(request: NextRequest): NextResponse {
+  const nonce = generateNonce();
+  const isDev = process.env.NODE_ENV === 'development';
+  const forceHttps = process.env.NODA_FORCE_HTTPS === 'true';
+  const csp = buildCsp(nonce, isDev, forceHttps);
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set('x-nonce', nonce);
+  response.headers.set('Content-Security-Policy', csp);
+  return response;
+}
 
 // Routes that require elevated (admin) permissions — future RBAC
 const ADMIN_ROUTES_PREFIX = '/api/admin';
@@ -212,9 +236,10 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Only apply to API routes
+  // H-04: Non-API routes get CSP nonce + header. Static assets are excluded
+  // by the matcher below, so this branch only runs for pages/layouts.
   if (!pathname.startsWith('/api/')) {
-    return NextResponse.next();
+    return applyCspHeaders(request);
   }
 
   // Block TRACE method (Story 13.4 / BUG-032)
@@ -366,5 +391,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  // Match API routes (auth + rate-limit) AND page/layout routes (CSP nonces, H-04).
+  // Exclude Next.js internals and common static assets.
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.well-known).*)',
+  ],
 };

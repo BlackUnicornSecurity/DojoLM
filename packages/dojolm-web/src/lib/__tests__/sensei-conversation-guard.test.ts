@@ -288,101 +288,101 @@ describe('guardSenseiOutput', () => {
 // ---------------------------------------------------------------------------
 
 describe('guardToolExecution', () => {
-  it('allows valid tool with sufficient role', () => {
-    const result = guardToolExecution('list_models', 'viewer', 'user-1');
+  it('allows valid tool with sufficient role', async () => {
+    const result = await guardToolExecution('list_models', 'viewer', 'user-1');
     expect(result.allowed).toBe(true);
     expect(result.reason).toBeUndefined();
   });
 
-  it('allows admin tool for admin role', () => {
-    const result = guardToolExecution('set_guard_mode', 'admin', 'user-1');
+  it('allows admin tool for admin role', async () => {
+    const result = await guardToolExecution('set_guard_mode', 'admin', 'user-1');
     expect(result.allowed).toBe(true);
   });
 
-  it('rejects unknown tool', () => {
-    const result = guardToolExecution('nonexistent_tool', 'admin', 'user-1');
+  it('rejects unknown tool', async () => {
+    const result = await guardToolExecution('nonexistent_tool', 'admin', 'user-1');
     expect(result.allowed).toBe(false);
     expect(result.reason).toContain('Unknown tool');
   });
 
-  it('truncates long unknown tool names in error', () => {
+  it('truncates long unknown tool names in error', async () => {
     const longName = 'a'.repeat(200);
-    const result = guardToolExecution(longName, 'admin', 'user-1');
+    const result = await guardToolExecution(longName, 'admin', 'user-1');
     expect(result.allowed).toBe(false);
     expect(result.reason!.length).toBeLessThan(200);
   });
 
   describe('role-based access control', () => {
-    it('rejects admin tool for user role', () => {
-      const result = guardToolExecution('set_guard_mode', 'user', 'user-1');
+    it('rejects admin tool for user role', async () => {
+      const result = await guardToolExecution('set_guard_mode', 'user', 'user-1');
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('Insufficient permissions');
       expect(result.reason).toContain('admin');
     });
 
-    it('rejects admin tool for viewer role', () => {
-      const result = guardToolExecution('set_guard_mode', 'viewer', 'user-1');
+    it('rejects admin tool for viewer role', async () => {
+      const result = await guardToolExecution('set_guard_mode', 'viewer', 'user-1');
       expect(result.allowed).toBe(false);
     });
 
-    it('rejects user tool for viewer role', () => {
-      const result = guardToolExecution('scan_text', 'viewer', 'user-1');
+    it('rejects user tool for viewer role', async () => {
+      const result = await guardToolExecution('scan_text', 'viewer', 'user-1');
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('Insufficient permissions');
     });
 
-    it('allows user tool for admin role (admin >= user)', () => {
-      const result = guardToolExecution('scan_text', 'admin', 'user-1');
+    it('allows user tool for admin role (admin >= user)', async () => {
+      const result = await guardToolExecution('scan_text', 'admin', 'user-1');
       expect(result.allowed).toBe(true);
     });
 
-    it('allows viewer tool for user role (user >= viewer)', () => {
-      const result = guardToolExecution('list_models', 'user', 'user-1');
+    it('allows viewer tool for user role (user >= viewer)', async () => {
+      const result = await guardToolExecution('list_models', 'user', 'user-1');
       expect(result.allowed).toBe(true);
     });
   });
 
   describe('rate limiting', () => {
-    it('allows up to 10 calls per tool per minute', () => {
+    it('allows up to 10 calls per tool per minute', async () => {
       for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-        const result = guardToolExecution('list_models', 'viewer', 'user-rate');
+        const result = await guardToolExecution('list_models', 'viewer', 'user-rate');
         expect(result.allowed).toBe(true);
       }
     });
 
-    it('blocks 11th call within rate limit window', () => {
+    it('blocks 11th call within rate limit window', async () => {
       for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-        guardToolExecution('list_models', 'viewer', 'user-rate2');
+        await guardToolExecution('list_models', 'viewer', 'user-rate2');
       }
-      const result = guardToolExecution('list_models', 'viewer', 'user-rate2');
+      const result = await guardToolExecution('list_models', 'viewer', 'user-rate2');
       expect(result.allowed).toBe(false);
       expect(result.reason).toContain('Rate limit exceeded');
     });
 
-    it('rate limits are per-tool (different tools have separate limits)', () => {
+    it('rate limits are per-tool (different tools have separate limits)', async () => {
       for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-        guardToolExecution('list_models', 'viewer', 'user-rate3');
+        await guardToolExecution('list_models', 'viewer', 'user-rate3');
       }
       // Different tool should still be allowed
-      const result = guardToolExecution('get_stats', 'viewer', 'user-rate3');
+      const result = await guardToolExecution('get_stats', 'viewer', 'user-rate3');
       expect(result.allowed).toBe(true);
     });
 
-    it('rate limits are per-identifier (different users have separate limits)', () => {
+    it('rate limits are per-identifier (different users have separate limits)', async () => {
       for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-        guardToolExecution('list_models', 'viewer', 'user-A');
+        await guardToolExecution('list_models', 'viewer', 'user-A');
       }
       // Different user should still be allowed
-      const result = guardToolExecution('list_models', 'viewer', 'user-B');
+      const result = await guardToolExecution('list_models', 'viewer', 'user-B');
       expect(result.allowed).toBe(true);
     });
 
-    it('_resetRateLimits clears all limits', () => {
+    it('_resetRateLimits clears all limits', async () => {
       for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-        guardToolExecution('list_models', 'viewer', 'user-reset');
+        await guardToolExecution('list_models', 'viewer', 'user-reset');
       }
       _resetRateLimits();
-      const result = guardToolExecution('list_models', 'viewer', 'user-reset');
+      const result = await guardToolExecution('list_models', 'viewer', 'user-reset');
       expect(result.allowed).toBe(true);
     });
   });

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
+import { headers } from "next/headers";
 import { Providers } from "./providers";
 import { serializePublicRuntimeEnvScript } from "@/lib/runtime-env";
 import "./globals.css";
@@ -22,17 +23,22 @@ export const metadata: Metadata = {
   description: "BlackUnicorn's Test Prompt Injection security testing platform for LLM applications - Detect vulnerabilities, run tests, and secure your AI applications.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers()
+  const nonce = headersList.get('x-nonce') ?? undefined
+
   return (
     <html lang="en">
       <body className={`${plusJakarta.variable} ${jetbrainsMono.variable} antialiased`}>
+        {/* nonce required by CSP (H-04): serializePublicRuntimeEnvScript() is sanitized (escapes <>&) */}
         <Script
           id="noda-runtime-env"
           strategy="beforeInteractive"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: serializePublicRuntimeEnvScript() }}
         />
         <a

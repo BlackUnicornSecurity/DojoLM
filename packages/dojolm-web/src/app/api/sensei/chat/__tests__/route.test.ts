@@ -43,7 +43,7 @@ vi.mock('@/lib/sensei', () => ({
   executeToolCall: vi.fn(),
   guardSenseiInput: vi.fn().mockReturnValue({ proceed: true }),
   guardSenseiOutput: vi.fn().mockImplementation((text: string) => ({ sanitizedText: text })),
-  guardToolExecution: vi.fn().mockReturnValue({ allowed: true }),
+  guardToolExecution: vi.fn().mockResolvedValue({ allowed: true }),
   escapeToolCallTags: vi.fn().mockImplementation((text: string) => text),
 }));
 

@@ -57,7 +57,7 @@ describe('fetch-with-auth', () => {
     // FWA-003: Saves key to sessionStorage (AUTH-04: preferred over localStorage)
     it('FWA-003: saves key to sessionStorage', () => {
       setApiKey('my-key');
-      expect(sessionStorageMock.setItem).toHaveBeenCalledWith('noda-api-key', 'my-key');
+      expect(sessionStorageMock.setItem).toHaveBeenCalledWith('noda-api-key', '"my-key"');
     });
   });
 

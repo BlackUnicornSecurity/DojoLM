@@ -21,6 +21,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { checkApiAuth } from './api-auth';
 import { apiError } from './api-error';
+import { createRateLimitStore, type RateLimitStore } from './rate-limit-store';
 
 // ===========================================================================
 // Types
@@ -58,7 +59,7 @@ export type ApiRouteHandler<TContext extends RouteContext | undefined = undefine
     : ApiRouteHandlerWithoutContext;
 
 // ===========================================================================
-// Rate Limiter — Token Bucket (in-memory, per-IP)
+// Rate Limiter — Token Bucket (backed by RateLimitStore)
 // ===========================================================================
 
 const RATE_LIMITS: Record<RateLimitTier, { maxTokens: number; refillRate: number }> = {
@@ -67,32 +68,11 @@ const RATE_LIMITS: Record<RateLimitTier, { maxTokens: number; refillRate: number
   execute: { maxTokens: 5, refillRate: 0.083 },   // 5 req/min
 };
 
-interface TokenBucket {
-  tokens: number;
-  lastRefill: number;
-}
-
-const buckets = new Map<string, TokenBucket>();
-
 type RateLimitRequest = Pick<Request, 'headers' | 'url'> & Partial<Pick<NextRequest, 'nextUrl'>>;
 
-// Clean up stale buckets every 5 minutes
-const CLEANUP_INTERVAL = 5 * 60 * 1000;
-const BUCKET_STALE_MS = 10 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanupBuckets(): void {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-
-  for (const [key, bucket] of buckets) {
-    if (now - bucket.lastRefill > BUCKET_STALE_MS) {
-      buckets.delete(key);
-    }
-  }
-
-  lastCleanup = now;
-}
+// Module-level store — InMemoryStore by default, RedisStore if RATE_LIMIT_BACKEND=redis.
+// Exported for test isolation (resetRateLimitStore).
+export const _rateLimitStore: RateLimitStore = createRateLimitStore();
 
 function hashRateLimitIdentity(value: string): string {
   return createHash('sha256').update(value).digest('hex').slice(0, 16);
@@ -144,36 +124,13 @@ export function getClientIp(request: RateLimitRequest): string {
   return 'unknown';
 }
 
-export function checkRateLimit(
+export async function checkRateLimit(
   request: RateLimitRequest,
   tier: RateLimitTier
-): { allowed: boolean; remaining: number; resetMs: number } {
-  cleanupBuckets();
-
+): Promise<{ allowed: boolean; remaining: number; resetMs: number }> {
   const ip = getClientIp(request);
   const key = `${ip}:${tier}:${getRateLimitScope(request, tier)}`;
-  const config = RATE_LIMITS[tier];
-  const now = Date.now();
-
-  let bucket = buckets.get(key);
-  if (!bucket) {
-    bucket = { tokens: config.maxTokens, lastRefill: now };
-    buckets.set(key, bucket);
-  }
-
-  // Refill tokens based on elapsed time
-  const elapsed = (now - bucket.lastRefill) / 1000;
-  bucket.tokens = Math.min(config.maxTokens, bucket.tokens + elapsed * config.refillRate);
-  bucket.lastRefill = now;
-
-  if (bucket.tokens >= 1) {
-    bucket.tokens -= 1;
-    const resetMs = Math.ceil(1 / config.refillRate) * 1000;
-    return { allowed: true, remaining: Math.floor(bucket.tokens), resetMs };
-  }
-
-  const resetMs = Math.ceil((1 - bucket.tokens) / config.refillRate) * 1000;
-  return { allowed: false, remaining: 0, resetMs };
+  return _rateLimitStore.consume(key, RATE_LIMITS[tier]);
 }
 
 // ===========================================================================
@@ -231,7 +188,7 @@ export function createApiHandler<TContext extends RouteContext>(
 
       // Rate limiting
       const tier = config.rateLimit ?? inferRateLimitTier(request.method);
-      const rateResult = checkRateLimit(request, tier);
+      const rateResult = await checkRateLimit(request, tier);
 
       if (!rateResult.allowed) {
         const retryAfter = Math.ceil(rateResult.resetMs / 1000);

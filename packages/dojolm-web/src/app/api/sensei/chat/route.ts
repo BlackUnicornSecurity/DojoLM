@@ -500,7 +500,7 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
           continue;
         }
 
-        const toolGuard = guardToolExecution(pending.tool, senseiContext.userRole, ip);
+        const toolGuard = await guardToolExecution(pending.tool, senseiContext.userRole, ip);
         if (!toolGuard.allowed) {
           const errorEvent: SenseiStreamEvent = {
             type: 'error',
@@ -614,7 +614,7 @@ async function runToolCallingLoop(options: LoopOptions): Promise<void> {
       controller.enqueue(encoder.encode(encodeSSE(toolCallEvent)));
 
       // Guard tool execution
-      const toolGuard = guardToolExecution(call.tool, senseiContext.userRole, ip);
+      const toolGuard = await guardToolExecution(call.tool, senseiContext.userRole, ip);
       if (!toolGuard.allowed) {
         const errorEvent: SenseiStreamEvent = {
           type: 'error',

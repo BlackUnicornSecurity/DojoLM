@@ -320,42 +320,42 @@ describe('guardSenseiInput — guard middleware delegation', () => {
 // ---------------------------------------------------------------------------
 
 describe('guardToolExecution — role-based access', () => {
-  it('allows viewer to access viewer-level tools', () => {
-    const result = guardToolExecution('list_models', 'viewer', 'test-ip');
+  it('allows viewer to access viewer-level tools', async () => {
+    const result = await guardToolExecution('list_models', 'viewer', 'test-ip');
     expect(result.allowed).toBe(true);
   });
 
-  it('allows user to access user-level tools', () => {
-    const result = guardToolExecution('scan_text', 'user', 'test-ip');
+  it('allows user to access user-level tools', async () => {
+    const result = await guardToolExecution('scan_text', 'user', 'test-ip');
     expect(result.allowed).toBe(true);
   });
 
-  it('allows admin to access admin-level tools', () => {
-    const result = guardToolExecution('set_guard_mode', 'admin', 'test-ip');
+  it('allows admin to access admin-level tools', async () => {
+    const result = await guardToolExecution('set_guard_mode', 'admin', 'test-ip');
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks viewer from user-level tools', () => {
-    const result = guardToolExecution('scan_text', 'viewer', 'test-ip');
+  it('blocks viewer from user-level tools', async () => {
+    const result = await guardToolExecution('scan_text', 'viewer', 'test-ip');
     expect(result.allowed).toBe(false);
     expect(result.reason).toContain('Insufficient permissions');
   });
 
-  it('blocks user from admin-level tools', () => {
-    const result = guardToolExecution('set_guard_mode', 'user', 'test-ip');
+  it('blocks user from admin-level tools', async () => {
+    const result = await guardToolExecution('set_guard_mode', 'user', 'test-ip');
     expect(result.allowed).toBe(false);
     expect(result.reason).toContain('admin');
   });
 
-  it('blocks unknown tool names', () => {
-    const result = guardToolExecution('nonexistent_tool', 'admin', 'test-ip');
+  it('blocks unknown tool names', async () => {
+    const result = await guardToolExecution('nonexistent_tool', 'admin', 'test-ip');
     expect(result.allowed).toBe(false);
     expect(result.reason).toContain('Unknown tool');
   });
 
-  it('truncates long tool names in error message', () => {
+  it('truncates long tool names in error message', async () => {
     const longName = 'a'.repeat(200);
-    const result = guardToolExecution(longName, 'admin', 'test-ip');
+    const result = await guardToolExecution(longName, 'admin', 'test-ip');
     expect(result.allowed).toBe(false);
     expect(result.reason!.length).toBeLessThan(200);
   });
@@ -366,44 +366,44 @@ describe('guardToolExecution — role-based access', () => {
 // ---------------------------------------------------------------------------
 
 describe('guardToolExecution — rate limiting', () => {
-  it('allows calls within rate limit', () => {
+  it('allows calls within rate limit', async () => {
     for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-      const result = guardToolExecution('list_models', 'viewer', 'test-ip');
+      const result = await guardToolExecution('list_models', 'viewer', 'test-ip');
       expect(result.allowed).toBe(true);
     }
   });
 
-  it('blocks after rate limit exceeded', () => {
+  it('blocks after rate limit exceeded', async () => {
     // Exhaust the limit
     for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-      guardToolExecution('list_models', 'viewer', 'ip-1');
+      await guardToolExecution('list_models', 'viewer', 'ip-1');
     }
 
     // Next call should be blocked
-    const result = guardToolExecution('list_models', 'viewer', 'ip-1');
+    const result = await guardToolExecution('list_models', 'viewer', 'ip-1');
     expect(result.allowed).toBe(false);
     expect(result.reason).toContain('Rate limit');
   });
 
-  it('rate limits per-tool independently', () => {
+  it('rate limits per-tool independently', async () => {
     // Exhaust list_models
     for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-      guardToolExecution('list_models', 'viewer', 'ip-2');
+      await guardToolExecution('list_models', 'viewer', 'ip-2');
     }
 
     // get_stats should still work
-    const result = guardToolExecution('get_stats', 'viewer', 'ip-2');
+    const result = await guardToolExecution('get_stats', 'viewer', 'ip-2');
     expect(result.allowed).toBe(true);
   });
 
-  it('rate limits per-identifier independently', () => {
+  it('rate limits per-identifier independently', async () => {
     // Exhaust for ip-a
     for (let i = 0; i < RATE_LIMIT_MAX_PER_TOOL; i++) {
-      guardToolExecution('list_models', 'viewer', 'ip-a');
+      await guardToolExecution('list_models', 'viewer', 'ip-a');
     }
 
     // ip-b should still work
-    const result = guardToolExecution('list_models', 'viewer', 'ip-b');
+    const result = await guardToolExecution('list_models', 'viewer', 'ip-b');
     expect(result.allowed).toBe(true);
   });
 });

@@ -52,9 +52,9 @@ function makeRequest(
 /**
  * Exhaust all tokens for a given IP + tier so subsequent calls are rate-limited.
  */
-function exhaustBucket(ip: string, tier: 'read' | 'write' | 'execute', count: number): void {
+async function exhaustBucket(ip: string, tier: 'read' | 'write' | 'execute', count: number): Promise<void> {
   for (let i = 0; i < count; i++) {
-    checkRateLimit(makeRequest('GET', ip), tier);
+    await checkRateLimit(makeRequest('GET', ip), tier);
   }
 }
 
@@ -134,7 +134,7 @@ describe('createApiHandler', () => {
   it('AH-006: returns 429 with Retry-After when rate limited', async () => {
     const ip = '100.100.100.1';
     // Exhaust read bucket (60 tokens)
-    exhaustBucket(ip, 'read', 60);
+    await exhaustBucket(ip, 'read', 60);
 
     const handler = createApiHandler(
       async () => NextResponse.json({ ok: true }),
@@ -246,33 +246,33 @@ afterAll(() => {
 
 describe('checkRateLimit', () => {
   // AH-009: Allows requests under the limit
-  it('AH-009: allows requests under the limit', () => {
-    const result = checkRateLimit(makeRequest('GET', '9.9.9.9'), 'read');
+  it('AH-009: allows requests under the limit', async () => {
+    const result = await checkRateLimit(makeRequest('GET', '9.9.9.9'), 'read');
     expect(result.allowed).toBe(true);
     expect(result.remaining).toBeGreaterThanOrEqual(0);
     expect(result.resetMs).toBeGreaterThan(0);
   });
 
   // AH-010: Blocks requests over the limit
-  it('AH-010: blocks requests over the limit (exhaust bucket)', () => {
+  it('AH-010: blocks requests over the limit (exhaust bucket)', async () => {
     const ip = '10.10.10.10';
     // Exhaust execute bucket (5 tokens)
-    exhaustBucket(ip, 'execute', 5);
+    await exhaustBucket(ip, 'execute', 5);
 
-    const result = checkRateLimit(makeRequest('GET', ip), 'execute');
+    const result = await checkRateLimit(makeRequest('GET', ip), 'execute');
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
     expect(result.resetMs).toBeGreaterThan(0);
   });
 
   // AH-011: Refills tokens over time
-  it('AH-011: refills tokens over time', () => {
+  it('AH-011: refills tokens over time', async () => {
     const ip = '11.11.11.11';
     // Exhaust read bucket
-    exhaustBucket(ip, 'read', 60);
+    await exhaustBucket(ip, 'read', 60);
 
     // Verify blocked
-    const blocked = checkRateLimit(makeRequest('GET', ip), 'read');
+    const blocked = await checkRateLimit(makeRequest('GET', ip), 'read');
     expect(blocked.allowed).toBe(false);
 
     // Simulate time passing by manipulating Date.now
@@ -281,7 +281,7 @@ describe('checkRateLimit', () => {
     Date.now = vi.fn(() => futureTime);
 
     try {
-      const refilled = checkRateLimit(makeRequest('GET', ip), 'read');
+      const refilled = await checkRateLimit(makeRequest('GET', ip), 'read');
       expect(refilled.allowed).toBe(true);
       expect(refilled.remaining).toBeGreaterThan(0);
     } finally {
@@ -290,23 +290,23 @@ describe('checkRateLimit', () => {
   });
 
   // AH-014: Uses separate buckets per IP
-  it('AH-014: uses separate buckets per IP', () => {
+  it('AH-014: uses separate buckets per IP', async () => {
     const ipA = '14.14.14.1';
     const ipB = '14.14.14.2';
 
     // Exhaust bucket for IP A
-    exhaustBucket(ipA, 'execute', 5);
+    await exhaustBucket(ipA, 'execute', 5);
 
     // IP A should be blocked
-    const resultA = checkRateLimit(makeRequest('GET', ipA), 'execute');
+    const resultA = await checkRateLimit(makeRequest('GET', ipA), 'execute');
     expect(resultA.allowed).toBe(false);
 
     // IP B should still be allowed
-    const resultB = checkRateLimit(makeRequest('GET', ipB), 'execute');
+    const resultB = await checkRateLimit(makeRequest('GET', ipB), 'execute');
     expect(resultB.allowed).toBe(true);
   });
 
-  it('AH-015: falls back to request fingerprint when TRUSTED_PROXY is unset', () => {
+  it('AH-015: falls back to request fingerprint when TRUSTED_PROXY is unset', async () => {
     process.env.TRUSTED_PROXY = '';
 
     try {
@@ -326,33 +326,33 @@ describe('checkRateLimit', () => {
       });
 
       for (let i = 0; i < 5; i++) {
-        checkRateLimit(browserA, 'execute');
+        await checkRateLimit(browserA, 'execute');
       }
 
-      const blocked = checkRateLimit(browserA, 'execute');
+      const blocked = await checkRateLimit(browserA, 'execute');
       expect(blocked.allowed).toBe(false);
 
-      const allowed = checkRateLimit(browserB, 'execute');
+      const allowed = await checkRateLimit(browserB, 'execute');
       expect(allowed.allowed).toBe(true);
     } finally {
       process.env.TRUSTED_PROXY = ORIGINAL_TRUSTED_PROXY ?? 'true';
     }
   });
 
-  it('AH-016: isolates read buckets by route path', () => {
+  it('AH-016: isolates read buckets by route path', async () => {
     const ip = '15.15.15.15';
     const fixturesRequest = makeRequest('GET', ip, 'http://localhost/api/fixtures');
     const complianceRequest = makeRequest('GET', ip, 'http://localhost/api/compliance');
 
     for (let i = 0; i < 60; i++) {
-      const result = checkRateLimit(fixturesRequest, 'read');
+      const result = await checkRateLimit(fixturesRequest, 'read');
       expect(result.allowed).toBe(true);
     }
 
-    const blockedFixtures = checkRateLimit(fixturesRequest, 'read');
+    const blockedFixtures = await checkRateLimit(fixturesRequest, 'read');
     expect(blockedFixtures.allowed).toBe(false);
 
-    const separateRoute = checkRateLimit(complianceRequest, 'read');
+    const separateRoute = await checkRateLimit(complianceRequest, 'read');
     expect(separateRoute.allowed).toBe(true);
   });
 });
