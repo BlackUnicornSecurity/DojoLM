@@ -16,6 +16,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { cn, formatDate } from '@/lib/utils'
 import { FileText, Filter, RefreshCw, Clock, Search } from 'lucide-react'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/error-state'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 
 // --- Types ---
@@ -203,17 +204,13 @@ export function AuditTrail({ className }: AuditTrailProps) {
   // --- Error ---
   if (error) {
     return (
-      <div className={cn('p-4 rounded-lg bg-red-50 dark:bg-red-900/20', className)} role="alert">
-        <p className="text-sm text-red-700 dark:text-red-400">
-          Error loading audit trail: {error}
-        </p>
-        <button
-          onClick={fetchAuditLog}
-          className="mt-2 text-sm text-[var(--dojo-primary)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bu-electric)] rounded"
-        >
-          Retry
-        </button>
-      </div>
+      <ErrorState
+        title="Error loading audit trail"
+        message="We couldn't load the audit log."
+        error={error}
+        onRetry={fetchAuditLog}
+        className={className}
+      />
     )
   }
 

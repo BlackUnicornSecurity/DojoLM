@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { Key, Eye, EyeOff, Trash2, CheckCircle, XCircle, Loader2, Plus, RefreshCw } from 'lucide-react'
 import { LLM_PROVIDERS, type LLMProvider } from '@/lib/llm-types'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { ErrorState } from '@/components/ui/error-state'
 
 interface ProviderRow {
   id: string
@@ -158,10 +159,12 @@ export function ApiKeyManager() {
       </div>
 
       {error && (
-        <div role="alert" className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-          <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-          {error}
-        </div>
+        <ErrorState
+          variant="inline"
+          title="API key error"
+          error={error}
+          onRetry={fetchProviders}
+        />
       )}
 
       {showAddForm && (

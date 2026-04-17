@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { ErrorState } from '@/components/ui/error-state'
 
 // --- Types ---
 
@@ -179,7 +180,9 @@ export default function ComplianceDashboard() {
   const [error, setError] = useState<string | null>(null)
   const [expandedFramework, setExpandedFramework] = useState<string | null>(null)
 
-  useEffect(() => {
+  const fetchCompliance = useCallback(() => {
+    setLoading(true)
+    setError(null)
     fetchWithAuth('/api/compliance')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch compliance data')
@@ -189,6 +192,8 @@ export default function ComplianceDashboard() {
       .catch(err => setError(err instanceof Error ? err.message : 'An unknown error occurred'))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => { fetchCompliance() }, [fetchCompliance])
 
   const toggleFramework = useCallback((id: string) => {
     setExpandedFramework(prev => prev === id ? null : id)
@@ -205,9 +210,12 @@ export default function ComplianceDashboard() {
 
   if (error || !data) {
     return (
-      <div className="p-4 bg-[var(--status-block)]/10 rounded-lg" role="alert">
-        <p className="text-[var(--status-block)]">Error loading compliance data: {error}</p>
-      </div>
+      <ErrorState
+        title="Error loading compliance data"
+        message="We couldn't load your compliance coverage."
+        error={error}
+        onRetry={fetchCompliance}
+      />
     )
   }
 

@@ -12,6 +12,20 @@ import { test, expect } from '@playwright/test';
 
 const VISUAL_TIMEOUT = 45000;
 
+/**
+ * Per-module max-diff thresholds. Tighter for static shells (login, dashboard
+ * sidebar); looser for data-heavy pages where live counts / timestamps cause
+ * legitimate pixel drift between runs.
+ */
+const DIFF_RATIO = {
+  // Static — ~5%: login form, dashboard shell
+  static: 0.05,
+  // Moderate — ~8%: scanner, guard, buki, atemi lab (some dynamic content)
+  moderate: 0.08,
+  // Dynamic — ~10%: admin (live counts), bushido book (live badges), model lab
+  dynamic: 0.10,
+} as const;
+
 /** Wait for page to be fully painted (no pending network, animations settled) */
 async function waitForStable(page: import('@playwright/test').Page) {
   // Use domcontentloaded + extra settle time instead of networkidle which can hang on long-poll endpoints
@@ -26,7 +40,7 @@ test.describe('Visual Regression — Critical Pages', () => {
     await expect(sidebar).toBeVisible({ timeout: 15000 });
     await waitForStable(page);
     await expect(page).toHaveScreenshot('dashboard.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.static,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -36,7 +50,7 @@ test.describe('Visual Regression — Critical Pages', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1500);
     await expect(page).toHaveScreenshot('login.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.static,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -58,7 +72,7 @@ test.describe('Visual Regression — Module Screens', () => {
   test('Haiku Scanner module', async ({ page }) => {
     await navigateToModule(page, 'Haiku Scanner', /Scan|Scanner/i);
     await expect(page).toHaveScreenshot('scanner.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.moderate,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -66,27 +80,27 @@ test.describe('Visual Regression — Module Screens', () => {
   test('Hattori Guard module', async ({ page }) => {
     await navigateToModule(page, 'Hattori Guard', /Guard|Protection/i);
     await expect(page).toHaveScreenshot('guard.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.moderate,
       timeout: VISUAL_TIMEOUT,
     });
   });
 
   test('Buki module', async ({ page }) => {
     // Armory absorbed into Buki (2026-04-13 Testing UX Consolidation).
-    // Baseline file kept as armory.png for now — rename tracked in TI-007.
+    // Baseline renamed from armory.png → buki.png 2026-04-16 (TI-007 closed).
     await navigateToModule(page, 'Buki', /Payload Lab|Buki|Fixtures/i);
-    await expect(page).toHaveScreenshot('armory.png', {
-      maxDiffPixelRatio: 0.15,
+    await expect(page).toHaveScreenshot('buki.png', {
+      maxDiffPixelRatio: DIFF_RATIO.moderate,
       timeout: VISUAL_TIMEOUT,
     });
   });
 
   test('Model Lab module', async ({ page }) => {
     // LLM Dashboard renamed to Model Lab (Train-2 PR-4b.6, 2026-04-09).
-    // Baseline file kept as llm-dashboard.png for now — rename tracked in TI-007.
+    // Baseline renamed from llm-dashboard.png → model-lab.png 2026-04-16 (TI-007 closed).
     await navigateToModule(page, 'Model Lab', /Model Lab|Models/i);
-    await expect(page).toHaveScreenshot('llm-dashboard.png', {
-      maxDiffPixelRatio: 0.15,
+    await expect(page).toHaveScreenshot('model-lab.png', {
+      maxDiffPixelRatio: DIFF_RATIO.dynamic,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -94,7 +108,7 @@ test.describe('Visual Regression — Module Screens', () => {
   test('Atemi Lab module', async ({ page }) => {
     await navigateToModule(page, 'Atemi Lab', /Atemi|Adversarial/i);
     await expect(page).toHaveScreenshot('atemi-lab.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.moderate,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -102,7 +116,7 @@ test.describe('Visual Regression — Module Screens', () => {
   test('Bushido Book module', async ({ page }) => {
     await navigateToModule(page, 'Bushido Book', /Bushido|Compliance/i, 40000);
     await expect(page).toHaveScreenshot('compliance.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.dynamic,
       timeout: VISUAL_TIMEOUT,
     });
   });
@@ -110,7 +124,7 @@ test.describe('Visual Regression — Module Screens', () => {
   test('Admin module', async ({ page }) => {
     await navigateToModule(page, 'Admin', /Admin|Settings/i);
     await expect(page).toHaveScreenshot('admin.png', {
-      maxDiffPixelRatio: 0.15,
+      maxDiffPixelRatio: DIFF_RATIO.dynamic,
       timeout: VISUAL_TIMEOUT,
     });
   });

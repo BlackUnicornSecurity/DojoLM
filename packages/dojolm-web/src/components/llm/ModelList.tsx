@@ -16,7 +16,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Pencil, Trash2, TestTube, Check, X, RefreshCw, Brain } from 'lucide-react';
+import { ErrorState } from '@/components/ui/error-state';
+import { Plus, Pencil, Trash2, TestTube, Check, X, Brain } from 'lucide-react';
 import { ModelForm } from './ModelForm';
 
 /**
@@ -98,15 +99,12 @@ export function ModelList() {
 
   if (error) {
     return (
-      <Card className="border-red-500/20 bg-red-500/10">
-        <CardContent className="p-4">
-          <p className="text-red-500">Error loading models: {error}</p>
-          <Button onClick={refresh} variant="outline" className="mt-4">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
-        </CardContent>
-      </Card>
+      <ErrorState
+        title="Error loading models"
+        message="We couldn't load your model configurations."
+        error={error}
+        onRetry={refresh}
+      />
     );
   }
 

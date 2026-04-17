@@ -10,9 +10,10 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ErrorState } from '@/components/ui/error-state'
 import { Trophy, Shield, Target, AlertTriangle, Loader2 } from 'lucide-react'
 
 interface ScoreEntry {
@@ -37,8 +38,10 @@ export function Scoreboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  useEffect(() => {
+  const fetchScoreboard = useCallback(() => {
     const controller = new AbortController()
+    setLoading(true)
+    setError(false)
     async function load() {
       try {
         const res = await fetchWithAuth('/api/llm/summary', { signal: controller.signal })
@@ -67,6 +70,8 @@ export function Scoreboard() {
               topProvider: entries[0].provider,
             })
           }
+        } else {
+          setError(true)
         }
       } catch {
         if (!controller.signal.aborted) setError(true)
@@ -77,6 +82,11 @@ export function Scoreboard() {
     load()
     return () => controller.abort()
   }, [])
+
+  useEffect(() => {
+    const cleanup = fetchScoreboard()
+    return cleanup
+  }, [fetchScoreboard])
 
   if (loading) {
     return (
@@ -102,11 +112,11 @@ export function Scoreboard() {
       )}
 
       {error ? (
-        <Card>
-          <CardContent className="p-6 text-center text-sm text-destructive" role="alert">
-            Failed to load scoreboard data. Check your connection and try again.
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Failed to load scoreboard data"
+          message="Check your connection and try again."
+          onRetry={fetchScoreboard}
+        />
       ) : scores.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-center text-sm text-muted-foreground">

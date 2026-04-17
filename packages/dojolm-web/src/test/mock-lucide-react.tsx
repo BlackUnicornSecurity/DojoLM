@@ -85,7 +85,7 @@ export function mockLucideIcons(
       'Mail', 'Maximize2', 'Medal', 'Menu', 'Minus', 'Monitor',
       'MoreHorizontal', 'MoreVertical', 'MousePointer',
       'Network',
-      'Package', 'Pause', 'Pencil', 'PenTool', 'Play', 'Plus', 'Power',
+      'Package', 'Pause', 'Pencil', 'PenTool', 'Play', 'Plug', 'Plus', 'Power',
       'Radar', 'Radio', 'RefreshCw', 'RotateCcw', 'Rss',
       'Save', 'Scan', 'ScanLine', 'ScrollText', 'Search', 'SearchX', 'Send', 'Settings',
       'Settings2', 'Share', 'Shield', 'ShieldAlert', 'ShieldCheck', 'ShieldHalf',

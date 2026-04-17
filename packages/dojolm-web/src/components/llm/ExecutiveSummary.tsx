@@ -10,12 +10,13 @@
 
 'use client';
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorState } from '@/components/ui/error-state';
 import {
   Shield, ShieldAlert, ShieldCheck, ShieldX,
   AlertTriangle, TrendingUp, Lightbulb,
@@ -71,11 +72,12 @@ export function ExecutiveSummary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadSummary = useCallback(() => {
     const controller = new AbortController();
-    const loadSummary = async () => {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
+
+    (async () => {
       try {
         const response = await fetchWithAuth('/api/llm/summary', { signal: controller.signal });
         if (!response.ok) {
@@ -95,11 +97,15 @@ export function ExecutiveSummary() {
       } finally {
         setLoading(false);
       }
-    };
+    })();
 
-    loadSummary();
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    const cleanup = loadSummary();
+    return cleanup;
+  }, [loadSummary]);
 
   if (loading) {
     return (
@@ -115,12 +121,11 @@ export function ExecutiveSummary() {
 
   if (error) {
     return (
-      <Card className="border-red-500/20">
-        <CardContent className="p-4 text-center">
-          <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-red-500" aria-hidden="true" />
-          <p className="text-red-500">{error}</p>
-        </CardContent>
-      </Card>
+      <ErrorState
+        title="Unable to load executive summary"
+        error={error}
+        onRetry={loadSummary}
+      />
     );
   }
 

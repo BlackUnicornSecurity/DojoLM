@@ -72,6 +72,22 @@ vi.mock('@/components/ui/tabs', () => ({
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
   CardContent: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
+  CardHeader: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
+  CardTitle: ({ children, className }: { children: ReactNode; className?: string }) => <h3 className={className}>{children}</h3>,
+  CardDescription: ({ children, className }: { children: ReactNode; className?: string }) => <p className={className}>{children}</p>,
+  CardFooter: ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>,
+}))
+
+vi.mock('@/components/ui/error-state', () => ({
+  ErrorState: ({ title, message, error, onRetry }: { title?: string; message?: string; error?: unknown; onRetry?: () => void }) => (
+    <div role="alert" data-testid="error-state">
+      {title && <p>{title}</p>}
+      {message && <p>{message}</p>}
+      {typeof error === 'string' && error && <p>{error}</p>}
+      {error instanceof Error && <p>{error.message}</p>}
+      {onRetry && <button onClick={onRetry}>Retry</button>}
+    </div>
+  ),
 }))
 
 vi.mock('@/components/ui/button', () => ({
@@ -106,6 +122,14 @@ vi.mock('../compliance/ComplianceExport', () => ({
   ComplianceExport: ({ frameworkData }: { frameworkData: { name: string } | null }) => (
     <div data-testid="compliance-export">{frameworkData?.name ?? 'No framework'}</div>
   ),
+}))
+
+// P1-2: mock the LLM barrel used by ComplianceCenter's lazy Insights tab so that
+// the lazy-loaded Leaderboard / AnalyticsWorkspace don't pull their real deps
+// (which require a full card-component surface that tests don't stub).
+vi.mock('@/components/llm', () => ({
+  Leaderboard: () => <div data-testid="leaderboard-stub">Leaderboard</div>,
+  AnalyticsWorkspace: () => <div data-testid="analytics-workspace-stub">Analytics Workspace</div>,
 }))
 
 vi.mock('@/components/coverage', () => ({

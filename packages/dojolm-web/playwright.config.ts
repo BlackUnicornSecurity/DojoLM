@@ -13,9 +13,15 @@
  */
 
 import { defineConfig, devices } from '@playwright/test';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 delete process.env.NO_COLOR;
 delete process.env.FORCE_COLOR;
+
+// __dirname-anchored so `storageState` resolves correctly whether Playwright
+// is invoked from packages/dojolm-web or from the monorepo root.
+const AUTH_STATE_PATH = resolve(__dirname, 'e2e/.auth/state.json');
 
 const isProd = process.env.E2E_TARGET === 'prod';
 const includeMobileProject =
@@ -56,9 +62,7 @@ export default defineConfig({
     ignoreHTTPSErrors: isProd,
     // Use storageState saved by global-setup (logged in as E2E_ADMIN_USERNAME).
     // The login spec itself ignores this in its own beforeEach if needed.
-    storageState: require('node:fs').existsSync('./e2e/.auth/state.json')
-      ? './e2e/.auth/state.json'
-      : undefined,
+    storageState: existsSync(AUTH_STATE_PATH) ? AUTH_STATE_PATH : undefined,
   },
   projects: [
     {

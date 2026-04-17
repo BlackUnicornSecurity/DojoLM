@@ -10,7 +10,7 @@
  * - GeneralSettings sub-component (line 116)
  */
 
-import { useCallback, useState, lazy, Suspense } from 'react'
+import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PageToolbar } from '@/components/layout/PageToolbar'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -54,21 +54,47 @@ const ADMIN_TABS = [
 type AdminTabId = typeof ADMIN_TABS[number]['id']
 
 const PLATFORM_MODULES = [
-  { name: 'Haiku Scanner', alias: 'Scanning', desc: 'Text and multimodal content analysis' },
-  { name: 'LLM Jutsu', alias: 'Model Testing', desc: 'Model security testing and benchmarks' },
-  { name: 'Atemi Lab', alias: 'Adversarial Testing', desc: 'Tool and MCP attack simulation' },
+  { name: 'Haiku Scanner', alias: 'Scanning', desc: 'Text and multimodal content analysis (includes Deep Scan / Shingan trust-boundary view)' },
+  { name: 'Model Lab', alias: 'Model Testing', desc: 'Model security testing, benchmarks, and Jutsu workflows' },
+  { name: 'Atemi Lab', alias: 'Adversarial Testing', desc: 'Attack Tools, Playbooks, Campaigns, Arena, and Test Cases' },
+  { name: 'Battle Arena', alias: 'Adversarial Matches', desc: 'Multi-agent adversarial matches with leaderboards' },
   { name: 'Hattori Guard', alias: 'Protection', desc: 'Input and output protection controls' },
   { name: 'Bushido Book', alias: 'Compliance', desc: 'Framework mapping, evidence, and audit views' },
   { name: 'Amaterasu DNA', alias: 'Threat Intelligence', desc: 'Attack lineage and clustering' },
-  { name: 'The Kumite', alias: 'Strategic Hub', desc: 'Arena, Mitsuke, SAGE, and DNA workflows' },
+  { name: 'Kagami', alias: 'Mirror Testing', desc: 'Behavioral comparison across model versions' },
+  { name: 'Mitsuke', alias: 'Threat Feed', desc: 'Threat indicators and alert triage' },
   { name: 'Sengoku', alias: 'Red Teaming', desc: 'Continuous campaign execution (includes Temporal workflows)' },
   { name: 'Kotoba', alias: 'Prompt Hardening', desc: 'Prompt optimization and scoring' },
   { name: 'Ronin Hub', alias: 'Bug Bounty', desc: 'Research and submission tracking' },
-  { name: 'Armory', alias: 'Fixture Library', desc: 'Fixtures, payloads, and comparisons' },
+  { name: 'Buki', alias: 'Payload Lab', desc: 'Fixtures, payloads, generator, and fuzzer (formerly Armory)' },
 ] as const
+
+/**
+ * VIS-09: Other components can deep-link into an admin sub-tab by writing the
+ * tab id to sessionStorage under this key before navigating to #admin.
+ * Only valid AdminTabId values are honored — anything else is ignored.
+ */
+const ADMIN_DEEP_LINK_KEY = 'admin-initial-tab'
+const VALID_ADMIN_TABS = new Set<string>(ADMIN_TABS.map(t => t.id))
 
 export function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTabId>('general')
+
+  // VIS-09: pick up a one-shot deep-link hint set by other modules (e.g. Sensei
+  // "No models — configure in Admin → Providers" CTA). The hint is read once
+  // on mount and immediately cleared so back-navigation doesn't re-trigger it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const hint = window.sessionStorage.getItem(ADMIN_DEEP_LINK_KEY)
+      if (hint && VALID_ADMIN_TABS.has(hint)) {
+        setActiveTab(hint as AdminTabId)
+      }
+      window.sessionStorage.removeItem(ADMIN_DEEP_LINK_KEY)
+    } catch {
+      // sessionStorage unavailable (Safari private mode, tests) — ignore
+    }
+  }, [])
 
   const handleRunTests = useCallback(async (filter?: string): Promise<TestSuiteResult> => {
     const response = await fetchWithAuth('/api/tests', {

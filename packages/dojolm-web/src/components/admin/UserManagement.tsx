@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { ErrorState } from '@/components/ui/error-state'
 import { UserPlus, Shield, ShieldCheck, Eye, UserX, UserCheck, Loader2 } from 'lucide-react'
 
 interface SafeUser {
@@ -81,7 +82,12 @@ export function UserManagement() {
       </div>
 
       {error && (
-        <p className="text-sm text-destructive" role="alert">{error}</p>
+        <ErrorState
+          variant="inline"
+          title="Failed to load users"
+          message="Check your connection and try again."
+          onRetry={fetchUsers}
+        />
       )}
 
       {showCreate && (

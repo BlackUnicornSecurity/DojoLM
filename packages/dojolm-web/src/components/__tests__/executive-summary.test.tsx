@@ -48,6 +48,18 @@ vi.mock('@/components/ui/skeleton', () => ({
   Skeleton: ({ className }: { className?: string }) => <div data-testid="skeleton" className={className} />,
 }))
 
+vi.mock('@/components/ui/error-state', () => ({
+  ErrorState: ({ title, message, error, onRetry }: { title?: string; message?: string; error?: unknown; onRetry?: () => void }) => (
+    <div role="alert" data-testid="error-state">
+      {title && <p>{title}</p>}
+      {message && <p>{message}</p>}
+      {typeof error === 'string' && error && <p>{error}</p>}
+      {error instanceof Error && <p>{error.message}</p>}
+      {onRetry && <button onClick={onRetry}>Retry</button>}
+    </div>
+  ),
+}))
+
 vi.mock('lucide-react', () => ({
   Shield: () => <span data-testid="icon-shield" />,
   ShieldAlert: () => <span data-testid="icon-shield-alert" />,

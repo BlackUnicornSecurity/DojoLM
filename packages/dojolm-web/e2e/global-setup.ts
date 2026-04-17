@@ -7,7 +7,7 @@
  * If creds are not set, exits cleanly (specs that don't need auth still run).
  */
 
-import { chromium, request, type FullConfig } from '@playwright/test';
+import { request, type FullConfig } from '@playwright/test';
 import path from 'node:path';
 import fs from 'node:fs';
 

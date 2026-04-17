@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useModelContext } from '@/lib/contexts';
 import { LLM_PROVIDERS } from '@/lib/llm-types';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
+import { ErrorState } from '@/components/ui/error-state';
 
 interface CustomConfig {
   name: string;
@@ -71,13 +72,12 @@ export function CustomProviderBuilder() {
   const [saving, setSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
-  useEffect(() => {
+  const loadPresets = useCallback(() => {
     let cancelled = false;
+    setLoadingPresets(true);
+    setPresetError(null);
 
-    async function loadPresets() {
-      setLoadingPresets(true);
-      setPresetError(null);
-
+    (async () => {
       try {
         const response = await fetch('/api/llm/presets');
         if (!response.ok) {
@@ -97,14 +97,17 @@ export function CustomProviderBuilder() {
           setLoadingPresets(false);
         }
       }
-    }
-
-    void loadPresets();
+    })();
 
     return () => {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const cleanup = loadPresets();
+    return cleanup;
+  }, [loadPresets]);
 
   const presetBackedProviders = useMemo(
     () =>
@@ -234,9 +237,14 @@ export function CustomProviderBuilder() {
           The preset library covers non-native OpenAI-compatible providers from the shared `bu-tpi` registry.
         </p>
         {presetError && (
-          <p className="mt-1 text-xs text-red-500" role="alert">
-            {presetError}
-          </p>
+          <div className="mt-2">
+            <ErrorState
+              variant="inline"
+              title="Unable to load provider presets"
+              error={presetError}
+              onRetry={loadPresets}
+            />
+          </div>
         )}
       </div>
 

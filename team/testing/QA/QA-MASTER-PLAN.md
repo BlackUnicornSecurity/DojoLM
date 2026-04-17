@@ -274,8 +274,8 @@ Apply the following minimum QA set when the change touches shared visual languag
 - `BUSH-001 | Framework selection and grouping`
   Steps: select frameworks from the left-side list, switch grouping between tier and category, refresh, and navigate across sub-views.
   Expected outcome: the chosen framework stays in context across sub-views, grouping changes only the presentation layer, and no framework disappears due to a stale filter or hidden legacy identifier.
-- `BUSH-002 | Sub-view matrix`
-  Steps: cover `Overview`, `Coverage`, `Gap Matrix`, `Audit Trail`, `Checklists`, `Navigator`, and `Framework Compliance`.
+- `BUSH-002 | Sub-view matrix (2026-04-16 REVISED — 4 tabs)`
+  Steps: cover `Evidence`, `Coverage`, `Results`, and `Audit`. The live `ComplianceCenter.tsx` consolidated the former 7-tab layout (Overview/Coverage/Gap Matrix/Audit Trail/Checklists/Navigator/Framework Compliance) into 4 top-level tabs. Gap Matrix and Navigator now live inside the Coverage composite.
   Expected outcome: every sub-view renders the selected framework context, no sub-view loses the active selection on tab switch, and every drill-down target resolves to the correct framework evidence.
 - `BUSH-003 | Framework compliance and heatmap flows`
   Steps: inspect the framework-specific testing or heatmap surface, drill into highlighted controls, and return to the prior context.
@@ -295,16 +295,17 @@ Apply the following minimum QA set when the change touches shared visual languag
 - `ATEMI-002 | Attack-mode matrix`
   Steps: create explicit stories for `Passive`, `Basic`, `Advanced`, and `Aggressive`, then inspect tab behavior and tool availability in each mode.
   Expected outcome: the UI exposes only the tools allowed by the selected mode, escalated modes unlock additional capabilities intentionally, and no restricted tool remains clickable in a lower mode.
-- `ATEMI-003 | Tab matrix`
-  Steps: cover `Attack Tools`, `Skills`, `MCP`, `Protocol Fuzz`, and `WebMCP`.
-  Expected outcome: each tab is reachable, `Protocol Fuzz` is presented as planned or placeholder work rather than ready execution, and state changes in one tab do not corrupt the next tab's context.
+- `ATEMI-003 | Tab matrix (2026-04-16 REVISED — 5 tabs)`
+  Steps: cover `Attack Tools`, `Playbooks`, `Campaigns`, `Arena`, and `Test Cases`.
+  Expected outcome: each tab is reachable, content matches the tab label, and state changes in one tab do not corrupt the next tab's context.
+  Note: 2026-04-13 Train-2 PR-4b.5/PR-4b.6 restructured the former 9-tab layout into these 5 tabs. Playbooks subsumes Skills / MCP / Protocol Fuzz / WebMCP. Campaigns embeds Sengoku. Arena embeds Battle Arena. Test Cases hosts LLM test execution (relocated from Model Lab).
 - `ATEMI-004 | Attack tools catalog`
   Steps: create child stories for every live attack tool entry: `capability-spoofing`, `tool-poisoning`, `uri-traversal`, `sampling-loop`, `name-typosquatting`, `cross-server-leak`, `notification-flood`, `prompt-injection`, `vector-db-poisoning`, `browser-exploitation`, `api-exploitation`, `filesystem-exploitation`, `model-exploitation`, `email-exploitation`, `code-repository-poisoning`, `message-queue-exploitation`, and `search-poisoning`.
   Expected outcome: each tool card opens the correct workflow, prerequisite warnings are truthful, execution produces a result or planned-state message appropriate to that tool, and no tool reports success without artifacts or logs.
-- `ATEMI-005 | Skills and MCP scenario coverage`
-  Steps: execute each live reusable skill, inspect result routing, and review protocol-level MCP scenario readiness content.
-  Expected outcome: skills produce reusable outputs tied to the selected context, MCP views expose the intended protocol information, and result routing does not strand users on ambiguous intermediate states.
-- `ATEMI-006 | WebMCP scenario matrix`
+- `ATEMI-005 | Playbooks scenario coverage (2026-04-16 REVISED)`
+  Steps: cover each live playbook chain (Custom, Protocol Fuzz, Agentic, WebMCP) inside the Playbooks tab, inspect result routing, and review protocol-level readiness content.
+  Expected outcome: playbooks produce reusable outputs tied to the selected context, WebMCP/protocol views expose the intended information, and result routing does not strand users on ambiguous intermediate states.
+- `ATEMI-006 | WebMCP scenario matrix (within Playbooks tab)`
   Steps: cover target URL validation, transport selection, each WebMCP category `web-poison`, `browser-tool`, `oauth`, `cors`, `content-type`, `chunked`, and `ws-hijack`, plus consent cancel and consent confirm paths.
   Expected outcome: invalid or unsafe targets are rejected clearly, consent gates block execution until confirmed, category selection changes the scenario payload truthfully, and simulated runs emit visible results or logs rather than blank success states.
 
@@ -387,9 +388,10 @@ Apply the following minimum QA set when the change touches shared visual languag
 
 ### Admin
 
-- `ADMIN-001 | Top-level tab matrix`
-  Steps: cover `General`, `Users`, `Scoreboard`, `API Keys`, `Haiku Scanner & Guard`, `System Health`, `Export`, `Admin Settings`, and `Validation`.
+- `ADMIN-001 | Top-level tab matrix (2026-04-16 REVISED — 12 tabs)`
+  Steps: cover `General`, `Users`, `Scoreboard`, `API Keys`, `Scanner & Guard`, `System Health`, `Export`, `Settings`, `Validation`, `Providers`, `Plugins`, and `Test Runner`.
   Expected outcome: every tab is reachable, tab labels match the live navigation vocabulary, and legacy labels inside the page are clearly subordinate to the current source-of-truth naming.
+  Note: Reconciliation on 2026-04-16 added Providers / Plugins / Test Runner (production-ready); renamed `Haiku Scanner & Guard` → `Scanner & Guard`; renamed `Admin Settings` → `Settings`. Live tab source: `AdminPanel.tsx:40-51`.
 - `ADMIN-002 | General, settings, and documentation truthfulness`
   Steps: inspect summary content, doc links, legacy naming blocks, and administrative settings controls.
   Expected outcome: historical labels are presented as historical, live links point to current docs, and settings controls do not imply side effects they do not actually perform.
@@ -402,7 +404,7 @@ Apply the following minimum QA set when the change touches shared visual languag
 - `ADMIN-005 | API key and provider lifecycle`
   Steps: cover create, update, credential entry, base URL entry, connection test, save, and remove flows for provider-backed models.
   Expected outcome: valid connections become visible to `LLM Dashboard`, failed tests explain what failed, and removing a provider does not leave stale model references in execution views.
-- `ADMIN-006 | Haiku Scanner and Guard operational settings`
+- `ADMIN-006 | Scanner and Guard operational settings (2026-04-16 renamed from "Haiku Scanner and Guard")`
   Steps: cover scanner engine toggles, reset filters, guard enable or disable, guard mode selection `Shinobi`, `Samurai`, `Sensei`, `Hattori`, and threshold selection `WARNING+` and `CRITICAL only`.
   Expected outcome: operational settings propagate to Scanner and Guard surfaces, reset returns the documented default state, and mode or threshold labels never drift from the live enforcement state.
 - `ADMIN-007 | System Health`
@@ -419,7 +421,16 @@ Apply the following minimum QA set when the change touches shared visual languag
   Expected outcome: each validation module returns module-specific evidence rather than a generic success shell, history rows reopen the correct run, and the traceability chain maps back to the selected module set.
 - `ADMIN-011 | Validation export and calibration`
   Steps: export validation reports as `JSON`, `CSV`, and `Markdown`, inspect `Calibration Status`, and cover `Recalibrate All`.
-  Expected outcome: each export format produces the requested artifact, calibration status reflects the latest known state, and recalibration updates status or reports failure without leaving stale “valid” labels behind.
+  Expected outcome: each export format produces the requested artifact, calibration status reflects the latest known state, and recalibration updates status or reports failure without leaving stale "valid" labels behind.
+- `ADMIN-012 | Providers lifecycle (2026-04-16 NEW)`
+  Steps: cover provider listing, add provider, credential entry, base URL entry, connection test, save, edit, and remove flows.
+  Expected outcome: valid providers become available for model creation in Model Lab, failed tests explain what failed, and removal does not leave orphaned model references.
+- `ADMIN-013 | Plugins management (2026-04-16 NEW)`
+  Steps: cover plugin listing, enable/disable toggles, configuration, and dependency checks.
+  Expected outcome: plugin state changes propagate to affected modules, disabled plugins do not appear in module workflows, and configuration changes are validated before save.
+- `ADMIN-014 | Test Runner (2026-04-16 NEW)`
+  Steps: cover test suite listing, manual run trigger, result viewing, history, and export controls.
+  Expected outcome: test runs produce actual results, history rows reopen the correct run, and export creates the requested artefact.
 
 ### Sensei (AI Assistant)
 

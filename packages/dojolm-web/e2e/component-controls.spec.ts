@@ -221,7 +221,7 @@ test.describe('Component Controls', () => {
 
     test('CampaignGraphBuilder: shows template buttons', async ({ page }) => {
       // Graph builder appears when creating a new campaign
-      const newCampaignBtn = page.getByRole('button', { name: /New Campaign/i });
+      const newCampaignBtn = page.getByRole('button', { name: /Start Campaign/i });
       const isVisible = await newCampaignBtn.isVisible().catch(() => false);
       if (isVisible) {
         await newCampaignBtn.click();
@@ -231,7 +231,7 @@ test.describe('Component Controls', () => {
     });
 
     test('SengokuCampaignBuilder: renders builder UI', async ({ page }) => {
-      const newCampaignBtn = page.getByRole('button', { name: /New Campaign/i });
+      const newCampaignBtn = page.getByRole('button', { name: /Start Campaign/i });
       const isVisible = await newCampaignBtn.isVisible().catch(() => false);
       if (isVisible) {
         await newCampaignBtn.click();

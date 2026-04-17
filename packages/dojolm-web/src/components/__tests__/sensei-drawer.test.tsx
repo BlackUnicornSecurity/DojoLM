@@ -17,6 +17,7 @@ vi.mock('lucide-react', () => ({
   X: (props: Record<string, unknown>) => <svg data-testid="x-icon" {...props} />,
   Trash2: (props: Record<string, unknown>) => <svg data-testid="trash-icon" {...props} />,
   ChevronDown: (props: Record<string, unknown>) => <svg data-testid="chevron-down-icon" {...props} />,
+  Plug: (props: Record<string, unknown>) => <svg data-testid="plug-icon" {...props} />,
 }))
 
 vi.mock('@/lib/utils', () => ({

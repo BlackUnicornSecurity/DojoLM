@@ -46,6 +46,7 @@ import { FrameworkNavigator } from './FrameworkNavigator'
 import { ComplianceExport } from './ComplianceExport'
 import { CoverageMap } from '@/components/coverage'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorState } from '@/components/ui/error-state'
 import { EnsoGauge } from '@/components/ui/EnsoGauge'
 import { COVERAGE_DATA, OWASP_LLM_COVERAGE_DATA } from '@/lib/constants'
 import { baissControlsToCoverageEntries } from '@/lib/data/baiss-framework'
@@ -280,7 +281,7 @@ export default function ComplianceCenter() {
     setActiveTab('adversarial')
   }, [setActiveTab])
 
-  useEffect(() => {
+  const fetchCompliance = useCallback(() => {
     let cancelled = false
     setLoading(true)
     setError(null)
@@ -361,6 +362,11 @@ export default function ComplianceCenter() {
     }
   }, [])
 
+  useEffect(() => {
+    const cleanup = fetchCompliance()
+    return cleanup
+  }, [fetchCompliance])
+
   const handleFrameworkSelect = useCallback((id: string) => {
     setSelectedFramework(id)
   }, [])
@@ -420,11 +426,12 @@ export default function ComplianceCenter() {
   // --- Error state ---
   if (error || !data) {
     return (
-      <div className="p-4 rounded-lg bg-[var(--danger)]/10" role="alert">
-        <p className="text-[var(--danger)]">
-          Error loading compliance data: {error}
-        </p>
-      </div>
+      <ErrorState
+        title="Error loading compliance data"
+        message="We couldn't load your compliance frameworks."
+        error={error}
+        onRetry={fetchCompliance}
+      />
     )
   }
 

@@ -36,6 +36,7 @@ import {
   Link2,
 } from 'lucide-react'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
+import { ErrorState } from '@/components/ui/error-state'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -902,9 +903,13 @@ export function ValidationManager() {
         </CardHeader>
         <CardContent>
           {historyError && (
-            <div role="alert" className="flex items-center gap-2 p-3 mb-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
-              <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
-              {historyError}
+            <div className="mb-3">
+              <ErrorState
+                variant="inline"
+                title="Run history unavailable"
+                error={historyError}
+                onRetry={() => fetchRunHistory(historyPage)}
+              />
             </div>
           )}
           <div className="overflow-x-auto">
@@ -1098,11 +1103,13 @@ export function ValidationManager() {
                 Loading report...
               </div>
             )}
-            {reportError && (
-              <div role="alert" className="flex items-center gap-2 p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
-                {reportError}
-              </div>
+            {reportError && selectedRunId && (
+              <ErrorState
+                variant="inline"
+                title="Report unavailable"
+                error={reportError}
+                onRetry={() => fetchReport(selectedRunId)}
+              />
             )}
             {reportData && !reportLoading && (
               <>
@@ -1568,12 +1575,13 @@ export function ValidationManager() {
         </CardHeader>
         <CardContent>
           {calibrationError && (
-            <div
-              role="alert"
-              className="flex items-center gap-2 p-3 mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg"
-            >
-              <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
-              {calibrationError}
+            <div className="mb-4">
+              <ErrorState
+                variant="inline"
+                title="Calibration data unavailable"
+                error={calibrationError}
+                onRetry={fetchModules}
+              />
             </div>
           )}
           <div className="overflow-x-auto">

@@ -11,13 +11,16 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, X, Trash2, ChevronDown } from 'lucide-react'
+import { Bot, X, Trash2, ChevronDown, Plug } from 'lucide-react'
 import { useSensei } from '@/hooks/useSensei'
 import { SenseiChat } from './SenseiChat'
 import { SenseiCapabilityPanel } from './SenseiCapabilityPanel'
 import { canAccessProtectedApi } from '@/lib/client-auth-access'
 import { fetchWithAuth } from '@/lib/fetch-with-auth'
 import type { NavId } from '@/lib/constants'
+
+/** VIS-09: must match ADMIN_DEEP_LINK_KEY in AdminPanel.tsx */
+const ADMIN_DEEP_LINK_KEY = 'admin-initial-tab'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -82,6 +85,23 @@ export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, close])
+
+  /**
+   * VIS-09: "Configure Providers" CTA. Deep-links into Admin → Providers.
+   * Closes the drawer and writes a one-shot sub-tab hint so AdminPanel can
+   * pre-select the 'providers' tab on mount.
+   */
+  const handleConfigureProviders = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.sessionStorage.setItem(ADMIN_DEEP_LINK_KEY, 'providers')
+      } catch {
+        // sessionStorage unavailable — fallback still lands the user on admin
+      }
+    }
+    close()
+    onNavigate?.('admin')
+  }, [close, onNavigate])
 
   return (
     <>
@@ -152,6 +172,7 @@ export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
           <SenseiModelPicker
             selectedModelId={selectedModelId}
             onSelect={setSelectedModelId}
+            onConfigureProviders={handleConfigureProviders}
           />
         </div>
 
@@ -198,9 +219,14 @@ export function SenseiDrawer({ activeModule, onNavigate }: SenseiDrawerProps) {
 interface SenseiModelPickerProps {
   readonly selectedModelId: string | null
   readonly onSelect: (modelId: string) => void
+  /**
+   * VIS-09: called when the user clicks the "Configure Providers" CTA shown
+   * in the empty state. Host (SenseiDrawer) handles navigation + drawer close.
+   */
+  readonly onConfigureProviders?: () => void
 }
 
-function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps) {
+function SenseiModelPicker({ selectedModelId, onSelect, onConfigureProviders }: SenseiModelPickerProps) {
   const [models, setModels] = useState<readonly ModelInfo[]>([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isLoadingModels, setIsLoadingModels] = useState(false)
@@ -275,13 +301,12 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
   }, [isDropdownOpen])
 
   const selectedModel = models.find((m) => m.id === selectedModelId)
+  const hasNoModels = !isLoadingModels && models.length === 0
   const displayName = isLoadingModels
     ? 'Loading models...'
     : selectedModel
       ? selectedModel.name
-      : models.length === 0
-        ? 'No models — configure in Admin → Providers'
-        : 'Select a model'
+      : 'Select a model'
 
   // Group models by provider
   const grouped = models.reduce<Record<string, ModelInfo[]>>((acc, m) => {
@@ -290,6 +315,29 @@ function SenseiModelPicker({ selectedModelId, onSelect }: SenseiModelPickerProps
     acc[group].push(m)
     return acc
   }, {})
+
+  // VIS-09: Empty state — show a CTA button that deep-links into Admin → Providers
+  // instead of a plain-text dead-end "No models — configure in Admin → Providers".
+  if (hasNoModels) {
+    return (
+      <div ref={dropdownRef} className="relative">
+        <button
+          type="button"
+          onClick={() => onConfigureProviders?.()}
+          className={cn(
+            'flex items-center gap-2 w-full px-3 py-1.5 rounded-lg text-xs font-medium',
+            'bg-[var(--dojo-primary)]/10 text-[var(--dojo-primary)] border border-[var(--dojo-primary)]/30',
+            'hover:bg-[var(--dojo-primary)]/20 focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+            'motion-safe:transition-colors',
+          )}
+          aria-label="Configure providers in Admin"
+        >
+          <Plug className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+          <span className="truncate">No models — configure providers</span>
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div ref={dropdownRef} className="relative">
