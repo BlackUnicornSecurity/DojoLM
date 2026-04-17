@@ -5,6 +5,10 @@
  * Index:
  * - ToolGroup type + buildGroups (line ~20)
  * - SenseiCapabilityPanel component (line ~55)
+ *
+ * VIS-10 (2026-04-17): Header pips (e.g. "19 / 8 / 4 / 2") now have an accessible
+ * legend via a native `title` tooltip on each number, plus an inline
+ * "Query / Write / Confirm / Navigate" label row that appears under the header.
  */
 
 'use client'
@@ -22,6 +26,7 @@ interface ToolGroup {
   readonly label: string
   readonly colorClass: string
   readonly tools: readonly string[]
+  readonly description: string
 }
 
 function buildGroups(): readonly ToolGroup[] {
@@ -43,10 +48,30 @@ function buildGroups(): readonly ToolGroup[] {
   }
 
   return [
-    { label: 'Query', colorClass: 'text-blue-400', tools: query },
-    { label: 'Write', colorClass: 'text-orange-400', tools: write },
-    { label: 'Confirm', colorClass: 'text-amber-400', tools: confirm },
-    { label: 'Navigate', colorClass: 'text-emerald-400', tools: navigate },
+    {
+      label: 'Query',
+      colorClass: 'text-blue-400',
+      tools: query,
+      description: 'Read-only tools that fetch data (no side effects).',
+    },
+    {
+      label: 'Write',
+      colorClass: 'text-orange-400',
+      tools: write,
+      description: 'Mutating tools that create or modify records.',
+    },
+    {
+      label: 'Confirm',
+      colorClass: 'text-amber-400',
+      tools: confirm,
+      description: 'Tools that require explicit confirmation before running.',
+    },
+    {
+      label: 'Navigate',
+      colorClass: 'text-emerald-400',
+      tools: navigate,
+      description: 'Client-side navigation shortcuts (no server call).',
+    },
   ] as const
 }
 
@@ -69,14 +94,28 @@ export function SenseiCapabilityPanel() {
         className="flex items-center justify-between w-full text-xs text-[var(--text-tertiary)] hover:text-[var(--foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-safe:transition-colors"
         aria-expanded={expanded}
         aria-label="Toggle capability summary"
+        aria-describedby="capability-panel-legend"
+        title={groups
+          .map((g) => `${g.label}: ${g.tools.length} (${g.description})`)
+          .join('\n')}
       >
         <span className="flex items-center gap-1.5">
           <Zap className="w-3 h-3" aria-hidden="true" />
           <span>{totalTools} capabilities</span>
-          <span className="flex items-center gap-1 ml-1" aria-hidden="true">
-            {groups.map((g) => (
-              <span key={g.label} className={cn('font-medium', g.colorClass)}>
-                {g.tools.length}
+          <span
+            className="flex items-center gap-1 ml-1"
+            data-testid="capability-panel-pips"
+          >
+            {groups.map((g, i) => (
+              <span key={g.label} className="flex items-center gap-1">
+                {i > 0 && <span className="text-[var(--text-tertiary)]">/</span>}
+                <span
+                  className={cn('font-medium', g.colorClass)}
+                  title={`${g.label}: ${g.tools.length} — ${g.description}`}
+                  aria-label={`${g.tools.length} ${g.label.toLowerCase()}`}
+                >
+                  {g.tools.length}
+                </span>
               </span>
             ))}
           </span>
@@ -89,6 +128,24 @@ export function SenseiCapabilityPanel() {
           aria-hidden="true"
         />
       </button>
+
+      {/* VIS-10: Inline legend so the pips aren't opaque without expanding.
+          Linked to the toggle via aria-describedby so screen readers announce
+          it alongside the button label. aria-hidden is dropped so the legend
+          is part of the accessibility tree. */}
+      <div
+        id="capability-panel-legend"
+        className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-muted-foreground"
+        data-testid="capability-panel-legend"
+      >
+        {groups.map((g, i) => (
+          <span key={g.label} className="flex items-center gap-1">
+            {i > 0 && <span className="opacity-50">·</span>}
+            <span className={cn('font-medium', g.colorClass)}>{g.label}</span>
+            <span className="font-mono">{g.tools.length}</span>
+          </span>
+        ))}
+      </div>
 
       {expanded && (
         <div className="mt-2 space-y-2" data-testid="capability-panel-expanded">

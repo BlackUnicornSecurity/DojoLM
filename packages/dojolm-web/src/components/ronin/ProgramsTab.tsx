@@ -119,6 +119,38 @@ export function ProgramsTab() {
     })
   }, [programs, debouncedSearch, platformFilter, statusFilter, showSubscribedOnly, subscriptions])
 
+  // VIS-15: filter-option counts reflect the number of programs matching each
+  // platform/status value (pre-select, post-subscribed/search). So the
+  // dropdown shows e.g. "HackerOne (12)" or "Active (8)" instead of "(0)".
+  const platformCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    programs.forEach(p => {
+      if (showSubscribedOnly && !subscriptions.has(p.id)) return
+      if (statusFilter !== 'all' && p.status !== statusFilter) return
+      counts[p.platform] = (counts[p.platform] ?? 0) + 1
+    })
+    return counts
+  }, [programs, statusFilter, showSubscribedOnly, subscriptions])
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    programs.forEach(p => {
+      if (showSubscribedOnly && !subscriptions.has(p.id)) return
+      if (platformFilter !== 'all' && p.platform !== platformFilter) return
+      counts[p.status] = (counts[p.status] ?? 0) + 1
+    })
+    return counts
+  }, [programs, platformFilter, showSubscribedOnly, subscriptions])
+
+  const totalAcrossPlatforms = useMemo(
+    () => Object.values(platformCounts).reduce((a, b) => a + b, 0),
+    [platformCounts],
+  )
+  const totalAcrossStatuses = useMemo(
+    () => Object.values(statusCounts).reduce((a, b) => a + b, 0),
+    [statusCounts],
+  )
+
   return (
     <div className="space-y-4">
       {/* Filters Bar */}
@@ -152,9 +184,11 @@ export function ProgramsTab() {
           )}
           aria-label="Filter by platform"
         >
-          <option value="all">All Platforms</option>
+          <option value="all">All Platforms ({totalAcrossPlatforms})</option>
           {(Object.keys(PLATFORM_META) as BountyPlatform[]).map(p => (
-            <option key={p} value={p}>{PLATFORM_META[p].label}</option>
+            <option key={p} value={p}>
+              {PLATFORM_META[p].label} ({platformCounts[p] ?? 0})
+            </option>
           ))}
         </select>
 
@@ -169,9 +203,11 @@ export function ProgramsTab() {
           )}
           aria-label="Filter by status"
         >
-          <option value="all">All Statuses</option>
+          <option value="all">All Statuses ({totalAcrossStatuses})</option>
           {(Object.keys(STATUS_META) as ProgramStatus[]).map(s => (
-            <option key={s} value={s}>{STATUS_META[s].label}</option>
+            <option key={s} value={s}>
+              {STATUS_META[s].label} ({statusCounts[s] ?? 0})
+            </option>
           ))}
         </select>
 

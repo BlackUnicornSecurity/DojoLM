@@ -12,6 +12,38 @@ test.describe('Widget Controls', () => {
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 15000 });
   });
 
+  /**
+   * Companion smoke test for the file's pervasive `isVisible().catch(() => false)`
+   * pattern. Confirms at least SOME widget CTA/aria-label surface renders —
+   * guards against a silent-regression where every conditional assertion no-ops
+   * because the dashboard itself is broken or rendered zero widgets.
+   *
+   * Default widgets (isDefault:true in DashboardConfigContext.tsx) include:
+   * quick-launch, guard-controls, engine-grid, activity-feed, threat-radar,
+   * kill-count, health-gauge, module-grid. At least one of these must render.
+   */
+  test('dashboard renders at least one default widget (smoke canary)', async ({ page }) => {
+    // Match the Customize-button aria-label which is always present when the
+    // dashboard mounts, plus a selection of default-widget anchors. If this
+    // asserts zero visible elements, the dashboard is broken — and the rest
+    // of this file's conditional assertions are meaningless no-ops.
+    const customizeBtn = page.locator('button[aria-label*="widgets active"]');
+    const quickLaunch = page.getByRole('heading', { name: /Quick Launch/i });
+    const guardControls = page.getByText(/Guard (Active|Off|Mode)/i).first();
+    const activityFeed = page.getByRole('heading', { name: /Recent Activity/i });
+    const moduleGrid = page.getByText(/Haiku Scanner Modules/i);
+
+    const anyVisible = await customizeBtn
+      .or(quickLaunch)
+      .or(guardControls)
+      .or(activityFeed)
+      .or(moduleGrid)
+      .first()
+      .isVisible({ timeout: 10000 })
+      .catch(() => false);
+    expect(anyVisible).toBe(true);
+  });
+
   test.describe('FixtureRoulette', () => {
     // FixtureRoulette is a non-default widget (isDefault: false).
     // It only appears if the user has toggled it on via the Dashboard Customizer.

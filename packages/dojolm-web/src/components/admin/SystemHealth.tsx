@@ -217,22 +217,29 @@ function StatusCard({
 }) {
   return (
     <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-          <span className="text-sm font-semibold text-foreground">{title}</span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <Icon className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+          <span className="text-sm font-semibold text-foreground break-words">{title}</span>
         </div>
         <span
-          className={cn('w-2 h-2 rounded-full', status === 'online' ? 'bg-[var(--status-allow)]' : 'bg-[var(--status-block)]')}
+          className={cn('w-2 h-2 rounded-full shrink-0', status === 'online' ? 'bg-[var(--status-allow)]' : 'bg-[var(--status-block)]')}
           role="status"
           aria-label={`${title}: ${status}`}
         />
       </div>
+      {/* VIS-18: on narrow viewports (≤768px) labels and values stack and wrap
+          via `flex-wrap` + `break-words`, instead of truncating with ellipsis. */}
       <div className="space-y-2">
         {items.map(item => (
-          <div key={item.label} className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">{item.label}</span>
-            <span className="text-foreground font-medium">{item.value}</span>
+          <div
+            key={item.label}
+            className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-xs"
+          >
+            <span className="text-muted-foreground shrink-0">{item.label}</span>
+            <span className="text-foreground font-medium break-words text-right min-w-0 max-w-full">
+              {item.value}
+            </span>
           </div>
         ))}
       </div>

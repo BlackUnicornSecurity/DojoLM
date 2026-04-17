@@ -263,17 +263,20 @@ function DashboardContent({
               <Layers2 className="w-4 h-4" aria-hidden="true" />
               Modules
             </Button>
+            {/* VIS-13: button has visible "Customize" text + "X/Y" badge so the
+                widget-count is discoverable and clicking clearly opens the drawer. */}
             <Button
               ref={triggerRef}
               variant="ghost"
               size="sm"
               onClick={() => setCustomizerOpen(true)}
               aria-label={`Customize Dashboard — ${visibleWidgets.length} of ${WIDGET_CATALOG.length} widgets active`}
+              title={`Open the Customize drawer — ${visibleWidgets.length} of ${WIDGET_CATALOG.length} widgets active`}
             >
               <Settings2 className="w-4 h-4" aria-hidden="true" />
               Customize
-              <span className="ml-1 text-xs opacity-60" aria-hidden="true">
-                {visibleWidgets.length}/{WIDGET_CATALOG.length}
+              <span className="ml-1 text-xs opacity-60">
+                {visibleWidgets.length}/{WIDGET_CATALOG.length} widgets
               </span>
             </Button>
           </div>

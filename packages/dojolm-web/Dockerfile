@@ -4,6 +4,11 @@
 # Build stage
 FROM node:22-alpine AS builder
 
+# VIS-17: Accept build-time metadata so /api/build-info can expose the
+# deployed git SHA and build timestamp in the Admin → General tab.
+ARG BUILD_SHA=unknown
+ARG BUILD_DATE=unknown
+
 WORKDIR /app
 
 # Copy root workspace config
@@ -25,6 +30,12 @@ RUN npm run build --workspace=packages/dojolm-web
 
 # Production stage
 FROM node:22-alpine AS runner
+
+# VIS-17: Re-declare ARGs in the runner stage so they can be promoted to ENV.
+ARG BUILD_SHA=unknown
+ARG BUILD_DATE=unknown
+ENV BUILD_SHA=${BUILD_SHA}
+ENV BUILD_DATE=${BUILD_DATE}
 
 ENV NODE_ENV=production
 

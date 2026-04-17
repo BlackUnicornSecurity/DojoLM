@@ -74,15 +74,17 @@ export function WarriorCardGrid({ warriors }: { warriors: WarriorCardType[] }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Medal className="w-4 h-4 text-[var(--accent-gold)]" aria-hidden="true" />
-            <CardTitle className="text-base">Warriors</CardTitle>
+            {/* VIS-14: UI copy uses "Fighters"; the `warriors` prop name is
+                retained to avoid large cross-file rename churn. */}
+            <CardTitle className="text-base">Fighters</CardTitle>
           </div>
           <span className="text-xs text-muted-foreground">
-            {warriors.length} {warriors.length === 1 ? 'warrior' : 'warriors'}
+            {warriors.length} {warriors.length === 1 ? 'fighter' : 'fighters'}
           </span>
         </div>
 
         {/* Sort pills */}
-        <div className="flex gap-1.5 mt-2" role="radiogroup" aria-label="Sort warriors by">
+        <div className="flex gap-1.5 mt-2" role="radiogroup" aria-label="Sort fighters by">
           {SORT_OPTIONS.map(({ key, label }) => (
             <button
               key={key}
@@ -107,7 +109,7 @@ export function WarriorCardGrid({ warriors }: { warriors: WarriorCardType[] }) {
       <CardContent className="pt-0 space-y-2">
         {sorted.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-6">
-            No warriors yet. Warriors appear after matches are completed.
+            No fighters yet. Fighters appear after matches are completed.
           </p>
         )}
 

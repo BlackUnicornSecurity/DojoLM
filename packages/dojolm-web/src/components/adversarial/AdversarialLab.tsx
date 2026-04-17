@@ -50,6 +50,7 @@ import { AtemiConfig } from './AtemiConfig'
 import { SessionRecorder } from './SessionRecorder'
 import { SessionHistory } from './SessionHistory'
 import { SkillsLibrary } from './SkillsLibrary'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { executeSkill } from '@/lib/adversarial-skill-engine'
 import { useEcosystemEmit } from '@/lib/contexts/EcosystemContext'
 import { LLMModelProvider, LLMExecutionProvider } from '@/lib/contexts'
@@ -259,7 +260,7 @@ const WORKSPACE_SHORTCUTS: AtemiWorkspaceShortcut[] = [
   {
     tab: 'arena',
     title: 'Open Battle Arena',
-    description: 'Run multi-agent adversarial matches with leaderboard rankings and warriors.',
+    description: 'Run multi-agent adversarial matches with leaderboard rankings and fighters.',
     badge: 'Arena',
     icon: Trophy,
   },
@@ -649,28 +650,30 @@ export function AdversarialLab({
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Active Tools</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length}</p>
-            <p className="text-xs text-[var(--text-tertiary)]">of {ATTACK_TOOLS.length} total</p>
+            {/* VIS-20: was text-[var(--text-tertiary)] (#565D6B, 3.3:1) — failed
+                WCAG AA 4.5:1 on the card background. Bumped to muted-foreground. */}
+            <p className="text-xs text-muted-foreground">of {ATTACK_TOOLS.length} total</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">MCP Attacks</p>
             <p className="text-xl font-bold text-[var(--dojo-primary)]">{mcpCount}</p>
-            <p className="text-xs text-[var(--text-tertiary)]">protocol-level</p>
+            <p className="text-xs text-muted-foreground">protocol-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Tool Attacks</p>
             <p className="text-xl font-bold text-[var(--severity-low)]">{toolCount}</p>
-            <p className="text-xs text-[var(--text-tertiary)]">integration-level</p>
+            <p className="text-xs text-muted-foreground">integration-level</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Scenarios</p>
             <p className="text-xl font-bold text-[var(--foreground)]">{activeTools.length * 3}</p>
-            <p className="text-xs text-[var(--text-tertiary)]">test permutations</p>
+            <p className="text-xs text-muted-foreground">test permutations</p>
           </CardContent>
         </Card>
       </div>
@@ -938,60 +941,80 @@ export function AdversarialLab({
 
         {/* Playbooks Tab — composite: Custom, Protocol Fuzz, Agentic, WebMCP */}
         <TabsContent value="playbooks" className="mt-4">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-16" aria-busy="true">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
-              </div>
-            }
+          <ErrorBoundary
+            fallbackTitle="Playbooks unavailable"
+            fallbackDescription="This section failed to load. Try refreshing, or switch to another tab."
           >
-            <PlaybooksCompositeLazy />
-          </Suspense>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-16" aria-busy="true">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+                </div>
+              }
+            >
+              <PlaybooksCompositeLazy />
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
 
         {/* Campaigns Tab — Sengoku red-team campaigns (PR-4b.5) */}
         <TabsContent value="campaigns" className="mt-4">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-16" aria-busy="true">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
-              </div>
-            }
+          <ErrorBoundary
+            fallbackTitle="Campaigns unavailable"
+            fallbackDescription="The Sengoku campaigns dashboard failed to load. Try refreshing."
           >
-            <SengokuDashboardLazy />
-          </Suspense>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-16" aria-busy="true">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+                </div>
+              }
+            >
+              <SengokuDashboardLazy />
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
 
         {/* Arena Tab — Battle Arena absorbed from top-level nav (Testing UX Consolidation) */}
         <TabsContent value="arena" className="mt-4">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-16" aria-busy="true">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
-              </div>
-            }
+          <ErrorBoundary
+            fallbackTitle="Arena unavailable"
+            fallbackDescription="The Battle Arena workspace failed to load. Try refreshing."
           >
-            <LLMModelProvider>
-              <ArenaBrowserLazy />
-            </LLMModelProvider>
-          </Suspense>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-16" aria-busy="true">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+                </div>
+              }
+            >
+              <LLMModelProvider>
+                <ArenaBrowserLazy />
+              </LLMModelProvider>
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
 
         {/* Test Cases Tab — TestExecution relocated from LLM Dashboard (PR-4b.6 part 4) */}
         <TabsContent value="test-cases" className="mt-4">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-16" aria-busy="true">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
-              </div>
-            }
+          <ErrorBoundary
+            fallbackTitle="Test Cases unavailable"
+            fallbackDescription="The Test Cases workspace failed to load. Try refreshing."
           >
-            <LLMModelProvider>
-              <LLMExecutionProvider>
-                <TestExecutionLazy />
-              </LLMExecutionProvider>
-            </LLMModelProvider>
-          </Suspense>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center py-16" aria-busy="true">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--dojo-primary)] border-t-transparent" />
+                </div>
+              }
+            >
+              <LLMModelProvider>
+                <LLMExecutionProvider>
+                  <TestExecutionLazy />
+                </LLMExecutionProvider>
+              </LLMModelProvider>
+            </Suspense>
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
 

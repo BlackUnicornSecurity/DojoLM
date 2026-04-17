@@ -91,18 +91,25 @@ test.describe('Style Guide', () => {
   });
 
   test('renders button variants', async ({ page }) => {
-    // Style guide may not exist in production; skip early if 404 or redirect.
-    // Increase test timeout since this page can be slow or absent on prod.
+    // Style guide is disabled on prod (`/style-guide` renders a 404). Skip
+    // the assertion block outright on prod targets.
+    if (process.env.E2E_TARGET === 'prod') {
+      test.skip(true, 'Style guide is disabled on prod (/style-guide → 404)');
+      return;
+    }
+    // Increase test timeout since this page can be slow or absent locally.
     test.setTimeout(90000);
     await page.goto('/style-guide', { waitUntil: 'domcontentloaded' });
-    // Wait for content or 404 to appear
+    // Wait for content or 404 to appear. 2026-04-17: Wrap the `.or()` chain in
+    // `.first()` — both `404` and `Page Not Found` are visible simultaneously
+    // on the 404 page so the combined locator resolves to 2 elements.
     const heading = page.getByText('DojoLM Style Guide');
     const notFound = page.getByText('Page Not Found');
     const fourOhFour = page.getByText('404');
-    await expect(heading.or(notFound).or(fourOhFour)).toBeVisible({ timeout: 30000 });
+    await expect(heading.or(notFound).or(fourOhFour).first()).toBeVisible({ timeout: 30000 });
 
     if (await notFound.isVisible().catch(() => false) || await fourOhFour.isVisible().catch(() => false)) {
-      test.skip(true, 'Style guide not available on prod');
+      test.skip(true, 'Style guide not available on this environment');
       return;
     }
 

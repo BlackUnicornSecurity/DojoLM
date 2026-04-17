@@ -29,13 +29,16 @@ test.describe('Battle Arena', () => {
     test('shows match tabs (Browser, Matches, Leaderboard, Rules)', async ({ page }) => {
       // ArenaBrowser tabs: Browser | Matches | Leaderboard | Rules
       // TabsTrigger renders as role="tab" inside TabsList. Wait longer for lazy-loaded tabs.
+      // 2026-04-17: All 4 tabs are present on prod so the combined locator resolves
+      // to multiple elements. Wrap the `.or()` chain in `.first()` to satisfy strict mode.
       const browserTab = page.getByRole('tab', { name: /Browser/i });
       const matchesTab = page.getByRole('tab', { name: /Matches/i });
       const rulesTab = page.getByRole('tab', { name: /Rules/i });
       const leaderboardTab = page.getByRole('tab', { name: /Leaderboard/i });
-      // Also match the tab text content directly as fallback
-      const tabText = page.getByText(/Browser|Matches|Leaderboard|Rules/i).first();
-      await expect(browserTab.or(matchesTab).or(rulesTab).or(leaderboardTab).or(tabText)).toBeVisible({ timeout: 20000 });
+      const tabText = page.getByText(/Browser|Matches|Leaderboard|Rules/i);
+      await expect(
+        browserTab.or(matchesTab).or(rulesTab).or(leaderboardTab).or(tabText).first()
+      ).toBeVisible({ timeout: 20000 });
     });
 
     test('new match button opens creation wizard', async ({ page }) => {

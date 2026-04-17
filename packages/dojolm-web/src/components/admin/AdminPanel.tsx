@@ -293,7 +293,56 @@ function PluginsTab() {
   )
 }
 
+interface BuildInfo {
+  sha: string | null
+  date: string | null
+  version: string
+  environment: string
+}
+
 function GeneralSettings() {
+  // VIS-17: replace hard-coded "UNKNOWN" / "HAKONE (v3.0)" with live
+  // /api/build-info response so the deployed SHA + build date are visible.
+  const [buildInfo, setBuildInfo] = useState<BuildInfo | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/build-info', { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then((data: BuildInfo | null) => {
+        if (!cancelled && data) setBuildInfo(data)
+      })
+      .catch(() => {
+        /* leave buildInfo null — fallback text rendered below */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const versionDisplay = buildInfo
+    ? `v${buildInfo.version}${buildInfo.sha ? ` (${buildInfo.sha})` : ''}`
+    : 'Loading...'
+
+  const buildDateDisplay = buildInfo?.date
+    ? new Date(buildInfo.date).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short',
+      })
+    : buildInfo
+      ? 'Unknown'
+      : 'Loading...'
+
+  const environmentDisplay = buildInfo?.environment
+    ? buildInfo.environment.charAt(0).toUpperCase() + buildInfo.environment.slice(1)
+    : process.env.NODE_ENV === 'production'
+      ? 'Production'
+      : 'Development'
+
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-[var(--border-subtle)] bg-card p-4 space-y-4">
@@ -305,11 +354,15 @@ function GeneralSettings() {
           </div>
           <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Version</p>
-            <p className="text-sm font-semibold text-foreground mt-1">HAKONE (v3.0)</p>
+            <p className="text-sm font-semibold text-foreground mt-1 font-mono" data-testid="platform-version">{versionDisplay}</p>
+          </div>
+          <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Build Date</p>
+            <p className="text-sm font-semibold text-foreground mt-1" data-testid="build-date">{buildDateDisplay}</p>
           </div>
           <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Environment</p>
-            <p className="text-sm font-semibold text-foreground mt-1">{process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}</p>
+            <p className="text-sm font-semibold text-foreground mt-1">{environmentDisplay}</p>
           </div>
           <div className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-tertiary)] p-4">
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Theme</p>

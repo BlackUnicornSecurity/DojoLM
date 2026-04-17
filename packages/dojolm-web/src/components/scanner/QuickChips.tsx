@@ -54,13 +54,16 @@ export function QuickChips({ onLoadPayload, isScanning = false, className }: Qui
           </button>
         )}
       </div>
+      {/* VIS-19: bumped idle-state text from muted-foreground (#7E8A9A) to
+          foreground-adjacent slate-200 to meet WCAG AA 4.5:1 on the muted
+          pill background. Hover still darkens via overlay-active. */}
       <div className="flex flex-wrap gap-2">
         {visiblePayloads.map((payload) => (
           <button
             key={payload.label}
             onClick={() => onLoadPayload(payload.text, false)}
             disabled={isScanning}
-            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-muted-foreground hover:bg-[var(--overlay-active)] hover:text-foreground transition-colors duration-[var(--transition-fast)] disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] inline-flex items-center"
+            className="px-3 py-1.5 text-xs font-medium rounded-full bg-muted text-slate-200 hover:bg-[var(--overlay-active)] hover:text-foreground transition-colors duration-[var(--transition-fast)] disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] inline-flex items-center"
             title={`Load "${payload.label}" payload to scanner`}
           >
             {payload.label}

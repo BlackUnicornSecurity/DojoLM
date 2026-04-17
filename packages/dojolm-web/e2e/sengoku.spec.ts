@@ -76,9 +76,12 @@ test.describe('Sengoku', () => {
     // Switch back to Campaigns
     await campaignsTab.click();
     // Should show campaigns content again (loading, list, empty state, or ghost card)
+    // 2026-04-17: On prod both a campaign item and "Create new campaign" ghost card
+    // can render together — wrap the full `.or()` chain in `.first()`.
     await expect(
-      page.getByText(/Loading campaigns|No campaigns yet|Authentication required|Campaign Overview|Create new campaign/i).first()
-        .or(page.locator('button[aria-label^="Campaign:"]').first())
+      page.getByText(/Loading campaigns|No campaigns yet|Authentication required|Campaign Overview|Create new campaign/i)
+        .or(page.locator('button[aria-label^="Campaign:"]'))
+        .first()
     ).toBeVisible({ timeout: 15000 });
   });
 

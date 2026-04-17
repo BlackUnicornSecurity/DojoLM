@@ -14,8 +14,12 @@ async function navigateToModule(page: import('@playwright/test').Page, sidebarNa
   const nav = sidebar.getByRole('button', { name: sidebarName, exact: true });
   await expect(nav).toBeVisible({ timeout: 5000 });
   await nav.click();
-  // Allow 45s for lazy-loaded module chunks + API data to render the heading (prod is slower)
-  await expect(page.getByRole('heading', { name: headingPattern }).or(page.getByText(headingPattern).first())).toBeVisible({ timeout: 45000 });
+  // Allow 45s for lazy-loaded module chunks + API data to render the heading (prod is slower).
+  // 2026-04-17: Wrap the whole `.or()` chain in `.first()` — on prod the sidebar button
+  // can also contain the module label so the combined locator resolves to 2 elements.
+  await expect(
+    page.getByRole('heading', { name: headingPattern }).or(page.getByText(headingPattern)).first()
+  ).toBeVisible({ timeout: 45000 });
 }
 
 /* Post-Kumite-retirement (2026-04-15): former Kumite subsystems are now
@@ -329,10 +333,12 @@ test.describe('Component Controls', () => {
       // Block threshold: aria-label="Block on WARNING and CRITICAL findings" or "Block on CRITICAL findings only"
       // Mode radio buttons: aria-label="Select <mode> mode: ..."
       // Also match the button visible text "Guard Active" / "Guard Off" as fallback
-      const guardToggle = page.getByRole('button', { name: /Guard (enabled|disabled)|Guard Active|Guard Off/i }).first();
-      const blockThreshold = page.getByRole('button', { name: /Block on (WARNING|CRITICAL)/i }).first();
-      const modeRadio = page.getByRole('radio', { name: /Select .* mode/i }).first();
-      await expect(guardToggle.or(blockThreshold).or(modeRadio)).toBeVisible({ timeout: 30000 });
+      // 2026-04-17: On prod all 3 controls can be present simultaneously — wrap the whole
+      // `.or()` chain in `.first()` so strict-mode doesn't complain about multiple matches.
+      const guardToggle = page.getByRole('button', { name: /Guard (enabled|disabled)|Guard Active|Guard Off/i });
+      const blockThreshold = page.getByRole('button', { name: /Block on (WARNING|CRITICAL)/i });
+      const modeRadio = page.getByRole('radio', { name: /Select .* mode/i });
+      await expect(guardToggle.or(blockThreshold).or(modeRadio).first()).toBeVisible({ timeout: 30000 });
     });
 
     test('GuardAuditLog: shows pagination buttons', async ({ page }) => {

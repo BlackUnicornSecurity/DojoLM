@@ -229,8 +229,10 @@ test.describe('Sensei Chat', () => {
       // transient aria-hidden state during animation.
       const messageLog = page.locator('[role="log"][aria-label="Sensei conversation"]');
       const welcomeText = page.getByText(/Welcome to Sensei/i);
-      // At least one of these should be visible inside the open drawer
-      await expect(welcomeText.or(messageLog)).toBeVisible({ timeout: 10000 });
+      // At least one of these should be visible inside the open drawer.
+      // 2026-04-17: On prod both are visible simultaneously — wrap the `.or()`
+      // chain in `.first()` to satisfy strict mode.
+      await expect(welcomeText.or(messageLog).first()).toBeVisible({ timeout: 10000 });
     });
   });
 });

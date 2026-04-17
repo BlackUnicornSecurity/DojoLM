@@ -106,17 +106,24 @@ test.describe('Mobile Navigation', () => {
   test('can navigate to Buki from More drawer', async ({ page }) => {
     // Armory absorbed into Buki (2026-04-13 Testing UX Consolidation).
     // Buki is not isPrimary, so it appears in the More drawer.
-    test.setTimeout(90000);
+    // 2026-04-17: Drawer buttons now render dual-line (label + description) so the
+    // accessible name is "BukiFixtures, payloads, synthetic generator, and fuzzer".
+    // Match by leading "Buki" substring instead of exact match.
+    test.setTimeout(120000);
     const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
     await mobileNav.getByRole('button', { name: /More navigation options/i }).click();
 
     const drawer = page.getByRole('dialog', { name: 'More navigation options' });
     await expect(drawer).toBeVisible({ timeout: 5000 });
 
-    await drawer.getByRole('button', { name: 'Buki', exact: true }).click();
+    await drawer.getByRole('button', { name: /^Buki/ }).first().click();
     // Buki page renders ModuleHeader with title "Buki" and tabs: Fixtures, Payloads, etc.
-    // On mobile viewport, module loads can be slow; wait for DOM content first
+    // On mobile viewport, module loads can be slow; wait for DOM content first.
+    // 2026-04-17: Scope to <main> — the sidebar has a hidden "Payloads & Fixtures"
+    // nav span that otherwise resolves first and stays hidden forever on mobile.
     await page.waitForLoadState('domcontentloaded');
-    await expect(page.getByText(/Buki|Fixtures|Payloads|Payload Lab/i).first()).toBeVisible({ timeout: 60000 });
+    await expect(
+      page.locator('main').getByText(/Buki|Fixtures|Payloads|Payload Lab/i).first()
+    ).toBeVisible({ timeout: 90000 });
   });
 });

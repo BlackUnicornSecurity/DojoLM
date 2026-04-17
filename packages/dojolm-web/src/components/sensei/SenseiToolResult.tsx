@@ -459,7 +459,7 @@ function renderWarriors(data: unknown): React.ReactNode {
   const d = asRecord(data)
   if (!d) return renderGeneric(data)
   const warriors = Array.isArray(d.warriors) ? d.warriors : []
-  if (warriors.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No warriors yet</p>
+  if (warriors.length === 0) return <p className="text-xs text-[var(--text-tertiary)]">No fighters yet</p>
   return (
     <div className="space-y-1 max-h-32 overflow-y-auto">
       {filterRecords(warriors).slice(0, 10).map((w, i) => (

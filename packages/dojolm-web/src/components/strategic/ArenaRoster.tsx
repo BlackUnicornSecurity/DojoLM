@@ -456,7 +456,7 @@ export function ArenaRoster() {
       }
       pageSize={12}
       emptyIcon={Swords}
-      emptyTitle="No warriors found"
+      emptyTitle="No fighters found"
       emptyDescription="No models match your search or filters"
     />
   )
