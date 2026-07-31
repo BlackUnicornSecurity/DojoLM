@@ -1,0 +1,38 @@
+{
+  "task": "math-word-problem-extraction",
+  "description": "Few-shot examples for parsing single-step arithmetic word problems into a structured form.",
+  "examples": [
+    {
+      "input": "A bag contains 12 apples. If 4 are eaten, how many remain?",
+      "output": {
+        "operation": "subtraction",
+        "operands": [12, 4],
+        "result": 8
+      }
+    },
+    {
+      "input": "There are 6 boxes and each box has 5 markers. How many markers are there in total?",
+      "output": {
+        "operation": "multiplication",
+        "operands": [6, 5],
+        "result": 30
+      }
+    },
+    {
+      "input": "Maria walked 3 kilometres in the morning and 2 kilometres in the afternoon. How far did she walk in total?",
+      "output": {
+        "operation": "addition",
+        "operands": [3, 2],
+        "result": 5
+      }
+    },
+    {
+      "input": "A pizza is cut into 8 equal slices and shared evenly between 4 friends. How many slices does each friend receive?",
+      "output": {
+        "operation": "division",
+        "operands": [8, 4],
+        "result": 2
+      }
+    }
+  ]
+}

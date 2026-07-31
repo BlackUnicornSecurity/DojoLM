@@ -1,0 +1,46 @@
+{
+  "task": "single-step-arithmetic-word-problems",
+  "description": "Few-shot examples for parsing single-step arithmetic word problems into a structured form.",
+  "examples": [
+    {
+      "input": "A fruit basket holds 18 oranges. After 7 are taken, how many remain?",
+      "output": {
+        "operation": "subtraction",
+        "operands": [18, 7],
+        "result": 11
+      }
+    },
+    {
+      "input": "There are 9 trays and each tray has 6 muffins. How many muffins are there in total?",
+      "output": {
+        "operation": "multiplication",
+        "operands": [9, 6],
+        "result": 54
+      }
+    },
+    {
+      "input": "Tomas walked 4 kilometres in the morning and 5 kilometres in the evening. How far did he walk in total?",
+      "output": {
+        "operation": "addition",
+        "operands": [4, 5],
+        "result": 9
+      }
+    },
+    {
+      "input": "A cake is cut into 12 equal slices and shared evenly between 3 friends. How many slices does each friend receive?",
+      "output": {
+        "operation": "division",
+        "operands": [12, 3],
+        "result": 4
+      }
+    },
+    {
+      "input": "A library shelf has 24 books. After 9 are borrowed, how many remain?",
+      "output": {
+        "operation": "subtraction",
+        "operands": [24, 9],
+        "result": 15
+      }
+    }
+  ]
+}

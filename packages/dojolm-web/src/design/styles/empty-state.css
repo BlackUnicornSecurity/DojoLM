@@ -1,0 +1,368 @@
+/* Yamabushi 1.3 (YU.3) — Sumi-e EmptyState styles.
+   Source port: the V1 design system (EmptyState styles)
+   Retokenized: every hardcoded var(--torii-hi) etc. resolves via Epic 0
+   tokens.css. Motion gates honor `prefers-reduced-motion: reduce`. The
+   --accent-wash variable is set inline per-instance via the `--es-wash`
+   custom property (matches the v2.1 pattern; renamed for clarity).
+   Token-driven only — zero hardcoded hex colors. G10: no `--bu-cyan`
+   reference. */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 36px 28px;
+  min-height: 220px;
+  text-align: center;
+  color: var(--fg-dim);
+  position: relative;
+}
+
+/* The motif SVG strokes inherit currentColor — set it on .empty-motif so
+   the ink reads as fg-ghost at rest, fg-mute on the parent panel hover. */
+.empty-motif {
+  color: var(--fg-ghost);
+  filter: drop-shadow(0 1px 0 rgba(var(--black-rgb), 0.3));
+  transition: color 240ms ease, transform 240ms ease;
+}
+
+.panel:hover .empty-state .empty-motif {
+  color: var(--fg-mute);
+}
+
+/* E7.S8 — :focus-within parity for the panel-hover motif tint.
+   Plan ref: audit/REMEDIATION-PLAN.md L821-825. F-5-006 (P1) — touch/
+   keyboard users cannot trigger the panel-hover affordance. The ink
+   motif lifts from --fg-ghost to --fg-mute when any focusable
+   descendant (Empty-state CTA button, retry link, etc.) is focused
+   via keyboard, mirroring the pointer hover. WCAG 2.5.7 (Dragging
+   Movements) + 2.1.1 (Keyboard) + Nielsen #1 (Visibility of system
+   status). Visible-effect anchor: identical color shift to the
+   :hover rule above — token-bound, not a placeholder. */
+.panel:focus-within .empty-state .empty-motif {
+  color: var(--fg-mute);
+}
+
+/* The accent wash resolves via per-tint --es-wash overrides below. Each
+   tint composes its rgba from the Epic 0 semantic RGB channel tokens
+   (--torii-rgb / --steel-rgb / --gold-rgb / --violet-rgb / --white-rgb)
+   so any future tokens.css edit propagates through automatically. The
+   neutral default sits on the base `.empty-state` rule and gets overridden
+   by the tint-specific selectors when present. G10: --bu-cyan is NOT in
+   this set — cross-brand cyan is reserved for chrome only, never an
+   archetype wash. */
+.empty-state {
+  --es-wash: rgba(var(--white-rgb), 0.04);
+}
+.empty-state.tint-red {
+  --es-wash: rgba(var(--torii-rgb), 0.08);
+}
+/* P3 re-audit — the primitive's own contract reserves torii for
+   `state="error"`; on neutral states (disabled/info/empty) a red wash
+   breaks the zero-red law on flag-off surfaces. Neutralize it there. */
+.empty-state.tint-red:not(.state-error) {
+  --es-wash: rgba(var(--white-rgb), 0.04);
+}
+.empty-state.tint-steel {
+  --es-wash: rgba(var(--steel-rgb), 0.08);
+}
+.empty-state.tint-gold {
+  --es-wash: rgba(var(--gold-rgb), 0.09);
+}
+.empty-state.tint-violet {
+  --es-wash: rgba(var(--violet-rgb), 0.09);
+}
+.empty-state.tint-neutral {
+  --es-wash: rgba(var(--white-rgb), 0.04);
+}
+
+/* Mount animation — ink settling on paper. Motion-safe gated. */
+@keyframes esInkSettle {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .empty-state .empty-motif {
+    animation: esInkSettle 520ms ease both;
+  }
+}
+
+/* Copy stack ----------------------------------------------------------- */
+.empty-state .empty-copy {
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.empty-state .empty-title {
+  /* P3 re-audit — serif is legal in exactly 3 slots (SKIN-SPEC §3.3:
+     command-hero verdict, paper/ceremony, marketing); empty/info titles
+     are Inter. The hero size variant keeps its --editorial face below. */
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: -0.005em;
+}
+
+.empty-state .empty-sub {
+  font-size: var(--text-md);
+  line-height: 1.55;
+  /* HAGANE E6.S3 — text-md sits under the 18pt large-text floor;
+     --fg-mute is large-text-only (E7.S3). Usage swap, values intact. */
+  color: var(--fg-dim);
+  text-wrap: pretty;
+}
+
+.empty-state .empty-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Loading state — motif breathes (motion-safe). title gets dot ellipsis. */
+@keyframes esInkBreath {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .empty-state.state-loading .empty-motif {
+    animation: esInkSettle 520ms ease both,
+      esInkBreath 2.8s ease-in-out infinite 520ms;
+  }
+}
+
+.empty-state.state-loading .empty-title {
+  color: var(--fg-dim);
+}
+
+@keyframes esLoadingDots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+  100% {
+    content: '';
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .empty-state.state-loading .empty-title::after {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    text-align: left;
+    margin-left: 4px;
+    animation: esLoadingDots 1.6s steps(4, end) infinite;
+  }
+}
+
+/* Static fallback for reduced-motion — show three dots without animating. */
+@media (prefers-reduced-motion: reduce) {
+  .empty-state.state-loading .empty-title::after {
+    content: '...';
+    margin-left: 4px;
+    color: var(--fg-mute);
+  }
+  .empty-state.state-loading .empty-motif {
+    opacity: 0.7;
+  }
+}
+
+/* Error state — torii-hi title, fg-mute motif. The torii-red diagonal
+   slash overlay is rendered inline by the React component (see
+   EmptyState.tsx state='error' branch). */
+.empty-state.state-error .empty-motif {
+  color: var(--fg-mute);
+}
+
+.empty-state.state-error .empty-title {
+  color: var(--torii-hi);
+}
+
+/* Compact variant — small panels. */
+.empty-state.compact {
+  padding: 22px 16px;
+  min-height: 160px;
+  gap: 12px;
+}
+
+.empty-state.compact .empty-title {
+  font-size: var(--text-lg);
+}
+
+.empty-state.compact .empty-sub {
+  font-size: var(--text-sm);
+}
+
+/* Match v2.1 .panel.nopad spacing rule. */
+.panel.nopad > .empty-state {
+  padding: 44px 28px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   A.1 consolidation (2026-05-14) — tone × size × watermark × errorCode.
+   Every new rule is additive: pre-A.1 consumers never trigger a new
+   class so render output is byte-identical. Tone classes layer on top
+   of the module-derived `.tint-*` wash without overriding it.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Semantic tone overlay — paints the title in the matching semantic
+   color (gold for warning, torii-red for error). The motif itself
+   keeps its module-derived currentColor + wash; tone only touches the
+   title typography so the brand-anchored ink language stays intact. */
+.empty-state--tone-warning .empty-title {
+  color: var(--gold-text);
+}
+
+/* Tone "error" applies to any state (including `state="empty"` callers
+   that want to communicate "this surface is in a non-fatal error
+   posture"). State="error" already paints the title via the legacy
+   `.empty-state.state-error .empty-title` rule using --torii-hi; tone
+   uses --torii-text so the cascade order leaves both rules co-resident.
+   The tone rule comes later in the source so the explicit caller-set
+   tone wins when both apply (e.g. `state="error"` + `tone="error"`). */
+.empty-state--tone-error .empty-title {
+  color: var(--torii-text);
+}
+
+/* Size: compact — alias for the legacy `.compact` rule so callers that
+   opt in via `size="compact"` (rather than the `compact={true}` boolean)
+   get the same padding / typography. The legacy rule is left in place
+   above so backward compat keeps holding. */
+.empty-state--size-compact {
+  padding: 22px 16px;
+  min-height: 160px;
+  gap: 12px;
+}
+.empty-state--size-compact .empty-title {
+  font-size: var(--text-lg);
+}
+.empty-state--size-compact .empty-sub {
+  font-size: var(--text-sm);
+}
+
+/* Size: hero — editorial layout for full-page / landing empty surfaces.
+   Larger padding, taller min-height, Fraunces title, generous copy
+   width. The motif itself scales via the inline width/height set by
+   the React component (220 → 165 keeps the 160:120 aspect). */
+.empty-state--size-hero {
+  padding: 64px 40px;
+  min-height: 360px;
+  gap: 24px;
+}
+
+.empty-state--size-hero .empty-title {
+  font-family: var(--editorial);
+  font-size: var(--text-4xl);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  margin: 0;
+}
+
+.empty-state--size-hero .empty-sub {
+  font-size: var(--text-lg);
+  max-width: 480px;
+}
+
+.empty-state--size-hero .empty-copy {
+  max-width: 520px;
+  gap: 10px;
+}
+
+/* Watermark — decorative background kanji glyph rendered behind the
+   content of hero variants. aria-hidden in the DOM; pointer-events
+   disabled here. Position absolute relative to the .empty-state root
+   (already `position: relative` per the base rule). z-index 0 keeps
+   the glyph below copy + motif (which sit at the default z-index 1
+   via the implicit stacking context created by the parent). */
+.empty-state__watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  /* 15rem = 240px at the 16px root font-size. Authored in rem (not px)
+     so the `dojo/no-px-font-size-in-design` stylelint rule clears while
+     keeping the decorative-glyph proportion the hero variant needs.
+     This intentionally lives outside the type-ramp tokens (--text-2xs
+     … --text-4xl) because it is a decorative background glyph, not a
+     typographic surface — sizing follows the watermark cell, not the
+     type scale. */
+  font-size: 15rem;
+  line-height: 1;
+  color: var(--fg-ghost);
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Lift the actual content above the watermark via a stacking context.
+   Both .empty-motif and .empty-copy share a sibling z-index so the
+   watermark glyph reads as background chrome only. */
+.empty-state--size-hero .empty-motif,
+.empty-state--size-hero .empty-copy {
+  position: relative;
+  z-index: 1;
+}
+
+/* Error code — mono code chip below the sub-line. Sits in the
+   .empty-copy stack so spacing follows the existing 6px gap. */
+.empty-state__error-code {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  background: rgba(var(--white-rgb), 0.04);
+  border: 1px solid var(--b-0);
+  border-radius: var(--r-sm);
+  padding: 2px 8px;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+  align-self: center;
+}
+
+/* Filter-narrowed + search-narrowed share the empty-state visual
+   treatment (no torii-slash overlay) but get a subtle motif fade so
+   the operator can tell at a glance that the surface has data which a
+   filter is hiding. Keep the wash + title color at the empty defaults. */
+.empty-state.state-filter-narrowed .empty-motif,
+.empty-state.state-search-narrowed .empty-motif {
+  opacity: 0.6;
+}
+
+/* Search-narrowed query live region — keep the inline display so the
+   query reads inline with the copy. The <output> element default
+   browser styling drops to inline via the rule below. */
+.empty-state .empty-sub output {
+  font-family: var(--mono);
+  color: var(--fg);
+  background: rgba(var(--white-rgb), 0.04);
+  border-radius: var(--r-sm);
+  padding: 0 4px;
+  margin: 0 2px;
+}

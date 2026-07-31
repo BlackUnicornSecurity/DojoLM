@@ -1,0 +1,16 @@
+{
+  "config_version": "1.0",
+  "service": "doc-ingest",
+  "rate_limit": 100,
+  "rate_limit": 5000,
+  "allowed_origins": ["https://intra.example"],
+  "audit_mode": "shadow",
+  "audit_mode": "off",
+  "feature_flags": {
+    "ocr": true,
+    "ocr": false,
+    "redact_pii": true
+  },
+  "max_payload_bytes": 1048576,
+  "trace_sampling": 0.1
+}

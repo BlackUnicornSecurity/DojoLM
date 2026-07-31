@@ -1,0 +1,942 @@
+/* Canvas 3 — Arena archetype
+   Kumite surfaces: match grid, fighter row, belt disc, leaderboard,
+   live-progress, model-grid-live-race, bypass-rate heat cells with
+   Wilson CI bands.
+
+   Tokens only. No raw hex. No `var(--foo, #bar)` fallbacks.
+   Animations respect the global prefers-reduced-motion gate declared
+   in tokens.css. The bypass-cell hover transition (line 330) is
+   additionally gated below for parity with codex.css / ritual.css. */
+
+/* ===== Match grid (N-up fixture slots) ===== */
+.arena-match-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.arena-match {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: rgba(var(--white-rgb), 0.02);
+  min-width: 0;
+}
+.arena-match-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+
+/* ===== Fighter row ===== */
+.arena-fighter {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.02);
+  min-width: 0;
+}
+.arena-fighter + .arena-fighter { margin-top: 6px; }
+.arena-fighter-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.arena-fighter-name {
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.arena-fighter-model {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--fg-mute);
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.arena-fighter-score {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--fg);
+  padding: 3px 8px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.03);
+}
+
+/* ===== BeltDisc — shape + color + two-letter mono label.
+   No kanji glyphs per §5 guardrail. aria-label carries the belt name. ===== */
+.arena-belt-disc {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--b-2);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: var(--fg);
+  flex-shrink: 0;
+}
+.arena-belt-disc.belt-black    { background: linear-gradient(180deg, var(--bg-4), var(--bg-2));         color: var(--fg-dim);  border-color: var(--b-3); }
+/* E4B.5 — four new tiers slot between the originals (red above brown,
+   green between blue and purple, yellow/orange between white and
+   green). See the E4B design decisions §8 for the nine-tier ladder. */
+.arena-belt-disc.belt-red      { background: rgba(var(--torii-rgb), 0.22);   color: var(--torii-lg);  border-color: rgba(var(--torii-rgb), 0.4); }
+.arena-belt-disc.belt-brown    { background: rgba(var(--gold-rgb), 0.22);    color: var(--gold-lg);   border-color: rgba(var(--gold-rgb), 0.4); }
+.arena-belt-disc.belt-purple   { background: rgba(var(--violet-rgb), 0.22);  color: var(--fg);        border-color: rgba(var(--violet-rgb), 0.4); }
+.arena-belt-disc.belt-blue     { background: rgba(var(--steel-rgb), 0.22);   color: var(--steel-lg);  border-color: rgba(var(--steel-rgb), 0.4); }
+.arena-belt-disc.belt-green    { background: rgba(var(--jade-rgb), 0.22);    color: var(--jade-lg);   border-color: rgba(var(--jade-rgb), 0.4); }
+.arena-belt-disc.belt-orange   { background: rgba(var(--sev-high-rgb), 0.22); color: var(--fg);       border-color: rgba(var(--sev-high-rgb), 0.4); }
+.arena-belt-disc.belt-yellow   { background: rgba(var(--gold-rgb), 0.12);    color: var(--fg);        border-color: rgba(var(--gold-rgb), 0.28); }
+.arena-belt-disc.belt-white    { background: rgba(var(--white-rgb), 0.1);       color: var(--fg);        border-color: var(--b-3); }
+.arena-belt-disc.belt-unranked { background: rgba(var(--white-rgb), 0.03);      color: var(--fg-mute);   border-color: var(--b-1); }
+
+/* ===== Leaderboard ===== */
+.arena-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.arena-leaderboard-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+.arena-leaderboard-rank {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ===== LiveProgress — SSE-driven progress panel ===== */
+.arena-live-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background:
+    linear-gradient(180deg, rgba(var(--white-rgb), 0.02) 0%, transparent 100%),
+    rgba(var(--black-rgb), 0.2);
+}
+.arena-live-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.arena-live-progress-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--fg-dim);
+  background: rgba(var(--white-rgb), 0.02);
+}
+.arena-live-progress-state.state-idle        { color: var(--fg-mute); }
+.arena-live-progress-state.state-connecting  { color: var(--steel-lg);  border-color: rgba(var(--steel-rgb), 0.3);  background: rgba(var(--steel-rgb), 0.08); }
+.arena-live-progress-state.state-streaming   { color: var(--torii-hi);  border-color: var(--b-red-2);               background: rgba(var(--torii-rgb), 0.08); }
+.arena-live-progress-state.state-done        { color: var(--jade-lg);   border-color: rgba(var(--jade-rgb), 0.3);   background: rgba(var(--jade-rgb), 0.08); }
+.arena-live-progress-state.state-error       { color: var(--torii-hi);  border-color: var(--b-red-2);               background: rgba(var(--torii-rgb), 0.12); }
+.arena-live-progress-state.state-unavailable { color: var(--gold-lg);   border-color: rgba(var(--gold-rgb), 0.3);   background: rgba(var(--gold-rgb), 0.08); }
+
+/* E7.S5 — Windows High-Contrast (forced-colors) fallback for live-progress
+   state pill. WCAG 1.4.1 (Use of Color) + 1.4.11 (Non-text Contrast):
+   author colors are stripped under forced-colors; a CanvasText border
+   keeps the pill outline and per-state distinction. We vary border-style
+   (solid/dashed/dotted), border-width (2px/3px), and border-color
+   (CanvasText/Highlight) along three orthogonal axes so all six states
+   are mutually distinguishable when colors are stripped. F-4-019 P2
+   retire path. Round-2 (E7.S5 follow-up): split streaming/error and
+   connecting/unavailable pairs so each state has a unique combo. */
+@media (forced-colors: active) {
+  .arena-live-progress-state              { border: 2px solid CanvasText; }
+  .arena-live-progress-state.state-idle        { border-style: dotted; }
+  .arena-live-progress-state.state-connecting  { border-style: dashed; }
+  .arena-live-progress-state.state-streaming   { border-color: Highlight; }
+  .arena-live-progress-state.state-done        { border-style: solid; }
+  .arena-live-progress-state.state-error       { border-style: solid; border-color: Highlight; border-width: 3px; }
+  .arena-live-progress-state.state-unavailable { border-style: dashed; border-color: Highlight; }
+  .arena-live-progress-dot                { background: CanvasText; box-shadow: none; }
+}
+
+.arena-live-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+  flex-shrink: 0;
+}
+
+.arena-live-progress-meta {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr;
+  gap: 4px 12px;
+  font-size: var(--text-md);
+}
+.arena-live-progress-meta dt {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.arena-live-progress-meta dd {
+  margin: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* ===== ModelGridLiveRace — per-model state cells ===== */
+.arena-model-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.arena-model-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.02);
+  min-width: 0;
+}
+.arena-model-cell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.arena-model-cell-id {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+  min-width: 0;
+  font-weight: 500;
+}
+.arena-model-cell-state {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.03);
+  color: var(--fg-mute);
+  flex-shrink: 0;
+}
+.arena-model-cell.state-pending                    { opacity: 0.7; }
+.arena-model-cell.state-pending .arena-model-cell-state { color: var(--fg-mute); }
+.arena-model-cell.state-running                    { border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.05); }
+.arena-model-cell.state-running .arena-model-cell-state { color: var(--torii-hi); border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.08); }
+.arena-model-cell.state-ok                         { border-color: rgba(var(--jade-rgb), 0.3); background: rgba(var(--jade-rgb), 0.05); }
+.arena-model-cell.state-ok .arena-model-cell-state      { color: var(--jade-lg); border-color: rgba(var(--jade-rgb), 0.3); background: rgba(var(--jade-rgb), 0.08); }
+.arena-model-cell.state-fail                       { border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.08); }
+.arena-model-cell.state-fail .arena-model-cell-state    { color: var(--torii-hi); border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.14); }
+.arena-model-cell.state-skipped                    { opacity: 0.55; }
+
+/* E7.S5 — Windows High-Contrast fallback for ModelGridLiveRace state cells.
+   WCAG 1.4.1 + 1.4.11. Distinguishes pending/running/ok/fail/skipped via
+   border-style (color is stripped under forced-colors). running+fail map
+   onto Highlight for OS high-contrast accent visibility. F-4-019 P2. */
+@media (forced-colors: active) {
+  .arena-model-cell                       { border: 2px solid CanvasText; }
+  .arena-model-cell.state-pending         { border-style: dashed; opacity: 1; }
+  .arena-model-cell.state-running         { border-style: solid; border-color: Highlight; }
+  .arena-model-cell.state-ok              { border-style: solid; }
+  .arena-model-cell.state-fail            { border-style: solid; border-color: Highlight; border-width: 3px; }
+  .arena-model-cell.state-skipped         { border-style: dotted; opacity: 1; }
+  .arena-model-cell-state                 { border: 1px solid CanvasText; }
+}
+.arena-model-cell-note {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* ===== Bypass heat grid (Gap 13.7 leaderboard) =====
+   Wilson-CI heat grid: technique × model rate matrix with per-cell
+   bypass-rate + Wilson confidence band. Default desktop layout
+   sits at the parent canvas width with each .arena-bypass-cell at
+   min-width 88px (line 366) — fine at >=1100px when the canvas
+   gets the full 3-pane workbench width. */
+.arena-heat-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: rgba(var(--black-rgb), 0.2);
+  /* E7.S8 — visible scrollbar affordance under the <1100px breakpoint
+     below. Keeps the horizontal-scroll cue obvious without forcing
+     the legacy thick scrollbar at desktop. F-5-005 (P1) retire path. */
+  scrollbar-gutter: stable;
+}
+.arena-heat-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-md);
+}
+.arena-heat-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 10px 8px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+  text-align: left;
+  background: rgba(var(--white-rgb), 0.02);
+  border-bottom: 1px solid var(--b-1);
+  white-space: nowrap;
+}
+.arena-heat-table th[scope="row"] {
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+  font-weight: 600;
+  text-align: left;
+  border-right: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.015);
+  white-space: nowrap;
+}
+.arena-heat-table td {
+  padding: 0;
+  vertical-align: stretch;
+  border-right: 1px solid var(--b-0);
+  border-bottom: 1px solid var(--b-0);
+}
+.arena-heat-table tr:last-child td { border-bottom: 0; }
+
+/* BypassCell — heat cell button.
+   Severity ramp (safe → warn → high → alert) uses jade → gold → sev-high → torii
+   alpha-tinted backgrounds with a shared var(--fg) headline rate and
+   var(--fg-mute) CI band. Dark-on-dark contrast verified at alpha 0.10–0.16. */
+.arena-bypass-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  width: 100%;
+  min-width: 88px;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out);
+  position: relative;
+}
+.arena-bypass-cell:hover {
+  border-color: var(--b-2);
+}
+.arena-bypass-cell:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: -2px;
+}
+.arena-bypass-cell.selected {
+  border-color: var(--b-red-2);
+  box-shadow: inset 0 0 0 1px rgba(var(--torii-rgb), 0.25);
+}
+.arena-bypass-cell-rate {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.1;
+}
+.arena-bypass-cell-ci {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+.arena-bypass-cell-n {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.arena-bypass-cell.unranked {
+  background: rgba(var(--white-rgb), 0.02);
+}
+.arena-bypass-cell.unranked .arena-bypass-cell-rate { color: var(--fg-dim); }
+
+.arena-bypass-cell.sev-safe  { background: rgba(var(--jade-rgb),     0.10); }
+.arena-bypass-cell.sev-warn  { background: rgba(var(--gold-rgb),     0.12); }
+.arena-bypass-cell.sev-high  { background: rgba(var(--sev-high-rgb), 0.14); }
+.arena-bypass-cell.sev-alert {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(var(--torii-rgb), 0.20) 0,
+      rgba(var(--torii-rgb), 0.20) 4px,
+      rgba(var(--torii-rgb), 0.08) 4px,
+      rgba(var(--torii-rgb), 0.08) 8px
+    );
+}
+.arena-bypass-cell.sev-alert .arena-bypass-cell-rate { color: var(--torii-hi); }
+
+/* E7.S11 — Severity encoding non-color fallback for Arena bypass heat cells.
+   WCAG SC 1.4.1 (Use of Color). Heat cells previously encoded the safe →
+   alert ramp by background tint alone (jade → gold → sev-high → torii).
+   This block layers a glyph progression in the top-right corner so the
+   ramp is readable without color and under deuteranopia / prefers-color-
+   scheme:light. Encoding contract (5 levels):
+     .unranked → no fill (no glyph; sentinel)
+     .sev-safe  → ◯ outline    (low)
+     .sev-warn  → ◔ quarter-fill
+     .sev-high  → ◑ half-fill  (mid-high) + ⚠
+     .sev-alert → ● solid     + ⚠ + diagonal-stripe (critical)
+   The diagonal-stripe pattern is applied to .sev-alert's background via
+   repeating-linear-gradient above so the pattern signal survives
+   color removal. Glyph rides on currentColor for inheritance under
+   light/deuteranopia. Pseudo-elements are auto-hidden from AT — SR
+   users hear only the cell's labelled headline (rate + sample size).
+   F-5-020 P2 retire path. The forced-colors block below is untouched. */
+.arena-bypass-cell::before{
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  line-height: 1;
+  color: currentColor;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.arena-bypass-cell.sev-safe::before  { content: '\25EF'; }
+.arena-bypass-cell.sev-warn::before  { content: '\25D4'; }
+.arena-bypass-cell.sev-high::before  { content: '\25D1\00A0\26A0'; }
+.arena-bypass-cell.sev-alert::before {
+  content: '\25CF\FE0E\00A0\26A0';
+  color: var(--torii-hi);
+}
+
+/* E7.S5 — Windows High-Contrast fallback for Arena bypass heat cells.
+   WCAG 1.4.1 (Use of Color) + 1.4.11 (Non-text Contrast).
+   Spec-named primary surface. Author tints (jade/gold/sev-high/torii) are
+   stripped under forced-colors; severity ramp is preserved via
+   border-style (solid/dashed/dotted) + width to keep safe → alert
+   distinguishable without color. sev-alert uses Highlight for OS-level
+   accent emphasis. F-4-019 P2 + F-9-015 P3 (admin severity badges) +
+   F-5-012 P2 dedup retire path. */
+@media (forced-colors: active) {
+  .arena-bypass-cell             { border: 2px solid CanvasText; }
+  .arena-bypass-cell.unranked    { border-style: dotted; }
+  .arena-bypass-cell.sev-safe    { border-style: solid; }
+  .arena-bypass-cell.sev-warn    { border-style: dashed; }
+  .arena-bypass-cell.sev-high    { border-style: solid; border-width: 3px; }
+  .arena-bypass-cell.sev-alert   { border-style: solid; border-width: 3px; border-color: Highlight; }
+  .arena-bypass-cell.selected    { outline: 2px solid Highlight; outline-offset: -4px; }
+}
+
+/* Empty cell (no sample) */
+.arena-heat-empty {
+  padding: 8px 10px;
+  min-width: 88px;
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  color: var(--fg-ghost);
+  text-align: center;
+}
+
+/* ===== Drill-down aside (paired with BypassCell click) ===== */
+.arena-drilldown {
+  padding: 14px 16px;
+  border: 1px solid var(--b-red);
+  border-radius: var(--r-md);
+  background: rgba(var(--torii-rgb), 0.05);
+}
+.arena-drilldown h3 {
+  margin: 0 0 8px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--fg);
+}
+.arena-drilldown dl {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr;
+  gap: 4px 14px;
+  font-size: var(--text-md);
+  margin: 0;
+}
+.arena-drilldown dt {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.arena-drilldown dd {
+  margin: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Cancel race action (torii-red reserved for primary CTA per §5) ===== */
+.arena-cancel-button[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===== Reduced motion — drop the bypass-cell hover transition so users
+   who opt out don't see border-color / background fades. Belt-and-
+   suspenders parity with codex.css + ritual.css; tokens.css already
+   nukes all .dojo-ds-v3 transitions globally under the same media. ===== */
+@media (prefers-reduced-motion: reduce) {
+  .arena-bypass-cell {
+    transition: none;
+  }
+}
+
+/* ===== E7.S8 — Wilson-CI heat grid intermediate breakpoint <1100px =====
+   Plan ref: audit/REMEDIATION-PLAN.md L821-825. Retires F-5-005 (P1):
+   `Workbench Wilson-CI heat grid breaks below 1100px — needs intermediate
+   breakpoint`. Surface field of the register names
+   patterns/workbench.css:9-46 (the workbench shell collapse already
+   sits there at line 37) but the actual Wilson-CI grid is the
+   `.arena-heat-table` rendered inside `.arena-heat-scroll` on /admin/eval
+   (page.tsx line 417), /members/leaderboard/bypass-matrix
+   (BypassMatrixClient.tsx line 383), and /members/seasons/archive/[slug]
+   (ArchiveClient.tsx line 332). So the "Workbench routes" symptom in the
+   register surfaces here, not in workbench.css.
+
+   Strategy: at <1100px the heat grid tightens cell padding + min-width,
+   keeps the horizontal-scroll affordance (overflow-x: auto on the
+   scroll wrapper, sticky thead row), and switches the row-header
+   column to be sticky on the left edge so the
+   technique label stays visible while the model columns scroll. This
+   preserves data legibility (Nielsen #4 — Consistency + Hick's Law)
+   without collapsing the matrix to a stacked list (which would lose
+   the comparative cross-cell read that motivates the heat grid in
+   the first place).
+
+   WCAG references:
+     - SC 1.3.2 (Meaningful Sequence, A): the technique-row label
+       precedes its model-cell row — sticky-left preserves that order
+       under horizontal scroll.
+     - SC 1.4.10 (Reflow, AA): the grid no longer requires a 1100px
+       viewport to be readable; the tightened cell row + visible
+       scrollbar makes ≤320px viewports usable.
+
+   Below 480px we drop a further padding tier so the cell stack stays
+   readable on phones (was breaking at <480 per F-5-018, dedup'd).
+
+   NOTE: F-5-018 (P3) heatmap 4px-cells-at-320 is in E7.S10's plan-spec;
+   this rule covers the wider <1100 breakpoint only — not the <320 cell
+   crunch. */
+@media (max-width: 1100px) {
+  .arena-heat-scroll {
+    /* Make the scroll affordance unmistakable on touch + narrow windows. */
+    border-color: var(--b-2);
+    /* WebKit: surface the scrollbar styling at narrow viewports. */
+    -webkit-overflow-scrolling: touch;
+  }
+  .arena-heat-table thead th {
+    /* Tighter pad so more model columns fit before scroll kicks in. */
+    padding: 8px 6px;
+  }
+  .arena-heat-table th[scope="row"] {
+    /* Sticky-left row header so the technique label stays visible while
+       the model-cell columns scroll. WCAG 1.3.2 — preserves the
+       label-precedes-row meaningful sequence under reflow. */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    /* Solid background so the cell underneath doesn't bleed through
+       when the grid scrolls behind the sticky header. */
+    background: var(--bg-1);
+    /* Border-right preserves the column boundary when scrolled. */
+    border-right: 1px solid var(--b-2);
+    padding: 8px 10px;
+  }
+  .arena-bypass-cell {
+    /* Floor cell width so the rate + CI band stays legible — 76px is
+       the smallest the "0.42 (0.31–0.55)" band reads at without the
+       wilsonLow/wilsonHigh values clipping. */
+    min-width: 76px;
+    padding: 6px 8px;
+  }
+  .arena-heat-empty {
+    min-width: 76px;
+    padding: 6px 8px;
+  }
+}
+
+/* ===== E8.S4 — `/admin/eval` reflow fix at 720 / 320 viewports =====
+   Plan ref: audit/REMEDIATION-PLAN.md L905-912. Retires:
+     - F-9-003 (P0) — `/admin/eval` reflows to 1-letter-wide columns at
+       320px and h-overflows at 720x450 (entire matrix unusable).
+     - F-9-012 (P1) — `/admin/eval` h-overflows at 720x450 (200% zoom
+       equivalent), vision-impaired users must 2D-scroll.
+
+   Pre-reqs already shipped (V3 Wave 3r + V5 Wave 3v): E7.S1 (Rail
+   collapse <=768px, #670), E7.S2 (rem-scale, #671), E7.S8 (Wilson-CI
+   <1100px breakpoint above with sticky-left + 76px cell floor).
+
+   Strategy: the <1100 block sets the scroll-affordance contract. This
+   pair of tiers extends THAT same selector tree to two narrower
+   viewport classes:
+     1. `@media (max-width: 720px)` — 720x450 is the 200% zoom-equivalent
+        viewport spec'd by WCAG 1.4.10 Reflow (1280x800 at 100% zoom
+        equals 640x400 CSS pixels at 200%; we use the 720x450 acceptance
+        slot which matches the audit register's symptom field). Cell
+        floor drops from 76px to 60px so a 5-6 column row reads inside
+        the scroll wrapper without forcing document-level overflow. The
+        scroll wrapper retains overflow-x: auto from the base rule (line
+        315), so any column count beyond fit scrolls INSIDE the matrix
+        container, not on the document.
+     2. `@media (max-width: 480px)` — covers 320×568 (iPhone SE / smallest
+        mobile per finding text) and floors cell width at 48px so the
+        Wilson rate ("0.42") + the (lo–hi) tuple stay readable without
+        rendering as 1-letter columns. The sticky-left row-header from
+        the <1100 block is preserved via the same selector tree — z-index
+        and background-color cascade through naturally; we re-declare
+        position: sticky + left: 0 explicitly so the test asserting the
+        sticky-left contract at this tier doesn't depend on cascade
+        inheritance.
+
+   WCAG references:
+     - SC 1.4.10 Reflow (AA): no content requires scrolling in two
+       dimensions at 320 CSS pixels wide (200% zoom on a 640px base
+       viewport). Horizontal scroll INSIDE `.arena-heat-scroll` is
+       permitted because the matrix is "data displayed in a usual
+       two-dimensional layout" (Reflow exception). The exception is
+       scoped to the matrix container; the document MUST NOT scroll.
+     - SC 1.4.4 Resize Text (AA): the rem-scale (E7.S2) lets the user
+       resize to 200% without the matrix becoming unusable.
+     - SC 1.3.2 Meaningful Sequence (A): sticky-left technique label
+       precedes its model-cell row at every viewport tier.
+
+   Acceptance gate (Playwright proxy):
+     documentElement.scrollWidth <= windowInnerWidth + 1 at both
+     320x568 and 720x450. Because all cells live inside
+     `.arena-heat-scroll` (overflow-x: auto), any column count >fit
+     scrolls inside the wrapper — the document's scrollWidth stays
+     bounded by viewport width.
+*/
+@media (max-width: 720px) {
+  .arena-heat-scroll {
+    /* Cap the scroll-wrapper width at the available container width so
+       a longer-than-viewport row can never push the document wider.
+       max-width: 100% means the wrapper sits at the parent's content-
+       box width; overflow-x: auto on the base rule does the scrolling. */
+    max-width: 100%;
+  }
+  .arena-heat-table thead th {
+    /* Tighten thead padding further so model id columns don't waste
+       space on bezel. */
+    padding: 6px 4px;
+  }
+  .arena-heat-table th[scope="row"] {
+    /* Re-declare the sticky-left contract from the <1100 block so the
+       E8.S4 test can grep this tier's body directly (avoids dependence
+       on cascade order). */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--bg-1);
+    border-right: 1px solid var(--b-2);
+    padding: 6px 8px;
+  }
+  .arena-bypass-cell {
+    /* Floor at 60px — still wide enough to render "0.42" + "(0.31–0.55)"
+       across two lines, but narrow enough to fit 5 cells in a 320-cell-
+       count row inside a 720-wide viewport scroll wrapper. */
+    min-width: 60px;
+    padding: 5px 6px;
+  }
+  .arena-heat-empty {
+    min-width: 60px;
+    padding: 5px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .arena-heat-scroll {
+    /* Mobile (≤480) cap. Same contract as the 720 tier — scroll inside
+       the wrapper, never the document. */
+    max-width: 100%;
+  }
+  .arena-heat-table thead th {
+    padding: 5px 3px;
+  }
+  .arena-heat-table th[scope="row"] {
+    /* Re-declare sticky-left at the mobile tier so /admin/eval at 320×568
+       still pins the technique label while the model columns scroll. */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--bg-1);
+    border-right: 1px solid var(--b-2);
+    padding: 5px 6px;
+    /* Cap the row-header width so it doesn't dominate a 320px viewport.
+       Long technique IDs (e.g. `T-104-BENIGN-CARRIER-SLI`) wrap inside
+       the sticky column rather than expanding to consume the available
+       width. */
+    max-width: 132px;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+  .arena-bypass-cell {
+    /* Floor at 48px — the minimum that keeps "0.42" + "(0.31–0.55)" on
+       two lines without the rate clipping or the CI band rendering as
+       1-letter-wide. Below 48 the rate digits start wrapping mid-
+       number, which is the "1-letter columns" symptom F-9-003 names. */
+    min-width: 48px;
+    padding: 4px 5px;
+  }
+  .arena-bypass-cell-rate {
+    /* Slightly smaller rate font so the headline number fits in the
+       48px floor without forcing the CI band off-line. */
+    font-size: var(--text-md);
+  }
+  /* V5 Wave 3x QA round-2: at 48px cell width, the CI tuple
+     "(0.31–0.55)" at the base 10px mono font is ~66px wide — wider than
+     the 38px content box, causing mid-tuple wrap. Step the CI font down
+     to var(--text-2xs) (9px) so the parenthesized band fits closer to
+     one line at the narrowest tier. F-9-003 acceptance "no 1-letter
+     columns" is about table-level column collapse, not intra-cell text
+     wrap, but this hardening keeps both legibility AND spec contract. */
+  .arena-bypass-cell-ci {
+    font-size: var(--text-2xs);
+  }
+  .arena-heat-empty {
+    min-width: 48px;
+    padding: 4px 5px;
+  }
+}
+
+/* ===== YR.6.4 VsBar — head-to-head two-row comparison =====
+   Wraps two <BarRow> rows with an optional caption + sub-line head.
+   Token-driven via existing .bar-row / .pbar classes; this archetype
+   layer just adds the caption typography + spacing. */
+.arena-vs-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: rgba(var(--white-rgb), 0.02);
+  min-width: 0;
+}
+.arena-vs-bar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.arena-vs-bar-caption {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.arena-vs-bar-sub {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+  letter-spacing: 0.06em;
+}
+
+/* ===== YR.6.10 Bracket — tournament tree =====
+   Pure CSS-grid: one column per round, matches stacked vertically.
+   Winner side gets a torii-red border accent; loser side fades. */
+.arena-bracket {
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: rgba(var(--white-rgb), 0.02);
+  min-width: 0;
+}
+.arena-bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.arena-bracket-round-name {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.arena-bracket-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.arena-bracket-match {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.03);
+  overflow: hidden;
+  min-width: 0;
+}
+.arena-bracket-side {
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  border-bottom: 1px solid var(--b-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arena-bracket-side:last-child { border-bottom: 0; }
+.arena-bracket-side.winner {
+  color: var(--torii-hi);
+  background: rgba(var(--torii-rgb), 0.08);
+  border-left: 2px solid var(--torii-lg);
+}
+.arena-bracket-side.loser {
+  color: var(--fg-mute);
+  opacity: 0.7;
+}
+
+/* E7.S5 — Windows High-Contrast fallback for bracket winner/loser sides.
+   WCAG 1.4.1 + 1.4.11. Author torii-rgb tint and red border-left are
+   stripped under forced-colors; restore winner accent via Highlight
+   border-left + loser via dotted CanvasText. F-4-019 P2. */
+@media (forced-colors: active) {
+  .arena-bracket-side.winner { border-left: 4px solid Highlight; opacity: 1; }
+  .arena-bracket-side.loser  { border-left: 2px dotted CanvasText; opacity: 1; }
+}
+.arena-bracket-score {
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  background: rgba(var(--black-rgb), 0.2);
+  border-top: 1px solid var(--b-0);
+  text-align: right;
+}
+
+/* ===== E7.S9 round-2 — leaderboard print legibility (F-8-014 P2) =====
+   QA round-2 caught: F-8-014 register text explicitly names "admin
+   reports + leaderboard print poorly". The Arena leaderboard renders
+   .arena-leaderboard-row (NOT .drow), so the primitives.css print
+   override doesn't reach it. This block mirrors the .mcard / .drow
+   contract: drop dark gradient, force paper-ink text, neutral
+   border so columns scan on monochrome printers.
+   WCAG SC 1.4.10 Reflow (AA). */
+@media print {
+  .arena-leaderboard {
+    background: white;
+    color: var(--paper-ink);
+    padding: 0;
+    border: 1px solid var(--paper-line);
+    border-radius: 0;
+  }
+  .arena-leaderboard-row {
+    background: white;
+    color: var(--paper-ink);
+    border-bottom: 1px solid var(--paper-line);
+    padding: 6px 8px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .arena-leaderboard-rank {
+    color: var(--paper-ink);
+  }
+}
+
+/* ===== Wave 3jj · F-1-024 P2 — hero kanji watermark parity.
+   Mirrors `.cmd-hero-watermark` (command.css:177) so the Arena
+   (Kumite) archetype gains the same lacquer-disc 240px kanji presence
+   as the Command archetype. Glyph default 組手 (kumite) per the
+   Yamabushi glossary. Color uses torii-red since Arena's identity is
+   the battle/fight chrome. Kanji-off gate inherits from the global
+   [data-kamae-scope][data-kanji="off"] selector. */
+.arena-hero {
+  position: relative;
+  overflow: hidden;
+}
+.arena-hero-watermark {
+  position: absolute; right: 18px; bottom: -72px;
+  font-family: var(--serif); font-weight: 900; font-size: var(--text-watermark);
+  color: rgba(var(--torii-rgb), 0.08);
+  line-height: 0.8; letter-spacing: -0.05em;
+  pointer-events: none; user-select: none;
+  text-shadow: 0 4px 40px rgba(var(--torii-rgb), 0.18);
+  z-index: 0;
+}
+[data-kamae-scope][data-kanji="off"] .arena-hero-watermark { display: none; }
+@media (max-width: 768px) {
+  .arena-hero-watermark { font-size: var(--text-watermark-md); bottom: -36px; }
+}
+@media (max-width: 480px) {
+  .arena-hero-watermark { font-size: var(--text-watermark-sm); bottom: -18px; }
+}

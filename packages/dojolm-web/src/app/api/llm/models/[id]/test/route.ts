@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: Apache-2.0
+/**
+ * File: api/llm/models/[id]/test/route.ts
+ * Purpose: Test model connection
+ * Method: POST
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+
+import { getStorage } from '@/lib/storage/storage-interface';
+import { testModelConfig } from '@/lib/llm-providers';
+import { withAuth } from '@/lib/auth/route-guard';
+
+// ===========================================================================
+// POST /api/llm/models/[id]/test - Test model connection
+// ===========================================================================
+
+export const POST = withAuth(
+  async (_request: NextRequest, { params }) => {
+  try {
+    const id = params?.id ?? '';
+    const storage = await getStorage();
+
+    const model = await storage.getModelConfig(id);
+
+    if (!model) {
+      return NextResponse.json(
+        { success: false, error: 'Model not found' },
+        { status: 404 }
+      );
+    }
+
+    // Test connection
+    const result = await testModelConfig(model);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Error testing model:', error);
+    return NextResponse.json(
+      { success: false, error: 'Model connection test failed' },
+      { status: 500 }
+    );
+  }
+  },
+  { role: 'admin' },
+);

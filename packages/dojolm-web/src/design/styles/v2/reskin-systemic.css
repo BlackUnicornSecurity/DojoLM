@@ -1,0 +1,275 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* ===========================================================================
+   v2 reskin — P4 systemic conformity (2026-07-17)
+   ===========================================================================
+   Cross-surface corrections the P4 re-audit confirmed on 8+ surfaces at
+   once. Loads after the wave sheets (layout.tsx) so these win over the
+   E-B12 V1-density sweep in primitives.css, which is correct for V1 but
+   off-law for the v2 skin. All rules scoped to [data-skin="v2"].
+   =========================================================================== */
+
+/* --- KPI tile anatomy (SKIN-SPEC §3.1 · design wave-a app-shell.css .kpi)
+   Labels: JetBrains Mono 500 caps, 0.16em. Values: mono 600, -0.02em.
+   COLOR: the design mockup paints `.kpi .l`/`.kpi .d` at --fg-mute (#5e6472,
+   3.12:1), but that is below WCAG 1.4.3 AA for 11px text and the app's own
+   token contract (e7-s3-token-contrast.test.ts:184, "mcard .k … = --fg-dim")
+   reserves --fg-mute for ≥18px/non-text. KPI labels are DATA content, so we
+   keep the AA-safe recessive tier --fg-dim (#9ba3b3, 7.35:1) inherited from
+   base.css/primitives.css — one ink-tier brighter than the mockup, AA-clean.
+   Only decorative section kickers (rail-group-label, nav sublabel) follow the
+   mockup's darker mute tier. jade/ember reserved for up/down deltas only. */
+[data-skin="v2"] .mcard .k {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+[data-skin="v2"] .mcard .v {
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+[data-skin="v2"] .mcard .d {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .mcard .d.pos {
+  color: var(--jade);
+}
+[data-skin="v2"] .mcard .d.neg {
+  color: var(--ember);
+}
+
+/* --- Topbar env chip — the design's quiet neutral chip ("● Prod").
+   The V1 colour-coding (jade DEV / red PROD) is retired under v2: the red
+   variant would hand every production view a second chrome red. Mirrors
+   .chip.ghost from primitives.css; the dot uses the mute token as
+   non-text decoration (sanctioned per tokens.css). */
+[data-skin="v2"] .topbar .chip[data-env] {
+  border-color: var(--b-0);
+  background: transparent;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .topbar .chip[data-env] .dot {
+  background: var(--fg-mute);
+  box-shadow: none;
+}
+
+/* --- RefBlock body — the design's .ref-block wraps title+sub in a .bd that
+   flexes to fill (min-width:0), so the link stays pinned right and the sub
+   is its own block line (wave-g2 §5.5). */
+[data-skin="v2"] .ref-block .bd {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+[data-skin="v2"] .ref-block .bd .s {
+  display: block;
+}
+
+/* --- Page header — the design's .page-head (app-shell.css:69) carries no
+   bottom rule; the V1-era primitives.css .page-head border-bottom leaked
+   into every v2 hero. */
+[data-skin="v2"] .page-head {
+  border-bottom: 0;
+}
+
+/* --- Panel-head anatomy — the design's .p-hd renders title + sub INLINE
+   on one baseline (app-shell.css:79-81), never stacked. Generalizes the
+   scanner-v2/amaterasu-v2 per-surface fixes to every v2 panel. */
+[data-skin="v2"] .panel-head .col {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .panel-head .col .sub {
+  margin-top: 0;
+}
+
+/* --- Panel-head title — design `.p-hd h3` = 15.5px/600 (app-shell.css:80,
+   measured -0.31px tracking). Reverts the E-B12 sweep's 16px/700 bump.
+   Covers h2 too — some panels promote the title tag for a11y hierarchy
+   (e.g. Scanner "Run a scan") but the design metric is identical. */
+[data-skin="v2"] .panel-head h2,
+[data-skin="v2"] .panel-head h3 {
+  font-size: 0.96875rem; /* 15.5px — design .p-hd h3 */
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* --- ModuleOnboarding head — design renders "Begin your training" as a
+   plain panel head (.p-hd: h3 15.5/600 + .sub 12.5px ghost INLINE on one
+   baseline), not an 18px title stacked over a mono caption. */
+[data-skin="v2"] .module-onboarding__heading {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .module-onboarding__title {
+  font-size: 0.96875rem; /* 15.5px — design .p-hd h3 */
+  letter-spacing: -0.02em;
+}
+[data-skin="v2"] .module-onboarding__subtitle {
+  font-family: var(--sans);
+  font-size: 0.78125rem; /* 12.5px — design .p-hd .sub */
+  letter-spacing: 0;
+  color: var(--fg-ghost);
+}
+
+/* --- Zone/section titles — design .zone-title is a baseline flex row
+   (h2 + sub inline, app-shell.css:84-86). */
+[data-skin="v2"] .zone-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .zone-title .sub,
+[data-skin="v2"] .zone-title p {
+  margin: 0;
+}
+/* Design zone h2 = 18px/600/-0.03em on EVERY surface (measured -0.54px);
+   generic so zone titles outside the aria-landmark pattern (e.g. Payloads
+   "Fixture library") get the same metric. */
+[data-skin="v2"] .zone-title h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+/* --- Ritual/parchment heading — design paper-panel h3 (wave-g2 Audit
+   Ledger, measured Fraunces 24px/600/-0.01em); the V1 ritual head ran
+   lighter (22/500). */
+[data-skin="v2"] .ritual-scroll h2 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* --- Kamae closed bar — design (.kamae, app-shell.css:146-151) renders a
+   PLAIN 構 glyph (no boxed tile) and the title + preferences gloss inline
+   on one baseline, not stacked. */
+[data-skin="v2"] .kamae-reopen-mark {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: 0;
+  font-size: var(--text-md);
+}
+[data-skin="v2"] .kamae-reopen-label {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* --- Kamae closed-bar CTA — design renders a plain dim text link
+   ("Adjust", link-dim 12.5px), not a bordered mono-caps button. */
+[data-skin="v2"] .kamae-reopen-cta {
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg-dim);
+}
+
+/* --- Chips — design .chip is ALWAYS neutral (fg-dim text, bg-2 fill,
+   line-2 border; app-shell.css:102-103); state colour lives ONLY in the
+   dot (.dot.jade/gold/steel/crit). The V1 jade-tinted chip container
+   leaked a second accent onto live/armed chips.
+   Neutralize when the colour is carried by a `.dot` (`:has(.dot)`) OR the
+   chip is decorative (`:not([role])`). This SPARES only the no-dot semantic-
+   feedback chips (BulkActionBar `role="status"` success / `role="alert"`
+   error, ViewPresetMenu "Saved") where the CONTAINER colour IS the message —
+   neutralizing those while `.chip.red` stays red would make success read as
+   inert chrome. Keying on `role` alone was over-broad: DemoDataBadge /
+   DashboardKillSwitchChip / Sensei ModeBadge use `role="status"` for SR
+   announcement yet DO carry a dot, so `:has(.dot)` correctly reclaims them. */
+[data-skin="v2"] .chip.jade:has(.dot),
+[data-skin="v2"] .chip.jade:not([role]),
+[data-skin="v2"] .chip.steel:has(.dot),
+[data-skin="v2"] .chip.steel:not([role]) {
+  border-color: var(--b-1);
+  background: var(--bg-2);
+  color: var(--fg-dim);
+}
+/* Orphaned steel pulse ring — the design's restrained skin has no pulsing
+   halo; without this the neutralized Hattori platform-active chip (.chip
+   .steel.yr4-steel-pulse) would wear a steel ::before ring around a neutral
+   body (a getComputedStyle census can't see ::before, so it slipped). */
+[data-skin="v2"] .chip.yr4-steel-pulse::before {
+  display: none;
+}
+/* Status-tone tags (allow/log/warn) join the same neutral grammar —
+   design campaign/status rows are neutral chips + coloured dot, never
+   jade/steel/gold-tinted boxes. `.tag.block` keeps its red text tier
+   (tokens.css sanctions it as the danger tag). */
+[data-skin="v2"] .tag.allow,
+[data-skin="v2"] .tag.log,
+[data-skin="v2"] .tag.warn {
+  border-color: var(--b-1);
+  background: var(--bg-2);
+  color: var(--fg-dim);
+}
+/* Rank tiles (Arena leaderboard) — the design's populated-standings
+   grammar (wave-e Leaderboard) is a medal OUTLINE only; rank tiles stay
+   neutral chrome. The V1 tone-red/tone-gold tinted the whole tile. */
+[data-skin="v2"] .yr4-rank-tile.tone-red,
+[data-skin="v2"] .yr4-rank-tile.tone-gold {
+  border-color: var(--b-1);
+  background: var(--bg-2);
+}
+[data-skin="v2"] .yr4-rank-tile.tone-red .rank-num,
+[data-skin="v2"] .yr4-rank-tile.tone-gold .rank-num {
+  color: var(--fg-dim);
+}
+/* PROCESS-status pills (queued/running) — neutral grammar (design shows
+   process state as plain text / chip+dot, Campaigns lrow). VERDICT chips
+   (pass/fail/open) stay tinted — the design's own wave-h Buki Fixture
+   Detail paints PASS jade / OPEN gold / FAIL torii (data verdicts are
+   exempt from the chrome red budget, like Models risk pills). */
+[data-skin="v2"] .attack-row-status.queued,
+[data-skin="v2"] .attack-row-status.running {
+  border-color: var(--b-1);
+  background: var(--bg-2);
+  color: var(--fg-dim);
+}
+
+/* --- Mode selector active card — design `.mode.on` (wave-g2 Live
+   Practice, measured): steel 0.55 BORDER + neutral bg-3 fill; never a
+   tinted surface. Overrides the primitives tone-steel/tone-torii fills. */
+[data-skin="v2"] .mode-selector--tone-steel .mode-selector__item--active,
+[data-skin="v2"] .mode-selector--tone-torii .mode-selector__item--active {
+  border-color: rgba(var(--steel-rgb), 0.55);
+  background: var(--bg-3);
+}
+
+/* --- Active-defenses card (design def-card, Command Center v2.html:203-211):
+   card NOT colour-tinted; chip text neutral — the jade dot is the ONLY
+   active signal; flag tags are neutral gray outlines. */
+[data-skin="v2"] .dashboard-v2 .gmode.active {
+  border-color: var(--b-0);
+  background: var(--bg-1);
+}
+[data-skin="v2"] .dashboard-v2 .gmode-tag {
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .dashboard-v2 .gmode-tag .dot {
+  background: var(--jade);
+  box-shadow: 0 0 6px rgba(var(--jade-rgb), 0.5);
+}
+[data-skin="v2"] .dashboard-v2 .flag.on {
+  border-color: var(--b-0);
+  background: transparent;
+  color: var(--fg-dim);
+}

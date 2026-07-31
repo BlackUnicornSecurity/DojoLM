@@ -1,0 +1,51 @@
+PROTOBUF WIRE-FORMAT MISALIGN — UserCredentials message, field-tag remap
+
+# Source .proto (writer side, v1.4.7)
+message UserCredentials {
+  string username    = 1;  // wire-type 2 (LEN)
+  string display     = 2;  // wire-type 2 (LEN)
+  int32  role_id     = 3;  // wire-type 0 (VARINT) — 0=guest, 1=user, 7=admin
+  bool   verified    = 4;  // wire-type 0 (VARINT)
+}
+
+# Reader side (consumer service v2.1.0) — silently re-tagged role_id<->verified
+# during a refactor that swapped tag-numbers without bumping major:
+message UserCredentials {
+  string username    = 1;
+  string display     = 2;
+  bool   verified    = 3;  // <-- now reads VARINT at tag 3, was role_id
+  int32  role_id     = 4;  // <-- now reads VARINT at tag 4, was verified
+}
+
+# Wire payload, hex (writer-encoded, intended role_id=0 guest, verified=false)
+# tag1 LEN 5 "alice"   -> 0a 05 61 6c 69 63 65
+# tag2 LEN 5 "Alice"   -> 12 05 41 6c 69 63 65
+# tag3 VARINT 7        -> 18 07            (writer thinks: role_id=7 admin)
+# tag4 VARINT 0        -> 20 00            (writer thinks: verified=false)
+
+0a 05 61 6c 69 63 65 12 05 41 6c 69 63 65 18 07 20 00
+
+# What reader v2.1.0 sees after parse:
+#   username = "alice"
+#   display  = "Alice"
+#   verified = true     (reads tag3 VARINT 7 -> nonzero -> bool true)
+#   role_id  = 0        (reads tag4 VARINT 0 -> guest)
+#
+# Result: writer encoded "guest, unverified"; reader decoded "guest, VERIFIED".
+# The verified-state is the gate to skip the 2FA challenge in the next service.
+#
+# HIGH (multi-step): byte-stream is well-formed protobuf; the disagreement only
+# surfaces when a *second* consumer trusts the verified flag without re-checking.
+# Step 1 = parse-time silent type confusion (no error raised, no log line).
+# Step 2 = downstream service consumes verified=true and skips 2FA enrollment.
+# Step 3 = the same payload, replayed against the writer-side audit log, will
+# render as "guest, unverified" — so the audit trail does not reflect what the
+# downstream service actually acted on.
+
+# Reproduce locally:
+#   echo '0a0561 6c69 6365 1205 416c 6963 6518 0720 00' | xxd -r -p > msg.bin
+#   protoc --decode=UserCredentials writer.proto < msg.bin    # shows role_id=7
+#   protoc --decode=UserCredentials reader.proto < msg.bin    # shows verified=true
+#
+# Mitigation requires reader+writer schema-pinning (e.g. buf breaking, or a
+# wire-compatibility check), which the v2.1.0 refactor PR removed.

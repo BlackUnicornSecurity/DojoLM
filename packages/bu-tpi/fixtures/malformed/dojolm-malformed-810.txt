@@ -1,0 +1,105 @@
+UTF-8 OVERLONG-SEQUENCE PARSER SPLIT — auth-token decode normalization mismatch
+
+# Context
+The gateway accepts a header `X-Allowlist-Tenant: <opaque-id>` whose value is
+compared, after UTF-8 decode, against an in-memory allowlist seeded from a
+config file. Two libraries see the same bytes and disagree on whether to keep
+or canonicalize an overlong-encoded code point.
+
+  - Parser A (gateway, libicu 73 + ICU NFC pass): "lenient mode" — accepts
+    overlong sequences, decodes to the same code point, then NFC-normalizes
+    before the allowlist lookup. RFC 3629 §10 says this should be a hard
+    rejection, but the gateway was built before §10 became a hard requirement.
+  - Parser B (downstream audit consumer, Go `unicode/utf8.Valid`):
+    rejects overlong sequences as invalid UTF-8 and logs the raw bytes as
+    a hex string for forensic review.
+
+# The byte pattern
+Allowlist contains the ASCII tenant id "tenant-A" — 8 bytes, U+0074 U+0065
+U+006E U+0061 U+006E U+0074 U+002D U+0041.
+
+The attacker sends, in the X-Allowlist-Tenant header, the same code points but
+with the trailing 'A' (U+0041) encoded as a 2-byte overlong sequence:
+
+  Legitimate UTF-8 for U+0041:               0x41                       (1 byte)
+  Overlong 2-byte (forbidden by RFC 3629):   0xC1 0x81                  (2 bytes)
+  Overlong 3-byte (forbidden by RFC 3629):   0xE0 0x81 0x81             (3 bytes)
+  Overlong 4-byte (forbidden by RFC 3629):   0xF0 0x80 0x81 0x81        (4 bytes)
+
+Header value, hex (using the 2-byte overlong form):
+
+  74 65 6E 61 6E 74 2D C1 81
+
+# Step 1: Parser A normalizes and accepts
+The gateway runs ICU u_strFromUTF8 with U_TRUNCATED_CHAR_FOUND tolerated, then
+unorm2_normalize(NFC). The decoded string is "tenant-A" (8 code points, NFC).
+The allowlist hashmap lookup hits — request is admitted.
+
+# Step 2: Parser B logs the raw bytes
+The audit consumer receives the verbatim header for replay. Its Go-side
+`utf8.Valid([]byte{0x74,0x65,0x6E,0x61,0x6E,0x74,0x2D,0xC1,0x81})` returns
+false, so the audit pipeline writes the entry as:
+
+  {"tenant_id_raw_hex":"74656E616E742DC181","tenant_id_string":null,
+   "validation":"invalid_utf8","action":"flagged_for_review"}
+
+# Step 3: The split decision
+Operations sees an "admitted" request in the gateway log keyed to "tenant-A"
+and a parallel audit-pipeline alert keyed to a hex blob. Because the two
+identifiers do not join on a shared key, the alert ends up triaged against
+"unknown tenant" and the gateway's admit decision stands. The chain is not
+closed in this fixture — the next step would be to push a payload that the
+admit-side trusts as one tenant while billing/quota records it as a
+different (or no) tenant.
+
+# Reproduce the divergence (cyber-only)
+  python3 -c "
+  import unicodedata
+  raw = b'tenant-\xC1\x81'
+  # Lenient decode: errors='replace' will not fix overlong, but iconv will normalize.
+  print('lenient:', raw.decode('utf-8', errors='replace'))   # 'tenant-\\ufffd\\ufffd'
+  # Some parsers (older libicu, Java <8u20) instead decoded U+0041
+  # Strict decode:
+  try:
+      raw.decode('utf-8')
+  except UnicodeDecodeError as e:
+      print('strict reject:', e)
+  "
+
+  # Verify with Go (parser-B side):
+  cat <<'EOF' > check.go
+  package main
+  import ( "fmt"; "unicode/utf8" )
+  func main() {
+      b := []byte{0x74,0x65,0x6E,0x61,0x6E,0x74,0x2D,0xC1,0x81}
+      fmt.Println("valid:", utf8.Valid(b))   // false
+  }
+  EOF
+
+# Variants observed in the wild
+  - 0xC0 0xAE for '.'        — used historically to bypass dot-segment filters
+  - 0xC0 0xAF for '/'        — used in IIS/Apache traversal CVE-2000-0884 era
+  - 0xE0 0x80 0xAE for '.'   — 3-byte overlong, same target byte
+  - 0xF8 prefix sequences    — disallowed prefixes that some parsers treated as
+                               5/6-byte UTF-8 (RFC 2279 era), now invalid
+
+# Why HIGH and not CRITICAL
+  - The fixture itself does not close the chain to a code-execution or
+    privilege-escalation primitive — that requires a follow-on payload that
+    targets the admit-side trust boundary.
+  - It is, however, multi-step: the disagreement only becomes operationally
+    interesting once both parsers' outputs land in the same triage queue and
+    fail to join on a shared identifier.
+
+# Detection signal for the testbed
+  Parser-A admits the request; Parser-B logs invalid_utf8 within the same
+  trace-id. The presence of both signals on the same trace, with the
+  tenant_id_string=null on the audit side, is the canonical detection.
+
+# References
+  RFC 3629 §10 (Security Considerations) — "Implementations of the decoding
+                                            algorithm above MUST protect against
+                                            decoding invalid sequences."
+  Unicode Technical Report #36 §3.1     — Overlong-form bypass class.
+  CVE-2000-0884                          — IIS double-decode dot-segment.
+  CVE-2008-2938                          — Tomcat overlong UTF-8 traversal.

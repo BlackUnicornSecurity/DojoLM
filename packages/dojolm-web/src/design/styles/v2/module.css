@@ -1,0 +1,398 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-B adapters for live module primitives. */
+
+/* S2 — tier-2 header kicker (design app-shell.css .page-kick). Codename romaji
+   + belt sit above the plain Inter H1; the full kanji renders here, not inlined
+   into the title. Lives here (loaded on every shell surface) to keep base.css
+   within its 400-line budget. */
+[data-skin="v2"] .page-head .page-kick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .page-head .page-kick .kj {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 19px;
+  letter-spacing: 0;
+  color: var(--fg-dim);
+}
+/* Belt-rank chip (design dojo.css SSOT). Global so card codenames (S8) and the
+   RefBlock primitive (P2a) reuse it. Colours are the brand belt literals. */
+[data-skin="v2"] .belt {
+  font-family: var(--mono);
+  /* 11px floor (SKIN-SPEC §3.1) rather than dojo.css's superseded 10px. */
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-weight: 600;
+}
+[data-skin="v2"] .belt.white {
+  background: #e8e6df;
+  color: #1a1a1a;
+}
+[data-skin="v2"] .belt.yellow {
+  background: #e4c84a;
+  color: #1a1a1a;
+}
+[data-skin="v2"] .belt.orange {
+  background: #e08a3c;
+  color: #1a1a1a;
+}
+[data-skin="v2"] .belt.green {
+  background: #3fa35c;
+  color: #fff;
+}
+[data-skin="v2"] .belt.blue {
+  background: #3d6bc4;
+  color: #fff;
+}
+[data-skin="v2"] .belt.black {
+  background: #15151c;
+  color: #fff;
+  border: 1px solid var(--b-2);
+}
+
+/* P2a — "how X works" explainer (design wave-e.css .steps), rendered by
+   design/shell/Steps.tsx as an <ol>. Selectors are scoped `.steps .step` so
+   the unscoped command-center `.step` rules (patterns/command.css: grid,
+   cursor:pointer, hover tint) don't leak onto this static list. */
+[data-skin="v2"] .steps {
+  display: flex;
+  flex-direction: column;
+  counter-reset: step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+[data-skin="v2"] .steps .step {
+  display: flex;
+  gap: 13px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--b-0);
+  cursor: default;
+}
+[data-skin="v2"] .steps .step:hover {
+  background: transparent;
+}
+[data-skin="v2"] .steps .step:first-child {
+  padding-top: 4px;
+}
+[data-skin="v2"] .steps .step:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
+}
+[data-skin="v2"] .steps .step .n {
+  counter-increment: step;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--b-1);
+  background: var(--bg-3);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  /* 11px floor (SKIN-SPEC §3.1); design's 11.5px rounds into --text-sm. */
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .steps .step .n::before {
+  content: counter(step);
+}
+[data-skin="v2"] .steps .step .bd {
+  min-width: 0;
+}
+[data-skin="v2"] .steps .step .t {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--fg);
+}
+[data-skin="v2"] .steps .step .s {
+  display: block;
+  font-size: var(--text-md);
+  color: var(--fg-dim);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+[data-skin="v2"] .v2-workbench-grid,
+[data-skin="v2"] .yr4-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+[data-skin="v2"] .v2-workbench-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+[data-skin="v2"] .kotoba-workbench-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+[data-skin="v2"] .kotoba-workshop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+[data-skin="v2"] .kotoba-workshop-diff {
+  grid-column: 1 / -1;
+}
+
+[data-skin="v2"] .buki-page-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  max-width: 30rem;
+  text-align: right;
+}
+
+[data-skin="v2"] .yr4-data-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+[data-skin="v2"] .yr4-data-row,
+[data-skin="v2"] .lrow {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--b-0);
+}
+
+[data-skin="v2"] .yr4-data-row:last-child,
+[data-skin="v2"] .lrow:last-child {
+  border-bottom: 0;
+}
+
+[data-skin="v2"] .lrow .bd {
+  flex: 1;
+  min-width: 0;
+}
+
+[data-skin="v2"] .lrow .t {
+  display: block;
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+[data-skin="v2"] .lrow .s {
+  display: block;
+  margin-top: 2px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+
+[data-skin="v2"] .ref-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid var(--b-0);
+  border-radius: 9px;
+  background: var(--bg-2);
+}
+
+[data-skin="v2"] .ref-block .kj {
+  color: var(--fg-dim);
+  font-family: var(--serif);
+  font-size: var(--text-2xl);
+}
+
+[data-skin="v2"] .ref-block .t {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+[data-skin="v2"] .ref-block .s {
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .ref-block a {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+
+[data-skin="v2"] .v2-empty-state {
+  padding: 24px 20px;
+  text-align: center;
+  border: 1px dashed var(--b-1);
+  border-radius: 10px;
+}
+
+[data-skin="v2"] .v2-empty-state strong {
+  display: block;
+  color: var(--fg);
+  font-size: var(--text-lg);
+}
+
+[data-skin="v2"] .v2-empty-state p {
+  max-width: 52ch;
+  margin: 6px auto 14px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+
+[data-skin="v2"] .module-onboarding[data-variant="row-deep-links"] {
+  border-left-color: var(--b-1);
+  background: var(--bg-2);
+  box-shadow: none;
+}
+
+[data-skin="v2"] .dashboard-v2 .module-onboarding__row-icon {
+  background: var(--bg-3);
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .dashboard-v2 .module-onboarding__row-chevron {
+  color: var(--fg-dim);
+}
+
+/* §1.4 severity ramp (design wave-b/module.css:38-53). DR-3 dashed zero-state
+   on --b-1; DR-4 --fg-dim ink; 11px floor = --text-sm. */
+[data-skin="v2"] .sevbar {
+  display: flex;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--bg-4);
+}
+
+[data-skin="v2"] .sevbar .sg {
+  display: block;
+  height: 100%;
+}
+
+[data-skin="v2"] .sevbar .sg + .sg {
+  margin-left: 2px;
+}
+
+[data-skin="v2"] .sg.crit {
+  background: var(--torii-text);
+}
+
+[data-skin="v2"] .sg.high {
+  background: var(--ember);
+}
+
+[data-skin="v2"] .sg.med {
+  background: var(--gold);
+}
+
+[data-skin="v2"] .sg.low {
+  background: var(--steel);
+}
+
+[data-skin="v2"] .sg.clean {
+  background: var(--jade);
+}
+
+[data-skin="v2"] .sevbar.zero {
+  border: 1px dashed var(--b-1);
+  background: var(--bg-3);
+}
+
+[data-skin="v2"] .sev-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 8px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+
+[data-skin="v2"] .sev-counts b {
+  font-weight: 500;
+}
+
+[data-skin="v2"] .sev-counts .k-crit b {
+  color: var(--torii-text);
+}
+
+[data-skin="v2"] .sev-counts .k-high b {
+  color: var(--ember);
+}
+
+[data-skin="v2"] .sev-counts .k-med b {
+  color: var(--gold);
+}
+
+[data-skin="v2"] .sev-counts .k-low b {
+  color: var(--steel);
+}
+
+[data-skin="v2"] .sev-counts .k-clean b {
+  color: var(--jade);
+}
+
+[data-skin="v2"] .sev-counts .k-none b,
+[data-skin="v2"] .sev-counts.zero b {
+  color: var(--fg-dim);
+}
+
+@media (max-width: 1080px) {
+  [data-skin="v2"] .v2-workbench-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  [data-skin="v2"] .v2-workbench-grid,
+  [data-skin="v2"] .yr4-section-grid,
+  [data-skin="v2"] .kotoba-workbench-grid,
+  [data-skin="v2"] .kotoba-workshop-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-skin="v2"] .buki-page-actions {
+    align-items: stretch;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-skin="v2"] .dashboard-v2 .module-onboarding__row-desc {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-skin="v2"]
+    .dashboard-v2
+    .module-onboarding[data-variant="row-deep-links"] {
+    padding: 16px;
+  }
+
+  [data-skin="v2"] .dashboard-v2 .module-onboarding__row {
+    grid-template-columns: minmax(0, 1fr) 18px;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+
+  [data-skin="v2"] .dashboard-v2 .module-onboarding__row-icon {
+    display: none;
+  }
+}

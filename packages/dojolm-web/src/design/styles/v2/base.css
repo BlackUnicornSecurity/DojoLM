@@ -1,0 +1,386 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Shared v2 surface primitives. Every selector is mount-scoped. */
+[data-skin="v2"] {
+  /* v2-skin parity — the old scope-level mute→dim token remap rendered every
+     mute consumer brighter than the served design (#9ba3b3 vs #5e6472);
+     removed per SSOT. A11y: mute 3.12:1 = micro-label/decorative only. */
+  color: var(--fg);
+  background: var(--bg-1);
+  font-family: var(--sans), Inter, system-ui, sans-serif;
+  font-size: var(--text-lg);
+  line-height: 1.55;
+  min-height: 100dvh;
+}
+
+[data-skin="v2"] * {
+  box-sizing: border-box;
+}
+[data-skin="v2"] a {
+  color: var(--steel-lg);
+  text-underline-offset: 3px;
+}
+[data-skin="v2"] a:hover {
+  color: var(--fg);
+}
+
+[data-skin="v2"] .page-head {
+  gap: 20px;
+  padding: 6px 0 20px;
+}
+[data-skin="v2"] .page-head .col {
+  min-width: 260px;
+}
+/* Retained for legacy callers that still pass a bare `jp` prop with no naming;
+   the default tier-2 header no longer inlines the kanji into the H1. The S2
+   kicker + belt rules live in module.css (loaded on every shell surface). */
+[data-skin="v2"] .page-head .jp {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: var(--text-4xl);
+  color: var(--fg-dim);
+  opacity: 1;
+}
+[data-skin="v2"] .page-head h1,
+[data-skin="v2"] .head3 h1 {
+  margin-top: 4px;
+  font-size: var(--text-7xl);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+[data-skin="v2"] .page-head .lede,
+[data-skin="v2"] .head3 .lede {
+  max-width: 62ch;
+  margin-top: 5px;
+  color: var(--fg-dim);
+  font-size: var(--text-lg);
+}
+[data-skin="v2"] .page-head .actions {
+  gap: 10px;
+  margin-top: 14px;
+}
+[data-skin="v2"] .page-head.page-head--compact {
+  align-items: center;
+  padding: 4px 0 14px;
+}
+[data-skin="v2"] .page-head.page-head--compact .col {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .page-head.page-head--compact h1 {
+  margin: 0;
+  font-size: var(--text-4xl);
+  letter-spacing: -0.01em;
+}
+[data-skin="v2"] .page-head.page-head--compact .gloss {
+  color: var(--fg-dim);
+  font-size: var(--text-md);
+}
+[data-skin="v2"] .page-head.page-head--compact .actions {
+  margin-top: 0;
+}
+
+[data-skin="v2"] .panel,
+[data-skin="v2"] .mcard,
+[data-skin="v2"] .members-scent-card {
+  border: 1px solid var(--b-0);
+  border-radius: 12px;
+  background: var(--bg-2);
+  box-shadow: none;
+}
+[data-skin="v2"] .panel::before,
+[data-skin="v2"] .mcard::before {
+  display: none;
+}
+[data-skin="v2"] .panel-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--b-0);
+}
+[data-skin="v2"] .panel-body {
+  padding: 16px 18px;
+}
+[data-skin="v2"] .mcard {
+  padding: 14px 16px;
+}
+[data-skin="v2"] .mcard .k {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .mcard .v {
+  margin-top: 6px;
+  font-size: var(--text-7xl);
+  color: var(--fg);
+  text-shadow: none;
+}
+[data-skin="v2"] .mcard .d {
+  margin-top: 4px;
+  color: var(--jade);
+}
+[data-skin="v2"] .mcard .d.neg {
+  color: var(--ember);
+}
+[data-skin="v2"] .mcard .d.flat {
+  /* KPI flat sub is DATA content — AA-safe --fg-dim, not the mockup's
+     sub-AA --fg-mute (see reskin-systemic.css .mcard .k rationale). */
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .mcard.jade .v {
+  color: var(--jade);
+}
+[data-skin="v2"] .mcard.red .v {
+  color: var(--torii-text);
+}
+
+[data-skin="v2"] .kpi-strip {
+  width: 100%;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+[data-skin="v2"] .kpi-strip__inner {
+  width: 100%;
+  min-width: 0;
+}
+[data-skin="v2"] .kpi-strip__row {
+  width: 100%;
+  flex: 1 1 100%;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--b-0);
+  border-radius: 12px;
+  background: var(--b-0);
+  align-items: stretch;
+}
+[data-skin="v2"] .kpi-strip__cell {
+  display: flex;
+  min-width: 0;
+}
+[data-skin="v2"] .kpi-strip__cell > .mcard {
+  flex: 1 1 auto;
+  min-height: 100%;
+}
+[data-skin="v2"] .kpi-strip .mcard,
+[data-skin="v2"] .kpi-strip__row .mcard {
+  border: 0;
+  border-radius: 0;
+}
+[data-skin="v2"] .kpi-strip__cell--zero .mcard .v {
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .dashboard-first-run-callout {
+  background: rgba(var(--steel-rgb), 0.06);
+}
+/* Active-defenses card overrides live in reskin-systemic.css (v2-skin
+   parity block — jade ACTIVE chip, neutral tags). */
+[data-skin="v2"] .dashboard-v2 .cov-cell.l1 {
+  background: rgba(var(--steel-rgb), 0.2);
+}
+[data-skin="v2"] .dashboard-v2 .cov-cell.l2 {
+  background: rgba(var(--steel-rgb), 0.42);
+}
+[data-skin="v2"] .dashboard-v2 .cov-cell.l3 {
+  background: rgba(var(--steel-rgb), 0.65);
+}
+[data-skin="v2"] .dashboard-v2 .cov-cell.l4 {
+  background: var(--steel);
+  box-shadow: none;
+}
+
+[data-skin="v2"] .tatami-v2-legal .btn-primary {
+  border-color: var(--b-1);
+  background: var(--bg-3);
+  color: var(--fg);
+  box-shadow: none;
+}
+[data-skin="v2"] .tatami-v2-legal .btn-primary:hover {
+  border-color: var(--b-2);
+  background: var(--bg-2);
+}
+
+/* (Phase 4.3 — the dashboard hero no longer mounts .cmd-hero; its
+   two-panel posture+gauge chrome lives in v2/command-center.css.) */
+
+/* One primary red action, neutral selections, explicit danger. */
+[data-skin="v2"] .btn {
+  min-height: 44px;
+  border: 1px solid var(--b-1);
+  border-radius: 8px;
+  background: var(--bg-3);
+  color: var(--fg-dim);
+  box-shadow: none;
+}
+[data-skin="v2"] .btn:hover {
+  border-color: var(--b-2);
+  background: var(--bg-4);
+  color: var(--fg);
+}
+[data-skin="v2"] .btn-primary {
+  background: var(--torii);
+  border-color: var(--torii);
+  color: var(--torii-text-on);
+}
+[data-skin="v2"] .btn-primary:hover {
+  background: var(--torii-lg);
+  border-color: var(--torii-lg);
+  color: var(--torii-text-on);
+}
+[data-skin="v2"] .btn-danger {
+  background: transparent;
+  border-color: rgba(var(--torii-rgb), 0.35);
+  color: var(--torii-text);
+}
+[data-skin="v2"] .btn-danger:hover {
+  background: rgba(var(--torii-rgb), 0.06);
+  border-color: rgba(var(--torii-rgb), 0.55);
+}
+[data-skin="v2"] .chip {
+  min-height: 26px;
+  padding: 4px 10px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  background: var(--bg-2);
+  color: var(--fg-dim);
+  font-size: var(--text-sm);
+  box-shadow: none;
+}
+[data-skin="v2"] .chip.red {
+  color: var(--torii-text);
+  background: rgba(var(--torii-rgb), 0.06);
+  border-color: rgba(var(--torii-rgb), 0.3);
+}
+[data-skin="v2"] .subtabs {
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--b-0);
+  border-radius: 10px;
+  background: var(--bg-2);
+  box-shadow: none;
+}
+[data-skin="v2"] .subtabs .st {
+  min-height: 44px;
+  padding: 7px 16px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .subtabs .st.on,
+[data-skin="v2"] .subtabs .st[aria-selected="true"] {
+  background: var(--bg-4);
+  color: var(--fg);
+  box-shadow: none;
+}
+
+[data-skin="v2"] .wb-input,
+[data-skin="v2"] .wb-select,
+[data-skin="v2"] .wb-textarea,
+[data-skin="v2"] input:not([type="checkbox"]):not([type="radio"]),
+[data-skin="v2"] select,
+[data-skin="v2"] textarea {
+  min-height: 44px;
+  border: 1px solid var(--b-1);
+  border-radius: 8px;
+  background: var(--bg-1);
+  color: var(--fg);
+  box-shadow: none;
+}
+[data-skin="v2"] .wb-input:focus-visible,
+[data-skin="v2"] .wb-select:focus-visible,
+[data-skin="v2"] .wb-textarea:focus-visible {
+  border-color: var(--steel);
+  outline: 2px solid var(--steel-lg);
+  outline-offset: 1px;
+}
+
+[data-skin="v2"] table {
+  border-collapse: collapse;
+}
+/* S8 — table headers are Inter sentence-case (design .ctable thead th), not
+   mono-caps. Mono-caps is reserved for the 3 sanctioned slots (kickers, KPI
+   labels, code chips); a blanket th uppercase violated that law app-wide. */
+[data-skin="v2"] th {
+  color: var(--fg-dim);
+  font-size: var(--text-md);
+  font-weight: 500;
+  text-align: left;
+}
+[data-skin="v2"] th,
+[data-skin="v2"] td {
+  border-bottom: 1px solid var(--b-0);
+}
+[data-skin="v2"] tbody tr:hover {
+  background: rgba(var(--white-rgb), 0.018);
+}
+[data-skin="v2"] .drow,
+[data-skin="v2"] .feed-row,
+[data-skin="v2"] .attack-row {
+  border-bottom-color: var(--b-0);
+}
+
+[data-skin="v2"] .empty-state,
+[data-skin="v2"] .empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--b-1);
+  border-radius: 10px;
+  background: transparent;
+}
+[data-skin="v2"] .sys-banner {
+  border-radius: 9px;
+  box-shadow: none;
+}
+[data-skin="v2"] .panel.paper,
+[data-skin="v2"] .paper-panel {
+  background: var(--paper);
+  color: var(--paper-ink);
+  border: 1px solid var(--paper-line);
+  box-shadow: none;
+}
+[data-skin="v2"] .panel.paper h1,
+[data-skin="v2"] .panel.paper h2,
+[data-skin="v2"] .panel.paper h3,
+[data-skin="v2"] .paper-panel h1,
+[data-skin="v2"] .paper-panel h2,
+[data-skin="v2"] .paper-panel h3 {
+  font-family: var(--editorial), Fraunces, Georgia, serif;
+  color: var(--paper-ink);
+}
+
+/* Keep panel-owned tab strips inside the content column on phones. The
+   title/meta row stacks first; the strip then owns its horizontal scroll. */
+@media (max-width: 480px) {
+  [data-skin="v2"] .panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  [data-skin="v2"] .panel-head .meta {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  [data-skin="v2"] .panel-head .meta > [data-sst-mode] {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  [data-skin="v2"] .sst-tablist.sst-tablist--pill {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-skin="v2"] *,
+  [data-skin="v2"] *::before,
+  [data-skin="v2"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

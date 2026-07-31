@@ -1,0 +1,34 @@
+// SPDX-License-Identifier: Apache-2.0
+// @orphan-tracked -- YA.7 Jutsu presets
+/**
+ * Presets Endpoint (P8-S84)
+ * GET /api/llm/presets — List built-in provider presets
+ *
+ * PUBLIC ENDPOINT: Intentionally unauthenticated. Returns only non-sensitive
+ * preset metadata and setup hints. No API keys, secrets, or env-var names.
+ */
+import { NextResponse } from 'next/server';
+import { getAllPresets } from 'bu-tpi/llm';
+
+export async function GET() {
+  try {
+    const presets = getAllPresets().map((preset) => ({
+      id: preset.id,
+      name: preset.name,
+      tier: preset.tier,
+      region: preset.region ?? 'Global',
+      isOpenAICompatible: preset.isOpenAICompatible,
+      authType: preset.authType,
+      baseUrl: preset.baseUrl,
+      defaultModels: [...preset.defaultModels],
+    }));
+
+    return NextResponse.json(presets);
+  } catch (error) {
+    console.error('Failed to load provider presets:', error);
+    return NextResponse.json(
+      { error: 'Failed to load provider presets' },
+      { status: 500 }
+    );
+  }
+}

@@ -1,0 +1,437 @@
+/* Canvas 5 — Ritual archetype
+   Paper-scroll surfaces: wax seal + signature block + ritual steps.
+   Used by /admin/bushido sign-off tab, /admin/onigaeshi approver flow,
+   /setup first-boot wizard.
+
+   Plan §5 reserved .panel.paper for this epic — ritual.css composes
+   .panel.paper directly and adds ritual-specific internals inside.
+   Do NOT duplicate the existing noise-SVG overlay from primitives.css;
+   .panel.paper::after already ships it.
+
+   Tokens only. No raw hex. No rgba(255/0, *) literals — use
+   --white-rgb / --black-rgb / paper-palette tokens. Animations respect
+   the global prefers-reduced-motion gate (see the end of this file). */
+
+/* ===== Scroll ===== */
+.ritual-scroll-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 24px 28px;
+  max-width: 840px;
+  margin: 0 auto;
+  width: 100%;
+}
+.ritual-scroll-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 0 6px;
+}
+.ritual-scroll-head-text { min-width: 0; }
+.ritual-scroll-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--paper-mute);
+  font-weight: 600;
+}
+.ritual-scroll h2 {
+  margin: 4px 0 0;
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-weight: 500;
+  font-size: var(--text-5xl);
+  letter-spacing: -0.015em;
+  color: var(--paper-ink);
+}
+.ritual-scroll .lede {
+  margin: 8px 0 0;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--paper-mute);
+  max-width: 60ch;
+  overflow-wrap: anywhere;
+}
+
+/* Ritual body sits inside .panel.paper's padding. The surrounding
+   .panel.paper handles background (paper + paper-2 gradient + noise
+   overlay + paper-line border); this class adds structure only. */
+.ritual-scroll-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--paper-ink);
+}
+.ritual-scroll-body p { margin: 0; }
+.ritual-scroll-body p + p { margin-top: 8px; }
+.ritual-scroll-body strong { color: var(--paper-ink); font-weight: 700; }
+.ritual-scroll-body code {
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  padding: 1px 5px;
+  background: rgba(var(--black-rgb), 0.08);
+  border: 1px solid var(--paper-line);
+  border-radius: 3px;
+  color: var(--paper-ink);
+}
+
+.ritual-scroll-divider {
+  border: 0;
+  border-top: 1px dashed var(--paper-line);
+  margin: 6px 0;
+}
+
+.ritual-scroll-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+/* ===== Seal (wax-style disc) ===== */
+.ritual-seal {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(var(--white-rgb), 0.25), transparent 42%),
+    linear-gradient(140deg, var(--torii-deep) 0%, var(--torii) 60%, var(--torii-deep) 100%);
+  border: 1.5px solid var(--torii-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--white-rgb), 0.18),
+    0 6px 18px rgba(var(--torii-rgb), 0.30);
+  color: rgba(var(--white-rgb), 0.9);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  position: relative;
+}
+.ritual-seal::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(var(--white-rgb), 0.35);
+  pointer-events: none;
+}
+.ritual-seal.state-pending {
+  background: linear-gradient(140deg, var(--paper-2) 0%, var(--paper) 100%);
+  border-color: var(--paper-line);
+  color: var(--paper-mute);
+  box-shadow: inset 0 1px 0 rgba(var(--white-rgb), 0.4);
+}
+.ritual-seal.state-pending::before {
+  border-color: var(--paper-mute);
+  opacity: 0.5;
+}
+.ritual-seal.state-revoked {
+  background: linear-gradient(140deg, var(--bg-4) 0%, var(--bg-3) 100%);
+  border-color: var(--b-2);
+  color: var(--fg-mute);
+  box-shadow: inset 0 1px 0 rgba(var(--white-rgb), 0.08);
+}
+/* Terminal success state — reached after the engagement-execute
+   POST chain commits (Epic 10 S10.2). Jade-green gradient signals a
+   completed sign-off; color + short-code "DONE" ramp, no kanji. */
+.ritual-seal.state-executed {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(var(--white-rgb), 0.25), transparent 42%),
+    linear-gradient(140deg, var(--jade-lg) 0%, var(--jade) 60%, var(--jade-lg) 100%);
+  border-color: var(--jade-lg);
+  color: rgba(var(--white-rgb), 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(var(--white-rgb), 0.18),
+    0 6px 18px rgba(var(--jade-rgb), 0.30);
+}
+
+/* ===== Signature block ===== */
+.ritual-signature-block {
+  padding: 14px 16px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.35);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  align-items: center;
+  color: var(--paper-ink);
+}
+.ritual-signature-block + .ritual-signature-block { margin-top: 10px; }
+.ritual-signature-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ritual-signature-role {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-mute);
+  font-weight: 600;
+}
+.ritual-signature-name {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-weight: 500;
+  font-size: var(--text-2xl);
+  color: var(--paper-ink);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.ritual-signature-date {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--paper-mute);
+  font-variant-numeric: tabular-nums;
+}
+.ritual-signature-phrase {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--paper-mute);
+  font-style: italic;
+}
+.ritual-signature-block.unsigned {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 4px,
+    rgba(var(--black-rgb), 0.04) 4px 5px
+  ),
+  rgba(var(--white-rgb), 0.18);
+}
+.ritual-signature-block.unsigned .ritual-signature-name {
+  color: var(--paper-mute);
+  font-style: italic;
+}
+
+/* ===== RitualSteps — vertical step progression.
+   Intentionally distinct from the Command archetype's StepList
+   (which is a checklist) and the Workbench StepStrip (horizontal
+   progress). This is a paper-textured vertical journey. ===== */
+.ritual-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: ritual-step;
+}
+.ritual-step {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.28);
+  color: var(--paper-ink);
+  counter-increment: ritual-step;
+  position: relative;
+}
+.ritual-step-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--black-rgb), 0.08);
+  border: 1px solid var(--paper-line);
+  color: var(--paper-ink);
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+.ritual-step-marker::before { content: counter(ritual-step); }
+.ritual-step-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ritual-step-label {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-weight: 500;
+  font-size: var(--text-lg);
+  color: var(--paper-ink);
+  letter-spacing: -0.005em;
+}
+.ritual-step-desc {
+  font-size: var(--text-sm);
+  color: var(--paper-mute);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.ritual-step-state {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-mute);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ritual-step.state-pending .ritual-step-marker { opacity: 0.6; }
+.ritual-step.state-active {
+  border-color: var(--torii-deep);
+  background: rgba(var(--torii-rgb), 0.08);
+  box-shadow: 0 0 0 1px rgba(var(--torii-rgb), 0.2);
+}
+.ritual-step.state-active .ritual-step-marker {
+  background: var(--torii);
+  color: rgba(var(--white-rgb), 0.95);
+  border-color: var(--torii-deep);
+}
+.ritual-step.state-active .ritual-step-state { color: var(--torii-deep); }
+.ritual-step.state-done .ritual-step-marker {
+  background: var(--jade);
+  color: var(--paper-ink);
+  border-color: var(--jade);
+}
+.ritual-step.state-done .ritual-step-marker::before { content: "\2713"; }
+.ritual-step.state-done .ritual-step-state { color: var(--paper-ink); }
+
+/* ===== Variant: Ritual scroll rendered OUTSIDE the .dojo-ds-v3 scope
+   (used by /setup which pre-dates the design-system scope wrapper).
+   Re-establishes the paper palette without relying on shell tokens
+   bleeding in. Keep narrow — tokens.css always loads alongside. ===== */
+.ritual-scroll-standalone {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 48px;
+}
+.ritual-scroll-standalone .ritual-scroll-wrap {
+  max-width: 720px;
+}
+
+/* ===== Print layout — paper panel is the only visible element.
+   Admin sign-off pages (`/admin/bushido` Q-attestation sign-off and
+   `/admin/onigaeshi` two-person engagement sign-off) are exported to
+   PDF for compliance archival. DSR receipt surfaces (Phase E /api/dsr
+   receipt rendering — UI surface deferred to F-8-013) will inherit
+   the same print contract once their attestation page lands.
+
+   E7.S9 (2026-05-10): expanded the original ritual-only chrome-hiding
+   rule into a compliance-attestation print contract. Retires
+   F-8-014 (P2 — print stylesheet existed for ritual.css ONLY) and
+   F-5-011 (P2 — duplicate of F-8-014). Plan ref:
+   audit/REMEDIATION-PLAN.md L827-831. Nielsen #7 (flexibility +
+   efficiency for power users — exporting compliance PDFs) +
+   WCAG SC 1.4.10 (reflow — print layout reflows to single column).
+
+   Shell-wide chrome rules (rail, topbar, sys-banner, drawers, command
+   palette, kamae close/reopen) live in primitives.css alongside the
+   surfaces they hide; this block carries the ritual-paper-specific
+   declarations: print-safe paper background, signature-block ink
+   colors, page-break behavior so a sign-off card never splits across
+   two pages. Together the two blocks cover the spec acceptance. ===== */
+@media print {
+  /* Paper panel — the carrier for every compliance attestation
+     (Bushido Q-attest, Onigaeshi two-person engagement). Drop the
+     elevation shadow + the noise-SVG overlay so the paper prints as
+     true white-with-paper-ink. Background uses the CSS `white`
+     keyword (forced light surface in print regardless of viewer
+     theme); text uses the `--paper-ink` token (warm dark ink) which
+     prints near-black on monochrome drivers. The ::after noise
+     overlay multiplies against background and reads as a dirty
+     smudge under monochrome drivers; `display: none` cleans it up. */
+  .panel.paper {
+    box-shadow: none;
+    border: 1px solid var(--paper-line);
+    background-color: white;
+    color: var(--paper-ink);
+    /* Keep the entire compliance card on one printed page so the
+       attestation phrase + signature block never split mid-card.
+       WCAG SC 1.4.10 reflow: single-column print layout. */
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .panel.paper::after {
+    /* Drop the noise-SVG overlay declared at ritual.css:498. It
+       multiplies against the paper gradient at 0.18 opacity which
+       prints as a dirty grey wash. Off in print. */
+    display: none;
+  }
+
+  /* Ritual scroll wrap — center on the printed sheet, no max-width
+     cap so the page reflows to the printer's content area. */
+  .ritual-scroll-wrap {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  .ritual-scroll h2,
+  .ritual-scroll .lede,
+  .ritual-scroll-eyebrow {
+    color: var(--paper-ink);
+  }
+
+  /* Signature block — the legally-meaningful element on the page.
+     Force ink-on-white so signer name + signed timestamp + phrase
+     all print at full contrast regardless of printer color profile.
+     Each signature block keeps together as a unit (no break inside
+     a signature row). */
+  .ritual-signature-block,
+  .ritual-signature-block + .ritual-signature-block {
+    background-color: white;
+    border: 1px solid var(--paper-line);
+    color: var(--paper-ink);
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .ritual-signature-name,
+  .ritual-signature-role,
+  .ritual-signature-date,
+  .ritual-signature-phrase {
+    color: var(--paper-ink);
+  }
+
+  /* Ritual steps — the sequenced step list (RitualSteps) preserves
+     its row-per-step structure when printed. Hint to keep an
+     individual step row together (so a step's marker + body never
+     orphan). */
+  .ritual-step {
+    background-color: white;
+    color: var(--paper-ink);
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .ritual-step-label,
+  .ritual-step-desc,
+  .ritual-step-state {
+    color: var(--paper-ink);
+  }
+
+  /* Wax seal — single brand accent on the printed page. Force
+     color-exact so the torii-red disc + jade-success disc print as
+     intended (not stripped to monochrome). The disc is 56×56 and
+     the only branded element; everything else is ink-on-paper. */
+  .ritual-seal {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ===== Reduced motion — no ritual animations bypass the global gate.
+   The seal has no entry animation, the steps have no transition, but
+   future additions should respect this rule. ===== */
+@media (prefers-reduced-motion: reduce) {
+  .ritual-step,
+  .ritual-seal,
+  .ritual-signature-block {
+    transition: none;
+    animation: none;
+  }
+}

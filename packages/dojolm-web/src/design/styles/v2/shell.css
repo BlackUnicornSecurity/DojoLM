@@ -1,0 +1,395 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* V2 application frame, rail, topbar, member variant, and reflow. */
+
+[data-skin="v2"] .app {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--bg-1);
+}
+[data-skin="v2"] .main {
+  min-width: 0;
+  min-height: 100dvh;
+  background: var(--bg-1);
+}
+[data-skin="v2"] .page {
+  width: min(100%, 1440px);
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+[data-skin="v2"] .page.page--with-product-footer {
+  padding-bottom: 16px;
+}
+[data-skin="v2"] .shell-product-footer {
+  width: min(100%, 1440px);
+  margin: 0 auto;
+  padding: 0 32px 48px;
+}
+
+[data-skin="v2"] .rail {
+  position: sticky;
+  inset-block-start: 0;
+  height: 100dvh;
+  padding: 14px 10px 20px;
+  overflow-y: auto;
+  gap: 2px;
+  background: var(--bg);
+  border-right: 1px solid var(--b-0);
+}
+[data-skin="v2"] .rail-logo {
+  gap: 10px;
+  margin: 0;
+  padding: 8px 12px 16px;
+  border: 0;
+}
+[data-skin="v2"] .rail-logo-mark {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--torii);
+  box-shadow: none;
+  color: var(--torii-text-on);
+}
+[data-skin="v2"] .rail-logo-mark::before {
+  display: none;
+}
+[data-skin="v2"] .rail-logo-mark .jp {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: var(--text-3xl);
+  filter: none;
+  text-shadow: none;
+  /* Beat the bare `.jp` torii-hi accent rule (direct rule > inherited
+     color — glyph rendered salmon). Design .brand .mark glyph = #fff. */
+  color: var(--torii-text-on);
+}
+[data-skin="v2"] .rail-logo-text .brand {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+}
+[data-skin="v2"] .rail-logo-text .brand .lm {
+  color: var(--torii-text);
+}
+[data-skin="v2"] .rail-logo-text .env {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .rail-group {
+  margin-top: 2px;
+}
+[data-skin="v2"] .rail-group-label {
+  padding: 14px 12px 5px;
+  /* design .nav-group label measured --fg-mute (94,100,114), not dim */
+  color: var(--fg-mute);
+  font-size: var(--text-sm);
+  font-weight: 400; /* design .grp-kick/.nav-grp = 400, not 500 */
+  letter-spacing: 0.2em;
+}
+[data-skin="v2"] .rail-item {
+  min-height: 44px;
+  gap: 11px;
+  padding: 7px 12px 7px 10px;
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg-dim);
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out);
+}
+[data-skin="v2"] .rail-item:hover {
+  color: var(--fg);
+  background: var(--bg-2);
+}
+[data-skin="v2"] .rail-item.active {
+  color: var(--fg);
+  background: var(--bg-2);
+  border-left-color: var(--fg-mute);
+}
+[data-skin="v2"] .rail-item.active::before {
+  display: none;
+}
+/* S1 — rail mark is the module kanji glyph (design app-shell.css .nav-item .kj),
+   not a line-icon. Fixed 17px column keeps every label flush-aligned even where
+   the mark is empty (Evaluations, Admin). */
+[data-skin="v2"] .rail-item .icon {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 14px;
+  width: 17px;
+  text-align: center;
+  flex-shrink: 0;
+  /* Design `.nav-item .kj` = --fg-mute in ALL states (no active override);
+     the kanji is decorative — the label carries the AA contrast. */
+  color: var(--fg-mute);
+}
+[data-skin="v2"] .rail-item.active .icon {
+  color: var(--fg-mute);
+}
+[data-skin="v2"] .rail-item .label {
+  gap: 0;
+  line-height: 1.3;
+}
+[data-skin="v2"] .rail-item .label .label-en,
+[data-skin="v2"][data-kamae-scope][data-kanji="on"]
+  .rail-item
+  .label
+  .label-en {
+  display: block !important;
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: inherit;
+}
+/* Active item — the design bolds the current nav label (design .nav-item.active
+   .l1 = 600) so it reads distinctly from the 500 siblings; the app had no
+   active-weight override, leaving the current item visually flat. The second
+   selector must out-specify the kamae-scoped base rule above (the rail renders
+   inside [data-kamae-scope][data-kanji="on"], 0,0,6,0) — hence the mirror. */
+[data-skin="v2"] .rail-item.active .label .label-en,
+[data-skin="v2"][data-kamae-scope][data-kanji="on"]
+  .rail-item.active
+  .label
+  .label-en {
+  font-weight: 600;
+}
+[data-skin="v2"] .rail-item .label .label-jp,
+[data-skin="v2"][data-kamae-scope][data-kanji="off"]
+  .rail-item
+  .label
+  .label-jp {
+  display: block !important;
+  margin-top: 0;
+  font-family: var(--mono), monospace;
+  font-size: var(--text-sm);
+  font-weight: 400; /* design .nav-item .l2 = 400, not 500 */
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  /* design .nav-item .l2 (app-shell.css:63) = --fg-mute, not dim */
+  color: var(--fg-mute);
+}
+[data-skin="v2"] .rail-item .badge {
+  border: 1px solid var(--b-1);
+  background: var(--bg-3);
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .topbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 30;
+  min-height: 56px;
+  height: 56px;
+  gap: 16px;
+  padding: 0 20px;
+  background: rgba(var(--bg-rgb), 0.92);
+  border-bottom: 1px solid var(--b-0);
+  backdrop-filter: blur(12px);
+}
+[data-skin="v2"] .breadcrumb {
+  gap: 9px;
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .breadcrumb b {
+  color: var(--fg-dim);
+  font-weight: 500;
+}
+[data-skin="v2"] .breadcrumb .jp {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: var(--text-xl);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .dojo-archetype-chip {
+  border-color: var(--b-1);
+  background: transparent;
+  color: var(--fg-dim);
+}
+/* S7 — nav-group context chip (design app-shell.css .ctx-chip): a steel-
+   bordered mono-caps pill after the page name. */
+[data-skin="v2"] .ctx-chip {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  border: 1px solid rgba(var(--steel-rgb), 0.35);
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+[data-skin="v2"] .sst-tab,
+[data-skin="v2"] .sst-tablist--compact .sst-tab {
+  min-height: 44px;
+}
+[data-skin="v2"] .search {
+  max-width: 420px;
+  height: 44px;
+  min-height: 44px;
+  padding: 7px 12px;
+  border: 1px solid var(--b-1);
+  border-radius: 9px;
+  background: var(--bg-2);
+  color: var(--fg-dim);
+  box-shadow: none;
+  /* Design app-shell.css `.search` is a <div> (text-align:start); the prod
+     slot is a <button> whose UA `text-align:center` was centering the
+     placeholder inside the flex:1 `.search-label`. Force start-alignment so
+     the placeholder sits beside the magnifier with ⌘K pinned to the edge. */
+  text-align: start;
+}
+[data-skin="v2"] .search:hover {
+  border-color: var(--b-2);
+  background: var(--bg-2);
+}
+[data-skin="v2"] .search .kbd {
+  color: var(--fg-dim);
+  background: transparent;
+  border-color: var(--b-1);
+}
+/* Design app-shell.css `.model-select` — a compact, labelled pill, NOT a wide
+   bare dropdown with the chevron flung to the far edge. The `.topbar` prefix
+   lifts specificity over the tablet/phone min-width floors in uat-autofix.css
+   so the pill stays content-width at every viewport. ModelSwitcher is a shared
+   shadcn `Select` (read-only here), so the design's `<span class="lbl">Model`
+   prefix is supplied as generated content on the trigger — the accessible
+   name stays the trigger's own `aria-label="Active model"`. */
+[data-skin="v2"] .topbar .model-switcher-trigger {
+  width: auto;
+  min-width: 0;
+  min-height: 44px;
+  gap: 8px;
+  justify-content: flex-start;
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--b-1);
+  background: var(--bg-2);
+  color: var(--fg);
+  font-size: var(--text-sm);
+}
+[data-skin="v2"] .model-switcher-trigger::before {
+  content: "Model";
+  color: var(--fg-dim);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+[data-skin="v2"] .topbar-right {
+  gap: 8px;
+}
+[data-skin="v2"] .avatar {
+  border: 1px solid var(--b-1);
+  background: var(--bg-3);
+  box-shadow: none;
+  /* Design avatar glyph = --fg-dim, NOT the base .avatar torii tint — the
+     view's one torii-red lives on the rail brand mark, not the avatar. */
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .icon-btn {
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] button.avatar {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+[data-skin="v2"] .dashboard-v2 .step-num,
+[data-skin="v2"] .dashboard-v2 .step-body > span {
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .icon-btn:hover {
+  background: var(--bg-2);
+  border-color: var(--b-1);
+  color: var(--fg);
+}
+
+@media (max-width: 1024px) {
+  [data-skin="v2"] .page {
+    padding: 18px 16px 40px;
+  }
+  [data-skin="v2"] .page.page--with-product-footer {
+    padding-bottom: 12px;
+  }
+  [data-skin="v2"] .shell-product-footer {
+    padding: 0 16px 40px;
+  }
+  [data-skin="v2"] .app {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-skin="v2"] .app > .rail {
+    display: none;
+  }
+  [data-skin="v2"] .topbar-rail-trigger {
+    display: inline-flex;
+  }
+  [data-skin="v2"] .dojo-rail-drawer-panel .rail {
+    display: flex;
+    position: static;
+    height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-skin="v2"] .topbar {
+    padding-inline: 12px;
+  }
+  /* Design app-shell.css ≤768: the crumb collapses to its section marker —
+     the kanji glyph plus any plain trail segment (`/ API keys`) — while the
+     bold page title and the context chip drop out. */
+  [data-skin="v2"] .breadcrumb b {
+    display: none;
+  }
+  [data-skin="v2"] .ctx-chip {
+    display: none;
+  }
+  [data-skin="v2"] .dojo-archetype-chip {
+    display: none;
+  }
+  [data-skin="v2"] .page-head .actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  [data-skin="v2"] .page-head .col {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  [data-skin="v2"] .page-head h1 {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  [data-skin="v2"] .grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  [data-skin="v2"] .grid > * {
+    grid-column: 1 / -1 !important;
+    min-width: 0;
+  }
+  [data-skin="v2"] .cmd-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 22px 20px;
+  }
+  [data-skin="v2"] .cmd-hero-left,
+  [data-skin="v2"] .cmd-hero-right {
+    min-width: 0;
+  }
+  [data-skin="v2"] .kpi-strip__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  [data-skin="v2"] .topbar {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+  [data-skin="v2"] .topbar-right {
+    gap: 2px;
+  }
+  [data-skin="v2"] .breadcrumb {
+    display: none;
+  }
+}

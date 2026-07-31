@@ -1,0 +1,131 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* AIVSS distribution widgets (D-02) — band pill, summary card, band bar.
+   Severity ramp per SKIN-SPEC §1.4 (wave-b/module.css:35-53): crit
+   --torii-text · high --ember · med --gold · low --steel · neutral
+   --fg-dim; zero-state echoes the .sevbar.zero dashed contract. Tokens
+   only — no hex (R-T1). */
+
+.av-band {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  background: var(--bg-3);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.av-band-crit {
+  color: var(--torii-text);
+}
+.av-band-high {
+  color: var(--ember);
+}
+.av-band-med {
+  color: var(--gold);
+}
+.av-band-low {
+  color: var(--steel);
+}
+.av-band-none {
+  color: var(--fg-dim);
+}
+
+.av-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--b-0);
+  border-radius: 12px;
+  background: var(--bg-2);
+}
+.av-summary-card-head h3 {
+  margin: 0;
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+.av-summary-card-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.av-summary-card-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+.av-summary-card-row-label {
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+.av-summary-card-row-count {
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+/* Earned data-colour on the per-band counts (design .sev-counts .k-* b). */
+.av-summary-card-row[data-band="critical"] .av-summary-card-row-count {
+  color: var(--torii-text);
+}
+.av-summary-card-row[data-band="high"] .av-summary-card-row-count {
+  color: var(--ember);
+}
+.av-summary-card-row[data-band="medium"] .av-summary-card-row-count {
+  color: var(--gold);
+}
+.av-summary-card-row[data-band="low"] .av-summary-card-row-count {
+  color: var(--steel);
+}
+/* All-zero rollup mutes every count (design .sev-counts.zero contract). */
+.av-summary-card[data-empty="true"] .av-summary-card-row-count {
+  color: var(--fg-dim);
+}
+.av-summary-card-empty {
+  padding: 10px 0;
+  border: 1px dashed var(--b-1);
+  border-radius: 8px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  text-align: center;
+}
+.av-summary-card-foot {
+  padding-top: 8px;
+  border-top: 1px solid var(--b-0);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.av-bandbar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.av-bandbar svg {
+  border-radius: 4px;
+}
+.av-bandbar-empty svg {
+  border: 1px dashed var(--b-1);
+  background: var(--bg-3);
+}
+.av-bandbar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}

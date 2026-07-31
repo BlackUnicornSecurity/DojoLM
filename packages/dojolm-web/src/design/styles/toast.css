@@ -1,0 +1,252 @@
+/* A.3 Toast — viewport-anchored notification chip + stack.
+   Tokens-only. Animations respect the global
+   prefers-reduced-motion gate declared at the bottom of tokens.css
+   (which sets animation:none + transition:none for the .dojo-ds-v3
+   scope when prefers-reduced-motion: reduce matches). Tone colours
+   compose the new --tone-{tone}-tint / --tone-{tone}-accent semantic
+   tokens declared in tokens.css. */
+
+.toast-viewport {
+  position: fixed;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none; /* Stacks are pointer-events:auto on themselves. */
+  max-width: min(420px, calc(100vw - 32px));
+  width: 100%;
+}
+
+.toast-viewport--bottom-right {
+  right: 24px;
+  bottom: 24px;
+  flex-direction: column-reverse;
+}
+
+.toast-viewport--top-right {
+  right: 24px;
+  top: 24px;
+}
+
+.toast-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.toast-stack--polite,
+.toast-stack--assertive {
+  /* Each stack is its own aria-live region; visually they read as one
+     column. The assertive stack ships above the polite stack in DOM
+     order, which the viewport reverses for bottom-right anchoring so
+     errors appear on top of the stack closest to the user. */
+}
+
+.toast {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px 12px 18px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-lg);
+  background: var(--bg-3);
+  box-shadow: var(--shadow-toast);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  line-height: 1.45;
+  /* Tone tint overlays the panel background via a linear-gradient so the
+     tint never replaces the panel surface (Atemi reviewer comment from
+     B.5 review — keeps panel chroma intact for users colour-tuning). */
+  background-image: linear-gradient(180deg, var(--toast-tint, transparent), transparent 60%);
+  animation: toast-enter 200ms var(--ease-out) both;
+  transition: transform 200ms var(--ease-out);
+}
+
+.toast::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--toast-accent, var(--fg-mute));
+  border-top-left-radius: var(--r-lg);
+  border-bottom-left-radius: var(--r-lg);
+}
+
+.toast--tone-success {
+  --toast-tint: var(--tone-success-tint);
+  --toast-accent: var(--tone-success-accent);
+}
+.toast--tone-success .toast-icon { color: var(--tone-success-accent); }
+.toast--tone-success .toast-title { color: var(--jade-text); }
+
+.toast--tone-error {
+  --toast-tint: var(--tone-error-tint);
+  --toast-accent: var(--tone-error-accent);
+}
+.toast--tone-error .toast-icon { color: var(--tone-error-accent); }
+.toast--tone-error .toast-title { color: var(--torii-text-em); }
+
+.toast--tone-warning {
+  --toast-tint: var(--tone-warning-tint);
+  --toast-accent: var(--tone-warning-accent);
+}
+.toast--tone-warning .toast-icon { color: var(--tone-warning-accent); }
+.toast--tone-warning .toast-title { color: var(--gold-text); }
+
+.toast--tone-info {
+  --toast-tint: var(--tone-info-tint);
+  --toast-accent: var(--tone-info-accent);
+}
+.toast--tone-info .toast-icon { color: var(--tone-info-accent); }
+.toast--tone-info .toast-title { color: var(--steel-lg); }
+
+.toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.toast-title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  line-height: 1.35;
+  /* word-break belt + suspenders for very long title strings (API-supplied). */
+  overflow-wrap: anywhere;
+}
+
+.toast-desc {
+  color: var(--fg-dim);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.toast-action {
+  align-self: flex-start;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--toast-accent);
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: background 120ms var(--ease-out), border-color 120ms var(--ease-out);
+  /* WCAG 2.5.5 minimum touch target — 44×44. Padded outward via :before
+     hit-box so the visual chip stays compact but the click target is
+     compliant. */
+  position: relative;
+}
+.toast-action::before {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
+}
+.toast-action:hover {
+  background: rgba(var(--white-rgb), 0.04);
+  border-color: var(--b-1);
+}
+.toast-action:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+.toast-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px 0 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-mute);
+  font-size: var(--text-4xl);
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: color 120ms var(--ease-out), background 120ms var(--ease-out), border-color 120ms var(--ease-out);
+  position: relative;
+}
+.toast-dismiss::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+.toast-dismiss:hover {
+  color: var(--fg);
+  background: rgba(var(--white-rgb), 0.04);
+  border-color: var(--b-1);
+}
+.toast-dismiss:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Top-right variant slides in from above instead of from below. */
+.toast-viewport--top-right .toast { animation-name: toast-enter-top; }
+@keyframes toast-enter-top {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile: full-width, anchored bottom. The viewport hugs the bottom
+   edge across both top-right and bottom-right anchors at small screens
+   per the A.3 acceptance criterion "Mobile (390×844): bottom-anchored
+   full-width". */
+@media (max-width: 480px) {
+  .toast-viewport,
+  .toast-viewport--top-right,
+  .toast-viewport--bottom-right {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    top: auto;
+    max-width: none;
+    flex-direction: column-reverse;
+  }
+}
+
+/* Reduced motion — collapse the entrance animation. Transitions are
+   also defused by the global rule in tokens.css. */
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none !important;
+    transition: none !important;
+  }
+}

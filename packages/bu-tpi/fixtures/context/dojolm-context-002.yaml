@@ -1,0 +1,25 @@
+# DojoLM scanner runtime configuration (clean baseline)
+# Loaded at process start. No instructions to the model live in this file —
+# only operator knobs.
+
+scanner:
+  workers: 4
+  queue_depth: 256
+  timeout_ms: 30000
+  retry:
+    attempts: 3
+    backoff_ms: 500
+
+telemetry:
+  enabled: true
+  endpoint: http://telemetry.local:9100/ingest
+  buffer_size: 1024
+
+logging:
+  level: info
+  rotate_mb: 64
+  keep: 7
+
+storage:
+  cache_dir: /var/lib/dojolm/cache
+  ttl_hours: 24

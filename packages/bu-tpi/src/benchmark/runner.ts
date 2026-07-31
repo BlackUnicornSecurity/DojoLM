@@ -1,0 +1,170 @@
+// SPDX-License-Identifier: Apache-2.0
+/**
+ * H20.3: Benchmark Runner
+ * Executes benchmark suites against model scan functions and produces scored results.
+ */
+
+import type {
+  BenchmarkComparison,
+  BenchmarkResult,
+  BenchmarkSuite,
+  DifficultyTier,
+  ScoreBreakdown,
+} from "./types.js";
+import { CATEGORY_DIFFICULTY } from "./suites/dojolm-bench.js";
+import { AGENTIC_CATEGORY_DIFFICULTY } from "./suites/agentic-bench.js";
+import { RAG_CATEGORY_DIFFICULTY } from "./suites/rag-bench.js";
+import { HARMBENCH_CATEGORY_DIFFICULTY } from "./suites/harmbench.js";
+import { STRONGREJECT_CATEGORY_DIFFICULTY } from "./suites/strongreject.js";
+import { requireFixtureContent } from "./fixture-content.js";
+
+/** Merged difficulty map across all suites */
+const ALL_DIFFICULTY: Readonly<Record<string, DifficultyTier>> = {
+  ...CATEGORY_DIFFICULTY,
+  ...AGENTIC_CATEGORY_DIFFICULTY,
+  ...RAG_CATEGORY_DIFFICULTY,
+  ...HARMBENCH_CATEGORY_DIFFICULTY,
+  ...STRONGREJECT_CATEGORY_DIFFICULTY,
+};
+
+/** Progress callback payload */
+export interface BenchmarkProgress {
+  readonly current: number;
+  readonly total: number;
+  readonly category: string;
+}
+
+/** Scan function signature expected by the runner */
+export type ScanFn = (text: string) => { verdict: "BLOCK" | "ALLOW" };
+
+/**
+ * BenchmarkRunner — executes a suite's fixtures through a scan function and scores results.
+ *
+ * Scoring:
+ *   - Per-category accuracy = correct / total within category
+ *   - Overall score = sum(category_accuracy * category_weight) * 100
+ */
+export class BenchmarkRunner {
+  private readonly suite: BenchmarkSuite;
+
+  constructor(suite: BenchmarkSuite) {
+    this.suite = suite;
+  }
+
+  /**
+   * Run the benchmark against a model's scan function.
+   * @param modelId   Unique model identifier
+   * @param scanFn    Function that returns a verdict for a given fixture text
+   * @param onProgress Optional progress callback
+   */
+  run(
+    modelId: string,
+    scanFn: ScanFn,
+    onProgress?: (progress: BenchmarkProgress) => void,
+  ): BenchmarkResult {
+    const startTime = Date.now();
+    const breakdown: ScoreBreakdown[] = [];
+    const categoryScores: Record<string, number> = {};
+
+    let globalIndex = 0;
+    const totalFixtures = this.suite.categories.reduce(
+      (sum, cat) => sum + cat.fixtureIds.length,
+      0,
+    );
+
+    for (const category of this.suite.categories) {
+      let correct = 0;
+      const total = category.fixtureIds.length;
+
+      for (const fixtureId of category.fixtureIds) {
+        globalIndex++;
+
+        const expectedVerdict = category.expectedVerdicts[fixtureId];
+        if (!expectedVerdict) {
+          throw new Error(
+            `Benchmark suite "${this.suite.id}" is missing expected verdict for fixture "${fixtureId}"`,
+          );
+        }
+
+        const result = scanFn(requireFixtureContent(fixtureId));
+        const actualVerdict = result.verdict;
+        const isCorrect = actualVerdict === expectedVerdict;
+
+        if (isCorrect) {
+          correct++;
+        }
+
+        const severity = ALL_DIFFICULTY[category.name] ?? "medium";
+
+        breakdown.push({
+          fixtureId,
+          category: category.name,
+          expectedVerdict,
+          actualVerdict,
+          correct: isCorrect,
+          severity,
+        });
+
+        if (onProgress) {
+          onProgress({
+            current: globalIndex,
+            total: totalFixtures,
+            category: category.name,
+          });
+        }
+      }
+
+      categoryScores[category.name] = total > 0 ? correct / total : 0;
+    }
+
+    // Overall score: weighted sum of category accuracies, scaled to 0-100
+    let overallScore = 0;
+    for (const category of this.suite.categories) {
+      const accuracy = categoryScores[category.name];
+      overallScore += accuracy * category.weight;
+    }
+    overallScore = Math.round(overallScore * 10000) / 100;
+
+    const elapsed = Date.now() - startTime;
+
+    return {
+      suiteId: this.suite.id,
+      modelId,
+      modelName: modelId,
+      provider: "",
+      overallScore,
+      categoryScores,
+      breakdown,
+      executedAt: new Date(startTime).toISOString(),
+      elapsed,
+    };
+  }
+
+  /**
+   * Compare multiple model results and rank them by overall score (descending).
+   */
+  compareModels(results: readonly BenchmarkResult[]): BenchmarkComparison {
+    const mismatched = results.find(
+      (result) => result.suiteId !== this.suite.id,
+    );
+    if (mismatched) {
+      throw new Error(
+        `Cannot compare benchmark suites "${mismatched.suiteId}" and "${this.suite.id}"`,
+      );
+    }
+
+    const sorted = [...results].sort((a, b) => b.overallScore - a.overallScore);
+
+    const rankedModels = sorted.map((r, i) => ({
+      modelId: r.modelId,
+      rank: i + 1,
+      score: r.overallScore,
+    }));
+
+    return {
+      suiteId: this.suite.id,
+      results: sorted,
+      rankedModels,
+    };
+  }
+}

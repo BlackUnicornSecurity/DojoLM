@@ -1,0 +1,281 @@
+/* SPDX-License-Identifier: Apache-2.0
+ *
+ * TatamiRail shell chrome — Epic 3, Story 1.
+ *
+ * Owns the visual + interaction surface of the embedded evidence cockpit
+ * (`design/tatami/TatamiRail.tsx`). Built entirely on the house token
+ * vocabulary — no new palette, no new fonts. Reuses `.chip` / `.btn` for the
+ * count pill and header controls; everything `.tr-*` is rail-local.
+ *
+ * Interaction states covered on the chrome: default · hover · :focus-visible
+ * (instant ring, never animated) · :active · disabled. (loading / error /
+ * success are panel-content states owned by the later panel stories — the
+ * shell only frames them.) Focus ring mirrors the canonical
+ * `outline: 2px solid var(--torii-hi)` shape from primitives.css.
+ *
+ * Motion: transform/opacity + a single width transition, all collapsed under
+ * `prefers-reduced-motion: reduce`. Mobile (≤768px): docked/expanded go
+ * full-width so the rail never forces horizontal scroll.
+ */
+
+.tatami-rail {
+  --tr-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --tr-w-docked: 320px;
+  --tr-w-expanded: 560px;
+  --tr-w-collapsed: 40px;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  color: var(--fg);
+  overflow: hidden;
+  transition: width 180ms var(--tr-ease);
+}
+
+.tatami-rail--collapsed {
+  width: var(--tr-w-collapsed);
+}
+.tatami-rail--docked {
+  width: var(--tr-w-docked);
+}
+.tatami-rail--expanded {
+  width: var(--tr-w-expanded);
+}
+
+/* ── Collapsed spine ─────────────────────────────────────────────────── */
+
+.tr-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-3) 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg-dim);
+  cursor: pointer;
+  transition: background 150ms var(--tr-ease), color 150ms var(--tr-ease);
+}
+.tr-spine:hover {
+  background: rgba(var(--white-rgb), 0.04);
+  color: var(--fg);
+}
+.tr-spine:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: -2px;
+}
+.tr-spine:active {
+  background: rgba(var(--white-rgb), 0.06);
+}
+
+.tr-spine__mark {
+  display: inline-flex;
+  color: var(--jade);
+}
+.tr-spine__word {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  /* --fg-ghost (4.83:1 on --bg-2, higher on the darker --bg-1 the spine sits on)
+     clears WCAG-AA small-text (4.5:1); --fg-mute (3.12:1) is non-text-only and
+     failed axe. Stays a notch quieter than the --fg-dim glyph so the spine's
+     mark → glyph → wordmark quiet-scale survives. (A11Y-01, aria-hidden but
+     still visible to sighted users.) */
+  color: var(--fg-ghost);
+}
+.tr-spine__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+}
+.tr-spine__count {
+  /* `.chip.steel` carries the colour; only override geometry for the spine. */
+  padding: 3px 6px;
+  letter-spacing: 0;
+}
+.tr-spine__badges {
+  /* Decorative compact (dot-only) evidence badges, stacked down the spine.
+     aria-hidden in the markup — the full labelled badges live in the header. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.tr-spine__expand {
+  margin-top: auto;
+  display: inline-flex;
+  color: var(--fg-mute);
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+
+.tr-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--b-1);
+  background: var(--bg-2);
+}
+.tr-head__mark {
+  display: inline-flex;
+  color: var(--jade);
+  flex: none;
+}
+.tr-title {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.tr-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+/* Compact evidence badge: the `.chip` collapsed to its coloured dot (the label
+   is dropped to aria-label/title). Reuses the chip tone tokens verbatim — this
+   only tightens the geometry to a round pill for the 40px collapsed spine. */
+.tr-badge--dot {
+  padding: 4px;
+  gap: 0;
+}
+.tr-head__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  flex: none;
+}
+.tr-ctl:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+.tr-ctl--collapse {
+  padding: 6px;
+}
+
+/* ── Tab strip ───────────────────────────────────────────────────────── */
+
+.tr-tabs {
+  display: flex;
+  gap: 2px;
+  padding: var(--space-2) var(--space-2) 0;
+  border-bottom: 1px solid var(--b-1);
+}
+.tr-tab {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  cursor: pointer;
+  transition: color 150ms var(--tr-ease), border-color 150ms var(--tr-ease);
+}
+.tr-tab:hover:not(:disabled) {
+  color: var(--fg);
+}
+.tr-tab:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: -2px;
+}
+.tr-tab:active:not(:disabled) {
+  color: var(--fg);
+}
+.tr-tab[data-active] {
+  color: var(--fg);
+  border-bottom-color: var(--jade);
+}
+.tr-tab:disabled {
+  color: var(--fg-ghost, var(--fg-mute));
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Panel + empty state ─────────────────────────────────────────────── */
+
+.tr-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-3);
+}
+.tr-panel:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: -2px;
+}
+
+.tr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 100%;
+  min-height: 120px;
+  text-align: center;
+  color: var(--fg-mute);
+}
+.tr-empty__mark {
+  display: inline-flex;
+  color: var(--b-3, var(--fg-mute));
+  opacity: 0.6;
+}
+.tr-empty__text {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+.tr-empty__hint {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+}
+
+/* ── Mobile degradation: full-width, no horizontal scroll ────────────── */
+
+@media (max-width: 768px) {
+  .tatami-rail--docked,
+  .tatami-rail--expanded {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .tatami-rail,
+  .tr-spine,
+  .tr-tab {
+    transition: none;
+  }
+}

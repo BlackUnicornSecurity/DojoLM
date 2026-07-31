@@ -1,0 +1,146 @@
+/* /members post-auth home — scent-grid styles (E5.S8 / retires F-3-002).
+   Token-driven only. Composes rgba via the Epic 0 RGB channel tokens
+   (--torii-rgb / --steel-rgb / --gold-rgb / --white-rgb) so any future
+   tokens.css edit propagates through automatically. No hardcoded hex.
+
+   Layout: 3-up at desktop, 2-up at tablet, 1-up at phone. Loaded by
+   the page module (not the shell layout) because the surface is
+   bounded to /members. */
+
+.members-scent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .members-scent-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .members-scent-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Card — full-area `<a>` so the entire surface is clickable. */
+.members-scent-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 22px 20px;
+  border-radius: var(--r-xl);
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--b-1);
+  box-shadow: var(--shadow-card);
+  color: var(--fg);
+  text-decoration: none;
+  min-height: 168px;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.members-scent-card:hover {
+  border-color: var(--b-3);
+  transform: translateY(-1px);
+}
+
+/* Focus-visible ring honors the design-system focus-baseline (no inline
+   colors — falls back to the global :focus-visible chain). */
+.members-scent-card:focus-visible {
+  outline: 2px solid var(--steel);
+  outline-offset: 2px;
+}
+
+/* E7.S8 round-2: mirror the :hover visible-property changes (border-color
+   + transform) when ANY descendant has focus, so a keyboard user that
+   focuses a child element of the scent card sees the same lift +
+   border-tint affordance the pointer-hover provides. The bare focus-ring
+   above (outline only) is a structurally-paired but visually-degraded
+   match per V5 round-2 lesson — adding the container parity closes the
+   gap. */
+.members-scent-card:focus-within {
+  border-color: var(--b-3);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .members-scent-card,
+  .members-scent-card:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Ink mark — single-stroke SVG colored via per-tint --ms-ink. */
+.members-scent-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--ms-ink);
+}
+
+.members-scent-title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+
+.members-scent-body {
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--fg-dim);
+}
+
+/* Tint compositions — each tint sets:
+     --ms-ink       (mark stroke color, semantic per destination)
+     --ms-edge      (left-rail accent)
+     --ms-wash      (subtle background tint)
+   Composes rgba from the channel tokens so a token swap propagates. */
+.members-scent-card.tint-red {
+  --ms-ink: var(--torii);
+  --ms-edge: rgba(var(--torii-rgb), 0.55);
+  --ms-wash: rgba(var(--torii-rgb), 0.04);
+}
+
+.members-scent-card.tint-steel {
+  --ms-ink: var(--steel);
+  --ms-edge: rgba(var(--steel-rgb), 0.55);
+  --ms-wash: rgba(var(--steel-rgb), 0.04);
+}
+
+.members-scent-card.tint-gold {
+  --ms-ink: var(--gold);
+  --ms-edge: rgba(var(--gold-rgb), 0.55);
+  --ms-wash: rgba(var(--gold-rgb), 0.04);
+}
+
+/* Apply the wash + accent rail via a left-edge gradient. The rail
+   sits inside the border-radius so it tracks the rounded corner. */
+.members-scent-card {
+  background:
+    linear-gradient(90deg, var(--ms-wash, transparent) 0, transparent 60%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+}
+
+.members-scent-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 3px;
+  background: var(--ms-edge, transparent);
+  border-radius: 0 2px 2px 0;
+  opacity: 0.85;
+}

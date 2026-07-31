@@ -1,0 +1,103 @@
+{
+  "name": "dojolm-monorepo",
+  "version": "1.0.0",
+  "description": "DojoLM - LLM Red Teaming and Security Testing Platform with TPI Taxonomy",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "packages/dojolm-web/stylelint-dojo",
+    "packages/dojolm-web/eslint-plugin-dojo"
+  ],
+  "scripts": {
+    "build:packages": "npm run build --workspace=bu-tpi --workspace=@dojolm/mcp --workspace=@dojolm/mcp-control --workspace=@dojolm/scanner",
+    "build": "npm run build:packages && npm run build --workspace=dojolm-web",
+    "build:watch": "npm run dev:web",
+    "dev": "npm run dev:web",
+    "lint": "npm run lint --workspace=dojolm-web",
+    "type-check": "npm run typecheck --workspace=bu-tpi --workspace=@dojolm/mcp --workspace=@dojolm/mcp-control --workspace=@dojolm/scanner --workspace=@dojolm/sdk --workspace=dojolm-web",
+    "clean": "npm run clean --workspace=dojolm-web",
+    "security:scan": "npm audit --audit-level=moderate",
+    "sbom:generate": "npx @cyclonedx/cyclonedx-npm --output-file sbom.json --output-format JSON --ignore-npm-errors",
+    "sbom:check-pins": "node tools/check-dep-pinning.js",
+    "sbom:check-pins:strict": "node tools/check-dep-pinning.js --strict",
+    "lint:md": "markdownlint-cli2 '**/*.md' '#node_modules'",
+    "qa": "npm run test:schemas && npm run lint && npm run lint:md && npm test && bash scripts/security-regression.sh",
+    "lint:links": "lychee --exclude-path node_modules/ --exclude-path .next/ --exclude-path dist/ '**/*.md' || echo 'Install lychee: https://github.com/lycheeverse/lychee#installation'",
+    "verify:docs": "node tools/verify-doc-metrics.js",
+    "lint:spdx": "node tools/spdx/check-spdx.mjs",
+    "fix:spdx": "node tools/spdx/apply-spdx.mjs",
+    "lint:unmounted": "cd packages/dojolm-web && npx --no-install knip --no-progress || echo 'knip not installed; add to devDependencies to enable unmounted-component detection'",
+    "audit:finding-decl": "node scripts/audit/validate-finding-declarations.mjs --pr-base origin/main --pr-head HEAD",
+    "audit:sensei-playwright": "node scripts/audit/validate-sensei-playwright.mjs --pr-base origin/main --pr-head HEAD",
+    "audit:ui-audit": "npm run audit:finding-decl && npm run audit:sensei-playwright",
+    "audit:type-floor": "node scripts/audit/type-floor.mjs",
+    "audit:token-parity": "node scripts/audit/token-parity.mjs",
+    "audit:skin": "npm run lint:audit --workspace=dojolm-web",
+    "dev:web": "npm run dev --workspace=packages/dojolm-web",
+    "build:web": "npm run build --workspace=packages/dojolm-web",
+    "start:web": "npm run start --workspace=packages/dojolm-web",
+    "push:dev": "bash deploy/deploy-challenger.sh",
+    "push:dev:dry": "bash deploy/deploy-challenger.sh --dry-run",
+    "deploy:status": "make status"
+  },
+  "keywords": [
+    "dojolm",
+    "llm",
+    "red-teaming",
+    "tpi",
+    "prompt-injection",
+    "security-testing",
+    "crowdstrike",
+    "adversarial-ml",
+    "ai-safety"
+  ],
+  "author": "DojoLM Team",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.4.3",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^17.23.2",
+    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-yml": "^3.1.2",
+    "jsdom": "^29.0.2",
+    "markdownlint-cli2": "^0.21.0",
+    "prettier": "^3.1.0",
+    "tsx": "^4.6.0",
+    "typedoc": "^0.28.19",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.55.0",
+    "vitest": "^4.1.0"
+  },
+  "overrides": {
+    "eslint": "^9.16.0",
+    "react-dom": "19.2.6",
+    "ws": "^7.5.11",
+    "fast-uri": "^3.1.2",
+    "qs": "^6.15.2",
+    "js-yaml": "^4.2.0",
+    "markdown-it": "^14.2.0",
+    "jspdf": {
+      "dompurify": "^3.4.9"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlackUnicornSecurity/DojoLM.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BlackUnicornSecurity/DojoLM/issues"
+  },
+  "homepage": "https://github.com/BlackUnicornSecurity/DojoLM#readme"
+}

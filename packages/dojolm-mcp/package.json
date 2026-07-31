@@ -1,0 +1,33 @@
+{
+  "name": "@dojolm/mcp",
+  "version": "1.0.0",
+  "description": "Adversarial MCP server for TPI Security Test Lab",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "node dist/main.js",
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bu-tpi": "file:../bu-tpi"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.0"
+  },
+  "private": true
+}

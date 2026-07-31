@@ -1,0 +1,128 @@
+# SPDX-License-Identifier: MIT
+# DojoLM repo-split boundary configuration
+#
+# Enforces master plan §3 / INT-02 decision: "Nothing SaaS-related lands on the
+# public OSS branch."
+#
+# Consumed by:
+#   - tools/check-repo-boundary.mjs (pre-commit hook + GitHub Action)
+#   - PR-template manual review checklist
+#
+# Update process: changes to this file require a PR review by a maintainer.
+# Adding new SaaS-only path globs is additive (safe). Removing globs requires
+# explicit justification (potentially relaxing the boundary). Removing a
+# `never_public:` glob is an EXPORT-boundary change (irreversible-leak class,
+# consumed by P5/P6) and needs the same maintainer review.
+
+version: 1
+last_updated: 2026-05-23
+authority: the DojoLM master plan (internal) §3
+
+# SaaS-only path globs — these MUST NOT appear on the public OSS branch.
+# The pre-commit hook + boundary-scan workflow reject any commit touching these.
+saas_only_paths:
+  # Multi-tenant routing primitives (not yet created — future SaaS repo)
+  - "packages/dojolm-saas/**"
+  - "packages/dojolm-saas-tenant/**"
+  - "packages/dojolm-saas-billing/**"
+  - "packages/dojolm-saas-admin-portal/**"
+
+  # Per-customer deploy automation
+  - "deploy/per-customer/**"
+  - "deploy/saas-tenant/**"
+  - "infra/saas/**"
+
+  # Customer admin portal + billing
+  - "src/lib/billing/**"
+  - "src/lib/customer-portal/**"
+  - "src/lib/saas-telemetry/**"
+  - "packages/**/src/lib/billing/**"
+  - "packages/**/src/lib/customer-portal/**"
+
+  # Customer-success runbooks (SaaS internal)
+  - "team/customer-success/**"
+  - "team/runbooks/saas-tenant/**"
+
+  # Sales / CRM integration
+  - "src/integrations/crm/**"
+  - "src/integrations/sales/**"
+
+  # Per-customer secrets + key-rotation tooling (SaaS commercial)
+  - "tools/saas-key-rotation/**"
+  - "tools/per-customer-secrets/**"
+
+  # Commercial deploy templates (EU-only / US-only / on-prem air-gapped tiers)
+  - "deploy/saas-tier-eu-only/**"
+  - "deploy/saas-tier-us-only/**"
+  - "deploy/saas-tier-onprem-airgap/**"
+
+  # M-7 paid-curator internal infra (TSC voting + contributor access)
+  - "tools/m7-curator-internal/**"
+  - "infra/m7-tsc-voting/**"
+
+  # Big-4 partner integration scaffolding (private commercial)
+  - "packages/dojolm-partner-onetrust/**"
+  - "packages/dojolm-partner-servicenow/**"
+  - "packages/dojolm-partner-auditboard/**"
+  - "src/integrations/big-4-partner/**"
+
+# Files / patterns that are ALLOWED even if a substring matches a saas_only glob.
+# Use sparingly; prefer adding to ALLOWLIST only when a real false-positive arises.
+allowlist:
+  # Documentation about SaaS in the public repo (describing the boundary) is fine.
+  - "docs/dev/repo-split-discipline.md"
+  - "docs/dev/license-policy.md"
+  - ".dojolm-repo-boundary.yaml"
+  - "team/docs/DOJOLM-MASTER-PLAN-V1-*.md"
+  - "CONTRIBUTING.md"
+  - "team/strategic-reviews/master-plan-integration-*/audit/**"
+  - "team/strategic-reviews/master-plan-integration-*/0*-*.md"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# never_public — internal-record path globs that must NEVER appear in a PUBLIC
+# export. Added by the OSS Release Program (P1.3, plan §3-P1.3(b)).
+#
+# SEPARATE list from `saas_only_paths` on purpose:
+#   - `saas_only_paths` is enforced on EVERY private-repo commit (pre-commit hook
+#     + boundary-scan workflow, default `--profile staged`). Putting internal
+#     globs there would make the hook reject the repo's own commits (self-brick).
+#   - `never_public` is enforced ONLY by `--profile public-export`, run against an
+#     export CANDIDATE (P5/P6) — never on a private-repo commit.
+#
+# never_public is NON-ALLOWLISTABLE: under `--profile public-export` a path
+# matching never_public is ALWAYS a violation, even if it also matches an
+# `allowlist:` entry above. (The allowlist permits SaaS-describing docs on private
+# commits; an allowlisted internal doc still must not enter a public export.)
+#
+# Host-bound VALUES (IPs / internal hostnames / OS username / email) are not
+# paths — they are handled by the export value-sweep + the deploy
+# templating, not this path-glob list. Comprehensive never-public vs
+# ship-after-templating classification of deploy/ (compose, challenger, the
+# dsr-smoke-* scripts) is finalized at P3.6/P5; `*-dojo.sh` (prod deploy) is the
+# one P1.3 fixes here.
+#
+# Parser note: each item is parsed one-per-line by check-repo-boundary.mjs; inline
+# `# comments` are tolerated, but do not use YAML anchors or flow sequences here.
+never_public:
+  - "team/**"
+  - "audit/**"
+  - "docs/operator/**"
+  - "docs/dev/handoffs/**"
+  - "docs/superpowers/**" # agent plans/prompts — internal program state, host/network refs
+  - "deploy/**/*-dojo.sh" # prod deploy script(s), flat or nested
+  - "scripts/audit/capture/**" # private full-edition route/state capture contract
+
+# Token patterns to scan COMMIT MESSAGES + branch names for (heuristic
+# defense, not authoritative). If matched, the hook prints a warning + asks
+# the author to confirm no SaaS code is in the change.
+suspicious_commit_message_patterns:
+  - "saas"
+  - "multi-tenant"
+  - "per-customer"
+  - "customer-portal"
+  - "billing"
+  - "tenant-routing"
+
+# Branches that bypass the boundary check (founder-authorized only — e.g.,
+# during the initial OSS-public launch).
+bypass_branches: []

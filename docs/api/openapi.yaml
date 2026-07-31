@@ -1,0 +1,353 @@
+# SPDX-License-Identifier: MIT
+#
+# DojoLM Public API — OpenAPI 3.1 spec.
+# Authority: E1-A-RB-15 of Master Plan v1.0 (substrate positioning per Élise §2).
+#
+# Status: v0.0.1 SKELETON. Stage 1 ships the spec shape; full implementation
+# of the predicate-bearing endpoints lands at E1-PHASE-4-M1 (predicate +
+# Phase-3-A wire ADDITIVE-ONLY via co-located store) + E1-PHASE-4-M3a
+# (export pack + verifier CLI + ghcr + HF Space).
+#
+# Public-API-first principle (master plan §3 + RB-15): this YAML is the
+# substrate; the admin UI consumes the same endpoints. SaaS-private routes
+# (per .dojolm-repo-boundary.yaml) are NOT in this spec.
+
+openapi: 3.1.0
+
+info:
+  title: DojoLM Public API
+  version: 0.0.1
+  description: |
+    Public substrate API for the DojoLM AI adversarial-evaluation platform.
+
+    DojoLM is the substrate UNDER GRC incumbents (OneTrust / ServiceNow /
+    AuditBoard) — not a replacement. Consumers integrate via this API to
+    push signed attestation packs into their GRC consoles + verify with the
+    `dojolm-verify` CLI (E1-PHASE-4-M3a) or the `@dojolm/sdk` TypeScript
+    client.
+
+    See also:
+    - Predicate schema: github.com/BlackUnicornSecurity/eval-predicate (Apache + CC-BY-4.0)
+    - Crosswalk dataset: github.com/dojolm-spec/crosswalk (CC-BY-4.0 + DOI)
+    - SDK: packages/dojolm-sdk
+    - Master Plan: the DojoLM master plan
+
+  contact:
+    name: BlackUnicorn Security / DojoLM
+    url: https://github.com/blackunicornsecurity/dojolm
+    email: info@blackunicorn.tech
+  license:
+    name: MIT
+    url: https://github.com/blackunicornsecurity/dojolm/blob/main/LICENSE
+
+servers:
+  - url: https://{tenant}.dojolm.example
+    description: Per-tenant SaaS deployment (Tier 1 EU-only / Tier 2 US-only per docs/architecture/data-residency-model.md)
+    variables:
+      tenant:
+        default: example
+        description: Customer tenant subdomain
+  - url: http://localhost:3001
+    description: Local self-hosted single-tenant dev
+
+security:
+  # Cookie-auth (session) OR API-key auth. CSRF double-submit gates the
+  # cookie path on state-mutating routes. See `components/securitySchemes`.
+  - sessionCookieAuth: []
+    csrfDoubleSubmit: []
+  - apiKeyAuth: []
+  - csrfDoubleSubmit: []
+
+paths:
+  /api/admin/kokugikan/submission:
+    post:
+      operationId: submitProbeRun
+      summary: Ingest a probe-run record into the Kokugikan submission store
+      description: |
+        Phase-3-A backbone (PRs #874/#875/#876) — DO-NOT-TOUCH per
+        master plan §9. Current Stage 1 schema: 5 fields. E1-PHASE-4-M1
+        adds optional `proofRef` additively (NEVER replaces).
+      tags: [submission]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionInput'
+      responses:
+        '200':
+          description: Submission accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResult'
+        '400':
+          description: Invalid payload (Zod validation failed)
+        '401':
+          description: Unauthenticated
+        '403':
+          description: CSRF token missing or invalid
+        '429':
+          description: Per-operator rate limit exceeded
+        '503':
+          description: KOKUGIKAN_ENABLED flag is false
+
+  /api/admin/eval/leaderboard:
+    get:
+      operationId: readBypassLeaderboard
+      summary: Read the per-technique × per-model bypass-rate leaderboard
+      description: |
+        Wilson-CI-aggregated leaderboard derived from the Kokugikan store.
+        Production source: packages/bu-tpi/src/catalog/bypass-rate.ts.
+      tags: [leaderboard]
+      parameters:
+        - name: breakdown
+          in: query
+          schema:
+            type: string
+            enum: [per-technique, per-model, overall]
+          required: true
+      responses:
+        '200':
+          description: Leaderboard payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Leaderboard'
+
+  /api/dojolm-verify:
+    post:
+      operationId: verifyAttestationPack
+      summary: Verify a DSSE attestation pack server-side (alternative to dojolm-verify CLI)
+      description: |
+        PROVISIONAL. Lands at E1-PHASE-4-M3a. Stage 1: placeholder.
+        Equivalent: download the pack + run `dojolm-verify <pack.dsse>`
+        from the Hugging Face Space or `ghcr.io/dojolm/verify` image.
+      tags: [verifier]
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              description: DSSE envelope file
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResult'
+
+  /api/dojolm-eval/v1/schema:
+    get:
+      operationId: retrievePredicateSchema
+      summary: Retrieve the `dojolm.eval/v1` in-toto predicate schema
+      description: |
+        Mirrors the authoritative schema from
+        `github.com/BlackUnicornSecurity/eval-predicate` (Apache-2.0 code +
+        CC-BY-4.0 spec text). Cached locally for air-gapped deploys.
+      tags: [predicate]
+      responses:
+        '200':
+          description: JSON-schema document
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /transparency/{tenant}:
+    get:
+      operationId: listTransparencyLogEntries
+      summary: Read the per-tenant transparency log (Rekor namespace)
+      description: |
+        PROVISIONAL — lands at E1-PHASE-4-M5. Read-only Rekor namespace
+        per tenant per master plan §4.3 M-5.
+      tags: [transparency]
+      parameters:
+        - name: tenant
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: startIndex
+          in: query
+          schema:
+            type: integer
+        - name: endIndex
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Array of inclusion-proof-bearing entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransparencyLogEntry'
+
+components:
+  securitySchemes:
+    # HIGH-3 fix (omnibus audit): production auth model is cookie-based
+    # session via `tpi_session` cookie OR `x-api-key` header — NOT bearer
+    # token. The CSRF double-submit applies only to cookie-auth on
+    # state-mutating routes.
+    sessionCookieAuth:
+      type: apiKey
+      in: cookie
+      name: tpi_session
+      description: |
+        Signed session cookie (`<rawToken>.<base64url(claim)>.<hex(hmac)>`)
+        issued by POST /api/auth/login. Required for all `/api/admin/*`
+        endpoints unless `x-api-key` is supplied.
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: |
+        DB-backed API key (issued via /admin/api-keys). Bypasses CSRF
+        because API-key clients add the header explicitly. Required for
+        all `/api/admin/*` endpoints unless session cookie present.
+    csrfDoubleSubmit:
+      type: apiKey
+      in: header
+      name: x-tpi-csrf
+      description: |
+        CSRF double-submit token (matches the `tpi_csrf` cookie). Required
+        on POST/PUT/PATCH/DELETE when session-cookie auth is used. NOT
+        required when `x-api-key` auth is used.
+
+  schemas:
+    SubmissionInput:
+      type: object
+      required: [id, techniqueId, modelId, refusalClass]
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: '^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$'
+        techniqueId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: '^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$'
+        modelId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          pattern: '^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$'
+        refusalClass:
+          type: string
+          enum: [refused, partial, complied, errored]
+        submittedAt:
+          type: string
+          format: date-time
+        # NOTE (HIGH-3 fix, omnibus audit): `proofRef` is reserved for
+        # E1-PHASE-4-M1 (Stage 1 close / Phase 4 wire-up). The
+        # production schema is currently `.strict()` — unknown keys
+        # are rejected. Do not send this field until M-1 lands.
+        # proofRef: <PHASE-4>
+        x-future-fields:
+          proofRef: 'Reserved for E1-PHASE-4-M1; currently rejected by .strict() schema'
+
+    SubmissionResult:
+      type: object
+      required: [accepted, id, storedAt]
+      properties:
+        accepted:
+          type: boolean
+        id:
+          type: string
+        storedAt:
+          type: string
+          format: date-time
+
+    Leaderboard:
+      type: object
+      required: [rows, generatedAt]
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaderboardRow'
+        generatedAt:
+          type: string
+          format: date-time
+
+    LeaderboardRow:
+      type: object
+      required: [techniqueId, modelId, attempts, refusals, refusalRate]
+      properties:
+        techniqueId:
+          type: string
+        modelId:
+          type: string
+        attempts:
+          type: integer
+        refusals:
+          type: integer
+        refusalRate:
+          type: number
+          format: double
+        wilsonLow:
+          type: number
+          format: double
+        wilsonHigh:
+          type: number
+          format: double
+
+    VerifyResult:
+      type: object
+      required: [valid, runCount, signers, errors, rekorRoot, verifiedAt]
+      properties:
+        valid:
+          type: boolean
+        runCount:
+          type: integer
+        signers:
+          type: array
+          items:
+            type: object
+            properties:
+              subject:
+                type: string
+              fingerprint:
+                type: string
+        errors:
+          type: array
+          items:
+            type: string
+        rekorRoot:
+          type: string
+        verifiedAt:
+          type: string
+          format: date-time
+
+    TransparencyLogEntry:
+      type: object
+      required: [logIndex, payload, signature, inclusionProof, entryTimestamp]
+      properties:
+        logIndex:
+          type: integer
+        payload:
+          type: object
+          description: '`dojolm.eval/v1` in-toto Statement payload'
+        signature:
+          type: string
+        inclusionProof:
+          type: object
+          properties:
+            rootHash:
+              type: string
+            treeSize:
+              type: integer
+            path:
+              type: array
+              items:
+                type: string
+        entryTimestamp:
+          type: string
+          format: date-time

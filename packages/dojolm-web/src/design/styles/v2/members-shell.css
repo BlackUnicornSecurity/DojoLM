@@ -1,0 +1,309 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-C member-shell adapter: one shell, sparse utility chrome. */
+
+[data-skin="v2"][data-shell-variant="member"] .rail-logo-text .env {
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"][data-shell-variant="member"] .topbar .search,
+[data-skin="v2"][data-shell-variant="member"] .dojo-archetype-chip {
+  display: none;
+}
+
+/* P5 — members topbar "Private beta" status chip (design Members Home v2.html:43
+   `<span class="chip only-signed-in"><span class="dot"></span>Private beta</span>`,
+   repeated on every wave-e/-h member header). Member chrome passes
+   showUtilities=false to shell-chrome, so TopBar renders no right-side chips at
+   all (correct — no model/env/kill-switch on member surfaces), which also drops
+   the members beta chip. Restore it as the leading `.topbar-right` flex item
+   (::before is the first child, so it sits left of the avatar) — reproducing the
+   base `.chip` pill: rounded, bordered, mono-caps, leading neutral dot (drawn as
+   a radial-gradient since a pseudo-element has no child element for the dot).
+   The chip is `only-signed-in` in the design; `:has(> *)` scopes it to the
+   signed-in surfaces (the avatar renders only for a member session — the
+   signed-out sign-in / request-invite gates leave `.topbar-right` empty).
+   Desktop-only: the design hides `.topbar .right .chip` ≤768px
+   (app-shell.css:183, mirrored by responsive.css). */
+[data-skin="v2"][data-shell-variant="member"] .topbar-right:has(> *)::before {
+  content: "Private beta";
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 11px 4px 23px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  background-color: var(--bg-2);
+  background-image: radial-gradient(
+    circle at 12px 50%,
+    var(--fg-dim) 0 3.5px,
+    transparent 4px
+  );
+  background-repeat: no-repeat;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  [data-skin="v2"][data-shell-variant="member"] .topbar-right::before {
+    content: none;
+  }
+}
+
+[data-skin="v2"][data-shell-variant="member"] .member-gate-stage {
+  min-height: calc(100dvh - 112px);
+  justify-content: center;
+}
+
+/* Members Home directory — wave-c "Members Home v2.html": .cat-card grid
+   (wave-b module.css grammar) + .home-note + per-card .stat-row facts.
+   Facts render from MEMBER_PRELAUNCH_FACTS (D-07), never hardcoded. */
+/* Corpus .g2 grid (wave-b module.css): two columns, one under 560px —
+   a fixed track list, never a min-width that can overflow 320px. */
+[data-skin="v2"] .members-scent-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+  border: 0;
+}
+@media (max-width: 560px) {
+  [data-skin="v2"] .members-scent-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* The title is the card's one interactive control — single-line per the
+   hallmark responsive contract; inherits the card ink. */
+[data-skin="v2"] .members-scent-title {
+  color: var(--fg);
+  text-decoration: none;
+  white-space: nowrap;
+}
+[data-skin="v2"] .members-scent-title:hover {
+  text-decoration: underline;
+}
+[data-skin="v2"] .cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-height: 0;
+  padding: 15px 16px;
+  border: 1px solid var(--b-0);
+  border-radius: 12px;
+  background: var(--bg-2);
+  box-shadow: none;
+  color: var(--fg);
+  text-decoration: none;
+}
+[data-skin="v2"] .cat-card::before {
+  display: none;
+}
+[data-skin="v2"] .cat-card:hover,
+[data-skin="v2"] .cat-card:focus-within {
+  border-color: var(--b-1);
+  transform: none;
+}
+[data-skin="v2"] .cat-card .top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+[data-skin="v2"] .cat-card .t {
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+[data-skin="v2"] .cat-card .badge {
+  margin-left: auto;
+  padding: 2px 9px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+[data-skin="v2"] .cat-card .desc {
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .cat-card .stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--b-0);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+[data-skin="v2"] .cat-card .stat-row .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fg-dim);
+  flex-shrink: 0;
+}
+
+/* welcome line — §4.4 info tone (steel dot, neutral body), never an alarm */
+[data-skin="v2"] .home-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-top: 16px;
+  padding: 13px 16px;
+  border: 1px solid var(--b-0);
+  border-radius: 10px;
+  background: var(--bg-2);
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  line-height: 1.6;
+}
+[data-skin="v2"] .home-note .dot {
+  width: 7px;
+  height: 7px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--steel);
+  flex-shrink: 0;
+}
+[data-skin="v2"] .home-note b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* P5 — the reference `.code` sub-caption is plain mono text directly under
+   the card title (wave-c Members Home v2.html:67, wave-e Seasons v2.html:72).
+   The global primitives.css `.code` (a mono PRE block) paints a bordered,
+   padded, tinted box — an input-like field the design never draws. Reset the
+   box here; the members `.code` is a caption, not a code block. */
+[data-skin="v2"] .cat-card .code {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+}
+
+/* P2b — Wave-E members content grid: main + aside columns, one column on
+   narrow viewports (design wave-e.css .g-main). */
+[data-skin="v2"] .g-main {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  [data-skin="v2"] .g-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* zone divider (design app-shell.css .zone-title) */
+[data-skin="v2"] .zone-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 26px 0 12px;
+}
+[data-skin="v2"] .zone-title h2 {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: 600;
+}
+[data-skin="v2"] .zone-title .sub {
+  color: var(--fg-ghost);
+  font-size: var(--text-base);
+}
+
+/* §4.1 empty grammar (design app-shell.css .empty): kanji mark + Inter title.
+   Overrides the base.css dashed-box treatment — inside a panel the panel IS
+   the box (reference shows no inner dashed border). */
+[data-skin="v2"] .empty {
+  padding: 26px 20px;
+  border: 0;
+  text-align: center;
+}
+[data-skin="v2"] .empty .kj {
+  color: var(--fg-dim);
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 38px;
+  line-height: 1;
+  opacity: 0.7;
+}
+[data-skin="v2"] .empty h4 {
+  margin: 12px 0 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+[data-skin="v2"] .empty p {
+  margin: 5px 0 14px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .empty .links {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+[data-skin="v2"] .empty .links a,
+[data-skin="v2"] .home-note a {
+  color: var(--steel-lg);
+}
+[data-skin="v2"] .empty .links a:hover,
+[data-skin="v2"] .home-note a:hover {
+  color: var(--fg);
+}
+
+/* mono text-link (design wave-b module.css .link-mono) */
+[data-skin="v2"] .link-mono {
+  color: var(--steel-lg);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+[data-skin="v2"] .link-mono:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+[data-skin="v2"][data-shell-variant="member"] .arena-heat-table th {
+  background: var(--bg-1);
+}
+
+@media (max-width: 768px) {
+  [data-skin="v2"][data-shell-variant="member"] .member-gate-stage {
+    min-height: auto;
+    padding-inline: 0;
+  }
+}
+
+/* P5 — the design `.p-hd` is always an inline row (app-shell.css:79); the
+   status chip stays right of the title at every width. The base.css ≤480px
+   rule stacks `.panel-head` into a column (chip drops below the title) — a
+   general fix for tab-strip panels the member surfaces never use. Restore the
+   inline header row for member panels so "Season record"/"The results grid"
+   keep the chip inline at phone width (seasons-archive 390 stacking). */
+@media (max-width: 480px) {
+  [data-skin="v2"][data-shell-variant="member"] .panel-head {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  [data-skin="v2"][data-shell-variant="member"] .panel-head .meta {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+}

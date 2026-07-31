@@ -1,0 +1,124 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Shared v2 interaction sizing. Visual control frames may stay compact, but
+   their rendered hit areas remain at least 44px in either dimension. */
+
+[data-skin="v2"] button,
+[data-skin="v2"] [role="button"] {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+[data-skin="v2"] .search,
+[data-skin="v2"] .icon-btn {
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-out);
+}
+
+[data-skin="v2"] .search {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[data-skin="v2"] .search-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-skin="v2"] button.chip,
+[data-skin="v2"] a.chip,
+[data-skin="v2"] a.btn,
+[data-skin="v2"] .v2-touch-link,
+[data-skin="v2"] .gate-links a,
+[data-skin="v2"] .legal-footer-link {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+[data-skin="v2"] a.btn,
+[data-skin="v2"] .v2-touch-link,
+[data-skin="v2"] .gate-links a,
+[data-skin="v2"] .legal-footer-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+[data-skin="v2"] label:has(input[type="checkbox"]),
+[data-skin="v2"] label:has(input[type="radio"]) {
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+[data-skin="v2"] summary {
+  min-height: 44px;
+  padding-block: 10px;
+  cursor: pointer;
+}
+
+[data-skin="v2"] input[type="checkbox"],
+[data-skin="v2"] input[type="radio"] {
+  width: 20px;
+  height: 20px;
+}
+
+/* Phase 2.1 — activity ping is a neutral live signal, not an alarm:
+   the torii ramp is reserved for the one chrome-red moment per view
+   (SKIN-SPEC §1.2); chip dots run steel/jade per wave-a. */
+[data-skin="v2"] .icon-btn .ping {
+  background: var(--steel);
+  box-shadow: none;
+}
+
+/* Design .app-foot (wave-a/app-shell.css:154-156) on the production
+   border/ink tokens (delta register DR-3/DR-4); 11px floor = --text-sm. */
+[data-skin="v2"] .app-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0 0;
+  margin-top: 26px;
+  border-top: 1px solid var(--b-0);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .app-foot .cy {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+}
+
+/* §4.3 error-banner law: the TITLE owns the red; body copy reads in
+   neutral ink (the legacy tone painted the whole banner torii). */
+[data-skin="v2"] .sys-banner--danger {
+  color: var(--fg-dim);
+}
+
+/* §5.3 subtab law: the active underline is neutral ink — torii is
+   reserved for the one chrome-red moment; jade/amber tone opt-ins keep
+   their colors (their selectors carry data-sst-tone). */
+[data-skin="v2"] .sst-indicator--underline:not([data-sst-tone]) {
+  background: var(--fg-mute);
+  box-shadow: none;
+}
+
+/* Sort/segmented controls are filter chrome — their active state is a
+   neutral fill, never the torii ramp (§1.2). */
+[data-skin="v2"] .bb-seg__btn[aria-checked="true"] {
+  background: var(--bg-3);
+  color: var(--fg);
+  box-shadow: inset 0 0 0 1px var(--b-2);
+}
+
+/* Live-status ring runs jade (scan-ring law) — the yr4 legacy ring was
+   torii; jade matches the chip + dot.live treatment. */
+[data-skin="v2"] .yr4-live-ring::before {
+  border-color: rgba(var(--jade-rgb), 0.4);
+}

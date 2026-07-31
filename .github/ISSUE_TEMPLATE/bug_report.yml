@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a defect in the scanner engine, web app, MCP server, or docs
+title: "[bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search existing issues first.
+        **Do not include real secrets, API keys, or sensitive prompts in this report** — redact anything you wouldn't publish.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Scanner engine (bu-tpi)
+        - Web application (dojolm-web)
+        - MCP adversarial server (dojolm-mcp)
+        - SDK / verifier CLI (dojolm-sdk)
+        - Documentation
+        - Build / tooling
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what happened instead?
+      placeholder: Steps to reproduce, expected vs actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Smallest input/command that reproduces it. For scanner false positives/negatives, include the (redacted) input text and the verdict you got.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: e.g. main @ <short SHA>, or the npm package version
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS, Node.js version, browser (for web app issues)"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Redact anything sensitive before pasting.

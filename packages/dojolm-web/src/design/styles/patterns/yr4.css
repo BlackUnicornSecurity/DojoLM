@@ -1,0 +1,401 @@
+/* YR.4 — v2.1 admin module pages (Red-tint cluster: Scanner / Buki /
+   Jutsu / Arena / Sengoku).
+
+   Token-driven only. Zero hex / rgb / hsl literals. All composites use
+   rgba(var(--*-rgb), α). prefers-reduced-motion is gated globally via
+   tokens.css — this file adds no animations. */
+
+/* ===== Page-level container ===== */
+.yr4-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 24px 24px;
+  min-width: 0;
+}
+
+/* ===== Top metric tile row =====
+   4 MCard tiles at >=1320px, 2 at 700–1319px, stacked below 700px. */
+.yr4-mtile-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 1319px) {
+  .yr4-mtile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .yr4-mtile-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===== Two-column section grid =====
+   8 / 4 split at 1320px+, single-col below 1100px (matches workbench). */
+.yr4-section-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+}
+@media (max-width: 1100px) {
+  .yr4-section-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===== Three-column section grid (Arena bracket / leaderboard / VsBar) ===== */
+.yr4-tri-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+}
+@media (max-width: 1320px) {
+  .yr4-tri-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 800px) {
+  .yr4-tri-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===== Data list (semantic role=list wrapper around .drow rows) ===== */
+.yr4-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* AttackRow grid template — title (left) · status pill · severity dot strip.
+   AttackRow already supplies its own CSS at primitives.css line ~1983; this
+   is the parent-list grid template for the .yr4-data-list wrapper. */
+.yr4-thead-attack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 64px;
+  gap: 12px;
+  padding: 8px 4px;
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-ghost);
+  font-weight: 600;
+  border-bottom: 1px solid var(--b-1);
+}
+
+/* ===== Module-specific kanji watermark in PageHead =====
+   Larger jp glyph for module landing pages (G3 hero-only). The base
+   `.page-head .jp` rule from primitives.css renders inline; the module
+   pages bump size + add a subtle glow tied to --torii-rgb.
+   Scoped under `.yr4-page` so the rule never escapes the YR.4 routes. */
+.yr4-page .page-head h1 .jp {
+  font-size: var(--text-4xl);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 24px rgba(var(--torii-rgb), 0.35);
+}
+
+/* ===== Reusable ribbon-row container =====
+   Caption above + Ribbon below pattern shared across Scanner / Buki / Jutsu. */
+.yr4-ribbon-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.yr4-ribbon-cap {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+
+/* ===== KV row (label / value table) — used in Scanner posture summary
+   + Jutsu swap detail. Tokens-only; no hex literals. */
+.yr4-kv-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== Sengoku scheduler queue — vertical stack of SchedulerList items ===== */
+.yr4-queue-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ===== Arena leaderboard rank tile =====
+   Shipped here (not as a YR.6 primitive) because the visual shape is one
+   small grid template — promoting to a TSX primitive would be premature.
+   Still token-driven, still discriminant-redacted in the host page via a
+   static RANK_TONE map. */
+.yr4-rank-tile {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md, 8px);
+  background: rgba(var(--white-rgb), 0.015);
+}
+.yr4-rank-tile .rank-num {
+  font-family: var(--mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-mute);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.yr4-rank-tile .rank-name {
+  font-size: var(--text-base);
+  color: var(--fg);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.yr4-rank-tile .rank-score {
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+}
+.yr4-rank-tile.tone-red {
+  border-color: rgba(var(--torii-rgb), 0.28);
+  background: rgba(var(--torii-rgb), 0.05);
+}
+.yr4-rank-tile.tone-red .rank-num {
+  color: var(--torii-hi);
+}
+.yr4-rank-tile.tone-gold {
+  border-color: rgba(var(--gold-rgb), 0.28);
+  background: rgba(var(--gold-rgb), 0.05);
+}
+.yr4-rank-tile.tone-gold .rank-num {
+  color: var(--gold-lg);
+}
+
+/* ===== Arena bracket (ASCII mono) =====
+   Bracket primitive already exists at design/primitives/Bracket; this adds
+   the page-level container so the bracket sits in the right grid cell. */
+.yr4-bracket-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===== Banner row — module-level load/error/empty banner =====
+   Reused for "Backend offline" + "Showing cached results" advisories.
+   Token-driven; no hex. */
+.yr4-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r-md, 8px);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.02);
+  color: var(--fg-dim);
+  font-size: var(--text-md);
+}
+.yr4-banner.tone-warn {
+  border-color: rgba(var(--gold-rgb), 0.32);
+  background: rgba(var(--gold-rgb), 0.06);
+  color: var(--gold-lg);
+}
+.yr4-banner.tone-red {
+  border-color: rgba(var(--torii-rgb), 0.32);
+  background: rgba(var(--torii-rgb), 0.06);
+  color: var(--torii-hi);
+}
+.yr4-banner.tone-jade {
+  border-color: rgba(var(--jade-rgb), 0.32);
+  background: rgba(var(--jade-rgb), 0.06);
+  color: var(--jade-lg);
+}
+
+/* ===== Live pulse (Arena-only) =====
+   Animated only when prefers-reduced-motion is unset. The .chip primitive
+   already provides the pill chrome; this layer the ring pulse. */
+.yr4-live-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yr4-live-ring::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 99px;
+  border: 1px solid rgba(var(--torii-rgb), 0.4);
+  animation: yr4LiveRingPulse 1800ms ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes yr4LiveRingPulse {
+  0% { transform: scale(0.92); opacity: 0.9; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yr4-live-ring::before {
+    animation: none;
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* ===== KPI row variants — Buki payload count / Sengoku run count etc. =====
+   Re-using .mcard tinted variants (.red/.steel/.gold/.jade) from primitives.css. */
+
+/* ===== Spacer utility =====
+   Replaces inline `style={{ height: 12 }}` JSX props on YR.4 pages so the
+   page chrome stays CSS-class-only (G-rule from PR #269 carried forward).
+   Use sparingly — most spacing should land in flex `gap` on the parent. */
+.yr4-stack-gap {
+  height: 12px;
+}
+
+/* ===== role=list wrappers around primitives =====
+   The list semantics live on the YR.4 page (`<div role="list">`) and the
+   primitive (AttackRow) already carries `role="listitem"`. FeedRow does
+   not, so the page wraps each FeedRow in `<div role="listitem">`. No extra
+   styling needed beyond the column flex from `.yr4-data-list`. */
+
+
+/* ===== Subset 2 (Steel-tint) =====
+   Hattori (command archetype) + Kotoba (workbench archetype) module
+   pages. Mirrors the Red-tint subset 1 pattern: page chrome stays in
+   `.yr4-page` + the shared layout grids; only Steel-tint specific
+   composites land here. Token-driven: rgba(var(--steel-rgb), α) only —
+   never raw hex / rgb literals. */
+
+/* Steel-tint pulse on `.chip.steel` in command surfaces (Hattori posture
+   chip mirrors the canvas-01 `.live-ring` motif but tinted Steel rather
+   than Torii red). Animated only when prefers-reduced-motion is unset. */
+.yr4-steel-pulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yr4-steel-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 99px;
+  border: 1px solid rgba(var(--steel-rgb), 0.4);
+  animation: yr4SteelPulse 1800ms ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes yr4SteelPulse {
+  0% { transform: scale(0.92); opacity: 0.9; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yr4-steel-pulse::before {
+    animation: none;
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Kotoba two-button form row (Score + Harden). Replaces the inline
+   `style={{ display: 'flex', gap: 8 }}` JSX prop so page chrome stays
+   CSS-class-only (carry-forward of the C-3 / subset 1 G-rule). */
+.yr4-button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Steel-tint banner variant — used on Steel-tint-cluster forms when a
+   neutral / informational banner needs to sit alongside the Red error
+   variant. Reuses the `.yr4-banner` container; only the tone class
+   changes. Mirrors `.yr4-banner.tone-jade` from subset 1. */
+.yr4-banner.tone-steel {
+  border-color: rgba(var(--steel-rgb), 0.32);
+  background: rgba(var(--steel-rgb), 0.06);
+  color: var(--steel-lg);
+}
+
+
+/* ===== Subset 3 (Gold-tint) =====
+   Mitsuke (codex archetype) + Amaterasu (codex archetype) + Kagami
+   (workbench archetype) + Ronin (workbench archetype). Mirrors the
+   Red-tint subset 1 + Steel-tint subset 2 pattern: page chrome stays
+   in `.yr4-page` + the shared layout grids; only Gold-tint specific
+   composites land here. Token-driven: rgba(var(--gold-rgb), α) only —
+   never raw hex / rgb literals. */
+
+/* Gold-tint pulse on `.chip.gold` LIVE indicators (Mitsuke streaming
+   feed counter + Ronin queue activity). Mirrors `.yr4-steel-pulse`
+   from subset 2 but tinted Gold rather than Steel. Animated only when
+   prefers-reduced-motion is unset. */
+.yr4-gold-pulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.yr4-gold-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 99px;
+  border: 1px solid rgba(var(--gold-rgb), 0.4);
+  animation: yr4GoldPulse 1800ms ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes yr4GoldPulse {
+  0% { transform: scale(0.92); opacity: 0.9; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yr4-gold-pulse::before {
+    animation: none;
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* Gold-tint banner variant — used on Gold-tint-cluster surfaces for
+   neutral / informational advisories (e.g. backend-pending notice on
+   Kagami). Reuses the `.yr4-banner` container; only the tone class
+   changes. Mirrors `.yr4-banner.tone-steel` from subset 2. */
+.yr4-banner.tone-gold {
+  border-color: rgba(var(--gold-rgb), 0.32);
+  background: rgba(var(--gold-rgb), 0.06);
+  color: var(--gold-lg);
+}
+
+/* Stack of DriftLane lanes (Kagami per-model drift). One lane per
+   model pair, vertical stack with gap. Replaces an inline
+   `style={{ display: 'flex', flexDirection: 'column', gap: 10 }}` JSX
+   prop so page chrome stays CSS-class-only. */
+.yr4-drift-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Stack of HunterLeader rank tiles inside `<ol role="list">` for the
+   Ronin leaderboard. Replaces an inline-style stack so chrome stays
+   CSS-class-only. */
+.yr4-hunter-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

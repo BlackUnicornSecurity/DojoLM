@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/stylelintrc.json",
+  "plugins": ["./stylelint-dojo/src/index.mjs"],
+  "rules": {
+    "dojo/example": true
+  },
+  "overrides": [
+    {
+      "files": ["src/design/**/*.css"],
+      "rules": {
+        "dojo/no-hardcoded-colors-in-design": true,
+        "dojo/no-phantom-tokens": true,
+        "dojo/no-cross-vocabulary-leakage": true,
+        "dojo/no-px-font-size-in-design": true
+      }
+    }
+  ],
+  "ignoreFiles": [".next/**", "node_modules/**", "dist/**", "stylelint-dojo/**"]
+}

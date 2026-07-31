@@ -1,0 +1,380 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-D adapters: Scanner, Guard, Flags, and System health. */
+
+[data-skin="v2"] .hattori-guard-modes-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+[data-skin="v2"] .hattori-guard-modes-row {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--b-0);
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+
+[data-skin="v2"] .hattori-guard-modes-row.active {
+  border-color: rgba(var(--steel-rgb), 0.58);
+  background: var(--bg-3);
+}
+
+[data-skin="v2"] .hattori-guard-modes-row-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-height: 66px;
+  padding: 11px 14px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+[data-skin="v2"] .hattori-guard-modes-row-title {
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+[data-skin="v2"] .hattori-guard-modes-row-summary,
+[data-skin="v2"] .hattori-guard-modes-row-detail {
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+
+[data-skin="v2"] .hattori-guard-modes-row-detail {
+  min-height: 64px;
+  padding: 0 14px 12px;
+  line-height: 1.5;
+}
+
+/* ---- Guard platform-mode cards (design wave-b/module.css .modes/.mode): static
+   4-card grid, every card shows its description, selected = steel ring (never
+   red); --fg-mute → --fg-dim (DR-4). ---- */
+[data-skin="v2"] .modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+[data-skin="v2"] .modes .mode { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 11px 14px; color: inherit; text-align: left; cursor: pointer; background: var(--bg-2); border: 1px solid var(--b-0); border-radius: 10px; }
+[data-skin="v2"] .modes .mode:hover { background: var(--bg-3); border-color: var(--b-1); }
+[data-skin="v2"] .modes .mode .t { color: var(--fg-dim); font-size: var(--text-base); font-weight: 600; }
+[data-skin="v2"] .modes .mode .s { color: var(--fg-ghost); font-size: var(--text-md); }
+[data-skin="v2"] .modes .mode .cnt { margin-top: 2px; color: var(--fg-dim); font-family: var(--mono); font-size: var(--text-sm); }
+[data-skin="v2"] .modes .mode.on { background: var(--bg-3); border: 1.5px solid rgba(var(--steel-rgb), 0.55); }
+[data-skin="v2"] .modes .mode.on .t { color: var(--fg); }
+/* ---- mode helper + save-row (design wave-d/wave-d.css .save-row) ---- */
+[data-skin="v2"] .mode-helper { max-width: 70ch; margin-top: 9px; color: var(--fg-ghost); font-size: var(--text-base); }
+[data-skin="v2"] .save-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--b-0); }
+[data-skin="v2"] .save-row .hint { color: var(--fg-ghost); font-size: var(--text-md); }
+/* ---- GAP coverage matrix (design wave-d/wave-d.css .gapmat): Inter sentence-case
+   headers, grouped/collapsible rows, gap pill = bordered chip (no red wash). ---- */
+[data-skin="v2"] .gapmat-scroll { overflow-x: auto; overscroll-behavior-inline: contain; }
+[data-skin="v2"] .gapmat { width: 100%; min-width: 620px; border-collapse: collapse; font-size: var(--text-base); }
+[data-skin="v2"] .gapmat thead th { padding: 8px 10px; color: var(--fg-dim); font-family: var(--sans); font-size: var(--text-md); font-weight: 500; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--b-1); }
+[data-skin="v2"] .gapmat thead th.svc { min-width: 170px; }
+[data-skin="v2"] .gapmat td { padding: 7px 10px; border-bottom: 1px solid var(--b-0); }
+[data-skin="v2"] .gapmat td.svc { color: var(--fg); font-size: var(--text-base); }
+[data-skin="v2"] .gapmat .grp-row td { padding: 0; }
+[data-skin="v2"] .gapmat .grp-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; color: var(--fg); font-family: var(--sans); font-size: var(--text-md); font-weight: 600; text-align: left; cursor: pointer; background: var(--bg-3); border: 0; }
+[data-skin="v2"] .gapmat .grp-btn .car { color: var(--fg-dim); font-size: var(--text-sm); transition: transform 0.15s var(--ease-out); }
+[data-skin="v2"] .gapmat .grp-btn.closed .car { transform: rotate(-90deg); }
+[data-skin="v2"] .gapmat .grp-btn .meta { margin-left: auto; color: var(--fg-dim); font-family: var(--mono); font-size: var(--text-sm); font-weight: 400; }
+[data-skin="v2"] .gm-gap { display: inline-flex; align-items: center; padding: 2px 10px; color: var(--ember); font-family: var(--mono); font-size: var(--text-sm); letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(var(--ember-rgb), 0.35); border-radius: 999px; }
+[data-skin="v2"] .gm-ok { display: inline-flex; align-items: center; gap: 5px; color: var(--jade); font-family: var(--mono); font-size: var(--text-sm); letter-spacing: 0.08em; text-transform: uppercase; }
+[data-skin="v2"] .gm-none { color: var(--fg-dim); }
+[data-skin="v2"] .gm-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 12px; color: var(--fg-dim); font-size: var(--text-md); }
+[data-skin="v2"] .gm-legend .it { display: inline-flex; align-items: center; gap: 8px; }
+[data-skin="v2"] .sev-note { margin-top: 12px; color: var(--fg-dim); font-size: var(--text-base); }
+[data-skin="v2"] button.link-steel { padding: 0; font: inherit; background: none; border: 0; cursor: pointer; }
+/* ---- Flags toggle switch (design wave-d/wave-d.css .tgl): knob colour = state,
+   jade only on ON, 44px tap floor. ---- */
+[data-skin="v2"] .tgl { position: relative; flex-shrink: 0; width: 40px; min-height: 44px; padding: 0; background: transparent; border: 0; cursor: pointer; }
+[data-skin="v2"] .tgl::before { content: ""; position: absolute; top: 50%; left: 0; width: 40px; height: 22px; transform: translateY(-50%); border-radius: 999px; background: var(--bg-4); border: 1px solid var(--b-1); transition: background 0.15s var(--ease-out), border-color 0.15s var(--ease-out); }
+[data-skin="v2"] .tgl i { position: absolute; top: 50%; left: 2px; width: 16px; height: 16px; transform: translateY(-50%); border-radius: 50%; background: var(--fg-dim); transition: left 0.15s var(--ease-out), background 0.15s var(--ease-out); }
+[data-skin="v2"] .tgl[aria-checked="true"]::before { background: rgba(var(--jade-rgb), 0.16); border-color: rgba(var(--jade-rgb), 0.4); }
+[data-skin="v2"] .tgl[aria-checked="true"] i { left: 22px; background: var(--jade); }
+/* ---- Flags list footer helper (design .p-hd footer note) ---- */
+[data-skin="v2"] .flags-help { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--b-0); color: var(--fg-ghost); font-size: var(--text-md); }
+
+[data-skin="v2"] .service-coverage-grid {
+  overflow-x: auto;
+}
+
+[data-skin="v2"] .service-coverage-grid-table {
+  width: 100%;
+  min-width: 620px;
+}
+
+[data-skin="v2"] .service-coverage-grid-table th,
+[data-skin="v2"] .service-coverage-grid-table td {
+  padding: 8px 10px;
+  text-align: left;
+}
+
+[data-skin="v2"]
+  .service-coverage-grid-cell.gap
+  .service-coverage-grid-cell-label {
+  display: inline-flex;
+  padding: 2px 10px;
+  color: var(--ember);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(var(--ember-rgb), 0.38);
+  border-radius: 999px;
+}
+
+[data-skin="v2"]
+  .service-coverage-grid-cell.ok
+  .service-coverage-grid-cell-label {
+  color: var(--jade);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+}
+
+[data-skin="v2"]
+  .service-coverage-grid-cell.na
+  .service-coverage-grid-cell-label {
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .engine-status-bar-bare .engine-status-bar-row {
+  gap: 8px !important;
+  grid-template-columns: repeat(auto-fill, minmax(122px, 1fr)) !important;
+}
+
+[data-skin="v2"] .engine-status-bar-bare .engine-cell {
+  min-height: 42px;
+  border-color: var(--b-0) !important;
+  border-radius: 9px !important;
+  background: var(--bg-2) !important;
+  /* C-06 design tile anatomy: name-left / index-right on one row (not the
+     primitive's default index-stacked-above-name column). */
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+[data-skin="v2"] .engine-status-bar-bare .engine-cell .engine-cell-row {
+  order: 1;
+  min-width: 0;
+}
+[data-skin="v2"] .engine-status-bar-bare .engine-cell .engine-cell-idx {
+  order: 2;
+  margin-left: auto;
+}
+
+[data-skin="v2"] .engine-status-bar-bare .engine-cell-selected {
+  /* Design .eng (measured aria-pressed=true): chrome stays neutral —
+     --line border + bg-2 fill; the jade dot alone signals selection.
+     The former steel 0.55 border painted 13 blue boxes on the READ-ONLY
+     status view (div cells, all-active). */
+  border-color: var(--b-0) !important;
+  background: var(--bg-2) !important;
+}
+/* A-405 INTERACTIVE toggle grid (ScannerEngineControlsPanel) — cells are
+   <button>, and here `selected` = the operator's local on/off pick, which is
+   DECOUPLED from `status` (so the dot doesn't move on toggle). A neutral
+   border would leave only a bg-1→bg-2 shift (~1.05:1) as the affordance —
+   invisible. Give the interactive selected button a steel border so the
+   pick reads. Higher specificity (button.class) beats the div rule above. */
+[data-skin="v2"] .engine-status-bar-bare button.engine-cell-selected {
+  border-color: rgba(var(--steel-rgb), 0.55) !important;
+}
+
+[data-skin="v2"] .engine-status-bar-bare .engine-cell-band-tint {
+  background: var(--b-1) !important;
+}
+
+[data-skin="v2"] .scanner-session-analysis {
+  padding: 12px 14px;
+  border: 1px solid var(--b-0);
+  border-radius: 9px;
+  background: var(--bg-2);
+}
+
+[data-skin="v2"] .scanner-session-analysis summary {
+  color: var(--fg-dim);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+[data-skin="v2"] .scanner-latest-run-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* D6 — Scanner technique chips (QuickChips): the design's mono-caps chip slot
+   (app-shell.css .chip), not sentence-case Inter. QuickChips owns pill
+   size/shape inline; only the type slots are corrected here. */
+[data-skin="v2"] .scanner-v2 [data-testid="scanner-quick-chips"] > button {
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* D12 — Scanner panel headers render title + sub inline (design .p-hd), not
+   stacked. Scoped to the scanner page so other surfaces are untouched. */
+[data-skin="v2"] .scanner-v2 .panel-head .col {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+[data-skin="v2"] .scanner-v2 .panel-head .col .sub {
+  margin-top: 0;
+}
+
+[data-skin="v2"] .kagami-preset-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+[data-skin="v2"] .kagami-preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  overflow: hidden;
+  text-align: left;
+}
+
+[data-skin="v2"] .kagami-preset-card > * {
+  width: 100%;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+[data-skin="v2"] .kagami-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+[data-skin="v2"] .kagami-axis-filters {
+  padding: 8px;
+  border: 1px solid var(--b-1);
+  border-radius: 6px;
+}
+
+[data-skin="v2"] .kagami-axis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px;
+  font-size: var(--text-base);
+}
+
+[data-skin="v2"] .kagami-score-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 60px;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: var(--text-base);
+  border-top: 1px solid var(--b-1);
+}
+
+[data-skin="v2"] .kagami-score-row:first-child {
+  border-top: 0;
+}
+
+[data-skin="v2"] .kagami-findings-table {
+  margin-top: 16px;
+}
+
+[data-skin="v2"] .kagami-findings-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+[data-skin="v2"] .kagami-findings-scroll:focus-visible {
+  outline: 2px solid var(--steel-lg);
+  outline-offset: 3px;
+}
+
+[data-skin="v2"] .kagami-findings-count {
+  margin-bottom: 4px;
+}
+
+[data-skin="v2"] .kagami-finding-row {
+  display: grid;
+  grid-template-columns: 120px 90px 130px minmax(0, 1fr);
+  gap: 8px;
+  min-width: 520px;
+  padding: 4px 0;
+}
+
+[data-skin="v2"] .kagami-findings-empty {
+  padding: 8px 0;
+}
+
+[data-skin="v2"] .edit-role-dialog {
+  min-width: 320px;
+  padding: var(--space-5);
+  background: var(--bg-1);
+  border: 1px solid var(--b-1);
+  border-radius: 8px;
+}
+
+[data-skin="v2"] .edit-role-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--fg-dim);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+}
+
+[data-skin="v2"] .edit-role-select {
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  background: rgba(var(--black-rgb), 0.3);
+  border: 1px solid var(--b-1);
+  border-radius: 6px;
+}
+
+[data-skin="v2"] .edit-role-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* Disabled primary (design wave-d/wave-d.css:70) — a disarmed confirm never
+   renders red. DR-4 --fg-dim ink. */
+[data-skin="v2"] .btn-primary[disabled] {
+  cursor: not-allowed;
+  color: var(--fg-dim);
+  background: var(--bg-3);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 900px) {
+  [data-skin="v2"] .hattori-guard-modes-list,
+  [data-skin="v2"] .modes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-skin="v2"] .kagami-results-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  [data-skin="v2"] .hattori-guard-modes-list,
+  [data-skin="v2"] .modes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

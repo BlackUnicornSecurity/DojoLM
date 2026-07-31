@@ -1,0 +1,690 @@
+/* Canvas 1 — Command archetype */
+
+/* ===== Canvas chrome =====
+   The canvas chrome has a darker background than the design-system default
+   (#06060B) to lift page-card panels off the canvas page. Scoped to the
+   (design) route group only — legacy routes keep globals.css's background.
+   The selector targets the scope wrapper itself since (design)/layout.tsx
+   applies .dojo-ds-v3 as a <div>, not a body class. */
+.dojo-ds-v3 { background: var(--ink-canvas); min-height: 100vh; }
+.canvas-top {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 40px; padding: 20px 32px 18px;
+  background: rgba(var(--ink-canvas-rgb),0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--b-1);
+}
+.canvas-top-left { display: flex; align-items: flex-start; gap: 24px; }
+.canvas-top .back {
+  font-family: var(--mono); font-size: var(--text-sm); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+  padding: 8px 12px; border: 1px solid var(--b-1); border-radius: 6px;
+  background: rgba(var(--white-rgb),0.02); transition: 150ms; white-space: nowrap;
+}
+.canvas-top .back:hover { color: var(--fg); border-color: var(--b-2); }
+.canvas-meta { display: flex; flex-direction: column; gap: 2px; }
+.canvas-eyebrow {
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.22em;
+  color: var(--torii-hi); text-transform: uppercase; font-weight: 600;
+}
+.canvas-meta h1 {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  margin: 0; font-family: var(--editorial);
+  font-weight: 500; font-size: var(--text-6xl); letter-spacing: -0.015em;
+  color: var(--fg);
+}
+.archetype-def {
+  max-width: 520px; font-size: var(--text-md); line-height: 1.55;
+  color: var(--fg-dim); margin-top: 4px;
+}
+.archetype-def b { color: var(--fg); font-weight: 600; }
+.archetype-def i { color: var(--torii-hi); font-style: italic; font-family: var(--editorial); }
+
+.legend-strip {
+  display: flex; align-items: center; gap: 20px;
+  padding: 10px 32px; background: rgba(var(--white-rgb),0.015);
+  border-bottom: 1px solid var(--b-1);
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 8px; }
+.lg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-spacer { flex: 1; }
+.legend-note { text-transform: none; letter-spacing: 0.02em; font-family: var(--sans); color: var(--fg-mute); }
+
+/* ===== Page grid: horizontal scroll with scroll-snap ===== */
+.page-grid {
+  display: flex; gap: 28px; padding: 28px 32px 64px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  min-height: calc(100vh - 140px);
+}
+
+/* ===== Page card frame =====
+   E7.S10 (NEW v3) — F-5-009 P2 retire. The Epic-0 declaration was
+   `flex: 0 0 1520px` (rigid sizing) which forced a 1520px-wide card
+   on every viewport, including viewports narrower than 1520. Result:
+   the `.page-grid` (the horizontal scroll-snap container line 56)
+   had to scroll the whole card horizontally even when the user's
+   viewport was 1440 / 1280 / 1100 / 768 / 480 — the card never
+   shrank to fit the screen, so the canvas scrolled INSIDE the card
+   AND the document scrolled to expose the card edges.
+   Fix: replace `flex: 0 0 1520px` with `flex: 0 0 auto` + a fluid
+   `min-width: min(100%, 1520px)`. At ≥1520 viewports the card is
+   1520 wide (Epic-0 visual parity); below 1520 the card hugs the
+   viewport (100% of available width) so horizontal scroll happens
+   only when the page-grid hosts ≥2 cards side-by-side. The
+   `scroll-snap-align: start` semantics survive — wider-than-viewport
+   carousels still snap. Visible-effect anchor: min-width replaces
+   flex-basis. */
+.page-card {
+  flex: 0 0 auto;
+  min-width: min(100%, 1520px);
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--b-1); border-radius: 14px;
+  background: linear-gradient(180deg, var(--ink-card-1) 0%, var(--bg) 100%);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(var(--black-rgb),0.5), 0 1px 0 rgba(var(--white-rgb),0.03) inset;
+}
+.page-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb),0.015);
+}
+.pc-label { display: flex; align-items: baseline; gap: 12px; }
+.pc-num {
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.2em;
+  color: var(--torii-hi); font-weight: 700;
+}
+.pc-name {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-size: var(--text-2xl); font-weight: 500; color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.pc-sub {
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 500;
+}
+.page-card-shell { position: relative; }
+.page-card-shell .app {
+  min-height: auto;
+}
+
+/* ===== Command Hero ===== */
+.cmd-hero {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;
+  padding: 36px 40px 34px;
+  background: linear-gradient(180deg, var(--lacquer-2) 0%, var(--lacquer-0) 100%);
+  border: 1px solid var(--b-red);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-hero);
+}
+/* Rising sun (hinomaru) — top-right anchor */
+.cmd-hero-glow {
+  position: absolute;
+  right: -180px; top: -320px;
+  width: 640px; height: 640px; border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(var(--ember-rgb),0.55) 0%, rgba(var(--torii-lg-rgb),0.22) 28%, rgba(var(--torii-rgb),0.06) 55%, transparent 72%);
+  filter: blur(6px);
+  pointer-events: none;
+  animation: cmdSunPulse 8s ease-in-out infinite;
+  z-index: 0;
+}
+@keyframes cmdSunPulse {
+  0%,100% { opacity: 0.85; transform: scale(1); }
+  50%     { opacity: 1;    transform: scale(1.03); }
+}
+/* Conic rays, slow rotate */
+.cmd-hero-rays {
+  position: absolute; right: -260px; top: -380px;
+  width: 760px; height: 760px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 8deg, rgba(var(--ember-rgb),0.12) 8deg 9deg,
+    transparent 9deg 22deg, rgba(var(--ember-rgb),0.08) 22deg 23deg,
+    transparent 23deg 45deg, rgba(var(--ember-rgb),0.14) 45deg 46deg,
+    transparent 46deg 68deg, rgba(var(--ember-rgb),0.06) 68deg 69deg,
+    transparent 69deg 360deg
+  );
+  mask-image: radial-gradient(circle at center, transparent 30%, black 40%, black 70%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, transparent 30%, black 40%, black 70%, transparent 80%);
+  animation: cmdRayRotate 80s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes cmdRayRotate { to { transform: rotate(360deg); } }
+.cmd-hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(var(--torii-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--torii-rgb), 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 65% at 80% 35%, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 80% 65% at 80% 35%, black, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.cmd-hero::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(var(--white-rgb),0.022) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay; opacity: 0.55; pointer-events: none; z-index: 0;
+}
+/* Giant kanji watermark — bottom-left, out of the sun's column */
+.cmd-hero-watermark {
+  position: absolute; left: 18px; bottom: -72px;
+  font-family: var(--serif); font-weight: 900; font-size: var(--text-watermark);
+  color: rgba(var(--torii-rgb),0.08);
+  line-height: 0.8; letter-spacing: -0.05em;
+  pointer-events: none; user-select: none;
+  text-shadow: 0 4px 40px rgba(var(--torii-rgb),0.18);
+  z-index: 0;
+}
+[data-kamae-scope][data-kanji="off"] .cmd-hero-watermark,
+[data-kamae-scope][data-kanji="off"] .cmd-hero-vlabel { display: none; }
+/* E7.S10-followup — F-5-014 P2 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L839. The .cmd-hero-watermark
+   uses --text-watermark (240px+ at desktop) which blankets the entire
+   dashboard hero at 320×568 — the giant kanji glyph covers the
+   eyebrow + title + lede. Step the font-size down at the two narrow-
+   viewport tiers so the watermark remains a tasteful decoration
+   instead of foreground chrome. Bottom offset rescaled proportionally
+   so the glyph base stays anchored to the hero floor. */
+@media (max-width: 768px) {
+  .cmd-hero-watermark {
+    font-size: var(--text-watermark-md);
+    bottom: -36px;
+  }
+}
+@media (max-width: 480px) {
+  .cmd-hero-watermark {
+    font-size: var(--text-watermark-sm);
+    bottom: -18px;
+  }
+}
+/* Vertical edge label */
+.cmd-hero-vlabel {
+  position: absolute; left: 14px; top: 28px; bottom: 28px;
+  writing-mode: vertical-rl;
+  font-family: var(--serif); font-weight: 700;
+  font-size: var(--text-md); letter-spacing: 0.42em;
+  color: rgba(var(--ember-rgb),0.5);
+  text-transform: uppercase;
+  z-index: 2;
+}
+.cmd-hero-left, .cmd-hero-right { position: relative; z-index: 2; }
+.cmd-hero-left { padding-left: 18px; }
+.cmd-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--torii-hi); font-weight: 600;
+  margin-bottom: 14px;
+}
+.cmd-eyebrow .bar { width: 24px; height: 2px; background: var(--torii); border-radius: 2px; }
+.cmd-title {
+  margin: 0 0 12px;
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-weight: 500; font-size: var(--text-display-lg); line-height: 1.1;
+  letter-spacing: -0.025em; color: var(--fg);
+  max-width: 22ch;
+}
+.cmd-title em {
+  font-style: italic; color: var(--torii-hi); font-weight: 400;
+}
+.cmd-lede {
+  margin: 0 0 20px; color: var(--fg-dim); font-size: var(--text-base);
+  line-height: 1.55; max-width: 54ch;
+}
+.cmd-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Readiness gauge */
+.readiness {
+  display: flex; gap: 28px; align-items: center;
+  padding: 20px; border-radius: 12px;
+  background: rgba(var(--black-rgb),0.35);
+  border: 1px solid var(--b-1);
+}
+.readiness-gauge { position: relative; width: 128px; height: 128px; flex-shrink: 0; }
+.readiness-val {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+}
+.readiness-val b {
+  font-family: var(--mono); font-weight: 700; font-size: var(--text-display);
+  color: var(--fg); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+}
+.readiness-val span {
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+}
+.readiness-bars { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.rb { display: grid; grid-template-columns: 80px 1fr 32px; gap: 10px; align-items: center; }
+.rb-k {
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+}
+.rb-v {
+  font-family: var(--mono); font-size: var(--text-sm); color: var(--fg-dim);
+  text-align: right; font-variant-numeric: tabular-nums;
+}
+
+/* Live ticker */
+.cmd-ticker {
+  display: flex; align-items: center; gap: 20px;
+  padding: 10px 16px; background: rgba(var(--black-rgb),0.4);
+  border: 1px solid var(--b-1); border-radius: 8px;
+  overflow: hidden; position: relative;
+}
+.cmd-ticker-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--torii-hi); font-weight: 700;
+  white-space: nowrap; flex-shrink: 0;
+}
+.cmd-ticker-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--torii); box-shadow: 0 0 6px var(--torii); }
+.cmd-ticker-track {
+  display: flex; gap: 32px; overflow: hidden; flex: 1;
+  /* F-QA-035 — a flex child defaults to min-width:auto, so this nowrap
+     marquee refused to shrink below its (doubled) content width and forced
+     .cmd-ticker wider than the viewport on mobile. min-width:0 lets it
+     shrink so its own overflow:hidden clips the decorative (aria-hidden)
+     marquee; max-width:100% is the belt-and-suspenders cap. */
+  min-width: 0; max-width: 100%;
+  mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+.tk {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: var(--text-md); white-space: nowrap; color: var(--fg-dim);
+}
+/* HAGANE E6.S3 — ticker meta is SMALL text; --fg-mute is the
+   large-text-only floor (E7.S3). Usage-site swap, token values
+   untouched (R1). */
+.tk .mute { color: var(--fg-dim); }
+
+/* Feed row specifics */
+.feed-row { grid-template-columns: 58px 4px 1fr auto auto; }
+.feed-row .sev-strip { height: 18px; }
+/* YR.4 audit pass-2 — extracted from inline `style={{}}` JSX props on
+   FeedRow's <b>msg</b> wrapper + the `mode` span so the design-system
+   primitive renders chrome without inline-style attributes. Tokens
+   only; matches the visual the inline rules previously produced. */
+.feed-row-msg { color: var(--fg); font-weight: 500; }
+.feed-row-mode {
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  color: var(--fg-ghost);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Step list */
+.steplist { display: flex; flex-direction: column; gap: 2px; }
+.step {
+  display: grid; grid-template-columns: 36px 1fr 20px; gap: 12px;
+  align-items: center; padding: 12px 4px;
+  border-bottom: 1px solid var(--b-0);
+  cursor: pointer; transition: 150ms;
+}
+.step:hover { background: rgba(var(--white-rgb),0.02); }
+.step-num {
+  width: 30px; height: 30px; border-radius: 7px;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: var(--text-sm); font-weight: 700;
+  color: var(--fg-mute); background: rgba(var(--white-rgb),0.03);
+  border: 1px solid var(--b-1); letter-spacing: 0.04em;
+}
+.step.done .step-num {
+  background: rgba(var(--jade-rgb),0.1); color: var(--jade-lg);
+  border-color: rgba(var(--jade-rgb),0.3);
+}
+.step-body { display: flex; flex-direction: column; gap: 2px; }
+.step-body b { font-weight: 500; font-size: var(--text-base); color: var(--fg); }
+.step-body span { font-size: var(--text-sm); color: var(--fg-mute); }
+.step-arrow { color: var(--fg-ghost); }
+.step:hover .step-arrow { color: var(--torii-hi); }
+.step.done .step-body b { color: var(--fg-dim); text-decoration: line-through; text-decoration-color: var(--fg-ghost); }
+
+.steplist.paper .step { border-color: rgba(var(--paper-line-rgb),0.3); }
+.steplist.paper .step-num {
+  background: rgba(var(--paper-ink-rgb),0.04); border-color: var(--paper-line);
+  color: var(--paper-mute);
+}
+.steplist.paper .step.done .step-num {
+  background: rgba(var(--torii-deep-rgb),0.1); border-color: var(--torii-deep); color: var(--torii-deep);
+}
+.steplist.paper .step-body b { color: var(--paper-ink); }
+.steplist.paper .step-body span { color: var(--paper-mute); }
+
+/* Guard modes */
+.guard-modes { display: flex; flex-direction: column; gap: 10px; }
+.gmode {
+  padding: 14px 16px; border-radius: 10px;
+  border: 1px solid var(--b-1); background: rgba(var(--white-rgb),0.015);
+  cursor: pointer; transition: 150ms;
+}
+.gmode:hover { border-color: var(--b-2); }
+.gmode.active { border-color: var(--b-red-2); background: linear-gradient(180deg, rgba(var(--torii-rgb),0.06) 0%, transparent 100%); }
+.gmode-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.gmode-name { font-weight: 600; font-size: var(--text-base); color: var(--fg); }
+.gmode-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.14em;
+  color: var(--torii-hi); font-weight: 700;
+}
+.gmode-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--torii); box-shadow: 0 0 4px var(--torii); }
+.gmode-desc { font-size: var(--text-sm); color: var(--fg-dim); line-height: 1.5; margin-bottom: 10px; }
+.gmode-flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.flag {
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.08em;
+  padding: 3px 7px; border-radius: 4px;
+  background: rgba(var(--white-rgb),0.03); color: var(--fg-mute);
+  border: 1px solid var(--b-1); font-weight: 600;
+}
+.flag.on { background: rgba(var(--torii-rgb),0.12); color: var(--torii-hi); border-color: var(--b-red); }
+
+/* Coverage grid (heatmap) */
+.cov-header, .cov-footer {
+  display: grid; grid-template-columns: repeat(13, 1fr); gap: 3px;
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.08em;
+  color: var(--fg-ghost); font-weight: 600; padding: 0 2px;
+}
+.cov-header { margin-bottom: 4px; }
+.cov-footer {
+  display: flex; gap: 4px; justify-content: flex-end; align-items: center;
+  margin-top: 6px; text-transform: uppercase;
+}
+.cov-footer .legend { display: inline-flex; align-items: center; }
+.cov-footer .sw { width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--b-0); }
+.cov-grid { display: grid; gap: 3px; }
+.cov-cell { aspect-ratio: 1; border-radius: 2px; border: 1px solid rgba(var(--white-rgb),0.02); transition: 150ms; }
+.cov-cell:hover { transform: scale(1.3); border-color: var(--b-2); }
+
+/* E7.S10-followup — F-5-018 P3 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L843. The aspect-ratio:1 +
+   13-column grid produces 4-px cells at 320px viewport — completely
+   unreadable. Collapse to 7 columns at the mobile tier and let the
+   grid wrapper scroll horizontally so the remaining 6 columns are
+   reachable via swipe. The 7-col threshold matches a typical week
+   slice (Mon–Sun) — a meaningful cohort even at narrow viewports.
+   The .cov-header / .cov-footer above also drop to 7 cols so legend
+   stays aligned with the visible cells. */
+@media (max-width: 480px) {
+  .cov-grid {
+    grid-template-columns: repeat(7, minmax(24px, 1fr));
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cov-header,
+  .cov-footer {
+    grid-template-columns: repeat(7, minmax(24px, 1fr));
+  }
+}
+.cov-cell.l0 { background: rgba(var(--white-rgb), 0.03); }
+.cov-cell.l1 { background: rgba(var(--torii-rgb), 0.2); }
+.cov-cell.l2 { background: rgba(var(--torii-rgb), 0.42); }
+.cov-cell.l3 { background: rgba(var(--torii-rgb), 0.65); }
+.cov-cell.l4 { background: var(--torii); box-shadow: 0 0 4px rgba(var(--torii-rgb), 0.4); }
+/* Phase 4.3 — the legend swatches are classed (CoverageGrid.tsx dropped
+   its inline style color literals); mirror the cell ramp so the legacy
+   chain renders identically. Critical-severity days carry the data-red
+   text tier (SKIN-SPEC §1.4); the v2 chain re-ramps l1-l4 to steel. */
+.cov-footer .sw.l0 { background: rgba(var(--white-rgb), 0.03); }
+.cov-footer .sw.l1 { background: rgba(var(--torii-rgb), 0.2); }
+.cov-footer .sw.l2 { background: rgba(var(--torii-rgb), 0.42); }
+.cov-footer .sw.l3 { background: rgba(var(--torii-rgb), 0.65); }
+.cov-footer .sw.l4 { background: var(--torii); }
+.cov-cell.crit,
+.cov-footer .sw.crit { background: var(--torii-text); }
+.cov-footer .cov-crit-label { margin-left: 10px; }
+
+/* E7.S5 — Windows High-Contrast fallback for command-deck coverage heat
+   cells. WCAG 1.4.1 (Use of Color) + 1.4.11 (Non-text Contrast). The
+   torii alpha-ramp (l0..l4) encodes severity by color saturation alone;
+   under forced-colors the ramp collapses. Preserve gradation via solid
+   fill (Canvas → CanvasText → Highlight) so empty/low/high cells remain
+   distinguishable on a black-and-white display. F-4-019 P2 dedup with
+   Arena bypass cells. */
+@media (forced-colors: active) {
+  .cov-cell    { border: 1px solid CanvasText; box-shadow: none; }
+  .cov-cell.l0 { background: Canvas; }
+  .cov-cell.l1 { background: Canvas; border-style: dotted; }
+  .cov-cell.l2 { background: Canvas; border-style: dashed; }
+  .cov-cell.l3 { background: CanvasText; }
+  .cov-cell.l4 { background: Highlight; border-color: Highlight; }
+  /* Phase 4.3 — critical-severity days must stay distinguishable from
+     the ramp under forced colors (WCAG 1.4.1). */
+  .cov-cell.crit { background: Highlight; border: 2px double Highlight; }
+}
+
+/* ===== E7.S7 — :focus-visible baseline for command-deck primitives =====
+   Plan ref: audit/REMEDIATION-PLAN.md L815-819. Sister rules to the
+   per-primitive baseline appended at the end of primitives.css. Keeps
+   pattern-scoped focus rules co-located with the class definitions
+   above (.step at line 277, .gmode at line 315, .cov-cell at line 354).
+
+   WCAG 2.2 SC 2.4.7 Focus Visible (AA) + SC 1.4.11 Non-text Contrast
+   (AA). Token: `--torii-hi` (clears 6.99:1 vs --bg-2 per tokens.css
+   E7.S3 round-2 audit).
+
+   .cov-cell uses `outline-offset: -1px` because the cell is 1px-bordered
+   and lives in a 3px-gap heatmap grid — a 2px outside outline would
+   collide with the neighbor cell. The inset 1px outline still clears
+   the 2px contrast-perceivable threshold against the cell's torii fill. */
+.step:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+.gmode:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+/* FORWARD-LOOKING: .cov-cell currently renders as <div> without tabIndex
+   in src/design/command/CoverageGrid.tsx — the heatmap is read-only today
+   and the rule below has no runtime effect. Kept declared so a follow-up
+   story (`E7.S7-followup-cov-cell-keyboard-nav`) that wires `role="grid"`
+   + arrow-key navigation lands the visible focus ring without re-touching
+   command.css. The plan-spec (REMEDIATION-PLAN.md L819) lists `.cov-cell`
+   in the interactive-primitive set; this rule honors the spec contract
+   for the day the cells become focusable. F-2-222 RESOLVED at the CSS-
+   declaration level (breadth lifted from 6 to 16); cov-cell DOM
+   focusability is tracked separately. */
+.cov-cell:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: -1px;
+}
+
+/* ===== E7.S8 — :focus-within parity for command-deck hover affordances =====
+   Plan ref: audit/REMEDIATION-PLAN.md L821-825. Retires F-5-006 (P1)
+   for command.css surfaces (sister rule block in primitives.css E7.S8
+   covers .tab/.pill-tab/.mcard/.drow/.rail-item).
+
+   The .step row (line 277) is a <button> with a focusable descendant:
+   the :hover rule at line 283 lifts the row background AND tints the
+   nested .step-arrow (line 299). Without :focus-within, keyboard focus
+   on a child element inside the step (or focus arriving via JS scroll
+   into a nested action) loses BOTH the row tint and the arrow cue.
+
+   The .gmode tile (line 315) is a click-target <div> with no
+   focusable children today, but the :focus-within below covers a
+   future refactor where each gmode row exposes an inline edit / lock
+   action. Pre-pinning the rule keeps F-5-006 retire honest under
+   evolution.
+
+   The .cov-cell row mirrors the E7.S7 forward-looking pattern: the
+   heatmap cells are non-focusable <div>s today (see CoverageGrid.tsx),
+   so :focus-within here is forward-prep for the
+   `E7.S7-followup-cov-cell-keyboard-nav` story. The rule body
+   matches the :hover transform so the day cells become focusable,
+   the affordance is identical for pointer + keyboard.
+
+   WCAG 2.5.7 + 2.1.1 + Nielsen #1. Visible-effect anchor: every
+   rule body changes a real property (background / border-color /
+   transform / color) — not a placeholder. */
+.step:focus-within { background: rgba(var(--white-rgb),0.02); }
+.step:focus-within .step-arrow { color: var(--torii-hi); }
+
+.gmode:focus-within { border-color: var(--b-2); }
+
+.cov-cell:focus-within { transform: scale(1.3); border-color: var(--b-2); }
+
+/* =====================================================================
+   Yamabushi 1.2 (YU.2) — Command archetype v2 additive layer
+   - Tint variants (red default / steel / gold / violet) via rgba(var(--*-rgb))
+   - Motion-safe gates on cmdSunPulse / cmdRayRotate / ticker marquee
+   - cmd-ticker-track marquee animation with reduced-motion fallback
+   - cmd-ticker-sr screen-reader-only feed list
+   Token-driven only. No --bu-cyan (G10 cross-brand chrome only — none here).
+   ===================================================================== */
+
+/* Tint variants — re-tone the lacquer gradient + grid + watermark.
+   .tint-red is identical to the Epic 0 default and exists so the tint
+   data attribute always resolves; no visual diff vs. Epic 0 for `red`. */
+.cmd-hero.tint-red {
+  /* No-op: Epic 0 default applies. */
+}
+.cmd-hero.tint-steel {
+  background: linear-gradient(180deg, rgba(var(--steel-rgb), 0.18) 0%, rgba(var(--steel-rgb), 0.04) 100%);
+  border-color: rgba(var(--steel-rgb), 0.3);
+}
+.cmd-hero.tint-steel .cmd-hero-glow {
+  background: radial-gradient(circle, rgba(var(--steel-rgb), 0.45) 0%, rgba(var(--steel-rgb), 0.18) 28%, rgba(var(--steel-rgb), 0.05) 55%, transparent 72%);
+}
+.cmd-hero.tint-steel .cmd-hero-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 8deg, rgba(var(--steel-rgb), 0.12) 8deg 9deg,
+    transparent 9deg 22deg, rgba(var(--steel-rgb), 0.08) 22deg 23deg,
+    transparent 23deg 45deg, rgba(var(--steel-rgb), 0.14) 45deg 46deg,
+    transparent 46deg 68deg, rgba(var(--steel-rgb), 0.06) 68deg 69deg,
+    transparent 69deg 360deg
+  );
+}
+.cmd-hero.tint-steel .cmd-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(var(--steel-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--steel-rgb), 0.05) 1px, transparent 1px);
+}
+.cmd-hero.tint-steel .cmd-hero-watermark { color: rgba(var(--steel-rgb), 0.1); text-shadow: 0 4px 40px rgba(var(--steel-rgb), 0.2); }
+.cmd-hero.tint-steel .cmd-hero-vlabel { color: rgba(var(--steel-rgb), 0.55); }
+.cmd-hero.tint-steel .cmd-eyebrow { color: var(--steel-lg); }
+.cmd-hero.tint-steel .cmd-eyebrow .bar { background: var(--steel); }
+.cmd-hero.tint-steel .cmd-title em { color: var(--steel-lg); }
+
+.cmd-hero.tint-gold {
+  background: linear-gradient(180deg, rgba(var(--gold-rgb), 0.18) 0%, rgba(var(--gold-rgb), 0.04) 100%);
+  border-color: rgba(var(--gold-rgb), 0.3);
+}
+.cmd-hero.tint-gold .cmd-hero-glow {
+  background: radial-gradient(circle, rgba(var(--gold-rgb), 0.45) 0%, rgba(var(--gold-rgb), 0.18) 28%, rgba(var(--gold-rgb), 0.05) 55%, transparent 72%);
+}
+.cmd-hero.tint-gold .cmd-hero-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 8deg, rgba(var(--gold-rgb), 0.12) 8deg 9deg,
+    transparent 9deg 22deg, rgba(var(--gold-rgb), 0.08) 22deg 23deg,
+    transparent 23deg 45deg, rgba(var(--gold-rgb), 0.14) 45deg 46deg,
+    transparent 46deg 68deg, rgba(var(--gold-rgb), 0.06) 68deg 69deg,
+    transparent 69deg 360deg
+  );
+}
+.cmd-hero.tint-gold .cmd-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(var(--gold-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--gold-rgb), 0.05) 1px, transparent 1px);
+}
+.cmd-hero.tint-gold .cmd-hero-watermark { color: rgba(var(--gold-rgb), 0.12); text-shadow: 0 4px 40px rgba(var(--gold-rgb), 0.22); }
+.cmd-hero.tint-gold .cmd-hero-vlabel { color: rgba(var(--gold-rgb), 0.6); }
+.cmd-hero.tint-gold .cmd-eyebrow { color: var(--gold-lg); }
+.cmd-hero.tint-gold .cmd-eyebrow .bar { background: var(--gold); }
+.cmd-hero.tint-gold .cmd-title em { color: var(--gold-lg); }
+
+.cmd-hero.tint-violet {
+  background: linear-gradient(180deg, rgba(var(--violet-rgb), 0.18) 0%, rgba(var(--violet-rgb), 0.04) 100%);
+  border-color: rgba(var(--violet-rgb), 0.3);
+}
+.cmd-hero.tint-violet .cmd-hero-glow {
+  background: radial-gradient(circle, rgba(var(--violet-rgb), 0.45) 0%, rgba(var(--violet-rgb), 0.18) 28%, rgba(var(--violet-rgb), 0.05) 55%, transparent 72%);
+}
+.cmd-hero.tint-violet .cmd-hero-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 8deg, rgba(var(--violet-rgb), 0.12) 8deg 9deg,
+    transparent 9deg 22deg, rgba(var(--violet-rgb), 0.08) 22deg 23deg,
+    transparent 23deg 45deg, rgba(var(--violet-rgb), 0.14) 45deg 46deg,
+    transparent 46deg 68deg, rgba(var(--violet-rgb), 0.06) 68deg 69deg,
+    transparent 69deg 360deg
+  );
+}
+.cmd-hero.tint-violet .cmd-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(var(--violet-rgb), 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--violet-rgb), 0.05) 1px, transparent 1px);
+}
+.cmd-hero.tint-violet .cmd-hero-watermark { color: rgba(var(--violet-rgb), 0.1); text-shadow: 0 4px 40px rgba(var(--violet-rgb), 0.2); }
+.cmd-hero.tint-violet .cmd-hero-vlabel { color: rgba(var(--violet-rgb), 0.55); }
+.cmd-hero.tint-violet .cmd-eyebrow { color: var(--violet); }
+.cmd-hero.tint-violet .cmd-eyebrow .bar { background: var(--violet); }
+.cmd-hero.tint-violet .cmd-title em { color: var(--violet); }
+
+/* Motion-safe gates — every cmd-hero animation idles when the user
+   prefers reduced motion. Epic 0 declares the @keyframes; YU.2 adds
+   the gate so the visual-regression baseline (and accessibility
+   compliance) holds. */
+@media (prefers-reduced-motion: reduce) {
+  .cmd-hero-glow { animation: none; }
+  .cmd-hero-rays { animation: none; }
+  .cmd-ticker-label .dot.pulse { animation: none; }
+  .cmd-ticker-track { animation: none; }
+  .readiness-arc { transition: none; animation: none; }
+}
+
+/* Ticker marquee — full-width masked scroll. Doubling the items
+   enables seamless looping; mask-image fade-out matches the Epic 0
+   design. Animation runs only when motion-safe (no-preference). */
+@media (prefers-reduced-motion: no-preference) {
+  .cmd-ticker-track {
+    animation: cmdTickerScroll 38s linear infinite;
+  }
+}
+@keyframes cmdTickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Screen-reader-only ticker feed — sighted users see the marquee;
+   AT consumes a static, ordered list. Hidden visually, exposed to AT. */
+.cmd-ticker-sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* ===== YR.6.18 RegressionLog — Kagami regression event feed =====
+   Wraps a list of <FeedRow> rows with caption + DoS-cap. The .feed-row
+   chrome is owned by FeedRow's existing rules above. */
+.regression-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.regression-log-caption {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.regression-log-rows {
+  display: flex;
+  flex-direction: column;
+}
+.regression-log-item { min-width: 0; }

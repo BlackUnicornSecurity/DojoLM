@@ -1,0 +1,162 @@
+/* ---------------------------------------------------------------------------
+ * DefenseDegradationIndicator primitive — chrome styling.
+ *
+ * The TICKET-L-702 primitive
+ * (`design/adversarial/DefenseDegradationIndicator.tsx`) ships closed-set
+ * class names (`defense-deg-*`) but no styles. Atemi-PR-5 wires the
+ * consumer on /admin/atemi above the McpConnectorStatus row; this file
+ * completes the chrome, mirroring the session-recorder.css recovery
+ * pattern (Atemi-PR-4 / PR #856).
+ *
+ * Level palette is keyed off the 5-id closed enum
+ * (`stable | minor | moderate | severe | critical`) — each level paints
+ * the chip background, bar fill, and the section's left-edge accent.
+ *
+ * Reduced-motion: the critical-state bar pulse is suppressed under
+ * `prefers-reduced-motion: reduce`.
+ * --------------------------------------------------------------------------- */
+
+.defense-deg {
+  display: grid;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(var(--black-rgb), 0.20);
+  border: 1px solid var(--b-1);
+  border-left-width: 3px;
+  border-radius: var(--r-md);
+}
+
+/* Level-derived left-accent — each level paints a distinct edge so the
+   posture is legible even when the chip + bar are off-screen on narrow
+   layouts. The accent colour matches the chip background. */
+.defense-deg.defense-deg-level-stable    { border-left-color: var(--jade, #6abf69); }
+.defense-deg.defense-deg-level-minor     { border-left-color: #d4a017; }
+.defense-deg.defense-deg-level-moderate  { border-left-color: #e0851f; }
+.defense-deg.defense-deg-level-severe    { border-left-color: var(--torii); }
+.defense-deg.defense-deg-level-critical  { border-left-color: var(--torii); }
+
+.defense-deg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.defense-deg-kicker {
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-family: var(--mono);
+}
+
+.defense-deg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 1px solid var(--b-1);
+  background: rgba(var(--black-rgb), 0.30);
+  color: var(--fg);
+}
+
+/* Chip tint per level — the chip background carries the strongest
+   visual signal; the bar repeats the cue at a longer scan distance. */
+.defense-deg-chip.defense-deg-level-stable    { background: rgba(106, 191, 105, 0.16); border-color: rgba(106, 191, 105, 0.40); color: var(--jade, #6abf69); }
+.defense-deg-chip.defense-deg-level-minor     { background: rgba(212, 160, 23,  0.16); border-color: rgba(212, 160, 23,  0.40); color: #f0c352; }
+.defense-deg-chip.defense-deg-level-moderate  { background: rgba(224, 133, 31,  0.18); border-color: rgba(224, 133, 31,  0.45); color: #f0a05b; }
+.defense-deg-chip.defense-deg-level-severe    { background: rgba(var(--torii-rgb), 0.18); border-color: rgba(var(--torii-rgb), 0.45); color: var(--torii); }
+.defense-deg-chip.defense-deg-level-critical  { background: rgba(var(--torii-rgb), 0.30); border-color: var(--torii); color: var(--fg); }
+
+.defense-deg-bar-wrap {
+  position: relative;
+  height: 6px;
+  background: rgba(var(--black-rgb), 0.40);
+  border-radius: var(--r-bar, 4px);
+  overflow: hidden;
+}
+
+.defense-deg-bar {
+  height: 100%;
+  border-radius: var(--r-bar, 4px);
+  transition: width 0.30s ease, background-color 0.30s ease;
+}
+
+/* Bar fill per level — same palette as the chip so the two cues
+   reinforce. The bar carries the quantitative read (`score / 100`). */
+.defense-deg-bar.defense-deg-level-stable    { background: var(--jade, #6abf69); }
+.defense-deg-bar.defense-deg-level-minor     { background: #d4a017; }
+.defense-deg-bar.defense-deg-level-moderate  { background: #e0851f; }
+.defense-deg-bar.defense-deg-level-severe    { background: var(--torii); }
+.defense-deg-bar.defense-deg-level-critical  {
+  background: var(--torii);
+  animation: defense-deg-bar-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes defense-deg-bar-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .defense-deg-bar.defense-deg-level-critical { animation: none; }
+}
+
+.defense-deg-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.defense-deg-score {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.defense-deg-score-unit {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.defense-deg-breach {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+}
+.defense-deg-breach-num {
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.defense-deg-breach-label {
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  font-size: var(--text-xs);
+}
+
+.defense-deg-incident {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--b-0);
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  line-height: 1.45;
+}
+.defense-deg-incident-kicker {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  margin-right: 4px;
+}

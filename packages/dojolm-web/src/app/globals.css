@@ -1,0 +1,811 @@
+/* YU.1 — Additive cross-product brand foundation.
+   Cascade: brand-tokens (shared) → tailwindcss → DojoLM :root → @theme inline.
+   DojoLM tokens WIN on every name collision (later declaration in the same
+   :root specificity tier). Net-new tokens this import contributes to the
+   global namespace: --bu-cyan (reserved for cross-brand chrome per
+   GUARDRAILS.md G10), --radius-card, --font-body, --brand-* product
+   identity references, the --text-* / --bg-quaternary aliases, the
+   --space-* / --duration-* / container scales, --overlay-* / --glass-*
+   foundations. Shadowed on collision (brand-tokens value LOSES; DojoLM
+   or @theme inline wins): every --z-* token, --font-mono (wider fallback
+   chain in @theme inline), --bg-secondary / --bg-tertiary / --overlay-*
+   where values diverge. Epic 0 .dojo-ds-v3-scoped tokens stay isolated
+   via scope selector — no collision with either layer. */
+@import "./brand-tokens.css";
+@import "tailwindcss";
+
+:root {
+  /* ===== Semantic RGB channels — mirrored from design-system tokens.css
+   * Declared here so legacy globals.css utilities (.gradient-overlay-*,
+   * .glass, etc.) that reference rgba(var(--gold-rgb), …) still resolve
+   * on routes that don't load the design-system layout.tsx chain (e.g.
+   * the root error/loading boundaries before route-group resolution).
+   * Yamabushi pass 15 (2026-04-25). */
+  --torii-rgb:    204, 58, 47;
+  --jade-rgb:     52, 199, 106;
+  --gold-rgb:     212, 168, 67;
+  --steel-rgb:    91, 141, 239;
+  --violet-rgb:   139, 123, 245;
+  --sev-high-rgb: 224, 128, 64;
+  --white-rgb:    255, 255, 255;
+  --black-rgb:    0, 0, 0;
+
+  /* ===== Deep Blacks — Near-True-Black palette ===== */
+  /* Ink scale — aligned with --bg-* in tokens.css
+   * (#06060B / #0A0A11 / #10111A / #161724 / #1E2030 / #2A2C3E).
+   * The earlier #09090F / #12131A / #1C1D26 / #262734 were a parallel
+   * 4-step ramp; collapsed onto the design-system 6-step ramp's tightest
+   * matches so a Card and a Panel render against the same lifted-bg
+   * surface tone.
+   */
+  --background: #06060B;            /* matches --bg */
+  --bg-secondary: #10111A;          /* matches --bg-2 */
+  --bg-tertiary: #161724;           /* matches --bg-3 */
+  --bg-quaternary: #1E2030;         /* matches --bg-4 */
+
+  /* ===== Steel Blue accent (AI/intelligence elements) — Story 2.3 ===== */
+  --bu-electric: #5B8DEF;
+  --bu-electric-muted: rgba(91, 141, 239, 0.15);
+  --bu-electric-subtle: rgba(91, 141, 239, 0.08);
+
+  /* ===== Torii Gate Red (Shu Vermillion) — Story 2.2 =====
+   * USAGE GUIDE:
+   * --dojo-primary (#CC3A2F): Interactive elements, borders, icons on dark backgrounds.
+   *   WCAG AA: 4.6:1 on #09090F (AA large text). Use --dojo-primary-lg for small text.
+   * --dojo-primary-lg (#E0544A): Small text variant (>=14px).
+   * --dojo-hover (#D94A3F): Hover state for interactive dojo-primary elements.
+   */
+  --dojo-primary: #CC3A2F;
+  --dojo-primary-lg: #E0544A;
+  --dojo-hover: #D94A3F;
+
+  /* ===== Accent violet + gold — Story 2.3 ===== */
+  --accent-violet: #8B7BF5;
+  --accent-violet-muted: rgba(139, 123, 245, 0.15);
+  --accent-gold: #D4A843;
+  --accent-gold-muted: rgba(212, 168, 67, 0.12);
+
+  /* ===== Semantic colors =====
+   * Yamabushi audit pass 9 (2026-04-25) aligned legacy semantic colours
+   * to the design-system palette in tokens.css so a Panel and a shadcn
+   * <Card variant="alert"> render the same red, a `text-success` and a
+   * `var(--jade)` render the same green. Old approximate shades
+   * (#E5A030 warning, #D94848 danger) deviated from the design system's
+   * --gold (#D4A843) and --torii (#CC3A2F) by enough to read as a
+   * different palette under the dark theme. Single-source semantic now.
+   */
+  --success: #34C76A;       /* matches --jade in design system */
+  --warning: #D4A843;       /* matches --gold */
+  --danger:  #CC3A2F;       /* matches --torii */
+  --severity-high: #E08040; /* matches --sev-high */
+  --severity-low:  #5B8DEF; /* matches --steel */
+
+  /* ===== Guard status tokens — aligned with design-system palette
+   * Yamabushi pass 9: block now uses --torii (was #E06060), allow uses
+   * --jade (was #40C870), log/input use --steel, output uses --violet.
+   * Single semantic vocabulary across legacy + design-system surfaces.
+   */
+  --status-block: #CC3A2F;                       /* matches --torii */
+  --status-block-bg: rgba(204, 58, 47, 0.15);
+  --status-allow: #34C76A;                       /* matches --jade */
+  --status-allow-bg: rgba(52, 199, 106, 0.15);
+  --status-log: #5B8DEF;                         /* matches --steel */
+  --status-log-bg: rgba(91, 141, 239, 0.15);
+  --status-input: #5B8DEF;                       /* matches --steel */
+  --status-input-bg: rgba(91, 141, 239, 0.15);
+  --status-output: #8B7BF5;                      /* matches --violet */
+  --status-output-bg: rgba(139, 123, 245, 0.15);
+  --status-online: #34C76A;                      /* matches --jade */
+  --status-offline: #565D6B;
+  --status-running: #5B8DEF;                     /* matches --steel */
+
+  /* ===== Brand identity tokens — aligned with design-system palette
+   * Yamabushi pass 9: --brand-dojolm aligned to --torii (was #D43A2C
+   * which read as a slightly orange-shifted red). bonklm aligned with
+   * --gold; blackunicorn (#565D6B grey) is off-palette by design
+   * (cross-product brand identity, not Dojo accents). */
+  --brand-dojolm: #CC3A2F;            /* matches --torii */
+  --brand-bonklm: #D4A843;            /* matches --gold */
+  --brand-blackunicorn: #565D6B;      /* off-palette: cross-product */
+
+  /* ===== Leaderboard rank tokens — Story 2.8 ===== */
+  --rank-gold: #D4A843;
+  --rank-silver: #8B95A5;
+  --rank-bronze: #C87830;
+
+  /* ===== Severity badge tokens — aligned with design-system palette
+   * Yamabushi audit pass 9: medium derives from --gold (was #E5A030),
+   * low-text derives from --jade (was #40C870, which was #34C76A's old
+   * approximation). Critical / high already aligned via --danger /
+   * --severity-high above.
+   */
+  --severity-critical: var(--danger);
+  --severity-critical-bg: color-mix(in srgb, var(--danger) 15%, transparent);
+  --severity-high-text: #E08040;                           /* matches --sev-high */
+  --severity-high-bg: color-mix(in srgb, #E08040 15%, transparent);
+  --severity-medium: #D4A843;                              /* matches --gold */
+  --severity-medium-bg: color-mix(in srgb, #D4A843 12%, transparent);
+  --severity-low-text: #34C76A;                            /* matches --jade */
+  --severity-low-bg: color-mix(in srgb, #34C76A 12%, transparent);
+
+  /* ===== Text colors — Yamabushi pass 9 aligned with design-system fg scale
+   * --foreground / --muted-foreground / --text-tertiary now mirror --fg /
+   * --fg-mute / --fg-ghost from tokens.css. --muted-foreground was
+   * #7E8A9A (slightly cooler grey); now #5E6472 to match --fg-mute.
+   * --text-tertiary was #565D6B; now #3A3F4B to match --fg-ghost.
+   */
+  --foreground: #ECEEF2;          /* matches --fg */
+  --muted-foreground: #5E6472;    /* matches --fg-mute */
+  --text-tertiary: #3A3F4B;       /* matches --fg-ghost */
+
+  /* ===== UI colors — Yamabushi pass 9 aligned with design-system ink scale
+   * --card was #12131A (legacy), aligned to --bg-2 #10111A (1 hex digit
+   * tighter, near-imperceptible visually but matches the design-system
+   * panel default). --foreground / --card-foreground / --accent-fg align
+   * with --fg #ECEEF2 (already identical).
+   */
+  --card: #10111A;                                  /* matches --bg-2 */
+  --card-foreground: #ECEEF2;                       /* matches --fg */
+  --popover: #1E2030;                               /* matches --bg-4 */
+  --popover-foreground: #ECEEF2;                    /* matches --fg */
+  --accent: #2A2C3E;                                /* matches --bg-5 */
+  --accent-foreground: #ECEEF2;                     /* matches --fg */
+  --border: rgba(255, 255, 255, 0.07);              /* matches --b-1 */
+  --input: #1E2030;                                 /* matches --bg-4 */
+  --muted: #1E2030;                                 /* matches --bg-4 */
+
+  /* ===== Primary action — Story 2.6 ===== */
+  --primary: #CC3A2F;
+  --primary-foreground: #ECEEF2;    /* POLARITY INVERSION: was dark, now light */
+  --ring: rgba(91, 141, 239, 0.35);
+
+  /* ===== Secondary ===== */
+  --secondary: #262734;
+  --secondary-foreground: #ECEEF2;
+
+  /* ===== Destructive — aligned with --torii (Yamabushi pass 9) ===== */
+  --destructive: #CC3A2F;
+  --destructive-foreground: #FFF3F1;
+
+  /* ===== Layout tokens ===== */
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 64px;
+  --header-height: 56px;
+
+  /* ===== Spacing (8px grid) ===== */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* ===== Transitions ===== */
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 300ms;
+  --transition-emphasis: 500ms;
+
+  /* ===== Shadows — Story 2.7, H3.1 (stronger for darker backgrounds) ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* ===== Overlay & border opacity tokens — Story 2.5 ===== */
+  --overlay-subtle: rgba(255, 255, 255, 0.04);
+  --overlay-hover: rgba(255, 255, 255, 0.08);
+  --overlay-active: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-hover: rgba(255, 255, 255, 0.10);
+  --border-active: rgba(255, 255, 255, 0.16);
+
+  /* ===== Z-index scale ===== */
+  --z-mobile-nav: 50;
+  --z-sidebar: 40;
+  --z-dropdown: 60;
+  --z-modal: 80;
+  --z-toast: 100;
+
+  /* ===== Card state tokens ===== */
+  --card-elevated: #1C1D26;
+  --card-pressed: #0E0F15;
+  --dojo-subtle: rgba(204, 58, 47, 0.12);
+
+  /* ===== Belt rank colors (Dojo Identity — UNCHANGED) ===== */
+  --belt-white: #F5F5F5;
+  --belt-yellow: #FDD835;
+  --belt-orange: #FF8A50;
+  --belt-green: #43A047;
+  --belt-blue: #1E88E5;
+  --belt-brown: #6D4C41;
+  --belt-black: #9CA3AF;
+}
+
+@theme inline {
+  /* Map Tailwind colors to CSS variables */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-tertiary: var(--text-tertiary);
+
+  /* Semantic colors */
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-destructive: var(--destructive);
+  --color-warning: var(--warning);
+
+  /* Shadcn UI color mappings */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Guard status tokens */
+  --color-status-block: var(--status-block);
+  --color-status-block-bg: var(--status-block-bg);
+  --color-status-allow: var(--status-allow);
+  --color-status-allow-bg: var(--status-allow-bg);
+  --color-status-log: var(--status-log);
+  --color-status-log-bg: var(--status-log-bg);
+  --color-status-input: var(--status-input);
+  --color-status-input-bg: var(--status-input-bg);
+  --color-status-output: var(--status-output);
+  --color-status-output-bg: var(--status-output-bg);
+  --color-status-online: var(--status-online);
+  --color-status-offline: var(--status-offline);
+  --color-status-running: var(--status-running);
+
+  /* Leaderboard rank tokens */
+  --color-rank-gold: var(--rank-gold);
+  --color-rank-silver: var(--rank-silver);
+  --color-rank-bronze: var(--rank-bronze);
+
+  /* Severity badge tokens */
+  --color-severity-critical: var(--severity-critical);
+  --color-severity-critical-bg: var(--severity-critical-bg);
+  --color-severity-high-text: var(--severity-high-text);
+  --color-severity-high-bg: var(--severity-high-bg);
+  --color-severity-medium: var(--severity-medium);
+  --color-severity-medium-bg: var(--severity-medium-bg);
+  --color-severity-low-text: var(--severity-low-text);
+  --color-severity-low-bg: var(--severity-low-bg);
+
+  /* Accent violet + gold */
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-gold: var(--accent-gold);
+
+  /* Belt rank tokens (Dojo Identity) */
+  --color-belt-white: var(--belt-white);
+  --color-belt-yellow: var(--belt-yellow);
+  --color-belt-orange: var(--belt-orange);
+  --color-belt-green: var(--belt-green);
+  --color-belt-blue: var(--belt-blue);
+  --color-belt-brown: var(--belt-brown);
+  --color-belt-black: var(--belt-black);
+
+  /* Border radius — design-system scale (xs/sm/md/lg/xl) */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows — kept 5 (sm/md/lg/card/card-hover); glow tokens dropped per Train 1 token consolidation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* Fonts — Story 3.2 (Yamabushi 1.1 YU.1: Plus Jakarta Sans → Inter).
+   * Single sans family across legacy + design-system surfaces; Inter is
+   * loaded by next/font in the root layout (variable=--font-sans) and
+   * also referenced by name in tokens.css's `--sans` declaration. */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+}
+
+/* ===== Title Hierarchy =====
+ * Train 1 PR-3: custom .text-page-title / .text-section-title / .text-card-title
+ * utilities deleted. Migrated to Tailwind defaults at call sites:
+ *   .text-page-title    → text-2xl font-bold tracking-tight
+ *   .text-section-title → text-base font-semibold tracking-tight
+ *   .text-card-title    → text-xl font-semibold tracking-tight
+ *
+ * .text-metric-xl / -lg / -md / .text-label are kept below (domain-specific).
+ * .text-label is kept because its uppercase + muted color styling is specialized.
+ */
+
+/* ===== Dojo Identity ===== */
+.dojo-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--dojo-primary) 20%, var(--dojo-primary) 80%, transparent 100%);
+  opacity: 0.3;
+  transform-origin: center;
+}
+
+/* ===== Divider expand animation (GPU-composited, no reflow) — Story 5.2 ===== */
+@keyframes divider-expand {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 0.3; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dojo-divider { animation: divider-expand var(--transition-slow) ease-out forwards; }
+}
+
+/* ===== Scroll behavior — Story 5.3 ===== */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+html { scroll-padding-top: calc(var(--header-height) + 16px); }
+
+/* F-QA-035 — kill any residual horizontal scroll on mobile. `clip` (not
+   `hidden`) contains overflow WITHOUT creating a scroll container, so the
+   `position: sticky` topbar keeps sticking. Applied to both html and body. */
+html, body { overflow-x: clip; }
+
+/* ===== Metric Typography System =====
+ * Usage mapping:
+ *   text-metric-xl (48px) — Hero/dashboard headline numbers
+ *   text-metric-lg (32px) — MetricCard values, primary stats
+ *   text-metric-md (24px) — Inline numbers, secondary stats, mobile metric values
+ *   text-label (12px)     — Card labels, captions, metadata (WCAG AA at 4.5:1 on bg-tertiary)
+ *
+ * All metric classes use font-mono (JetBrains Mono) with tabular-nums for aligned columns.
+ * Weights loaded: 400 (regular), 600 (semibold), 700 (bold).
+ */
+@utility text-metric-xl {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-metric-lg {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-metric-md {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-label {
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Focus-visible handled by enhanced rule at bottom of file (S14) */
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--bu-electric);
+  box-shadow: 0 0 0 2px rgba(91, 141, 239, 0.15);
+}
+
+/* ===== Custom scrollbar (webkit + Firefox) — H3.2 polished ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-quaternary);
+  border-radius: 3px;
+  transition: background 150ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-quaternary) var(--background);
+}
+
+/* ===== Scrollbar hide utility (for mobile horizontal scroll) ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== Dark mode forced, no light mode ===== */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Glassmorphic utilities ===== */
+/* (.nav-item-active / .nav-item-active-icon removed in Train 1 PR-3 —
+    new Sidebar uses inline Tailwind active state) */
+.glass {
+  background: rgba(18, 19, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+}
+
+.glass-card {
+  background: rgba(18, 19, 26, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-normal) ease;
+}
+
+.glass-card:hover {
+  background: rgba(28, 29, 38, 0.8);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--overlay-hover);
+}
+
+/* ===== Card inner gradient (Story 4.1 — via CSS class, not inline style) ===== */
+.card-gradient {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+}
+
+/* ===== Widget hero gradient border (Story 4.2, H3.1 — blue accent) ===== */
+.widget-hero-border {
+  position: relative;
+}
+.widget-hero-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--bu-electric), transparent);
+  border-radius: 1px;
+  z-index: 1;
+}
+
+/* ===== Gradient card overlays ===== */
+/* Yamabushi pass 15 (2026-04-25): raw rgb tuples migrated to RGB-channel
+ * tokens. `warning` was rgba(229,160,48,…) — drifted from --gold rgb
+ * (212,168,67); now uses --gold-rgb directly. */
+.gradient-overlay-primary {
+  background: linear-gradient(135deg, rgba(var(--steel-rgb), 0.08) 0%, transparent 60%);
+}
+.gradient-overlay-success {
+  background: linear-gradient(135deg, rgba(var(--jade-rgb), 0.08) 0%, transparent 60%);
+}
+.gradient-overlay-warning {
+  background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.08) 0%, transparent 60%);
+}
+.gradient-overlay-danger {
+  background: linear-gradient(135deg, rgba(var(--torii-rgb), 0.12) 0%, transparent 60%);
+}
+
+/* ===== Shimmer loading animation ===== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* ===== View transitions ===== */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-in {
+    animation: fade-in var(--transition-normal) ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up var(--transition-normal) ease-out;
+  }
+}
+
+/* ===== Dojo strike animation (DojoLM branding - bypass detection emphasis) ===== */
+@keyframes dojo-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(204, 58, 47, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(204, 58, 47, 0.7), 0 0 60px rgba(224, 84, 74, 0.3); }
+}
+
+@keyframes dojo-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-dojo-glow {
+    animation: dojo-glow 2s ease-in-out infinite;
+  }
+
+  .animate-dojo-pulse {
+    animation: dojo-pulse 300ms ease-out;
+  }
+}
+
+/* ===== Bento grid dense flow — fills gaps when widgets toggled off ===== */
+/* Note: grid-auto-flow: dense may cause visual order to differ from DOM/tab order */
+.bento-grid { grid-auto-flow: dense; }
+
+/* ===== Staggered entrance (motion-safe only) ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-children > * {
+    opacity: 0;
+    animation: slide-up var(--transition-normal) ease-out forwards;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+  .stagger-children > *:nth-child(9) { animation-delay: 320ms; }
+  .stagger-children > *:nth-child(10) { animation-delay: 360ms; }
+  .stagger-children > *:nth-child(11) { animation-delay: 400ms; }
+  .stagger-children > *:nth-child(12) { animation-delay: 440ms; }
+  .stagger-children > *:nth-child(13) { animation-delay: 480ms; }
+  .stagger-children > *:nth-child(14) { animation-delay: 520ms; }
+  .stagger-children > *:nth-child(15) { animation-delay: 560ms; }
+  .stagger-children > *:nth-child(16) { animation-delay: 600ms; }
+}
+
+/* ===== Button press effect ===== */
+.press-effect:active {
+  transform: scale(0.98);
+  transition: transform 100ms ease;
+}
+
+/* ===== Scan ring animation ===== */
+/* Uses transform only — static Tailwind opacity-* classes provide the layered depth per ring */
+@keyframes scan-ring {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* ===== Toast slide-in animation ===== */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right var(--transition-normal) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-right {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ===== iOS safe area for mobile nav ===== */
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ===== Design Context System =====
+ * Two visual contexts used across the app:
+ *   .blundesi-context — Data-dense dashboard sections (metrics, tables, charts)
+ *   .clean-context — Focused input/inference sections (scanner input, results, chat)
+ *
+ * RULE: Never mix BLUNDESI data tables inline with Clean AI input areas on the same visual row.
+ * Use >= 32px spacing or a divider between contexts on hybrid pages (e.g. Scanner).
+ */
+
+/* BLUNDESI context — data-dense dashboard sections */
+.blundesi-context {
+  --card-bg: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  --card-border: rgba(255,255,255,0.06);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --spacing-context: 16px;
+}
+
+/* Clean AI context — focused input/inference sections */
+.clean-context {
+  --input-border: rgba(255,255,255,0.08);
+  --input-glow: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  --spacing-context: 48px;
+  --border-radius-xl: 16px;
+}
+
+/* ===== GlowCard "input" variant (Clean AI top gradient line) =====
+ * Centered neutral gradient across 80% width at top edge, rounded-2xl border.
+ * Focus-within blue glow for keyboard accessibility.
+ */
+.glow-card-input {
+  position: relative;
+  border-radius: var(--border-radius-xl, var(--radius-lg));
+}
+
+.glow-card-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: var(--input-glow, linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent));
+  border-radius: 1px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Compose focus-within glow WITH Card hover shadow to avoid clobbering */
+.glow-card-input:focus-within {
+  box-shadow:
+    0 0 20px rgba(91, 141, 239, 0.15),
+    0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Touch device optimizations ===== */
+@media (hover: none) {
+  /* On touch devices, replace hover with active press effects */
+  .glass-card:hover {
+    transform: none;
+  }
+}
+
+/* ===== Arena match animations (Story 17.1) ===== */
+@keyframes arena-slash {
+  0% { opacity: 0; transform: scale(0.5) rotate(-45deg); }
+  30% { opacity: 1; transform: scale(1.1) rotate(-45deg); }
+  100% { opacity: 0; transform: scale(1.3) rotate(-45deg); }
+}
+
+@keyframes arena-slash-line {
+  0% { stroke-dasharray: 0 300; }
+  50% { stroke-dasharray: 300 0; }
+  100% { stroke-dasharray: 300 0; opacity: 0; }
+}
+
+@keyframes arena-shield-pulse {
+  0% { opacity: 0; transform: scale(0.3); }
+  40% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes arena-shield-ring {
+  0% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0.4); }
+  50% { box-shadow: 0 0 20px 8px rgba(91, 141, 239, 0.2); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 141, 239, 0); }
+}
+
+@keyframes arena-score-float {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  20% { opacity: 1; transform: translateY(-10px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
+}
+
+@keyframes arena-round-fade {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-arena-slash {
+    animation: arena-slash 0.8s ease-out forwards;
+  }
+  .animate-arena-slash-line {
+    animation: arena-slash-line 0.6s ease-out forwards;
+  }
+  .animate-arena-shield-pulse {
+    animation: arena-shield-pulse 0.7s ease-out forwards;
+  }
+  .animate-arena-shield-ring {
+    animation: arena-shield-ring 0.7s ease-out forwards;
+  }
+  .animate-arena-score-float {
+    animation: arena-score-float 0.8s ease-out forwards;
+  }
+  .animate-arena-round-fade {
+    animation: arena-round-fade 1.2s ease-in-out forwards;
+  }
+}
+
+/* ===== Reduced motion =====
+ * Global * backstop — ensures EVERY element honors prefers-reduced-motion: reduce
+ * regardless of whether it lives inside the .dojo-ds-v3 design-system canvas,
+ * a shadcn ui/ primitive, a Tailwind utility class (animate-in / animate-out /
+ * data-[state=open]:* / data-[state=closed]:*), or legacy V1 chrome.
+ *
+ * Aligned with GUARDRAILS G7 (prefers-reduced-motion disables ALL ambient
+ * motion). The * selector closes the "shadcn / Tailwind layer leak" the
+ * design-system-only :where(.dojo-ds-v3) * scope cannot cover.
+ *
+ * Retires audit findings F-4-026 (P2 reduced-motion shadcn-layer leak) and
+ * F-4-030 (P1 shadcn dialog reduced-motion leak — Radix data-state
+ * animations). E0.S4 (2026-05-08). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* E0.S4 — Radix-state-aware reinforcement (F-4-030).
+     shadcn Dialog/Select/Popover/Tooltip emit data-state="open"|"closed"
+     transitions via Tailwind animate-in/animate-out utility classes.
+     The global * rule above already neutralizes their animation/transition
+     duration; this block belts-and-suspenders by explicitly killing the
+     animation-name on Radix-state-bearing elements so the Tailwind keyframe
+     never starts. */
+  [data-state="open"], [data-state="closed"],
+  [data-state="open"]::before, [data-state="closed"]::before,
+  [data-state="open"]::after, [data-state="closed"]::after {
+    animation-name: none !important;
+  }
+  .glass-card:hover {
+    transform: none;
+  }
+  .glow-card-input:focus-within {
+    box-shadow: none;
+  }
+}
+
+/* ===== Enhanced focus ring — blue accent for dark backgrounds (Exon alignment) ===== */
+:focus-visible {
+  outline: 2px solid var(--bu-electric);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.15);
+}

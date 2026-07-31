@@ -1,0 +1,45 @@
+/* /members/request-invite form — E9.S5 (retires F-2-213).
+   Replaces the bare HTML inputs + inline style={{}} blocks in
+   `RequestInviteForm.tsx` with token-driven design-system classes
+   (.wb-input, .wb-textarea, .btn). The form-level layout
+   (`.request-invite-form`) is a thin token-aware composition; field
+   error and submit-button placement use the same RGB-channel /
+   spacing tokens as the rest of the design system. */
+
+.request-invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.request-invite-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.request-invite-field > label {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  font-weight: 500;
+}
+
+.request-invite-field-error {
+  color: var(--torii-hi);
+  font-size: var(--text-sm);
+  margin-top: 2px;
+}
+
+.request-invite-submit {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.request-invite-success {
+  margin-top: 12px;
+}
+
+.request-invite-success > p {
+  margin: 0;
+}

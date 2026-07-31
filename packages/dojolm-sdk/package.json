@@ -1,0 +1,54 @@
+{
+  "name": "@dojolm/sdk",
+  "version": "0.0.1",
+  "description": "DojoLM TypeScript SDK — public API client for the AI adversarial-evaluation substrate. Verifier client, submission ingest, predicate schema, transparency-log read.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "_comment": "Set to public BUT package remains private (private: true above) until Stage 2 RB-15 npm-publish milestone (Master Plan v1.0)."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blackunicornsecurity/dojolm.git",
+    "directory": "packages/dojolm-sdk"
+  },
+  "keywords": [
+    "ai-security",
+    "sigstore",
+    "attestation",
+    "verifier",
+    "dojolm",
+    "dojolm.eval",
+    "openssf",
+    "in-toto",
+    "dsse"
+  ],
+  "author": "BlackUnicorn Security",
+  "bugs": {
+    "url": "https://github.com/blackunicornsecurity/dojolm/issues"
+  },
+  "homepage": "https://github.com/blackunicornsecurity/dojolm/tree/main/packages/dojolm-sdk"
+}

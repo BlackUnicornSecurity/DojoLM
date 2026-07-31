@@ -1,0 +1,194 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* UAT-scoped shell and route corrections; loaded after responsive.css. */
+
+[data-skin="v2"] .buki-page-head-wrap {
+  padding: 16px 24px 0;
+}
+
+[data-skin="v2"] .buki-kpi-wrap {
+  padding: 12px 24px 0;
+}
+
+[data-skin="v2"] .bushido-evidence-summary {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 1024px) {
+  [data-skin="v2"] .topbar {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  [data-skin="v2"] .dojo-archetype-chip {
+    display: none;
+  }
+
+}
+
+@media (max-width: 960px) {
+  [data-skin="v2"] .page-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  [data-skin="v2"] .page-head > .col,
+  [data-skin="v2"] .page-head > .actions {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  [data-skin="v2"] .page-head > .actions {
+    flex-wrap: wrap;
+    margin-top: 0;
+  }
+
+  [data-skin="v2"] .search {
+    display: flex;
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  [data-skin="v2"] .search-label,
+  [data-skin="v2"] .search .kbd {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  [data-skin="v2"] .buki-route-page {
+    padding-inline: 0;
+  }
+
+  [data-skin="v2"] .buki-page-head-wrap,
+  [data-skin="v2"] .buki-kpi-wrap {
+    padding-inline: 0;
+  }
+
+}
+
+@media (max-width: 640px) {
+  [data-skin="v2"] .bushido-evidence-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-skin="v2"] .bushido-evidence-summary > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+
+  [data-skin="v2"] .bushido-readiness-client .readiness {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .readiness-gauge {
+    margin-inline: auto;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .readiness-bars {
+    width: 100%;
+    min-width: 0;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .rb {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 10px;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .rb-k {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .rb-v {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  [data-skin="v2"] .bushido-readiness-client .rb > .pbar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  [data-skin="v2"] .buki-workbench-panel > .panel-head {
+    padding-inline: 0;
+  }
+
+  [data-skin="v2"] .buki-workbench-tabs {
+    overflow-x: hidden;
+  }
+
+  [data-skin="v2"] .buki-workbench-tabs > .sst-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 3px;
+    font-size: var(--text-sm);
+  }
+
+  [data-skin="v2"] .bushido-inner-tabs {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  [data-skin="v2"] .bushido-inner-tabs > .sst-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 4px;
+    font-size: var(--text-sm);
+  }
+
+  [data-skin="v2"] .bushido-route-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    overflow: visible;
+  }
+
+  [data-skin="v2"] .bushido-route-tabs > .pill-tab {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 360px) {
+  [data-skin="v2"] .buki-workbench-tabs.sst-tablist--pill {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    overflow: visible;
+  }
+
+  [data-skin="v2"] .buki-workbench-tabs > .sst-indicator {
+    display: none;
+  }
+
+  [data-skin="v2"] .buki-workbench-tabs > .sst-tab {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  [data-skin="v2"] .buki-workbench-tabs > .sst-tab[data-state="active"] {
+    color: var(--fg);
+    background: var(--bg-3);
+    border-color: var(--b-1);
+  }
+}

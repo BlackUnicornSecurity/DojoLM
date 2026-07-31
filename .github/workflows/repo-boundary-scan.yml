@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: MIT
+# DojoLM repo-split boundary scanner — single-purpose PR-time check.
+#
+# DojoLM does not run general CI. This workflow is
+# the explicit carve-out: a single irreversible-leak defense check that runs ONLY
+# on PRs targeting `main` (not on push, not on schedule). It enforces master
+# plan §3 repo-split rule server-side as defense against `git commit --no-verify`
+# bypasses of the pre-commit hook.
+#
+# Configured as a REQUIRED status check on the protected `main` branch.
+#
+# Security note: all PR-controlled values are passed via env (never directly into
+# `run:` interpolation) per https://github.blog/security/vulnerability-research/how-to-catch-github-actions-workflow-injections-before-attackers-do/
+
+name: repo-boundary-scan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  scan:
+    name: Repo-split boundary scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Compute changed paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "${BASE_SHA}...${HEAD_SHA}" > /tmp/changed-paths.txt
+          echo "Changed paths in this PR:"
+          cat /tmp/changed-paths.txt
+
+      - name: Run boundary scan
+        run: |
+          set -euo pipefail
+          node tools/check-repo-boundary.mjs --paths-file /tmp/changed-paths.txt --strict
+
+      - name: Boundary scan summary
+        if: always()
+        run: |
+          echo "Boundary scan complete."
+          echo "See .dojolm-repo-boundary.yaml + docs/dev/repo-split-discipline.md for the rule."

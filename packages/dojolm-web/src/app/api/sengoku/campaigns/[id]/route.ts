@@ -1,0 +1,177 @@
+// SPDX-License-Identifier: Apache-2.0
+/**
+ * D4.2 — Campaign CRUD (single campaign operations)
+ * GET /api/sengoku/campaigns/[id]
+ * PATCH /api/sengoku/campaigns/[id]
+ * DELETE /api/sengoku/campaigns/[id]
+ *
+ * YR.13.2 founder migration — multi-method route with dynamic ID param.
+ * Demonstrates `withAuth` wrapping for PATCH/DELETE state mutations
+ * (CSRF enforced by the wrapper) plus the param-resolution shape that
+ * Next.js 16+ exposes as `Promise<{ id }>`.
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoCampaignById } from '@/lib/demo/mock-api-handlers';
+import { withAuth } from '@/lib/auth/route-guard';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Campaign, UpdateCampaignRequest, CampaignStatus } from '@/lib/sengoku-types';
+import { TARGET_SOURCES } from '@/lib/sengoku-types';
+import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
+import { getDataPath } from '@/lib/runtime-paths';
+
+const CAMPAIGNS_DIR = getDataPath('sengoku', 'campaigns');
+const RUNS_DIR = getDataPath('sengoku', 'runs');
+const SAFE_ID = /^[\w-]{1,128}$/;
+const VALID_STATUSES: readonly CampaignStatus[] = ['draft', 'active', 'paused', 'completed', 'archived'];
+const SAFE_NAME = /^[\w \-().]{1,200}$/;
+const MAX_SKILLS = 100;
+
+async function loadCampaign(id: string): Promise<Campaign | null> {
+  try {
+    const content = await fs.promises.readFile(path.join(CAMPAIGNS_DIR, `${id}.json`), 'utf-8');
+    return JSON.parse(content) as Campaign;
+  } catch {
+    return null;
+  }
+}
+
+async function saveCampaign(campaign: Campaign): Promise<void> {
+  const filePath = path.join(CAMPAIGNS_DIR, `${campaign.id}.json`);
+  const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
+  await fs.promises.writeFile(tmpFile, JSON.stringify(campaign, null, 2));
+  await fs.promises.rename(tmpFile, filePath);
+}
+
+export const GET = withAuth(
+  async (_request: NextRequest, { params }) => {
+    const id = params?.id ?? '';
+    if (isDemoMode()) return demoCampaignById(id);
+
+    if (!SAFE_ID.test(id)) {
+      return NextResponse.json({ error: 'Invalid campaign ID' }, { status: 400 });
+    }
+
+    const campaign = await loadCampaign(id);
+    if (!campaign) {
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+    }
+
+    // Include run history — bounded to prevent unbounded memory growth (H-05).
+    // Filenames are validated with SAFE_ID before being joined to the runs dir,
+    // defense-in-depth against path-traversal via crafted filenames.
+    const MAX_RUNS = 200;
+    const SAFE_RUN_FILE = /^[\w-]{1,128}\.json$/;
+    const runs: unknown[] = [];
+    try {
+      const runsDir = path.join(RUNS_DIR, id);
+      const files = (await fs.promises.readdir(runsDir))
+        .filter((f) => SAFE_RUN_FILE.test(f))
+        .slice(0, MAX_RUNS);
+      for (const f of files) {
+        const content = await fs.promises.readFile(path.join(runsDir, f), 'utf-8');
+        runs.push(JSON.parse(content));
+      }
+    } catch {
+      // No runs yet
+    }
+
+    return NextResponse.json({ campaign, runs });
+  },
+  { role: 'admin' },
+);
+
+export const PATCH = withAuth(
+  async (request: NextRequest, { params }) => {
+    const id = params?.id ?? '';
+    if (!SAFE_ID.test(id)) {
+      return NextResponse.json({ error: 'Invalid campaign ID' }, { status: 400 });
+    }
+
+    const campaign = await loadCampaign(id);
+    if (!campaign) {
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+    }
+
+    const body = (await request.json()) as UpdateCampaignRequest;
+    let normalizedWebhookUrl: string | null | undefined;
+
+    // Validate name if provided
+    if (body.name !== undefined && !SAFE_NAME.test(body.name)) {
+      return NextResponse.json({ error: 'Invalid campaign name' }, { status: 400 });
+    }
+
+    // Validate webhookUrl if provided
+    if (body.webhookUrl !== undefined && body.webhookUrl !== null) {
+      const webhookValidation = await validateSengokuWebhookUrl(body.webhookUrl);
+      if (!webhookValidation.valid) {
+        return NextResponse.json({ error: webhookValidation.error }, { status: 400 });
+      }
+      normalizedWebhookUrl = webhookValidation.normalizedUrl ?? null;
+    }
+    if (body.webhookUrl === null) {
+      normalizedWebhookUrl = null;
+    }
+
+    // Validate selectedSkillIds if provided
+    if (body.selectedSkillIds !== undefined) {
+      if (!Array.isArray(body.selectedSkillIds) || body.selectedSkillIds.length === 0) {
+        return NextResponse.json({ error: 'At least one skill must be selected' }, { status: 400 });
+      }
+      if (body.selectedSkillIds.length > MAX_SKILLS) {
+        return NextResponse.json({ error: `Maximum ${MAX_SKILLS} skills per campaign` }, { status: 400 });
+      }
+    }
+
+    // Validate targetUrl if provided (SSRF hardening — parity with POST handler)
+    if (body.targetUrl !== undefined && body.targetUrl !== null) {
+      try {
+        const parsed = new URL(String(body.targetUrl));
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          return NextResponse.json({ error: 'targetUrl must use http or https' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'targetUrl must be a valid URL' }, { status: 400 });
+      }
+    }
+
+    const updated: Campaign = {
+      ...campaign,
+      ...(body.name !== undefined && { name: String(body.name).slice(0, 200) }),
+      ...(body.schedule !== undefined && { schedule: body.schedule }),
+      ...(body.selectedSkillIds !== undefined && { selectedSkillIds: body.selectedSkillIds.map((s) => String(s).slice(0, 128)) }),
+      ...(body.status !== undefined && VALID_STATUSES.includes(body.status) && { status: body.status }),
+      ...(body.graph !== undefined && { graph: body.graph }),
+      ...(body.webhookUrl !== undefined && { webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null }),
+      ...(body.targetSource !== undefined && TARGET_SOURCES.includes(body.targetSource) && { targetSource: body.targetSource }),
+      ...(body.targetModelId !== undefined && { targetModelId: body.targetModelId }),
+      ...(body.targetUrl !== undefined && { targetUrl: String(body.targetUrl).slice(0, 2048) }),
+      updatedAt: new Date().toISOString(),
+    };
+
+    await saveCampaign(updated);
+    return NextResponse.json(updated);
+  },
+  { role: 'admin' },
+);
+
+export const DELETE = withAuth(
+  async (_request: NextRequest, { params }) => {
+    const id = params?.id ?? '';
+    if (!SAFE_ID.test(id)) {
+      return NextResponse.json({ error: 'Invalid campaign ID' }, { status: 400 });
+    }
+
+    const campaign = await loadCampaign(id);
+    if (!campaign) {
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+    }
+
+    const archived: Campaign = { ...campaign, status: 'archived', updatedAt: new Date().toISOString() };
+    await saveCampaign(archived);
+    return NextResponse.json({ status: 'archived' });
+  },
+  { role: 'admin' },
+);

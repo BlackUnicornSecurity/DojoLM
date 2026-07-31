@@ -1,0 +1,72 @@
+# DojoLM — DEV/QA Deployment (single-host Docker Compose, build-from-source; demo opt-in)
+# Deploy to: <deploy-dir>/docker-compose.yml on your DEV/QA host.
+# No TLS on DEV/QA — app reachable at http://<dev-host>:3001
+# Caddy: optional, not required for DEV/QA
+
+services:
+  dojolm-web:
+    image: dojolm-web:latest
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: dojolm-web
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:3001:42001"
+    environment:
+      NODE_ENV: production
+      PORT: "42001"
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # EPIC-B (F-QA-022): no NEXT_PUBLIC_APP_URL/API_URL — client uses
+      # location.origin; server derives the trusted origin from request Host.
+      NEXT_PUBLIC_MAX_TEXT_LENGTH: "10000"
+      NEXT_PUBLIC_ENABLE_ANALYTICS: "false"
+      NEXT_PUBLIC_ENABLE_ERROR_REPORTING: "false"
+      # Demo mode — DEV/QA only: mock data for pitch / onboarding demos. The
+      # production failsafe in src/lib/demo/index.ts is bypassed ONLY when
+      # TPI_ALLOW_DEMO_IN_PROD=true. Both default OFF here (safe to publish) —
+      # set them =true in your DEV/QA .env to enable the demo. NEVER enable them
+      # on the production compose (deploy/docker-compose.yml).
+      NEXT_PUBLIC_DEMO_MODE: "${NEXT_PUBLIC_DEMO_MODE:-false}"
+      TPI_ALLOW_DEMO_IN_PROD: "${TPI_ALLOW_DEMO_IN_PROD:-false}"
+      # Wave 0 Track C.5 (2026-04-18): feature-maturity badges. These are
+      # UI-only — they do NOT alter API routing. Demo takes precedence.
+      NEXT_PUBLIC_PREVIEW_MODE: "${NEXT_PUBLIC_PREVIEW_MODE:-false}"
+      NEXT_PUBLIC_PARTIAL_MODE: "${NEXT_PUBLIC_PARTIAL_MODE:-false}"
+      # Internal API auth. TPI_API_KEY / TPI_API_KEY_ROLE are the current names;
+      # the app falls back to the legacy NODA_ vars below until env is migrated.
+      TPI_API_KEY: "${TPI_API_KEY:-}"
+      TPI_API_KEY_ROLE: "${TPI_API_KEY_ROLE:-}"
+      NODA_API_KEY: "${NODA_API_KEY:-}"
+      NODA_API_KEY_ROLE: "${NODA_API_KEY_ROLE:-analyst}"
+      TPI_DB_ENCRYPTION_KEY: "${TPI_DB_ENCRYPTION_KEY}"
+      TPI_COOKIE_SIGNING_KEY_CURRENT: "${TPI_COOKIE_SIGNING_KEY_CURRENT}"
+      TPI_COOKIE_SIGNING_KEY_PREVIOUS: "${TPI_COOKIE_SIGNING_KEY_PREVIOUS}"
+      TPI_APP_URL: "${TPI_APP_URL:-}"
+      TPI_STORAGE_BACKEND: "${TPI_STORAGE_BACKEND:-db}"
+      TPI_DATA_DIR: "${TPI_DATA_DIR:-/app/data}"
+      TPI_TRUSTED_INTERNAL_IPS: "${TPI_TRUSTED_INTERNAL_IPS:-}"
+      TPI_ADMIN_USERNAME: "${TPI_ADMIN_USERNAME:-admin}"
+      TPI_ADMIN_PASSWORD: "${TPI_ADMIN_PASSWORD}"
+      TPI_SESSION_TTL_HOURS: "${TPI_SESSION_TTL_HOURS:-24}"
+      GUARD_CONFIG_SECRET: "${GUARD_CONFIG_SECRET}"
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://localhost:11434}"
+    volumes:
+      - dojolm_data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:42001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  dojolm_data:
+    driver: local

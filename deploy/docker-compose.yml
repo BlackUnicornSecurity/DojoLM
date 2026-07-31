@@ -1,0 +1,226 @@
+# DojoLM — Production Deployment (self-hosted, single-host Docker Compose)
+# Deploy to: <deploy-dir>/docker-compose.yml on your production host.
+#
+# Topology:
+#   - dojolm-web + dojolm-db on a private `dojolm-net`.
+#   - dojolm-web ALSO joins an external edge network (default `edge-net`,
+#     override with DOJOLM_EDGE_NETWORK) so a reverse proxy (e.g. Caddy/Traefik)
+#     reaches it by container name (`dojolm-web:42001`) instead of a host
+#     hairpin. Create that external network, or drop it and publish ports directly.
+#   - dojolm-edge (Caddy) is the OPTIONAL standalone public edge. It terminates
+#     the public hostnames (dojo.example.internal, dojolm.example.internal) on
+#     host :80 + :443 and reverse-proxies to `dojolm-web:42001` over that same
+#     edge network. Its config is the repo-tracked deploy/edge/Caddyfile (mounted
+#     read-only); see deploy/README.md for the HTTPS/:443 path.
+#
+#     ★ OPT-IN: gated behind the compose `edge` profile, which defaults OFF.
+#       The profile gates the WHOLE service — both its host port publishes
+#       (:80 + :443) AND its `dojolm_edge_data` external-volume requirement —
+#       so a plain `docker compose up` brings up db + web only.
+#         - WITHOUT an upstream :443 terminator  → enable it:
+#             docker compose --profile edge up -d        (or COMPOSE_PROFILES=edge).
+#             This is the standalone path: the
+#             edge is what actually serves the domain — without it the hostname
+#             resolves to the host but nothing answers.
+#         - WITH an upstream :443 terminator already serving the hostnames
+#           (e.g. a platform Caddy that reverse-proxies straight to
+#           `dojolm-web:42001`) → leave the profile OFF and run edge-less. A
+#           standalone edge would only collide on host :443 with that upstream.
+#   - `dojolm_data` is an EXTERNAL volume (default `dojolm_data`, override with
+#     DOJOLM_DATA_VOLUME) holding persistent data. Create/import it BEFORE the
+#     first `compose up` — never let compose create a fresh empty one.
+#   - The image `dojolm-web:latest` is built before `compose up`; no `build:`
+#     here on purpose so a stray `compose up` cannot trigger an unintended rebuild.
+
+services:
+  dojolm-db:
+    image: postgres:16-alpine
+    container_name: dojolm-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DOJOLM_DB_NAME:-dojolm}"
+      POSTGRES_USER: "${DOJOLM_DB_USER:-dojolm}"
+      POSTGRES_PASSWORD: "${DOJOLM_DB_PASSWORD}"
+    volumes:
+      - dojolm_db:/var/lib/postgresql/data
+    networks:
+      - dojolm-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DOJOLM_DB_USER:-dojolm} -d ${DOJOLM_DB_NAME:-dojolm}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  dojolm-web:
+    image: dojolm-web:latest
+    container_name: dojolm-web
+    env_file:
+      - .env
+    restart: unless-stopped
+    security_opt:
+      - "no-new-privileges:true"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      dojolm-db:
+        condition: service_healthy
+    ports:
+      - "0.0.0.0:3001:42001"
+    environment:
+      NODE_ENV: production
+      PORT: "42001"
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # EPIC-B (F-QA-022): no NEXT_PUBLIC_APP_URL/API_URL — the client uses
+      # relative URLs (location.origin) and the server derives the trusted origin
+      # from the incoming request Host. Set TPI_APP_URL in .env only when you
+      # want to PIN the trusted origin to one canonical URL.
+      NEXT_PUBLIC_MAX_TEXT_LENGTH: "10000"
+      NEXT_PUBLIC_ENABLE_ANALYTICS: "false"
+      NEXT_PUBLIC_ENABLE_ERROR_REPORTING: "false"
+      # Internal API auth. TPI_API_KEY / TPI_API_KEY_ROLE are the current names;
+      # the app reads them first and falls back to the legacy NODA_ vars below,
+      # so an existing deployment keeps working until its env is migrated.
+      # Remove the NODA_ lines once every environment sets the TPI_ names — and
+      # when you do, move the `:-analyst` role default onto TPI_API_KEY_ROLE
+      # (it lives on the NODA_ line today so a legacy custom role still wins).
+      TPI_API_KEY: "${TPI_API_KEY:-}"
+      TPI_API_KEY_ROLE: "${TPI_API_KEY_ROLE:-}"
+      NODA_API_KEY: "${NODA_API_KEY:-}"
+      NODA_API_KEY_ROLE: "${NODA_API_KEY_ROLE:-analyst}"
+      DOJOLM_DB_HOST: "dojolm-db"
+      DOJOLM_DB_PORT: "5432"
+      TPI_DB_ENCRYPTION_KEY: "${TPI_DB_ENCRYPTION_KEY}"
+      TPI_COOKIE_SIGNING_KEY_CURRENT: "${TPI_COOKIE_SIGNING_KEY_CURRENT}"
+      TPI_COOKIE_SIGNING_KEY_PREVIOUS: "${TPI_COOKIE_SIGNING_KEY_PREVIOUS}"
+      TPI_APP_URL: "${TPI_APP_URL:-}"
+      TPI_STORAGE_BACKEND: "${TPI_STORAGE_BACKEND:-db}"
+      TPI_DATA_DIR: "${TPI_DATA_DIR:-/app/data}"
+      TPI_TRUSTED_INTERNAL_IPS: "${TPI_TRUSTED_INTERNAL_IPS:-}"
+      TPI_ADMIN_USERNAME: "${TPI_ADMIN_USERNAME:-admin}"
+      TPI_ADMIN_PASSWORD: "${TPI_ADMIN_PASSWORD}"
+      TPI_SESSION_TTL_HOURS: "${TPI_SESSION_TTL_HOURS:-24}"
+      TRUSTED_PROXY: "${TRUSTED_PROXY:-caddy}"
+      GUARD_CONFIG_SECRET: "${GUARD_CONFIG_SECRET}"
+      OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://localhost:11434}"
+      # W21 closeout — Bushido feature flag. Code checks `=== 'true'` (string-strict).
+      # Hardcoded literal (NOT ${BUSHIDO_ENABLED:-true}) so compose interpolation
+      # cannot pull a stale `1` from .env; `environment:` always overrides env_file.
+      BUSHIDO_ENABLED: "true"
+    volumes:
+      - dojolm_data:/app/data
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "2.0"
+          pids: 512
+    networks:
+      - dojolm-net
+      - edge-net
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:42001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # Public edge — OPTIONAL standalone Caddy reverse proxy for
+  # dojo.example.internal / dojolm.example.internal.
+  #
+  # OPT-IN via the `edge` profile (defaults OFF — see the header). When the
+  # profile is inactive this whole service is omitted, so neither its :80/:443
+  # publishes nor its `dojolm_edge_data` external volume are required: a plain
+  # `docker compose up` is db + web only. Enable the standalone edge with
+  # `--profile edge` (or COMPOSE_PROFILES=edge)
+  # ONLY on hosts that have no upstream :443 terminator for the hostnames.
+  #
+  # Config is the repo-tracked deploy/edge/Caddyfile, mounted read-only. The bind
+  # path is relative to this compose file's directory; keep deploy/edge/ next to
+  # docker-compose.yml so `compose up` finds it (the same `./edge/Caddyfile`
+  # resolves locally from deploy/ during `docker compose config` preflight). If
+  # the file is MISSING at up-time a bind mount would silently create an empty
+  # directory and Caddy would fail to load — verify the file exists before
+  # `compose up`.
+  dojolm-edge:
+    image: caddy:2-alpine
+    container_name: dojolm-edge
+    # Gated: only started when the `edge` profile is active. This single tag
+    # gates the service, its :80/:443 publishes, and its `dojolm_edge_data`
+    # external-volume dependency together.
+    profiles: ["edge"]
+    restart: unless-stopped
+    security_opt:
+      - "no-new-privileges:true"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      - dojolm-web
+    ports:
+      # :80 plain HTTP (unchanged) + :443 HTTPS (tls internal, reusing an
+      # operator-provided internal CA seeded into dojolm_edge_data). See
+      # deploy/README.md ("HTTP vs HTTPS").
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./edge/Caddyfile:/etc/caddy/Caddyfile:ro
+      # Persistent Caddy storage. Holds the internal-CA PKI (pre-seed it with
+      # your platform's root+intermediate so issued leaves chain to a root your
+      # LAN clients trust) + the auto-renewed leaf certs. EXTERNAL + operator-
+      # seeded so a fresh first boot can't silently mint a throwaway untrusted
+      # CA.
+      - dojolm_edge_data:/data
+      - dojolm_edge_config:/config
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          pids: 256
+    networks:
+      # Same external edge network as dojolm-web so `dojolm-web:42001` resolves
+      # via Docker embedded DNS. NOT on dojolm-net — the edge only needs the app.
+      - edge-net
+    healthcheck:
+      # Liveness only: the Caddyfile routes by Host (dojo.example.internal), so a
+      # localhost:80 probe wouldn't match a site block. Caddy's admin API on
+      # :2019 is always up while the process is healthy. End-to-end proxy reach
+      # (http://dojo.example.internal -> app) is worth verifying after deploy.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:2019/config/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  dojolm_db:
+    driver: local
+  dojolm_data:
+    external: true
+    name: "${DOJOLM_DATA_VOLUME:-dojolm_data}"
+  # Edge Caddy storage (internal-CA PKI + issued leaves). Only consumed when the
+  # `edge` profile is active — with the profile OFF nothing mounts it, so its
+  # absence does not block a `compose up`. When the edge IS enabled it is EXTERNAL
+  # and must be seeded with your internal CA BEFORE the first
+  # `compose up` that publishes :443. External (not
+  # auto-created) on purpose: under the edge profile a missing volume fails `up`
+  # loudly rather than letting Caddy boot a fresh untrusted CA.
+  dojolm_edge_data:
+    external: true
+    name: "${DOJOLM_EDGE_DATA_VOLUME:-dojolm_edge_data}"
+  # Caddy's /config (last-loaded autosave only — regenerable, no secrets).
+  dojolm_edge_config:
+    driver: local
+
+networks:
+  dojolm-net:
+    driver: bridge
+  edge-net:
+    external: true
+    name: "${DOJOLM_EDGE_NETWORK:-edge-net}"

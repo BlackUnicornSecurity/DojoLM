@@ -1,0 +1,295 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-E adapters for stadium tables and public competition data. */
+
+[data-skin="v2"] .arena-heat-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--b-0);
+  border-radius: 10px;
+}
+
+[data-skin="v2"] .arena-heat-table {
+  width: 100%;
+  min-width: 680px;
+}
+
+[data-skin="v2"] .arena-heat-table th,
+[data-skin="v2"] .arena-heat-table td {
+  padding: 9px 11px;
+}
+
+[data-skin="v2"] .arena-heat-empty {
+  color: var(--fg-dim);
+  font-family: var(--mono);
+}
+
+[data-skin="v2"] .arena-drilldown {
+  margin-top: 14px;
+  border-color: var(--b-0);
+  background: var(--bg-2);
+}
+
+/* P2b — stadium content primitives (design wave-b module.css + wave-e.css),
+   consumed by the Leaderboard / Seasons / Bounty rebuilds. */
+
+/* control table (design .ctable): Inter sentence-case headers per base.css;
+   base.css already owns th color/weight and row borders. */
+[data-skin="v2"] .tbl-scroll {
+  overflow-x: auto;
+}
+[data-skin="v2"] .ctable {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+/* P3 — an empty board has nothing to scroll to: drop the floor so the
+   in-table empty state stays fully visible at 390. */
+[data-skin="v2"] .ctable--empty {
+  min-width: 0;
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .ctable thead th {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--b-1);
+}
+[data-skin="v2"] .ctable th.num,
+[data-skin="v2"] .ctable td.num {
+  text-align: right;
+}
+[data-skin="v2"] .ctable tbody td {
+  padding: 8px 12px;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .ctable tbody td.num {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+[data-skin="v2"] .ctable tbody td.nm {
+  color: var(--fg);
+}
+
+/* §4.1 empty state hosted inside a real table (design wave-e.css .emptycell) */
+[data-skin="v2"] .ctable td.emptycell {
+  padding: 0;
+  border-bottom: 0;
+}
+[data-skin="v2"] .ctable td.emptycell .empty {
+  padding: 30px 20px 26px;
+}
+
+/* medal tiers (design wave-b module.css — positive metals, no red) */
+[data-skin="v2"] .medal {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--b-1);
+  border-radius: 50%;
+  background: var(--bg-3);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+[data-skin="v2"] .medal.gold {
+  border-color: rgba(212, 168, 67, 0.5);
+  color: var(--gold-lg);
+}
+[data-skin="v2"] .medal.steel {
+  border-color: rgba(91, 141, 239, 0.45);
+  color: var(--steel-lg);
+}
+[data-skin="v2"] .medal.bronze {
+  border-color: rgba(224, 138, 60, 0.4);
+  color: #d99a66;
+}
+
+/* data rows (design wave-b module.css .drows) — scoped under .drows so the
+   unscoped primitives.css grid `.drow` never collides. */
+[data-skin="v2"] .drows {
+  display: flex;
+  flex-direction: column;
+}
+[data-skin="v2"] .drows .drow {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--b-0);
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .drows .drow:hover {
+  background: transparent;
+}
+[data-skin="v2"] .drows .drow:last-child {
+  border-bottom: 0;
+}
+[data-skin="v2"] .drows .drow .l {
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .drows .drow .v {
+  margin-left: auto;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-weight: 500;
+}
+[data-skin="v2"] .drows .drow .v.dim {
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .drows .drow .mt {
+  display: block;
+  color: var(--fg);
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+[data-skin="v2"] .drows .drow .ms {
+  display: block;
+  color: var(--fg-ghost);
+}
+
+/* severity dots inside list rows (design wave-e.css sizing; app-shell colors —
+   §5.2 value-color law: crit red is semantic, never decorative) */
+[data-skin="v2"] .lrow .sev {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+[data-skin="v2"] .lrow .sev.crit {
+  background: var(--torii-text);
+}
+[data-skin="v2"] .lrow .sev.high {
+  background: var(--ember);
+}
+[data-skin="v2"] .lrow .sev.med {
+  background: var(--gold);
+}
+[data-skin="v2"] .lrow .sev.low {
+  background: var(--steel);
+}
+[data-skin="v2"] .lrow .end {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+[data-skin="v2"] .lrow .end .mono {
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+
+/* helper note under severity / scoring lists (design wave-b module.css) */
+[data-skin="v2"] .sev-note {
+  margin-top: 9px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .sev-note a {
+  color: var(--steel-lg);
+}
+[data-skin="v2"] .sev-note a:hover {
+  color: var(--fg);
+}
+
+/* quiet status-chip dot (design app-shell default dot is muted; the prod
+   .chip default dot is jade-live — jade stays reserved for live status) */
+[data-skin="v2"] .chip .dot.quiet {
+  background: var(--fg-dim);
+  box-shadow: none;
+}
+
+/* ===== Arena mode-selector cards (design wave-b module.css .modes/.mode) =====
+   Four labeled match-mode filters above the outer tabs. Active card carries
+   a steel accent — no torii-red on this chrome (red is the header primary). */
+[data-skin="v2"] .arena-modes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+[data-skin="v2"] .arena-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 64px;
+  padding: 11px 14px;
+  text-align: left;
+  color: inherit;
+  background: var(--bg-2);
+  border: 1px solid var(--b-1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s var(--ease-out),
+    background 0.15s var(--ease-out);
+}
+[data-skin="v2"] .arena-mode:hover {
+  background: var(--bg-3);
+  border-color: var(--b-2);
+}
+[data-skin="v2"] .arena-mode.on {
+  padding: 10.5px 13.5px;
+  background: var(--bg-3);
+  border: 1.5px solid rgba(var(--steel-rgb), 0.55);
+}
+[data-skin="v2"] .arena-mode .t {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .arena-mode.on .t {
+  color: var(--fg);
+}
+[data-skin="v2"] .arena-mode .s {
+  font-size: var(--text-md);
+  color: var(--fg-ghost);
+}
+[data-skin="v2"] .arena-mode .cnt {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .arena-mode-helper {
+  margin-top: 9px;
+  font-size: var(--text-md);
+  color: var(--fg-ghost);
+}
+@media (max-width: 900px) {
+  [data-skin="v2"] .arena-modes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-skin="v2"] .arena-mode {
+    transition: none;
+  }
+}
+
+/* g2 row (design .g2): Bracket + Recent fighters side by side, one column
+   on mobile. Replaces the 3-across tri-grid so Recent fighters gets the
+   width the design intends. */
+[data-skin="v2"] .arena-g2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 860px) {
+  [data-skin="v2"] .arena-g2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* D6 — Recent-fighters feed: the full ISO timestamp is one unbreakable
+   token that overflowed the 58px .ts column and drew over the fighter
+   label at 390. Widen the column and let the (trimmed) date+minute stamp
+   wrap in-cell so nothing overlaps. */
+[data-skin="v2"] [data-testid="arena-feed-list"] .feed-row {
+  grid-template-columns: 92px 4px minmax(0, 1fr) auto auto;
+}
+[data-skin="v2"] [data-testid="arena-feed-list"] .feed-row .ts {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}

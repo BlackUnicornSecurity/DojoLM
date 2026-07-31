@@ -1,0 +1,313 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-G adapters for account, settings, keys, exports, and users. */
+
+[data-skin="v2"] .v2-wide-row {
+  min-width: 640px;
+}
+
+[data-skin="v2"] .v2-wide-list {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+[data-skin="v2"] .thead.v2-wide-row {
+  padding: 8px 12px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--b-1);
+}
+
+[data-skin="v2"] .drow.v2-wide-row {
+  padding: 10px 12px;
+}
+
+[data-skin="v2"] .admin-plugin-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+}
+
+[data-skin="v2"] .admin-plugin-row-identity {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+[data-skin="v2"] .admin-plugin-row-identity code {
+  overflow-wrap: anywhere;
+}
+
+[data-skin="v2"] .admin-plugin-row-meta,
+[data-skin="v2"] .admin-plugin-row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+[data-skin="v2"] .toast {
+  color: var(--fg);
+  background: var(--bg-3);
+  border-color: var(--b-1);
+  box-shadow: var(--shadow-hero);
+}
+
+[data-skin="v2"] input[type="radio"],
+[data-skin="v2"] input[type="checkbox"] {
+  accent-color: var(--steel);
+}
+
+/* NR-account — reference wave-d `.g2-wide` 2-column body:
+   Profile + Change-password left, Active-sessions right. */
+[data-skin="v2"] .g2-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+/* NR-member-invites — reference wave-a `.empty` info-state (flag-off is an
+   info state, NOT an error; zero red) + wave-a `.link-steel`. */
+[data-skin="v2"] .empty {
+  padding: 26px 20px;
+  text-align: center;
+}
+
+[data-skin="v2"] .empty .kj {
+  color: var(--fg-dim);
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 38px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+[data-skin="v2"] .empty h4 {
+  margin: 12px 0 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+[data-skin="v2"] .empty p {
+  margin: 5px 0 14px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+
+[data-skin="v2"] .empty .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* P2c users — design wave-b module.css .tbl-foot (fg-mute → fg-dim per the
+   skin conformity law; mono floor var(--text-sm) = 11px). */
+[data-skin="v2"] .tbl-foot {
+  padding: 10px 12px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+}
+
+/* P4 users (wave-g/Users v2.html) — roster header. The `.thead` primitive is
+   mono-caps; the design's `.ctable thead th` is Inter sentence case (12px,
+   weight 500, muted). `roster-thead` reverts the mono-caps override just for
+   this table (fg-mute → fg-dim per the conformity law). Must follow the
+   `.thead.v2-wide-row` rule above to win on equal specificity. */
+[data-skin="v2"] .thead.roster-thead {
+  font-family: var(--sans);
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--fg-dim);
+}
+
+/* P4 users red budget — neutral OFF state chip. `.chip.red` is torii-red
+   (reserved for the single Invite-user primary); a disabled account reads as a
+   quiet neutral chip with a dim dot, not a data-red alarm. */
+[data-skin="v2"] .chip.state-off {
+  color: var(--fg-dim);
+  background: var(--bg-2);
+  border-color: var(--b-1);
+}
+[data-skin="v2"] .chip.state-off .dot {
+  background: var(--fg-dim);
+  box-shadow: none;
+}
+
+[data-skin="v2"] .link-steel {
+  color: var(--steel-lg);
+  font-size: var(--text-base);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* P2d exports (wave-g "Exports v2") — Add-a-target form (§5.6). The design
+   `.field`/`.in` map to prod's auto-styled controls; the namespaced `.eg-*`
+   avoids colliding with those generic class names. */
+[data-skin="v2"] .eg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+[data-skin="v2"] .eg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: var(--text-base);
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .eg-field > select,
+[data-skin="v2"] .eg-field > input {
+  width: 100%;
+}
+
+/* P2d api-keys (wave-g "API Keys v2") — two-person-rule paper ceremony
+   (§5.9). base.css owns `.paper-panel` fill + serif headings; these add the
+   kicker / body / outline status the design layers on top. */
+[data-skin="v2"] .paper-panel .pk {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(var(--paper-ink-rgb), 0.55);
+}
+
+[data-skin="v2"] .paper-panel .body {
+  margin-top: 10px;
+  max-width: 62ch;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: rgba(var(--paper-ink-rgb), 0.75);
+}
+
+[data-skin="v2"] .paper-panel .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 4px 12px;
+  border: 1px solid rgba(var(--paper-ink-rgb), 0.25);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(var(--paper-ink-rgb), 0.6);
+}
+
+[data-skin="v2"] .paper-panel .status .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(var(--paper-ink-rgb), 0.5);
+}
+
+/* P2d validation (wave-g "Validation v2") — underline sub-tabs sit above
+   the runs panel; add breathing room before the panel. */
+[data-skin="v2"] .validation-subtabs {
+  margin-bottom: 12px;
+}
+
+/* P4 settings (wave-g "Settings v2") — §5.6 dark-surface form field kit
+   (design wave-f/wave-f.css .field + dojo.css mono-caps label). Reproduces
+   the consolidated one-panel/one-save form so /admin/settings drops the v1.5
+   three-save split. Generic .field/.in/.f-row/.f-help are safe here: no v2
+   surface uses those class names for anything else (only .eg-* export forms). */
+[data-skin="v2"] .field {
+  margin-top: 16px;
+}
+[data-skin="v2"] .field:first-child {
+  margin-top: 0;
+}
+[data-skin="v2"] .field > label {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .field .in {
+  width: 100%;
+  padding: 9px 11px;
+  background: var(--bg-1);
+  border: 1px solid var(--b-1);
+  border-radius: 8px;
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--text-md);
+}
+[data-skin="v2"] .f-help {
+  margin-top: 6px;
+  max-width: 62ch;
+  font-size: var(--text-md);
+  color: var(--fg-ghost);
+}
+[data-skin="v2"] .f-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+[data-skin="v2"] .f-row .field {
+  flex: 1;
+  min-width: 170px;
+  margin-top: 0;
+}
+
+/* P4 plugins (wave-g "Plugins v2") — D6 self-attestation footer note. Design
+   ships this as a bordered `.p-bd` panel footer (fg-ghost, 12.5px Inter); this
+   reproduces the divider + quiet-legal voice under the installed rows. */
+[data-skin="v2"] .plugins-attest-help {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--b-0);
+  max-width: 72ch;
+  font-size: var(--text-md);
+  color: var(--fg-ghost);
+}
+
+/* P4 plugins — D9 tab count as a dim badge (design `.st .n`), not the old
+   `(2)` parenthetical. Mono floor is --text-sm; fg-mute → fg-dim. */
+[data-skin="v2"] .plg-tab-count {
+  margin-left: 6px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+
+@media (max-width: 900px) {
+  [data-skin="v2"] .g2-wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  [data-skin="v2"] .admin-plugin-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  [data-skin="v2"] .admin-plugin-row-meta,
+  [data-skin="v2"] .admin-plugin-row-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  [data-skin="v2"] .admin-plugin-row-actions .btn {
+    flex: 1 1 120px;
+    justify-content: center;
+  }
+}

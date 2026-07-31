@@ -1,0 +1,1602 @@
+/* Epic 7 · System & edge states
+   Tokens-only chrome for top-of-page system banners and shared
+   error-boundary surfaces. Complements the inline `.wb-banner` utility
+   declared in patterns/workbench.css — that class stays for in-panel
+   callouts; `.sys-banner` is page-level.
+
+   No raw hex, no fallback colours, no direct rgba literals — semantic
+   RGB channels (var(--torii-rgb), var(--jade-rgb) …) own the alpha-tinted
+   backgrounds. Animations respect the global prefers-reduced-motion gate
+   in tokens.css (this file adds no new transitions or animations).
+*/
+
+/* ========== SystemBanner ========== */
+.sys-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.02);
+  color: var(--fg);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.sys-banner::before {
+  content: "";
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--fg-mute);
+  flex-shrink: 0;
+}
+
+.sys-banner-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sys-banner-title {
+  color: var(--fg);
+  font-weight: 600;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sys-banner-msg {
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.sys-banner-msg code {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  padding: 1px 5px;
+  margin: 0 2px;
+  border-radius: 3px;
+  background: rgba(var(--white-rgb), 0.05);
+  border: 1px solid var(--b-1);
+  color: var(--fg);
+}
+
+/* E7.S4 — 44×44 hit-area for SystemBanner dismiss × button.
+   Plan ref: audit/REMEDIATION-PLAN.md L797-801. Retires part of
+   F-5-008 (P1). WCAG 2.2 SC 2.5.5 Target Size (Enhanced, AAA).
+   Pseudo-element expansion: the visible × stays 24×24 inside the
+   single-line banner row to keep the dismiss compact relative to
+   the banner copy on narrow viewports. The ::before pseudo grows
+   the click region by 10px each axis (24 + 20 = 44). position:
+   relative is added on the host so the absolutely-positioned
+   ::before resolves against the button frame. */
+.sys-banner-dismiss {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  color: var(--fg-mute);
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: var(--text-2xl);
+  line-height: 1;
+  cursor: pointer;
+  position: relative;
+}
+.sys-banner-dismiss::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
+.sys-banner-dismiss:hover {
+  color: var(--fg);
+  background: rgba(var(--white-rgb), 0.04);
+  border-color: var(--b-1);
+}
+
+.sys-banner-dismiss:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+/* Tone variants */
+.sys-banner--warn {
+  border-color: var(--b-red);
+  background: rgba(var(--torii-rgb), 0.08);
+}
+.sys-banner--warn::before { background: var(--torii); }
+.sys-banner--warn .sys-banner-title { color: var(--torii-hi); }
+
+.sys-banner--danger {
+  border-color: var(--b-red-2);
+  background: rgba(var(--torii-rgb), 0.14);
+  color: var(--torii-hi);
+}
+.sys-banner--danger::before { background: var(--torii-lg); }
+.sys-banner--danger .sys-banner-title { color: var(--torii-hi); }
+.sys-banner--danger .sys-banner-msg code {
+  background: rgba(var(--torii-rgb), 0.08);
+  border-color: var(--b-red);
+  color: var(--fg);
+}
+
+.sys-banner--info {
+  border-color: rgba(var(--steel-rgb), 0.3);
+  background: rgba(var(--steel-rgb), 0.06);
+}
+.sys-banner--info::before { background: var(--steel); }
+.sys-banner--info .sys-banner-title { color: var(--steel-lg); }
+
+.sys-banner--success {
+  border-color: rgba(var(--jade-rgb), 0.3);
+  background: rgba(var(--jade-rgb), 0.06);
+}
+.sys-banner--success::before { background: var(--jade); }
+.sys-banner--success .sys-banner-title { color: var(--jade-lg); }
+
+/* E5.S4 (REMEDIATION-PLAN line 600): `fixture` tone — page-level
+   "Demo data" callout that replaces the 4 per-widget DemoDataBadge
+   chips on the `/` dashboard. Uses --gold (warning yellow) for the
+   accent stripe so reviewers can distinguish demo surfaces from the
+   torii-red `warn`/`danger` tones reserved for kill-switch states.
+   Tokens-only per GUARDRAILS G10 + E1.S2 lint rule. */
+.sys-banner--fixture {
+  border-color: rgba(var(--gold-rgb), 0.3);
+  background: rgba(var(--gold-rgb), 0.06);
+}
+.sys-banner--fixture::before { background: var(--gold); }
+.sys-banner--fixture .sys-banner-title { color: var(--gold-lg); }
+
+/* ========== A.4 SystemBanner extensions ==========
+   Additive classes for the A.4 Banner primitive extension. Every
+   existing .sys-banner consumer renders identically — these rules
+   apply ONLY when the new variant data attributes / classes are
+   present (position="page-top", action, icon). Default
+   position="inline" is the existing rendering (no new class added).
+*/
+
+/* page-top position — full-bleed banner that anchors above the page
+   hero. The slide-down entrance respects the global
+   prefers-reduced-motion gate in tokens.css. */
+.sys-banner--position-page-top {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom-width: 2px;
+  margin: 0;
+  width: 100%;
+  animation: sys-banner-slide-down 250ms var(--ease-out) both;
+}
+.sys-banner--position-page-top::before {
+  /* In page-top mode, the tone stripe sits at the bottom rather than
+     the left so the banner reads as a "ribbon" across the page. */
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 2px;
+  top: auto;
+  bottom: 0;
+}
+
+@keyframes sys-banner-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optional decorative icon — only renders when caller passes the
+   `icon` prop. Without an icon the existing layout is preserved
+   verbatim. */
+.sys-banner-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  flex: 0 0 auto;
+  color: var(--fg-dim);
+}
+.sys-banner--warn .sys-banner-icon,
+.sys-banner--danger .sys-banner-icon { color: var(--torii-lg); }
+.sys-banner--success .sys-banner-icon { color: var(--jade-lg); }
+.sys-banner--info .sys-banner-icon { color: var(--steel-lg); }
+.sys-banner--fixture .sys-banner-icon { color: var(--gold-lg); }
+
+/* Optional action button — token-driven, focus-ring per the shared
+   focus contract (--torii-hi 2px outline, 2px offset). */
+.sys-banner-action {
+  font-family: var(--sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--fg);
+  padding: 6px 12px;
+  margin-left: 12px;
+  border: 1px solid var(--b-2);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.04);
+  cursor: pointer;
+  transition: background 120ms var(--ease-out), border-color 120ms var(--ease-out);
+  flex: 0 0 auto;
+}
+.sys-banner-action:hover {
+  background: rgba(var(--white-rgb), 0.08);
+  border-color: var(--b-3);
+}
+.sys-banner-action:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+.sys-banner--with-action {
+  /* Re-align body when an action is present so the action sits in the
+     right column with the dismiss button. */
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sys-banner--position-page-top {
+    animation: none !important;
+  }
+}
+
+/* ========== Confirm-phrase modal ==========
+   Tokens-only chrome for the ConfirmPhraseModal primitive at
+   src/design/system/ConfirmPhraseModal.tsx. The modal aligns visually
+   with the dark-theme archetypes (Workbench / Command / Ritual) and
+   reuses the .btn + .btn-primary button variants from primitives.css.
+
+   E2.S2 (REMEDIATION-PLAN lines 333-347): the ConfirmPhraseModal now
+   renders as a native `<dialog>` element. The `.sys-modal-scrim`
+   class continues to drive the full-viewport flex-center layout —
+   the `<dialog>` element behaves like the old `<div role="dialog">`
+   from a paint perspective. Native focus-trap + Esc + focus-restore
+   come for free from the UA. The `.dojo-confirm-phrase-modal` class
+   resets `<dialog>` UA defaults (auto-margins, fixed width, 1px
+   border) and registers a `::backdrop` pseudo-element for the dim
+   scrim. We KEEP the rgba background on `.sys-modal-scrim` for
+   visual parity (VR baselines unchanged at ≤2.5% diff per project
+   memory) — `::backdrop` paints the same colour beneath the dialog
+   for browsers/contexts where the top-layer renders the pseudo
+   above the page (light-dismiss + non-modal stacking edge cases).
+*/
+
+/* Reset UA `<dialog>` defaults so the existing `.sys-modal-scrim`
+   layout can drive the viewport-fill flex container. */
+dialog.dojo-confirm-phrase-modal {
+  margin: 0;
+  border: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  inset: 0;
+  color: var(--fg);
+  overflow: visible;
+}
+
+/* Backdrop pseudo paints the dimmed scrim (token-driven per
+   GUARDRAILS G10 + E1.S2 lint rule). Mirrors the rgba on
+   `.sys-modal-scrim` so the visual is identical whether the UA
+   composites via top-layer or via z-index. */
+dialog.dojo-confirm-phrase-modal::backdrop {
+  background: rgba(var(--black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* E2.S3 (REMEDIATION-PLAN lines 349-359): TwoPersonApprovalModal native
+   <dialog> migration. Same UA-default reset + ::backdrop chrome as the
+   E2.S2 ConfirmPhraseModal block above — kept as a sibling rule (not a
+   shared selector) so a future variant divergence (e.g. richer chrome
+   for the dual-actor surface) can land without touching the
+   ConfirmPhraseModal block. Token-driven background per GUARDRAILS G10
+   + E1.S2 dojo/no-phantom-tokens lint rule. */
+dialog.dojo-twoperson-approval-modal {
+  margin: 0;
+  border: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  inset: 0;
+  color: var(--fg);
+  overflow: visible;
+}
+
+dialog.dojo-twoperson-approval-modal::backdrop {
+  background: rgba(var(--black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* E2.S4 (REMEDIATION-PLAN lines 361-370): MatchCreationWizard native
+   <dialog> migration. Same UA-default reset + ::backdrop chrome as the
+   E2.S2 / E2.S3 sibling rules above — kept as a separate selector so a
+   future divergence (e.g. the wizard panel needing different chrome
+   from the system-level confirm/approval modals) lands without
+   cross-contamination. The wizard's inner panel keeps its own
+   PANEL_STYLE (var(--bg-1) + var(--b-2) border) — this rule only
+   resets the UA defaults so the inner <div style={PANEL_STYLE}>
+   centers correctly inside the viewport-fill <dialog>. Token-driven
+   backdrop background per GUARDRAILS G10 + E1.S2 lint rule. */
+/* CRITICAL: gate on `[open]` so the UA `dialog:not([open]) { display: none }`
+   wins when the wizard is closed. See `.sys-modal-scrim[open]` comment for
+   the same fix on the system-level modals. Founder eye-test 2026-05-20. */
+dialog.dojo-match-creation-wizard[open] {
+  margin: 0;
+  border: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  inset: 0;
+  padding: 8vh 24px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent;
+  color: var(--fg);
+  overflow: visible;
+}
+
+dialog.dojo-match-creation-wizard::backdrop {
+  background: rgba(var(--black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* E2.S5 (REMEDIATION-PLAN lines 372-376): CommandPalette native
+   <dialog> migration. The palette is a top-anchored centred panel
+   (paddingTop 14vh, justifyContent center) — same shape as the
+   E2.S4 wizard but with a smaller fixed width carried by the inner
+   PANEL_STYLE. We reset the UA defaults so the dialog itself spans
+   the viewport (so the click-target for backdrop-close covers the
+   full canvas) and let the inner <div style={PANEL_STYLE}> flex-
+   center the palette card. Token-driven backdrop background per
+   GUARDRAILS G10 + E1.S2 dojo/no-phantom-tokens lint rule. */
+/* CRITICAL: gate on `[open]` so the UA `dialog:not([open]) { display: none }`
+   wins when the palette is closed. Same root-cause fix as the
+   `.sys-modal-scrim[open]` + `dialog.dojo-match-creation-wizard[open]`
+   rules above — see those comments. Founder eye-test 2026-05-20. */
+dialog.dojo-command-palette[open] {
+  margin: 0;
+  border: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  inset: 0;
+  padding: 14vh 16px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent;
+  color: var(--fg);
+  overflow: visible;
+}
+
+dialog.dojo-command-palette::backdrop {
+  background: rgba(var(--black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* E2.S5: ActivityLogDrawer native <dialog> migration.
+   Off-canvas right-slide drawer. The pre-migration <div> backdrop
+   filled the viewport with rgba(0,0,0,0.45) and the panel was a
+   right-anchored fixed div with `width: min(420px, 90vw)` clamped
+   to the viewport edge. Native <dialog> centres by default, so we
+   reset the UA defaults and re-anchor the dialog to the right edge
+   (`inset: 0 0 0 auto`) with `max-width: min(420px, 90vw)`. The
+   right-slide animation is preserved via `transform` on the [open]
+   attribute. The `::backdrop` pseudo paints the same dim scrim as
+   the legacy <div>, so the visual identity is unchanged. */
+dialog.dojo-activity-log-drawer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  inset: 0 0 0 auto;
+  max-width: min(420px, 90vw);
+  height: 100vh;
+  max-height: 100vh;
+  background: transparent;
+  color: var(--fg);
+  overflow: visible;
+  transform: translateX(100%);
+  transition: transform 220ms var(--ease-out);
+}
+
+dialog.dojo-activity-log-drawer[open] {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.dojo-activity-log-drawer {
+    transition: none;
+  }
+}
+
+dialog.dojo-activity-log-drawer::backdrop {
+  background: rgba(var(--black-rgb), 0.45);
+  transition: opacity 180ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.dojo-activity-log-drawer::backdrop {
+    transition: none;
+  }
+}
+
+/* E7.S1 — Rail collapse below 768px (off-canvas hamburger).
+   Plan ref: audit/REMEDIATION-PLAN.md L772-779. Retires F-5-002 (P1)
+   and the rail-steal portion of F-9-003 (P0 partial).
+
+   Off-canvas LEFT-edge drawer hosting the same <Rail> primitive as
+   the static aside. Mirrors the E2.S5 ActivityLogDrawer chrome
+   verbatim (same UA-default reset, same ::backdrop scrim, same
+   prefers-reduced-motion gate) but anchored to the LEFT edge so the
+   drawer slides in from the same side the operator's mental model
+   expects navigation to live. `max-width: min(280px, 88vw)` keeps the
+   drawer ≈ 281px clamped to 88vw at 320px (≈ 282px) so a thin sliver
+   of page content stays visible behind the backdrop, signalling that
+   tapping the backdrop dismisses.
+
+   The `@media (max-width: 768px)` gate on display means the dialog
+   is a no-op above 768px even if a stale `open=true` slips through —
+   defence-in-depth against the static rail + drawer rendering
+   simultaneously. */
+dialog.dojo-rail-drawer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  inset: 0 auto 0 0;
+  max-width: min(280px, 88vw);
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  background: transparent;
+  color: var(--fg);
+  overflow: visible;
+  transform: translateX(-100%);
+  transition: transform 220ms var(--ease-out);
+}
+
+dialog.dojo-rail-drawer[open] {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.dojo-rail-drawer {
+    transition: none;
+  }
+}
+
+dialog.dojo-rail-drawer::backdrop {
+  background: rgba(var(--black-rgb), 0.45);
+  transition: opacity 180ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.dojo-rail-drawer::backdrop {
+    transition: none;
+  }
+}
+
+/* The drawer panel rehosts the .rail primitive. We override the static
+   .rail's sticky/100vh positioning so the rail content fills the
+   drawer panel's box (the dialog itself owns the viewport-edge anchor
+   + the height). */
+.dojo-rail-drawer-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg) 100%);
+  border-right: 1px solid var(--b-1);
+  overflow: hidden;
+}
+
+.dojo-rail-drawer-panel .rail {
+  position: static;
+  height: 100%;
+  border-right: 0;
+  flex: 1;
+}
+
+/* Visually-hidden title + description for screen-reader context.
+   The visible Rail items follow immediately so keyboard initial-
+   focus lands on the first nav item per UA <dialog> default. */
+.dojo-rail-drawer-title,
+.dojo-rail-drawer-desc {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* CRITICAL: gate `display: flex` on `[open]` so the UA default
+   `dialog:not([open]) { display: none }` wins when the dialog is closed.
+   Without the `[open]` scope, author-level `display: flex` beats UA
+   `display: none` regardless of specificity (author > UA), so
+   `dialog.close()` leaves the scrim painted full-viewport — trapping
+   the operator behind an invisible-but-click-catching overlay. Founder
+   eye-test 2026-05-20 (Jutsu): every ConfirmPhraseModal consumer
+   (Jutsu / api-keys / settings / flags / plugins / users / etc.) was
+   blocked by this — PRs #834 + #835 closed the dialog at the JS/native
+   layer, but CSS kept the scrim visible. */
+.sys-modal-scrim[open] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--black-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 24px;
+}
+
+.sys-modal {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--b-2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-hero);
+  padding: 22px;
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sys-modal-title {
+  margin: 0;
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-size: var(--text-4xl);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.sys-modal-desc {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--fg-dim);
+}
+
+.sys-modal-phrase-label {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--fg-dim);
+}
+
+.sys-modal-phrase-label code {
+  display: inline-block;
+  margin: 0 4px;
+  padding: 2px 7px;
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  letter-spacing: 0.04em;
+  color: var(--torii-hi);
+  background: rgba(var(--torii-rgb), 0.12);
+  border: 1px solid var(--b-red);
+  border-radius: var(--r-sm);
+}
+
+.sys-modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  color: var(--fg);
+  background: rgba(var(--white-rgb), 0.03);
+  border: 1px solid var(--b-2);
+  border-radius: var(--r-md);
+  /* Forced-colors (Windows High Contrast) strips box-shadow but keeps
+     outline. Keep a transparent outline here so the UA still renders
+     a visible ring when :focus-visible replaces it below. */
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.sys-modal-input:focus-visible {
+  border-color: var(--torii);
+  outline-color: var(--torii-hi);
+}
+
+/* E0.S5 — diagnostic surfaced on phrase mismatch (WCAG 2.2 SC 3.3.3
+   Error Suggestion + Nielsen #5 Error Prevention via Postel's Law).
+   Lives between the input and the action row, color matched to torii
+   so it reads as warning without being aggressive. */
+.sys-modal-hint {
+  margin: 8px 0 0;
+  font-size: var(--text-md);
+  font-family: var(--sans);
+  color: var(--torii-hi);
+}
+
+.sys-modal-hint code {
+  display: inline-block;
+  margin: 0 2px;
+  padding: 1px 6px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  color: var(--torii-hi);
+  background: rgba(var(--torii-rgb), 0.12);
+  border: 1px solid var(--b-red);
+  border-radius: var(--r-sm);
+}
+
+.sys-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ========== Full-page hero ==========
+   Generic centered-hero layout. Hosts error boundaries (404/500/403),
+   the login entry, and any future full-bleed edge-state surface. Pages
+   compose `.sys-fullpage-code` only when rendering an error code in
+   torii red; plain surfaces (e.g. login) skip it. */
+.sys-fullpage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+}
+
+.sys-fullpage-inner {
+  max-width: 520px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+/* E7.S10-followup — F-5-016 P3 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L841. The Epic-0 .sys-fullpage-inner
+   pegs max-width at 520px for every viewport — fine at phone tier, fine at
+   desktop where the 520px column sits centered above an inviting amount
+   of negative space, but the iPad-Mini / iPad-Pro tablet tier (720–1024px
+   wide) hosts a stranded 520px column with ~600px of empty gutter. Grow
+   the column up to 720px at tablet widths so the /login + /404 + /500
+   surfaces breathe to fill the intermediate viewport.
+   The min-width media-query stack keeps the desktop 520px floor for
+   ≥1024px (the surface stays composed at large desktop) — only the
+   720–1023px tablet band gets the upsized column. F-5-016 P3 acceptance:
+   "scales with viewport up to 720px-wide tablet view". */
+@media (min-width: 720px) {
+  .sys-fullpage-inner {
+    max-width: 720px;
+  }
+}
+@media (min-width: 1024px) {
+  .sys-fullpage-inner {
+    max-width: 520px;
+  }
+}
+
+.sys-fullpage-code {
+  font-family: var(--mono);
+  font-size: var(--text-stencil);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  /* E1-followup — F-4-005 P1: was var(--torii) (4.06:1 vs --bg / 3.77:1
+     vs --bg-2, FAILS WCAG 1.4.3 small-text 4.5:1). The stencil renders
+     at --text-stencil (72px) which is technically "large text" (≥18.66px)
+     where 3:1 is the floor — but we use --torii-text here so the surface
+     is robust if downstream consumers reduce the size or reuse the class
+     at smaller weights. --torii-text #E0544A = 5.33:1 vs --bg. */
+  color: var(--torii-text);
+  text-shadow: 0 0 32px rgba(var(--torii-rgb), 0.35);
+}
+
+.sys-fullpage-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  font-weight: 600;
+}
+
+.sys-fullpage-title {
+  margin: 0;
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-size: var(--text-6xl);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.sys-fullpage-lede {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--fg-dim);
+  max-width: 48ch;
+}
+
+.sys-fullpage-ref {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  color: var(--fg-dim);
+  padding: 4px 10px;
+  background: rgba(var(--white-rgb), 0.02);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+}
+
+.sys-fullpage-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ========== Loading skeleton ========== */
+.sys-loading {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: var(--bg);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  gap: 12px;
+}
+
+.sys-loading-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--b-2);
+  border-top-color: var(--torii);
+  animation: sys-spin 900ms linear infinite;
+}
+
+/* Local keyframe so the spinner stays animated even if a future refactor
+   drops the tokens.css @keyframes spin declaration from a standalone
+   route that loads system.css in isolation (error.tsx / loading.tsx /
+   forbidden/page.tsx all import tokens.css ahead of system.css today,
+   but the explicit redeclaration removes the load-order dependency). */
+@keyframes sys-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sys-loading-spinner {
+    animation: none;
+    border-top-color: var(--torii-hi);
+  }
+}
+
+/* ========== E0.S11 Auth-loading takeover ==========
+   Replaces the `bg-background flex items-center justify-center` placeholder
+   that AuthGate (HomeClient.tsx) showed while AuthContext was still
+   resolving. F-1-028 (P1) named this surface as primary cited evidence —
+   the route was unstyled Tailwind utilities with no Yamabushi expression.
+
+   This class owns the brand identity for that loading state. It uses the
+   same token-driven palette as `.sys-loading` and `.dojo-brand-hero` so
+   the spinner ring renders in torii red over the platform background, and
+   the kanji 道 sits behind the spinner at low opacity as the visual brand
+   cue. The geometry stays the same (full-screen flex-center) so AuthGate
+   keeps its previous structural shape. The spinner respects
+   `prefers-reduced-motion` (G7 GUARDRAIL).
+
+   No hex literals — every value resolves through tokens.css. */
+.dojo-auth-loading {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--bg);
+  color: var(--fg-dim);
+  overflow: hidden;
+}
+
+/* The kanji 道 sits behind the spinner as a low-opacity brand watermark.
+   We render it via a ::before so the markup stays a pure spinner div and
+   the test in HomeClient.test.tsx can keep its assertion shape simple. */
+.dojo-auth-loading::before {
+  content: '道';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--serif, 'Noto Serif JP', serif);
+  font-weight: 900;
+  font-size: var(--text-mark);
+  line-height: 1;
+  color: var(--torii-hi);
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+}
+
+.dojo-auth-loading-spinner {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(var(--torii-rgb), 0.18);
+  border-top-color: var(--torii);
+  animation: sys-spin 900ms linear infinite;
+  box-shadow: 0 0 24px rgba(var(--torii-rgb), 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dojo-auth-loading-spinner {
+    animation: none;
+    border-top-color: var(--torii-hi);
+  }
+}
+
+/* ========== /login form layout (YR.0.7) ==========
+   Replaces the inline `style={{ width: 100%, ... }}` overrides retired in
+   the YR.0.7 sweep. `.sys-fullpage-inner` stretches its children only when
+   they opt in via `align-self: stretch`; these classes provide that opt-in
+   without per-call inline styles. */
+.login-form-stretch {
+  align-self: stretch;
+}
+
+.login-form {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.login-form-submit {
+  justify-content: center;
+}
+
+/* ========== YR.9.1 SessionExpiredCard ==========
+   Full-page takeover overlay that mounts above the shell chrome when
+   the auth session evaporates. Uses the same alpha-tinted scrim as
+   ConfirmPhraseModal so the operator's eye lands on the kanji 鍵
+   first. No new tokens — every value resolves through tokens.css. */
+.session-expired-card {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(var(--bg-rgb), 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.session-expired-card-body {
+  width: min(420px, 100%);
+  border-radius: var(--r-md);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.04);
+  padding: 32px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  box-shadow: 0 24px 60px rgba(var(--black-rgb), 0.6);
+}
+
+.session-expired-card-kanji {
+  font-family: var(--serif, 'Noto Serif JP', serif);
+  font-size: var(--text-stencil-xl);
+  line-height: 1;
+  color: var(--torii-lg);
+  opacity: 0.92;
+  margin-bottom: 6px;
+  user-select: none;
+}
+
+.session-expired-card-title {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.session-expired-card-sub {
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  max-width: 32ch;
+}
+
+.session-expired-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-expired-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(var(--bg-rgb), 0.92);
+  }
+}
+
+/* ========== YR.9.3 PermissionDeniedPanel ==========
+   Wraps EmptyState in error-state mode and overlays the kanji 封
+   (seal) glyph as a watermark. Composes inside any panel — the
+   wrapper sets a relative position so the kanji can sit absolute
+   without escaping. The kanji uses pointer-events:none so clicks
+   pass through to the underlying EmptyState CTA. */
+.permission-denied-panel {
+  position: relative;
+  isolation: isolate;
+}
+
+.permission-denied-kanji {
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  z-index: 0;
+  font-family: var(--serif, 'Noto Serif JP', serif);
+  font-size: var(--text-stencil-lg);
+  line-height: 1;
+  color: var(--torii-lg);
+  opacity: 0.18;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ========== YR.9.2 TopBar offline indicator ==========
+   The chip itself reuses `.chip.red` — no new colours. The `.offline`
+   modifier scopes the pulse so it only animates on this chip and not
+   on every red chip in the topbar. The animation is gated by the
+   prefers-reduced-motion media query at the bottom. */
+@keyframes topbar-offline-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.chip.red.offline .dot {
+  animation: topbar-offline-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip.red.offline .dot {
+    animation: none;
+  }
+}
+
+/* ========== Focus ring baseline ==========
+   Epic 7 S7.6 a11y sweep — every interactive control inside the design
+   system scope gets a visible, tokens-tinted focus outline. Buttons /
+   inputs / links that set their own focus-visible rule win (higher
+   specificity); this is the fallback that covers anything we missed. */
+.dojo-ds-v3 :focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Wave 3gg — F-4-031 P2 retire. The baseline `--torii-hi` outline above
+   fails 3:1 non-text contrast when the focused element ITSELF has a
+   torii-red background — the outline color is essentially the same hue
+   as the selected-state fill, so the focus ring disappears into the
+   chrome it should distinguish. Audit-flagged surfaces:
+     - `.btn-primary` (linear-gradient `--torii-lg` → `--torii-mid`)
+     - `[aria-current="page"]` tabs / list items that paint a torii fill
+     - any explicit `.is-active` / `[data-active="true"]` tab carrying a
+       torii background.
+   Override: use a contrasting NEUTRAL (`--fg`, very near white) for the
+   outline + an `outline-offset` band of the dark page chrome (`--bg`)
+   carried via a `box-shadow` halo so the white ring is visible against
+   both the torii fill (high-contrast white-on-red) AND any sliver of
+   chrome that bleeds through at the offset. WCAG 1.4.11 Non-text
+   Contrast (3:1 floor) + 2.4.7 Focus Visible. */
+.dojo-ds-v3 .btn-primary:focus-visible,
+.dojo-ds-v3 [aria-current="page"]:focus-visible,
+.dojo-ds-v3 [data-active="true"]:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--black-rgb), 0.6);
+}
+
+/* ========== E0.S11 Branded login frame ==========
+   Hero brand mark + LegalFooter chrome for `/login` and
+   `/members/sign-in`. Retires F-1-028 (login surface unstyled).
+   All values resolve through tokens.css — no hex literals.
+
+   Layout:
+     `.dojo-brand-hero`      block-level wrapper centered above the form
+     `.dojo-brand-hero-mark` 64×64 lacquer disc carrying kanji 道.LM
+     `.dojo-brand-hero-jp`   the kanji glyph (Noto Serif JP via --serif-jp)
+     `.dojo-brand-hero-en`   the romaji "DL" fallback (mono)
+     `.dojo-brand-hero-tag`  uppercase "Yamabushi platform" eyebrow
+*/
+.dojo-brand-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.dojo-brand-hero-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--b-1);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(var(--white-rgb), 0.12), transparent 45%),
+    linear-gradient(160deg, var(--torii-deep) 0%, var(--bg-1) 100%);
+  display: grid;
+  place-items: center;
+  color: var(--torii-hi);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(var(--white-rgb), 0.08),
+    inset 0 0 18px rgba(var(--torii-rgb), 0.22),
+    0 8px 22px rgba(var(--torii-rgb), 0.28);
+}
+
+.dojo-brand-hero-mark > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dojo-brand-hero-jp {
+  font-family: var(--serif, 'Noto Serif JP', serif);
+  font-weight: 900;
+  font-size: var(--text-display);
+  line-height: 1;
+  color: var(--torii-hi);
+  text-shadow: 0 1px 0 rgba(var(--black-rgb), 0.5);
+}
+
+.dojo-brand-hero-en {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.dojo-brand-hero-tag {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  font-weight: 600;
+}
+
+/* ========== E0.S11 → E6.S1 LegalFooter ==========
+   Public-route legal navigation primitive. Privacy / Terms /
+   Accessibility / Cookie links rendered as a horizontal flex row
+   below any public-facing route (consumer-bar criterion 16).
+   E6.S1 (2026-05-08) added Cookie as the 4th entry; the
+   `.legal-footer*` class chain is unchanged so consumer mounts
+   that already shipped under E0.S11 (`/login`,
+   `/members/sign-in`) require no per-route CSS edits. Mobile-
+   collapse rule below stacks the list vertically at the 320px
+   small-viewport breakpoint per consumer-bar §11. All values
+   are token-driven (`var(--fg-mute)` / `var(--b-1)` /
+   `var(--torii-hi)` / `var(--mono)` / `var(--r-sm)`); the
+   `dojo/no-hardcoded-colors-in-design` lint rule (E1.S2) catches
+   any future hex regressions. */
+.legal-footer {
+  margin-top: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--b-1);
+  width: 100%;
+}
+
+.legal-footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 18px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.legal-footer-item {
+  margin: 0;
+  padding: 0;
+}
+
+.legal-footer-link {
+  color: var(--fg-dim);
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: var(--r-sm);
+  transition: color 150ms ease;
+}
+
+.legal-footer-link:hover,
+.legal-footer-link:focus-visible {
+  color: var(--torii-hi);
+}
+
+/* Mobile-collapse: at 360px and below (consumer-bar §11 baseline is
+   320px, but the 4-link wrap produces uneven 2/2 chunks anywhere
+   below ~360px — pin the column-stack rule a touch above the §11
+   floor so the wrap-uneven artifact cannot appear). The flex row
+   above wraps via `flex-wrap: wrap`; this @media stack pins the
+   layout direction so the wrap stays predictable. */
+@media (max-width: 360px) {
+  .legal-footer-list {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+/* Visually-hidden utility — replaces Tailwind's `sr-only` for design-system
+   surfaces (E1.S5 + dojo/forbid-tailwind-in-design-tsx). Renders content
+   invisible to sighted users but accessible to screen readers (clip-path
+   trick keeps the text off-canvas without removing it from the
+   accessibility tree). Use for hidden labels, headings paired with
+   aria-labelledby, and any text consumed only by AT. */
+.dojo-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========== FreshnessChip (E5.S6) ==========
+   Inline last-fetched indicator with a 14×14 SVG countdown ring. The
+   ring fill rotates 90° counter-clockwise so the stroke fills from
+   12-o'clock — matches the conventional "loading" / progress arc
+   pattern. Token-driven colors only (--fg-mute / --torii-lg / --b-1).
+   The stroke-dashoffset transition is gated behind `no-preference` so
+   `prefers-reduced-motion: reduce` users see the value jump rather
+   than animate (G7 GUARDRAIL). */
+.dojo-freshness-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.dojo-freshness-chip[data-pending="true"] {
+  color: var(--fg-dim);
+}
+
+.dojo-freshness-chip-ring {
+  flex-shrink: 0;
+  /* Rotate -90° so the stroke fills from 12-o'clock. */
+  transform: rotate(-90deg);
+}
+
+.dojo-freshness-chip-ring-track {
+  fill: none;
+  stroke: var(--b-2);
+  stroke-width: 1.5;
+}
+
+.dojo-freshness-chip-ring-fill {
+  fill: none;
+  stroke: var(--torii-lg);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dojo-freshness-chip-ring-fill {
+    transition: stroke-dashoffset 800ms var(--ease-out);
+  }
+}
+
+.dojo-freshness-chip-label {
+  /* Inherit font-family / size from the chip root so the label and
+     ring sit on the same baseline. */
+  color: inherit;
+}
+
+/* ========== Wave 3jj · F-1-035 P3 — archetype indicator chip ==========
+   Retires the audit observation that the canvas-01 artboards make the
+   archetype taxonomy explicit (Command / Workbench / Arena / Codex /
+   Ritual) but production routes ship without a visible "you are here"
+   indicator. A small uppercase-mono badge sits next to the breadcrumb
+   in the TopBar; tone is keyed by archetype.
+
+   Tokens only. Color tokens chosen per archetype:
+     command   → torii red (combat / authority)
+     workbench → steel    (mechanical / configurable)
+     arena     → ember    (heat / competition)
+     codex     → gold     (knowledge / catalog)
+     ritual    → jade     (process / attestation)
+
+   The chip is purely decorative; the route name still owns the
+   breadcrumb. WCAG 2.4.6: chip carries `data-archetype` for assistive
+   tech but no role override (it sits inside the existing breadcrumb
+   list landmark).
+*/
+.dojo-archetype-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(var(--white-rgb), 0.02);
+  color: var(--fg-mute);
+}
+
+.dojo-archetype-chip .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.dojo-archetype-chip[data-archetype="command"] {
+  color: var(--torii-hi);
+  border-color: var(--b-red);
+  background: rgba(var(--torii-rgb), 0.06);
+}
+.dojo-archetype-chip[data-archetype="workbench"] {
+  color: var(--steel-lg);
+  border-color: rgba(var(--steel-rgb), 0.35);
+  background: rgba(var(--steel-rgb), 0.06);
+}
+.dojo-archetype-chip[data-archetype="arena"] {
+  color: var(--torii-hi);
+  border-color: rgba(var(--ember-rgb), 0.35);
+  background: rgba(var(--ember-rgb), 0.08);
+}
+.dojo-archetype-chip[data-archetype="codex"] {
+  color: var(--gold-lg);
+  border-color: rgba(var(--gold-rgb), 0.35);
+  background: rgba(var(--gold-rgb), 0.06);
+}
+.dojo-archetype-chip[data-archetype="ritual"] {
+  color: var(--jade-lg);
+  border-color: rgba(var(--jade-rgb), 0.35);
+  background: rgba(var(--jade-rgb), 0.06);
+}
+
+
+
+
+/* ==========================================================================
+   A.5 — Drawer / Sheet anchor primitive chrome
+   (UI Coherence Phase 1 W2)
+
+   Canonical off-canvas right-edge drawer used by `src/design/primitives/
+   Drawer.tsx`. Three variant widths (default 420 / form 600 / wide 820)
+   keyed by `.dojo-drawer--variant-*`, plus optional left-edge
+   `.dojo-drawer--pos-left`. Native `<dialog>` UA defaults (auto-margin,
+   fixed width, 1px border) reset so the dialog slides in from the
+   chosen edge instead of centring. `::backdrop` pseudo paints the dim
+   scrim that backs the panel.
+
+   Specificity discipline — every rule uses a SINGLE class selector
+   (0,0,1,0) rather than `dialog.dojo-drawer` (0,0,1,1) so the pre-A.5
+   legacy class anchors (`dialog.dojo-activity-log-drawer`,
+   `dialog.dojo-codex-drawer`, `dialog.dojo-rail-drawer` etc. declared
+   above this block) win on every property they author. The
+   ActivityLogDrawer + codex/Drawer shims keep their pre-A.5 visual
+   identity unchanged.
+
+   Mobile degradation: full-screen modal at ≤768px. The drawer fills
+   the viewport (width 100%, height 100%) instead of right-anchored
+   off-canvas. Bottom-sheet was considered (per A.5 spec brief "design
+   call") but full-screen lowers regression risk and matches the
+   existing SenseiDrawer mobile pattern (`w-full sm:w-[400px]`).
+
+   Reduced-motion: `prefers-reduced-motion: reduce` kills both the
+   panel transform-transition and the backdrop opacity-transition.
+
+   WCAG citations (A.5):
+     - SC 2.1.2 No Keyboard Trap (Level A) — native <dialog> + the
+       `useDrawerFocusTrap` jsdom parity layer keep Tab cycle inside.
+     - SC 2.4.3 Focus Order (Level A) — UA restores focus to the
+       invoking control on close (native <dialog>).
+     - SC 4.1.3 Status Messages (Level AA) — optional `aria-live` on
+       the body slot so async-loaded content announces.
+   ========================================================================== */
+
+.dojo-drawer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  overflow: visible;
+  inset: 0 0 0 auto;
+  height: 100vh;
+  max-height: 100vh;
+  width: var(--drawer-width-default);
+  max-width: 100vw;
+  transform: translateX(100%);
+  transition: transform var(--drawer-slide-duration-out) var(--drawer-slide-easing);
+  z-index: var(--z-drawer);
+}
+
+.dojo-drawer[open] {
+  transform: translateX(0);
+  transition: transform var(--drawer-slide-duration-in) var(--drawer-slide-easing);
+}
+
+.dojo-drawer::backdrop {
+  background: var(--backdrop-bg);
+  transition: opacity var(--backdrop-fade-duration) var(--drawer-slide-easing);
+}
+
+.dojo-drawer--variant-default { width: var(--drawer-width-default); }
+.dojo-drawer--variant-form    { width: var(--drawer-width-form); }
+.dojo-drawer--variant-wide    { width: var(--drawer-width-wide); }
+
+/* Position modifiers — `pos-right` re-affirms the right-edge geometry
+   set by `.dojo-drawer` itself (`inset: 0 0 0 auto`, `translateX(100%)`
+   → 0 slide). The class is emitted by the TypeScript `POSITION_CLASS`
+   map for every default-position drawer and existed as a dead class
+   in the first A.5 cut; this explicit ruleset gives it a symmetric
+   anchor with `.dojo-drawer--pos-left` so future overrides (shim-level
+   adjustments, light-mode panel-edge skin) have a hook point.
+   Redundant-but-explicit declarations on purpose. */
+.dojo-drawer--pos-right {
+  inset: 0 0 0 auto;
+  transform: translateX(100%);
+}
+.dojo-drawer--pos-right[open] { transform: translateX(0); }
+
+.dojo-drawer--pos-left {
+  inset: 0 auto 0 0;
+  transform: translateX(-100%);
+}
+.dojo-drawer--pos-left[open] { transform: translateX(0); }
+
+.dojo-drawer__panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-1);
+  border-left: 1px solid var(--b-2);
+  box-shadow: -8px 0 32px rgba(var(--black-rgb), 0.45);
+  outline: none;
+}
+
+.dojo-drawer--pos-left .dojo-drawer__panel {
+  border-left: 0;
+  border-right: 1px solid var(--b-2);
+  box-shadow: 8px 0 32px rgba(var(--black-rgb), 0.45);
+}
+
+.dojo-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--b-1);
+  flex: 0 0 auto;
+}
+
+.dojo-drawer__header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.dojo-drawer__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0;
+  line-height: 1.3;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dojo-drawer__sub {
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dojo-drawer__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.dojo-drawer__close {
+  background: transparent;
+  border: 1px solid var(--b-1);
+  color: var(--fg-mute);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: var(--text-xs);
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: color var(--backdrop-fade-duration) var(--drawer-slide-easing),
+              border-color var(--backdrop-fade-duration) var(--drawer-slide-easing);
+}
+
+.dojo-drawer__close:hover {
+  color: var(--fg);
+  border-color: var(--b-2);
+}
+
+.dojo-drawer__close:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+.dojo-drawer__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  min-height: 0;
+}
+
+.dojo-drawer__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--b-1);
+  flex: 0 0 auto;
+  background: var(--bg-1);
+}
+
+.dojo-drawer__footer-helper {
+  flex: 1 1 auto;
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  line-height: 1.4;
+}
+
+.dojo-drawer__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.dojo-drawer__footer-btn {
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+  border: 1px solid transparent;
+  transition: opacity var(--backdrop-fade-duration) var(--drawer-slide-easing);
+}
+
+.dojo-drawer__footer-btn--primary {
+  background: var(--torii);
+  color: var(--torii-text-on);
+  border-color: var(--torii);
+}
+
+.dojo-drawer__footer-btn--primary:hover {
+  background: var(--torii-mid, var(--torii));
+}
+
+.dojo-drawer__footer-btn--primary:disabled,
+.dojo-drawer__footer-btn--primary[aria-busy='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dojo-drawer__footer-btn--secondary {
+  background: transparent;
+  color: var(--fg-dim);
+  border-color: var(--b-1);
+}
+
+.dojo-drawer__footer-btn--secondary:hover {
+  color: var(--fg);
+  border-color: var(--b-2);
+}
+
+.dojo-drawer__footer-btn:focus-visible {
+  outline: 2px solid var(--torii-hi);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .dojo-drawer,
+  .dojo-drawer--variant-default,
+  .dojo-drawer--variant-form,
+  .dojo-drawer--variant-wide {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dojo-drawer,
+  .dojo-drawer[open],
+  .dojo-drawer--pos-left,
+  .dojo-drawer--pos-left[open] {
+    transition: none;
+  }
+  .dojo-drawer::backdrop {
+    transition: none;
+  }
+}

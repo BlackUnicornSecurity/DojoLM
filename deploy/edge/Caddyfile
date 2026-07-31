@@ -1,0 +1,35 @@
+# DojoLM production edge — reverse proxy for dojo.example.internal / dojolm.example.internal.
+#
+# Serves BOTH:
+#   - http://  on :80   — plain HTTP, unchanged for existing consumers.
+#   - https:// on :443  — TLS via Caddy's INTERNAL CA (`tls internal`).
+#
+# TLS model. The internal LAN has no public CA, so there is no public/wildcard
+# *.example.internal cert to mount. Certs are issued by Caddy's INTERNAL CA.
+# dojolm-edge REUSES the internal platform's internal CA (the `Caddy Local Authority
+# 2026 ECC Root`, valid to 2036 — the one LAN clients already trust) by
+# persisting its Caddy storage on the external `dojolm_edge_data` volume,
+# pre-seeded with that CA's root+intermediate under caddy/pki/authorities/local/.
+# `tls internal` then mints + auto-renews short-lived leaves for the two
+# hostnames that chain to that trusted root. Seeding the volume is a one-time
+# host step. NEVER commit the
+# CA key. (If the volume is NOT seeded, Caddy falls back to a fresh self-signed
+# CA: HTTPS still answers, but with an untrusted cert until you seed + restart.)
+#
+# `auto_https disable_redirects` keeps internal cert issuance ON for the https://
+# sites but does NOT auto-redirect :80 -> :443, so the explicit http:// block
+# below keeps answering plain HTTP.
+#
+# `dojolm-web` is the container_name of the v2 app (deploy/docker-compose.yml);
+# Docker embedded DNS on the shared edge network resolves it.
+# 42001 is the app's in-container PORT.
+{
+	auto_https disable_redirects
+}
+http://dojo.example.internal, http://dojolm.example.internal {
+	reverse_proxy dojolm-web:42001
+}
+https://dojo.example.internal, https://dojolm.example.internal {
+	tls internal
+	reverse_proxy dojolm-web:42001
+}

@@ -1,0 +1,23 @@
+{
+  "name": "eslint-plugin-dojo",
+  "version": "0.1.0",
+  "description": "Internal ESLint plugin enforcing DojoLM token discipline in src/design/**.tsx (Epic 1 — sister to stylelint-dojo)",
+  "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {},
+  "peerDependencies": {
+    "eslint": ">=9"
+  },
+  "devDependencies": {
+    "eslint": "^9.16.0",
+    "vitest": "^4.1.0"
+  },
+  "dependencies": {
+    "react": "^19.2.6"
+  }
+}

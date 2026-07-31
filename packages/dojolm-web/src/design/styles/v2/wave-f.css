@@ -1,0 +1,370 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-F adapters for evaluation configuration and result views. */
+
+[data-skin="v2"] .pill-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  overflow-x: auto;
+  border: 1px solid var(--b-0);
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+
+[data-skin="v2"] .pill-tab {
+  min-height: 44px;
+  padding: 7px 16px;
+  color: var(--fg-dim);
+  text-decoration: none;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+}
+
+[data-skin="v2"] .pill-tab.active,
+[data-skin="v2"] .pill-tab[aria-current="page"] {
+  color: var(--fg);
+  background: var(--bg-4);
+}
+
+[data-skin="v2"] .wb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+[data-skin="v2"] .wb-meta {
+  border-color: var(--b-0);
+  background: var(--bg-2);
+}
+
+/* ---------- P2b nr-evaluations — wave-f "Evaluations v2" landing ----------
+   Design source: wave-f/Evaluations v2.html (+ wave-a .empty/.link-steel,
+   wave-b .ctable/.sev-note, wave-d .g2-wide). Scoped to .eval-landing so
+   shared shell primitives stay untouched. Ink is --fg-dim (the mute literal
+   is banned); mono micro-labels sit on the --text-sm 11px floor (§3.1). */
+
+/* Tier-2 kicker — ROUTE_NAMING.eval has no kanji/romaji/belt, so the page
+   renders the design's literal "Scored races"; mirrors the module.css
+   .page-head .page-kick lockup. */
+[data-skin="v2"] .eval-landing > header .page-kick {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+/* Two-column body (design wave-d .g2-wide: 1.7fr/1fr, stacked ≤900px).
+   Shared by the Evaluations landing and the Eval-run launcher (P2d D3). */
+[data-skin="v2"] .eval-landing .g2-wide,
+[data-skin="v2"] .eval-run .g2-wide {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+[data-skin="v2"] .eval-landing .g2-col,
+[data-skin="v2"] .eval-run .g2-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Race-history table shell (design wave-b .ctable / .tbl-scroll). Header
+   type comes from the base.css sentence-case th rule. */
+[data-skin="v2"] .eval-landing .tbl-scroll {
+  overflow-x: auto;
+}
+[data-skin="v2"] .eval-landing .ctable {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+}
+/* P3 — zero scaffold: no columns worth scrolling to; keep the 競 empty
+   state fully visible at 390. */
+[data-skin="v2"] .eval-landing .ctable--empty {
+  min-width: 0;
+}
+[data-skin="v2"] .eval-landing .ctable thead th {
+  padding: 8px 12px;
+}
+[data-skin="v2"] .eval-landing .ctable thead th.num {
+  text-align: right;
+}
+[data-skin="v2"] .eval-landing .ctable td.emptycell {
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* §4.1 empty states — in-table (race history) + compact (bypass matrix,
+   P2c eval-run cost-estimate card).
+   The design .empty is border-free inside a panel; the dashed base.css box
+   is for standalone empties, so it unwinds here. */
+[data-skin="v2"] .eval-landing .empty,
+[data-skin="v2"] .eval-run .empty {
+  padding: 30px 20px 26px;
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+}
+[data-skin="v2"] .eval-landing .empty .kj {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 38px;
+  line-height: 1;
+  color: var(--fg-dim);
+  opacity: 0.7;
+}
+[data-skin="v2"] .eval-landing .empty h4,
+[data-skin="v2"] .eval-run .empty h4 {
+  margin: 12px 0 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+[data-skin="v2"] .eval-landing .empty p,
+[data-skin="v2"] .eval-run .empty p {
+  margin: 5px 0 14px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .eval-landing .empty .links {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+[data-skin="v2"] .eval-landing .empty.compact,
+[data-skin="v2"] .eval-run .empty.compact {
+  padding: 18px 16px;
+}
+[data-skin="v2"] .eval-landing .empty.compact h4,
+[data-skin="v2"] .eval-run .empty.compact h4 {
+  margin-top: 9px;
+  font-size: var(--text-lg);
+}
+[data-skin="v2"] .eval-landing .empty.compact p,
+[data-skin="v2"] .eval-run .empty.compact p {
+  margin: 4px 0 0;
+  font-size: var(--text-md);
+}
+
+/* Steel utility link (design app-shell .link-steel). */
+[data-skin="v2"] .eval-landing .link-steel {
+  color: var(--steel-lg);
+  font-size: var(--text-base);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="v2"] .eval-landing .link-steel:hover {
+  color: var(--fg);
+}
+
+/* Severity-panel note (design wave-b .sev-note). */
+[data-skin="v2"] .eval-landing .sev-note {
+  margin: 9px 0 0;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+}
+
+/* Export utilities re-homed into the race-history panel header (wiring
+   carve-out — the design surfaces no exports; the live links survive as
+   quiet header meta so the red budget stays on the one primary). */
+[data-skin="v2"] .eval-landing .eval-export-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  [data-skin="v2"] .eval-landing .g2-wide,
+  [data-skin="v2"] .eval-run .g2-wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* P2c — quiet inline disclosure (design wave-f.css .f-more): used by the
+   Evidence "Redaction" and Live-practice "Key storage" details blocks. */
+[data-skin="v2"] details.f-more {
+  margin-top: 6px;
+  font-size: var(--text-base);
+  color: var(--fg-ghost);
+}
+[data-skin="v2"] details.f-more summary {
+  cursor: pointer;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] details.f-more p {
+  margin: 6px 0 0;
+  max-width: 62ch;
+}
+
+/* ---------- P2d nr-eval-run — wave-f "Eval Run v2" launcher body ----------
+   Design source: wave-f/Eval Run v2.html. Scoped to .eval-run so the shared
+   form primitives stay untouched. */
+
+/* D4 — tier-2 "Scored races" kicker rendered above the plain Inter H1 (the
+   route carries no kanji/romaji, so the literal renders inline in <header>). */
+[data-skin="v2"] .eval-run > header > .page-kick {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+/* D6 — required marker is a red ghost word (design .req), never a gold
+   asterisk. RequiredAsterisk variant="word" renders the [data-required-
+   variant="word"] hook; the sr-only twin keeps the accessible "required". */
+[data-skin="v2"] .eval-run label [data-required-variant="word"] {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--torii-hi);
+  opacity: 0.85;
+}
+
+/* D2/D5 — between-round mutation is a NEUTRAL fieldset with the §5.6 toggle
+   switch. No red anywhere (the view's one red is the Stage primary). */
+[data-skin="v2"] .eval-run .fset {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--b-0);
+  border-radius: 9px;
+  background: var(--bg-2);
+}
+[data-skin="v2"] .eval-run .fset-t {
+  display: block;
+  margin-bottom: 8px;
+  padding: 0;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+[data-skin="v2"] .eval-run .opt-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+[data-skin="v2"] .eval-run .opt-row .bd {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+[data-skin="v2"] .eval-run .opt-row .bd .t {
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+[data-skin="v2"] .eval-run .opt-row .bd .s {
+  color: var(--fg-dim);
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+/* Pill toggle switch (design .tgl). The knob colour is the on/off state; the
+   track stays neutral steel-on so the one-red invariant holds. The 44px tap
+   floor comes from the global button rule; the visible track is centred. */
+[data-skin="v2"] .eval-run .tgl {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+[data-skin="v2"] .eval-run .tgl::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--b-1);
+  background: var(--bg-4);
+}
+[data-skin="v2"] .eval-run .tgl i {
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--fg-dim);
+}
+[data-skin="v2"] .eval-run .tgl[aria-checked="true"]::before {
+  border-color: var(--steel);
+  background: var(--steel);
+}
+[data-skin="v2"] .eval-run .tgl[aria-checked="true"] i {
+  left: 23px;
+  background: var(--bg);
+}
+
+/* P5 prod-parity — registered-model append chips (design wave-f.css
+   .chip-btn). Compact steel-outlined pill sized to content; an
+   already-appended chip is aria-pressed → active steel fill, NOT the
+   greyed/oversized generic .chip the launcher shipped with. Mirrors the
+   shipped wave-g2 .ag-runner .chip-btn anatomy so the two launcher chip
+   rows read identically. */
+[data-skin="v2"] .eval-run .chip-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 11px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  background: var(--bg-2);
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+[data-skin="v2"] .eval-run .chip-btn:hover:not(:disabled) {
+  border-color: var(--steel);
+  color: var(--fg);
+}
+[data-skin="v2"] .eval-run .chip-btn[aria-pressed="true"] {
+  border-color: var(--steel);
+  background: var(--bg-3);
+  color: var(--fg);
+}
+[data-skin="v2"] .eval-run .chip-btn:disabled {
+  cursor: default;
+}
+
+/* P5 prod-parity — bushido-run launcher kicker. The design law pairs the
+   module glyph with its caps romaji (e.g. "武士道 BUSHIDO"); the launcher
+   header renders the kicker outside PageHead's .page-head (same pattern as
+   the eval-run launcher), so the global .page-head .page-kick rule can't
+   reach it — restate it here. */
+[data-skin="v2"] .bushido-run-head > .page-kick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .bushido-run-head > .page-kick .kj {
+  font-family: var(--serif), "Noto Serif JP", serif;
+  font-size: 19px;
+  letter-spacing: 0;
+  color: var(--fg-dim);
+}

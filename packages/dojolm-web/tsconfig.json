@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@dojolm/mcp-control": ["../dojolm-control-mcp/src/index.ts"],
+      "bu-tpi/aivss": ["../bu-tpi/src/aivss/index.ts"],
+      "bu-tpi/compliance": ["../bu-tpi/src/compliance/index.ts"],
+      "bu-tpi/validation/types": ["../bu-tpi/src/validation/types.ts"],
+      "bu-tpi/llm": ["../bu-tpi/src/llm/index.ts"],
+      "bu-tpi/llm/types": ["../bu-tpi/src/llm/types.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": [
+    "node_modules",
+    "vitest.config.ts",
+    "vitest.stryker.config.ts"
+  ]
+}

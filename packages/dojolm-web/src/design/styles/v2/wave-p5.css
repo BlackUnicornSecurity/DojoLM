@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* v2 reskin — P5 prod-parity per-surface conformity (2026-07-18). Scoped
+   [data-skin="v2"]; overflow room for surfaces whose wave sheet is near
+   the 400-line cap. One owner per fix wave. */
+
+/* P5 users/api-keys/flags — two-person-rule paper ceremony title. base.css
+   gives .paper-panel headings the serif family + paper-ink colour but no
+   SIZE, so the ceremony title inherited a small default and read as an
+   old-skin sub-heading (~15px) instead of the design's Fraunces display.
+   Restore the design's `.paper-panel h3` metrics (wave-b/module.css:89 —
+   24px / 600 / -0.01em). PendingApprovalsPanel renders the title as an <h2>
+   for the route heading-level contract, so both tags are sized. Loads after
+   base.css → wins on equal specificity. */
+[data-skin="v2"] .paper-panel h2,
+[data-skin="v2"] .paper-panel h3 {
+  margin: 8px 0 0;
+  font-size: var(--text-6xl); /* 24px */
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}

@@ -1,0 +1,406 @@
+/* Canvas 2 — Workbench archetype
+   3-pane IDE shell: config (left) · canvas (center) · inspector (right)
+   plus optional sticky step strip at the bottom.
+
+   Tokens only. No raw hex. Animations respect the global
+   prefers-reduced-motion gate declared in tokens.css — this file
+   adds no new transitions or animations. */
+
+.workbench {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 260px)
+    minmax(0, 1fr)
+    minmax(280px, 340px);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 16px;
+  padding: 16px 24px 24px;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.workbench-config    { grid-column: 1; grid-row: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.workbench-canvas    { grid-column: 2; grid-row: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.workbench-inspector { grid-column: 3; grid-row: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+.workbench-steps {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Collapse to stacked layout on narrow viewports.
+   Config → Canvas → Inspector order preserved so config decisions land before
+   inspector reads when reading top-to-bottom. */
+@media (max-width: 1100px) {
+  .workbench {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+  }
+  .workbench-config    { grid-column: 1; grid-row: 1; }
+  .workbench-canvas    { grid-column: 1; grid-row: 2; }
+  .workbench-inspector { grid-column: 1; grid-row: 3; }
+  .workbench-steps     { grid-column: 1; grid-row: 4; position: static; }
+}
+
+/* ===== Step strip ===== */
+.wb-steps {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 14px;
+  margin: 0;
+  list-style: none;
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-card);
+  overflow-x: auto;
+}
+
+.wb-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.02);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.wb-step-marker {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fg-mute);
+  flex-shrink: 0;
+}
+.wb-step-label {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  font-weight: 600;
+}
+
+.wb-step.state-pending .wb-step-marker { background: var(--fg-ghost); }
+.wb-step.state-running                  { border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.06); }
+.wb-step.state-running .wb-step-marker  { background: var(--torii); box-shadow: 0 0 6px var(--torii); }
+.wb-step.state-running .wb-step-label   { color: var(--torii-hi); }
+.wb-step.state-ok                       { border-color: rgba(var(--jade-rgb), 0.3); background: rgba(var(--jade-rgb), 0.06); }
+.wb-step.state-ok .wb-step-marker       { background: var(--jade); }
+.wb-step.state-ok .wb-step-label        { color: var(--jade-lg); }
+.wb-step.state-fail                     { border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.1); }
+.wb-step.state-fail .wb-step-marker     { background: var(--torii); }
+.wb-step.state-fail .wb-step-label      { color: var(--torii-hi); }
+.wb-step.state-skipped                  { opacity: 0.55; }
+.wb-step.state-skipped .wb-step-marker  { background: var(--fg-ghost); }
+
+/* E7.S10-followup — F-5-021 P3 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L844. The .wb-steps strip uses
+   overflow-x:auto to host the run/audit/snapshot step sequence; on
+   iOS Safari + macOS Safari the default scrollbar is zero-height, so
+   off-screen steps are invisible (no chrome cue that more steps exist
+   beyond the right edge). Declare cross-browser visible scrollbar
+   styling at the mobile tier:
+     - Firefox / Chromium: `scrollbar-width: thin` + `scrollbar-color`.
+     - WebKit (Safari, mobile Safari): `::-webkit-scrollbar` height +
+       thumb chrome.
+   The torii-tinted thumb keeps the workbench palette consistent — the
+   strip already lives on a torii-accented sticky-bottom shelf.
+   F-5-021 P3 acceptance: "::-webkit-scrollbar + scrollbar-width: thin
+   cross-browser visible scrollbar on mobile". */
+.wb-steps::-webkit-scrollbar {
+  height: 6px;
+}
+.wb-steps::-webkit-scrollbar-track {
+  background: rgba(var(--black-rgb), 0.25);
+  border-radius: 3px;
+}
+.wb-steps::-webkit-scrollbar-thumb {
+  background: rgba(var(--torii-rgb), 0.4);
+  border-radius: 3px;
+}
+.wb-steps::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--torii-rgb), 0.6);
+}
+@media (max-width: 768px) {
+  .wb-steps {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--torii-rgb), 0.4) rgba(var(--black-rgb), 0.25);
+  }
+}
+
+/* ===== Form helpers reused across Config panes ===== */
+.wb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.wb-field > label,
+.wb-field > .wb-label {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* E7.S3 — was --fg-mute (3.12:1, FAIL 4.5:1 small-text). Swap to
+     --fg-dim (7.35:1) to satisfy WCAG 1.4.3 (F-4-001 P0). */
+  color: var(--fg-dim);
+  font-weight: 600;
+}
+.wb-input,
+.wb-select,
+.wb-textarea {
+  width: 100%;
+  background: rgba(var(--black-rgb), 0.25);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-variant-numeric: tabular-nums;
+}
+.wb-textarea {
+  font-family: var(--mono);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* TICKET-DROPDOWN-UNIFY — visually unify the native `.wb-select`
+   with the ModelPicker combobox chrome. Pre-fix the native browser
+   chevron (OS-themed light arrow) clashed with the dark surface +
+   the custom ModelPicker dropdown immediately adjacent — founder
+   eye-test 2026-05-22 flagged the mismatch even after the #856 dark-
+   theme fix. Post-fix:
+     - `appearance: none` hides the OS arrow.
+     - inline SVG chevron painted as `background-image` (no extra DOM,
+       no client-side JS) — same metallic tint as ModelPicker.
+     - right padding bumped to 30px so the value doesn't run under
+       the chevron.
+   The same selector still wraps every consumer so the visual
+   unification lands across all 12+ wb-select sites without touching
+   the call sites. Reduced-motion is N/A (no animations added). */
+.wb-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23a5a5a5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='1.5,1.5 6,6.5 10.5,1.5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px 8px;
+  padding-right: 30px;
+}
+.wb-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wb-input:focus-visible,
+.wb-select:focus-visible,
+.wb-textarea:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: 1px;
+  border-color: var(--b-red-2);
+}
+.wb-hint {
+  font-size: var(--text-sm);
+  /* E7.S3 — small body text (--text-sm under 18pt large-text floor). Swap
+     to --fg-dim (7.35:1) for WCAG 1.4.3 small-text compliance. */
+  color: var(--fg-dim);
+  line-height: 1.45;
+}
+
+/* E9.S7 — error-text counterpart to .wb-hint. Helper text (.wb-hint)
+   stays neutral grey; field-level error text (.wb-error) renders in
+   torii red and carries a leading "!" glyph in its ::before so the
+   visual distinction is BOTH semantic colour and a leading icon —
+   meeting the F-6-010 acceptance "helper-vs-error text visually
+   distinct (icon + color)" without relying on colour alone (WCAG
+   1.4.1 Use of Color). The two rules deliberately share font-size
+   and line-height so the inline-flow rhythm is preserved; only the
+   colour and the icon differ. */
+.wb-error {
+  font-size: var(--text-sm);
+  color: var(--torii-hi);
+  line-height: 1.45;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.wb-error::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--torii-hi);
+  color: var(--torii-hi);
+  font-family: var(--mono);
+  /* --text-xs (0.625rem / 10px) — token-driven so user zoom + rem scaling
+     work; px literal would fail the dojo/no-px-font-size lint rule. */
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ===== Inspector metadata rows =====
+   Wave 3gg — F-4-024 P3 retire. The `.wb-meta` `<dl>` ships without an
+   associated heading inside Workbench Inspector panels — screen-reader
+   users navigating description lists ("dl") jump into the dt/dd pairs
+   without any anchoring label. The structural-CSS rule below is
+   unchanged; the a11y fix is at the call-site: every `<dl className=
+   "wb-meta">` MUST carry either an `aria-label` describing the metadata
+   group OR `aria-labelledby` pointing at a visually-hidden `<h2>` /
+   `<h3>` inside the same Panel. The atemi summary dl in
+   `/admin/atemi/page.tsx` is the canonical example (aria-labelledby
+   threaded to the inspector heading). See F-4-024 in audit/REMEDIATION-
+   PLAN.md for the full call-site sweep. */
+.wb-meta {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr;
+  gap: 6px 14px;
+  font-size: var(--text-md);
+}
+.wb-meta dt {
+  /* E7.S3 — 10.5px mono uppercase label (small text). --fg-dim 7.35:1. */
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.wb-meta dd {
+  margin: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ===== Banners + callouts ===== */
+.wb-banner {
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  border: 1px solid var(--b-1);
+}
+.wb-banner.warn   { border-color: var(--b-red);   background: rgba(var(--torii-rgb), 0.08); color: var(--fg); }
+.wb-banner.info   { border-color: var(--b-2);     background: rgba(var(--white-rgb), 0.02);  color: var(--fg-dim); }
+.wb-banner.danger { border-color: var(--b-red-2); background: rgba(var(--torii-rgb), 0.14); color: var(--torii-hi); }
+.wb-banner b      { color: var(--fg); font-weight: 600; }
+
+/* ===== Data table inside Canvas ===== */
+.wb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-md);
+}
+.wb-table thead th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--b-1);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* E7.S3 — 10px mono uppercase th (small text). --fg-dim 7.35:1. */
+  color: var(--fg-dim);
+  font-weight: 600;
+  background: rgba(var(--white-rgb), 0.02);
+}
+.wb-table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid var(--b-0);
+  color: var(--fg);
+  vertical-align: top;
+}
+.wb-table tbody tr:last-child td { border-bottom: 0; }
+.wb-table tbody tr:hover { background: rgba(var(--white-rgb), 0.015); }
+
+/* State badges shared across Workbench views. */
+.wb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.03);
+  color: var(--fg-dim);
+}
+.wb-badge.ok      { border-color: rgba(var(--jade-rgb), 0.3);  background: rgba(var(--jade-rgb), 0.08);  color: var(--jade-lg); }
+.wb-badge.warn    { border-color: rgba(var(--gold-rgb), 0.35); background: rgba(var(--gold-rgb), 0.08);  color: var(--gold-lg); }
+.wb-badge.alert   { border-color: var(--b-red-2);              background: rgba(var(--torii-rgb), 0.1); color: var(--torii-hi); }
+/* E7.S3 — 10px mono uppercase badge (small text). --fg-dim 7.35:1. */
+.wb-badge.muted   { color: var(--fg-dim); }
+
+/* ===== Transcript rows — shared across chain-runner + race transcripts. */
+.wb-transcript-row {
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.02);
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+/* ===== Buttons reused from primitives.css — add a workbench-scoped
+   "button row" helper so Config panels can stack submit/dry-run pairs. */
+.wb-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.wb-actions .grow { flex: 1; }
+
+/* ===== Wave 3jj · F-1-024 P2 — hero kanji watermark parity.
+   The Command archetype shipped `.cmd-hero-watermark` (command.css:177)
+   as the lacquer-disc 240px kanji glyph in the bottom-left of the hero
+   row. Workbench / Arena / Codex archetypes were missing this brand
+   expression — the page heroes had no kanji presence at scale, so the
+   archetype hierarchy felt visually flat across the canvases.
+   This pattern mirrors the Command rule (font-size, color, line-height,
+   user-select, kanji-toggle gate) but anchors to a Workbench-scoped
+   selector + the workbench-specific kanji glyph 構 (kamae, the same
+   default as CommandHero.tsx). Per-archetype glyph override remains
+   possible by passing `data-watermark="<glyph>"` on the host element.
+   Same kanji-off gate as Command so the existing Kamae control toggles
+   all archetypes uniformly. */
+.wb-hero {
+  position: relative;
+  overflow: hidden;
+}
+.wb-hero-watermark {
+  position: absolute; left: 18px; bottom: -72px;
+  font-family: var(--serif); font-weight: 900; font-size: var(--text-watermark);
+  color: rgba(var(--steel-rgb), 0.08);
+  line-height: 0.8; letter-spacing: -0.05em;
+  pointer-events: none; user-select: none;
+  text-shadow: 0 4px 40px rgba(var(--steel-rgb), 0.18);
+  z-index: 0;
+}
+[data-kamae-scope][data-kanji="off"] .wb-hero-watermark { display: none; }
+@media (max-width: 768px) {
+  .wb-hero-watermark { font-size: var(--text-watermark-md); bottom: -36px; }
+}
+@media (max-width: 480px) {
+  .wb-hero-watermark { font-size: var(--text-watermark-sm); bottom: -18px; }
+}

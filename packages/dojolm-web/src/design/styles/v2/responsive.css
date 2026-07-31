@@ -1,0 +1,150 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Hallmark-responsive density and containment for signed v2 surfaces. */
+
+[data-skin="v2"] .kill-switch-label-short {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  [data-skin="v2"] .workbench {
+    padding-inline: 0;
+  }
+
+  /* Keep the crumb's kanji section-marker visible (design app-shell.css shows
+     it at every width); the bold page title is already hidden at ≤768. The
+     cell shrinks but never drops its glyph. */
+  [data-skin="v2"] .breadcrumb {
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Design phone topbar anatomy (app-shell.css): the model pill drops its
+     "Model" label and the environment / metadata chips hide, leaving
+     ☰ · crumb · search · model-a ▾ · avatar — the avatar stays on-screen
+     without a horizontal utility scroller. */
+  [data-skin="v2"] .topbar .model-switcher-trigger::before {
+    display: none;
+  }
+  [data-skin="v2"] .topbar-right .chip {
+    display: none;
+  }
+
+  [data-skin="v2"] .sst-tablist {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  [data-skin="v2"] .v2-data-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  [data-skin="v2"] .wb-field,
+  [data-skin="v2"] .wb-input,
+  [data-skin="v2"] .wb-select,
+  [data-skin="v2"] .wb-textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  [data-skin="v2"] .pill-tabs {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
+    row-gap: 6px;
+    overflow-x: visible;
+  }
+
+  [data-skin="v2"] .pill-tab {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  [data-skin="v2"][data-shell-variant="member"] .members-scent-body {
+    display: none;
+  }
+
+  [data-skin="v2"] .kagami-preset-card .wb-hint {
+    display: none;
+  }
+
+  [data-skin="v2"] .kagami-preset-cards {
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  }
+
+  [data-skin="v2"] .kotoba-examples-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  [data-skin="v2"] .kill-switch-label-long {
+    display: none;
+  }
+
+  [data-skin="v2"] .kill-switch-label-short {
+    display: inline;
+  }
+
+  [data-skin="v2"] .arena-leaderboard-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+[data-skin="v2"] .v2-data-scroll:focus-visible {
+  outline: 2px solid var(--steel-lg);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  [data-skin="v2"] .atemi-sessions-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  [data-skin="v2"] .atemi-recon-form {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  [data-skin="v2"] .atemi-recon-form > *,
+  [data-skin="v2"] .session-rec > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  [data-skin="v2"] .atemi-recon-actions {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  [data-skin="v2"] .session-rec {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-skin="v2"] .session-rec-head {
+    flex-wrap: wrap;
+  }
+
+  [data-skin="v2"] .session-rec-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-skin="v2"] .session-rec-id,
+  [data-skin="v2"] .session-rec-id code {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+}

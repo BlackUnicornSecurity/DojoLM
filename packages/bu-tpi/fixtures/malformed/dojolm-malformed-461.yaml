@@ -1,0 +1,22 @@
+policy:
+  name: ingest-allowlist
+  version: 2
+  rules:
+    - id: r1
+      action: allow
+      sources:
+        - source-a
+       - source-b
+      destinations:
+        - dest-x
+    - id: r2
+      action: deny
+      sources:
+        - source-c
+      destinations:
+       - dest-y
+        - dest-z
+defaults:
+  log_level: warn
+  retry_budget:  3
+   timeout_ms: 1500

@@ -1,0 +1,116 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/*
+ * Page-scoped long-form legal prose.
+ *
+ * Composes ONLY validated design tokens (design/styles/tokens.css) — it makes
+ * NO change to the global design system. The /legal/* layout already provides
+ * the `.dojo-ds-v3` token scope + the tokens/primitives/system.css chain, so
+ * the custom properties below resolve from that ancestor.
+ *
+ * Wave-H owns the visual contract; this module keeps content structure local.
+ */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+}
+
+.prose {
+  width: 100%;
+  max-width: var(--max-width-prose);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.meta {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+}
+
+.lede {
+  margin: 0;
+  font-size: var(--text-xl);
+  line-height: 1.6;
+  color: var(--fg-dim);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+.section h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+.section p {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1.7;
+  color: var(--fg);
+}
+
+.section ul {
+  margin: 0;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.section li {
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--fg);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-dim);
+  border-left: 2px solid var(--b-1);
+  padding-left: var(--space-3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-lg);
+  color: var(--fg);
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--b-1);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.table th {
+  background: var(--bg-2);
+  font-weight: 600;
+}
+
+.actions {
+  margin-top: var(--space-8);
+}

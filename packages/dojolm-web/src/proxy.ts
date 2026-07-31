@@ -1,0 +1,428 @@
+// SPDX-License-Identifier: Apache-2.0
+/**
+ * File: proxy.ts
+ * Purpose: Next.js proxy for API auth + rate limiting (Story 13.1 / Story 8.3)
+ *
+ * Provides Node.js-runtime auth checking for all /api/* routes.
+ * Public routes (health) are whitelisted.
+ * Admin routes require elevated auth (future: role-based).
+ * Auth failures are recorded via the security audit logger (Story 13.6).
+ *
+ * Story 8.3 Security Hardening:
+ * - Multi-header Sec-Fetch validation (R2-C1)
+ * - Sliding window rate limiter (R2-S3)
+ * - Environment-dependent CORS origins
+ *
+ * Index:
+ * - Runtime config (line ~25)
+ * - Public route whitelist (line ~28)
+ * - Client IP extraction (line ~35)
+ * - Auth check (line ~50)
+ * - Rate limiter (line ~75)
+ * - Proxy function (line ~140)
+ * - Config matcher (end of file)
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
+import { auditLog } from '@/lib/audit-logger';
+import { isPublicApiRoute, isPublicBrowserActionRoute, isPublicReadApiRoute } from '@/lib/api-route-access';
+import {
+  isAllowedCorsOrigin,
+  isTrustedBrowserOriginRequest,
+  isTrustedBrowserSessionRequest,
+} from '@/lib/request-origin';
+import { applyCspToResponse, buildCspResponse, shouldApplyCsp } from '@/middleware/csp';
+import { rbacMiddleware } from '@/middleware/rbac';
+import { isDemoMode } from '@/lib/demo';
+import { getApiKeyEnv } from '@/lib/api-key-env';
+
+// Routes that require elevated (admin) permissions — future RBAC
+const ADMIN_ROUTES_PREFIX = '/api/admin';
+
+// F-QA-025: mutation routes that take NO request body and are therefore exempt
+// from the Content-Type guard below. EVERY entry MUST enforce CSRF on its own
+// (the double-submit cookie) — see /api/auth/logout's handler. The media-type
+// guard is the simple-request CSRF defense for public routes, so removing a
+// route from it without an independent CSRF check would open a CSRF hole.
+const CSRF_SELF_ENFORCING_BODYLESS_ROUTES = new Set<string>(['/api/auth/logout']);
+
+/**
+ * Extract client IP from request headers.
+ * Checks common proxy headers, falls back to 'unknown'.
+ */
+function getClientIp(request: NextRequest): string {
+  // PT-RATELIM-M01 fix: Only trust X-Forwarded-For behind known reverse proxies.
+  // In production with TRUSTED_PROXY set, use the header; otherwise ignore it
+  // to prevent rate limit bypass via header spoofing.
+  if (process.env.TRUSTED_PROXY) {
+    const forwarded = request.headers.get('x-forwarded-for');
+    if (forwarded) {
+      const first = forwarded.split(',')[0]?.trim();
+      if (first) return first;
+    }
+  }
+  // PT-RATELIM-M01 fix: X-Real-IP is equally attacker-controlled without a trusted proxy
+  if (process.env.TRUSTED_PROXY) {
+    return request.headers.get('x-real-ip') ?? 'unknown';
+  }
+
+  const apiKey = request.headers.get('x-api-key');
+  if (apiKey) {
+    return `key:${crypto.createHash('sha256').update(apiKey).digest('hex').slice(0, 16)}`;
+  }
+
+  const fingerprintParts = [
+    request.headers.get('sec-fetch-site') ?? '',
+    request.headers.get('origin') ?? '',
+    request.headers.get('referer') ?? '',
+    request.headers.get('user-agent') ?? '',
+    request.headers.get('accept-language') ?? '',
+  ];
+
+  if (fingerprintParts.some(Boolean)) {
+    return `fp:${crypto.createHash('sha256').update(fingerprintParts.join('|')).digest('hex').slice(0, 16)}`;
+  }
+
+  return 'unknown';
+}
+
+// ===========================================================================
+// In-Memory Sliding Window Rate Limiter (R2-S3)
+// ===========================================================================
+
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_GENERAL = 100; // 100 req/min per IP (external/programmatic)
+const RATE_LIMIT_SAME_ORIGIN = 300; // 300 req/min per IP (same-origin UI — R3-001)
+const RATE_LIMIT_AUTH_FAILURE = 10; // 10 auth failures/min per IP
+const RATE_LIMIT_MAP_CAP = 10_000; // LRU eviction cap (R2-S3)
+
+interface RateLimitEntry {
+  timestamps: number[];
+  authFailures: number[];
+  lastAccess: number;
+}
+
+const rateLimitMap = new Map<string, RateLimitEntry>();
+
+// Cleanup stale entries every 60s
+let lastCleanup = Date.now();
+function cleanupRateLimiter() {
+  const now = Date.now();
+  if (now - lastCleanup < RATE_LIMIT_WINDOW_MS) return;
+  lastCleanup = now;
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  for (const [key, entry] of rateLimitMap) {
+    if (entry.lastAccess < cutoff) {
+      rateLimitMap.delete(key);
+    }
+  }
+  // LRU eviction if map exceeds cap
+  if (rateLimitMap.size > RATE_LIMIT_MAP_CAP) {
+    const entries = Array.from(rateLimitMap.entries())
+      .sort((a, b) => a[1].lastAccess - b[1].lastAccess);
+    const toRemove = entries.slice(0, rateLimitMap.size - RATE_LIMIT_MAP_CAP);
+    for (const [key] of toRemove) {
+      rateLimitMap.delete(key);
+    }
+  }
+}
+
+/** FINDING-009 fix: auth failure blocking only applies to auth routes.
+ * Non-auth routes use the general rate limit even if auth failures are high.
+ * This prevents login brute-force from cascading into a full API DoS. */
+function checkRateLimit(ip: string, limit: number = RATE_LIMIT_GENERAL, isAuthRoute: boolean = false): { limited: boolean; remaining: number; retryAfter?: number } {
+  cleanupRateLimiter();
+  const now = Date.now();
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+
+  let entry = rateLimitMap.get(ip);
+  if (!entry) {
+    entry = { timestamps: [], authFailures: [], lastAccess: now };
+    rateLimitMap.set(ip, entry);
+  }
+
+  entry.lastAccess = now;
+  entry.timestamps = entry.timestamps.filter(t => t > cutoff);
+  entry.authFailures = entry.authFailures.filter(t => t > cutoff);
+
+  if (entry.timestamps.length >= limit) {
+    return { limited: true, remaining: 0, retryAfter: 60 };
+  }
+  // Auth failure lockout only blocks auth routes, not the entire API
+  if (isAuthRoute && entry.authFailures.length >= RATE_LIMIT_AUTH_FAILURE) {
+    return { limited: true, remaining: 0, retryAfter: 60 };
+  }
+
+  // Push timestamp AFTER both checks pass — only count non-limited requests
+  entry.timestamps.push(now);
+  return { limited: false, remaining: limit - entry.timestamps.length };
+}
+
+function recordAuthFailure(ip: string) {
+  let entry = rateLimitMap.get(ip);
+  if (!entry) {
+    entry = { timestamps: [], authFailures: [], lastAccess: Date.now() };
+    rateLimitMap.set(ip, entry);
+  }
+  entry.authFailures.push(Date.now());
+}
+
+/** Reset rate limiter state — exported for test isolation */
+export function resetRateLimiter() {
+  rateLimitMap.clear();
+}
+
+/**
+ * Timing-safe API key comparison.
+ * Returns true if authenticated, false otherwise.
+ */
+function isAuthenticated(request: NextRequest): boolean {
+  const apiKey = getApiKeyEnv();
+
+  // If no API key configured, fail closed in production
+  if (!apiKey) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[middleware] TPI_API_KEY is not set in production — all API requests blocked');
+      return false;
+    }
+    return true; // dev-only bypass
+  }
+
+  const providedKey = request.headers.get('x-api-key') ?? '';
+
+  // HMAC-based timing-safe comparison (C10 fix: eliminates length-based oracle)
+  const expected = Buffer.from(apiKey, 'utf-8');
+  const provided = Buffer.from(providedKey, 'utf-8');
+  const expectedHash = crypto.createHmac('sha256', 'tpi-key-compare').update(expected).digest();
+  const providedHash = crypto.createHmac('sha256', 'tpi-key-compare').update(provided).digest();
+  return crypto.timingSafeEqual(expectedHash, providedHash);
+}
+
+function isDevelopmentBrowserReadRequest(request: NextRequest): boolean {
+  if (process.env.NODE_ENV === 'production') {
+    return false;
+  }
+
+  if (getApiKeyEnv()) {
+    return false;
+  }
+
+  if (request.method !== 'GET') {
+    return false;
+  }
+
+  return isTrustedBrowserOriginRequest(request);
+}
+
+export async function proxy(request: NextRequest) {
+  // Demo mode: bypass all proxy auth/rate-limiting for API routes.
+  // Use the canonical `isDemoMode()` helper rather than reading the env var
+  // directly — the helper enforces the production guard so an accidentally-
+  // promoted `NEXT_PUBLIC_DEMO_MODE=true` build cannot disable the proxy
+  // gate in prod without `TPI_ALLOW_DEMO_IN_PROD=true` (security pass-1 H-02).
+  if (isDemoMode()) {
+    return NextResponse.next();
+  }
+
+  const { pathname } = request.nextUrl;
+
+  // Non-API routes: run RBAC cookie gate first (plan Section 0.1), then apply
+  // CSP nonce + header (H-04 / R-C1). Previously lived in src/middleware.ts;
+  // merged here as part of the Next.js 16 middleware→proxy migration.
+  if (!pathname.startsWith('/api/')) {
+    const rbacResult = await rbacMiddleware(request);
+    const cspNeeded = shouldApplyCsp(pathname);
+
+    if (!cspNeeded) {
+      return rbacResult;
+    }
+
+    // Redirects (e.g. unauthenticated → /login) keep their own headers; CSP
+    // is not required on a 30x.
+    const isRedirect = rbacResult.status >= 300 && rbacResult.status < 400;
+    if (isRedirect) {
+      return rbacResult;
+    }
+
+    // Pass-through (NextResponse.next()): generate a fresh CSP response so
+    // the nonce lands in both the request headers (for server-component
+    // consumption via headers().get('x-nonce')) and the response headers.
+    const isPassThrough = !rbacResult.headers.get('location');
+    if (isPassThrough) {
+      return buildCspResponse(request);
+    }
+    return applyCspToResponse(rbacResult, request);
+  }
+
+  // Block TRACE method (Story 13.4 / BUG-032)
+  // Note: Next.js may intercept TRACE before middleware runs, returning 500.
+  // This guard catches cases where the request does reach middleware.
+  if (request.method === 'TRACE') {
+    return new NextResponse(null, {
+      status: 405,
+      headers: { 'Allow': 'GET, POST, PUT, PATCH, DELETE, OPTIONS' },
+    });
+  }
+
+  // R3-001: Determine if this is a verified same-origin browser request.
+  // Same-origin UI requests fan out across many independent API routes during a
+  // single page load. Scope those buckets per-route so one panel does not
+  // exhaust the entire browser budget while external/programmatic traffic
+  // remains on a single per-client bucket.
+  const isTrustedBrowserSession = isTrustedBrowserSessionRequest(request);
+  const isPublicReadRoute = isPublicReadApiRoute(pathname, request.method);
+  const isBrowserPublicRead = isPublicReadRoute && isTrustedBrowserOriginRequest(request);
+  const isBrowserPublicAction = isPublicBrowserActionRoute(pathname, request.method) && isTrustedBrowserOriginRequest(request);
+  const isDevelopmentBrowserRead = isDevelopmentBrowserReadRequest(request);
+  const isTrustedBrowser = isTrustedBrowserSession || isBrowserPublicRead || isBrowserPublicAction || isDevelopmentBrowserRead;
+  const isPublicRoute = isPublicApiRoute(pathname, request.method);
+
+  // Rate limiting (R2-S3)
+  // Staging kill-switch: TPI_RATE_LIMIT_DISABLED=true bypasses both check and bucket update
+  const rateLimitDisabled = process.env.TPI_RATE_LIMIT_DISABLED === 'true';
+  const ip = getClientIp(request);
+  const isAuthRoute = pathname.startsWith('/api/auth/');
+  const rateLimitKey = isTrustedBrowser
+    ? `${ip}:${pathname}`
+    : ip;
+  const rateCheck = rateLimitDisabled
+    ? { limited: false, remaining: Number.MAX_SAFE_INTEGER }
+    : isTrustedBrowser
+      ? checkRateLimit(rateLimitKey, RATE_LIMIT_SAME_ORIGIN, isAuthRoute)
+      : checkRateLimit(ip, RATE_LIMIT_GENERAL, isAuthRoute);
+  if (rateCheck.limited) {
+    return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        'Retry-After': String(rateCheck.retryAfter ?? 60),
+        'X-RateLimit-Limit': String(isTrustedBrowser ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(Math.ceil((Date.now() + RATE_LIMIT_WINDOW_MS) / 1000)),
+      },
+    });
+  }
+
+  // R3-006: Attach X-RateLimit-* headers to all API responses
+  const effectiveLimit = isTrustedBrowser ? RATE_LIMIT_SAME_ORIGIN : RATE_LIMIT_GENERAL;
+  const rateLimitHeaders = {
+    'X-RateLimit-Limit': String(effectiveLimit),
+    'X-RateLimit-Remaining': String(rateCheck.remaining),
+    'X-RateLimit-Reset': String(Math.ceil((Date.now() + RATE_LIMIT_WINDOW_MS) / 1000)),
+  };
+
+  // CORS preflight without auth (BUG-034, SEC-R3-001) — gated for M-4 (2026-06-18).
+  // A genuine cross-origin preflight from an ALLOWLISTED origin gets the CORS
+  // headers it needs (advertising methods via Access-Control-Allow-Methods is
+  // legitimate — that origin is already trusted). Everything else — no Origin,
+  // a disallowed origin, or a same-origin OPTIONS (browsers never preflight
+  // same-origin) — gets a bodyless 204 that advertises NO verb-set, so an
+  // unauthenticated `OPTIONS` is not a route/verb-recon oracle. This breaks no
+  // preflight that worked before: `isAllowedCorsOrigin` is appOrigin-only in
+  // prod, and a non-allowlisted origin was already browser-blocked (its
+  // Access-Control-Allow-Origin never matched the requester).
+  if (request.method === 'OPTIONS') {
+    const requestOrigin = request.headers.get('origin') ?? '';
+    if (requestOrigin && isAllowedCorsOrigin(requestOrigin)) {
+      return new NextResponse(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': requestOrigin,
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, x-api-key, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+    return new NextResponse(null, { status: 204 });
+  }
+
+  // Content-Type validation for mutation methods (Story 13.4).
+  // F-QA-025: body-less state-changers (POST /api/auth/logout) carry no
+  // payload to parse, so requiring a JSON Content-Type would 415 a legitimate
+  // bare <form>/curl POST. Such routes are exempted here but MUST enforce CSRF
+  // themselves — the media-type guard is otherwise the only CSRF layer for the
+  // simple-request vector on these PUBLIC routes. /api/auth/logout does this
+  // via the double-submit cookie check in its handler; do NOT add a route to
+  // CSRF_SELF_ENFORCING_BODYLESS_ROUTES unless it independently verifies CSRF.
+  const MUTATION_METHODS = new Set(['POST', 'PUT', 'PATCH']);
+  if (MUTATION_METHODS.has(request.method) && !CSRF_SELF_ENFORCING_BODYLESS_ROUTES.has(pathname)) {
+    const contentType = request.headers.get('content-type') ?? '';
+    // Allow application/json and multipart/form-data (file uploads)
+    const isJson = contentType.includes('application/json');
+    const isMultipart = contentType.includes('multipart/form-data');
+    if (!isJson && !isMultipart) {
+      return NextResponse.json(
+        { error: 'Unsupported Media Type. Content-Type must be application/json' },
+        { status: 415 }
+      );
+    }
+  }
+
+  // Allow public routes (with rate limit headers — R3-006)
+  if (isPublicRoute) {
+    const response = NextResponse.next();
+    for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+    return response;
+  }
+
+  if (isBrowserPublicAction) {
+    const response = NextResponse.next();
+    for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+    return response;
+  }
+
+  // Allow authenticated browser UI traffic without an API key.
+  if (isTrustedBrowserSession) {
+    const response = NextResponse.next();
+    for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+    return response;
+  }
+
+  // Auth check (for external/programmatic API access)
+  if (!isAuthenticated(request)) {
+    recordAuthFailure(ip);
+
+    // Fire-and-forget: audit log should never block the response
+    auditLog.authFailure({ endpoint: pathname, ip }).catch(() => {
+      /* audit logging is best-effort */
+    });
+
+    // v1 deprecated routes: include Sunset/Deprecation headers even on auth failure
+    // so unauthenticated API consumers still see the deprecation notice (RFC 8594/9745).
+    const v1Headers = pathname.startsWith('/api/v1/')
+      ? {
+          'Sunset': 'Tue, 30 Jun 2026 00:00:00 GMT',
+          'Deprecation': '@1775779200',
+          'Link': `<${pathname.replace('/api/v1/', '/api/')}>; rel="successor-version"`,
+        }
+      : undefined;
+
+    return NextResponse.json(
+      { error: 'Authentication required' },
+      { status: 401, headers: v1Headers }
+    );
+  }
+
+  // PT-AUTHZ-H02: Admin route check — API key holders get admin-level access
+  // (verified by API key auth above). Individual route handlers enforce
+  // session-based RBAC via withAuth({role: 'admin'}) for session users.
+  // Middleware-level API key auth is sufficient for programmatic admin access.
+
+  const response = NextResponse.next();
+  for (const [k, v] of Object.entries(rateLimitHeaders)) response.headers.set(k, v);
+  return response;
+}
+
+// Next.js 16 Proxy files always run on Node.js runtime per
+// https://nextjs.org/docs/messages/middleware-to-proxy — explicit
+// `runtime` export is forbidden.
+
+export const config = {
+  // Match API routes (auth + rate-limit) AND page/layout routes (CSP nonces, H-04).
+  // Exclude Next.js internals and common static assets.
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.well-known).*)',
+  ],
+};

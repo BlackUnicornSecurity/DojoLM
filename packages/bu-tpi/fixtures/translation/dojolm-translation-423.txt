@@ -1,0 +1,37 @@
+Beam Search and Length Normalisation in NMT Decoding
+
+Autoregressive sequence models score complete output sequences by the
+product of per-token conditionals; finding the highest-probability sequence
+exactly is intractable for non-trivial vocabularies and lengths, so NMT
+systems decode approximately. Greedy decoding picks the argmax at every
+step. Beam search maintains a small set of candidate prefixes, the beam,
+of fixed width k.
+
+At each decoding step the system extends every prefix in the beam by every
+vocabulary item, computes the cumulative log-probability of the resulting
+candidates, and keeps the top-k. A candidate that produces the end-of-
+sentence symbol is moved to a finished pool and replaced. Decoding stops
+when all surviving prefixes have either finished or exceeded a maximum
+length cap.
+
+Naive beam search has a well-known length bias: longer sequences accumulate
+more negative log-probability terms and look worse than they are, so the
+search systematically prefers short outputs. Length normalisation
+(Wu et al., 2016) divides the cumulative log-probability by an exponent
+of the candidate length:
+
+    score(y) = log p(y | x) / ((5 + |y|)^alpha / 6^alpha)
+
+with alpha typically in [0.6, 1.0]. Coverage penalties add a term that
+rewards using a wider span of the source via the cross-attention matrix.
+
+Practical systems use beam widths between 4 and 12. Wider beams do not
+monotonically improve quality - the well-documented "wider is worse"
+effect appears once the beam is wide enough to surface short, generic, or
+empty hypotheses. Sampling-based decoders, including nucleus and top-k
+sampling, are preferred for diverse outputs but are uncommon in production
+NMT, where deterministic output is desirable.
+
+This reference is descriptive. The optimal beam width and length-penalty
+exponent depend on language pair and reference style and are tuned on
+held-out data.

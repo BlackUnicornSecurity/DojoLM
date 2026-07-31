@@ -1,0 +1,292 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-G3 adapter for the live Models surface. */
+
+[data-skin="v2"] .jutsu-model-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+/* Per-provider accent: a left rail, a bottom line and a diagonal wash, all
+   composed as background layers from the `--mdl-*` custom properties set by
+   providerColor(). Cards with no accent set fall back to `none`/`var(--bg-2)`
+   and render exactly as before. */
+[data-skin="v2"] .jutsu-model-card {
+  position: relative;
+  border-color: var(--b-0) !important;
+  background:
+    var(--mdl-rail, none) left / 4px 100% no-repeat,
+    var(--mdl-base, none) bottom / 100% 2px no-repeat,
+    var(--mdl-wash, none),
+    var(--bg-2) !important;
+  box-shadow: none !important;
+}
+
+/* Manufacturer mark, top-right. SVG marks render as a mask tinted with the
+   brand ink (--mdl-ink); BlackUnicorn's own PNG renders full-color. */
+[data-skin="v2"] .jutsu-model-card .mdl-logo {
+  position: absolute;
+  top: 24px;
+  right: 26px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  opacity: 0.9;
+  pointer-events: none;
+  background: var(--mdl-ink, var(--fg-dim));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+[data-skin="v2"] .jutsu-model-card .mdl-logo-bu {
+  top: 22px;
+  right: 23px;
+  width: 28px;
+  height: 28px;
+  opacity: 1;
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+  filter: drop-shadow(0 0 6px rgba(46, 123, 255, 0.5));
+}
+
+[data-skin="v2"] .jutsu-model-card:hover {
+  border-color: var(--b-2) !important;
+  background:
+    var(--mdl-rail, none) left / 4px 100% no-repeat,
+    var(--mdl-base, none) bottom / 100% 2px no-repeat,
+    var(--mdl-wash, none),
+    var(--bg-3) !important;
+}
+
+/* D9 — assistant-model bar (design base.css `.asst-bar`): title + helper
+   stacked on the left, the select on the right, inside the bordered panel.
+   `--fg-mute` is banned in v2 text (SKIN-SPEC), so the helper reads --fg-dim. */
+[data-skin="v2"] .asst-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .asst-bar .lead {
+  min-width: 180px;
+  flex: 1;
+}
+[data-skin="v2"] .asst-bar .lead .t {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fg);
+}
+[data-skin="v2"] .asst-bar .lead .s {
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+  margin-top: 2px;
+}
+[data-skin="v2"] .asst-bar select {
+  flex: 1;
+  min-width: 220px;
+  max-width: 360px;
+}
+
+/* D2/D8/D10/D13 — registry card anatomy (design wave-g3 `.mdl`). Scoped to
+   the prod card wrapper so the generic `.chips`/`.acts` names don't leak.
+   Spacing follows the reference's per-child margins (no flex gap). */
+[data-skin="v2"] .jutsu-model-card .prov {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mdl-ink, var(--fg-dim));
+  padding-right: 38px;
+}
+[data-skin="v2"] .jutsu-model-card .mdl-hd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+[data-skin="v2"] .jutsu-model-card .nm {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-skin="v2"] .jutsu-model-card .mdl-hd .belt {
+  margin-left: auto;
+  flex: none;
+}
+[data-skin="v2"] .jutsu-model-card .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 16px;
+}
+[data-skin="v2"] .jutsu-model-card .mdl-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--b-1);
+}
+[data-skin="v2"] .jutsu-model-card .mdl-meta .l {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .jutsu-model-card .mdl-meta .v {
+  display: block;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--fg);
+  margin-top: 5px;
+}
+[data-skin="v2"] .jutsu-model-card .acts {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--b-1);
+}
+[data-skin="v2"] .jutsu-model-card .acts .btn-danger {
+  margin-left: auto;
+}
+/* Roomier action buttons to match the generous card padding. */
+[data-skin="v2"] .jutsu-model-card .acts .btn {
+  padding: 9px 17px;
+  font-size: 13px;
+}
+
+/* BlackUnicorn glass easter egg — an electric-blue frosted surface with a
+   corner-to-corner sheen sweep. Declared after the generic card rules so it
+   wins the equal-specificity tie on hover; the sheen is driven by animating
+   the first background layer's position and honours prefers-reduced-motion. */
+[data-skin="v2"] .jutsu-model-card.glass {
+  position: relative;
+  border-color: rgba(90, 150, 255, 0.42) !important;
+  background:
+    linear-gradient(120deg, transparent 44%, rgba(255, 255, 255, 0.14) 50%, rgba(150, 205, 255, 0.08) 53%, transparent 60%),
+    linear-gradient(180deg, #22d3ee 0%, #2e7bff 55%, rgba(46, 123, 255, 0.15) 100%) left / 4px 100% no-repeat,
+    linear-gradient(90deg, rgba(34, 211, 238, 0.6) 0%, rgba(46, 123, 255, 0.5) 50%, rgba(46, 123, 255, 0.04) 100%) bottom / 100% 2px no-repeat,
+    radial-gradient(120% 80% at 82% -12%, rgba(46, 123, 255, 0.22), transparent 55%),
+    radial-gradient(90% 70% at -12% 0%, rgba(34, 211, 238, 0.1), transparent 50%),
+    rgba(12, 16, 26, 0.72) !important;
+  background-size: 220% 220%, 4px 100%, 100% 2px, auto, auto, auto !important;
+  background-position: 130% 130%, left, bottom, 0 0, 0 0, 0 0 !important;
+  background-repeat: no-repeat !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 30px rgba(46, 123, 255, 0.16) !important;
+  animation: bu-glass-sheen 6.5s ease-in-out infinite;
+}
+[data-skin="v2"] .jutsu-model-card.glass:hover {
+  border-color: rgba(120, 180, 255, 0.6) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 36px rgba(46, 123, 255, 0.24) !important;
+}
+[data-skin="v2"] .jutsu-model-card.glass .prov {
+  color: #9bd4ff;
+}
+[data-skin="v2"] .jutsu-model-card.glass .acts .btn {
+  background: rgba(46, 123, 255, 0.1);
+  border-color: rgba(120, 170, 255, 0.3);
+  color: #cfe0ff;
+}
+[data-skin="v2"] .jutsu-model-card.glass .acts .btn-danger {
+  background: rgba(224, 84, 74, 0.1);
+  border-color: rgba(255, 120, 110, 0.3);
+  color: #ffb0aa;
+}
+@keyframes bu-glass-sheen {
+  0% {
+    background-position: 130% 130%, left, bottom, 0 0, 0 0, 0 0;
+  }
+  55%,
+  100% {
+    background-position: -30% -30%, left, bottom, 0 0, 0 0, 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-skin="v2"] .jutsu-model-card.glass {
+    animation: none;
+    background-position: 45% 45%, left, bottom, 0 0, 0 0, 0 0 !important;
+  }
+}
+
+/* Belt-brown safety — module.css ships white/yellow/orange/green/blue/black
+   only, but getBeltRank returns Brown (score 86-92); keep the rank legible. */
+[data-skin="v2"] .belt.brown {
+  background: #a9673b;
+  color: #fff;
+}
+
+/* §1.4 risk chip — bordered pill carrying a ramp word (design
+   wave-g3/wave-g3.css:42-48). 11px floor = --text-sm; DR-3 --b-1 base border;
+   ramp borders read the frozen *-rgb triplets. */
+[data-skin="v2"] .rchip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--b-1);
+  border-radius: 999px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+[data-skin="v2"] .rchip.crit {
+  color: var(--torii-text);
+  border-color: rgba(var(--torii-rgb), 0.3);
+}
+
+[data-skin="v2"] .rchip.high {
+  color: var(--ember);
+  border-color: rgba(var(--ember-rgb), 0.3);
+}
+
+[data-skin="v2"] .rchip.med {
+  color: var(--gold);
+  border-color: rgba(var(--gold-rgb), 0.3);
+}
+
+[data-skin="v2"] .rchip.low {
+  color: var(--steel);
+  border-color: rgba(var(--steel-rgb), 0.3);
+}
+
+[data-skin="v2"] .rchip.clean {
+  color: var(--jade);
+  border-color: rgba(var(--jade-rgb), 0.32);
+}
+
+/* P2c — below-grid registry caption (design wave-b module.css .tbl-foot).
+   Mono micro-copy on the --text-sm 11px floor; ink is --fg-dim (the mute
+   literal is banned). */
+[data-skin="v2"] .tbl-foot {
+  padding: 10px 12px;
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 700px) {
+  [data-skin="v2"] .jutsu-model-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

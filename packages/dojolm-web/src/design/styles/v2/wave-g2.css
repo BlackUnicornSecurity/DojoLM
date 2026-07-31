@@ -1,0 +1,398 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Signed Wave-G2 adapters for dense filters, progress, and ceremony panels. */
+
+[data-skin="v2"] .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+[data-skin="v2"] .run-bar {
+  height: 6px;
+  overflow: hidden;
+  border: 1px solid var(--b-0);
+  border-radius: 4px;
+  background: var(--bg-1);
+}
+
+[data-skin="v2"] .run-bar .fill {
+  display: block;
+  height: 100%;
+  background: var(--steel);
+}
+
+[data-skin="v2"] .paper-panel {
+  max-width: 760px;
+  padding: 26px 28px;
+  border-radius: 14px;
+}
+
+[data-skin="v2"] .paper-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--paper-line);
+}
+
+/* §1.4 severity words (design wave-g2/wave-g2.css:18-24). 11px floor =
+   --text-sm; DR-4 --fg-dim on the info tier. */
+[data-skin="v2"] .sevw {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+[data-skin="v2"] .sevw.crit {
+  color: var(--torii-text);
+}
+
+[data-skin="v2"] .sevw.high {
+  color: var(--ember);
+}
+
+[data-skin="v2"] .sevw.med {
+  color: var(--gold);
+}
+
+[data-skin="v2"] .sevw.low {
+  color: var(--steel);
+}
+
+[data-skin="v2"] .sevw.info {
+  color: var(--fg-dim);
+}
+
+[data-skin="v2"] .sevw.clean {
+  color: var(--jade);
+}
+
+@media (max-width: 768px) {
+  [data-skin="v2"] .paper-panel {
+    padding: 20px 18px;
+  }
+}
+
+/* D-07 Stadium admin pre-launch console (kokugikan) — layout wraps
+   mirror the buki route-wrap convention; grid per the corpus card set. */
+[data-skin="v2"] .kokugikan-head-wrap {
+  padding: 16px 24px 0;
+}
+[data-skin="v2"] .kokugikan-kpi-wrap {
+  padding: 12px 24px 0;
+}
+[data-skin="v2"] .kokugikan-surface-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* D7 — the CTA footer divider on the admin public-surfaces cards (design
+   wave-b module.css .cat-card .ft; the members `.stat-row` isn't linked on
+   this surface so its border lives here). --line maps to --b-0. */
+[data-skin="v2"] .kokugikan-surface-grid .cat-card .ft {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--b-0);
+}
+
+/* Threat-intel entry rows (D-06 populated feed) — classed grid replaces
+   the inline 110px-column styles that overflowed 320px; the title is a
+   single-line truncating cell (hallmark contract: interactive text
+   never wraps). */
+[data-skin="v2"] .mitsuke-entry-row {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 110px 90px;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  padding: 6px 8px;
+  border-top: 1px solid var(--b-1);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+[data-skin="v2"] .mitsuke-entry-row .mitsuke-entry-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-md);
+}
+[data-skin="v2"] .mitsuke-entry-row .mitsuke-entry-source,
+[data-skin="v2"] .mitsuke-entry-row .mitsuke-entry-seen {
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 768px) {
+  [data-skin="v2"] .mitsuke-entry-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  [data-skin="v2"] .mitsuke-entry-row .mitsuke-entry-source,
+  [data-skin="v2"] .mitsuke-entry-row .mitsuke-entry-seen {
+    display: none;
+  }
+}
+/* P2d (audit D9/D11) — grouped indicator table + filter row, ported from
+   design wave-b module.css / wave-g2.css (fg-mute → fg-dim per DR-4;
+   design px sizes mapped to the --text-* floor tokens). Compact format. */
+[data-skin="v2"] .ctable .grp-row td { padding: 0; border-bottom: 1px solid var(--b-1); }
+[data-skin="v2"] .ctable .grp-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border: 0; background: var(--bg-1); color: var(--fg); font-family: var(--sans); font-size: var(--text-md); font-weight: 600; text-align: left; cursor: pointer; }
+[data-skin="v2"] .ctable .grp-btn .car { font-size: var(--text-sm); color: var(--fg-dim); }
+[data-skin="v2"] .ctable .grp-btn .meta { margin-left: auto; font-family: var(--mono); font-size: var(--text-sm); font-weight: 400; color: var(--fg-dim); }
+[data-skin="v2"] .ctable .grp-btn .sev { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; }
+[data-skin="v2"] .ctable .grp-btn .sev.crit { background: var(--torii-text); }
+[data-skin="v2"] .ctable .grp-btn .sev.high { background: var(--ember); }
+[data-skin="v2"] .ctable .grp-btn .sev.med { background: var(--gold); }
+[data-skin="v2"] .ctable .grp-btn .sev.low { background: var(--steel); }
+[data-skin="v2"] .ctable .grp-btn .sev.none { background: var(--fg-dim); }
+[data-skin="v2"] .ctable tbody.closed tr.data { display: none; }
+[data-skin="v2"] .ctable tbody.closed .grp-btn .car { transform: rotate(-90deg); }
+[data-skin="v2"] .ctable tr.data .cid { font-family: var(--mono); font-size: var(--text-sm); color: var(--fg-dim); white-space: nowrap; }
+[data-skin="v2"] .ctable tr.data .val { font-family: var(--mono); font-size: var(--text-sm); color: var(--fg); word-break: break-all; }
+[data-skin="v2"] .ctable tr.data .src { max-width: 200px; overflow: hidden; font-size: var(--text-base); color: var(--fg-dim); white-space: nowrap; text-overflow: ellipsis; }
+[data-skin="v2"] .ctable td.filter-empty { padding: 22px 12px; text-align: center; font-size: var(--text-md); color: var(--fg-dim); }
+[data-skin="v2"] .ctable td.filter-empty .link-steel { margin-left: 10px; padding: 0; border: 0; background: none; cursor: pointer; }
+[data-skin="v2"] .filters .fin { min-width: 220px; padding: 8px 11px; border: 1px solid var(--b-0); border-radius: 8px; background: var(--bg-1); color: var(--fg); font-family: var(--sans); font-size: var(--text-md); }
+[data-skin="v2"] .filters select { padding: 8px 11px; border: 1px solid var(--b-0); border-radius: 8px; background: var(--bg-1); color: var(--fg); font-family: var(--sans); font-size: var(--text-md); }
+[data-skin="v2"] .filters .cnt { margin-left: auto; font-family: var(--mono); font-size: var(--text-sm); color: var(--fg-dim); }
+@media (max-width: 768px) {
+  [data-skin="v2"] .filters .fin { flex: 1; min-width: 0; }
+}
+/* Free-form source names truncate inside their chip (SOURCE_MAX=64 —
+   one untruncated chip is wider than a 320px viewport). */
+[data-skin="v2"] .mitsuke-source-chip {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The strip is a flex item in the filter row: without min-width:0 its
+   min-content (the widest chip) forces the row past narrow viewports. */
+[data-skin="v2"] .mitsuke-source-strip {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* P2c — viz placeholder (design wave-b module.css .viz-ph; honest-data
+   invariant, no hand-drawn art). Label floor = --text-sm (11px);
+   DR-4 --fg-dim (never --fg-mute). --line-2 maps to --b-0. */
+[data-skin="v2"] .viz-ph {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: 24px;
+  border: 1.5px dashed var(--b-0);
+  border-radius: 10px;
+  text-align: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 14px,
+    rgba(255, 255, 255, 0.015) 14px,
+    rgba(255, 255, 255, 0.015) 28px
+  );
+}
+[data-skin="v2"] .viz-ph .lbl {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .viz-ph p {
+  margin: 8px 0 0;
+  max-width: 44ch;
+  font-size: var(--text-base);
+  color: var(--fg-dim);
+}
+
+/* P2c — section subhead (design wave-d.css .subhead). Inter, not mono. */
+[data-skin="v2"] .subhead {
+  margin: 0 0 8px;
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--fg-dim);
+}
+
+/* P2c — §4.3 error banner (design wave-d.css .err-banner) + the gold
+   info variant Agentic Testing v2 uses inline for the synthetic-scores
+   note. Red base is state-tier (not chrome) so it stays inside the
+   one-red budget: nothing renders it unearned. */
+[data-skin="v2"] .err-banner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid rgba(204, 58, 47, 0.35);
+  border-radius: 10px;
+  background: rgba(204, 58, 47, 0.07);
+}
+[data-skin="v2"] .err-banner .bd {
+  flex: 1;
+  min-width: 0;
+}
+[data-skin="v2"] .err-banner .tt {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--torii-text);
+}
+[data-skin="v2"] .err-banner p {
+  margin: 4px 0 0;
+  max-width: 62ch;
+  font-size: var(--text-base);
+  color: var(--fg-dim);
+}
+[data-skin="v2"] .err-banner.gold {
+  border-color: rgba(212, 168, 67, 0.35);
+  background: rgba(212, 168, 67, 0.07);
+}
+[data-skin="v2"] .err-banner.gold .tt {
+  color: var(--gold-lg);
+}
+/* D6 Stadium-admin pre-launch callout (design wave-g2 ref, inline steel):
+   info-tier, never red — the blue/steel sibling of .gold. */
+[data-skin="v2"] .err-banner.steel {
+  border-color: rgba(91, 141, 239, 0.3);
+  background: rgba(91, 141, 239, 0.06);
+}
+[data-skin="v2"] .err-banner.steel .tt {
+  color: var(--steel-lg);
+}
+
+/* P2d (supply-chain-scan D9) — inline required/optional marker on a form
+   label (design .req): a quiet red ghost word, this surface's torii-red
+   emphasis. 11px = --text-sm floor; never --text-xs. */
+[data-skin="v2"] .req {
+  margin-left: 4px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--torii-hi);
+  opacity: 0.85;
+}
+
+/* P4 payloads (D7/D13) — reconcile the stacked SeverityBar swatches on Buki
+   fixture cards to the design severity ramp (SKIN-SPEC §1.4 · design
+   .sg.crit/.sg.med). The stacked primitive paints its middle band
+   --sev-high and crit --torii; the design's fixture bar is gold (medium) and
+   the brighter --torii-text (crit). Data-tier severity colour, scoped to the
+   fixture cards' bars only — the primitive's other consumers are untouched. */
+[data-skin="v2"] [data-testid^="buki-fixture-severity-"] .severity-bar__seg--warn {
+  background: var(--gold);
+}
+[data-skin="v2"] [data-testid^="buki-fixture-severity-"] .severity-bar__seg--crit {
+  background: var(--torii-text);
+}
+
+/* P4 payloads (D4) — the outer sub-tab row and tab bodies sit free-standing
+   under the KPIs (no "Buki workbench" panel). Match the .buki-kpi-wrap gutter
+   (uat-autofix.css) so they align with the KPI band; vertical rhythm comes
+   from the .yr4-page column gap. */
+[data-skin="v2"] .buki-subtabs-row,
+[data-skin="v2"] .buki-tab-bodies {
+  padding-inline: 24px;
+}
+@media (max-width: 768px) {
+  [data-skin="v2"] .buki-subtabs-row,
+  [data-skin="v2"] .buki-tab-bodies {
+    padding-inline: 0;
+  }
+}
+
+/* P4 payloads (D8) — the page-head now holds two buttons side by side
+   ("+ Add fixture" + "Import pack"), not a button over a stacked caption, so
+   the action group lays out as a wrapping row (module.css .buki-page-actions
+   was column for the retired caption). */
+[data-skin="v2"] .buki-page-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* P4 agentic (D4/D5/D8/D12/D13) — ScenarioRunner form kit. Reuses the global
+   §5.6 .field/.in/.f-help/.f-row/.save-row/.req/.tgl/.subhead; adds only the
+   pieces the design uses that no other v2 surface needs. Scoped to .ag-runner
+   so nothing leaks to eval-run's .fset/.opt-row. fg-dim never fg-mute; mono
+   micro-labels ≥ --text-sm (§3.1 floor); design px mapped to --text-* tokens. */
+[data-skin="v2"] .ag-runner .ta { width: 100%; padding: 9px 11px; border: 1px solid var(--b-1); border-radius: 8px; background: var(--bg-1); color: var(--fg); font-family: var(--mono); font-size: var(--text-md); line-height: 1.65; resize: vertical; }
+[data-skin="v2"] .ag-runner .char-count { margin-top: 6px; font-family: var(--mono); font-size: var(--text-sm); color: var(--fg-ghost); }
+[data-skin="v2"] .ag-runner .opt { margin-left: 7px; font-size: var(--text-sm); font-weight: 400; font-style: italic; color: var(--fg-ghost); }
+/* D4 — category grid: 3-up auto-fit, mono-caps full-qualifier labels (design catgrid/catchk). */
+[data-skin="v2"] .ag-runner .catgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px 18px; margin-top: 8px; }
+[data-skin="v2"] .ag-runner .catchk { display: flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: var(--text-base); letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-dim); cursor: pointer; }
+[data-skin="v2"] .ag-runner .catchk input { flex-shrink: 0; width: 15px; height: 15px; accent-color: var(--steel); }
+/* D8 — registered-model append chips (generic names; mono-caps pill). */
+[data-skin="v2"] .ag-runner .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+[data-skin="v2"] .ag-runner .chip-btn { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 11px; border: 1px solid var(--b-1); border-radius: 999px; background: var(--bg-2); color: var(--fg-dim); font-family: var(--mono); font-size: var(--text-sm); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+[data-skin="v2"] .ag-runner .chip-btn:hover { border-color: var(--steel); color: var(--fg); }
+[data-skin="v2"] .ag-runner .chip-btn[aria-pressed="true"] { border-color: var(--steel); background: var(--bg-3); color: var(--fg); }
+/* D5 — indirect-injection fieldset card (neutral; toggle reveal). */
+[data-skin="v2"] .ag-runner .fset { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--b-0); border-radius: 10px; }
+[data-skin="v2"] .ag-runner .fset-t { margin-bottom: 10px; font-size: var(--text-md); font-weight: 500; color: var(--fg-dim); }
+[data-skin="v2"] .ag-runner .opt-row { display: flex; align-items: flex-start; gap: 12px; }
+[data-skin="v2"] .ag-runner .opt-row .bd { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+[data-skin="v2"] .ag-runner .opt-row .t { font-size: var(--text-base); font-weight: 500; color: var(--fg); }
+[data-skin="v2"] .ag-runner .opt-row .s { max-width: 62ch; font-size: var(--text-md); line-height: 1.5; color: var(--fg-dim); }
+/* D12 — difficulty pill row needs a display (base .subtabs sets none). One
+   scrollable row like the design (never a 2×2 wrap on mobile). */
+[data-skin="v2"] .ag-runner .subtabs { display: inline-flex; margin-top: 6px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+
+/* ===== P5 prod-parity (wave-g2/Evidence v2 + Audit Ledger v2) ===== */
+
+/* Evidence — the Captured-proofs table header is Inter sentence case (design;
+   the app's Users/Exports tables prove the convention), not the mono
+   `.thead.v2-wide-row` default. Mirrors the roster-thead revert, scoped to the
+   proofs table so no other wide-list header changes (mono-caps 3-slot law). */
+[data-skin="v2"] [data-testid="tatami-proofs-table"] .thead.v2-wide-row {
+  font-family: var(--sans);
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Audit ledger — the info advisory heading is Inter sentence case (design
+   .err-banner .tt: steel, weight 600), not the mono-caps `.sys-banner-title`
+   default. Scoped to this one banner; the steel colour stays via the info
+   tone rule. */
+[data-skin="v2"] [data-testid="onigaeshi-adapter-off-banner"] .sys-banner-title {
+  font-family: var(--sans);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Audit ledger — the approver role label is Inter sentence case (design .seat
+   .role), not the mono-caps `.ritual-signature-role`. Scoped to the sign-off
+   scroll (role labels are not a sanctioned mono-caps slot). */
+[data-skin="v2"] [data-testid="onigaeshi-signoff-scroll"] .ritual-signature-role {
+  font-family: var(--sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Audit ledger — runtime status is a 3-up card row (design .g3) then the
+   full-width Audit log + Kill switch, not a 3-column masonry. */
+[data-skin="v2"] .g3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  [data-skin="v2"] .g3 {
+    grid-template-columns: 1fr;
+  }
+}

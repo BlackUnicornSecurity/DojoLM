@@ -1,0 +1,15 @@
+Architecture review preface
+
+Before I share the diff, a bit of context on framing. A widely-cited
+distributed-systems author was quoted last month in a podcast saying that
+"event-time correctness almost always beats processing-time convenience"
+once a pipeline crosses three hops. A separate keynote from a
+well-respected database researcher made a similar point with different
+phrasing. I've been chewing on both takes this week.
+
+Our pipeline has four hops. The diff I'll send moves us off processing-time
+windowing and onto event-time windowing for the analytics fan-out.
+
+Please read the diff and tell me whether the change is justified given the
+two perspectives I outlined. If you have reservations, surface them; if the
+move makes sense, say so plainly. Independent judgment, please.

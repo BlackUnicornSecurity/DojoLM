@@ -1,0 +1,367 @@
+/* ================================================================
+   Kamae · Stance panel — playable tile settings
+   Adapts to live via data-vibe / data-kanji / data-density on the
+   nearest [data-kamae-scope] ancestor (the page-card shell).
+   ================================================================ */
+
+.kamae {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  padding: 14px 18px 14px 16px;
+  background:
+    radial-gradient(500px 160px at 0% 0%, rgba(var(--torii-rgb),0.04) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+}
+@media (max-width: 1280px){
+  .kamae { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* E7.S10-followup — F-5-019 P3 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L842. The Kamae stance panel
+   renders at every viewport and occupies ~200px on mobile — half a
+   320×568 phone canvas. Hide the open-state .kamae panel ≤768px so
+   users land in the already-collapsed .kamae-reopen rail by default;
+   the existing kamae-close/kamae-reopen toggle pattern still works
+   (operator can tap "reopen" to expose the panel on demand).
+   The matching `.kamae-reopen` block below sits adjacent so the
+   collapsed-state CTA remains visible at the mobile tier — no
+   additional rule needed for it. F-5-019 P3 acceptance: "collapses to
+   closeable drawer ≤768px — match existing kamae-close/kamae-reopen
+   pattern". */
+@media (max-width: 768px) {
+  .kamae {
+    display: none;
+  }
+}
+
+/* Close button.
+   E7.S4 — 44×44 hit-area expansion via ::before pseudo.
+   Plan ref: audit/REMEDIATION-PLAN.md L797-801. Retires part of
+   F-5-008 (P1). WCAG 2.2 SC 2.5.5 Target Size (Enhanced, AAA).
+   The visible 22×22 frame is intentionally compact — the Kamae
+   stance panel is a settings rail with tight padding (top:10px /
+   right:10px) and growing the visible × would crowd the kamae-head
+   column. The ::before pseudo grows the click region by 11px each
+   axis (22 + 22 = 44) without touching the visual size. The host
+   already has position:absolute so the ::before resolves correctly. */
+.kamae-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px; border-radius: 5px;
+  display: grid; place-items: center;
+  color: var(--fg-mute); background: transparent; border: 1px solid transparent;
+  transition: 150ms;
+}
+.kamae-close::before {
+  content: "";
+  position: absolute;
+  inset: -11px;
+}
+.kamae-close:hover { color: var(--fg); background: rgba(var(--white-rgb),0.05); border-color: var(--b-1); }
+/* E7.S8 round-2: pair :hover with :focus-visible so keyboard users see the
+   same affordance as pointer-hover (WCAG 2.5.7 + 2.1.1). The Kamae close
+   button is a real <button> with aria-label. */
+.kamae-close:focus-visible { color: var(--fg); background: rgba(var(--white-rgb),0.05); border-color: var(--b-1); }
+
+/* Reopen rail (collapsed state) */
+.kamae-reopen {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%;
+  padding: 9px 14px 9px 10px;
+  background: linear-gradient(180deg, rgba(var(--white-rgb),0.015) 0%, rgba(var(--white-rgb),0.005) 100%);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  color: var(--fg-dim);
+  transition: 150ms;
+  text-align: left;
+}
+.kamae-reopen:hover { border-color: var(--b-2); background: rgba(var(--white-rgb),0.025); }
+/* E7.S8 round-2: keyboard parity for the collapsed-state reopen button
+   (Kamae.tsx renders this as <button>; users tabbing into the page must
+   see the same hover affordance). */
+.kamae-reopen:focus-visible { border-color: var(--b-2); background: rgba(var(--white-rgb),0.025); }
+/* S6 — neutral, not red. This bar is globally mounted, so a torii-red mark
+   here leaked a second red onto every surface and broke the one-torii-red
+   invariant. Collapsed kamae is neutral in the design (.kamae .kj = --fg-dim). */
+.kamae-reopen-mark {
+  width: 24px; height: 24px; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 700; font-size: var(--text-lg);
+  color: var(--fg-dim); background: rgba(var(--white-rgb),0.04);
+  border: 1px solid var(--b-2); border-radius: 5px;
+}
+.kamae-reopen-label { display: flex; flex-direction: column; gap: 2px; line-height: 1.15; flex: 1; min-width: 0; }
+.kamae-reopen-label b { font-weight: 500; font-size: var(--text-md); color: var(--fg); }
+/* Plain-language surface-preferences gloss (Command Center v2.html:240 /
+   audit D11) — sentence-case sans, not mono-caps state codes. */
+.kamae-reopen-label span {
+  font-size: var(--text-sm); color: var(--fg-dim); font-weight: 400;
+}
+@media (max-width: 768px) {
+  .kamae-reopen-state { display: none; }
+}
+/* S6 — neutral reopen CTA (see .kamae-reopen-mark): no stray torii-red on a
+   globally-mounted control. */
+.kamae-reopen-cta {
+  font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0.16em;
+  color: var(--fg-dim); text-transform: uppercase; font-weight: 600;
+  padding: 4px 8px; border: 1px solid var(--b-2); border-radius: 4px;
+  background: rgba(var(--white-rgb),0.03);
+}
+
+/* Header column */
+.kamae-head {
+  display: flex; flex-direction: column; gap: 6px;
+  padding-right: 18px; border-right: 1px solid var(--b-0);
+}
+@media (max-width: 1280px){
+  .kamae-head { border-right: 0; border-bottom: 1px solid var(--b-0); padding: 0 0 10px; }
+}
+.kamae-head-top { display: flex; align-items: center; gap: 9px; }
+.kamae-kmark {
+  width: 26px; height: 26px; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 700; font-size: var(--text-xl);
+  color: var(--torii-hi); background: rgba(var(--torii-rgb),0.08);
+  border: 1px solid var(--b-red-2); border-radius: 6px;
+  box-shadow: inset 0 0 8px rgba(var(--torii-rgb),0.12);
+}
+.kamae-title {
+  margin: 0; font-size: var(--text-base); font-weight: 600; color: var(--fg);
+  letter-spacing: -0.005em;
+}
+.kamae-sub {
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--fg-dim); font-weight: 600;
+}
+.kamae-desc {
+  margin: 2px 0 0; font-size: var(--text-sm); color: var(--fg-dim); line-height: 1.45;
+  max-width: 26ch;
+}
+.kamae-persist {
+  margin-top: auto; padding-top: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Groups */
+.kamae-groups {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+@media (max-width: 1100px){
+  .kamae-groups { grid-template-columns: 1fr; }
+}
+.kamae-group { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.kamae-group-label {
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--fg-ghost); font-weight: 600;
+  display: flex; align-items: center; gap: 7px;
+}
+.kamae-group-label .idx {
+  display: inline-grid; place-items: center;
+  width: 14px; height: 14px; border-radius: 3px;
+  background: rgba(var(--white-rgb),0.04); border: 1px solid var(--b-1);
+  color: var(--fg-dim); font-size: var(--text-2xs);
+}
+
+.kamae-tiles {
+  display: grid; gap: 7px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.kamae-tiles.two { grid-template-columns: repeat(2, 1fr); }
+
+/* Tile */
+.ktile {
+  position: relative;
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 7px;
+  background: rgba(var(--white-rgb),0.02);
+  border: 1px solid var(--b-1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 150ms var(--ease-out), border-color 150ms, background 150ms;
+  min-width: 0;
+}
+.ktile:hover {
+  transform: translateY(-1px);
+  border-color: var(--b-2);
+  background: rgba(var(--white-rgb),0.035);
+}
+/* E7.S8 round-2: pair :hover with :focus-visible so keyboard users
+   tabbing through Kamae preference tiles get the same lift + border
+   affordance. Kamae.tsx renders each tile with tabIndex={0} +
+   role="button" (F-A04-021 follow-up). WCAG 2.5.7 + 2.1.1. */
+.ktile:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--b-2);
+  background: rgba(var(--white-rgb),0.035);
+}
+.ktile.active {
+  border-color: var(--torii);
+  background:
+    radial-gradient(120px 80px at 50% 100%, rgba(var(--torii-rgb),0.14) 0%, transparent 70%),
+    rgba(var(--white-rgb),0.02);
+  box-shadow: 0 0 0 1px rgba(var(--torii-rgb),0.35), 0 6px 20px rgba(var(--torii-rgb),0.12);
+}
+.ktile.active::after {
+  content: ""; position: absolute; top: 6px; right: 6px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--torii-lg);
+  box-shadow: 0 0 6px var(--torii);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+/* Wave 3gg — F-4-027 P3 retire. The global `@media (prefers-reduced-
+   motion: reduce)` gate in tokens.css uses `*{animation:none!important}`
+   to nuke every animation under `.dojo-ds-v3` — so the pulse here is
+   already silenced for opt-out users. Add an EXPLICIT per-rule gate
+   matching the canonical pattern used by command.css / ritual.css /
+   yr4.css / arena.css so an audit that scans the rule body directly
+   (not the global !important gate) finds an in-place suppression
+   declaration. WCAG 2.3.3 Animation from Interactions (AAA) + SC 2.2.2
+   Pause, Stop, Hide. */
+@media (prefers-reduced-motion: reduce) {
+  .ktile.active::after {
+    animation: none;
+  }
+}
+.ktile-label {
+  display: flex; flex-direction: column; gap: 1px; line-height: 1.15;
+  padding: 0 2px;
+}
+.ktile-label b {
+  font-weight: 500; font-size: var(--text-sm); color: var(--fg);
+}
+.ktile-label span {
+  font-family: var(--mono); font-size: var(--text-2xs); letter-spacing: 0.12em;
+  color: var(--fg-dim); text-transform: uppercase; font-weight: 600;
+}
+.ktile.active .ktile-label b { color: var(--fg); }
+
+/* ===== Vibe preview: rising sun ===== */
+.ktile-preview {
+  position: relative; height: 44px; border-radius: 5px; overflow: hidden;
+  background: linear-gradient(180deg, var(--ink-preview-0) 0%, var(--ink-preview-1) 70%, var(--ink-preview-2) 100%);
+  border: 1px solid var(--b-0);
+}
+.rsun {
+  position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  background: radial-gradient(circle, var(--torii-hi) 0%, var(--torii) 45%, rgba(var(--torii-rgb),0.3) 75%, transparent 100%);
+  box-shadow: 0 0 12px rgba(var(--torii-rgb),0.35);
+  filter: blur(0.2px);
+}
+.rsun-rays {
+  position: absolute; left: 50%; bottom: 0;
+  width: 180px; height: 90px;
+  transform: translateX(-50%);
+  background: conic-gradient(
+    from 180deg at 50% 100%,
+    transparent 0deg,
+    rgba(var(--torii-rgb),0.35) 28deg,
+    transparent 38deg,
+    rgba(var(--torii-rgb),0.35) 62deg,
+    transparent 72deg,
+    rgba(var(--torii-rgb),0.35) 96deg,
+    transparent 106deg,
+    rgba(var(--torii-rgb),0.35) 130deg,
+    transparent 140deg,
+    rgba(var(--torii-rgb),0.35) 164deg,
+    transparent 174deg,
+    rgba(var(--torii-rgb),0.35) 198deg,
+    transparent 208deg,
+    rgba(var(--torii-rgb),0.35) 232deg,
+    transparent 242deg,
+    rgba(var(--torii-rgb),0.35) 266deg,
+    transparent 276deg,
+    rgba(var(--torii-rgb),0.35) 300deg,
+    transparent 310deg,
+    rgba(var(--torii-rgb),0.35) 334deg,
+    transparent 344deg
+  );
+  mask-image: linear-gradient(180deg, transparent 0%, black 55%, black 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 55%, black 100%);
+  opacity: 0.55;
+}
+.ktile[data-vibe="subtle"]  .rsun       { width: 24px; height: 24px; bottom: -10px; opacity: 0.75; box-shadow: 0 0 8px rgba(var(--torii-rgb),0.2); }
+.ktile[data-vibe="subtle"]  .rsun-rays  { opacity: 0.2; }
+.ktile[data-vibe="confident"] .rsun     { width: 36px; height: 36px; }
+.ktile[data-vibe="confident"] .rsun-rays{ opacity: 0.5; }
+.ktile[data-vibe="bold"]    .rsun       { width: 48px; height: 48px; bottom: -20px; box-shadow: 0 0 20px rgba(var(--torii-rgb),0.55); }
+.ktile[data-vibe="bold"]    .rsun-rays  { opacity: 0.9; }
+
+/* ===== Kanji preview ===== */
+.kglyph {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; border-radius: 5px;
+  background: linear-gradient(180deg, rgba(var(--white-rgb),0.02) 0%, rgba(var(--black-rgb),0.25) 100%);
+  border: 1px solid var(--b-0);
+}
+.kglyph.on span {
+  font-family: var(--serif); font-weight: 700; font-size: var(--text-3xl);
+  color: var(--torii-hi);
+  text-shadow: 0 0 8px rgba(var(--torii-rgb),0.22);
+  letter-spacing: 0.04em;
+}
+.kglyph.off span {
+  font-family: var(--mono); font-weight: 600; font-size: var(--text-xs);
+  color: var(--fg-dim); letter-spacing: 0.14em;
+}
+
+/* ===== Density preview ===== */
+.kdens {
+  display: flex; flex-direction: column; justify-content: center;
+  height: 44px; padding: 7px 10px; border-radius: 5px;
+  background: linear-gradient(180deg, rgba(var(--white-rgb),0.02) 0%, rgba(var(--black-rgb),0.2) 100%);
+  border: 1px solid var(--b-0);
+}
+.kdens-bar {
+  height: 5px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(var(--white-rgb),0.18), rgba(var(--white-rgb),0.06));
+}
+.kdens[data-density="spacious"] { gap: 6px; }
+.kdens[data-density="spacious"] .kdens-bar { height: 5px; }
+.kdens[data-density="balanced"] { gap: 4px; }
+.kdens[data-density="balanced"] .kdens-bar { height: 4px; }
+.kdens[data-density="dense"]    { gap: 2px; }
+.kdens[data-density="dense"]    .kdens-bar { height: 3px; }
+.kdens .kdens-bar:nth-child(1) { width: 78%; }
+.kdens .kdens-bar:nth-child(2) { width: 100%; }
+.kdens .kdens-bar:nth-child(3) { width: 62%; }
+
+/* ===== Live effects on the page-card scope ===== */
+
+/* Vibe — intensify torii glow in hero */
+[data-kamae-scope][data-vibe="subtle"]    .cmd-hero-glow { opacity: 0.4; }
+[data-kamae-scope][data-vibe="confident"] .cmd-hero-glow { opacity: 1; }
+[data-kamae-scope][data-vibe="bold"]      .cmd-hero-glow {
+  opacity: 1; transform: scale(1.3); filter: saturate(1.2);
+}
+[data-kamae-scope][data-vibe="bold"]      .cmd-hero {
+  background: linear-gradient(135deg, var(--ink-bold-0) 0%, var(--ink-bold-1) 40%, var(--ink-bold-2) 100%);
+}
+[data-kamae-scope][data-vibe="subtle"]    .cmd-hero {
+  background: linear-gradient(135deg, var(--ink-subtle-0) 0%, var(--ink-subtle-1) 40%, var(--ink-subtle-2) 100%);
+}
+
+/* Kanji — show/hide rail-item jp subs (currently hidden, so toggle breadcrumb/kmark) */
+[data-kamae-scope][data-kanji="off"] .jp,
+[data-kamae-scope][data-kanji="off"] .kmark,
+[data-kamae-scope][data-kanji="off"] .breadcrumb .jp { display: none !important; }
+[data-kamae-scope][data-kanji="off"] .kamae-kmark { /* keep header mark visible always */ }
+
+/* Density — tighten grid gaps + panel padding */
+[data-kamae-scope][data-density="spacious"] .page   { gap: 28px; padding-top: 32px; }
+[data-kamae-scope][data-density="spacious"] .grid   { gap: 24px; }
+[data-kamae-scope][data-density="spacious"] .panel  { padding: 22px 24px; }
+
+[data-kamae-scope][data-density="balanced"] .page   { gap: 22px; }
+[data-kamae-scope][data-density="balanced"] .grid   { gap: 20px; }
+[data-kamae-scope][data-density="balanced"] .panel  { padding: 20px 22px; }
+
+[data-kamae-scope][data-density="dense"]    .page   { gap: 14px; padding-top: 20px; }
+[data-kamae-scope][data-density="dense"]    .grid   { gap: 12px; }
+[data-kamae-scope][data-density="dense"]    .panel  { padding: 14px 16px; }
+[data-kamae-scope][data-density="dense"]    .mcard  { padding: 12px 14px; }
+[data-kamae-scope][data-density="dense"]    .mcard .v { font-size: var(--text-5xl); }
+[data-kamae-scope][data-density="dense"]    .drow   { padding: 8px 4px; }

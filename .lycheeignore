@@ -1,0 +1,36 @@
+# Lychee link-checker ignore list
+# Format: one regex per line. Matches against the resolved link URL.
+#
+# Each entry must explain WHY. Do not add without a reason. If a link is
+# legitimately broken, fix the source instead of suppressing.
+
+# -----------------------------------------------------------------------------
+# Intentional attack payloads (fixture content)
+# -----------------------------------------------------------------------------
+# These URLs appear in fixture files by design — they are part of
+# prompt-injection / delivery-vector attack payloads that the dojo
+# detects and blocks. Resolving them is not useful and some are
+# deliberate 404s or unreachable hosts.
+^https?://evil\.com/
+
+# -----------------------------------------------------------------------------
+# External domains that return 404 / moved / unreliable
+# -----------------------------------------------------------------------------
+# Pages below have moved or are rate-limited by the checker. When a stable
+# replacement URL exists, update the source doc and remove the ignore.
+
+# MITRE ATLAS individual techniques sometimes 404 intermittently on
+# lychee's HEAD probes; pages render fine in a browser.
+^https?://atlas\.mitre\.org/techniques/
+
+# Google responsibility page frequently returns a 404 to automated
+# checkers but is reachable in a browser. Prefer a stable archive link
+# when referenced; ignored here until the source docs are updated.
+^https?://ai\.google/responsibility
+
+# -----------------------------------------------------------------------------
+# Social platforms (consistent with docs-link-check.yml --exclude list)
+# -----------------------------------------------------------------------------
+^https?://(www\.)?twitter\.com/
+^https?://(www\.)?x\.com/
+^https?://(www\.)?linkedin\.com/

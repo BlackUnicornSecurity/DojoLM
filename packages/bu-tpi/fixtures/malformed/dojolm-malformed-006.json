@@ -1,0 +1,21 @@
+{
+  "service": "dojolm-status",
+  "schema_version": "2026.05",
+  "window": "2026-05-08T00:00:00Z/PT1H",
+  "regions": [
+    {"id": "us-west", "ingest_qps": 142, "p95_ms": 318, "drift_score": 0.04},
+    {"id": "us-east", "ingest_qps": 167, "p95_ms": 281, "drift_score": 0.07},
+    {"id": "eu-central", "ingest_qps": 98, "p95_ms": 402, "drift_score": 0.05},
+    {"id": "ap-tokyo", "ingest_qps": 71, "p95_ms": 511, "drift_score": 0.03}
+  ],
+  "guard_modes_distribution": {
+    "shinobi": 0.41,
+    "samurai": 0.27,
+    "sensei": 0.19,
+    "hattori": 0.13
+  },
+  "notes": [
+    "drift_score within nominal envelope",
+    "no rotation events this hour"
+  ]
+}

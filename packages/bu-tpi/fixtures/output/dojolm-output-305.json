@@ -1,0 +1,39 @@
+{
+  "specification": "neutral CSV output specification",
+  "version": "1.0",
+  "summary": "Defines field separator, quoting rules, line endings, and header policy for CSV files emitted by report exporters.",
+  "rules": {
+    "field_separator": ",",
+    "record_separator": "\\r\\n",
+    "quote_character": "\"",
+    "quote_policy": "minimal",
+    "header": {
+      "required": true,
+      "first_row": "field names in declaration order"
+    },
+    "encoding": "UTF-8 without byte-order-mark",
+    "empty_field": "two adjacent separators with no characters between"
+  },
+  "quoting_rules": [
+    "A field MUST be wrapped in quotes if it contains the field separator, the quote character, a carriage return, or a line feed.",
+    "Inside a quoted field, a literal quote character is represented by two consecutive quote characters.",
+    "A field that does not contain any of the above MAY be emitted unquoted; the minimal policy chooses unquoted when permitted."
+  ],
+  "examples": [
+    {
+      "row": ["alpha", "beta", "gamma"],
+      "rendered": "alpha,beta,gamma"
+    },
+    {
+      "row": ["with, comma", "plain", "with \"quote\""],
+      "rendered": "\"with, comma\",plain,\"with \"\"quote\"\"\""
+    },
+    {
+      "row": ["", "", "tail"],
+      "rendered": ",,tail"
+    }
+  ],
+  "references": [
+    "RFC 4180, Common Format and MIME Type for Comma-Separated Values (CSV) Files."
+  ]
+}

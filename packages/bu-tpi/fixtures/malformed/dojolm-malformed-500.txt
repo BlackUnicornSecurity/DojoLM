@@ -1,0 +1,38 @@
+JSON Specification Primer (RFC 8259) — neutral reference
+
+JSON, the JavaScript Object Notation, is a text-based interchange format defined authoritatively by RFC 8259 (December 2017), which obsoletes the earlier RFC 7159 and aligns the IETF specification with the ECMA-404 surface syntax. The format is language-independent: it inherits punctuation conventions from JavaScript object literals but the grammar, encoding rules, and value semantics described below are the normative definition for any conforming implementation.
+
+Value grammar
+
+A JSON text encodes exactly one value. The grammar admits seven concrete values: the three literal tokens true, false, and null; numeric literals; string literals delimited by double quotes; arrays surrounded by square brackets; and objects surrounded by curly braces. Whitespace consisting of space, horizontal tab, line feed, or carriage return is permitted between any two structural tokens and is otherwise insignificant.
+
+Numbers are decimal, optionally signed with a leading minus, with an integer part, an optional fractional part introduced by a period, and an optional exponent introduced by e or E followed by an optional sign and one or more decimal digits. Leading zeros on the integer part are forbidden except for the single digit 0 itself. The grammar does not bound the magnitude or precision of numeric values; consumers commonly map JSON numbers to IEEE 754 double-precision floats, but the specification permits more precise representations.
+
+Strings are sequences of Unicode code points enclosed in double quotes. Inside the quotes, the backslash escape sequences \", \\, \/, \b, \f, \n, \r, \t, and \uXXXX are recognised. The four-hex-digit form \uXXXX denotes a single Basic Multilingual Plane code point; characters outside the BMP are encoded using a UTF-16 surrogate pair, also written as two consecutive \uXXXX escapes. Control characters U+0000 through U+001F must be escaped; literal U+0022 (double quote) and U+005C (reverse solidus) inside a string must also be escaped.
+
+Composite values
+
+Arrays are ordered sequences of zero or more values separated by commas; trailing commas are not permitted. Objects are unordered collections of name/value pairs, where each name is a string and each value is any JSON value. RFC 8259 explicitly states that the names within an object should be unique and that the behaviour of software receiving non-unique names is unpredictable; many implementations reject duplicate keys, others retain only the last occurrence.
+
+Encoding
+
+JSON texts exchanged between systems that are not part of a closed ecosystem must be encoded using UTF-8. UTF-16 and UTF-32 are permitted only in closed environments by historical agreement. A JSON text that begins with a Unicode byte-order mark is not strictly conformant; receivers may either ignore the BOM or treat its presence as an error.
+
+Worked example
+
+A minimal but well-formed example illustrating each value kind:
+
+  {
+    "schema": "https://example.invalid/profile/v1",
+    "version": 3,
+    "released": true,
+    "deprecated": null,
+    "authors": ["a", "b"],
+    "metrics": { "size": 4096, "ratio": 0.875 }
+  }
+
+The text above parses successfully under any RFC 8259 conformant parser: the object has six well-formed members, the array authors has two well-formed string elements, and the nested metrics object has two well-formed numeric members.
+
+Scope
+
+This document is a neutral descriptive primer of RFC 8259. It does not introduce malformed input, parser-fuzzing artefacts, or any payload intended to elicit error states from a consumer. It is suitable for inclusion in a benign-control fixture set.

@@ -1,0 +1,180 @@
+/* Shared canvas chrome for the (design)/canvas/{01,02,03} routes.
+   Extracted from canvas-01/canvas.css + canvas-02/canvas.css during Epic
+   4A S4A.5 — canvas-01 and canvas-02 previously duplicated this block
+   verbatim. Keep visual parity identical; this is a pure extract. */
+
+.canvas-top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 20px 32px 18px;
+  background: rgba(3, 3, 8, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--b-1);
+}
+.canvas-top-left { display: flex; align-items: flex-start; gap: 24px; }
+.canvas-top .back {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+  padding: 8px 12px; border: 1px solid var(--b-1); border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02); transition: 150ms; white-space: nowrap;
+}
+.canvas-top .back:hover { color: var(--fg); border-color: var(--b-2); }
+.canvas-meta { display: flex; flex-direction: column; gap: 2px; }
+.canvas-eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em;
+  color: var(--torii-hi); text-transform: uppercase; font-weight: 600;
+}
+.canvas-meta h1 {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  margin: 0; font-family: var(--editorial);
+  font-weight: 500; font-size: 24px; letter-spacing: -0.015em;
+  color: var(--fg);
+}
+.archetype-def {
+  max-width: 520px; font-size: 12.5px; line-height: 1.55;
+  color: var(--fg-dim); margin-top: 4px;
+}
+.archetype-def b { color: var(--fg); font-weight: 600; }
+.archetype-def i { color: var(--torii-hi); font-style: italic; font-family: var(--editorial); }
+
+.legend-strip {
+  display: flex; align-items: center; gap: 20px;
+  padding: 10px 32px; background: rgba(255, 255, 255, 0.015);
+  border-bottom: 1px solid var(--b-1);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 600;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 8px; }
+.lg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-spacer { flex: 1; }
+.legend-note { text-transform: none; letter-spacing: 0.02em; font-family: var(--sans); color: var(--fg-mute); }
+
+.page-grid {
+  display: flex; gap: 28px; padding: 28px 32px 64px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  min-height: calc(100vh - 140px);
+}
+
+.page-card {
+  flex: 0 0 1520px;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--b-1); border-radius: 14px;
+  background: linear-gradient(180deg, #09090F 0%, #06060B 100%);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+.page-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--b-1);
+  background: rgba(255, 255, 255, 0.015);
+}
+.pc-label { display: flex; align-items: baseline; gap: 12px; }
+.pc-num {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  color: var(--torii-hi); font-weight: 700;
+}
+.pc-name {
+  /* F-1-019 — Fraunces stack lives in `--editorial` (tokens.css). */
+  font-family: var(--editorial);
+  font-size: 16px; font-weight: 500; color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.pc-sub {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fg-mute); font-weight: 500;
+}
+.page-card-shell { position: relative; }
+.page-card-shell .app { min-height: auto; }
+
+/* Canvas-08 (YR.6 C-2 showcase) layout helpers — keep inline `style={{}}`
+   props out of canvas pages so a strict CSP `style-src` that omits
+   `'unsafe-inline'` cannot block them. Reuse for canvas-09+ when adding
+   new spotlight surfaces. */
+.canvas-card-pad { padding: 20px; }
+.canvas-card-pad-stack {
+  padding: 20px; display: flex; flex-direction: column; gap: 8px;
+}
+.canvas-card-pad-grid-2 {
+  padding: 20px; display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.canvas-card-pad-grid-vert {
+  padding: 20px; display: grid; gap: 16px;
+}
+.canvas-card-pad-grid-12 {
+  padding: 20px; display: grid; gap: 12px;
+}
+/* Canvas-09 (YR.6 C-3) additions. */
+.canvas-card-pad-grid-4 {
+  padding: 20px; display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.canvas-card-list {
+  padding: 20px; display: flex; flex-direction: column; gap: 0;
+}
+
+/* Canvas-17 (A.2 LoadingSkeleton) — manual reduced-motion preview hook.
+   Used by section 08 of the canvas-17 showcase to demonstrate the
+   prefers-reduced-motion static state without requiring reviewers to
+   toggle their OS setting. Production consumers never set these
+   overrides directly — the global @media (prefers-reduced-motion:
+   reduce) block in primitives.css handles real OS-driven behavior. */
+.ls-reduced-preview .skel {
+  animation: none;
+  background-image: none;
+}
+
+@media (max-width: 768px) {
+  .canvas-top {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+  .canvas-top-left {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    min-width: 0;
+  }
+  .canvas-top-right { display: none; }
+  .canvas-meta, .canvas-title { min-width: 0; }
+  .canvas-meta h1, .canvas-title h1 {
+    font-size: 18px;
+    overflow-wrap: anywhere;
+  }
+  .canvas-top .back, .canvas-back {
+    align-self: start;
+    white-space: nowrap;
+  }
+  .legend-strip {
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 10px 12px;
+    overflow-x: visible;
+  }
+  .legend-item, .legend-note { flex: 0 1 auto; }
+  .legend-spacer { display: none; }
+  .legend-note { min-width: 0; overflow-wrap: anywhere; }
+  .page-grid {
+    max-width: 100%;
+    padding: 16px 12px 40px;
+    box-sizing: border-box;
+  }
+  .page-card-shell, .page-card-shell .app {
+    min-width: 0;
+    max-width: 100%;
+  }
+}

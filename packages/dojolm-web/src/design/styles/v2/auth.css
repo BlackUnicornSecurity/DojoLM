@@ -1,0 +1,230 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Auth and forbidden: a deliberate gate, not dashboard chrome. */
+
+[data-skin="v2"] .sys-fullpage {
+  min-height: 100dvh;
+  padding: 56px 20px 28px;
+  background: var(--bg-1);
+}
+[data-skin="v2"] .sys-fullpage-inner {
+  width: min(100%, 460px);
+  margin: 0 auto;
+}
+[data-skin="v2"] .gate-card {
+  width: min(100%, 400px);
+  margin-inline: auto;
+  padding: 30px 28px 26px;
+  background: var(--bg-2);
+  border: 1px solid var(--b-0);
+  border-radius: 14px;
+}
+[data-skin="v2"] .gate-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+[data-skin="v2"] .gate-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--torii);
+  color: var(--torii-text-on);
+  font-family: var(--serif);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+}
+[data-skin="v2"] .gate-wordmark {
+  color: var(--fg);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+}
+/* wave-c Login v2 two-tone wordmark — Dojo<span class="lm">LM</span>.
+   DR-6 KEEP: the text-safe red (--torii-text), never --torii. */
+[data-skin="v2"] .gate-wordmark .lm {
+  color: var(--torii-text);
+}
+[data-skin="v2"] .gate-kick {
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+[data-skin="v2"] .gate-card h1 {
+  margin: 14px 0 0;
+  font-family: var(--sans);
+  font-size: var(--text-4xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+[data-skin="v2"] .gate-card .sub {
+  margin: 7px 0 0;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  text-align: center;
+}
+[data-skin="v2"] .gfield {
+  margin-top: 16px;
+}
+[data-skin="v2"] .gfield label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--fg-dim);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+[data-skin="v2"] .login-form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+[data-skin="v2"] .gate-error:not(:empty) {
+  margin-top: 16px;
+}
+[data-skin="v2"] .gate-password-field {
+  position: relative;
+}
+[data-skin="v2"] .gate-password-field .input {
+  padding-right: 42px;
+}
+[data-skin="v2"] .gate-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: grid;
+  padding: 4px;
+  color: var(--fg-dim);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  transform: translateY(-50%);
+  place-items: center;
+}
+[data-skin="v2"] .gate-cta {
+  margin-top: 20px;
+}
+[data-skin="v2"] .login-form-submit {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+}
+[data-skin="v2"] .gate-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  text-align: center;
+}
+[data-skin="v2"] .gate-links a {
+  color: var(--steel-lg);
+  font-size: var(--text-base);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="v2"] .member-gate-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 34px 20px;
+}
+[data-skin="v2"] .member-gate-form {
+  margin-top: 2px;
+}
+[data-skin="v2"] .member-gate-form form {
+  margin-top: 2px;
+}
+[data-skin="v2"] .member-gate-submit {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 20px;
+  justify-content: center;
+}
+[data-skin="v2"] .member-gate-form .wb-banner,
+[data-skin="v2"] .member-gate-form .gate-info {
+  margin-top: 14px;
+}
+[data-skin="v2"] .err-card {
+  width: 100%;
+  padding: 26px 28px;
+  /* §4.3 gradient wash (design wave-c/auth.css:49-50). */
+  background: linear-gradient(
+    180deg,
+    rgba(var(--torii-rgb), 0.07),
+    rgba(var(--torii-rgb), 0.015)
+  );
+  border: 1px solid rgba(var(--torii-rgb), 0.28);
+  border-radius: 14px;
+}
+[data-skin="v2"] .err-card .ek {
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+[data-skin="v2"] .err-card h1 {
+  margin: 10px 0 0;
+  color: var(--torii-text);
+  font-family: var(--sans);
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+[data-skin="v2"] .err-card p {
+  max-width: 52ch;
+  margin: 8px 0 0;
+  color: var(--fg-dim);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+}
+[data-skin="v2"] .err-card .act {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+[data-skin="v2"] .err-card details {
+  margin-top: 16px;
+  color: var(--fg-ghost);
+  font-size: var(--text-base);
+}
+[data-skin="v2"] .err-card summary {
+  color: var(--fg-dim);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+[data-skin="v2"] .err-card details a {
+  color: var(--steel-lg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+[data-skin="v2"] .legal-footer {
+  margin-top: 26px;
+  border-top-color: var(--b-0);
+}
+
+@media (max-width: 520px) {
+  [data-skin="v2"] .sys-fullpage {
+    padding: 28px 14px 20px;
+  }
+  [data-skin="v2"] .gate-card {
+    padding: 24px 18px 20px;
+  }
+  [data-skin="v2"] .err-card {
+    padding: 22px 18px;
+  }
+}

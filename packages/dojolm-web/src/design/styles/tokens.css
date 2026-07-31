@@ -1,0 +1,555 @@
+/* Dojo LM Design System — Tokens
+   Shared foundation for all product pages.
+   Metaphor dialed down: no giant kanji watermarks, no per-page Japanese subtitles.
+   Torii red is reserved for primary actions, alerts, and selected state only.
+*/
+:root {
+  /* Ink scale — blue-tinted blacks */
+  --bg: #06060b;
+  --bg-1: #0a0a11;
+  --bg-2: #10111a;
+  --bg-3: #161724;
+  --bg-4: #1e2030;
+  --bg-5: #2a2c3e;
+
+  /* Lacquer (reserved for hero + primary CTA only) */
+  --lacquer-0: #160403;
+  --lacquer-1: #220604;
+  --lacquer-2: #300906;
+  /* Lacquer mark stops — used by .avatar + .rail-logo-mark gradients
+     (paler than the panel-grade --lacquer-* ramp because the mark wash
+     reads more saturated against the chrome bg than against the hero). */
+  --lacquer-mark-0: #2a0b08;
+  --lacquer-mark-1: #140404;
+
+  /* Canvas + page-card ink stops — darker than --bg so panels lift off
+     the canvas chrome (only consumed in src/design/styles/patterns/command.css
+     and ktile-preview gradients in kamae.css). */
+  --ink-canvas: #030308; /* .dojo-ds-v3 canvas chrome bg */
+  --ink-card-1: #09090f; /* page-card top gradient stop */
+
+  /* Vibe + preview gradient stops — used by kamae.css ktile-preview
+     and [data-vibe="bold"|"subtle"] hero overrides. Kept as a small
+     distinct ramp so theme drift can re-tone vibe presets without
+     touching the panel/hero-grade --bg / --lacquer-* scales. */
+  --ink-preview-0: #060309;
+  --ink-preview-1: #0d0711;
+  --ink-preview-2: #160a0e;
+  --ink-bold-0: #2a0908;
+  --ink-bold-1: #120507;
+  --ink-bold-2: #070311;
+  --ink-subtle-0: #0f0504;
+  --ink-subtle-1: #09040a;
+  --ink-subtle-2: #05050b;
+
+  /* Torii red — single accent.
+     E7.S3 round-2 (2026-05-09) — corrected WCAG ratios for --torii-hi
+     (used as small-text replacement for --torii in inline error/hint
+     copy). Prior IMPLEMENTATION-LOG claimed 7.10:1; actual values:
+       --torii-hi #F47A63 vs --bg-2 (#10111A) = 6.99:1
+       --torii-hi #F47A63 vs --bg   (#06060B) = 7.52:1
+     Both pass the 4.5:1 small-text floor (WCAG 1.4.3) by a wide margin
+     in both background contexts (panels on --bg-2, page chrome on --bg).
+
+     E1-followup (2026-05-11) — F-4-005 P1: `--torii` (#CC3A2F) at 4.06:1
+     vs --bg / 3.77:1 vs --bg-2 FAILS WCAG 1.4.3 small-text 4.5:1 floor
+     when used as a text color (e.g., `.sys-fullpage-code` hero stencil,
+     inline Arena error spans, MatchCreationWizard ERROR_STYLE). Keep
+     `--torii` as the brand-identity solid-surface token (backgrounds,
+     borders, fills — those targets only need 3:1 non-text contrast,
+     which 4.06:1 clears). Add a dedicated `--torii-text` variant at
+     #E0544A (same hex as `--torii-lg`, but exposed under a semantic
+     text-color alias so consumers can express intent — `--torii-lg`
+     remains the brand-identity "lighter solid surface" alias). Ratios
+     for `--torii-text` #E0544A:
+       --torii-text vs --bg   (#06060B) = 5.33:1 — passes 4.5:1
+       --torii-text vs --bg-2 (#10111A) = 4.96:1 — passes 4.5:1
+     NOTE: distinct from `--torii-text-em/on/dim` below (which paint
+     text that sits ON TOP of a torii fill — the inverse scenario). */
+  --torii: #cc3a2f;
+  --torii-lg: #e0544a;
+  --torii-hi: #f47a63;
+  --torii-text: #e0544a; /* text-color variant of --torii (≥4.5:1 vs --bg/--bg-2) — F-4-005 P1 retire */
+  --torii-deep: #8b1e16;
+  /* Wave 3gg — F-4-006 P2 retire. `--torii-deep` (#8B1E16) at 2.21:1
+     vs --bg / 2.05:1 vs --bg-2 FAILS both the 3:1 non-text floor
+     (WCAG 1.4.11) and the 4.5:1 small-text floor (WCAG 1.4.3) when
+     painted as a solid surface against the dark page chrome. Keep
+     `--torii-deep` as the brand-identity gradient stop (already used
+     in btn-primary linear-gradient bottom, ritual.css headers, dashboard
+     scrollwork — all gradients where the perceived contrast is averaged
+     with a brighter sibling stop) but expose `--torii-deep-text` at
+     #D24A3A for callers that need a solid-color paint against the dark
+     ground. Ratios for `--torii-deep-text` #D24A3A:
+       --torii-deep-text vs --bg   (#06060B) = 4.60:1 — passes 4.5:1
+       --torii-deep-text vs --bg-2 (#10111A) = 4.28:1 — passes 3:1 non-text;
+                                                 4.28:1 misses 4.5:1 by 0.22
+                                                 → use `--torii-text` for
+                                                 text against --bg-2.
+     This is the same hex as `--torii-text` but exposed under a
+     distinct semantic alias so call-sites that historically reached
+     for `--torii-deep` (the brand-deep-red ramp anchor) can swap to
+     the contrast-cleared sibling without leaking the implementation
+     detail of "we picked the same hex as the --torii-text variant". */
+  --torii-deep-text: #d24a3a; /* contrast-cleared variant of --torii-deep (≥3:1 non-text, ≥4.5:1 small-text vs --bg) — F-4-006 P2 retire */
+  --torii-mid: #b22a20; /* btn-primary gradient mid-stop, between --torii and --torii-deep */
+  --ember: #f0744b;
+  --torii-rgb: 204, 58, 47;
+  --torii-lg-rgb:
+    224, 84, 74; /* mirror of --torii-lg for rgba() composites — used where the lighter variant is intentional (e.g., command.css cmd-hero-glow stop 28%) */
+
+  /* Torii ink-on-red text tiers — paler cousins of --torii used for text
+     and small marks that sit on top of torii fills (chip.red color,
+     btn-danger color, btn-primary color, avatar/rail-logo glyph). Kept
+     here next to the torii ramp so the brand-mood single-source-of-truth
+     stays intact. Sourced from the verbatim canvas-01 hex set. */
+  --torii-text-em: #ffd9d0; /* avatar + rail-logo glyph color */
+  --torii-text-on: #ffffff; /* text on torii fills — served design (wave-a app-shell.css .brand .mark + dojo.css .btn-primary) paints on-red text pure #fff, not the former #fff3f1 */
+  --torii-text-dim: #ffa89d; /* chip.red / tag.block / btn-danger text */
+
+  /* Semantic RGB channels — used for token-driven rgba() composites
+     (alpha-tinted badges, banners, step-strip state swatches, arena
+     heat cells, belt discs). --sev-high-rgb mirrors --sev-high for the
+     3rd tier of the Arena bypass-rate heat ramp (safe → warn → high →
+     alert). --violet-rgb mirrors --violet for BeltDisc purple belts.
+     --white-rgb / --black-rgb are neutral-alpha channels for glass and
+     shadow overlays — the alpha is the semantic signal, not the hue.
+     --bg-rgb mirrors --bg (#06060B) so YR.9.1 takeover scrim composites
+     can resolve a token-driven base instead of a raw triplet. */
+  --jade-rgb: 52, 199, 106;
+  --gold-rgb: 212, 168, 67;
+  --steel-rgb: 91, 141, 239;
+  --sev-high-rgb: 224, 128, 64;
+  --violet-rgb: 139, 123, 245;
+  --white-rgb: 255, 255, 255;
+  --black-rgb: 0, 0, 0;
+  --bg-rgb: 6, 6, 11;
+  /* E1.S7 — additional channel mirrors so token-driven rgba() composites
+     never reach for raw RGB triplets. --ember-rgb mirrors --ember (#F0744B),
+     --torii-deep-rgb mirrors --torii-deep (#8B1E16), --paper-line-rgb
+     mirrors --paper-line (#B8AF94), --paper-ink-rgb mirrors --paper-ink
+     (#1B1609), --torii-tag-rgb is the paler torii (#E06060) that legacy
+     tag.block + tag.allow rules wash through (kept distinct from --torii
+     for visual parity), --bg-2-rgb mirrors --bg-2 (#10111A) for the
+     topbar frosted scrim, --ink-card-rgb mirrors --ink-canvas (#030308)
+     for the canvas chrome scrim, --ink-bg-soft-rgb is a softer ink
+     (9,9,15) for the topbar scrim bottom-stop. */
+  --ember-rgb: 240, 116, 75;
+  --torii-deep-rgb: 139, 30, 22;
+  --paper-line-rgb: 184, 175, 148;
+  --paper-ink-rgb: 27, 22, 9;
+  --torii-tag-rgb: 224, 96, 96;
+  --bg-2-rgb: 16, 17, 26;
+  --ink-canvas-rgb: 3, 3, 8;
+  --ink-bg-soft-rgb: 9, 9, 15;
+
+  /* Secondary band — enterprise palette */
+  --steel: #5b8def;
+  --steel-lg: #8bb4ff;
+  --violet: #8b7bf5;
+  --violet-lg: #b2a9ff; /* lighter violet — matches *-lg lightening pattern; consumed by D-204 GOVERN engine chip + D-205 Operations category chip */
+  /* F-1-023 + F-1-034 (Wave 3ff) — `--cyan` is the Layer-3 brand-cyan
+     alias for the Layer-1 cross-brand `--bu-cyan` defined in
+     app/brand-tokens.css. The two tokens shared the same literal hex
+     (#00D9FF) so consumers couldn't tell whether they were paying the
+     cross-brand reservation tax (G10) or pulling a local Layer-3 cyan.
+     Aliasing here collapses the duplicate while preserving every
+     downstream consumer (--band-intel + ThreatRadarWidget fallback).
+     The G10 cross-brand surface-allowlist still applies to --bu-cyan;
+     --cyan is the design-system passthrough. */
+  --cyan: var(--bu-cyan, #00d9ff);
+  --jade: #34c76a;
+  --jade-lg: #6fe19a;
+  --gold: #d4a843;
+  --gold-lg: #f5c862;
+  --crimson: #c8344b;
+  --crimson-lg: #e8627a; /* command-layer color — distinguishes Sensei category from Test (torii) in D-205 */
+  --bamboo: #34c76a; /* legend alias for jade (canvas-01 reference) */
+  --sev-high: #e08040; /* high-severity risk swatch */
+
+  /* Pale text tiers for chip/tag rules — paler cousins of --gold and --jade
+     used as text color on top of warn/allow fills. Sourced from canvas-01. */
+  --gold-text: #f0ce78; /* chip.warn text color */
+  --jade-text: #8be6a6; /* tag.allow text color */
+
+  /* Threat-radar band tokens — semantic dimension assignment for the
+     6-sector ThreatRadarWidget + 4-band EngineStatusBar/EngineFilterChips.
+     Mapped to existing brand tokens so themes that re-skin the brand
+     re-skin the bands automatically. PROTECT=torii (threat-defense red),
+     TEST=steel (analytical blue), GOVERN=violet (D-204 governance chip
+     reference, see --violet-lg comment line 50), INTEL=cyan, AGENTIC=jade
+     (autonomous-agents green), MULTIMODAL=gold (sensory amber). Retires
+     phantom-token cluster (--accent-2..6) in
+     src/design/workbench/ThreatRadarWidget.tsx. */
+  --band-protect: var(--torii);
+  --band-test: var(--steel);
+  --band-govern: var(--violet);
+  --band-intel: var(--cyan);
+  --band-agentic: var(--jade);
+  --band-multimodal: var(--gold);
+
+  /* Paper (for ritual moments only) */
+  --paper: #f0e9d7;
+  --paper-2: #e3d9bf;
+  --paper-ink: #1b1609;
+  --paper-mute: #6b5f42;
+  --paper-line: #b8af94;
+
+  /* Foreground — E7.S3 (2026-05-09) WCAG 1.4.3 contrast bump.
+     Ratios computed against --bg-2 (#10111A, L≈0.0065). Prior values:
+       --fg-mute  #5E6472 → 3.12:1 (FAIL small-text 4.5:1; passes large 3:1)
+       --fg-ghost #3A3F4B → 1.83:1 (FAIL non-text 3:1)
+     Fix: --fg-ghost raised to #7A8294 (~4.83:1, passes 1.4.3 small-text).
+     --fg-mute kept at 3.12:1 — large-text/non-text only; small-text
+     consumers swapped to --fg-dim (#9BA3B3 ≈ 7.35:1) per E7.S3 acceptance.
+     Round-2 fix (2026-05-09) expanded the swap from workbench-only to
+     primitives.css/system.css/kamae.css small-text (≤14px) sites — see
+     IMPLEMENTATION-LOG `2026-05-09 — E7.S3 round 2 fix`. */
+  --fg: #eceef2; /* 14.96:1 vs --bg-2 */
+  --fg-dim: #9ba3b3; /*  7.35:1 vs --bg-2 — small-text safe */
+  --fg-mute: #5e6472; /*  3.12:1 vs --bg-2 — large-text / non-text only */
+  --fg-ghost: #7a8294; /*  4.83:1 vs --bg-2 — small-text safe (was #3A3F4B / 1.83:1) */
+
+  /* Borders — REALIGNED to the design source (2026-07-20, founder design
+     authority). The design's `dojo.css` draws every border/divider at
+     `--line` rgba 0.07 / `--line-2` rgba 0.12 — near-invisible hairlines.
+     E7.S3 (2026-05-09) had bumped these to 0.36/0.46/0.58/0.72 for WCAG
+     1.4.11 non-text 3:1, which made every panel/rail/chip edge a harsh box
+     — the systemic reason the app "didn't match the design." Restored to the
+     design ramp; 4-tier hierarchy preserved at design subtlety.
+     A11Y NOTE: these fall below WCAG 1.4.11 3:1 non-text (as the design does).
+     If a11y contrast must win over pixel-parity, raise --b-2/--b-3 for the
+     interactive/input tiers only, not the panel/divider tiers. */
+  --b-0: rgba(255, 255, 255, 0.07); /* == design --line — panels, dividers */
+  --b-1: rgba(255, 255, 255, 0.1); /* panel rules */
+  --b-2: rgba(255, 255, 255, 0.14); /* input borders ≈ design --line-2 */
+  --b-3: rgba(255, 255, 255, 0.2); /* emphasized hairlines */
+  --b-red: rgba(204, 58, 47, 0.3);
+  --b-red-2: rgba(204, 58, 47, 0.45);
+
+  /* Fonts */
+  --sans:
+    var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --mono: var(--font-mono), "JetBrains Mono", "SF Mono", Monaco, monospace;
+  --serif: var(--font-jp), "Noto Serif JP", serif;
+  /* F-1-019 (Wave 3ff) — `--editorial` retires the verbatim `"Fraunces",
+     var(--serif), serif` re-statement that lived in 4 pattern stylesheets
+     (system.css × 2, command.css × 4, ritual.css × 3, canvas.css × 3 =
+     12 occurrences across 4 files). Fraunces is the editorial/display
+     family for ritual + command-hero surfaces; Noto Serif JP (the
+     `--serif` fallback) keeps kanji glyphs renderable when Fraunces
+     fails to load. Consumers reference `var(--editorial)` instead of
+     re-stating the family stack, so a future swap (e.g. self-host vs
+     Google Fonts) lands in one place. */
+  --editorial: var(--font-editorial), "Fraunces", var(--serif), serif;
+
+  /* F-1-002 (Wave 3ff) — semantic-alias tokens for legacy inline-style
+     consumers that were referencing phantom names (`--text-default`,
+     `--text-muted`, `--card-bg`, `--border-subtle`) with hardcoded
+     fallbacks like `#1a1a1a` / `#888` / `#ddd` / `#333`. Aliasing them
+     here resolves `dojo/no-phantom-tokens` and routes the inline
+     fallbacks through the real design vocabulary:
+       --text-default → --fg (#ECEEF2, WCAG 14.96:1 vs --bg-2)
+       --text-muted   → --fg-dim (#9BA3B3, WCAG 7.35:1 small-text safe)
+       --card-bg      → --bg-2 (#10111A, panel default)
+       --border-subtle→ --b-0 (rgba 0.36, WCAG 1.4.11 3:1 non-text)
+     `--border-subtle` also exists in globals.css L203 at a lower-contrast
+     0.04 alpha; the tokens.css declaration takes precedence inside the
+     .dojo-ds-v3 scope because globals.css is unscoped and tokens.css
+     follows it in cascade order (E1.S7 / accessibility-floor compliance). */
+  --text-default: var(--fg);
+  --text-muted: var(--fg-dim);
+  --card-bg: var(--bg-2);
+  --border-subtle: var(--b-0);
+
+  /* Type scale — `--text-*` rem ramp (E7.S2).
+     Browser default font-size is 16px → 1rem = 16px. Using rem (not px)
+     lets users honor browser zoom + accessibility font-size settings.
+     The ramp is sized to the actual px values used across design CSS:
+     micro/2xs cover mono labels (9-10px), xs/sm/md/base cover body
+     copy (10-13px), lg/xl/2xl cover section labels + small headings
+     (14-18px), and the display-* tier covers stencil/mark/watermark
+     (32-240px) used in command-hero + canvas-watermark patterns.
+     The named tokens below are the SOLE legitimate consumers of
+     font-size in design CSS — see Stylelint rule
+     `dojo/no-px-font-size-in-design` (E7.S2) which fails the build
+     on any `font-size: <N>px` literal in design CSS. */
+  --text-micro: 0.1875rem; /*   3px — mono diagram glyph (DnaGraph leaf label) */
+  --text-2xs: 0.5625rem; /*   9px — uppercase mono microlabel, rail meta */
+  --text-xs: 0.625rem; /*  10px — most common mono caption */
+  --text-sm: 0.6875rem; /*  11px — breadcrumb, count-pill labels */
+  --text-md: 0.75rem; /*  12px — body small / chip text */
+  --text-base: 0.8125rem; /*  13px — body default, table cells */
+  --text-lg: 0.875rem; /*  14px — section labels, btn lg, drow primary */
+  --text-xl: 0.9375rem; /*  15px — kamae card title */
+  --text-2xl: 1rem; /*  16px — page-card body, primary button */
+  --text-3xl: 1.125rem; /*  18px — kamae meta-row title, primitive-card h2 */
+  --text-4xl: 1.25rem; /*  20px — primitive-card subtitle, yr4 hero h1 */
+  --text-5xl: 1.375rem; /*  22px — kamae dense mcard, ritual hero */
+  --text-6xl: 1.5rem; /*  24px — command-hero title, system-card display */
+  --text-7xl: 1.625rem; /*  26px — primitive-card hero h1 */
+  --text-8xl: 1.75rem; /*  28px — command-hero meta value, primitive mcard */
+  --text-display: 2rem; /*  32px — system-card hero, command-hero meta-large */
+  --text-display-lg: 2.25rem; /*  36px — command-hero hero-title, primitive total */
+  --text-stencil: 4.5rem; /*  72px — canvas-watermark stencil number */
+  --text-stencil-lg: 5.5rem; /*  88px — system-card stencil */
+  --text-stencil-xl: 6rem; /*  96px — system-card stencil-large */
+  --text-mark: 10rem; /* 160px — system-card logomark */
+  --text-watermark: 15rem; /* 240px — command canvas-watermark */
+  --text-watermark-md: 7.5rem; /* 120px — command canvas-watermark, tablet tier (≤768px) */
+  --text-watermark-sm: 4rem; /*  64px — command canvas-watermark, mobile tier (≤480px) */
+
+  /* Shadows */
+  --shadow-card:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 1px 0 rgba(0, 0, 0, 0.4),
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-hero:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 30px 80px rgba(0, 0, 0, 0.55);
+  --shadow-drop: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* Radii */
+  --r-bar: 4px; /* E-B3 SeverityBar — proportional bar track + segments */
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+  --r-2xl: 18px;
+
+  /* HAGANE E5.S1 — 4pt spacing ramp (audit M8: spacing was never
+     tokenized; even flagship files inline raw px). Values are the
+     census of in-tree usage — adopting a token is value-preserving.
+     lint:spacing ratchets raw margin/padding/gap literals downward. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-11: 44px;
+  --space-12: 48px;
+
+  /* HAGANE E5.S5 — last raw prod hexes tokenized (identical values;
+     audit M9). Kotoba rubric score ladder + the dark ink used on
+     medal/score chips. */
+  --score-low: #ef4444;
+  --score-mid: #fbbf24;
+  --score-high: #4ade80;
+  --score-none: #94a3b8;
+  --ink-on-medal: #1a1a1f;
+
+  /* Prose / shell max-width — E7.S10 (NEW v3) responsive sweep cluster.
+     Plan ref: audit/REMEDIATION-PLAN.md L833-848. Retires F-5-010 P2
+     (max-width 1500 + 4K gutters). The `.page` shell grows to
+     `min(1920px, 90vw)` at 4K viewports for canvas chrome, while text
+     blocks (lede / hint / banner copy) clamp at 65ch so a 1920px-wide
+     shell does not host 240-character line lengths that fail the
+     50-75ch readable-prose floor (Bringhurst). Token lives in tokens.css
+     so `dojo/no-phantom-tokens` resolves it across primitives.css +
+     pattern stylesheets without per-file scoped declarations. */
+  --max-width-prose: 65ch;
+
+  /* Timing */
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* A.3 + A.4 — shared tone palette for Toast + Banner.
+     Semantic aliases composed from existing brand RGB channels
+     (--jade-rgb / --torii-rgb / --gold-rgb / --steel-rgb). The `-tint`
+     value is a low-alpha background wash (0.12) used as a card overlay
+     above --bg-2; the `-accent` is the solid color used for the 4px
+     left-border stripe + icon glyph. Text inside the surface uses
+     existing --fg / --fg-dim / per-tone text tokens (--torii-text-em
+     for error titles, --jade-text for success titles, etc.).
+     Fixture tone intentionally NOT mapped — the existing
+     .sys-banner--fixture variant (gold accent) is preserved verbatim
+     for backward compatibility (see system.css L152). Toast primitive
+     does not expose a fixture tone (Banner-only). */
+  --tone-success-tint: rgba(var(--jade-rgb), 0.12);
+  --tone-success-accent: var(--jade);
+  --tone-error-tint: rgba(var(--torii-rgb), 0.12);
+  --tone-error-accent: var(--torii);
+  --tone-warning-tint: rgba(var(--gold-rgb), 0.12);
+  --tone-warning-accent: var(--gold);
+  --tone-info-tint: rgba(var(--steel-rgb), 0.12);
+  --tone-info-accent: var(--steel);
+
+  /* Toast shadow — Card-style elevation. Composes the existing card +
+     drop shadows with a tighter top inset for the floating viewport-
+     anchored chip. Distinct from --shadow-card (panel-grade) and
+     --shadow-drop (chip-grade) so visual reviewers can spot the
+     toast-tier shadow without touching either neighbour token. */
+  --shadow-toast:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 14px 36px rgba(0, 0, 0, 0.5),
+    0 6px 14px rgba(0, 0, 0, 0.4);
+
+  /* Z-index for viewport-anchored toast stack. Sits above page chrome
+     (z-index ≤ 100 for .canvas-top / shell), below modal/dialog
+     (typically 1000+). 600 leaves headroom for both sides. */
+  --z-toast: 600;
+
+  /* A.2 LoadingSkeleton — new tokens (2026-05-14).
+     Three new tokens: shape fill, shimmer band, shimmer cycle duration.
+     The skel base sits brighter than --bg-2 (panel ground, #10111A → L≈0.0065)
+     and dimmer than --b-1 (rgba(255,255,255,0.46)) so placeholders are
+     visible without animation but quiet enough that the shimmer carries
+     the "data is coming" signal. Box radius reuses --r-md (8px); pill
+     radius reuses --r-bar (4px) — no new radius tokens needed. */
+  --skel-base: rgba(245, 239, 224, 0.05);
+  --skel-shimmer: rgba(245, 239, 224, 0.12);
+  --skel-shimmer-duration: 1.5s;
+
+  /* A.5 — Drawer / Sheet anchor primitive (UI Coherence Phase 1 W2).
+     Variant widths cap at the design canvas decision: default for
+     content viewers (Activity log / Sensei chat), form for AddProvider
+     and similar field-stacks, wide for compliance attestation review
+     and audit-trail deep-dive. All three are right-edge anchored on
+     desktop; the @media (max-width: 768px) gate in the A.5 section of
+     system.css collapses each to full-width (full-screen modal
+     degradation). */
+  --drawer-width-default: 420px;
+  --drawer-width-form: 600px;
+  --drawer-width-wide: 820px;
+
+  /* Slide + backdrop-fade timing. `_in` matches the legacy
+     dojo-activity-log-drawer transition (220ms slide) so the existing
+     visual identity is preserved when shimming. `_out` is the snappier
+     close timing per spec. Both compose with `--ease-out` for the
+     standard material-style decel curve. `--backdrop-fade-duration`
+     paints the dim scrim alongside the panel slide so the two reach
+     full opacity together. */
+  --drawer-slide-duration-in: 220ms;
+  --drawer-slide-duration-out: 160ms;
+  --drawer-slide-easing: var(--ease-out);
+  --backdrop-fade-duration: 180ms;
+
+  /* Modal-overlay backdrop. Composes the existing `--black-rgb` channel
+     so dark/light palette swaps re-derive automatically. 0.55 alpha
+     matches the legacy `dojo-codex-drawer::backdrop` (codex.css) so
+     AddProviderDrawer's visual identity is preserved post-migration.
+     0.45 was the legacy ActivityLogDrawer backdrop — kept as a separate
+     token so the shim can opt-in to its lighter scrim if the design
+     review prefers parity over the canonical 0.55 floor. */
+  --backdrop-bg: rgba(var(--black-rgb), 0.55);
+  --backdrop-bg-light: rgba(var(--black-rgb), 0.45);
+
+  /* Z-index for drawer stack. Sits above toast viewport (600) and
+     command palette (~1000 per existing patterns/command.css). 1100
+     leaves headroom for any future modal-on-modal pattern. The native
+     <dialog> top-layer overrides this in practice; the token is for
+     the inner panel `position: fixed` fallback during the React render
+     before showModal() promotes the element to top-layer. */
+  --z-drawer: 1100;
+}
+
+/* Light-mode token alphas for A.2 LoadingSkeleton. Scoped — light mode
+   is not the dark V2 default; this block exists so the loading-skeleton
+   showcase can render a tinted-paper variant for token reference, and
+   so future light-mode work has the values pre-cleared. Alphas lift on
+   dark hex (35,28,18 = --paper-ink) because pure additive shimmer would
+   bloom against the warm-paper canvas. */
+[data-theme="light"] {
+  --skel-base: rgba(35, 28, 18, 0.06);
+  --skel-shimmer: rgba(35, 28, 18, 0.1);
+}
+
+/* Element-selector rules scoped via :where(.dojo-ds-v3) so they don't leak
+   to legacy routes (globals.css + Tailwind preflight own the global layer)
+   AND don't outrank class-based primitives like .btn-primary, .wb-input,
+   .panel.paper. :where() contributes zero specificity, so the resets fall
+   back to the bare element-selector specificity (0,0,1) — exactly what
+   the verbatim canvas-01 source uses. The scope class is applied by
+   packages/dojolm-web/src/app/(design)/layout.tsx for canvas previews,
+   ShellChrome for /admin/* routes, and <Scroll standalone> for /setup. */
+:where(.dojo-ds-v3) * {
+  box-sizing: border-box;
+}
+/* Canvas chrome background is set in patterns/command.css with a darker tone
+   than --bg; color + font-family apply to the scope wrapper itself. */
+.dojo-ds-v3 {
+  margin: 0;
+  padding: 0;
+  color: var(--fg);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+:where(.dojo-ds-v3) button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+:where(.dojo-ds-v3) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.dojo-ds-v3) ::selection {
+  background: rgba(var(--torii-rgb), 0.35);
+  color: var(--fg);
+}
+:where(.dojo-ds-v3) ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+:where(.dojo-ds-v3) ::-webkit-scrollbar-track {
+  background: transparent;
+}
+:where(.dojo-ds-v3) ::-webkit-scrollbar-thumb {
+  background: var(--bg-4);
+  border-radius: 99px;
+  border: 2px solid var(--bg);
+}
+/* Wave 3gg — F-4-006 P2 retire. Scrollbar thumb is a non-text UI
+   component (WCAG 1.4.11 3:1 floor) painted against the page chrome
+   (`--bg`). `--torii-deep` was 2.21:1 (FAIL). Swap to `--torii-deep-text`
+   (#D24A3A) which clears 4.60:1 vs --bg — comfortably above the 3:1
+   non-text floor while staying within the brand-identity deep-red ramp
+   (same hex as `--torii-text` but reached via the semantic
+   "deep-but-contrast-cleared" alias so the intent reads true). */
+:where(.dojo-ds-v3) ::-webkit-scrollbar-thumb:hover {
+  background: var(--torii-deep-text);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+:where(.dojo-ds-v3) .pulse {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+:where(.dojo-ds-v3) .fade {
+  animation: fadeInUp 320ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.dojo-ds-v3) * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

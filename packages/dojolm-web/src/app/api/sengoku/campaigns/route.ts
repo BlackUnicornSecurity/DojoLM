@@ -1,0 +1,169 @@
+// SPDX-License-Identifier: Apache-2.0
+/**
+ * D4.2 — Campaign CRUD API (list + create)
+ * GET /api/sengoku/campaigns — list all campaigns
+ * POST /api/sengoku/campaigns — create a new campaign
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { isDemoMode } from '@/lib/demo';
+import { demoCampaignsGet, demoNoOpCreated } from '@/lib/demo/mock-api-handlers';
+import { withAuth } from '@/lib/auth/route-guard';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { Campaign, CreateCampaignRequest } from '@/lib/sengoku-types';
+import { TARGET_SOURCES, type TargetSource } from '@/lib/sengoku-types';
+import { validateSengokuWebhookUrl } from '@/lib/sengoku-webhook';
+import { getDataPath } from '@/lib/runtime-paths';
+import { resolveModelId, ResolveModelError } from '@/lib/llm/resolve-model';
+import { readActiveModelCookie } from '@/lib/llm/active-model-cookie';
+
+const CAMPAIGNS_DIR = getDataPath('sengoku', 'campaigns');
+const SAFE_NAME = /^[\w \-().]{1,200}$/;
+const MAX_SKILLS = 100;
+
+async function ensureDir() {
+  await fs.promises.mkdir(CAMPAIGNS_DIR, { recursive: true });
+}
+
+export function OPTIONS(_request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: { Allow: 'GET, POST, OPTIONS' },
+  });
+}
+
+export const GET = withAuth(
+  async (_request: NextRequest) => {
+  if (isDemoMode()) return demoCampaignsGet();
+
+  try {
+    await ensureDir();
+    const files = await fs.promises.readdir(CAMPAIGNS_DIR);
+    const campaigns: Campaign[] = [];
+
+    for (const file of files.filter((f) => f.endsWith('.json'))) {
+      try {
+        const content = await fs.promises.readFile(path.join(CAMPAIGNS_DIR, file), 'utf-8');
+        const campaign = JSON.parse(content) as Campaign;
+        if (campaign.status !== 'archived') {
+          campaigns.push(campaign);
+        }
+      } catch {
+        // Skip corrupt files
+      }
+    }
+
+    campaigns.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    return NextResponse.json({ campaigns });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to list campaigns' }, { status: 500 });
+  }
+  },
+  { role: 'admin' },
+);
+
+export const POST = withAuth(
+  async (request: NextRequest) => {
+  if (isDemoMode()) return demoNoOpCreated();
+
+  try {
+    const body = (await request.json()) as CreateCampaignRequest;
+
+    if (!body.name || !SAFE_NAME.test(body.name)) {
+      return NextResponse.json({ error: 'Invalid campaign name' }, { status: 400 });
+    }
+    // Validate targetSource (defaults to 'external' for backward compatibility)
+    const targetSource: TargetSource = body.targetSource && TARGET_SOURCES.includes(body.targetSource as TargetSource)
+      ? (body.targetSource as TargetSource)
+      : 'external';
+
+    // Active Model Switcher (Story B) — when targetSource is 'dashboard'
+    // and no explicit targetModelId is supplied, fall back through the
+    // resolver chain (cookie -> admin default -> first enabled). Only
+    // throws 400 when nothing resolves at all.
+    let targetModelId: string | null = targetSource === 'dashboard' && typeof body.targetModelId === 'string'
+      ? body.targetModelId.slice(0, 256)
+      : null;
+
+    if (targetSource === 'dashboard' && !targetModelId) {
+      const userPrefCookie = readActiveModelCookie(request);
+      try {
+        // Reviewer fold-in (post-merge 2026-05-08): pass `explicit`
+        // through even when null so the resolver call site is uniform
+        // across all five inference routes. The branch only enters
+        // when targetModelId is null/missing, so explicit is always
+        // undefined here — this keeps the call shape consistent.
+        targetModelId = await resolveModelId({
+          explicit: undefined,
+          userPref: userPrefCookie,
+        });
+      } catch (err) {
+        if (err instanceof ResolveModelError) {
+          return NextResponse.json({ error: err.message }, { status: 400 });
+        }
+        throw err;
+      }
+    }
+
+    if (!body.targetUrl || typeof body.targetUrl !== 'string') {
+      return NextResponse.json({ error: 'targetUrl is required' }, { status: 400 });
+    }
+
+    // URL validation: dashboard:// is a virtual scheme for dashboard model references
+    if (targetSource === 'external' || targetSource === 'local') {
+      try {
+        const parsed = new URL(body.targetUrl);
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+          return NextResponse.json({ error: 'targetUrl must use http or https' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'targetUrl must be a valid URL' }, { status: 400 });
+      }
+    }
+    if (!body.selectedSkillIds || !Array.isArray(body.selectedSkillIds) || body.selectedSkillIds.length === 0) {
+      return NextResponse.json({ error: 'At least one skill must be selected' }, { status: 400 });
+    }
+    if (body.selectedSkillIds.length > MAX_SKILLS) {
+      return NextResponse.json({ error: `Maximum ${MAX_SKILLS} skills per campaign` }, { status: 400 });
+    }
+    let normalizedWebhookUrl: string | null = null;
+    if (body.webhookUrl) {
+      const webhookValidation = await validateSengokuWebhookUrl(body.webhookUrl);
+      if (!webhookValidation.valid) {
+        return NextResponse.json({ error: webhookValidation.error }, { status: 400 });
+      }
+      normalizedWebhookUrl = webhookValidation.normalizedUrl ?? null;
+    }
+
+    const now = new Date().toISOString();
+    const campaign: Campaign = {
+      id: crypto.randomUUID(),
+      name: String(body.name).slice(0, 200),
+      targetUrl: String(body.targetUrl).slice(0, 2048),
+      authConfig: body.authConfig ?? {},
+      selectedSkillIds: body.selectedSkillIds.map((s) => String(s).slice(0, 128)),
+      schedule: body.schedule ?? null,
+      webhookUrl: normalizedWebhookUrl ? normalizedWebhookUrl.slice(0, 2048) : null,
+      status: 'draft',
+      graph: body.graph,
+      targetSource,
+      targetModelId,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    await ensureDir();
+    const filePath = path.join(CAMPAIGNS_DIR, `${campaign.id}.json`);
+    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 10)}.tmp`;
+    await fs.promises.writeFile(tmpFile, JSON.stringify(campaign, null, 2));
+    await fs.promises.rename(tmpFile, filePath);
+
+    return NextResponse.json(campaign, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 });
+  }
+  },
+  { role: 'admin' },
+);

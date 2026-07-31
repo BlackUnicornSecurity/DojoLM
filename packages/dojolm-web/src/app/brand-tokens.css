@@ -1,0 +1,415 @@
+/**
+ * Black Unicorn - Shared Brand Tokens v1.0
+ * Cross-product design foundation for brand consistency
+ *
+ * Products inheriting this foundation:
+ *   - BU-WEB (marketing site) — accent: violet #8B5CF6
+ *   - DojoLM (security platform) — accent: torii red #CC3A2F
+ *   - Future products follow the same pattern
+ *
+ * Usage:
+ *   Each product imports this file, then overrides --product-accent-*
+ *   variables with its own primary color. All shared tokens (backgrounds,
+ *   text, borders, typography, spacing, glass, animations) remain unified.
+ *
+ * Alignment decisions (2026-03-14):
+ *   - Backgrounds: DojoLM's blue-tinted blacks (more sophisticated than pure black)
+ *   - Text: #ECEEF2 primary (warmer than pure white, easier on eyes)
+ *   - Body font: Inter across all products
+ *   - Glass: dark-color opacity approach (DojoLM pattern, more refined)
+ *   - Border radius: 12px cards (compromise between 16px BU and 8px DojoLM)
+ *   - Borders: 0.06 default, 0.10 hover (DojoLM's subtler defaults)
+ *   - Secondary accent: electric cyan #00D9FF shared across all products
+ *   - Semantic colors: unified green/red/amber
+ *
+ * Yamabushi 1.1 (2026-04-24) integration note:
+ *   This file is an ADDITIVE import in packages/dojolm-web/src/app/globals.css.
+ *   The DojoLM :root {} block in globals.css and the .dojo-ds-v3-scoped
+ *   src/design/styles/tokens.css (Epic 0) take precedence over any name
+ *   collision via CSS cascade order. The only globally-unique tokens this
+ *   file contributes in the DojoLM context are the cross-brand ones
+ *   (--bu-cyan, --bu-cyan-light, --bu-cyan-dark, --bu-cyan-rgb,
+ *   --brand-bu, --brand-bonklm, --brand-shogun) plus the shared
+ *   --radius-card, --font-body, --text-*
+ *   scale aliases. See the yamabushi design update §7.2 YU.1 + §7.4
+ *   guardrails for the adoption rules. G10: --bu-cyan reserved for
+ *   cross-brand chrome only — never primary CTA, never hero accent,
+ *   never torii-red-adjacent.
+ */
+
+/* ========================================
+   SHARED BRAND FOUNDATION
+   ======================================== */
+
+:root {
+  /* Force dark mode across all BU products */
+  color-scheme: dark;
+
+  /* ----------------------------------------
+     Brand Identity Colors
+     ---------------------------------------- */
+
+  /* Electric Cyan — shared secondary accent across ALL products */
+  --bu-cyan: #00D9FF;
+  --bu-cyan-light: #5EE7FF;
+  --bu-cyan-dark: #00B8D9;
+  --bu-cyan-rgb: 0, 217, 255;
+
+  /* Product brand colors (for cross-references, badges, product switches) */
+  --brand-bu: #8B5CF6;
+  --brand-dojolm: #CC3A2F;
+  --brand-bonklm: #D4A843;
+  --brand-shogun: #5B8DEF;
+
+  /* ----------------------------------------
+     Background Scale (blue-tinted blacks)
+     ---------------------------------------- */
+  --bg-primary: #09090F;
+  --bg-secondary: #12131A;
+  --bg-tertiary: #1C1D26;
+  --bg-quaternary: #262734;
+
+  /* ----------------------------------------
+     Glass-morphism Foundation
+     ---------------------------------------- */
+
+  /* Dark-color opacity approach (more refined than white-opacity) */
+  --glass-bg: rgba(18, 19, 26, 0.6);
+  --glass-bg-solid: rgba(18, 19, 26, 0.7);
+  --glass-bg-hover: rgba(18, 19, 26, 0.8);
+  --glass-blur: blur(16px);
+  --glass-blur-sm: blur(8px);
+  --glass-blur-xl: blur(24px);
+
+  /* Overlay opacities (white-based, for subtle highlights) */
+  --overlay-subtle: rgba(255, 255, 255, 0.04);
+  --overlay-hover: rgba(255, 255, 255, 0.08);
+  --overlay-active: rgba(255, 255, 255, 0.12);
+
+  /* ----------------------------------------
+     Text Colors
+     ---------------------------------------- */
+  --text-primary: #ECEEF2;
+  --text-secondary: #7E8A9A;
+  --text-tertiary: #565D6B;
+  --text-quaternary: #3D4350;
+
+  /* ----------------------------------------
+     Border Colors
+     ---------------------------------------- */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.10);
+  --border-active: rgba(255, 255, 255, 0.16);
+
+  /* ----------------------------------------
+     Semantic / Status Colors
+     ---------------------------------------- */
+  --color-success: #34C76A;
+  --color-warning: #E5A030;
+  --color-danger: #D44040;
+  --color-info: #5B8DEF;
+
+  --color-success-bg: rgba(52, 199, 106, 0.15);
+  --color-warning-bg: rgba(229, 160, 48, 0.12);
+  --color-danger-bg: rgba(212, 64, 64, 0.15);
+  --color-info-bg: rgba(91, 141, 239, 0.15);
+
+  /* ----------------------------------------
+     Typography — Shared
+     ---------------------------------------- */
+
+  /* Body font: Inter across all products */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Monospace: JetBrains Mono for code (used by DojoLM, available to all) */
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Font Sizes — Major Third Scale (1.25 ratio) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+  --text-6xl: 3.75rem;     /* 60px */
+  --text-7xl: 4.5rem;      /* 72px */
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* ----------------------------------------
+     Spacing Scale (8px grid)
+     ---------------------------------------- */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;   /* 2px */
+  --space-1: 0.25rem;      /* 4px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-8: 2rem;         /* 32px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-12: 3rem;        /* 48px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-32: 8rem;        /* 128px */
+
+  /* ----------------------------------------
+     Border Radius
+     ---------------------------------------- */
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.375rem;   /* 6px */
+  --radius-lg: 0.5rem;     /* 8px */
+  --radius-xl: 0.75rem;    /* 12px */
+  --radius-2xl: 1rem;      /* 16px */
+  --radius-full: 9999px;
+
+  /* Shared component radius */
+  --radius-card: 0.75rem;   /* 12px — unified */
+  --radius-button: 9999px;  /* pill buttons */
+  --radius-input: 0.5rem;   /* 8px */
+
+  /* ----------------------------------------
+     Shadows — Standard
+     ---------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  /* ----------------------------------------
+     Transitions & Timing
+     ---------------------------------------- */
+  --duration-instant: 0ms;
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* ----------------------------------------
+     Z-Index Scale
+     ---------------------------------------- */
+  --z-hide: -1;
+  --z-base: 0;
+  --z-docked: 10;
+  --z-sidebar: 40;
+  --z-mobile-nav: 50;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-banner: 1200;
+  --z-overlay: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-skip-link: 1600;
+  --z-toast: 1700;
+  --z-tooltip: 1800;
+
+  /* ----------------------------------------
+     Container & Grid
+     ---------------------------------------- */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  --max-width-prose: 65ch;
+
+  /* ----------------------------------------
+     Focus & Accessibility
+     ---------------------------------------- */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  /* Focus ring color is product-specific (uses product accent) */
+}
+
+/* ========================================
+   SHARED BASE STYLES
+   ======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* scroll-behavior gated on motion preference — mirrors globals.css L293 */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ========================================
+   SHARED ACCESSIBILITY
+   ======================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-nav {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-nav:focus {
+  position: fixed;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: var(--z-skip-link);
+  width: auto;
+  height: auto;
+  padding: var(--space-2) var(--space-4);
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  border-radius: var(--radius-lg);
+  outline: none;
+  /* WCAG 2.4.1 — bypass mechanism must be perceivable when activated.
+     E7.S6 round-2: ports the visible-focus tokens from the prior Tailwind
+     skip-link (focus:bg/focus:text/focus:ring) into canonical CSS so the
+     repositioned link actually renders. Steel-blue ring matches the
+     project's secondary/info accent (G10) without competing with the
+     torii-red primary CTA. */
+  background: var(--bg-2);
+  color: var(--fg);
+  box-shadow: 0 0 0 2px var(--steel);
+}
+
+/* ========================================
+   SHARED SCROLLBAR STYLING
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-quaternary);
+  border-radius: var(--radius-full);
+}
+
+/* Thumb hover color is product-specific */
+
+/* ========================================
+   SHARED ANIMATIONS
+   ======================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========================================
+   SHARED REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

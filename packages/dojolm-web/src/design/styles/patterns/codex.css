@@ -1,0 +1,521 @@
+/* Canvas 4 — Codex archetype
+   Filter rail + result grid + detail drawer + technique-card chrome.
+   Used by /admin/leaks (CL4R1T4S archive) and the technique-catalog
+   drill-down tab on /admin/eval.
+
+   Tokens only. No raw hex, no raw rgba(255/0/...) literals.
+   Animations respect the global prefers-reduced-motion gate declared
+   in tokens.css — the drawer slide is gated below. */
+
+/* ===== Layout shell ===== */
+.codex-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 16px 24px 24px;
+  align-items: stretch;
+  min-height: 0;
+}
+.codex-layout-rail { grid-column: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.codex-layout-main { grid-column: 2; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+
+@media (max-width: 1000px) {
+  .codex-layout { grid-template-columns: minmax(0, 1fr); }
+  .codex-layout-rail { grid-column: 1; }
+  .codex-layout-main { grid-column: 1; }
+}
+
+/* E7.S10-followup — F-5-013 P2 retire.
+   Plan ref: audit/REMEDIATION-PLAN.md L838 "Codex routes get 8px padding
+   override on small viewports". The Epic-0 .codex-layout declared a
+   `padding: 16px 24px 24px` floor; combined with the primitives `.page`
+   28px floor, /admin/leaks and /admin/mitsuke landed under ~52px of
+   horizontal chrome on a 320×568 viewport — eating half the content
+   column. Drop to 8px at the mobile tier so the codex-archetype filter
+   rail + grid have room to breathe.
+   WCAG SC 1.4.10 Reflow (AA): no two-dimensional scroll at 320px. */
+@media (max-width: 480px) {
+  .codex-layout {
+    padding: 8px;
+    gap: 10px;
+  }
+}
+
+/* ===== Filter rail ===== */
+.codex-filter-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background: rgba(var(--white-rgb), 0.02);
+}
+.codex-filter-rail-title {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.codex-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.codex-filter-field > label {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.codex-filter-field input,
+.codex-filter-field select {
+  width: 100%;
+  background: rgba(var(--black-rgb), 0.25);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  padding: 7px 10px;
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--text-md);
+}
+.codex-filter-field input:focus-visible,
+.codex-filter-field select:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: 1px;
+  border-color: var(--b-red-2);
+}
+
+/* ===== Grid ===== */
+.codex-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.codex-grid-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.02);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out);
+  color: inherit;
+  font: inherit;
+  width: 100%;
+  min-width: 0;
+}
+.codex-grid-row:hover { border-color: var(--b-2); background: rgba(var(--white-rgb), 0.035); }
+.codex-grid-row:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: -2px;
+}
+.codex-grid-row.selected {
+  border-color: var(--b-red-2);
+  background: rgba(var(--torii-rgb), 0.06);
+}
+.codex-grid-row-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--text-md);
+  min-width: 0;
+  overflow: hidden;
+}
+.codex-grid-row-head > * {
+  min-width: 0;
+  white-space: nowrap;
+}
+.codex-grid-row-vendor,
+.codex-grid-row-product,
+.codex-grid-row-version {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.codex-grid-row-vendor {
+  font-weight: 600;
+  color: var(--fg);
+}
+.codex-grid-row-sep {
+  flex: 0 0 auto;
+  color: var(--fg-ghost);
+}
+.codex-grid-row-product {
+  color: var(--fg-dim);
+}
+.codex-grid-row-version {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+  letter-spacing: 0.05em;
+}
+.codex-grid-row-meta {
+  flex: 0 1 auto;
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  color: var(--fg-mute);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.codex-grid-row-hash {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--fg-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.codex-grid-row-preview {
+  font-size: var(--text-md);
+  color: var(--fg-dim);
+  line-height: 1.4;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .codex-grid-row-head {
+    gap: 4px;
+  }
+  .codex-grid-row-meta {
+    display: none;
+  }
+}
+.codex-grid-empty {
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  text-align: center;
+  border: 1px dashed var(--b-1);
+  border-radius: var(--r-sm);
+}
+
+/* ===== Drawer (right-slide detail panel) =====
+   E2.S5 (REMEDIATION-PLAN lines 372-376): the codex Drawer migrated
+   from a hand-rolled <div role="dialog"> + <div>-backdrop pair to the
+   native HTML <dialog> element. The .codex-drawer rule now targets a
+   <dialog> node; .dojo-codex-drawer resets UA defaults so the right-
+   slide animation + ::backdrop pseudo can drive the visual identical
+   to the pre-migration layout. */
+.codex-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 61;
+  width: min(520px, 96vw);
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border-left: 1px solid var(--b-2);
+  box-shadow: -24px 0 80px rgba(var(--black-rgb), 0.55);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 220ms var(--ease-out);
+}
+.codex-drawer[open] {
+  transform: translateX(0);
+}
+
+/* UA-default reset for the native <dialog> shell. Without these the
+   browser auto-margins / fixed-width / 1px border collide with the
+   right-slide layout above. The right-slide is preserved via the
+   transform on .codex-drawer (selectors win on specificity tied to
+   the [open] attribute). */
+dialog.dojo-codex-drawer {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  inset: 0 0 0 auto;
+  max-width: min(520px, 96vw);
+  max-height: 100vh;
+  color: var(--fg);
+  overflow: visible;
+}
+
+/* Backdrop pseudo paints the dimmed scrim — replaces the legacy
+   `.codex-drawer-backdrop` div. Token-driven per GUARDRAILS G10 + the
+   E1.S2 dojo/no-phantom-tokens lint rule. Mirrors the pre-migration
+   `rgba(var(--black-rgb), 0.55)` opacity + 180ms ease-out fade. */
+dialog.dojo-codex-drawer::backdrop {
+  background: rgba(var(--black-rgb), 0.55);
+  transition: opacity 180ms var(--ease-out);
+}
+.codex-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--b-1);
+}
+.codex-drawer-head h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: -0.005em;
+}
+.codex-drawer-head .sub {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 500;
+  margin-top: 4px;
+}
+/* E7.S4 — 44×44 hit-area for Codex drawer close button.
+   Plan ref: audit/REMEDIATION-PLAN.md L797-801. Retires part of
+   F-4-014 (P1) and F-5-008 (P1). WCAG 2.2 SC 2.5.5 Target Size
+   (Enhanced, AAA). Pseudo-element expansion: the visible × glyph
+   stays 28×28 inside the drawer head row to match the inline header
+   layout (the header has only 18px gutters left/right; growing the
+   visible button to 44×44 would push the title h3 baseline). The
+   ::before pseudo grows the click region by 8px each axis (28 + 16
+   = 44) without affecting layout. position:relative on the host is
+   the anchor so inset:-8px resolves against the button frame. */
+.codex-drawer-close {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  display: inline-grid;
+  place-items: center;
+  color: var(--fg-mute);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.02);
+  transition: color 150ms, border-color 150ms;
+  position: relative;
+}
+.codex-drawer-close::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.codex-drawer-close:hover { color: var(--fg); border-color: var(--b-2); }
+.codex-drawer-close:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: 2px;
+}
+.codex-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ===== PaperEntry (parchment metaphor — dark card with warm accent,
+   NOT .panel.paper which plan §5 reserves for Ritual / Epic 6) ===== */
+.codex-paper-entry {
+  position: relative;
+  padding: 14px 16px;
+  border: 1px solid var(--b-1);
+  border-left: 3px solid rgba(var(--gold-rgb), 0.5);
+  border-radius: var(--r-sm);
+  background: rgba(var(--white-rgb), 0.02);
+  color: var(--fg);
+}
+.codex-paper-entry-provenance {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr;
+  gap: 4px 12px;
+  font-size: var(--text-sm);
+  margin: 0 0 10px;
+}
+.codex-paper-entry-provenance dt {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  font-weight: 600;
+}
+.codex-paper-entry-provenance dd {
+  margin: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+}
+.codex-paper-entry-body {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+/* ===== TechniqueCard (technique-catalog drill-down) ===== */
+.codex-technique-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+  background:
+    linear-gradient(180deg, rgba(var(--white-rgb), 0.02) 0%, transparent 100%),
+    rgba(var(--black-rgb), 0.2);
+  color: var(--fg);
+}
+.codex-technique-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.codex-technique-card-id {
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  color: var(--torii-hi);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.codex-technique-card-label {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.codex-technique-card-desc {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+}
+.codex-technique-card-example {
+  padding: 10px 12px;
+  border: 1px dashed var(--b-1);
+  border-radius: var(--r-sm);
+  background: rgba(var(--black-rgb), 0.25);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-dim);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.codex-technique-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.codex-technique-card-tag {
+  font-family: var(--mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.03);
+  color: var(--fg-dim);
+}
+.codex-technique-card-refs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+.codex-technique-card-refs li {
+  color: var(--fg-mute);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+/* ===== Provenance badge (shared between PaperEntry + Drawer meta) ===== */
+.codex-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: 1px solid var(--b-1);
+  background: rgba(var(--white-rgb), 0.03);
+  color: var(--fg-dim);
+}
+.codex-badge.archival {
+  color: var(--gold-lg);
+  border-color: rgba(var(--gold-rgb), 0.35);
+  background: rgba(var(--gold-rgb), 0.08);
+}
+
+/* ===== Reduced motion — collapse the drawer slide to instant so
+   users who opt out don't see the 220ms transform animation. The
+   `<dialog>::backdrop` pseudo is targeted via the same media query
+   so the dim scrim materialises instantly for opt-out users too. ===== */
+@media (prefers-reduced-motion: reduce) {
+  .codex-drawer {
+    transition: none;
+  }
+  dialog.dojo-codex-drawer::backdrop {
+    transition: none;
+  }
+}
+
+/* ===== Wave 3jj · F-1-024 P2 — hero kanji watermark parity.
+   Mirrors `.cmd-hero-watermark` (command.css:177) so the Codex
+   (archive / catalog) archetype gains the same lacquer-disc 240px
+   kanji presence as the Command archetype. Glyph default 巻物
+   (makimono, scroll) per the Yamabushi glossary — Codex is the
+   technique catalog / leak archive. Gold tint connotes catalogued
+   knowledge (vs torii red for Arena combat). Kanji-off gate inherits
+   from the global [data-kamae-scope][data-kanji="off"] selector. */
+.codex-hero {
+  position: relative;
+  overflow: hidden;
+}
+.codex-hero-watermark {
+  position: absolute; right: 18px; bottom: -72px;
+  font-family: var(--serif); font-weight: 900; font-size: var(--text-watermark);
+  color: rgba(var(--gold-rgb), 0.08);
+  line-height: 0.8; letter-spacing: -0.05em;
+  pointer-events: none; user-select: none;
+  text-shadow: 0 4px 40px rgba(var(--gold-rgb), 0.18);
+  z-index: 0;
+}
+[data-kamae-scope][data-kanji="off"] .codex-hero-watermark { display: none; }
+@media (max-width: 768px) {
+  .codex-hero-watermark { font-size: var(--text-watermark-md); bottom: -36px; }
+}
+@media (max-width: 480px) {
+  .codex-hero-watermark { font-size: var(--text-watermark-sm); bottom: -18px; }
+}

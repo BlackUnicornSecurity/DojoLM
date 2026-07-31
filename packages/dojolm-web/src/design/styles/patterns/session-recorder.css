@@ -1,0 +1,169 @@
+/* ---------------------------------------------------------------------------
+ * SessionRecorder primitive — chrome styling.
+ *
+ * The TICKET-L-702 primitive (`design/adversarial/SessionRecorder.tsx`)
+ * ships closed-set class names (`session-rec-*`) but no styles. That left
+ * the recorder rendering as unstyled stacked <div>s on /admin/atemi after
+ * Atemi-PR-4 wired the consumer. This file completes the chrome.
+ *
+ * State-modifier classes (`session-rec-state-{idle,recording,paused,
+ * stopped}`) are reserved — currently only `recording` carries a visual
+ * delta (the pulsing dot). Add more state-specific rules below if the
+ * primitive's state matrix grows.
+ *
+ * Reduced-motion: the recording-dot pulse is suppressed under
+ * `prefers-reduced-motion: reduce`.
+ * --------------------------------------------------------------------------- */
+
+.session-rec {
+  display: grid;
+  gap: 14px;
+  padding: 16px 18px;
+  background: rgba(var(--black-rgb), 0.20);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-md);
+}
+
+.session-rec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.session-rec-kicker {
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-family: var(--mono);
+}
+
+.session-rec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  border: 1px solid var(--b-1);
+  background: rgba(var(--black-rgb), 0.30);
+  color: var(--fg);
+}
+
+.session-rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg-mute);
+  flex: 0 0 8px;
+}
+.session-rec-dot-idle      { background: var(--fg-mute); }
+.session-rec-dot-recording { background: var(--torii); box-shadow: 0 0 6px var(--torii); animation: session-rec-pulse 1.5s ease-in-out infinite; }
+.session-rec-dot-paused    { background: #d4a017; }
+.session-rec-dot-stopped   { background: var(--jade, #6abf69); }
+
+@keyframes session-rec-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .session-rec-dot-recording { animation: none; }
+}
+
+/* 3-column meta grid: Duration / Events / Size side-by-side with
+   borders so each value reads as its own card, not a wall of text. */
+.session-rec-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.session-rec-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: rgba(var(--black-rgb), 0.25);
+  border: 1px solid var(--b-0);
+  border-radius: var(--r-sm);
+}
+.session-rec-meta-key {
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: var(--mono);
+}
+.session-rec-meta-val {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.session-rec-id {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-dim);
+}
+.session-rec-id-kicker {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--text-xs);
+  color: var(--fg-dim);
+}
+.session-rec-id code {
+  font-family: var(--mono);
+  color: var(--fg);
+}
+
+.session-rec-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.session-rec-btn {
+  appearance: none;
+  border: 1px solid var(--b-1);
+  background: rgba(var(--black-rgb), 0.30);
+  color: var(--fg);
+  padding: 7px 16px;
+  border-radius: var(--r-sm);
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.session-rec-btn:hover:not(:disabled) {
+  background: rgba(var(--black-rgb), 0.45);
+  border-color: var(--b-2);
+}
+.session-rec-btn:focus-visible {
+  outline: 2px solid var(--torii-lg);
+  outline-offset: 1px;
+  border-color: var(--b-red-2);
+}
+.session-rec-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Start = torii-red tint to mirror the page-head Record CTA convention
+   (single primary action on /admin/atemi). Stop + Discard stay neutral. */
+.session-rec-btn-start {
+  background: rgba(var(--torii-rgb), 0.15);
+  border-color: var(--b-red-2);
+  color: var(--torii-hi);
+}
+.session-rec-btn-start:hover:not(:disabled) {
+  background: rgba(var(--torii-rgb), 0.25);
+}
+.session-rec-btn-discard {
+  color: var(--fg-dim);
+}
+.session-rec-btn-discard:hover:not(:disabled) {
+  color: var(--fg);
+}

@@ -1,0 +1,11 @@
+-- Migration M-0003: RESERVED for Phase E PR-E4 OnigaeshiAuditRecord (issue #134).
+--
+-- Number reservation only. No DDL ships in PR-E1 — see execution plan §1
+-- "Notes" for rationale (architect Rev 2 ask: prevent feature-team
+-- migration-number collisions while PR-E4's Q1 outcome is locked).
+--
+-- Operator sign-off (2026-05-03): Q1=B (WORM + erasure-overlay). PR-E4
+-- under Path B does NOT add a Postgres table for OnigaeshiAuditRecord —
+-- the existing audit-worm-writer.ts is extended with a DSR erasure-marker
+-- append + an audit-overlay reader. Even so, this number stays reserved
+-- so PR-E4 owns 0003 if Path A is ever revisited.

@@ -1,0 +1,143 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* v2 motion layer (design motion.css, Phase 4 Batch B) — loads LAST in the v2
+   chain. Every run is gated on prefers-reduced-motion: no-preference and
+   animates FROM hidden with the VISIBLE end-state as the base style, so
+   no-JS, print, and reduced-motion always show finished content. The corpus
+   raw timing curves map onto the frozen named timing token (tokens.css is
+   frozen and the v2 contract bans raw curve literals). */
+
+@keyframes dojo-v2-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Ring holds at 70% so the pulse rests before repeating (design motion.css:12). */
+@keyframes dojo-v2-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  70% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes dojo-v2-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Steel bloom — one-shot, never red (design motion.css:13). */
+@keyframes dojo-v2-glow {
+  from {
+    box-shadow: 0 0 0 0 rgba(var(--steel-rgb), 0);
+  }
+  to {
+    box-shadow: 0 0 22px -4px rgba(var(--steel-rgb), 0.35);
+  }
+}
+
+/* dojo.css `pop` is frozen upstream but absent from the production chain;
+   redeclared under the v2 namespace for the §5.9 seal stamp. */
+@keyframes dojo-v2-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Base (visible end-state) styles stay outside the motion gate. Skeletons
+   degrade to a static --bg-3 block under reduce/print/no-JS. */
+[data-skin="v2"] .chip .dot.live,
+[data-skin="v2"] .scan-ring {
+  position: relative;
+}
+
+[data-skin="v2"] .skel {
+  border-radius: 6px;
+  background: var(--bg-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrance — one-shot header → KPIs → tabs cascade (+0.06s / +0.12s). */
+  [data-skin="v2"] .page-head,
+  [data-skin="v2"] .head3,
+  [data-skin="v2"] .sys-fullpage-inner {
+    animation: dojo-v2-in 0.5s var(--ease-out) both;
+  }
+
+  [data-skin="v2"] .kpi-strip {
+    animation: dojo-v2-in 0.5s var(--ease-out) 0.06s both;
+  }
+
+  [data-skin="v2"] .subtabs,
+  [data-skin="v2"] .pill-tabs {
+    animation: dojo-v2-in 0.48s var(--ease-out) 0.12s both;
+  }
+
+  /* Sub-tab crossfade on switch (transition, not a loop). */
+  [data-skin="v2"] .subtabs .st,
+  [data-skin="v2"] .pill-tab {
+    transition:
+      background-color 0.18s var(--ease-out),
+      color 0.18s var(--ease-out);
+  }
+
+  /* Live status ring — only behind a genuinely-streaming dot. */
+  [data-skin="v2"] .chip .dot.live::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--jade);
+    border-radius: 50%;
+    animation: dojo-v2-ring 2.4s var(--ease-out) infinite;
+    pointer-events: none;
+  }
+
+  /* Active scan/run states (opt-in, transient) — steel ring, no red. */
+  [data-skin="v2"] .scan-ring.scanning::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border: 1.5px solid var(--steel);
+    border-radius: inherit;
+    animation: dojo-v2-ring 1.8s var(--ease-out) infinite;
+    pointer-events: none;
+  }
+
+  /* Skeleton shimmer — loading placeholders (canvas-17 contract). */
+  [data-skin="v2"] .skel {
+    background: linear-gradient(
+      90deg,
+      var(--bg-3) 25%,
+      var(--bg-4) 37%,
+      var(--bg-3) 63%
+    );
+    background-size: 200% 100%;
+    animation: dojo-v2-shimmer 1.5s var(--ease-out) infinite;
+  }
+
+  /* §5.9 paper-ceremony seal — one-shot stamp on sign. */
+  [data-skin="v2"] .ritual-seal.state-signed {
+    animation: dojo-v2-pop 0.5s var(--ease-out) both;
+  }
+}

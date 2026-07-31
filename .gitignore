@@ -1,0 +1,364 @@
+node_modules/
+packages/*/node_modules/
+.DS_Store
+*.log
+
+# Development framework (not part of DojoLM)
+packages/bmad-cybersec/
+.claude/
+
+# Private/internal documentation (not public)
+# SC.1 (2026-04-29): lessons-learned doc is a shared persistent artifact.
+# YR.6 retro visual-fidelity audits: per §YR.6 acceptance criterion,
+# canvas-showcase screenshots + side-by-side comparison docs land here.
+# Renders themselves come from transient mock fixtures (canvas-07 page
+# never committed); only the resulting evidence ships.
+# DojoLM brand & marketing corpus (2026-06-16): source-of-truth + the
+# self-contained Claude-design prompt for the design-system / decks /
+# Wave 0 (2026-04-18): active program plans + ADRs need to be tracked so the
+# team can review them. Each plan is whitelisted explicitly to avoid leaking
+# YR.13.1 (2026-04-29): typed admin-mutation event schema doc
+# YR.16 (2026-04-30): copy-paste agent brief for the operability + global state epic
+# v2 skin engineering submission (2026-07-07): design handoff + 8 filed tickets + v1.5 evidence
+# v2 skin implementation plan (2026-07-12): full epic/story reskin plan incl. QA/UAT/rollout
+# Industry-Tools-Parity plan (2026-04-20): technical implementation plan + audit artifacts
+# Active Model Switcher (2026-05-08): top-bar dropdown epic plan + coordinator brief
+# E0.S12 (2026-05-08): consumer-bar acceptance baseline + CI-gate contract for E1.S9
+# E1.S8 (2026-05-09): CI policy doc — workflow scaffolds + branch-protection deferral rationale
+# E9.S9 (2026-05-11): sub-line voice convention doc — registered for every <Panel sub=…> author
+# Design upgrade plan (2026-04-22): canvas-01 port + archetype system roll-out
+# E4B product-decision record (2026-04-24): hunter-facing /members/* surface unblocked
+# Epic 3 (2026-04-23): copy-paste agent brief for the Workbench archetype epic
+# Epic 4A (2026-04-23): copy-paste agent brief for the Arena archetype epic
+# Epic 5 (2026-04-23): copy-paste agent brief for the Codex archetype epic
+# Epic 6 (2026-04-23): copy-paste agent brief for the Ritual archetype epic
+# Epic 7 (2026-04-23): copy-paste agent brief for the edge-state hardening epic
+# Epic 9 (2026-04-23): copy-paste agent brief for the kill-switch + probe epic
+# Epic 10 (2026-04-23): copy-paste agent brief for the engagement-execute epic
+# Epic 11 (2026-04-23): copy-paste agent brief for the engagement-revoke epic
+# Epic 12 (2026-04-24): copy-paste agent brief for the KmsVault signer wiring
+# E4B kickoff (2026-04-24): meta-prompt — drafts E4B.1 sub-epic brief
+# E4B.1 (2026-04-24): member auth + /members shell + flag gate
+# E4B.2 (2026-04-24): /members/leaderboard + /api/members/leaderboard
+# E4B.3 (2026-04-24): /members/leaderboard/bypass-matrix drill-down
+# E4B.4 (2026-04-24): /members/seasons + archive + unknown-season 404
+# E4B.5 (2026-04-24): /members/bounty + belt ledger (append-only WORM-signed)
+# E4B.6 (2026-04-24): /admin/members/invites + persistent storage swap + belt-ledger verify endpoint
+# E4B.7 (2026-04-24): public-beta cutover + /members/request-invite CTA + admin requests tab + deploy runbook
+# E4B continuation (2026-04-24): fresh-agent handover — program status + next-step dispatch
+# Yamabushi (2026-04-24): V2 design handoff adoption plan — post-E4B+E12 epic
+# Yamabushi 1.1 (2026-04-24): tokens + fonts + radius + dual-token accent
+# Yamabushi 1.2 (2026-04-24): Command archetype v2 + primitives expansion
+# Yamabushi 1.3 (2026-04-25): EmptyState 16-module sumi-e matrix
+# Yamabushi 1.4 (2026-04-25): Kagami (Mirror Test) module page
+# V1→V2 audit close-out (2026-04-29): YR.13–YR.21 execution plan + 7 anti-recurrence gates
+# SC.1 (2026-04-27): Scanner calibration restoration plan
+# ISO 17025 (2026-04-30+): Phase 3 / Phase 6 evidence + multi-stream "→100%" plans
+# ISO 17025 (2026-05-02): technical-aspects evidence pack — 14 clause-mapped
+# reports + 29 per-module method validation records. Bundles the §6/§7 evidence
+# from streams 1-6 into a deliverable that supports the technical-conformity
+# claim. Committed because reviewers cite these documents directly.
+# ISO 17025 Payload Armory (2026-05-08): plan v2 corpus-boundary declaration
+# (plan §1 / §12). Binding contract for the Payload Armory program; cited
+# by the validator + promote tools and required reading before any wave.
+# SC.1 phase artifacts (investigation + report + dashboard)
+# Phase 0 deploy-glue bootstrap reference (2026-04-22, post-Phase-0 closure)
+# Phase E DSR Postgres research (2026-05-03, T8.2 carve-out — operator review gate)
+# V1→V2 restoration program closeout (2026-Q2, Phase F deliverable #2 of 4)
+# UI Coherence Plan v4 + plan-history (2026-05-13) — active program plan for the
+# UI primitive epic + the source-audit + senior-review docs v4 cites in §0.
+# UI Coherence epic register (2026-Q2) — authoritative per-epic merge log
+# for primitive train + sweep + deep redesign phases. Append-only.
+# Phase 3 deep-redesign step-0 / step-1 founder gate docs (E-A15 Bushido,
+# E-A7 Atemi, future E-A4/E-A5/E-A9/E-A1/E-A26/E-A2). Doc-only files that
+# capture audit findings + founder design-call decisions before Phase B
+# implementation starts.
+# UI Coherence design-brief tree (2026-05-13) — claude.ai/design handoff bundle
+# (spec briefs A.*/B.*/C.*/D.*, context, screenshots) referenced by every
+# primitive epic in plan v4 §6.
+# Wave 1 (2026-04-18): backlog tickets for deferred Wave 2 engine work.
+# Scanner coverage sub-plans (2026-04-20): companion docs to scanner-testing-plan
+# T0-VISUAL-BASELINE: V1→V2 visual regression manifest (consumed by e2e spec).
+
+# Project instructions files (agent-local; AGENTS.md is the Codex mirror of CLAUDE.md)
+CLAUDE.md
+AGENTS.md
+
+# Workspace build outputs
+packages/*/dist/
+dist/
+
+# Build artifacts
+sbom.json
+.next/
+*.tsbuildinfo
+
+# LLM provider config (contains API key references)
+dojolm.config.json
+
+# Development tools (not part of the main package)
+tools/*
+# Wave 0 Track B.1 (2026-04-18): verify-doc-metrics is CI-enforced, must be tracked.
+!tools/verify-doc-metrics.js
+# Phase 0 R-X6: dep-pinning check (CI gate)
+!tools/check-dep-pinning.js
+!tools/dep-pinning-allowlist.json
+# DojoLM Master Plan v1.0 Stage 0 E0-REPO-BOUNDARY-HOOK: repo-split boundary scanner
+!tools/check-repo-boundary.mjs
+# OSS Release P3.1a: per-tier SPDX license tooling (npm run lint:spdx / fix:spdx)
+!tools/spdx/
+tools/spdx/*
+!tools/spdx/license-map.mjs
+!tools/spdx/check-spdx.mjs
+!tools/spdx/apply-spdx.mjs
+# OSS Release P5-A: community-export tooling (include allow-list + §7 import-graph gate)
+!tools/oss-export/
+tools/oss-export/*
+!tools/oss-export/oss-export.mjs
+!tools/oss-export/classify-path.mjs
+!tools/oss-export/classify-package.mjs
+!tools/oss-export/classify-transforms.mjs
+!tools/oss-export/import-graph.mjs
+!tools/oss-export/value-sweep.mjs
+!tools/__tests__/
+tools/__tests__/*
+!tools/__tests__/verify-doc-metrics.test.js
+!tools/__tests__/check-dep-pinning.test.js
+!tools/__tests__/check-repo-boundary.test.js
+!tools/__tests__/check-repo-boundary-smoke.test.js
+!tools/__tests__/spdx-license-map.test.js
+!tools/__tests__/spdx-check.test.js
+!tools/__tests__/spdx-apply.test.js
+!tools/__tests__/oss-export-classify.test.js
+!tools/__tests__/oss-export-classify-transforms.test.js
+!tools/__tests__/oss-export-import-graph.test.js
+!tools/__tests__/oss-export-value-sweep.test.js
+!tools/__tests__/oss-export-cli.test.js
+!tools/__tests__/oss-export-materialize.test.js
+!tools/__tests__/lock-platform-completeness.test.js
+!tools/__tests__/skin-audit.test.js
+
+# Dev artifacts and debug files
+packages/bu-tpi/agent_failures.txt
+packages/bu-tpi/debug-*.js
+packages/bu-tpi/coverage/
+packages/dojolm-scanner/coverage/
+packages/dojolm-sdk/coverage/
+packages/bu-tpi/tools/**
+# Whitelist CI-referenced tooling stubs (2026-04-20): package.json scripts
+# `test:regression` and `validate:manifest` invoke these files from CI.
+# Prior implementations were archived; stubs ship here to keep CI green
+# until the real tooling is restored or the scripts are removed.
+!packages/bu-tpi/tools/
+!packages/bu-tpi/tools/test-regression.ts
+!packages/bu-tpi/tools/validate-manifest.ts
+!packages/bu-tpi/tools/check-budget-gate.ts
+!packages/bu-tpi/tools/audit-generated-fixture-verdicts.ts
+!packages/bu-tpi/tools/benchmark-cli.ts
+!packages/bu-tpi/tools/benchmark-cli.test.ts
+# CAPA-2026-06-11-01 Phase 0 (2026-06-11): gate-integrity tests for the
+# generated-verdict audit — contract-vocabulary + invalid-contract preflight,
+# and registry<->taxonomy parity. Companions to the audit tool above.
+!packages/bu-tpi/tools/audit-generated-fixture-verdicts.test.ts
+!packages/bu-tpi/tools/registry-taxonomy-parity.test.ts
+# CAPA-2026-06-11-01 Phase-3 (2026-06-22): scoped single-file detector backing
+# `payload-armory-validate.ts --run-detector` (detector-positive/negative) via
+# `iso17025-evidence-runner.ts --scoped-file`. Unblocks Corpus-B staging.
+!packages/bu-tpi/tools/scoped-detector.ts
+!packages/bu-tpi/tools/scoped-detector.test.ts
+!packages/bu-tpi/tools/probe-silent-census.ts
+!packages/bu-tpi/tools/probe-empty-fixtures.ts
+!packages/bu-tpi/tools/build-quarantine-from-failures.ts
+!packages/bu-tpi/tools/regen-corpus.ts
+# CAPA-2026-06-11-01: faithful regenerator for coverage-gap-analysis.current
+# (absorbs Corpus-B coverage waves into the tracked metric) + its drift-guard test.
+!packages/bu-tpi/tools/regen-coverage-gap.ts
+!packages/bu-tpi/tools/regen-coverage-gap.test.ts
+# SC.1.0 (2026-04-27): scanner regression gate — diffs two audit failure
+# reports to detect regressions/improvements; required dependency for SC.1.1+.
+!packages/bu-tpi/tools/scanner-regression-gate.ts
+!packages/bu-tpi/tools/scanner-regression-gate.test.ts
+# SC.1.2 (2026-04-29): encoding-engine FP root-cause tooling.
+!packages/bu-tpi/tools/sc1-2-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-2-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-2-prune-quarantine.ts
+# SC.1.4 (2026-04-29): token-analyzer FP root-cause tooling.
+!packages/bu-tpi/tools/sc1-4-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-4-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-4-prune-quarantine.ts
+!packages/bu-tpi/tools/sc1-4-residual-debug.ts
+!packages/bu-tpi/tools/sc1-4-tp-spotcheck.ts
+# SC.1.4b (2026-04-29): bidirectional FN coverage tooling.
+!packages/bu-tpi/tools/sc1-4b-measure-fn-impact.ts
+!packages/bu-tpi/tools/sc1-4b-prune-quarantine.ts
+# SC.1.7a (2026-04-29): edgefuzz-detector multi_layer_base64 FP root-cause tooling.
+!packages/bu-tpi/tools/sc1-7a-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-7a-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-7a-prune-quarantine.ts
+# SC.1.7b (2026-04-29): ssrf-detector documentation-placeholder framing tooling.
+!packages/bu-tpi/tools/sc1-7b-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-7b-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-7b-prune-quarantine.ts
+# SC.1.7c (2026-04-29): dos-detector shape-only-pattern attack-signal gating tooling.
+!packages/bu-tpi/tools/sc1-7c-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-7c-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-7c-prune-quarantine.ts
+# SC.1.9 (2026-04-29): cross-module stale-quarantine sweep tooling.
+!packages/bu-tpi/tools/sc1-9-stale-quarantine-sweep.ts
+!packages/bu-tpi/tools/sc1-9-prune-stale-quarantine.ts
+# SC.1.10 (2026-04-29): pii-detector NANP-fictitious-range placeholder tooling.
+!packages/bu-tpi/tools/sc1-10-fp-pattern-tabulation.ts
+!packages/bu-tpi/tools/sc1-10-measure-fp-reduction.ts
+!packages/bu-tpi/tools/sc1-10-prune-quarantine.ts
+# SC.1.11 (2026-04-30): missing-fixture stale-quarantine sweep tooling.
+!packages/bu-tpi/tools/sc1-11-stale-fixture-sweep.ts
+!packages/bu-tpi/tools/sc1-11-prune-quarantine.ts
+# SC.1.12 (2026-04-30): ReDoS-orphan release tool (re-test post-SC.1.5b).
+!packages/bu-tpi/tools/sc1-12-release-redos-orphans.ts
+# SC.1.13 (2026-04-30): encoding-engine residual FP release tool.
+!packages/bu-tpi/tools/sc1-13-prune-quarantine.ts
+# ISO 17025 Stream 8 (2026-05-02): shingan-scanner pattern tightening
+# tools — cluster mining, recall preservation probe, clean-corpus probe,
+# residual FP probe, release-record builder, mpegts-mislabel reclassifier.
+!packages/bu-tpi/tools/stream8-cluster-probe.ts
+!packages/bu-tpi/tools/stream8-recall-probe.ts
+!packages/bu-tpi/tools/stream8-clean-corpus-probe.ts
+!packages/bu-tpi/tools/stream8-residual-probe.ts
+!packages/bu-tpi/tools/stream8-build-release.ts
+!packages/bu-tpi/tools/stream8-add-mpegts-shingan-row.ts
+# ISO 17025 (2026-04-30): Phase 3 + Phase 6 R&R / uncertainty / proficiency
+# orchestrators. Drive existing src/validation/runner harness over corpus
+# subset and write evidence reports under validation/reports/ + validation/
+# proficiency/.
+!packages/bu-tpi/tools/iso17025-corpus-loader.ts
+!packages/bu-tpi/tools/iso17025-uncertainty.ts
+!packages/bu-tpi/tools/iso17025-repeatability.ts
+!packages/bu-tpi/tools/iso17025-reproducibility-collect.ts
+!packages/bu-tpi/tools/iso17025-reproducibility-compare.ts
+# ISO 17025 Stream 4 (2026-05-01): N-way compare-tool extension test coverage.
+!packages/bu-tpi/tools/iso17025-reproducibility-compare.test.ts
+!packages/bu-tpi/tools/iso17025-proficiency.ts
+# ISO 17025 Stream 1 (2026-05-01): corpus content_hash drift remediation
+# tool. Reconciles per-module samples.json + top-level manifest.json with
+# on-disk file bytes (authoritative). Required for repeatability +
+# reproducibility studies to reach 28/28 module coverage.
+!packages/bu-tpi/tools/iso17025-fix-corpus-drift.ts
+# ISO 17025 Stream 2 (2026-05-01): evidence runner producing
+# validation-run.json from on-disk ground-truth + generated corpus.
+# Replaces the legacy gitignored generate-katana-evidence.ts.
+!packages/bu-tpi/tools/iso17025-evidence-runner.ts
+
+# ISO 17025 Payload Armory (2026-05-08): plan v2 gap-closure tooling under
+# `payload-armory-*` family covers (a) read-only gap-matrix audit,
+# (b) staging scaffolder, (c) 11-check validator, (d) Custodian-only
+# promote (staging→production), (e) NCR-driven recall, plus the shared
+# Zod schema + utils + their vitest test files. All deterministic.
+!packages/bu-tpi/tools/payload-armory-*.ts
+
+# ISO 17025 Stream 3 (2026-05-01): proficiency disagreement dumps emitted
+# by ISO_PROFICIENCY_DUMP_DISAGREEMENTS=1. The 60-char prompt previews
+# may contain copyrighted upstream HF dataset content; the dump is
+# regenerable on demand from the deterministic proficiency tool, so we
+# do not commit the per-row records. The committed proficiency JSONs
+# under validation/proficiency/<dataset>.json carry sufficient evidence
+# for §7.7 (per-row agreement + Wilson CI + confusion matrix).
+packages/bu-tpi/validation/proficiency/disagreements/
+
+# ISO 17025 Stream 3 (2026-05-01): per-failure dump emitted by
+# ISO_EVIDENCE_DUMP_FAILURES=1 alongside validation-run.json. Each entry
+# carries only sample_id + module_id + verdict shape (no corpus content),
+# but the file routinely exceeds the 50MB GitHub recommendation on full
+# 200k+ runs (~2k+ failures × ~250B each + per-sample meta). Track only
+# the small validation-run.summary.json instead; dumps are regenerable.
+packages/bu-tpi/validation/reports/runs/*/validation-run.failures.json
+
+# ISO 17025 Stream 2 (2026-05-01): generated-corpus per-sample JSONs are
+# reproducible from KATANA_SEED via tools/regen-corpus.ts. Tracking
+# 200k+ per-sample files (1-3KB each) bloats the repo and produces
+# unreviewable PR diffs; the canonical corpus state is captured by the
+# committed manifest.json + stats.json + index.json in each generator
+# directory's parent. Per-sample JSONs are derivable on demand.
+packages/bu-tpi/validation/corpus/generated/*/*.json
+!packages/bu-tpi/validation/corpus/generated/manifest.json
+!packages/bu-tpi/validation/corpus/generated/stats.json
+!packages/bu-tpi/validation/corpus/generated/index.json
+
+# ISO 17025 Stream 2 (2026-05-01): the iso17025-evidence-runner emits a
+# `validation-run.json` per evidence run. At 200k+ inputs the file
+# exceeds GitHub's 50 MB recommended size (compact JSON ~85 MiB at
+# 309k scans). Track only the small `validation-run.summary.json`
+# beside it; the full per-sample results are reproducible from
+# regen-corpus + iso17025-evidence-runner with the recorded SEED.
+packages/bu-tpi/validation/reports/runs/*/validation-run.json
+!packages/bu-tpi/validation/reports/runs/*/validation-run.summary.json
+
+# SC.1 regression-gate evidence — large intermediates ignored, summaries kept.
+# Audit failure dumps and full gate reports can be 10s-100s of MB; the report
+# .txt summaries, quarantine patch JSONs, and audit summary JSONs are committed
+packages/bu-tpi/validation/reports/regression-gate/**/*.failures.json
+packages/bu-tpi/validation/reports/regression-gate/**/gate-report.json
+packages/dojolm-scanner/test-vec-fixtures.cjs
+
+# Temporary files
+*.tmp
+
+# Internal documentation
+internal/
+
+# Documentation tracking (internal)
+.documentation-index.md
+DOCUMENTATION_UPDATE_SUMMARY.md
+docs/DOCUMENTAL-UPDATE-SUMMARY.md
+docs/NEXTJS-MIGRATION-PLAN.md
+docs/MAINTENANCE.md
+docs/MIGRATION.md
+docs/STYLE-GUIDE.md
+docs/API_REFERENCE.md
+docs/app/developer-guide.md
+docs/app/improvement-tracker.md
+
+# QA screenshots and presentation screenshots in repo root
+qa*.png
+*.png
+
+# Exception: Playwright visual regression baselines must be tracked
+!packages/*/e2e/**/*.png
+!packages/*/e2e/**/*-snapshots/**
+# Exception: YR.6 retro visual-fidelity screenshots (canvas-showcase evidence)
+# Exception: UI Coherence design-brief V1 reference shots (primitive-by-primitive
+# evidence + side-by-side comparison fixtures cited by every B.1-B.5 spec).
+# Exception: v2 skin eng submission — v1.5 ticket-evidence captures (2026-07-07)
+
+# Data directory (runtime artifacts, root-level only)
+/data/
+
+# Presentation materials (internal)
+presentation/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# bu-review adversarial-review receipts — local-only, HEAD-sha-keyed
+.bu-review/
+
+# Runtime / local environment files (never commit)
+deploy/.env
+*.env.e2e.prod
+*.env.e2e.local
+
+# Historical backups (2GB+ of pre-QA snapshots; never commit). Root-anchored.
+/archive/
+
+# Root-level coverage output (package-scoped entries above cover package dirs)
+/coverage/
+
+# Claude Code skill packages belong in ~/.claude/skills/, not repo root
+*.skill
+
+# --- public export: un-ignore curated ship files so `git add -A` is honest (F-15) ---
+!packages/dojolm-web/public/branding/blackunicorn.png
+!packages/dojolm-web/public/branding/dojolm-lockup.png
+!packages/dojolm-web/public/branding/models/blackunicorn.png
+!tools/industry-tools/
+tools/industry-tools/*
+!tools/industry-tools/st3gg-coverage-audit.mjs
